@@ -44,71 +44,7 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/calendar">
-            <Calendar />
-          </Route>
-          <Route exact path="/strips">
-            <Strips />
-          </Route>
-          <Route exact path="/stripboard">
-            <StripBoard />
-          </Route>
-          <Route exact path="/cast">
-            <Cast />
-          </Route>
-          <Route exact path="/sets">
-            <Sets />
-          </Route>
-          <Route exact path="/elements">
-            <Elements />
-          </Route>
-          <Route exact path="/reports">
-            <Reports />
-          </Route>
-          <Route exact path="/settings">
-            <Settings />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/strips" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="calendar" href="/calendar">
-            <IonIcon icon={calendarOutline} />
-            <IonLabel>CALENDAR</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="strips" href="/strips">
-            <IonIcon icon={listOutline} />
-            <IonLabel>STRIPS</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="stripboard" href="/stripboard">
-            <IonIcon icon={calendarOutline} />
-            <IonLabel>STRIPBOARD</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="cast" href="/cast">
-            <IonIcon icon={peopleOutline} />
-            <IonLabel>CAST</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="sets" href="/sets">
-            <IonIcon icon={businessOutline} />
-            <IonLabel>SETS</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="elements" href="/elements">
-            <IonIcon icon={businessOutline} />
-            <IonLabel>ELEMENTS</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="reports" href="/reports">
-            <IonIcon icon={readerOutline} />
-            <IonLabel>REPORTS</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="settings" href="/settings">
-            <IonIcon icon={settingsOutline} />
-            <IonLabel>SETTINGS</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
+      
     </IonReactRouter>
   </IonApp>
 );
