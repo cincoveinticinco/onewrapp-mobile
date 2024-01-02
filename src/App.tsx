@@ -1,24 +1,13 @@
-import { Redirect, Route } from 'react-router-dom';
+import React, { useState } from 'react';
 import {
   IonApp,
-  IonIcon,
-  IonLabel,
   IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
   setupIonicReact
 } from '@ionic/react';
+import { Redirect, Route } from 'react-router';
+import { AuthContext } from './context/auth';
 import { IonReactRouter } from '@ionic/react-router';
-import { businessOutline, calendarOutline, ellipse, listOutline, peopleOutline, readerOutline, settingsOutline, square, triangle } from 'ionicons/icons';
-import Calendar from './pages/Calendar';
-import Cast from './pages/Cast';
-import Elements from './pages/Elements';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import Sets from './pages/Sets';
-import StripBoard from './pages/StripBoard';
-import Strips from './pages/Strips';
+import LoginPage from './pages/LoginPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -38,16 +27,34 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Projects from './pages/Projects';
+import AppTabs from './AppTabs';
 
 setupIonicReact();
 
-const App: React.FC = () => (
+const App: React.FC = () => {
+const [loggedIn, setLoggedIn] = useState(false);
+
+return (
   <IonApp>
-    <IonReactRouter>
-      
-    </IonReactRouter>
+    <AuthContext.Provider value={{ loggedIn }}>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Route exact path="/login">
+            <LoginPage onLogin={() => setLoggedIn(true)} />
+          </Route>
+          <Route exact path="/my/projects">
+            <Projects />
+          </Route>
+          <Route path="/my/projects/:id">
+            <AppTabs />
+          </Route>
+          <Redirect exact path="/" to="/my/projects" />
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </AuthContext.Provider>
   </IonApp>
-);
+)};
 
 export default App;
 
