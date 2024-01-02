@@ -7,13 +7,13 @@ const Strips: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Strips</IonTitle>
+          <IonTitle>STRIPS</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Strips</IonTitle>
+            <IonTitle size="large">STRIPS</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Strips page" />

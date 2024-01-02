@@ -7,13 +7,13 @@ const Reports: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Reports PAGE</IonTitle>
+          <IonTitle>REPORTS</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Reports PAGE</IonTitle>
+            <IonTitle size="large">REPORTS</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Reports page" />

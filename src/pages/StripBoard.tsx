@@ -7,13 +7,13 @@ const StripBoard: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Strip Board</IonTitle>
+          <IonTitle>STRIP</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Strip Board</IonTitle>
+            <IonTitle size="large">STRIP BOARD</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Strip Board page" />

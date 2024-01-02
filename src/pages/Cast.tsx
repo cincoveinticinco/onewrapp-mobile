@@ -7,13 +7,13 @@ const Cast: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>CAST PAGE</IonTitle>
+          <IonTitle>CAST</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">CAST PAGE</IonTitle>
+            <IonTitle size="large">CAST</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Cast page" />

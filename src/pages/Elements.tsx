@@ -7,13 +7,13 @@ const Elements: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Elements PAGE</IonTitle>
+          <IonTitle>ELEMENTS</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Elements PAGE</IonTitle>
+            <IonTitle size="large">ELEMENTS</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Elements page" />

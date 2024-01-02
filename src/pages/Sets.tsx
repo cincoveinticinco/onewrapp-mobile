@@ -7,13 +7,13 @@ const Sets: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Sets PAGE</IonTitle>
+          <IonTitle>SETS</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Sets PAGE</IonTitle>
+            <IonTitle size="large">SETS</IonTitle>
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Sets page" />
