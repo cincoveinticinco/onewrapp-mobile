@@ -7,15 +7,10 @@ const Calendar: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>CALENDAR</IonTitle>
+          <IonTitle color='primary'>CALENDAR</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">CALENDAR</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Calendar page" />
       </IonContent>
     </IonPage>

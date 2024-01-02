@@ -11,11 +11,6 @@ const Elements: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">ELEMENTS</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Elements page" />
       </IonContent>
     </IonPage>

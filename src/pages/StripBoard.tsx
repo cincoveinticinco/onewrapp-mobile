@@ -11,11 +11,6 @@ const StripBoard: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">STRIP BOARD</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Strip Board page" />
       </IonContent>
     </IonPage>

@@ -11,11 +11,6 @@ const Sets: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">SETS</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Sets page" />
       </IonContent>
     </IonPage>

@@ -11,11 +11,6 @@ const Cast: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">CAST</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Cast page" />
       </IonContent>
     </IonPage>

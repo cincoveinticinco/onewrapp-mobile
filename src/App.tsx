@@ -46,11 +46,11 @@ return (
           <Route exact path="/my/projects">
             <Projects />
           </Route>
-          <Route path="/my/projects/:id">
-            <AppTabs />
-          </Route>
           <Redirect exact path="/" to="/my/projects" />
         </IonRouterOutlet>
+        <Route path="/my/projects/:id">
+            <AppTabs />
+        </Route>
       </IonReactRouter>
     </AuthContext.Provider>
   </IonApp>

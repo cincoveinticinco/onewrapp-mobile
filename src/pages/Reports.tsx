@@ -11,11 +11,6 @@ const Reports: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">REPORTS</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Reports page" />
       </IonContent>
     </IonPage>

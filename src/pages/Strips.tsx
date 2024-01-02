@@ -11,11 +11,6 @@ const Strips: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">STRIPS</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <ExploreContainer name="Strips page" />
       </IonContent>
     </IonPage>
