@@ -1,6 +1,6 @@
 import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { Redirect } from 'react-router';
-import { useAuth } from '../context/auth';
+import { useAuth } from '../../context/auth';
 
 interface Props {
   onLogin: () => void;

@@ -1,20 +1,20 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import './Sets.css';
+import ExploreContainer from '../../components/Shared/ExploreContainer';
+import './Settings.css';
 
-const Sets: React.FC = () => {
+const Settings: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>SETS</IonTitle>
+          <IonTitle>SETTINGS</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <ExploreContainer name="Sets page" />
+        <ExploreContainer name="Settings page" />
       </IonContent>
     </IonPage>
   );
 };
 
-export default Sets;
+export default Settings;

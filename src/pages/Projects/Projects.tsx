@@ -1,6 +1,6 @@
 import { IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { projects } from '../data'
-import { useAuth } from '../context/auth';
+import { projects } from '../../data'
+import { useAuth } from '../../context/auth';
 import { Redirect } from 'react-router';
 
 const Projects: React.FC = () => {

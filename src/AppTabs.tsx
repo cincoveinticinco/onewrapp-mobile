@@ -11,14 +11,14 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 import { businessOutline, calendarOutline, ellipse, listOutline, peopleOutline, readerOutline, settingsOutline, square, triangle } from 'ionicons/icons';
 import { useAuth } from './context/auth';
-import Calendar from './pages/Calendar';
-import Cast from './pages/Cast';
-import Elements from './pages/Elements';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import Sets from './pages/Sets';
-import StripBoard from './pages/StripBoard';
-import Strips from './pages/Strips';
+import Calendar from './pages/Calendar/Calendar';
+import Cast from './pages/Cast/Cast';
+import Elements from './pages/Elements/Elements';
+import Reports from './pages/Reports/Reports';
+import Settings from './pages/Settings/Settings';
+import Sets from './pages/Sets/Sets';
+import StripBoard from './pages/StripBoard/StripBoard';
+import Strips from './pages/Strips/Strips';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';

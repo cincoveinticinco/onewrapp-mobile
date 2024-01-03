@@ -1,20 +1,20 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import './Settings.css';
+import ExploreContainer from '../../components/Shared/ExploreContainer';
+import './StripBoard.css';
 
-const Settings: React.FC = () => {
+const StripBoard: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>SETTINGS</IonTitle>
+          <IonTitle>STRIP</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <ExploreContainer name="Settings page" />
+        <ExploreContainer name="Strip Board page" />
       </IonContent>
     </IonPage>
   );
 };
 
-export default Settings;
+export default StripBoard;

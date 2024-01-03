@@ -7,7 +7,7 @@ import {
 import { Redirect, Route } from 'react-router';
 import { AuthContext } from './context/auth';
 import { IonReactRouter } from '@ionic/react-router';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,7 +27,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import Projects from './pages/Projects';
+import Projects from './pages/Projects/Projects';
 import AppTabs from './AppTabs';
 
 setupIonicReact();
