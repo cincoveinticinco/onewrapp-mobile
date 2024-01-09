@@ -1,7 +1,9 @@
-import { IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { projects } from '../../data'
-import { useAuth } from '../../context/auth';
+import React from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonItem, IonNav } from '@ionic/react';
 import { Redirect } from 'react-router';
+import { useAuth } from '../../context/auth';
+import { projects } from '../../data';
+import ProjectCard from '../../components/Projects/ProjectCard';
 
 const Projects: React.FC = () => {
   const { loggedIn } = useAuth();
@@ -18,14 +20,15 @@ const Projects: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonList>
-          {projects.map((project) =>
-            <IonItem button key={project.id}
-              routerLink={`/my/projects/${project.id}`}>
-              {project.title}
-            </IonItem>
-          )}
-        </IonList>
+        <IonGrid>
+          <IonRow>
+            {projects.map((project) => (
+              <IonCol size="3" size-md="6" size-lg="4" key={project.id} class='ion-no-padding'>
+                  <ProjectCard project={project} />
+              </IonCol>
+            ))}
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );
