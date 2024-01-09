@@ -1,0 +1,17 @@
+.project-card {
+  border-radius: 0%;
+}
+
+.project-card-margin {
+  margin: 4px !important;
+}
+
+.project-card-padding {
+  padding: 4px !important;
+}
+
+.project-abreviation {
+  display: flex;
+  min-height: 100px;
+  color: #000;
+}
