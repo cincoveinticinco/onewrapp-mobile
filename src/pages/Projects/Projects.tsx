@@ -23,7 +23,7 @@ const Projects: React.FC = () => {
         <IonGrid>
           <IonRow>
             {projects.map((project) => (
-              <IonCol size="3" size-md="6" size-lg="4" key={project.id} class='ion-no-padding'>
+              <IonCol size="3" size-md="3" size-lg="4" key={project.id} class='ion-no-padding'>
                   <ProjectCard project={project} />
               </IonCol>
             ))}
