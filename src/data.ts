@@ -117,8 +117,24 @@ export const scenes: Scene[] = [
     page: 3,
     pages: 0.38,
     estimatedSeconds: null,
-    characters: [],
-    extras: [],
+    characters: [
+      {
+        categoryName: 'Principal',
+        characterName: 'Cesar',
+        characterNum: 1
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Pedro',
+        characterNum: 2
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Jorge',
+        characterNum: 3
+      }
+    ],
+    extras: null,
     elements: [],
     notes: [],
     updatedAt: new Date().toISOString()
