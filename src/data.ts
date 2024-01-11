@@ -1,6 +1,8 @@
+import { Scene } from "./interfaces/scenesTypes";
+
 export const projects = [
   {
-    id: 'mds-1',
+    id: '01',
     projName: 'Memorias De Una Soledad',
     projAbreviation: 'MDS',
     season: 1,
@@ -12,7 +14,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'ed-1',
+    id: '02',
     projName: 'El Dentista',
     projAbreviation: 'ED',
     season: 1,
@@ -24,7 +26,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'lvd-1',
+    id: '03',
     projName: 'La Vida Entera',
     projAbreviation: 'LVD',
     season: 1,
@@ -36,7 +38,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'lbdn-1',
+    id: '04',
     projName: 'La Banda',
     projAbreviation: 'LBDN',
     season: null,
@@ -48,7 +50,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'mds-11',
+    id: '05',
     projName: 'Memorias De Una Soledad',
     projAbreviation: 'MDS',
     season: 1,
@@ -60,7 +62,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'ed-11',
+    id: '06',
     projName: 'El Dentista',
     projAbreviation: 'ED',
     season: 1,
@@ -72,7 +74,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'lvd-11',
+    id: '07',
     projName: 'La Vida Entera',
     projAbreviation: 'LVD',
     season: 1,
@@ -84,7 +86,7 @@ export const projects = [
     updatedAt: '2024-01-09T12:57:10Z',
   },
   {
-    id: 'lbdn-11',
+    id: '08',
     projName: 'La Banda',
     projAbreviation: 'LBDN',
     season: null,
@@ -97,6 +99,28 @@ export const projects = [
   },
 ];
 
-export const scenes = [
-
+export const scenes: Scene[] = [
+  {
+    id: 'scene-1022-int-day-26',
+    projectId: '01',
+    episodeNumber: 10,
+    sceneNumber: '22',
+    sceneType: 'scene',
+    protectionType: null,
+    intOrExtOption: 'INT',
+    dayOrNightOption: 'day',
+    locationName: 'INTERNADO LA VICTORIA',
+    setName: 'CAMINO AL INTERNADO',
+    scriptDay: '26',
+    year: '2022',
+    synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
+    page: 3,
+    pages: 0.38,
+    estimatedSeconds: null,
+    characters: [],
+    extras: [],
+    elements: [],
+    notes: [],
+    updatedAt: new Date().toISOString()
+  },
 ];
