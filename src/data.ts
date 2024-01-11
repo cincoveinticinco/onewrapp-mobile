@@ -139,4 +139,82 @@ export const scenes: Scene[] = [
     notes: [],
     updatedAt: new Date().toISOString()
   },
+  {
+    id: 'scene-1023-int-day-26',
+    projectId: '01',
+    episodeNumber: 10,
+    sceneNumber: '22',
+    sceneType: 'scene',
+    protectionType: null,
+    intOrExtOption: 'INT',
+    dayOrNightOption: 'day',
+    locationName: 'INTERNADO LA VICTORIA',
+    setName: 'CAMINO AL INTERNADO',
+    scriptDay: '26',
+    year: '2022',
+    synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
+    page: 0,
+    pages: 0.375,
+    estimatedSeconds: null,
+    characters: [
+      {
+        categoryName: 'Principal',
+        characterName: 'Cesar',
+        characterNum: 1
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Pedro',
+        characterNum: 2
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Jorge',
+        characterNum: 3
+      }
+    ],
+    extras: null,
+    elements: [],
+    notes: [],
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'scene-1024-int-day-26',
+    projectId: '01',
+    episodeNumber: 10,
+    sceneNumber: '22',
+    sceneType: 'scene',
+    protectionType: null,
+    intOrExtOption: 'INT',
+    dayOrNightOption: 'day',
+    locationName: 'INTERNADO LA VICTORIA',
+    setName: 'CAMINO AL INTERNADO',
+    scriptDay: '26',
+    year: '2022',
+    synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
+    page: 0,
+    pages: 0.375,
+    estimatedSeconds: null,
+    characters: [
+      {
+        categoryName: 'Principal',
+        characterName: 'Cesar',
+        characterNum: 1
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Pedro',
+        characterNum: 2
+      },
+      {
+        categoryName: 'Principal',
+        characterName: 'Jorge',
+        characterNum: 3
+      }
+    ],
+    extras: null,
+    elements: [],
+    notes: [],
+    updatedAt: new Date().toISOString()
+  },
 ];
