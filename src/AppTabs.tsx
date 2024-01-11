@@ -6,10 +6,12 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact
+  setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { businessOutline, calendarOutline, ellipse, listOutline, peopleOutline, readerOutline, settingsOutline, square, triangle } from 'ionicons/icons';
+import {
+  business, calendar, list, people, reader, settings,
+} from 'ionicons/icons';
 import { useAuth } from './context/auth';
 import Calendar from './pages/Calendar/Calendar';
 import Cast from './pages/Cast/Cast';
@@ -41,7 +43,7 @@ import './theme/variables.css';
 
 setupIonicReact();
 
-const AppTabs: React.FC = () =>{
+const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
 
   if (!loggedIn) {
@@ -77,42 +79,41 @@ const AppTabs: React.FC = () =>{
         </Route>
         <Redirect exact path="/my/projects/:id" to="/my/projects/:id/strips" />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom">
+      <IonTabBar slot="bottom" color="dark">
         <IonTabButton tab="calendar" href="/my/projects/:id/calendar">
-          <IonIcon icon={calendarOutline} />
+          <IonIcon icon={calendar} color="light" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
         <IonTabButton tab="strips" href="/my/projects/:id/strips">
-          <IonIcon icon={listOutline} />
+          <IonIcon icon={list} color="light" />
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="stripboard" href="/my/projects/:id/stripboard">
-          <IonIcon icon={calendarOutline} />
+          <IonIcon icon={calendar} color="light" />
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
         <IonTabButton tab="cast" href="/my/projects/:id/cast">
-          <IonIcon icon={peopleOutline} />
+          <IonIcon icon={people} color="light" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
         <IonTabButton tab="sets" href="/my/projects/:id/sets">
-          <IonIcon icon={businessOutline} />
+          <IonIcon icon={business} color="light" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="elements" href="/my/projects/:id/elements">
-          <IonIcon icon={businessOutline} />
+          <IonIcon icon={business} color="light" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="reports" href="/my/projects/:id/reports">
-          <IonIcon icon={readerOutline} />
+          <IonIcon icon={reader} color="light" />
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" href="/my/projects/:id/settings">
-          <IonIcon icon={settingsOutline} />
+          <IonIcon icon={settings} color="light" />
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
   );
-}
+};
 export default AppTabs;
-

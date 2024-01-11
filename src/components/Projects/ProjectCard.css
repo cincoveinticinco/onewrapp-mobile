@@ -1,17 +1,29 @@
 .project-card {
   border-radius: 0%;
-}
-
-.project-card-margin {
-  margin: 4px !important;
-}
-
-.project-card-padding {
-  padding: 4px !important;
+  margin: 0px;
+  border: none;
+  background-color: #282F3A;
+  padding: 7px;
+  min-height: 100%;
 }
 
 .project-abreviation {
   display: flex;
   min-height: 100px;
-  color: #000;
+  font-size: 28px;
+}
+
+.project-card-subtitle {
+  font-size: 18px;
+  color: #fff;
+  margin-top: 2px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.project-card-description {
+  color: #fff;
+  padding: 0px;
+  margin: 0px;
+  font-size: 12px;
 }

@@ -1,54 +1,54 @@
-import { DatabaseSchema } from "../database_schema";
+import { DatabaseSchema } from '../database_schema';
 
 export class ProjectsSchema extends DatabaseSchema {
   static schemaName = 'projects'
 
   constructor() {
-    const schemaName =  ProjectsSchema.schemaName
-    const schemaInput = projectSchemaInput
-    super(schemaName, schemaInput)
+    const { schemaName } = ProjectsSchema;
+    const schemaInput = projectSchemaInput;
+    super(schemaName, schemaInput);
   }
 }
 
 const projectSchema = {
-  title: "project schema",
+  title: 'project schema',
   version: 0,
-  type: "object",
+  type: 'object',
   primaryKey: 'id',
   properties: {
     id: {
-      type: "string",
-      maxLength: 250
+      type: 'string',
+      maxLength: 250,
     },
     projName: {
-      type: "string"
+      type: 'string',
     },
     season: {
-      type: ["integer", "null"]
+      type: ['integer', 'null'],
     },
     projStatus: {
-      type: "string",
-      enum: ["On Development", "On Pre-production", "On Production", "On Wrapp", "On Post-production", "closed"]
+      type: 'string',
+      enum: ['On Development', 'On Pre-production', 'On Production', 'On Wrapp', 'On Post-production', 'closed'],
     },
     projType: {
-      type: "string",
-      enum: ["Scripted film", "scripted series", "Non Scripted film", "Non Scripted series"]
+      type: 'string',
+      enum: ['Scripted film', 'scripted series', 'Non Scripted film', 'Non Scripted series'],
     },
     prodCenter: {
-      type: "string"
+      type: 'string',
     },
     episodes: {
-      type: "integer"
+      type: 'integer',
     },
     year: {
-      type: "integer"
-    }
+      type: 'integer',
+    },
   },
   updatedAt: {
-    type: "string",
-    format: "date-time"
+    type: 'string',
+    format: 'date-time',
   },
-  required: ["id", "projName", "projStatus", "projType", "prodCenter", "episodes", "year"]
+  required: ['id', 'projName', 'projStatus', 'projType', 'prodCenter', 'episodes', 'year'],
 };
 
 const projectSchemaInput = {
@@ -56,13 +56,12 @@ const projectSchemaInput = {
     schema: projectSchema,
     checkpointFields: [
       'id',
-      'updatedAt'
+      'updatedAt',
     ],
     deletedField: 'deleted',
-    headerFields: ['Authorization']
-  }
-}
-
+    headerFields: ['Authorization'],
+  },
+};
 
 // LOS PROYECTOS QUE ESTEN EN DESARROLLO
 // COLOR BLANCO

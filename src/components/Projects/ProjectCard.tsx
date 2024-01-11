@@ -1,5 +1,7 @@
 import React from 'react';
-import { IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
+import {
+  IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle,
+} from '@ionic/react';
 import './ProjectCard.css';
 
 interface Project {
@@ -20,38 +22,63 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
-
-  const defineColor = (status: string) => {
+  const defineBgColor = (status: string) => {
     switch (status) {
       case 'On Development':
-        return 'white';
+        return '#fff';
       case 'On Pre-production':
-        return 'yellow';
+        return '#f4fb8c';
       case 'On Production':
+        return '#19cff9';
       case 'On Wrapp':
-        return 'blue';
+        return '#19cff9';
       case 'On Post-production':
-        return 'purple';
+        return '#c13afd';
       case 'closed':
-        return 'green';
+        return '#04feaa';
       default:
         return 'black';
     }
   };
 
+  const defineTextColor = (status: string) => {
+    switch (status) {
+      case 'On Post-production':
+        return '#fff';
+      default:
+        return '#282f3a';
+    }
+  };
+
   return (
-    <IonCard routerLink={`/my/projects/${project.id}`} className='project-card-margin project-card-padding project-card'>
-        <IonCardTitle 
-          class='ion-justify-content-center ion-align-items-center project-abreviation'
-          style={{ backgroundColor: defineColor(project.projStatus) }}>
-            {project.projAbreviation}
-        </IonCardTitle>
-      <IonCardHeader class='ion-no-padding'>
-        <IonCardSubtitle>{project.projName} S{project.season}</IonCardSubtitle>
+    <IonCard routerLink={`/my/projects/${project.id}`} className="project-card project-card project-card">
+      <IonCardTitle
+        class="ion-justify-content-center ion-align-items-center project-abreviation"
+        style={{
+          backgroundColor: defineBgColor(project.projStatus),
+          color: defineTextColor(project.projStatus),
+        }}
+      >
+        {project.projAbreviation}
+      </IonCardTitle>
+      <IonCardHeader class="ion-no-padding">
+        <IonCardSubtitle class="project-card-subtitle">
+          {project.projName.length > 9 ? `${project.projName.substring(0, 9)}...` : project.projName}
+          {' '}
+          {project.season ? `S${project.season}` : null}
+        </IonCardSubtitle>
       </IonCardHeader>
       <div>
-        <p>{project.projStatus}</p>
-        <p>{project.episodes} Episodes - {project.year}</p>
+        <p className="project-card-description">{project.projStatus}</p>
+        <p className="project-card-description">
+          {project.episodes}
+          {' '}
+          {`${project.projType}-${project.prodCenter}`}
+          {' '}
+          Episodes -
+          {' '}
+          {project.year}
+        </p>
       </div>
     </IonCard>
   );

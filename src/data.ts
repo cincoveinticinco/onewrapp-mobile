@@ -1,7 +1,7 @@
 export const projects = [
   {
     id: 'mds-1',
-    projName: 'Memorias De...',
+    projName: 'Memorias De Una Soledad',
     projAbreviation: 'MDS',
     season: 1,
     projStatus: 'On Development',
@@ -9,7 +9,7 @@ export const projects = [
     prodCenter: 'Mexico',
     episodes: 20,
     year: 2024,
-    updatedAt: '2024-01-09T12:57:10Z'
+    updatedAt: '2024-01-09T12:57:10Z',
   },
   {
     id: 'ed-1',
@@ -21,7 +21,7 @@ export const projects = [
     prodCenter: 'Mexico',
     episodes: 20,
     year: 2023,
-    updatedAt: '2024-01-09T12:57:10Z'
+    updatedAt: '2024-01-09T12:57:10Z',
   },
   {
     id: 'lvd-1',
@@ -33,18 +33,70 @@ export const projects = [
     prodCenter: 'Mexico',
     episodes: 20,
     year: 2024,
-    updatedAt: '2024-01-09T12:57:10Z'
+    updatedAt: '2024-01-09T12:57:10Z',
   },
-    {
+  {
     id: 'lbdn-1',
     projName: 'La Banda',
     projAbreviation: 'LBDN',
-    season: 1,
+    season: null,
     projStatus: 'On Post-production',
     projType: 'Scripted Series',
     prodCenter: 'Mexico',
     episodes: 20,
     year: 2024,
-    updatedAt: '2024-01-09T12:57:10Z'
-  }
-]
+    updatedAt: '2024-01-09T12:57:10Z',
+  },
+  {
+    id: 'mds-11',
+    projName: 'Memorias De Una Soledad',
+    projAbreviation: 'MDS',
+    season: 1,
+    projStatus: 'On Development',
+    projType: 'Scripted Series',
+    prodCenter: 'Mexico',
+    episodes: 20,
+    year: 2024,
+    updatedAt: '2024-01-09T12:57:10Z',
+  },
+  {
+    id: 'ed-11',
+    projName: 'El Dentista',
+    projAbreviation: 'ED',
+    season: 1,
+    projStatus: 'On Production',
+    projType: 'Scripted Series',
+    prodCenter: 'Mexico',
+    episodes: 20,
+    year: 2023,
+    updatedAt: '2024-01-09T12:57:10Z',
+  },
+  {
+    id: 'lvd-11',
+    projName: 'La Vida Entera',
+    projAbreviation: 'LVD',
+    season: 1,
+    projStatus: 'On Pre-production',
+    projType: 'Scripted Series',
+    prodCenter: 'Mexico',
+    episodes: 20,
+    year: 2024,
+    updatedAt: '2024-01-09T12:57:10Z',
+  },
+  {
+    id: 'lbdn-11',
+    projName: 'La Banda',
+    projAbreviation: 'LBDN',
+    season: null,
+    projStatus: 'On Post-production',
+    projType: 'Scripted Series',
+    prodCenter: 'Mexico',
+    episodes: 20,
+    year: 2024,
+    updatedAt: '2024-01-09T12:57:10Z',
+  },
+];
+
+export const scenes = [
+
+];

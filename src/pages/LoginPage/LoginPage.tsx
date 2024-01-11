@@ -1,4 +1,6 @@
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {
+  IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
+} from '@ionic/react';
 import { Redirect } from 'react-router';
 import { useAuth } from '../../context/auth';
 
@@ -8,7 +10,7 @@ interface Props {
 
 const LoginPage: React.FC<Props> = ({ onLogin }) => {
   const { loggedIn } = useAuth();
-  
+
   if (loggedIn) {
     return <Redirect to="/my/projects" />;
   }

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import {
   IonApp,
   IonRouterOutlet,
-  setupIonicReact
+  setupIonicReact,
 } from '@ionic/react';
 import { Redirect, Route } from 'react-router';
-import { AuthContext } from './context/auth';
 import { IonReactRouter } from '@ionic/react-router';
+import { AuthContext } from './context/auth';
 import LoginPage from './pages/LoginPage/LoginPage';
 
 /* Core CSS required for Ionic components to work properly */
@@ -36,40 +36,39 @@ import { DatabaseContext } from './context/database';
 
 setupIonicReact();
 
-const sceneCollection = new ScenesSchema()
-const projectCollection = new ProjectsSchema()
+const sceneCollection = new ScenesSchema();
+const projectCollection = new ProjectsSchema();
 
 const RXdatabase = new AppDataBase([
-    sceneCollection,
-    projectCollection
-  ]
-)
+  sceneCollection,
+  projectCollection,
+]);
 
 const App: React.FC = () => {
-const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
-return (
-  <IonApp>
-    <AuthContext.Provider value={{ loggedIn }}>
-      <DatabaseContext.Provider value={{db: RXdatabase}}>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route exact path="/login">
-              <LoginPage onLogin={() => setLoggedIn(true)} />
-            </Route>
-            <Route exact path="/my/projects">
-              <Projects />
-            </Route>
-            <Redirect exact path="/" to="/my/projects" />
-          </IonRouterOutlet>
-          <Route path="/my/projects/:id">
+  return (
+    <IonApp>
+      <AuthContext.Provider value={{ loggedIn }}>
+        <DatabaseContext.Provider value={{ db: RXdatabase }}>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route exact path="/login">
+                <LoginPage onLogin={() => setLoggedIn(true)} />
+              </Route>
+              <Route exact path="/my/projects">
+                <Projects />
+              </Route>
+              <Redirect exact path="/" to="/my/projects" />
+            </IonRouterOutlet>
+            <Route path="/my/projects/:id">
               <AppTabs />
-          </Route>
-        </IonReactRouter>
-      </DatabaseContext.Provider>
-    </AuthContext.Provider>
-  </IonApp>
-)};
+            </Route>
+          </IonReactRouter>
+        </DatabaseContext.Provider>
+      </AuthContext.Provider>
+    </IonApp>
+  );
+};
 
 export default App;
-

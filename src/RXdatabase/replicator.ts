@@ -1,9 +1,10 @@
-import { RxDatabase } from "rxdb";
-import { replicateGraphQL } from "rxdb/plugins/replication-graphql";
-import { AppDataBase } from "./database";
+import { RxDatabase } from 'rxdb';
+import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
+import { AppDataBase } from './database';
 
 export class GraphQLReplicator {
   private database: AppDataBase;
+
   private syncURL = {
     http: `${process.env.URL_PATH}:${process.env.GRAPHQL_PORT}/${process.env.GRAPHQL_PATH}`,
   }
@@ -13,18 +14,17 @@ export class GraphQLReplicator {
   constructor(database: AppDataBase) {
     this.database = database;
 
-    this.startReplication
+    this.startReplication;
   }
 
   public startReplication() {
-    const collections = this.database.getCollections()
+    const collections = this.database.getCollections();
 
-    collections.forEach((collection) => this.setupGraphQLReplication(collection))
-
+    collections.forEach((collection) => this.setupGraphQLReplication(collection));
   }
 
   public stopReplication() {
-    this.replicationStates.forEach(replicationState => {
+    this.replicationStates.forEach((replicationState) => {
       if (replicationState) {
         replicationState.cancel();
       }
@@ -34,7 +34,7 @@ export class GraphQLReplicator {
 
   private setupGraphQLReplication(collection: any) {
     const replicationState = replicateGraphQL({
-      collection: collection,
+      collection,
       url: this.syncURL,
       pull: {
         queryBuilder: collection.schema.getPullQueryBuilder(),
@@ -46,7 +46,7 @@ export class GraphQLReplicator {
       },
       deletedField: 'deleted',
       live: true,
-      replicationIdentifier: `replication-${collection.name}`
+      replicationIdentifier: `replication-${collection.name}`,
     });
 
     replicationState.error$.subscribe((err) => {
