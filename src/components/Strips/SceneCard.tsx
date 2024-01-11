@@ -2,7 +2,7 @@ import React from 'react'
 import { IonRow, IonCol, IonTitle } from '@ionic/react'
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.css';
-import { get } from 'mongoose';
+import { floatToFraction } from '../../utils/floatToFraction';
 
 interface SceneCardProps {
   scene: Scene;
@@ -53,9 +53,19 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
 
   }
 
+  const getPageNumber = (scene: Scene) => {
+    const pageNumber = scene.page;
+    const pageFloat = scene.pages;
+    let pageFraction;
+
+    pageFraction = pageNumber + '/' + floatToFraction(pageFloat);
+
+    return pageFraction;
+  }
+
   return (
     <IonRow className='scene-card'>
-      <IonCol size="auto">
+      <IonCol className='scene-card-col-1'>
         <h3 className='scene-card-header'>
           {getSceneHeader(scene)}
         </h3>
@@ -67,12 +77,15 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
           <strong>EXTRAS: </strong> {getExtras(scene)}
         </p>
       </IonCol>
-      <IonCol size="auto">
-        
+      <IonCol className='scene-card-col-2'>
+        <p className='ion-no-margin'>
+          <strong>P: </strong> {getPageNumber(scene)}
+        </p>
+        <p className='ion-no-margin'><strong>M: 3:33 </strong></p>
       </IonCol>
-      <IonCol size="auto">
-      
-      </IonCol>   
+      <IonCol className='scene-card-col-3 center-flex-row'>
+        <p className='assignament-date'> NOT ASSIGNED </p>
+      </IonCol>
     </IonRow>
   )
 }

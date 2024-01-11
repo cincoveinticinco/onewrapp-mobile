@@ -1,7 +1,9 @@
 .scene-card {
-  border: 1px solid #ccc;
+  border-bottom: 0.3px solid black;
   color: black;
   background-color: white;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
 }
 
 .scene-card-header {
@@ -28,4 +30,34 @@
   padding: 0px;
   font-weight: normal;
   position: relative;
+}
+
+.scene-card-col-1 {
+  grid-column: 1 / 15;
+  padding: 6px;
+}
+
+.scene-card-col-2 {
+  grid-column: 3;
+  grid-column: 15 / 23;
+  padding: 6px;
+  margin-right: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-card-col-3 {
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  padding: 0px;
+  grid-column: 23 / 24;
+}
+
+.assignament-date {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  color: white;
+  font-weight: bold;
+  font-size: 9px;
 }
