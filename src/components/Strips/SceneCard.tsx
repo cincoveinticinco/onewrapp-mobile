@@ -7,7 +7,7 @@ interface SceneCardProps {
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
-
+  
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber;
     const sceneNumber = scene.sceneNumber;
