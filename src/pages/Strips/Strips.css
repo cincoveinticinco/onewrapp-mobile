@@ -1,0 +1,15 @@
+.scenes-grid {
+  display: grid;
+  padding: 0px;
+  margin: 0px 12px;
+}
+
+.filter-strips-toolbar {
+  padding: 7px;
+}
+
+.filter-strips-text {
+  color: #19cff9;
+  font-size: 12px;
+  font-weight: bold;
+}

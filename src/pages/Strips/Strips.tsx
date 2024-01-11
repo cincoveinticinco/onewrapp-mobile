@@ -1,22 +1,28 @@
 import {
-  IonContent, IonGrid, IonHeader, IonPage, IonTitle, IonToolbar,
+  IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import './Strips.css';
 import { scenes } from '../../data';
-import { Scene } from '../../interfaces/scenesTypes';
 import SceneCard from '../../components/Strips/SceneCard';
+import Toolbar from '../../components/Shared/Toolbar';
+import { chevronDownOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
 
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>STRIPS</IonTitle>
-        </IonToolbar>
+        <Toolbar name="LVE-STRIPS" />
       </IonHeader>
       <IonContent color="primary" fullscreen>
-        <IonGrid>
+        <IonToolbar color='primary' className='filter-strips-toolbar'>
+          <p className='filter-strips-text'>
+            <IonIcon icon={chevronDownOutline} />
+            {' '}
+            FILTER BY: EPISODE NUMBER
+          </p>
+        </IonToolbar>
+        <IonGrid className='scenes-grid'>
           {scenes.map((scene) => (
             <SceneCard key={scene.id} scene={scene} />
           ))}
