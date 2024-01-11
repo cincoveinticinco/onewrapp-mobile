@@ -114,8 +114,8 @@ export const scenes: Scene[] = [
     scriptDay: '26',
     year: '2022',
     synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
-    page: 3,
-    pages: 0.38,
+    page: 0,
+    pages: 0.375,
     estimatedSeconds: null,
     characters: [
       {

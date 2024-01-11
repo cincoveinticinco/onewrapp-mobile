@@ -34,14 +34,28 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
       charactersString += character.characterName + ', ';
     });
 
-    console.log(characters);
-
     return charactersString;
+  }
+
+  const getExtras = (scene: Scene) => {
+    const extras = scene.extras;
+    let extrasString = ''
+
+    if (extras) {
+      extras.forEach((extra) => {
+        extrasString += extra.extraName + ', ';
+      });
+
+      return extrasString;
+    }
+
+    return 'NO EXTRAS PLAYING'
+
   }
 
   return (
     <IonRow className='scene-card'>
-      <IonCol size="10">
+      <IonCol size="auto">
         <h3 className='scene-card-header'>
           {getSceneHeader(scene)}
         </h3>
@@ -49,13 +63,14 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
           {scene.synopsis}
         </p>
         <p className='scene-card-characters'>
-          <strong>CHARACTERS:</strong> {getCharacters(scene)}
+          <strong>CHARACTERS:</strong> {getCharacters(scene)}<br />
+          <strong>EXTRAS: </strong> {getExtras(scene)}
         </p>
       </IonCol>
-      <IonCol size="1">
-
+      <IonCol size="auto">
+        
       </IonCol>
-      <IonCol size="1">
+      <IonCol size="auto">
       
       </IonCol>   
     </IonRow>
