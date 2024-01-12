@@ -1,6 +1,7 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import './AddScene.css';
 import { useEffect } from 'react';
+import AddScenesForm from '../../components/AddScene/AddSceneForm';
 
 const AddScene = () => {
   useEffect(() => {
@@ -24,6 +25,7 @@ const AddScene = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent color='dark'>
+        <AddScenesForm />
       </IonContent>
     </IonPage>
   );
