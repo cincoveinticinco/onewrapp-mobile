@@ -15,3 +15,8 @@
   position: static;
   font-size: 24px;
 }
+
+.toolbar-icon {
+  font-size: 24px;
+  color: #fff;
+}
