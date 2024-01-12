@@ -12,15 +12,15 @@ import { IonReactRouter } from '@ionic/react-router';
 import {
   business, calendar, list, people, reader, settings,
 } from 'ionicons/icons';
-import { useAuth } from './context/auth';
-import Calendar from './pages/Calendar/Calendar';
-import Cast from './pages/Cast/Cast';
-import Elements from './pages/Elements/Elements';
-import Reports from './pages/Reports/Reports';
-import Settings from './pages/Settings/Settings';
-import Sets from './pages/Sets/Sets';
-import StripBoard from './pages/StripBoard/StripBoard';
-import Strips from './pages/Strips/Strips';
+import { useAuth } from '../../context/auth';
+import Calendar from '../../pages/Calendar/Calendar';
+import Cast from '../../pages/Cast/Cast';
+import Elements from '../../pages/Elements/Elements';
+import Reports from '../../pages/Reports/Reports';
+import Settings from '../../pages/Settings/Settings';
+import Sets from '../../pages/Sets/Sets';
+import StripBoard from '../../pages/StripBoard/StripBoard';
+import Strips from '../../pages/Strips/Strips';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -38,8 +38,9 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-/* Theme variables */
-import './theme/variables.css';
+/* Personalized CSS */
+import './AppTabs.css';
+import AddScene from '../../pages/AddScene/AddScene';
 
 setupIonicReact();
 
@@ -53,6 +54,9 @@ const AppTabs: React.FC = () => {
   return (
     <IonTabs>
       <IonRouterOutlet>
+        <Route exact path="/my/projects/:id/addscene">
+          <AddScene />
+        </Route>
         <Route exact path="/my/projects/:id/calendar">
           <Calendar />
         </Route>
@@ -79,37 +83,37 @@ const AppTabs: React.FC = () => {
         </Route>
         <Redirect exact path="/my/projects/:id" to="/my/projects/:id/strips" />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom" color="dark">
+      <IonTabBar slot="bottom" className='app-tabs-container' color='dark'>
         <IonTabButton tab="calendar" href="/my/projects/:id/calendar">
-          <IonIcon icon={calendar} color="light" />
+          <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
         <IonTabButton tab="strips" href="/my/projects/:id/strips">
-          <IonIcon icon={list} color="light" />
+          <IonIcon icon={list} className='tab-bar-icons'/>
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="stripboard" href="/my/projects/:id/stripboard">
-          <IonIcon icon={calendar} color="light" />
+          <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
         <IonTabButton tab="cast" href="/my/projects/:id/cast">
-          <IonIcon icon={people} color="light" />
+          <IonIcon icon={people} className='tab-bar-icons'/>
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
         <IonTabButton tab="sets" href="/my/projects/:id/sets">
-          <IonIcon icon={business} color="light" />
+          <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="elements" href="/my/projects/:id/elements">
-          <IonIcon icon={business} color="light" />
+          <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="reports" href="/my/projects/:id/reports">
-          <IonIcon icon={reader} color="light" />
+          <IonIcon icon={reader} className='tab-bar-icons'/>
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" href="/my/projects/:id/settings">
-          <IonIcon icon={settings} color="light" />
+          <IonIcon icon={settings} className='tab-bar-icons'/>
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
       </IonTabBar>
