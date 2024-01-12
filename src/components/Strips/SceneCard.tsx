@@ -58,7 +58,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
     const pageFloat = scene.pages;
     let pageFraction;
 
-    pageFraction = pageNumber + '/' + floatToFraction(pageFloat);
+    pageFraction = pageNumber + ' ' + floatToFraction(pageFloat);
 
     return pageFraction;
   }
