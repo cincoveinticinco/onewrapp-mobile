@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { IonList, IonItem, IonLabel, IonInput, IonButton } from '@ionic/react';
+import { IonList, IonItem, IonLabel, IonInput, IonButton, IonIcon } from '@ionic/react';
 import { useForm } from 'react-hook-form';
 
 import InputItem from './InputItem';
 import SelectItem from './SelectItem';
 import SelectOrInsertItem from './SelectOrInsertItem';
+import { add } from 'ionicons/icons';
+import AddCategoryForm from './AddCategoryForm';
 
 const AddScenesForm = () => {
   const [formData, setFormData] = useState({
@@ -136,16 +138,20 @@ const AddScenesForm = () => {
 
         <IonItem>
           <IonLabel position='stacked'> PAGES </IonLabel>
-          <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-          <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-          /8
+          <div className='ion-flex'>
+            <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
+            <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
+            <p>/8</p>
+          </div>
         </IonItem>
         
         <IonItem>
           <IonLabel position='stacked'> EST.MINUTES(MM:SS)</IonLabel>
-          <IonInput placeholder='MM' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-          :
-          <IonInput placeholder='SS' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
+          <div className='ion-flex'>
+            <IonInput placeholder='MM' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
+            <p>:</p>
+            <IonInput placeholder='SS' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
+          </div>
         </IonItem>
 
         <SelectOrInsertItem
@@ -178,6 +184,29 @@ const AddScenesForm = () => {
           value={formData.synopsis}
           onChange={(e) => handleChange(e.detail.value, 'synopsis')}
         />
+        
+        <AddCategoryForm handleSceneChange={handleChange}/>
+
+        <IonItem>
+          Extras / Background Actor
+          <IonButton slot='end'>
+            <IonIcon icon={add} />
+          </IonButton>
+        </IonItem>
+
+        <IonItem>
+          Elements
+          <IonButton slot='end'>
+            <IonIcon icon={add} />
+          </IonButton>
+        </IonItem>
+
+        <IonItem>
+          Notes
+          <IonButton slot='end'>
+            <IonIcon icon={add} />
+          </IonButton>
+        </IonItem>
 
         <IonButton type="submit" expand="block">Save</IonButton>
       </IonList>
