@@ -13,7 +13,7 @@ const SelectItem: React.FC<SelectItemProps> = ({ label, value, onChange, options
   return (
     <IonItem>
       <IonLabel position='stacked'>{label}</IonLabel>
-      <IonSelect value={value} onIonChange={onChange} disabled={disabled}>
+      <IonSelect interface="popover" value={value} onIonChange={onChange} disabled={disabled}>
         {options.map((option, index) => (
           <IonSelectOption key={index} value={option.value}>{option.label}</IonSelectOption>
         ))}

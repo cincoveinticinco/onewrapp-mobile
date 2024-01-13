@@ -1,6 +1,8 @@
+import React from 'react';
 import {
   IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
+import { useParams } from 'react-router';
 import './Strips.css';
 import { scenes } from '../../data';
 import SceneCard from '../../components/Strips/SceneCard';
@@ -8,6 +10,8 @@ import Toolbar from '../../components/Shared/Toolbar';
 import { chevronDownOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
+  
+  let { id }: { id: string} = useParams();
 
   return (
     <IonPage>
@@ -29,6 +33,7 @@ const Strips: React.FC = () => {
         </IonGrid>
       </IonContent>
     </IonPage>
-);}
+  );
+}
 
 export default Strips;
