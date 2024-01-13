@@ -149,13 +149,13 @@ export const scenes: Scene[] = [
     intOrExtOption: 'INT',
     dayOrNightOption: 'day',
     locationName: 'INTERNADO LA VICTORIA',
-    setName: 'CAMINO AL INTERNADO',
+    setName: 'CAMINO AL INTERNADO', // UNIQUE NOT NULL
     scriptDay: '26',
     year: '2022',
     synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
     page: 0,
-    pages: 0.375,
-    estimatedSeconds: null,
+    pages: 0.375, // siempre 8
+    estimatedSeconds: 125, // To minutes
     characters: [
       {
         categoryName: 'Principal',
@@ -172,7 +172,7 @@ export const scenes: Scene[] = [
         characterName: 'Jorge',
         characterNum: 3
       }
-    ],
+    ], // CAN BE NULL
     extras: null,
     elements: [],
     notes: [],
@@ -218,3 +218,17 @@ export const scenes: Scene[] = [
     updatedAt: new Date().toISOString()
   },
 ];
+
+// SCENE COLOR
+
+// SCENE TYPE === PROTECTION ROSE
+
+// SCENE TYP === SCENE
+  // CASE 1: INT OR EXT OR DAY OR NIGHT NULL,  BLACK
+  // CASE 2: IF INT DAY, WHITE
+  // CASE 4: IF INT NIGHT, YELLOW
+  // CASE 5: IF EXT DAY, GREEN
+  // CASE 6: IF EXT NIGHT, BLUE
+
+// SCENE WITHOUT INT OR EXT BLACK, OR DAY OR NIGHT BLACK
+// 
