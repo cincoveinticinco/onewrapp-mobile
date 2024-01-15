@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent } from '@ionic/react';
+import { IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddElementInput from './AddElementInput';
 
@@ -34,12 +34,14 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
 
   return (
     <>
-      <IonItem>
-        Elements
-        <IonButton id="element-category-alert" slot='end'>
+      <div className='category-item-title ion-flex ion-justify-content-between'>
+        <p className='ion-flex ion-align-items-center'>
+          Elements
+        </p>
+        <IonButton fill="clear" color="light" id="element-category-alert" slot='end' className='ion-no-padding'>
           <IonIcon icon={add} />
         </IonButton>
-      </IonItem>
+      </div>
       <IonAlert
         trigger='element-category-alert'
         header='Please, enter an element category name'
@@ -59,34 +61,51 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         ]}
       ></IonAlert>
 
+      {
+        categories.length === 0 &&
+        <IonCard color="tertiary" className='no-items-card'>
+          <IonCardHeader>
+            <IonCardSubtitle className='no-items-card-title'>
+              NO ELEMENTS ADDED TO THIS STRIP
+            </IonCardSubtitle>
+          </IonCardHeader>
+        </IonCard>
+      }
+
       {categories.length > 0 && 
-        <IonGrid>
+        <IonGrid className='add-scene-items-card-grid'>
           {categories.map((category, index) => (
-            <IonCard key={index}>
-              <IonCardHeader className='ion-flex'>
+            <IonCard 
+              key={index}
+              color="tertiary"
+              className='add-scene-items-card ion-no-border'
+            >
+            <IonCardHeader className='ion-flex'>
                 <div className='ion-flex ion-justify-content-between'>
-                  <IonCardContent>
+                  <IonCardSubtitle className='ion-flex ion-align-items-center'>
                     {category}
-                  </IonCardContent>
+                  </IonCardSubtitle>
                   <IonButton 
                     size='small' 
                     onClick={() => {toggleForm(index)}}
+                    fill='clear'
+                    color="light"
                   >
                     <IonIcon icon={add} />
                   </IonButton>
                 </div>
-                <IonCardContent>
-                  <AddElementInput
-                    categoryName={category}
-                    id={index}
-                    toggleForm={toggleForm}
-                    handleSceneChange={handleSceneChange}
-                  />
-                </IonCardContent>
               </IonCardHeader>
+              <IonCardContent>
+                <AddElementInput
+                  categoryName={category}
+                  id={index}
+                  toggleForm={toggleForm}
+                  handleSceneChange={handleSceneChange}
+                />
+              </IonCardContent>
             </IonCard>  
           ))}
-        </IonGrid>
+        </IonGrid>  
       }
     </>
   );
