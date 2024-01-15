@@ -21,9 +21,9 @@ const Projects: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name="Projects" />
+        <Toolbar name="Projects" search={true}/>
       </IonHeader>
-      <IonContent className="ion-padding" color="primary">
+      <IonContent className="ion-padding" color="tertiary">
         <IonGrid>
           <IonRow>
             {projects.map((project) => (

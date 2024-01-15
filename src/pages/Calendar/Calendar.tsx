@@ -7,11 +7,11 @@ import './Calendar.css';
 const Calendar: React.FC = () => (
   <IonPage>
     <IonHeader>
-      <IonToolbar color="primary">
+      <IonToolbar color="tertiary">
         <IonTitle>CALENDAR</IonTitle>
       </IonToolbar>
     </IonHeader>
-    <IonContent color="primary" fullscreen>
+    <IonContent color="tertiary" fullscreen>
       <ExploreContainer name="Calendar page" />
     </IonContent>
   </IonPage>

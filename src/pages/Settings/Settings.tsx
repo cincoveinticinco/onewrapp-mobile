@@ -7,11 +7,11 @@ import './Settings.css';
 const Settings: React.FC = () => (
   <IonPage>
     <IonHeader>
-      <IonToolbar color="primary">
+      <IonToolbar color="tertiary">
         <IonTitle>SETTINGS</IonTitle>
       </IonToolbar>
     </IonHeader>
-    <IonContent color="primary" fullscreen>
+    <IonContent color="tertiary" fullscreen>
       <ExploreContainer name="Settings page" />
     </IonContent>
   </IonPage>

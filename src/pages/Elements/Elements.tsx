@@ -7,11 +7,11 @@ import './Elements.css';
 const Elements: React.FC = () => (
   <IonPage>
     <IonHeader>
-      <IonToolbar color="primary">
+      <IonToolbar color="tertiary">
         <IonTitle>ELEMENTS</IonTitle>
       </IonToolbar>
     </IonHeader>
-    <IonContent color="primary" fullscreen>
+    <IonContent color="tertiary" fullscreen>
       <ExploreContainer name="Elements page" />
     </IonContent>
   </IonPage>

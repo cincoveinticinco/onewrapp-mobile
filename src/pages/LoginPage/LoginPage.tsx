@@ -23,7 +23,7 @@ const LoginPage: React.FC<Props> = ({ onLogin }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonButton expand="block" onClick={onLogin}>Login</IonButton>
+        <IonButton expand="block" color="tertiary" onClick={onLogin}>Login</IonButton>
       </IonContent>
     </IonPage>
   );

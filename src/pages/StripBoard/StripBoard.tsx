@@ -7,11 +7,11 @@ import './StripBoard.css';
 const StripBoard: React.FC = () => (
   <IonPage>
     <IonHeader>
-      <IonToolbar color="primary">
+      <IonToolbar color="tertiary">
         <IonTitle>STRIP</IonTitle>
       </IonToolbar>
     </IonHeader>
-    <IonContent color="primary" fullscreen>
+    <IonContent color="tertiary" fullscreen>
       <ExploreContainer name="Strip Board page" />
     </IonContent>
   </IonPage>

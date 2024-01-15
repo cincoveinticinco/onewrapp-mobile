@@ -7,11 +7,11 @@ import './Sets.css';
 const Sets: React.FC = () => (
   <IonPage>
     <IonHeader>
-      <IonToolbar color="primary">
+      <IonToolbar color="tertiary">
         <IonTitle>SETS</IonTitle>
       </IonToolbar>
     </IonHeader>
-    <IonContent color="primary" fullscreen>
+    <IonContent color="tertiary" fullscreen>
       <ExploreContainer name="Sets page" />
     </IonContent>
   </IonPage>

@@ -16,10 +16,16 @@ const Strips: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name="LVE-STRIPS" />
+        <Toolbar 
+          name="LVE-STRIPS" 
+          search={true}
+          addScene={true}
+          filter={true}
+          elipse={true}
+        />
       </IonHeader>
-      <IonContent color="primary" fullscreen>
-        <IonToolbar color='primary' className='filter-strips-toolbar'>
+      <IonContent color="tertiary" fullscreen>
+        <IonToolbar color="tertiary" className='filter-strips-toolbar'>
           <p className='filter-strips-text'>
             <IonIcon icon={chevronDownOutline} />
             {' '}
