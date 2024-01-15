@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonHeader, IonTitle, IonCardSubtitle, IonCardHeader, IonCardContent, IonInput } from '@ionic/react';
+import { IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonHeader, IonTitle, IonCardSubtitle, IonCardHeader, IonCardContent, IonInput, IonCardTitle } from '@ionic/react';
 import { add, trash } from 'ionicons/icons';
 import AddCharacterInput from './AddCharacterInput';
 
@@ -18,6 +18,9 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
     }
   };
 
+  // category has many characters
+  // character has one category
+
   const handleOk = (inputData: { categoryName: string; }) => {
     const inputElement = document.getElementById('add-category-input');
     if (inputData.categoryName) {
@@ -35,13 +38,16 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
 
   return (
     <>
-      <IonItem>
-        Characters
-        <IonButton id="category-alert" slot='end'>
+      <div className='category-item-title ion-flex ion-justify-content-between'>
+        <p className='ion-flex ion-align-items-center'>
+          Characters
+        </p>
+        <IonButton fill="clear" id="category-alert" slot='end' color="light" className='ion-no-padding'>
           <IonIcon icon={add} />
         </IonButton>
-      </IonItem>
+      </div>
       <IonAlert
+        color='tertiary'
         trigger='category-alert'
         header='Please, enter a category name'
         buttons={[
@@ -60,10 +66,25 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
         ]}
       ></IonAlert>
 
+      {
+        categories.length === 0 &&
+        <IonCard color="tertiary" className='no-items-card'>
+          <IonCardHeader>
+            <IonCardSubtitle className='no-items-card-title'>
+              NO CHARACTERS ADDED TO THIS STRIP
+            </IonCardSubtitle>
+          </IonCardHeader>
+        </IonCard>
+      }
+
       {categories.length > 0 && 
-        <IonGrid>
+        <IonGrid className='add-scene-items-card-grid'>
           {categories.map((category, index) => (
-            <IonCard key={index}>
+            <IonCard 
+              key={index}
+              color="tertiary"
+              className='add-scene-items-card ion-no-border'
+            >
               <IonCardHeader className='ion-flex'>
                 <div className='ion-flex ion-justify-content-between'>
                   <IonCardSubtitle className='ion-flex ion-align-items-center'>
@@ -72,19 +93,22 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
                   <IonButton 
                     size='small' 
                     onClick={() => {toggleForm(index)}}
+                    fill='clear'
+                    color="light"
                   >
                     <IonIcon icon={add} />
                   </IonButton>
                 </div>
-                <IonCardContent>
-                  <AddCharacterInput
+              </IonCardHeader>
+              <IonCardContent>
+                <AddCharacterInput
                     categoryName={category} 
                     toggleForm={toggleForm}
                     id={index}
                     handleSceneChange={handleSceneChange}
-                  />
-                </IonCardContent>
-              </IonCardHeader>
+                  />  
+              </IonCardContent>
+
             </IonCard>  
           ))}
         </IonGrid>
