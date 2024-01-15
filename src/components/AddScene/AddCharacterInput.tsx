@@ -31,7 +31,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
     const newCharacter = {
       categoryName: categoryName,
       characterName: newCharacterName,
-      characterNum: characters.length + 1,
+      characterNum: characters.length + 1,  // This is other field
     };
 
     setCharacters(currentCharacters => [...currentCharacters, newCharacter]);
@@ -45,13 +45,15 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
   return (
     <>
       {characters.length > 0 && (
-        <IonList>
+        <IonList className='ion-no-padding ion-no-margin'>
           {characters.map((character, index) => (
             <IonItem
               key={`character-item-${index}`}
+              color='tertiary'
+              className='ion-no-margin category-items'
             >
               {character.characterName}
-              <IonButton slot='end' onClick={() => deleteCharacter(character.characterNum)}>
+              <IonButton fill='clear' color="danger" slot='end' onClick={() => deleteCharacter(character.characterNum)}>
                 <IonIcon icon={trash} />
               </IonButton>
             </IonItem>
@@ -59,6 +61,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
         </IonList>
       )}
         <IonItem
+          color="tertiary"
           style={{ display: 'none'}}
           id={`character-form-${id}`}
         >
