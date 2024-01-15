@@ -8,6 +8,7 @@ interface SelectOrInsertItemProps {
   onInputChange: (event: CustomEvent) => void;
   onSelectChange: (event: CustomEvent) => void;
   options: Array<{ label: string; value: any }>;
+  inputName: string;
 }
 
 const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
@@ -16,7 +17,8 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
   inputPlaceholder,
   onInputChange,
   onSelectChange,
-  options
+  options,
+  inputName
 }) => {
   const [isInsertMode, setIsInsertMode] = useState(selectValue === 'INSERT');
 
@@ -27,8 +29,8 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
 
   return (
     <>
-      <IonItem>
-        <IonSelect label={label} labelPlacement='stacked' interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
+      <IonItem color="tertiary" id={inputName}>
+        <IonSelect placeholder="SELECT OR INSERT" label={label} labelPlacement='stacked' interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
           {options.map((option, index) => (
             <IonSelectOption key={`selorin-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
           ))}
@@ -36,8 +38,8 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
         </IonSelect>
       </IonItem>
       {isInsertMode && (
-        <IonItem>
-          <IonInput clearInput={true} placeholder={inputPlaceholder} onIonChange={onInputChange} />
+        <IonItem color="tertiary">
+          <IonInput clearInput={true} placeholder={inputPlaceholder} onIonChange={onInputChange} class='add-scene-input'/>
         </IonItem>
       )}
     </>
