@@ -6,12 +6,21 @@ interface InputItemProps {
   placeholder?: string;
   value: any;
   onChange: (event: CustomEvent) => void;
+  inputName: string;
 }
 
-const InputItem: React.FC<InputItemProps> = ({ label, placeholder, value, onChange }) => {
+const InputItem: React.FC<InputItemProps> = ({ label, placeholder, value, onChange, inputName }) => {
   return (
-    <IonItem>
-      <IonInput placeholder={placeholder} label={label} labelPlacement='stacked' value={value} onIonChange={onChange} />
+    <IonItem color="tertiary" id={inputName}>
+      <IonInput 
+        placeholder={placeholder} 
+        label={label} 
+        labelPlacement='stacked' 
+        value={value} 
+        onIonChange={onChange}
+        class='add-scene-input'
+        
+      />
     </IonItem>
   );
 };
