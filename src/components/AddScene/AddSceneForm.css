@@ -1,0 +1,250 @@
+.add-scene-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  margin-top: 24px;
+}
+
+#add-scene-type-input {
+  grid-column: 1 / 5;
+}
+
+#add-protection-type-input {
+  grid-column: 5 / 9;
+}
+
+#add-day-night-input {
+  grid-column: 1 / 5;
+}
+
+#add-episode-input {
+  grid-column: 1 / 3;
+}
+
+#add-scene-number-input {
+  grid-column: 3 / 5;
+}
+
+#add-script-day-input {
+  grid-column: 5 / 7;
+}
+
+#add-year-input {
+  grid-column: 7 / 9;
+}
+
+#add-int-ext-input {
+  grid-column: 5 / 9;
+}
+
+#add-page-input {
+  grid-column: 1 / 3;
+}
+
+#add-pages-integer-input {
+  grid-column: 3 / 5;
+  padding: 0px;
+  margin: auto;
+}
+
+#add-pages-fraction-input {
+  grid-column: 5 / 6;
+  padding: 0px;
+  margin: auto;
+}
+
+#add-scene-minutes-input {
+  grid-column: 6 / 7;
+  margin: auto;
+}
+
+#add-scene-seconds-input {
+  margin: auto;
+}
+
+#add-pages-fraction-input > ion-input,
+#add-pages-integer-input > ion-input,
+#add-scene-minutes-input > ion-input,
+#add-scene-seconds-input > ion-input
+{
+  padding: 0px;
+  margin: 0px;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+#add-pages-denominator {
+  grid-column: 7 / 8;
+  padding: 0px;
+  margin: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  font-size: 18px;
+}
+
+#add-location-input {
+  grid-column: 1 / 5;
+}
+
+#add-set-input {
+  grid-column: 5 / 9;
+}
+
+#add-synopsis-input {
+  grid-column: 1 / 9;
+}
+
+
+.submit-scene-button {
+  border: 1px solid #19CFF9;
+  background-color: transparent;
+  height: 34pt;
+  width: 90%;
+  justify-self: center;
+  margin-top: 24px;
+  grid-column: 1 / 9;
+}
+
+.submit-scene-button:active {
+  background-color: #19CFF9;
+}
+
+.cancel-add-scene-button {
+  border: 1px solid #fff;
+  background-color: transparent;
+  height: 34pt;
+  width: 90%;
+  justify-self: center;
+  margin-bottom: 24px;
+  margin-top: 7.5px;
+  grid-column: 1 / 9;
+}
+
+.category-item-title {
+  border-top: 1px solid var(--ion-color-dark);
+  border-bottom: 1px solid var(--ion-color-dark);
+  padding: 0 12px;
+  background-color: #0000001e;
+  font-size: 18px;
+  margin: 0px;
+  grid-column: 1 / 9;
+}
+
+
+.add-scene-items-card-grid {
+  display: grid;
+  grid-column: 1 / 9;
+  grid-template-columns: 1fr;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.add-scene-items-card {
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0px;
+  border: 1px solid var(--ion-color-dark);
+  border-radius: 0px;
+  margin: 0px;
+}
+
+.category-items {
+  border: 1px solid var(--ion-color-light);
+  margin: 0px;
+}
+
+.add-scene-input {
+  background-color: transparent;
+  margin: 6px 0px;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.no-items-card {
+  border: 1px solid var(--ion-color-dark);
+  border-radius: 0px;
+  margin: 0px;
+  grid-column: 1 / 9;
+}
+
+.no-items-card-title {
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (min-width: 500px) {
+  .submit-scene-button {
+    width: 254px;
+    margin-top: 90px;
+    margin-bottom: 54px;
+  }
+
+  .category-item-title {
+    background-color: transparent;
+  }
+
+  .add-scene-items-card-grid {
+    grid-column: 1 / 9;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  #add-scene-type-input {
+    grid-column: 1 / 3;
+  }
+  
+  #add-protection-type-input {
+    grid-column: 3 / 5;
+  }
+  
+  #add-day-night-input {
+    grid-column: 1 / 3;
+  }
+  
+  #add-episode-input {
+    grid-column: 5 / 6;
+  }
+  
+  #add-scene-number-input {
+    grid-column: 6 / 7;
+  }
+  
+  #add-script-day-input {
+    grid-column: 7 / 8;
+  }
+  
+  #add-year-input {
+    grid-column: 8 / 9;
+  }
+  
+  #add-int-ext-input {
+    grid-column: 3 / 5;
+  }
+  
+  #add-page-input {
+    grid-column: 5 / 6;
+  }
+
+  #add-pages-integer-input {
+    grid-column: 6 / 7;
+  }
+  
+  #add-pages-fraction-input {
+    grid-column: 7 / 8;
+  }
+  
+  #add-pages-denominator {
+    grid-column: 8 / 9;
+  }  
+  
+  #add-location-input {
+    grid-column: 1 / 5;
+  }
+  
+  #add-set-input {
+    grid-column: 5 / 9;
+  }
+  
+  #add-synopsis-input {
+    grid-column: 1 / 9;
+  }
+}
