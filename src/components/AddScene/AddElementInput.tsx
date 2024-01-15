@@ -44,11 +44,17 @@ const AddElementInput: React.FC<AddElementInputProps> = ({ categoryName, toggleF
   return (
     <>
       {elements.length > 0 && (
-        <IonList>
+        <IonList
+          className='ion-no-padding ion-no-margin'
+        >
           {elements.map((element, index) => (
-            <IonItem key={index}>
+            <IonItem
+              key={index} 
+              color="tertiary"
+              className='ion-no-margin category-items'
+            >
               {element.elementName}
-              <IonButton slot='end' onClick={() => deleteElement(index)}>
+              <IonButton fill='clear' color="danger" slot='end' onClick={() => deleteElement(index)}>
                 <IonIcon icon={trash} />
               </IonButton>
             </IonItem>
@@ -58,6 +64,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({ categoryName, toggleF
         <IonItem
           style={{ display: 'none'}}
           id={`element-form-${id}`}
+          color="tertiary"
         >
           <IonInput 
             placeholder='Element Name' 
