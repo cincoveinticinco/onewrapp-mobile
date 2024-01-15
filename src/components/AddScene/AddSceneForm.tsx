@@ -6,9 +6,11 @@ import InputItem from './InputItem';
 import SelectItem from './SelectItem';
 import SelectOrInsertItem from './SelectOrInsertItem';
 import { add } from 'ionicons/icons';
-import AddCategoryForm from './AddCategoryForm';
+import AddCharacterForm from './AddCharacterForm';
+import AddElementForm from './AddElementForm';
+import AddExtraForm from './AddExtraForm';
 
-const AddScenesForm = () => {
+const AddScenesForm: React.FC = () => {
   const [formData, setFormData] = useState({
       id: null,
       projectId: null,
@@ -137,7 +139,7 @@ const AddScenesForm = () => {
         />
 
         <IonItem>
-          <IonLabel position='stacked'> PAGES </IonLabel>
+          <p> PAGES </p>
           <div className='ion-flex'>
             <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
             <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
@@ -146,7 +148,7 @@ const AddScenesForm = () => {
         </IonItem>
         
         <IonItem>
-          <IonLabel position='stacked'> EST.MINUTES(MM:SS)</IonLabel>
+          <p> EST.MINUTES(MM:SS)</p>
           <div className='ion-flex'>
             <IonInput placeholder='MM' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
             <p>:</p>
@@ -185,22 +187,12 @@ const AddScenesForm = () => {
           onChange={(e) => handleChange(e.detail.value, 'synopsis')}
         />
         
-        <AddCategoryForm handleSceneChange={handleChange}/>
+        <AddCharacterForm handleSceneChange={handleChange} />
 
-        <IonItem>
-          Extras / Background Actor
-          <IonButton slot='end'>
-            <IonIcon icon={add} />
-          </IonButton>
-        </IonItem>
+        <AddElementForm handleSceneChange={handleChange} />
 
-        <IonItem>
-          Elements
-          <IonButton slot='end'>
-            <IonIcon icon={add} />
-          </IonButton>
-        </IonItem>
-
+        <AddExtraForm handleSceneChange={handleChange} />
+        
         <IonItem>
           Notes
           <IonButton slot='end'>
