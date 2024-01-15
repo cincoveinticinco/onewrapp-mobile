@@ -44,11 +44,17 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({ categoryName, toggleForm,
   return (
     <>
       {extras.length > 0 && (
-        <IonList>
+        <IonList
+           className='ion-no-padding ion-no-margin'
+        >
           {extras.map((extra, index) => (
-            <IonItem key={index}>
+            <IonItem 
+              key={index}
+              color='tertiary'
+              className='ion-no-margin category-items'
+            >
               {extra.extraName}
-              <IonButton slot='end' onClick={() => deleteExtra(index)}>
+              <IonButton color="danger" fill='clear' slot='end' onClick={() => deleteExtra(index)}>
                 <IonIcon icon={trash} />
               </IonButton>
             </IonItem>
@@ -58,6 +64,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({ categoryName, toggleForm,
         <IonItem
           style={{ display: 'none'}}
           id={`extra-form-${id}`}
+          color="tertiary"
         >
           <IonInput 
             placeholder='Extra Name'
