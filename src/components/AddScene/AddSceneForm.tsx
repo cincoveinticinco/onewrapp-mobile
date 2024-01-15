@@ -10,16 +10,26 @@ import AddCharacterForm from './AddCharacterForm';
 import AddElementForm from './AddElementForm';
 import AddExtraForm from './AddExtraForm';
 
+import './AddSceneForm.css';
+import { useIsMobile } from '../../hooks/useIsMobile';
+import { useHistory } from 'react-router';
+import { AddPagesForm } from './AddPagesForm';
+import AddSecondsForm from './AddSecondsForm';
+
 const AddScenesForm: React.FC = () => {
-  const [formData, setFormData] = useState({
+
+  const isMobile = useIsMobile();
+  const history = useHistory();
+
+  const [formData, setFormData]: any[] = useState({
       id: null,
       projectId: null,
       episodeNumber: null,
       sceneNumber: null,
-      sceneType: "scene",
+      sceneType: null,
       protectionType: null,
       intOrExtOption: null,
-      dayOrNightOption: "day",
+      dayOrNightOption: null,
       locationName: null,
       setName: null,
       scriptDay: null,
@@ -42,166 +52,193 @@ const AddScenesForm: React.FC = () => {
     getValues,
   } = useForm();
 
-  const handleChange = (value: any, field: string) => {
-    setFormData({ ...formData, [field]: value });
+  const handleChange = (value: any, field: any) => {
+    
+    if (Array.isArray(formData[field])) {
+        setFormData({ 
+            ...formData, 
+            [field]: [...new Set([...(formData[field] || []), ...[].concat(value)])] 
+        });
+    } else {
+        setFormData({ ...formData, [field]: value });
+    }
   };
+
 
   const onSubmit = (): void => {
     console.log(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <IonList>
-        <SelectItem
-          label="TYPE *"
-          value={formData.sceneType}
-          onChange={(e) => handleChange(e.detail.value, 'sceneType')}
-          options={[
-            { label: "SCENE", value: "scene" },
-            { label: "PROTECTION", value: "protection" }
-          ]}
-        />
+    <form onSubmit={handleSubmit(onSubmit)} className='add-scene-form'>
+      <SelectItem
+        label="SCENE TYPE *"
+        value={formData.sceneType}
+        onChange={(e) => handleChange(e.detail.value, 'sceneType')}
+        options={[
+          { label: "Scene", value: "scene" },
+          { label: "Protection", value: "protection" }
+        ]}
+        inputName='add-scene-type-input'
+      />
 
-        <SelectItem
-          label="PROTECTION TYPE"
-          value={formData.protectionType}
-          onChange={(e) => handleChange(e.detail.value, 'protectionType')}
-          disabled={formData.sceneType !== 'protection'}
-          options={[
-            { label: "Voice Off", value: "voice Off" },
-            { label: "Image", value: "image" },
-            { label: "Stock Image", value: "stock image" },
-            { label: "Video", value: "video" },
-            { label: "Stock Video", value: "stock video" },
-            { label: "Multimedia", value: "multimedia" },
-            { label: "Other", value: "other" }
-          ]}
-        />
+      <SelectItem
+        label="PROTECTION TYPE"
+        value={formData.protectionType}
+        onChange={(e) => handleChange(e.detail.value, 'protectionType')}
+        disabled={formData.sceneType !== 'protection'}
+        options={[
+          { label: "Voice Off", value: "voice Off" },
+          { label: "Image", value: "image" },
+          { label: "Stock Image", value: "stock image" },
+          { label: "Video", value: "video" },
+          { label: "Stock Video", value: "stock video" },
+          { label: "Multimedia", value: "multimedia" },
+          { label: "Other", value: "other" }
+        ]}
+        inputName='add-protection-type-input'
+      />
 
-        <SelectItem
-          label="Day/Night"
-          value={formData.dayOrNightOption}
-          onChange={(e) => handleChange(e.detail.value, 'dayOrNightOption')}
-          options={[
-            { label: "DAY", value: "day" },
-            { label: "NIGHT", value: "night" },
-            { label: "SUNSET", value: "sunset" },
-            { label: "SUNRISE", value: "sunrise" }
-          ]}
-        />
+      <InputItem
+        label="EPISODE *"
+        placeholder="INSERT"
+        value={formData.episodeNumber}
+        onChange={(e) => handleChange(e.detail.value, 'episodeNumber')}
+        inputName='add-episode-input'
+      />
 
-        <SelectItem
-          label="Interior/Exterior"
-          value={formData.intOrExtOption}
-          onChange={(e) => handleChange(e.detail.value, 'intOrExtOption')}
-          options={[
-            { label: "INTERIOR", value: "INT" },
-            { label: "EXTERIOR", value: "EXT" },
-            { label: "INTERIOR/EXTERIOR", value: "INT/EXT" },
-            { label: "EXTERIOR/INTERIOR", value: "EXT/INT" }
-          ]}
-        />
+      <InputItem
+        label="SCENE *"
+        placeholder="INSERT"
+        value={formData.sceneNumber}
+        onChange={(e) => handleChange(e.detail.value, 'sceneNumber')}
+        inputName='add-scene-number-input'
+      />
 
-        <InputItem
-          label="EPISODE *"
-          placeholder="INSERT"
-          value={formData.episodeNumber}
-          onChange={(e) => handleChange(e.detail.value, 'episodeNumber')}
-        />
+      <InputItem
+        label="SCRIPT DAY"
+        placeholder="INSERT"
+        value={formData.scriptDay}
+        onChange={(e) => handleChange(e.detail.value, 'scriptDay')}
+        inputName='add-script-day-input'
+      />
 
-        <InputItem
-          label="SCENE *"
-          placeholder="INSERT"
-          value={formData.sceneNumber}
-          onChange={(e) => handleChange(e.detail.value, 'sceneNumber')}
-        />
+      <InputItem
+        label="YEAR"
+        placeholder="INSERT"
+        value={formData.year}
+        onChange={(e) => handleChange(e.detail.value, 'year')}
+        inputName='add-year-input'
+      />
 
-        <InputItem
-          label="SCRIPT DAY"
-          placeholder="INSERT"
-          value={formData.scriptDay}
-          onChange={(e) => handleChange(e.detail.value, 'scriptDay')}
-        />
+      <SelectItem
+        label="Day/Night"
+        value={formData.dayOrNightOption}
+        onChange={(e) => handleChange(e.detail.value, 'dayOrNightOption')}
+        options={[
+          { label: "Day", value: "day" },
+          { label: "Night", value: "night" },
+          { label: "Sunset", value: "sunset" },
+          { label: "Sunrise", value: "sunrise" }
+        ]}
+        inputName='add-day-night-input'
+      />
 
-        <InputItem
-          label="YEAR"
-          placeholder="INSERT"
-          value={formData.year}
-          onChange={(e) => handleChange(e.detail.value, 'year')}
-        />
+      <SelectItem
+        label="INT/EXT"
+        value={formData.intOrExtOption}
+        onChange={(e) => handleChange(e.detail.value, 'intOrExtOption')}
+        options={[
+          { label: "Interior", value: "INT" },
+          { label: "Exterior", value: "EXT" },
+          { label: "Interior/Exterior", value: "INT/EXT" },
+          { label: "Exterior/Interior", value: "EXT/INT" }
+        ]}
+        inputName='add-int-ext-input'
+      />
 
-        <InputItem
-          label="PAGE"
-          placeholder="INSERT"
-          value={formData.page}
-          onChange={(e) => handleChange(e.detail.value, 'page')}
-        />
+      <InputItem
+        label="SCRIPT PAGE"
+        placeholder="INSERT"
+        value={formData.page}
+        onChange={(e) => handleChange(e.detail.value, 'page')}
+        inputName='add-page-input'
+      />
 
-        <IonItem>
-          <p> PAGES </p>
-          <div className='ion-flex'>
-            <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-            <IonInput placeholder='0' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-            <p>/8</p>
-          </div>
-        </IonItem>
-        
-        <IonItem>
-          <p> EST.MINUTES(MM:SS)</p>
-          <div className='ion-flex'>
-            <IonInput placeholder='MM' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-            <p>:</p>
-            <IonInput placeholder='SS' onIonChange={(e) => handleChange(e.detail.value, 'sceneNumber')} />
-          </div>
-        </IonItem>
+      <AddPagesForm 
+        handleChange={handleChange}
+      />
 
-        <SelectOrInsertItem
-          label="LOCATION"
-          selectValue={formData.locationName}
-          inputPlaceholder="INSERT"
-          onInputChange={(e) => handleChange(e.detail.value, 'locationName')}
-          onSelectChange={(e) => handleChange(e.detail.value, 'locationName')}
-          options={[
-            { label: "OPTION 1", value: "option 1" },
-            { label: "OPTION 2", value: "option 2" },
-          ]}
-        />
+      <AddSecondsForm 
+        handleChange={handleChange}
+      />
 
-        <SelectOrInsertItem
-          label="SET"
-          selectValue={formData.setName}
-          inputPlaceholder="INSERT"
-          onInputChange={(e) => handleChange(e.detail.value, 'setName')}
-          onSelectChange={(e) => handleChange(e.detail.value, 'setName')}
-          options={[
-            { label: "OPTION 1", value: "option 1" },
-            { label: "OPTION 2", value: "option 2" },
-          ]}
-        />
+      <SelectOrInsertItem
+        label="LOCATION"
+        selectValue={formData.locationName}
+        inputPlaceholder="INSERT"
+        onInputChange={(e) => handleChange(e.detail.value, 'locationName')}
+        onSelectChange={(e) => handleChange(e.detail.value, 'locationName')}
+        options={[
+          { label: "Option 1", value: "option 1" },
+          { label: "Option 2", value: "option 2" },
+        ]}
+        inputName='add-location-input'
+      />
 
-        <InputItem
-          label="DESCRIPTION/SYNOPSIS"
-          placeholder="Type here"
-          value={formData.synopsis}
-          onChange={(e) => handleChange(e.detail.value, 'synopsis')}
-        />
-        
-        <AddCharacterForm handleSceneChange={handleChange} />
+      <SelectOrInsertItem
+        label="SET"
+        selectValue={formData.setName}
+        inputPlaceholder="INSERT"
+        onInputChange={(e) => handleChange(e.detail.value, 'setName')}
+        onSelectChange={(e) => handleChange(e.detail.value, 'setName')}
+        options={[
+          { label: "Option 1", value: "option 1" },
+          { label: "Option 2", value: "option 2" },
+        ]}
+        inputName='add-set-input'
+      />
 
-        <AddElementForm handleSceneChange={handleChange} />
+      <InputItem
+        label="DESCRIPTION/SYNOPSIS"
+        placeholder="Type here"
+        value={formData.synopsis}
+        onChange={(e) => handleChange(e.detail.value, 'synopsis')}
+        inputName='add-synopsis-input'
+      />
+      
+      <AddCharacterForm handleSceneChange={handleChange} />
 
-        <AddExtraForm handleSceneChange={handleChange} />
-        
-        <IonItem>
-          Notes
-          <IonButton slot='end'>
-            <IonIcon icon={add} />
-          </IonButton>
-        </IonItem>
+      <AddElementForm handleSceneChange={handleChange} />
 
-        <IonButton type="submit" expand="block">Save</IonButton>
-      </IonList>
+      <AddExtraForm handleSceneChange={handleChange} />
+      
+      {/* <div color="tertiary">
+        Notes
+        <IonButton slot='end' fill='clear' color="light">
+          <IonIcon icon={add} />
+        </IonButton>
+      </div> */}
+
+      <button
+        className="submit-scene-button" 
+        type="submit" 
+        color="tertiary"
+
+      >
+        SAVE
+      </button>
+      {
+        isMobile && 
+        <button
+          className="cancel-add-scene-button"
+          type="submit" 
+          color="tertiary"
+          onClick={() => history.goBack()}
+        >
+        CANCEL
+        </button>
+      }
     </form>
   );
 };
