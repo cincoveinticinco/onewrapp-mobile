@@ -116,7 +116,7 @@ export const scenes: Scene[] = [
     synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
     page: 0,
     pages: 0.375,
-    estimatedSeconds: null,
+    estimatedSeconds: 400,
     characters: [
       {
         categoryName: 'Principal',
@@ -194,7 +194,7 @@ export const scenes: Scene[] = [
     synopsis: 'POLICIAS VAN PREGUNTANDO E INFORMA A CESAR SE COMIENZA LA BUSQUEDA DEL CUERPO DE PEDRO',
     page: 0,
     pages: 0.375,
-    estimatedSeconds: null,
+    estimatedSeconds: 213,
     characters: [
       {
         categoryName: 'Principal',
