@@ -4,19 +4,18 @@ export interface Character {
   characterNum: number;
 }
 
-interface Extra {
+export interface Extra {
   categoryName: string | null;
   extraName: string;
 }
 
-interface Element {
+export interface Element {
   categoryName: string;
   elementName: string;
 }
 
-interface Note {
+export interface Note {
   email: string;
-  createdAt: string; // formato date-time
   note: string;
 }
 

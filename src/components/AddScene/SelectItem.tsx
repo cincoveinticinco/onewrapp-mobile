@@ -12,10 +12,9 @@ interface SelectItemProps {
 const SelectItem: React.FC<SelectItemProps> = ({ label, value, onChange, options, disabled }) => {
   return (
     <IonItem>
-      <IonLabel position='stacked'>{label}</IonLabel>
-      <IonSelect interface="popover" value={value} onIonChange={onChange} disabled={disabled}>
+      <IonSelect label={label} labelPlacement='stacked' interface="popover" value={value} onIonChange={onChange} disabled={disabled}>
         {options.map((option, index) => (
-          <IonSelectOption key={index} value={option.value}>{option.label}</IonSelectOption>
+          <IonSelectOption key={`select-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
         ))}
       </IonSelect>
     </IonItem>

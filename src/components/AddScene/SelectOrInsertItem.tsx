@@ -28,10 +28,9 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
   return (
     <>
       <IonItem>
-        <IonLabel position='stacked'>{label}</IonLabel>
-        <IonSelect interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
+        <IonSelect label={label} labelPlacement='stacked' interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
           {options.map((option, index) => (
-            <IonSelectOption key={index} value={option.value}>{option.label}</IonSelectOption>
+            <IonSelectOption key={`selorin-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
           ))}
           <IonSelectOption value="INSERT">Insert</IonSelectOption>
         </IonSelect>

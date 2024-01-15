@@ -11,8 +11,7 @@ interface InputItemProps {
 const InputItem: React.FC<InputItemProps> = ({ label, placeholder, value, onChange }) => {
   return (
     <IonItem>
-      <IonLabel position='stacked'>{label}</IonLabel>
-      <IonInput placeholder={placeholder} value={value} onIonChange={onChange} />
+      <IonInput placeholder={placeholder} label={label} labelPlacement='stacked' value={value} onIonChange={onChange} />
     </IonItem>
   );
 };
