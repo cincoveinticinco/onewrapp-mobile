@@ -3,6 +3,7 @@ import { IonRow, IonCol, IonTitle } from '@ionic/react'
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.css';
 import { floatToFraction } from '../../utils/floatToFraction';
+import { secondsToMinSec } from '../../utils/secondsToMinSec';
 
 interface SceneCardProps {
   scene: Scene;
@@ -54,11 +55,10 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
   }
 
   const getPageNumber = (scene: Scene) => {
-    const pageNumber = scene.page;
     const pageFloat = scene.pages;
     let pageFraction;
 
-    pageFraction = pageNumber + ' ' + floatToFraction(pageFloat);
+    pageFraction = floatToFraction(pageFloat);
 
     return pageFraction;
   }
@@ -81,7 +81,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
         <p className='ion-no-margin'>
           <strong>P: </strong> {getPageNumber(scene)}
         </p>
-        <p className='ion-no-margin'><strong>M: 3:33 </strong></p>
+        <p className='ion-no-margin'><strong>M: </strong> {scene.estimatedSeconds !== null ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}</p>
       </IonCol>
       <IonCol className='scene-card-col-3 center-flex-row'>
         <p className='assignament-date'> NOT ASSIGNED </p>
