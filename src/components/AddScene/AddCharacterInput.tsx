@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Character } from '../../interfaces/scenesTypes';
 import { IonInput, IonItem, IonList, IonButton, IonIcon } from '@ionic/react';
 import { trash } from 'ionicons/icons';
-import { v4 as uuid } from 'uuid';
 
 interface AddCharacterInputProps {
   categoryName: string;
