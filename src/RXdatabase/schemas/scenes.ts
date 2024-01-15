@@ -106,14 +106,12 @@ const sceneSchema = {
         type: 'object',
         properties: {
           email: { type: 'string' },
-          createdAt: { type: 'string', format: 'date-time' },
           note: { type: 'string' },
         },
       },
     },
     updatedAt: {
       type: 'string',
-      format: 'date-time',
     },
   },
   required: ['episodeNumber', 'sceneNumber', 'sceneType', 'setName', 'projectId'],

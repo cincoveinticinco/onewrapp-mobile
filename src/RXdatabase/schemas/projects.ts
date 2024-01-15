@@ -46,7 +46,6 @@ const projectSchema = {
   },
   updatedAt: {
     type: 'string',
-    format: 'date-time',
   },
   required: ['id', 'projName', 'projStatus', 'projType', 'prodCenter', 'episodes', 'year'],
 };
