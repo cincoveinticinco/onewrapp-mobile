@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  IonButton,
   IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { useParams } from 'react-router';
@@ -25,12 +26,12 @@ const Strips: React.FC = () => {
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        <IonToolbar color="tertiary" className='filter-strips-toolbar'>
-          <p className='filter-strips-text'>
+        <IonToolbar color="tertiary" className='sort-strips-toolbar'>
+          <IonButton fill="clear" className='reset-button sort-strips-button' routerLink='sortscenes'>
             <IonIcon icon={chevronDownOutline} />
             {' '}
             SORT BY: EPISODE NUMBER
-          </p>
+          </IonButton>
         </IonToolbar>
         <IonGrid className='scenes-grid'>
           {scenes.map((scene) => (

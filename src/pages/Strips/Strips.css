@@ -4,12 +4,11 @@
   margin: 0px 12px;
 }
 
-.filter-strips-toolbar {
+.sort-strips-toolbar {
   padding: 7px;
 }
 
-.filter-strips-text {
-  color: #19cff9;
+.sort-strips-button {
   font-size: 12px;
   font-weight: bold;
 }
