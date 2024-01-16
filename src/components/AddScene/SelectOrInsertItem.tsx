@@ -38,7 +38,7 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
         </IonSelect>
       </IonItem>
       {isInsertMode && (
-        <IonItem color="tertiary">
+        <IonItem color="tertiary" className='add-scente-input-insert'>
           <IonInput clearInput={true} placeholder={inputPlaceholder} onIonChange={onInputChange} class='add-scene-input'/>
         </IonItem>
       )}

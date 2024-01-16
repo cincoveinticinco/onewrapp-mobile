@@ -10,7 +10,7 @@ import AddCharacterForm from './AddCharacterForm';
 import AddElementForm from './AddElementForm';
 import AddExtraForm from './AddExtraForm';
 
-import './AddSceneForm.css';
+import './AddSceneForm.scss';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useHistory } from 'react-router';
 import { AddPagesForm } from './AddPagesForm';
@@ -132,7 +132,7 @@ const AddScenesForm: React.FC = () => {
       />
 
       <SelectItem
-        label="Day/Night"
+        label="DAY/NIGHT"
         value={formData.dayOrNightOption}
         onChange={(e) => handleChange(e.detail.value, 'dayOrNightOption')}
         options={[
@@ -158,7 +158,7 @@ const AddScenesForm: React.FC = () => {
       />
 
       <InputItem
-        label="SCRIPT PAGE"
+        label="PAGE"
         placeholder="INSERT"
         value={formData.page}
         onChange={(e) => handleChange(e.detail.value, 'page')}
@@ -176,7 +176,7 @@ const AddScenesForm: React.FC = () => {
       <SelectOrInsertItem
         label="LOCATION"
         selectValue={formData.locationName}
-        inputPlaceholder="INSERT"
+        inputPlaceholder="INSERT LOCATION NAME"
         onInputChange={(e) => handleChange(e.detail.value, 'locationName')}
         onSelectChange={(e) => handleChange(e.detail.value, 'locationName')}
         options={[
@@ -189,7 +189,7 @@ const AddScenesForm: React.FC = () => {
       <SelectOrInsertItem
         label="SET"
         selectValue={formData.setName}
-        inputPlaceholder="INSERT"
+        inputPlaceholder="INSERT SET NAME"
         onInputChange={(e) => handleChange(e.detail.value, 'setName')}
         onSelectChange={(e) => handleChange(e.detail.value, 'setName')}
         options={[
@@ -201,7 +201,7 @@ const AddScenesForm: React.FC = () => {
 
       <InputItem
         label="DESCRIPTION/SYNOPSIS"
-        placeholder="Type here"
+        placeholder="INSERT"
         value={formData.synopsis}
         onChange={(e) => handleChange(e.detail.value, 'synopsis')}
         inputName='add-synopsis-input'
