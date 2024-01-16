@@ -29,7 +29,7 @@ const Strips: React.FC = () => {
           <p className='filter-strips-text'>
             <IonIcon icon={chevronDownOutline} />
             {' '}
-            FILTER BY: EPISODE NUMBER
+            SORT BY: EPISODE NUMBER
           </p>
         </IonToolbar>
         <IonGrid className='scenes-grid'>
