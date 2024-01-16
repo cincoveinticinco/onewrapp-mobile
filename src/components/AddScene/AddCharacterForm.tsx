@@ -10,16 +10,6 @@ interface AddCategoryFormProps {
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }) => {
 
   const [categories, setCategories] = useState<string[]>([]);
-  
-  const toggleForm = (index: number) => {
-    const element = document.getElementById(`character-form-${index}`);
-    if (element) {
-     element.style.display === 'none' ? element.style.display = 'block' : element.style.display = 'none';
-    }
-  };
-
-  // category has many characters
-  // character has one category
 
   const handleOk = (inputData: { categoryName: string; }) => {
     const inputElement = document.getElementById('add-category-input');
@@ -92,9 +82,9 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
                   </IonCardSubtitle>
                   <IonButton 
                     size='small' 
-                    onClick={() => {toggleForm(index)}}
                     fill='clear'
                     color="light"
+                    id="character-item-alert"
                   >
                     <IonIcon icon={add} />
                   </IonButton>
@@ -103,7 +93,6 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ( { handleSceneChange }
               <IonCardContent>
                 <AddCharacterInput
                     categoryName={category} 
-                    toggleForm={toggleForm}
                     id={index}
                     handleSceneChange={handleSceneChange}
                   />  

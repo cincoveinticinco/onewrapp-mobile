@@ -1,18 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Character } from '../../interfaces/scenesTypes';
-import { IonInput, IonItem, IonList, IonButton, IonIcon } from '@ionic/react';
+import { IonInput, IonItem, IonList, IonButton, IonIcon, IonAlert } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 
 interface AddCharacterInputProps {
   categoryName: string;
-  toggleForm: (index: number) => void;
   handleSceneChange: (value: any, field: string) => void;
   id: number;
 }
 
-const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, toggleForm, handleSceneChange, id}) => {
+const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, handleSceneChange, id}) => {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const characterNameInputRef = useRef<HTMLIonInputElement>(null);
 
   useEffect(() => {
     handleSceneChange(characters, 'characters');
@@ -24,22 +22,16 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
     );
   };
 
-  const addCharacter = () => {
-    const newCharacterName = characterNameInputRef.current?.value as string;
-    if (!newCharacterName) return; 
-
+  const handleAlertConfirm = (name: string, number: number) => {
+    if (!name || number <= 0) return;
+  
     const newCharacter = {
       categoryName: categoryName,
-      characterName: newCharacterName,
-      characterNum: characters.length + 1,  // This is other field
+      characterName: name,
+      characterNum: number,
     };
-
+  
     setCharacters(currentCharacters => [...currentCharacters, newCharacter]);
-    toggleForm(id)
-
-    if (characterNameInputRef.current) {
-      characterNameInputRef.current.value = '';
-    }
   };
 
   return (
@@ -52,7 +44,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
               color='tertiary'
               className='ion-no-margin category-items'
             >
-              {character.characterName}
+              {`${character.characterNum}. ${character.characterName}`}
               <IonButton fill='clear' color="danger" slot='end' onClick={() => deleteCharacter(character.characterNum)}>
                 <IonIcon icon={trash} />
               </IonButton>
@@ -60,18 +52,28 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, tog
           ))}
         </IonList>
       )}
-        <IonItem
-          color="tertiary"
-          style={{ display: 'none'}}
-          id={`character-form-${id}`}
-        >
-          <IonInput
-            placeholder='Character Name' 
-            ref={characterNameInputRef}
-            clearInput={true}
-          />
-          <IonButton onClick={addCharacter}>Add Character</IonButton>
-        </IonItem>
+        <IonAlert
+          trigger='character-item-alert'
+          header={'Add New Character'}
+          inputs={[
+            {
+              name: 'name',
+              type: 'text',
+              placeholder: 'Character Name'
+            },
+            {
+              name: 'number',
+              type: 'number',
+              placeholder: 'Character Number'
+            }
+          ]}
+          buttons={[
+            {
+              text: 'Ok',
+              handler: (alertData) => handleAlertConfirm(alertData.name, parseInt(alertData.number))
+            }
+          ]}
+        />
     </>
   );
 }
