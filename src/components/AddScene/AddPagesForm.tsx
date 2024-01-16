@@ -27,7 +27,7 @@ export const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
           labelPlacement='stacked'
         />
       </IonItem>
-      <IonItem color='tertiary' id='add-pages-fraction-input' className='ion-flex'>
+      <IonItem color='tertiary' id='add-pages-fraction-input'>
         <IonInput
           value={pageFraction}
           type="number"
@@ -38,6 +38,9 @@ export const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
           labelPlacement='stacked'
         />
       </IonItem>
+      <div id='add-pages-denominator'>
+        /8
+      </div>
     </>
   )
 }
