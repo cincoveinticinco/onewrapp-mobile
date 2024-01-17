@@ -5,24 +5,13 @@ import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import { useHistory } from 'react-router';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { chevronBack } from 'ionicons/icons';
+import useHideTabs from '../../hooks/useHideTabs';
 
 const AddScene = () => {
 
   const history = useHistory();
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    const tabsContainer: any = document.querySelector('.app-tabs-container');
-    if (tabsContainer) {
-      tabsContainer.style.display = 'none';
-    }
-
-    return () => {
-      if (tabsContainer) {
-        tabsContainer.style.display = '';
-      }
-    };
-  }, []);
+  useHideTabs();
 
   const handleBack = () => {
     history.goBack();

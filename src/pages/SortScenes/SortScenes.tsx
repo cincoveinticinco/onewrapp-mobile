@@ -5,6 +5,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { appsSharp, chevronBack } from 'ionicons/icons';
 import './SortScenes.scss';
 import SortItem from '../../components/SortScenes/SortItem';
+import useHideTabs from '../../hooks/useHideTabs';
 
 const SortScenes = () => {
 
@@ -38,18 +39,7 @@ const SortScenes = () => {
   const history = useHistory();
   const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const tabsContainer: any = document.querySelector('.app-tabs-container');
-    if (tabsContainer) {
-      tabsContainer.style.display = 'none';
-    }
-
-    return () => {
-      if (tabsContainer) {
-        tabsContainer.style.display = '';
-      }
-    };
-  }, []);
+  useHideTabs();
 
   const handleBack = () => {
     history.goBack();
