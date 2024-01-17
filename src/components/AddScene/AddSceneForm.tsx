@@ -158,7 +158,7 @@ const AddScenesForm: React.FC = () => {
       />
 
       <InputItem
-        label="PAGE"
+        label="SCRIPT PAGE"
         placeholder="INSERT"
         value={formData.page}
         onChange={(e) => handleChange(e.detail.value, 'page')}
@@ -173,6 +173,8 @@ const AddScenesForm: React.FC = () => {
         handleChange={handleChange}
       />
 
+      {/* 12FR */}
+
       <SelectOrInsertItem
         label="LOCATION"
         selectValue={formData.locationName}
@@ -182,6 +184,7 @@ const AddScenesForm: React.FC = () => {
         options={[
           { label: "Option 1", value: "option 1" },
           { label: "Option 2", value: "option 2" },
+          // THIS VALUE CAN BE EXTRACTEED FROM SCENES
         ]}
         inputName='add-location-input'
       />
@@ -195,6 +198,7 @@ const AddScenesForm: React.FC = () => {
         options={[
           { label: "Option 1", value: "option 1" },
           { label: "Option 2", value: "option 2" },
+          // THIS VALUE CAN BE EXTRACTEED FROM SCENES
         ]}
         inputName='add-set-input'
       />
