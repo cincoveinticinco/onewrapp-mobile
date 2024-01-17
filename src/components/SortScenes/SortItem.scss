@@ -1,0 +1,16 @@
+.sort-option-item {
+  border-bottom: 1px solid black;
+  box-shadow: none;
+
+  ion-checkbox {
+    --size: 16px;
+    --checkbox-background-checked: #F3FB8C;
+  }
+
+  ion-checkbox::part(container) {
+    border: 1px solid black;
+    border-radius: 100%;
+    margin: 12px;
+    padding: 6px;
+  }
+}
