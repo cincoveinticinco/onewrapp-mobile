@@ -42,6 +42,7 @@ import '@ionic/react/css/display.css';
 import './AppTabs.css';
 import AddScene from '../../pages/AddScene/AddScene';
 import SortScenes from '../../pages/SortScenes/SortScenes';
+import FilterScenes from '../../pages/FilterScenes/FilterScenes';
 
 setupIonicReact();
 
@@ -60,6 +61,9 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route exact path="/my/projects/:id/sortscenes">
           <SortScenes />
+        </Route>
+        <Route exact path="/my/projects/:id/filterscenes">
+          <FilterScenes />
         </Route>
         <Route exact path="/my/projects/:id/calendar">
           <Calendar />
