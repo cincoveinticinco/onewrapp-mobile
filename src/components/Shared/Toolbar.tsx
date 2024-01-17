@@ -35,7 +35,7 @@ const Toolbar:React.FC<ToolbarProps> = ({ name, search, addScene, filter, elipse
       {
         filter
         &&
-        <IonButton fill="clear" slot="end" className='ion-no-padding toolbar-button'>
+        <IonButton fill="clear" slot="end" routerLink={'filterscenes'} className='ion-no-padding toolbar-button'>
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
         </IonButton>
       }

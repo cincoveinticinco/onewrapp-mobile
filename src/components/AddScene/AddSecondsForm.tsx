@@ -15,7 +15,7 @@ const AddSecondsForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
   }, [minutes, seconds])
   return (
     <div className='estimated-minutes-input'>
-      <p id='estimated-minutes-label'>ESTIMATED SECONDS (MM:SS)</p>
+      <p id='estimated-minutes-label'>ESTIMATED TIME (MM:SS)</p>
       <IonItem color="tertiary" id ='add-scene-minutes-input'>
         <IonInput 
           value={minutes}
