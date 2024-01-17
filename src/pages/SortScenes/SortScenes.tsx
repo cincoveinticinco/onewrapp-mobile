@@ -1,10 +1,39 @@
-import { IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import { IonButton, IonCheckbox, IonContent, IonHeader, IonIcon, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react'
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { chevronBack } from 'ionicons/icons';
+import { appsSharp, chevronBack } from 'ionicons/icons';
+import './SortScenes.scss';
+import SortItem from '../../components/SortScenes/SortItem';
 
 const SortScenes = () => {
+
+  const sortOptions = [
+    {
+      label: 'EP NUMBER',
+    },
+    {
+      label: 'SCENE NUMBER',
+    },
+    {
+      label: 'DAY OR NIGHT',
+    },
+    {
+      label: 'INT OR EXT',
+    },
+    {
+      label: 'LOCATION NAME',
+    },
+    {
+      label: 'SET NAME',
+    },
+    {
+      label: 'SCRIPT DAY',
+    },
+    {
+      label: 'CHARACTERS',
+    }
+  ]
 
   const history = useHistory();
   const isMobile = useIsMobile();
@@ -54,9 +83,19 @@ const SortScenes = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent color='tertiary'>
+      <IonList color='tertiary' className='ion-no-padding ion-margin-top sort-items-list'>
+        { 
+          sortOptions.map((sortOption, index) => (
+            <SortItem key={`sort-item-${index}`} sortOption={sortOption} />
+          ))
+        }
+      </IonList>
       </IonContent>
     </IonPage>
   )
 }
+
+// sort by scene number, ep number
+// convert string to number
 
 export default SortScenes
