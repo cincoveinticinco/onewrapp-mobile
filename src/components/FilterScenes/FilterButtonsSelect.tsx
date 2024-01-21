@@ -14,11 +14,11 @@ interface FilterButtonsSelectProps {
 
 const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions, groupName }) => {
   return (
-    <IonRow>
+    <IonRow className='filter-item-container ion-margin-top'>
       <IonCol size='12' className='ion-flex ion-justify-content-start'>
-        <h5 className='ion-text-start'>
+        <h6 className='ion-text-start'>
           { groupName }
-        </h5>
+        </h6>
       </IonCol>
       {
         selectOptions.map((option, index) => {
