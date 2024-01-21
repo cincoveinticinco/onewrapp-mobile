@@ -1,0 +1,64 @@
+.center-flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ion-flex {
+  display: flex;
+}
+
+.reset-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+button:active {
+  color: var(--ion-color-primary);
+}
+
+ion-button.outline-light-button {
+  --background: var(--ion-color-tertiary);
+  --background-activated: var(--ion-color-primary);
+
+  --color: var(--ion-color-light);
+
+  --border-radius: 0;
+  --border-color: var(--ion-color-light);
+  --border-style: solid;
+  --border-width: 1px;
+}
+
+ion-button.filled-primary-button {
+  --background: var(--ion-color-primary);
+
+  --color: var(--ion-color-dark);
+
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+  --border-style: solid;
+  --border-width: 1px;
+}
+
+.outline-primary-button {
+  --background: var(--ion-color-tertiary);
+  --background-hover: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary);
+  --background-focused: var(--ion-color-primary);
+
+  --color: var(--ion-color-light);
+
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+  --border-style: solid;
+  --border-width: 1px;
+}
