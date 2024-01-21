@@ -1,0 +1,15 @@
+.filter-item-container {
+  border: 1px solid var(--ion-color-dark);
+  padding: 0px 6px;
+}
+
+@media (min-width: 500px) {
+
+  .filter-item-container {
+    margin: 0px;
+  }
+
+  .filter-button-row {
+    margin-top: 20%;
+  }
+}
