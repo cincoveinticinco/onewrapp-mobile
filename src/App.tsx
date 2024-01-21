@@ -33,7 +33,7 @@ import { AppDataBase } from './RXdatabase/database';
 import { ProjectsSchema } from './RXdatabase/schemas/projects';
 import { ScenesSchema } from './RXdatabase/schemas/scenes';
 import { DatabaseContext } from './context/database';
-import AddScene from './pages/AddScene/AddScene';
+import { ScenesFiltersProvider } from './context/scenesFiltersContext';
 
 setupIonicReact();
 
@@ -52,20 +52,22 @@ const App: React.FC = () => {
     <IonApp>
       <AuthContext.Provider value={{ loggedIn }}>
         <DatabaseContext.Provider value={{ db: RXdatabase }}>
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route exact path="/login">
-                <LoginPage onLogin={() => setLoggedIn(true)} />
+          <ScenesFiltersProvider>
+            <IonReactRouter>
+              <IonRouterOutlet>
+                <Route exact path="/login">
+                  <LoginPage onLogin={() => setLoggedIn(true)} />
+                </Route>
+                <Route exact path="/my/projects">
+                  <Projects />
+                </Route>
+                <Redirect exact path="/" to="/my/projects" />
+              </IonRouterOutlet>
+              <Route path="/my/projects/:id">
+                <AppTabs />
               </Route>
-              <Route exact path="/my/projects">
-                <Projects />
-              </Route>
-              <Redirect exact path="/" to="/my/projects" />
-            </IonRouterOutlet>
-            <Route path="/my/projects/:id">
-              <AppTabs />
-            </Route>
-          </IonReactRouter>
+            </IonReactRouter>
+          </ScenesFiltersProvider>
         </DatabaseContext.Provider>
       </AuthContext.Provider>
     </IonApp>
