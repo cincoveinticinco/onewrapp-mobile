@@ -4,7 +4,7 @@ import App from './App';
 
 /* Overwrite main.css */
 
-import './theme/main.css';
+import './theme/main.scss';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
