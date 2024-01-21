@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useParams } from 'react-router-dom';
 import {
   IonIcon,
   IonLabel,
@@ -49,6 +49,8 @@ setupIonicReact();
 const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
 
+  const { id } = useParams<{ id: string }>();
+
   if (!loggedIn) {
     return <Redirect to="/login" />;
   }
@@ -62,7 +64,7 @@ const AppTabs: React.FC = () => {
         <Route exact path="/my/projects/:id/sortscenes">
           <SortScenes />
         </Route>
-        <Route exact path="/my/projects/:id/filterscenes">
+        <Route exact path="/my/projects/:id/strips/filters">
           <FilterScenes />
         </Route>
         <Route exact path="/my/projects/:id/calendar">
@@ -92,35 +94,35 @@ const AppTabs: React.FC = () => {
         <Redirect exact path="/my/projects/:id" to="/my/projects/:id/strips" />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" className='app-tabs-container' color='dark'>
-        <IonTabButton tab="calendar" href="/my/projects/:id/calendar">
+        <IonTabButton tab="calendar" href="/my/projects/${id}/calendar">
           <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="strips" href="/my/projects/:id/strips">
+        <IonTabButton tab="strips" href={`/my/projects/${id}/strips`}>
           <IonIcon icon={list} className='tab-bar-icons'/>
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="stripboard" href="/my/projects/:id/stripboard">
+        <IonTabButton tab="stripboard" href={`/my/projects/${id}/stripboard`}>
           <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="cast" href="/my/projects/:id/cast">
+        <IonTabButton tab="cast" href={`/my/projects/${id}/cast`}>
           <IonIcon icon={people} className='tab-bar-icons'/>
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="sets" href="/my/projects/:id/sets">
+        <IonTabButton tab="sets" href={`/my/projects/${id}/sets`}>
           <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="elements" href="/my/projects/:id/elements">
+        <IonTabButton tab="elements" href={`/my/projects/${id}/elements`}>
           <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="reports" href="/my/projects/:id/reports">
+        <IonTabButton tab="reports" href={`/my/projects/${id}/reports`}>
           <IonIcon icon={reader} className='tab-bar-icons'/>
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="settings" href="/my/projects/:id/settings">
+        <IonTabButton tab="settings" href={`/my/projects/${id}/settings`}>
           <IonIcon icon={settings} className='tab-bar-icons'/>
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
