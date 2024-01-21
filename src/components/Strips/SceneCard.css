@@ -1,9 +1,34 @@
 .scene-card {
   border-bottom: 0.3px solid black;
   color: black;
-  background-color: white;
   display: grid;
+  background-color: var(--ion-color-light);
   grid-template-columns: repeat(12, 1fr);
+}
+
+.scene-theme-dark {
+  background-color: var(--ion-color-dark);
+  color: var(--ion-color-light);
+}
+
+.scene-theme-light {
+  background-color: var(--ion-color-light);;
+}
+
+.scene-theme-yellow {
+  background-color: #F3FB8C;
+}
+
+.scene-theme-success {
+  background-color: var(--ion-color-success);
+}
+
+.scene-theme-rose {
+  background-color: #FDC6F7;
+}
+
+.scene-theme-primary {
+  background-color: var(--ion-color-primary);
 }
 
 .scene-card-header {

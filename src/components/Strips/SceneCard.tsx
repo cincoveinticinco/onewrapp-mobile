@@ -31,20 +31,45 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
     const characters = scene.characters;
     let charactersString = ''
 
-    characters.forEach((character) => {
-      charactersString += character.characterName + ', ';
-    });
+    if(characters) {
+      characters.forEach((character) => {
+        charactersString += character.characterName.toUpperCase() + ', ';
+      });
+    }
 
     return charactersString;
+  }
+
+  const defineSceneColor = (scene: Scene) => {
+
+    const intOrExt: any = ['EXTERIOR', 'INT/EXT', 'EXT/INT'];
+
+
+    if (scene.sceneType === 'protection') {
+      return 'rose';
+    } else if (scene.sceneType === 'scene') {
+      if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
+        return 'dark';
+      } else if (scene.intOrExtOption === 'Interior' && scene.dayOrNightOption === 'Day') {
+        return 'light';
+      } else if (scene.intOrExtOption === 'Interior' && scene.dayOrNightOption === 'Night') {
+        return 'success';
+      } else if ( intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Day') {
+        return 'yellow';
+      } else if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Night') {
+        return 'primary';
+      }
+      // INT/EXT EXT/INT === EXT
+    }
   }
 
   const getExtras = (scene: Scene) => {
     const extras = scene.extras;
     let extrasString = ''
 
-    if (extras) {
+    if (extras && extras.length > 0) {
       extras.forEach((extra) => {
-        extrasString += extra.extraName + ', ';
+        extrasString += extra.extraName.toUpperCase() + ', ';
       });
 
       return extrasString;
@@ -58,13 +83,15 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
     const pageFloat = scene.pages;
     let pageFraction;
 
-    pageFraction = floatToFraction(pageFloat);
+    if(pageFloat){
+      pageFraction = floatToFraction(pageFloat)
+    };
 
     return pageFraction;
   }
 
   return (
-    <IonRow className='scene-card'>
+    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`}>
       <IonCol className='scene-card-col-1'>
         <h3 className='scene-card-header'>
           {getSceneHeader(scene)}
@@ -79,9 +106,9 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
       </IonCol>
       <IonCol className='scene-card-col-2'>
         <p className='ion-no-margin'>
-          <strong>P: </strong> {getPageNumber(scene)}
+          <strong>P: </strong> {getPageNumber(scene) || 'N/A'}
         </p>
-        <p className='ion-no-margin'><strong>M: </strong> {scene.estimatedSeconds !== null ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}</p>
+        <p className='ion-no-margin'><strong>M: </strong> {scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}</p>
       </IonCol>
       <IonCol className='scene-card-col-3 center-flex-row'>
         <p className='assignament-date'> NOT ASSIGNED </p>
