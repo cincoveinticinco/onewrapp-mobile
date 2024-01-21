@@ -1,38 +1,20 @@
 import { IonButton, IonCardSubtitle, IonCheckbox, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonList, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react'
 import React, { useEffect } from 'react'
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { appsSharp, chevronBack } from 'ionicons/icons';
+import { chevronBack } from 'ionicons/icons';
 import './FilterScenes.scss';
 import FilterButtonsSelect from '../../components/FilterScenes/FilterButtonsSelect';
 import useHideTabs from '../../hooks/useHideTabs';
+import ScenesFiltersContext from '../../context/scenesFiltersContext';
 
 
 
 const FilterScenes = () => {
 
-  const [filterOptions, setFilterOptions]: any[] = React.useState(
-    {
-      stripType: {
-        scenes: false,
-        protection: false
-      },
-      dayOrNight: {
-        day: false,
-        night: false,
-        sunrise: false,
-        sunset: false
-      },
-      interiorOrExterior: {
-        interior: false,
-        exterior: false
-      },
-      units: {
-        unit1: false,
-        unit2: false,
-      }
-    }
-  )
+  const { id } = useParams<{ id: string }>();
+
+  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
 
   const history = useHistory();
   const isMobile = useIsMobile();
@@ -42,16 +24,42 @@ const FilterScenes = () => {
     history.goBack();
   };
 
-  const handleFilterOption = ( option: boolean, parentKey: string, subKey: string) => {
+const handleFilterOption = (category: string, optionValue: string) => {
+  
+  setFilterOptions((prevOptions: any) => {
+    const updatedOptions = prevOptions[category] ? [...prevOptions[category]] : [];
+    const valueIndex = updatedOptions.indexOf(optionValue);
 
-    setFilterOptions({
-      ...filterOptions,
-      [parentKey]: {
-        ...filterOptions[parentKey],
-        [subKey]: option
-      }
-    })
+    if (valueIndex > -1) {
+      updatedOptions.splice(valueIndex, 1);
+    } else {
+      updatedOptions.push(optionValue);
+    }
+
+    if (updatedOptions.length === 0) {
+      const {[category]: _, ...newOptions} = prevOptions;
+      return newOptions;
+    }
+
+    return {
+      ...prevOptions,
+      [category]: updatedOptions
+    };
+  });
+};
+
+  const defineFilterButtonClass = (optionValue: string, category: string) => {
+
+    if(filterOptions[category] && filterOptions[category].includes(optionValue)) {
+      return 'filled-primary-button';
+    } else {
+      return 'outline-light-button';
+    }
   }
+
+  const resetFilters = () => {
+    setFilterOptions({});
+  };
 
   return (
     <IonPage color='tertiary'>
@@ -69,7 +77,9 @@ const FilterScenes = () => {
             <IonButton 
               fill='clear' 
               color='primary'
-              slot='end'>
+              slot='end' 
+              onClick={resetFilters}
+            >
               RESET
             </IonButton>
           </>
@@ -92,13 +102,13 @@ const FilterScenes = () => {
               [
                 {
                   optionName: 'SCENES',
-                  handleOption: () => handleFilterOption(!filterOptions.stripType.scenes, 'stripType', 'scenes'),
-                  class: filterOptions.stripType.scenes ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('sceneType', 'scene'),
+                  class: defineFilterButtonClass('scene', 'sceneType')
                 },
                 {
                   optionName: 'PROTECTION',
-                  handleOption: () => handleFilterOption(!filterOptions.stripType.protection, 'stripType', 'protection'),
-                  class: filterOptions.stripType.protection ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('sceneType', 'protection'),
+                  class: defineFilterButtonClass('protection', 'sceneType')
                 }
               ]
             }
@@ -109,23 +119,23 @@ const FilterScenes = () => {
               [
                 {
                   optionName: 'DAY',
-                  handleOption: () => handleFilterOption(!filterOptions.dayOrNight.day, 'dayOrNight', 'day'),
-                  class: filterOptions.dayOrNight.day ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('dayOrNightOption', 'Day'),
+                  class: defineFilterButtonClass('Day', 'dayOrNightOption')
                 },
                 {
                   optionName: 'NIGHT',
-                  handleOption: () => handleFilterOption(!filterOptions.dayOrNight.night, 'dayOrNight', 'night'),
-                  class: filterOptions.dayOrNight.night ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('dayOrNightOption', 'Night'),
+                  class: defineFilterButtonClass('Night', 'dayOrNightOption')
                 },
                 {
                   optionName: 'SUNRISE',
-                  handleOption: () => handleFilterOption(!filterOptions.dayOrNight.sunrise, 'dayOrNight', 'sunrise'),
-                  class: filterOptions.dayOrNight.sunrise ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('dayOrNightOption', 'Sunrise'),
+                  class: defineFilterButtonClass('Sunrise', 'dayOrNightOption')
                 },
                 {
                   optionName: 'SUNSET',
-                  handleOption: () => handleFilterOption(!filterOptions.dayOrNight.sunset, 'dayOrNight', 'sunset'),
-                  class: filterOptions.dayOrNight.sunset ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('dayOrNightOption', 'Sunset'),
+                  class: defineFilterButtonClass('Sunset', 'dayOrNightOption')
                 }
               ]
             }
@@ -137,13 +147,13 @@ const FilterScenes = () => {
               [
                 {
                   optionName: 'INTERIOR',
-                  handleOption: () => handleFilterOption(!filterOptions.interiorOrExterior.interior, 'interiorOrExterior', 'interior'),
-                  class: filterOptions.interiorOrExterior.interior ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('intOrExtOption', 'Interior'),
+                  class: defineFilterButtonClass('Interior', 'intOrExtOption')
                 },
-                {
+               {
                   optionName: 'EXTERIOR',
-                  handleOption: () => handleFilterOption(!filterOptions.interiorOrExterior.exterior, 'interiorOrExterior', 'exterior'),
-                  class: filterOptions.interiorOrExterior.exterior ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('intOrExtOption', 'Exterior'),
+                  class: defineFilterButtonClass('Exterior', 'intOrExtOption')
                 }
               ]
             }
@@ -155,18 +165,44 @@ const FilterScenes = () => {
               [
                 {
                   optionName: 'UNIT 1',
-                  handleOption: () => handleFilterOption(!filterOptions.units.unit1, 'units', 'unit1'),
-                  class: filterOptions.units.unit1 ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('units', 'unit1'),
+                  class: defineFilterButtonClass('unit1', 'units')
                 },
                 {
                   optionName: 'UNIT 2',
-                  handleOption: () => handleFilterOption(!filterOptions.units.unit2, 'units', 'unit2'),
-                  class: filterOptions.units.unit2 ? 'filled-primary-button' : 'outline-light-button'
+                  handleOption: () => handleFilterOption('units', 'unit2'),
+                  class: defineFilterButtonClass('unit2', 'units')
                 }
               ]
             }
             groupName='UNITS'
           />
+
+          <IonRow class='ion-flex ion-justify-content-center'>
+            <IonCol size-sm='12' size-md='3'>
+              <IonButton 
+                expand='block' 
+                onClick={handleBack}
+                className='outline-primary-button'
+              >
+                FILTER
+              </IonButton>
+            </IonCol>
+          </IonRow>
+
+          { isMobile && 
+          <IonRow>
+            <IonCol>
+              <IonButton 
+                expand='block' 
+                onClick={handleBack}
+                className='outline-light-button'
+              >
+                CANCEL
+              </IonButton>
+            </IonCol>
+          </IonRow>
+          }
         </IonGrid>
       </IonContent>
     </IonPage>
