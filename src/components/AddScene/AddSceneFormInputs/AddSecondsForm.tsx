@@ -1,6 +1,6 @@
 import { IonInput, IonItem } from '@ionic/react'
 import React, { useEffect } from 'react'
-import { minSecToSeconds } from '../../utils/minSecToSeconds'
+import { minSecToSeconds } from '../../../utils/minSecToSeconds'
 
 interface AddPagesFormProps {
   handleChange: (value: any, field: string) => void

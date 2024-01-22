@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Character } from '../../interfaces/scenesTypes';
+import { Character } from '../../../interfaces/scenesTypes';
 import { IonInput, IonItem, IonList, IonButton, IonIcon, IonAlert } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 
@@ -16,10 +16,11 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, han
     handleSceneChange(characters, 'characters');
   }, [characters])
 
-  const deleteCharacter = (characterNum: number) => {
-    setCharacters(currentCharacters => 
-      currentCharacters.filter(character => character.characterNum !== characterNum)
-    );
+  const deleteCharacter = (characterNum: string | null) => {
+    if(characterNum) {
+      setCharacters(currentCharacters => 
+        currentCharacters.filter((character: Character )=> character.characterNum !== characterNum));
+    } 
   };
 
   const handleAlertConfirm = (name: string, number: number) => {
@@ -31,7 +32,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, han
       characterNum: number,
     };
   
-    setCharacters(currentCharacters => [...currentCharacters, newCharacter]);
+    setCharacters((currentCharacters) => [...currentCharacters, { ...newCharacter, characterNum: number.toString() }]);
   };
 
   return (

@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { IonList, IonItem, IonLabel, IonInput, IonButton, IonIcon } from '@ionic/react';
 import { useForm } from 'react-hook-form';
 
-import InputItem from './InputItem';
-import SelectItem from './SelectItem';
-import SelectOrInsertItem from './SelectOrInsertItem';
+import InputItem from './AddSceneFormInputs/InputItem';
+import SelectItem from './AddSceneFormInputs/SelectItem';
+import SelectOrInsertItem from './AddSceneFormInputs/SelectOrInsertItem';
 import { add } from 'ionicons/icons';
-import AddCharacterForm from './AddCharacterForm';
-import AddElementForm from './AddElementForm';
-import AddExtraForm from './AddExtraForm';
+import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
+import AddElementForm from './AddSceneFormInputs/AddElementForm';
+import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
 
 import './AddSceneForm.scss';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useHistory } from 'react-router';
-import { AddPagesForm } from './AddPagesForm';
-import AddSecondsForm from './AddSecondsForm';
+import { AddPagesForm } from './AddSceneFormInputs/AddPagesForm';
+import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 
 const AddScenesForm: React.FC = () => {
 

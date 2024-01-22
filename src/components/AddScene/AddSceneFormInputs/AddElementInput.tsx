@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IonInput, IonItem, IonList, IonButton, IonIcon } from '@ionic/react';
 import { trash } from 'ionicons/icons';
-import { Element } from '../../interfaces/scenesTypes';
+import { Element } from '../../../interfaces/scenesTypes';
 
 interface AddElementInputProps {
   categoryName: string;
