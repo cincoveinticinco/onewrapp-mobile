@@ -10,14 +10,15 @@
   padding: 0px;
   width: auto;
   text-align: left;
-  font-size: 20px;
+  font-size: var(--525-toolbar-title-size);
+  height: 100%;
 }
 
 .toolbar-burger-menu {
   position: static;
   font-size: 24px;
   margin: 0px;
-  padding: 6px;
+  height: 100%;
 }
 
 .toolbar-icon {

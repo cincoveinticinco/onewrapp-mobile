@@ -70,7 +70,7 @@
 
   #estimated-minutes-label {
     position: absolute;
-    font-size: 12px;
+    font-size: var(--525-common-text-size);
     top: -4px;
     left: 16px;
     z-index: 3;
@@ -165,7 +165,7 @@
   border-bottom: 1px solid var(--ion-color-dark);
   padding: 0 12px;
   background-color: #0000001e;
-  font-size: 18px;
+  font-size: var(--525-common-text-size);
   margin: 0px;
   grid-column: 1 / 13;
 }
@@ -208,7 +208,7 @@
 }
 
 .no-items-card-title {
-  font-size: 12px;
+  font-size: var(--525-common-text-size);
   text-align: center;
 }
 

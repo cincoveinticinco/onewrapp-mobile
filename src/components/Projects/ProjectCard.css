@@ -14,7 +14,7 @@
 }
 
 .project-card-subtitle {
-  font-size: 18px;
+  font-size: var(--525-common-title-size);
   color: #fff;
   margin-top: 2px;
   font-weight: bold;
@@ -25,5 +25,5 @@
   color: #fff;
   padding: 0px;
   margin: 0px;
-  font-size: 12px;
+  font-size: var(--525-common-text-size);
 }

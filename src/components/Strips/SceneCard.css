@@ -32,7 +32,7 @@
 }
 
 .scene-card-header {
-  font-size: 14px;
+  font-size: var(--525-common-title-size);
   font-weight: bold;
   margin: 0px;
   padding: 0px;
@@ -42,7 +42,7 @@
 }
 
 .scene-card-synopsis {
-  font-size: 12px;
+  font-size: var(--525-common-text-size);
   margin: 0px;
   padding: 0px;
   font-weight: normal;
@@ -50,7 +50,7 @@
 }
 
 .scene-card-characters {
-  font-size: 12px;
+  font-size: var(--525-common-text-size);
   margin: 0px;
   padding: 0px;
   font-weight: normal;
@@ -84,5 +84,5 @@
   transform: rotate(180deg);
   color: white;
   font-weight: bold;
-  font-size: 9px;
+  font-size: 8px;
 }

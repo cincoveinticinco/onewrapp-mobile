@@ -1,5 +1,6 @@
 import { IonButton, IonCol, IonRow } from '@ionic/react'
 import React from 'react'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 type SelectOptions = {
   optionName: string,
@@ -13,26 +14,27 @@ interface FilterButtonsSelectProps {
 }
 
 const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions, groupName }) => {
+
+  const isMobile = useIsMobile()
+
   return (
-    <IonRow className='filter-item-container ion-margin-top'>
+    <IonRow className={'filter-item-container' + (isMobile ? ' ion-margin-top' : '')}>
       <IonCol size='12' className='ion-flex ion-justify-content-start'>
-        <h6 className='ion-text-start'>
+        <p className='ion-text-start ion-no-margin ion-padding-top'>
           { groupName }
-        </h6>
+        </p>
       </IonCol>
       {
         selectOptions.map((option, index) => {
           return (
             <IonCol key={`filter-button-select-${index}`}>
-              <IonCol>
-                <IonButton
-                  expand='block' 
-                  className={option.class}
-                  onClick={() => option.handleOption()} 
-                >
-                  {option.optionName}
-                </IonButton>
-              </IonCol>
+              <IonButton
+                expand='block' 
+                className={`${option.class} `}
+                onClick={() => option.handleOption()} 
+              >
+                {option.optionName}
+              </IonButton>
             </IonCol>
           );
         })

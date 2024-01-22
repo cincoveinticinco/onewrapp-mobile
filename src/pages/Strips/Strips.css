@@ -9,6 +9,6 @@
 }
 
 .sort-strips-button {
-  font-size: 12px;
+  font-size: var(--525-common-text-size);
   font-weight: bold;
 }
