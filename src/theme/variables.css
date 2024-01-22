@@ -65,6 +65,12 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-dark-contrast-rgb: 255,255,255;
 	--ion-color-dark-shade: #000000;
 	--ion-color-dark-tint: #1a1a1a;
+
+  /* CUSTOM 525 VARIABLES */
+  
+  --525-common-text-size: 12px;
+  --525-common-title-size: 14px;
+  --525-toolbar-title-size: 24px;
 }
 
 /* 
