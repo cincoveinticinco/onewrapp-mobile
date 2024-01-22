@@ -26,6 +26,10 @@ button:active {
   color: var(--ion-color-primary);
 }
 
+ion-button {
+  font-size: var(--525-common-text-size);
+}
+
 ion-button.outline-light-button {
   --background: var(--ion-color-tertiary);
   --background-activated: var(--ion-color-primary);
