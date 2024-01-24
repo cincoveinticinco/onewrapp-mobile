@@ -14,7 +14,7 @@ import { useLocation } from 'react-router';
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
 const Strips: React.FC = () => {
-  const BATCH_SIZE = 30;
+  const BATCH_SIZE = 20;
   const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
@@ -26,9 +26,25 @@ const Strips: React.FC = () => {
 
   function filterScenes(scenes: Scene[], criteria: any): Scene[] {
     return scenes.filter((scene: any) =>
-      Object.entries(criteria).every(([key, values]: any[]) =>
-          values.includes(scene[key])
-        )
+      Object.entries(criteria).every(([key, values]: [string, any]) => {
+        if (Array.isArray(scene[key])) {
+          // If the property is an array, check if any of the items match the criteria
+          return scene[key].some((item: any) => {
+            if (typeof values[0] === 'object') {
+              // Handle nested criteria for array elements
+              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) =>
+                subValues.includes(item[subKey])
+              );
+            } else {
+              // Handle criteria for array elements
+              return values.includes(item);
+            }
+          });
+        } else {
+          // If the property is not an array, check if it matches the criteria
+          return values.includes(scene[key]);
+        }
+      })
     );
   }
 
@@ -37,7 +53,7 @@ const Strips: React.FC = () => {
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
-    setInfiniteDisabled(false); 
+    setInfiniteDisabled(false);
   }, [filterOptions]);
 
   const loadMoreScenes = () => {
@@ -83,7 +99,7 @@ const Strips: React.FC = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <IonGrid className='scenes-grid'>
             {displayedScenes.map((scene, index) => (
-              <SceneCard key={'scene-item-' + index} scene={scene} />
+              <SceneCard key={'scene-item-' + index} scene={scene} clickEvent={() => console.log(scene)}/>
             ))}
             <IonInfiniteScroll
               onIonInfinite={handleInfinite}
