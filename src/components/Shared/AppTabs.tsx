@@ -1,4 +1,4 @@
-import { Redirect, Route, useParams } from 'react-router-dom';
+import { useRouteMatch, Redirect, Route, useParams } from 'react-router-dom';
 import {
   IonIcon,
   IonLabel,
@@ -8,11 +8,13 @@ import {
   IonTabs,
   setupIonicReact,
 } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
 import {
-  business, calendar, list, people, reader, settings,
+  calendar, list, people, business, reader, settings,
 } from 'ionicons/icons';
 import { useAuth } from '../../context/auth';
+import AddScene from '../../pages/AddScene/AddScene';
+import SortScenes from '../../pages/SortScenes/SortScenes';
+import FilterScenes from '../../pages/FilterScenes/FilterScenes';
 import Calendar from '../../pages/Calendar/Calendar';
 import Cast from '../../pages/Cast/Cast';
 import Elements from '../../pages/Elements/Elements';
@@ -22,107 +24,94 @@ import Sets from '../../pages/Sets/Sets';
 import StripBoard from '../../pages/StripBoard/StripBoard';
 import Strips from '../../pages/Strips/Strips';
 
-/* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
-
-/* Basic CSS for apps built with Ionic */
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
-
-/* Optional CSS utils that can be commented out */
 import '@ionic/react/css/padding.css';
 import '@ionic/react/css/float-elements.css';
 import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-
-/* Personalized CSS */
 import './AppTabs.css';
-import AddScene from '../../pages/AddScene/AddScene';
-import SortScenes from '../../pages/SortScenes/SortScenes';
-import FilterScenes from '../../pages/FilterScenes/FilterScenes';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
+  const { url } = useRouteMatch();
 
-  const { id } = useParams<{ id: string }>();
 
-  if (!loggedIn) {
-    return <Redirect to="/login" />;
-  }
 
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route exact path="/my/projects/:id/addscene">
+        <Route exact path={`${url}/addscene`}>
           <AddScene />
         </Route>
-        <Route exact path="/my/projects/:id/sortscenes">
+        <Route exact path={`${url}/sortscenes`}>
           <SortScenes />
         </Route>
-        <Route exact path="/my/projects/:id/strips/filters">
+        <Route exact path={`${url}/strips/filters`}>
           <FilterScenes />
         </Route>
-        <Route exact path="/my/projects/:id/calendar">
+        <Route exact path={`${url}/calendar`}>
           <Calendar />
         </Route>
-        <Route exact path="/my/projects/:id/strips">
+        <Route exact path={`${url}/strips`}>
           <Strips />
         </Route>
-        <Route exact path="/my/projects/:id/stripboard">
+        <Route exact path={`${url}/stripboard`}>
           <StripBoard />
         </Route>
-        <Route exact path="/my/projects/:id/cast">
+        <Route exact path={`${url}/cast`}>
           <Cast />
         </Route>
-        <Route exact path="/my/projects/:id/sets">
+        <Route exact path={`${url}/sets`}>
           <Sets />
         </Route>
-        <Route exact path="/my/projects/:id/elements">
+        <Route exact path={`${url}/elements`}>
           <Elements />
         </Route>
-        <Route exact path="/my/projects/:id/reports">
+        <Route exact path={`${url}/reports`}>
           <Reports />
         </Route>
-        <Route exact path="/my/projects/:id/settings">
+        <Route exact path={`${url}/settings`}>
           <Settings />
         </Route>
-        <Redirect exact path="/my/projects/:id" to="/my/projects/:id/strips" />
+        <Redirect exact from={`${url}`} to={`${url}/strips`} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" className='app-tabs-container' color='dark'>
-        <IonTabButton tab="calendar" href="/my/projects/${id}/calendar">
+        <IonTabButton tab="calendar" href={`${url}/strips`}>
           <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="strips" href={`/my/projects/${id}/strips`}>
+        <IonTabButton tab="strips" href={`${url}/strips`}>
           <IonIcon icon={list} className='tab-bar-icons'/>
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="stripboard" href={`/my/projects/${id}/stripboard`}>
+        <IonTabButton tab="stripboard" href={`${url}/stripboard`}>
           <IonIcon icon={calendar} className='tab-bar-icons'/>
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="cast" href={`/my/projects/${id}/cast`}>
+        <IonTabButton tab="cast" href={`${url}/cast`}>
           <IonIcon icon={people} className='tab-bar-icons'/>
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="sets" href={`/my/projects/${id}/sets`}>
+        <IonTabButton tab="sets" href={`${url}/sets`}>
           <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="elements" href={`/my/projects/${id}/elements`}>
+        <IonTabButton tab="elements" href={`${url}/elements`}>
           <IonIcon icon={business} className='tab-bar-icons'/>
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="reports" href={`/my/projects/${id}/reports`}>
+        <IonTabButton tab="reports" href={`${url}/reports`}>
           <IonIcon icon={reader} className='tab-bar-icons'/>
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="settings" href={`/my/projects/${id}/settings`}>
+        <IonTabButton tab="settings" href={`${url}/settings`}>
           <IonIcon icon={settings} className='tab-bar-icons'/>
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
