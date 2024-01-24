@@ -3,6 +3,10 @@
   padding: 0px 6px;
 }
 
+.filter-button-row {
+  margin-top: 10%;
+}
+
 @media (min-width: 500px) {
 
   .filter-item-container {
@@ -11,5 +15,6 @@
 
   .filter-button-row {
     margin-top: 20%;
+    margin-bottom: 50px;
   }
 }

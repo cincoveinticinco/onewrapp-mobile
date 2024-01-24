@@ -1,0 +1,29 @@
+.filters-items-rows {
+  border-bottom: 1px solid var(--ion-color-dark);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.filters-search-bar {
+  text-align: center;
+  --border-radius: 50px;
+  .searchbar-cancel-button {
+    color: red
+  }
+}
+
+.filter-items-modal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  --overflow: show;
+  .ion-delegate-host {
+    min-height: 100vh !important;
+    min-width: 100vw !important;
+    display: flex;
+  }
+  .modal-wrapper {
+    min-height: 100vh !important;
+    min-width: 100vw !important;
+  }
+}

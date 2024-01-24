@@ -2,6 +2,8 @@ import { IonButton, IonCol, IonRow } from '@ionic/react'
 import React from 'react'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
+import './FilterButtonSelect.scss'
+
 type SelectOptions = {
   optionName: string,
   handleOption: () => void,
@@ -18,8 +20,8 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
   const isMobile = useIsMobile()
 
   return (
-    <IonRow className={'filter-item-container' + (isMobile ? ' ion-margin-top' : '')}>
-      <IonCol size='12' className='ion-flex ion-justify-content-start'>
+    <IonRow className={'filter-item-container ion-padding' + (isMobile ? ' ion-margin-top' : '')}>
+      <IonCol size='12' className='ion-flex ion-justify-content-start filter-button-select-column'>
         <p className='ion-text-start ion-no-margin ion-padding-top'>
           { groupName }
         </p>

@@ -66,3 +66,7 @@ ion-button.filled-primary-button {
   --border-style: solid;
   --border-width: 1px;
 }
+
+ion-toolbar {
+  --border-color: var(--ion-color-dark);
+}
