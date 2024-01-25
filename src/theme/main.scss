@@ -38,9 +38,7 @@ ion-button {
 ion-button.outline-light-button {
   --background: var(--ion-color-tertiary);
   --background-activated: var(--ion-color-primary);
-
   --color: var(--ion-color-light);
-
   --border-radius: 0;
   --border-color: var(--ion-color-light);
   --border-style: solid;
@@ -49,9 +47,7 @@ ion-button.outline-light-button {
 
 ion-button.filled-primary-button {
   --background: var(--ion-color-primary);
-
   --color: var(--ion-color-dark);
-
   --border-radius: 0;
   --border-color: var(--ion-color-primary);
   --border-style: solid;
@@ -63,9 +59,7 @@ ion-button.filled-primary-button {
   --background-hover: var(--ion-color-primary);
   --background-activated: var(--ion-color-primary);
   --background-focused: var(--ion-color-primary);
-
   --color: var(--ion-color-light);
-
   --border-radius: 0;
   --border-color: var(--ion-color-primary);
   --border-style: solid;

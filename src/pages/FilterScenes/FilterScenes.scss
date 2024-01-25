@@ -1,6 +1,6 @@
 .filter-item-container {
   outline: 1px solid var(--ion-color-dark);
-  padding: 0px 6px;
+  padding: 0 6px;
 }
 
 .filter-button-row {
@@ -8,9 +8,8 @@
 }
 
 @media (min-width: 500px) {
-
   .filter-item-container {
-    margin: 0px;
+    margin: 0;
   }
 
   .filter-button-row {

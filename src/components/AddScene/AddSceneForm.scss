@@ -48,7 +48,6 @@
 #add-pages-integer-input {
   grid-column: 7 / 9;
   margin: auto;
-
 }
 
 #add-pages-fraction-input {
@@ -74,7 +73,7 @@
     top: -4px;
     left: 16px;
     z-index: 3;
-    text-wrap: nowrap
+    text-wrap: nowrap;
   }
 
   #add-scene-minutes-input {
@@ -91,9 +90,10 @@
     justify-content: center;
     padding-top: 12px;
   }
-  
+
   #add-scene-seconds-input {
     grid-column: 7 / 13;
+
     .native-input {
       padding-top: 16px;
     }
@@ -103,10 +103,9 @@
 #add-pages-fraction-input > ion-input,
 #add-pages-integer-input > ion-input,
 #add-scene-minutes-input > ion-input,
-#add-scene-seconds-input > ion-input
-{
-  padding: 0px;
-  margin: 0px;
+#add-scene-seconds-input > ion-input {
+  padding: 0;
+  margin: 0;
   border-bottom: 1px solid var(--ion-color-light);
 }
 
@@ -133,9 +132,8 @@
   }
 }
 
-
 .submit-scene-button {
-  border: 1px solid #19CFF9;
+  border: 1px solid #19cff9;
   background-color: transparent;
   height: 34pt;
   width: 90%;
@@ -146,7 +144,7 @@
 
 .submit-scene-button:active {
   background-color: var(--ion-color-primary);
-  color: var(--ion-color-dark)
+  color: var(--ion-color-dark);
 }
 
 .cancel-add-scene-button {
@@ -166,43 +164,42 @@
   padding: 0 12px;
   background-color: #0000001e;
   font-size: var(--525-common-text-size);
-  margin: 0px;
+  margin: 0;
   grid-column: 1 / 13;
 }
-
 
 .add-scene-items-card-grid {
   display: grid;
   grid-column: 1 / 13;
   grid-template-columns: 1fr;
   width: 100%;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 .add-scene-items-card {
   width: 100%;
   grid-template-columns: 1fr;
-  margin: 0px;
+  margin: 0;
   border: 1px solid var(--ion-color-dark);
-  border-radius: 0px;
-  margin: 0px;
+  border-radius: 0;
+  margin: 0;
 }
 
 .category-items {
   border: 1px solid var(--ion-color-light);
-  margin: 0px;
+  margin: 0;
 }
 
 .add-scene-input {
   background-color: transparent;
-  margin: 6px 0px;
+  margin: 6px 0;
   border-bottom: 1px solid var(--ion-color-light);
 }
 
 .no-items-card {
-  border-radius: 0px;
-  margin: 0px;
+  border-radius: 0;
+  margin: 0;
   grid-column: 1 / 13;
   box-shadow: none;
 }
@@ -217,7 +214,6 @@
 }
 
 @media (min-width: 500px) {
-
   .add-scene-form {
     .native-input {
       text-align: center;
@@ -242,35 +238,35 @@
   #add-scene-type-input {
     grid-column: 1 / 7;
   }
-  
+
   #add-protection-type-input {
     grid-column: 7 / 13;
   }
-  
+
   #add-day-night-input {
     grid-column: 1 / 7;
   }
-  
+
   #add-episode-input {
     grid-column: 1 / 4;
   }
-  
+
   #add-scene-number-input {
     grid-column: 4 / 7;
   }
-  
+
   #add-script-day-input {
     grid-column: 7 / 10;
   }
-  
+
   #add-year-input {
     grid-column: 10 / 13;
   }
-  
+
   #add-int-ext-input {
     grid-column: 7 / 13;
   }
-  
+
   #add-page-input {
     grid-column: 1 / 4;
   }
@@ -278,7 +274,7 @@
   #add-pages-integer-input {
     grid-column: 4 / 6;
   }
-  
+
   #add-pages-fraction-input {
     grid-column: 6 / 8;
   }
@@ -295,19 +291,19 @@
   #add-scene-minutes-input {
     margin: auto;
   }
-  
+
   #add-scene-seconds-input {
     margin: auto;
   }
-  
+
   #add-location-input {
     grid-column: 1 / 7;
   }
-  
+
   #add-set-input {
     grid-column: 7 / 13;
   }
-  
+
   #add-synopsis-input {
     grid-column: 1 / 13;
   }

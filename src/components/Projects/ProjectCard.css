@@ -1,8 +1,8 @@
 .project-card {
   border-radius: 0%;
-  margin: 0px;
+  margin: 0;
   border: none;
-  background-color: #282F3A;
+  background-color: #282f3a;
   padding: 7px;
   min-height: 100%;
 }
@@ -23,7 +23,7 @@
 
 .project-card-description {
   color: #fff;
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
   font-size: var(--525-common-text-size);
 }

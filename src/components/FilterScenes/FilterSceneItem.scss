@@ -6,9 +6,11 @@
 
 .filters-search-bar {
   text-align: center;
+
   --border-radius: 50px;
+
   .searchbar-cancel-button {
-    color: red
+    color: red;
   }
 }
 
@@ -16,16 +18,20 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+
   --overflow: show;
+
   .ion-delegate-host {
     min-height: 100vh !important;
     min-width: 100vw !important;
     display: flex;
   }
+
   .modal-wrapper {
     min-height: 100vh !important;
     min-width: 100vw !important;
   }
+
   .filters-options-list {
     outline: 1px solid black;
     border: 1px solid black;
