@@ -27,15 +27,15 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
         </p>
       </IonCol>
       {
-        selectOptions.map((option, index) => {
+        selectOptions.map(({ optionName, handleOption, class: optionClass }, index) => {
           return (
             <IonCol key={`filter-button-select-${index}`}>
               <IonButton
                 expand='block' 
-                className={`${option.class} `}
-                onClick={() => option.handleOption()} 
+                className={`${optionClass} `}
+                onClick={handleOption} 
               >
-                {option.optionName}
+                {optionName}
               </IonButton>
             </IonCol>
           );
