@@ -1,6 +1,6 @@
 // import { Scene } from './interfaces/scenesTypes';
 
-export const projects = [
+const projects = [
   {
     id: '01',
     projName: 'Memorias De Una Soledad',
@@ -112,3 +112,5 @@ export const projects = [
 
 // SCENE WITHOUT INT OR EXT BLACK, OR DAY OR NIGHT BLACK
 //
+
+export default projects;

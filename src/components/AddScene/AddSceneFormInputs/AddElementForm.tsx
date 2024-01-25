@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
+  IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddElementInput from './AddElementInput';
@@ -15,7 +15,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
   const toggleForm = (index: number) => {
     const element = document.getElementById(`element-form-${index}`);
     if (element) {
-      element.style.display === 'none' ? element.style.display = 'block' : element.style.display = 'none';
+      element.style.display = element.style.display === 'none' ? 'block' : 'none';
     }
   };
 
@@ -29,10 +29,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
     }
   };
 
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = categories.filter((category) => category !== categoryName);
-    setCategories(updatedCategories);
-  };
+  // const removeCategory = (categoryName: string) => {
+  //   const updatedCategories = categories.filter((category) => category !== categoryName);
+  //   setCategories(updatedCategories);
+  // };
 
   return (
     <>

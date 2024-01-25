@@ -1,8 +1,15 @@
 import { useState } from 'react';
 import {
-  IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonHeader, IonTitle, IonCardSubtitle, IonCardHeader, IonCardContent, IonInput, IonCardTitle,
+  IonButton,
+  IonIcon,
+  IonAlert,
+  IonGrid,
+  IonCard,
+  IonCardSubtitle,
+  IonCardHeader,
+  IonCardContent,
 } from '@ionic/react';
-import { add, trash } from 'ionicons/icons';
+import { add } from 'ionicons/icons';
 import AddCharacterInput from './AddCharacterInput';
 
 interface AddCategoryFormProps {
@@ -22,10 +29,10 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
     }
   };
 
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = categories.filter((category) => category !== categoryName);
-    setCategories(updatedCategories);
-  };
+  // const removeCategory = (categoryName: string) => {
+  //   const updatedCategories = categories.filter((category) => category !== categoryName);
+  //   setCategories(updatedCategories);
+  // };
 
   return (
     <>
@@ -97,7 +104,6 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
               <IonCardContent>
                 <AddCharacterInput
                   categoryName={category}
-                  id={index}
                   handleSceneChange={handleSceneChange}
                 />
               </IonCardContent>

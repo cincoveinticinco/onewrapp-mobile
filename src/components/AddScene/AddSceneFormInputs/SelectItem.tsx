@@ -21,7 +21,15 @@ const SelectItem: React.FC<SelectItemProps> = ({
   inputName,
 }) => (
   <IonItem color="tertiary" id={inputName}>
-    <IonSelect placeholder="SELECT TYPE" label={label} labelPlacement="stacked" interface="popover" value={value} onIonChange={onChange} disabled={disabled}>
+    <IonSelect
+      placeholder="SELECT TYPE"
+      label={label}
+      labelPlacement="stacked"
+      interface="popover"
+      value={value}
+      onIonChange={onChange}
+      disabled={disabled}
+    >
       {options.map((option, i) => (
         <IonSelectOption key={`select-${option}-${i}`} value={option.value}>{option.label}</IonSelectOption>
       ))}

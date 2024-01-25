@@ -13,7 +13,7 @@ import {
 import {
   calendar, list, people, business, reader, settings,
 } from 'ionicons/icons';
-import { useAuth } from '../../context/auth';
+// import { useAuth } from '../../context/auth';
 import AddScene from '../../pages/AddScene/AddScene';
 import SortScenes from '../../pages/SortScenes/SortScenes';
 import FilterScenes from '../../pages/FilterScenes/FilterScenes';

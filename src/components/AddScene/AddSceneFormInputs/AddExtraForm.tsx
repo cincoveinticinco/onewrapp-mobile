@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
+  IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddExtraInput from './AddExtraInput';
@@ -15,7 +15,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
   const toggleForm = (index: number) => {
     const element = document.getElementById(`extra-form-${index}`);
     if (element) {
-      element.style.display === 'none' ? element.style.display = 'block' : element.style.display = 'none';
+      if (element.style.display === 'none') {
+        element.style.display = 'block';
+      } else {
+        element.style.display = 'none';
+      }
     }
   };
 
@@ -29,10 +33,10 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
     }
   };
 
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = categories.filter((category) => category !== categoryName);
-    setCategories(updatedCategories);
-  };
+  // const removeCategory = (categoryName: string) => {
+  //   const updatedCategories = categories.filter((category) => category !== categoryName);
+  //   setCategories(updatedCategories);
+  // };
 
   return (
     <>

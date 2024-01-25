@@ -2,11 +2,11 @@ import { IonInput, IonItem } from '@ionic/react';
 import React, { useEffect } from 'react';
 import minSecToSeconds from '../../../utils/minSecToSeconds';
 
-interface AddPagesFormProps {
+interface AddSecondsFormProps {
   handleChange: (value: any, field: string) => void
 }
 
-const AddSecondsForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
+const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange }) => {
   const [minutes, setMinutes]: any[] = React.useState(null);
   const [seconds, setSeconds]: any[] = React.useState(null);
 

@@ -1,17 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  IonInput, IonItem, IonList, IonButton, IonIcon, IonAlert,
+  IonItem, IonList, IonButton, IonIcon, IonAlert,
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 import { Character } from '../../../interfaces/scenesTypes';
 
 interface AddCharacterInputProps {
   categoryName: string;
-  handleSceneChange: (value: any, field: string) => void;
-  id: number;
+  handleSceneChange: (value: any, field: string) => void
 }
 
-const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, handleSceneChange, id }) => {
+const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
+  categoryName, handleSceneChange,
+}) => {
   const [characters, setCharacters] = useState<Character[]>([]);
 
   useEffect(() => {
@@ -33,7 +34,12 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, han
       characterNum: number,
     };
 
-    setCharacters((currentCharacters) => [...currentCharacters, { ...newCharacter, characterNum: number.toString() }]);
+    const appendCharacter = (currentChars: any, newCharacter: any, number: any) => [
+      ...currentChars,
+      { ...newCharacter, characterNum: number.toString() },
+    ];
+
+    setCharacters((currChars) => appendCharacter(currChars, newCharacter, number));
   };
 
   return (
@@ -72,7 +78,9 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({ categoryName, han
         buttons={[
           {
             text: 'Ok',
-            handler: (alertData) => handleAlertConfirm(alertData.name, parseInt(alertData.number)),
+            handler: (alertData) => {
+              handleAlertConfirm(alertData.name, parseInt(alertData.number, 10));
+            },
           },
         ]}
       />

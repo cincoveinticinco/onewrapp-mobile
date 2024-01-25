@@ -2,7 +2,6 @@ import {
   IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonRow, IonTitle, IonToolbar,
 } from '@ionic/react';
 import React from 'react';
-import { useParams } from 'react-router';
 import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
@@ -39,7 +38,7 @@ const FilterScenes = () => {
       }
 
       if (updatedOptions.length === 0) {
-        const { [category]: _, ...newOptions } = prevOptions;
+        const { [category]: unused_, ...newOptions } = prevOptions;
         return newOptions;
       }
 

@@ -26,8 +26,8 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
         </p>
       </IonCol>
       {
-        selectOptions.map(({ optionName, handleOption, class: optionClass }, optioni) => (
-          <IonCol key={`filter-button-select-${optioni}`}>
+        selectOptions.map(({ optionName, handleOption, class: optionClass }) => (
+          <IonCol key={`filter-button-select-${optionName}`}>
             <IonButton
               expand="block"
               className={`${optionClass} `}

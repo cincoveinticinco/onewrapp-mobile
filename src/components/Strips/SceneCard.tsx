@@ -37,6 +37,8 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
 
       return charactersString;
     }
+
+    return '';
   };
 
   const defineSceneColor = (scene: Scene) => {
@@ -56,9 +58,9 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
       } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Night') {
         return 'primary';
       }
-
-      return 'light';
     }
+
+    return 'light';
   };
 
   const getExtras = (scene: Scene) => {

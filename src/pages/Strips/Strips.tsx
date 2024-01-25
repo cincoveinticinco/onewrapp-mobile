@@ -39,7 +39,7 @@ const Strips: React.FC = () => {
           return scene[key].some((item: any) => {
             if (typeof values[0] === 'object') {
             // Handle nested criteria for array elements
-              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey]));
+              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey])); // eslint-disable-line
             }
             // Handle criteria for array elements
             return values.includes(item);
@@ -95,7 +95,7 @@ const Strips: React.FC = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <IonGrid className="scenes-grid">
             {displayedScenes.map((scene, i) => (
-              <SceneCard key={`scene-item-${i}`} scene={scene} />
+              <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
             ))}
             <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
               <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />

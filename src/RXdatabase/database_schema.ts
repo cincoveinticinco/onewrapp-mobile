@@ -1,5 +1,9 @@
 import { RxDatabase } from 'rxdb';
-import { pullQueryBuilderFromRxSchema, pushQueryBuilderFromRxSchema, pullStreamBuilderFromRxSchema } from 'rxdb/plugins/replication-graphql';
+import {
+  pullQueryBuilderFromRxSchema,
+  pushQueryBuilderFromRxSchema,
+  pullStreamBuilderFromRxSchema,
+} from 'rxdb/plugins/replication-graphql';
 
 export default class DatabaseSchema {
     private schemaName: string;

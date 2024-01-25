@@ -49,7 +49,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
         <IonList
           className="ion-no-padding ion-no-margin"
         >
-          {extras.map((extra, index) => (
+          {extras.map((extra, index) => ( // eslint-disable-next-line react/no-array-index-key
             <IonItem
               key={index}
               color="tertiary"

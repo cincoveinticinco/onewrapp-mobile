@@ -33,6 +33,12 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   const [searchText, setSearchText] = useState('');
   const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
 
+  const removeNumberAndDot = (selectedOption: string) => {
+    const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
+    const restPart = selectedOption.replace(numberAndDotPart, '');
+    return numberAndDotPart ? restPart.trim() : selectedOption.trim();
+  };
+
   const getCheckedOptions = () => {
     const result = filterOptions[optionKey];
 
@@ -59,7 +65,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
 
   const clearFilterOptions = () => {
     setFilterOptions((prev: any) => {
-      const { [optionKey]: _, ...newOptions } = prev;
+      const { [optionKey]: unused_, ...newOptions } = prev;
       return newOptions;
     });
   };
@@ -76,12 +82,6 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
     }
   };
 
-  const removeNumberAndDot = (selectedOption: string) => {
-    const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
-    const restPart = selectedOption.replace(numberAndDotPart, '');
-    return numberAndDotPart ? restPart.trim() : selectedOption.trim();
-  };
-
   const filteredItemsOptions = filterNames.filter((option) => removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase()));
 
   return (
@@ -92,7 +92,12 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
         </p>
       </IonCol>
       <IonCol size-xs="2" size-sm="2" size-lg="1" size-xl="1" className="ion-no-margin ion-no-padding ion-flex ion-justify-content-end">
-        <IonButton id={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`} fill="clear" color="light" className="ion-no-margin ion-no-padding">
+        <IonButton
+          id={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`}
+          fill="clear"
+          color="light"
+          className="ion-no-margin ion-no-padding"
+        >
           {
             checkedOptions.length === 0 ? (
               <p className="ion-no-margin ion-no-padding">View All</p>
@@ -168,11 +173,15 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
               ? (
                 <IonItem color="tertiary">
                   {`There are no coincidences with "${searchText}". Do you want to create a `}
-                  <a style={{ marginLeft: '6px' }}>NEW ITEM</a>
+                  <a style={{ marginLeft: '6px' }} href="/">NEW ITEM</a>
                 </IonItem>
               ) : (
                 filteredItemsOptions.map((option, i) => (
-                  <IonItem color="tertiary" key={`filter-item-${i}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
+                  <IonItem
+                    color="tertiary"
+                    key={`filter-item-${i}`}
+                    className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                  >
                     <IonCheckbox
                       slot="start"
                       className="ion-no-margin ion-no-padding"

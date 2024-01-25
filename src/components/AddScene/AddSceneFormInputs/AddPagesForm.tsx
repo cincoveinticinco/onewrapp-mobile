@@ -1,4 +1,4 @@
-import { IonButton, IonInput, IonItem } from '@ionic/react';
+import { IonInput, IonItem } from '@ionic/react';
 import React, { useEffect } from 'react';
 import fractionToFloat from '../../../utils/fractionToFloat';
 
@@ -6,7 +6,7 @@ interface AddPagesFormProps {
   handleChange: (value: any, field: string) => void
 }
 
-export const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
+const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
   const [pageInteger, setPageInteger] = React.useState(0);
   const [pageFraction, setPageFraction] = React.useState(0);
 
@@ -44,3 +44,5 @@ export const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
     </>
   );
 };
+
+export default AddPagesForm;

@@ -10,7 +10,7 @@ import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
 
 import './AddSceneForm.scss';
 import useIsMobile from '../../hooks/useIsMobile';
-import { AddPagesForm } from './AddSceneFormInputs/AddPagesForm';
+import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 
 const AddScenesForm: React.FC = () => {
@@ -44,7 +44,7 @@ const AddScenesForm: React.FC = () => {
   const {
     // register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
     // getValues,
   } = useForm();
 

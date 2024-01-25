@@ -25,9 +25,13 @@
     "import/extensions": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^unused_" }],
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"]
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "react/require-default-props": "off",
+    "react/no-array-index-key": "off",
+    "react/prop-types": "off",
+    "max-len": ["error", { "code": 140 }]
   },
   "overrides": [
     {
@@ -35,5 +39,15 @@
       "rules": { "no-param-reassign": ["error", { "props": false }] }
     }
   ],
-  "ignorePatterns": ["dist/", "build/", "node_modules/", "android/"]
+  "ignorePatterns": [
+    "dist/",
+    "build/",
+    "node_modules/",
+    "android/",
+    "cypress.config.ts",
+    "vite.config.ts",
+    "cypress/e2e/*.cy.ts",
+    "cypress/support/*.ts",
+    "capacitor.config.ts"
+  ]
 }
