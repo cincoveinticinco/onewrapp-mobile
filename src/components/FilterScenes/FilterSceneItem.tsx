@@ -1,47 +1,91 @@
 import { IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem, IonList, IonModal, IonNavLink, IonRow, IonSearchbar, IonTitle, IonToolbar } from '@ionic/react'
 import { chevronBack, chevronForward, trash } from 'ionicons/icons';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './FilterSceneItem.scss';
-import { useHistory } from 'react-router';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import HighlightedFilterOption from './HighlightedFilterOptions';
+import HighlightedFilterNames from './HighlightedFilterNames';
+import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton';
+import OutlineLightButton from '../Shared/OutlineLightButton';
+import useHandleBack from '../../hooks/useHandleBack';
+import ScenesFiltersContext from '../../context/scenesFiltersContext';
 
 interface FilterSceneItemProps {
   itemOption: string;
-  filterOptions: any[];
-  handleOption?: (category: string, optionValue: string) => void;
-  handleNestedOption?: (category: string, nestedKey: string, optionValue: string) => void;
-  defineCheck: (category: string, optionValue: string, nestedKey?: string) => boolean;
+  filterNames: any[];
+  handleOptionToggle?: (category: string, optionValue: string) => void;
+  handleNestedOptionToggle?: (category: string, nestedKey: string, optionValue: string) => void;
   optionKey: string;
   nestedKey?: string;
 }
 
 const FilterSceneItem: React.FC<FilterSceneItemProps> = ( { 
   itemOption,
-  filterOptions,
-  handleOption,
-  handleNestedOption,
+  filterNames,
+  handleOptionToggle,
+  handleNestedOptionToggle,
   optionKey,
-  defineCheck,
   nestedKey }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
   const isMobile = useIsMobile();
   const [searchText, setSearchText] = useState('')
+  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
 
+  const getCheckedOptions = () => {
+    const result = filterOptions[optionKey];
+
+    if(result && !nestedKey) {
+      return result
+    } else if(Array.isArray(result) && result[0] && nestedKey) { 
+      return result[0][nestedKey]
+    } 
+
+    return []
+  }
+
+
+
+  const checkedOptions = getCheckedOptions() || []
+
+  const isFilterOptionChecked = (option: string) => {
+    return checkedOptions.includes(removeNumberAndDot(option))
+  }
+
+  const handleCheckboxToggle = (option: string) => {
+    if (nestedKey && handleNestedOptionToggle) {
+      handleNestedOptionToggle(optionKey, nestedKey, removeNumberAndDot(option));
+    } else if (handleOptionToggle) {
+      handleOptionToggle(optionKey, option);
+    }
+  };
+
+  const clearFilterOptions = () => {
+    setFilterOptions((prev: any) => {
+      const { [optionKey]: _, ...newOptions } = prev;
+      return newOptions;
+    });
+  };
+
+  const capitalizeString = (str: string): string => {
+    const words = str.split(' ') || [];
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    return capitalizedWords.join(' ');
+  };
+
+  
   const handleBack = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
   }
 
-  const deleteNumberAndDot = (optionString: string) => {
-    const numberAndDotPart = optionString.match(/^[0-9]+\./)?.[0] || '';
-    const restPart = optionString.replace(numberAndDotPart, '');
-    return numberAndDotPart ? restPart.trim() : optionString.trim();
+  const removeNumberAndDot = (selectedOption: string) => {
+    const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
+    const restPart = selectedOption.replace(numberAndDotPart, '');
+    return numberAndDotPart ? restPart.trim() : selectedOption.trim();
   }
 
-  const filteredOptions = filterOptions.filter((option) =>
-    deleteNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase())
+  const filteredItemsOptions = filterNames.filter((option) =>
+    removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase())
   );
 
   return (
@@ -53,8 +97,24 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ( {
       </IonCol>
       <IonCol size-xs="2" size-sm="2" size-lg="1" size-xl="1" className='ion-no-margin ion-no-padding ion-flex ion-justify-content-end'>
         <IonButton id={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`} fill='clear' color='light' className='ion-no-margin ion-no-padding'>
-          View All
-          <IonIcon icon={chevronForward} />
+        {
+          checkedOptions.length === 0 ? (
+            <p className='ion-no-margin ion-no-padding'>View All</p>
+          ) : (
+            <p
+              className='ion-no-margin ion-no-padding'
+              style={{ color: 'var(--ion-color-primary)' }}
+            >
+              {checkedOptions.map((option: string, index: number) => (
+                <span key={`checked-option-${index}`}>
+                  {index > 0 && ", "}
+                  {capitalizeString(option)}
+                </span>
+              ))}
+            </p>
+          )
+        }
+          <IonIcon color={checkedOptions.length > 0 ? 'primary' : 'light' } icon={chevronForward} />
         </IonButton>
       </IonCol>
       <IonModal 
@@ -70,7 +130,12 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ( {
                 <IonButton fill='clear' color="primary" slot='start' onClick={handleBack}>
                   BACK
                 </IonButton>
-                <IonButton fill='clear' color="primary" slot='end'>
+                <IonButton
+                  fill='clear' 
+                  color="primary" 
+                  slot='end'
+                  onClick={clearFilterOptions}
+                >
                   RESET
                 </IonButton>
               </>
@@ -98,41 +163,39 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ( {
               cancelButtonIcon={trash}
               ></IonSearchbar>
             </IonToolbar>
-            <IonList color='tertiary' className='ion-no-padding ion-no-margin'>
-              { filteredOptions.length === 0 ? 
+            <IonList color='tertiary' className='ion-no-padding ion-margin filters-options-list'>
+              { filteredItemsOptions.length === 0 ? 
                 (
                   <IonItem color='tertiary'>
                     {`There are no coincidences with "${searchText}". Do you want to create a `}
                     <a style={{ marginLeft: '6px' }}>NEW ITEM</a>
                   </IonItem>
                 ) : (
-                filteredOptions.map((option, index) => (
-                  <IonItem color="tertiary" key={`filter-item-${index}`} className='sort-option-item filter-item ion-no-margin ion-no-padding'>
+                filteredItemsOptions.map((option, index) => (
+                  <IonItem color="tertiary" key={`filter-item-${index}`} className='checkbox-item-option filter-item ion-no-margin ion-no-padding'>
                     <IonCheckbox 
                       slot='start' 
-                      className='sort-option-checkbox ion-padding'
+                      className='ion-no-margin ion-no-padding'
                       labelPlacement='end'
-                      onClick={() => {
-                        if (nestedKey && handleNestedOption) {
-                          // Nested Options
-                          handleNestedOption(optionKey, nestedKey, deleteNumberAndDot(option));
-                        } else if (handleOption) {
-                          // Normal Options
-                          handleOption(optionKey, option);
-                        }
-                      }}
-                      checked={
-                        !nestedKey ? 
-                        defineCheck(optionKey, option) :
-                        defineCheck(optionKey, deleteNumberAndDot(option), nestedKey)
-                      }
+                      onClick={() => handleCheckboxToggle(option)} 
+                      checked={isFilterOptionChecked(option)}
                     >
-                      { <HighlightedFilterOption option={option.toUpperCase()} /> }
+                    {
+                      <HighlightedFilterNames
+                        option={option.toUpperCase()} 
+                        checked={() => { return isFilterOptionChecked(option)}}
+                      /> 
+                    }
                     </IonCheckbox>
                   </IonItem>
                 )))
               }
             </IonList>
+            <OutlinePrimaryButton buttonName='CONFIRM' onClick={handleBack} className='ion-margin' />
+            {
+              isMobile &&
+              <OutlineLightButton buttonName='CANCEL' onClick={handleBack} className='ion-margin' />
+            }
           </IonContent>
       </IonModal>
     </IonRow>
