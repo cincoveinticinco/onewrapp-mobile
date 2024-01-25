@@ -1,3 +1,5 @@
+/* CUSTOMIZED FLEX STYLES */
+
 .center-flex-row {
   display: flex;
   justify-content: center;
@@ -15,6 +17,8 @@
   display: flex;
 }
 
+/* BUTTONS GENERAL STYLES */
+
 .reset-button {
   background: none;
   border: none;
@@ -28,6 +32,7 @@ button:active {
 
 ion-button {
   font-size: var(--525-common-text-size);
+  text-transform: none;
 }
 
 ion-button.outline-light-button {
@@ -65,8 +70,34 @@ ion-button.filled-primary-button {
   --border-color: var(--ion-color-primary);
   --border-style: solid;
   --border-width: 1px;
+
+  @media (min-width: 500px) {
+    max-width: 250px;
+    margin: auto;
+    margin-top: 20%;
+  }
 }
 
 ion-toolbar {
   --border-color: var(--ion-color-dark);
+}
+
+/* CHECKBOX STYLES */
+
+.checkbox-item-option {
+  border-bottom: 1px solid black;
+  box-shadow: none;
+  outline: 2px solid black;
+
+  ion-checkbox {
+    --size: 16px;
+    --checkbox-background-checked: var(--ion-color-yellow);
+  }
+
+  ion-checkbox::part(container) {
+    border: 1px solid black;
+    border-radius: 100%;
+    margin: 12px;
+    padding: 6px;
+  }
 }

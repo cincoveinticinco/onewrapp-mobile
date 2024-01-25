@@ -14,7 +14,7 @@ const SortItem: React.FC<SortItemProps> = ({ sortOption }) => {
         <IonIcon className="ion-no-padding ion-no-margin" icon={appsSharp} />
       </IonButton>
       <IonCheckbox
-        className='sort-option-checkbox'
+        className='checkbox-item-option'
         slot="start"
         labelPlacement='end'
       >
