@@ -3,12 +3,12 @@ import {
   IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol, IonItem, IonNav, IonIcon, IonButton,
 } from '@ionic/react';
 import { Redirect } from 'react-router';
+import {
+  menu,
+} from 'ionicons/icons';
 import { useAuth } from '../../context/auth';
 import { projects } from '../../data';
 import ProjectCard from '../../components/Projects/ProjectCard';
-import {
-  menu
-} from 'ionicons/icons';
 import Toolbar from '../../components/Shared/Toolbar';
 
 const Projects: React.FC = () => {
@@ -21,7 +21,7 @@ const Projects: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name="Projects" search={true}/>
+        <Toolbar name="Projects" search />
       </IonHeader>
       <IonContent className="ion-padding" color="tertiary">
         <IonGrid>

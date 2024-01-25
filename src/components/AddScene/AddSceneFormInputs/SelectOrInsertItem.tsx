@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { IonItem, IonLabel, IonSelect, IonSelectOption, IonInput } from '@ionic/react';
+import {
+  IonItem, IonLabel, IonSelect, IonSelectOption, IonInput,
+} from '@ionic/react';
 
 interface SelectOrInsertItemProps {
   label: string;
@@ -18,7 +20,7 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
   onInputChange,
   onSelectChange,
   options,
-  inputName
+  inputName,
 }) => {
   const [isInsertMode, setIsInsertMode] = useState(selectValue === 'INSERT');
 
@@ -30,7 +32,7 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
   return (
     <>
       <IonItem color="tertiary" id={inputName}>
-        <IonSelect placeholder="SELECT OR INSERT" label={label} labelPlacement='stacked' interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
+        <IonSelect placeholder="SELECT OR INSERT" label={label} labelPlacement="stacked" interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
           {options.map((option, index) => (
             <IonSelectOption key={`selorin-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
           ))}
@@ -38,8 +40,8 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
         </IonSelect>
       </IonItem>
       {isInsertMode && (
-        <IonItem color="tertiary" className='add-scente-input-insert'>
-          <IonInput clearInput={true} placeholder={inputPlaceholder} onIonChange={onInputChange} class='add-scene-input'/>
+        <IonItem color="tertiary" className="add-scente-input-insert">
+          <IonInput clearInput placeholder={inputPlaceholder} onIonChange={onInputChange} class="add-scene-input" />
         </IonItem>
       )}
     </>

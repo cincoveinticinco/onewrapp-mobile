@@ -15,6 +15,6 @@ const useHideTabs = () => {
       }
     };
   }, []);
-}
+};
 
 export default useHideTabs;

@@ -12,10 +12,9 @@ export function getUniqueValuesFromNestedArray(items: any, arrayKey: any, valueK
 }
 
 const data = [
-  { characterArray: [{ characterName: "Daniel", color: "red" }]},
-  { characterArray: [{ characterName: "Daniel", color: "blue" }, { characterName: "Fernando", color: "purple" }] }
+  { characterArray: [{ characterName: 'Daniel', color: 'red' }] },
+  { characterArray: [{ characterName: 'Daniel', color: 'blue' }, { characterName: 'Fernando', color: 'purple' }] },
 ];
 
-console.log(getUniqueValuesFromNestedArray(data, 'characterArray', 'characterName')); 
+console.log(getUniqueValuesFromNestedArray(data, 'characterArray', 'characterName'));
 // Output:[{ characterName: 'Daniel', color: 'blue' },{ characterName: 'Fernando', color: 'purple' }]
- 

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { IonInput, IonItem, IonList, IonButton, IonIcon } from '@ionic/react';
+import {
+  IonInput, IonItem, IonList, IonButton, IonIcon,
+} from '@ionic/react';
 import { trash } from 'ionicons/icons';
 import { Extra } from '../../../interfaces/scenesTypes';
 
@@ -10,18 +12,18 @@ interface AddExtraInputProps {
   id: number;
 }
 
-const AddExtraInput: React.FC<AddExtraInputProps> = ({ categoryName, toggleForm, id, handleSceneChange}) => {
+const AddExtraInput: React.FC<AddExtraInputProps> = ({
+  categoryName, toggleForm, id, handleSceneChange,
+}) => {
   const [extras, setExtras] = useState<Extra[]>([]);
   const extraNameInputRef = useRef<HTMLIonInputElement>(null);
 
   useEffect(() => {
     handleSceneChange(extras, 'extras');
-  }, [extras])
+  }, [extras]);
 
   const deleteExtra = (index: number) => {
-    setExtras(currentExtras => 
-      currentExtras.filter((_, i) => i !== index)
-    );
+    setExtras((currentExtras) => currentExtras.filter((_, i) => i !== index));
   };
 
   const addExtra = () => {
@@ -29,12 +31,12 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({ categoryName, toggleForm,
     if (!newExtraName) return;
 
     const newExtra: Extra = {
-      categoryName: categoryName,
+      categoryName,
       extraName: newExtraName,
     };
 
-    setExtras(currentExtras => [...currentExtras, newExtra]);
-    toggleForm(id)
+    setExtras((currentExtras) => [...currentExtras, newExtra]);
+    toggleForm(id);
 
     if (extraNameInputRef.current) {
       extraNameInputRef.current.value = '';
@@ -45,36 +47,36 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({ categoryName, toggleForm,
     <>
       {extras.length > 0 && (
         <IonList
-           className='ion-no-padding ion-no-margin'
+          className="ion-no-padding ion-no-margin"
         >
           {extras.map((extra, index) => (
-            <IonItem 
+            <IonItem
               key={index}
-              color='tertiary'
-              className='ion-no-margin category-items'
+              color="tertiary"
+              className="ion-no-margin category-items"
             >
               {extra.extraName}
-              <IonButton color="danger" fill='clear' slot='end' onClick={() => deleteExtra(index)}>
+              <IonButton color="danger" fill="clear" slot="end" onClick={() => deleteExtra(index)}>
                 <IonIcon icon={trash} />
               </IonButton>
             </IonItem>
           ))}
         </IonList>
       )}
-        <IonItem
-          style={{ display: 'none'}}
-          id={`extra-form-${id}`}
-          color="tertiary"
-        >
-          <IonInput 
-            placeholder='Extra Name'
-            ref={extraNameInputRef}
-            clearInput={true}
-          />
-          <IonButton onClick={addExtra}>Add Extra</IonButton>
-        </IonItem>
+      <IonItem
+        style={{ display: 'none' }}
+        id={`extra-form-${id}`}
+        color="tertiary"
+      >
+        <IonInput
+          placeholder="Extra Name"
+          ref={extraNameInputRef}
+          clearInput
+        />
+        <IonButton onClick={addExtra}>Add Extra</IonButton>
+      </IonItem>
     </>
   );
-}
+};
 
 export default AddExtraInput;

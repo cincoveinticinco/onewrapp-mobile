@@ -1,14 +1,14 @@
-import React from 'react'
-import { useHistory } from 'react-router'
+import React from 'react';
+import { useHistory } from 'react-router';
 
 const useHandleBack = () => {
-  const history = useHistory()
+  const history = useHistory();
 
   const handleBack = () => {
-    history.goBack()
-  }
+    history.goBack();
+  };
 
-  return handleBack
-}
+  return handleBack;
+};
 
-export default useHandleBack
+export default useHandleBack;

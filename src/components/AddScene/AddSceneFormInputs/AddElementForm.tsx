@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle } from '@ionic/react';
+import {
+  IonItem, IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
+} from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddElementInput from './AddElementInput';
 
@@ -28,67 +30,70 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
   };
 
   const removeCategory = (categoryName: string) => {
-    const updatedCategories = categories.filter(category => category !== categoryName);
+    const updatedCategories = categories.filter((category) => category !== categoryName);
     setCategories(updatedCategories);
   };
 
   return (
     <>
-      <div className='category-item-title ion-flex ion-justify-content-between'>
-        <p className='ion-flex ion-align-items-center'>
+      <div className="category-item-title ion-flex ion-justify-content-between">
+        <p className="ion-flex ion-align-items-center">
           Elements
         </p>
-        <IonButton fill="clear" color="light" id="element-category-alert" slot='end' className='ion-no-padding'>
+        <IonButton fill="clear" color="light" id="element-category-alert" slot="end" className="ion-no-padding">
           <IonIcon icon={add} />
         </IonButton>
       </div>
       <IonAlert
-        trigger='element-category-alert'
-        header='Please, enter an element category name'
+        trigger="element-category-alert"
+        header="Please, enter an element category name"
         buttons={[
           {
             text: 'OK',
-            handler: handleOk
-          }
+            handler: handleOk,
+          },
         ]}
         inputs={[
           {
             name: 'categoryName',
             type: 'text',
             placeholder: 'Element Category Name',
-            id: 'add-element-category-input'
-          }
+            id: 'add-element-category-input',
+          },
         ]}
-      ></IonAlert>
+      />
 
       {
-        categories.length === 0 &&
-        <IonCard color="tertiary" className='no-items-card'>
+        categories.length === 0
+        && (
+        <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
-            <IonCardSubtitle className='no-items-card-title'>
+            <IonCardSubtitle className="no-items-card-title">
               NO ELEMENTS ADDED TO THIS STRIP
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
+        )
       }
 
-      {categories.length > 0 && 
-        <IonGrid className='add-scene-items-card-grid'>
+      {categories.length > 0
+        && (
+        <IonGrid className="add-scene-items-card-grid">
           {categories.map((category, index) => (
-            <IonCard 
+            <IonCard
               key={index}
               color="tertiary"
-              className='add-scene-items-card ion-no-border'
+              className="add-scene-items-card ion-no-border"
             >
-            <IonCardHeader className='ion-flex'>
-                <div className='ion-flex ion-justify-content-between'>
-                  <IonCardSubtitle className='ion-flex ion-align-items-center'>
+              <IonCardHeader className="ion-flex">
+                <div className="ion-flex ion-justify-content-between">
+                  <IonCardSubtitle className="ion-flex ion-align-items-center">
                     {category}
                   </IonCardSubtitle>
-                  <IonButton 
-                    size='small' 
-                    onClick={() => {toggleForm(index)}}
-                    fill='clear'
+                  <IonButton
+                    size="small"
+                    onClick={() => { toggleForm(index); }}
+                    fill="clear"
                     color="light"
                   >
                     <IonIcon icon={add} />
@@ -103,10 +108,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
                   handleSceneChange={handleSceneChange}
                 />
               </IonCardContent>
-            </IonCard>  
+            </IonCard>
           ))}
-        </IonGrid>  
-      }
+        </IonGrid>
+        )}
     </>
   );
 };

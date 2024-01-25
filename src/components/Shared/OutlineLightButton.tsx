@@ -1,5 +1,5 @@
-import { IonButton } from '@ionic/react'
-import React from 'react'
+import { IonButton } from '@ionic/react';
+import React from 'react';
 
 interface OutlineLightButtonProps {
   buttonName: string,
@@ -7,16 +7,14 @@ interface OutlineLightButtonProps {
   className?: string
 }
 
-const OutlineLightButton: React.FC<OutlineLightButtonProps> = ({buttonName, onClick, className}) => {
-  return (
+const OutlineLightButton: React.FC<OutlineLightButtonProps> = ({ buttonName, onClick, className }) => (
   <IonButton
-    expand='block' 
+    expand="block"
     onClick={onClick}
-    className={'outline-light-button ' + className }
+    className={`outline-light-button ${className}`}
   >
     {buttonName}
   </IonButton>
-  )
-}
+);
 
-export default OutlineLightButton
+export default OutlineLightButton;

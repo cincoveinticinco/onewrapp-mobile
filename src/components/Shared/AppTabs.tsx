@@ -1,4 +1,6 @@
-import { useRouteMatch, Redirect, Route, useParams } from 'react-router-dom';
+import {
+  useRouteMatch, Redirect, Route, useParams,
+} from 'react-router-dom';
 import {
   IonIcon,
   IonLabel,
@@ -42,8 +44,6 @@ const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
   const { url } = useRouteMatch();
 
-
-
   return (
     <IonTabs>
       <IonRouterOutlet>
@@ -82,37 +82,37 @@ const AppTabs: React.FC = () => {
         </Route>
         <Redirect exact from={`${url}`} to={`${url}/strips`} />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom" className='app-tabs-container' color='dark'>
+      <IonTabBar slot="bottom" className="app-tabs-container" color="dark">
         <IonTabButton tab="calendar" href={`${url}/strips`}>
-          <IonIcon icon={calendar} className='tab-bar-icons'/>
+          <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
         <IonTabButton tab="strips" href={`${url}/strips`}>
-          <IonIcon icon={list} className='tab-bar-icons'/>
+          <IonIcon icon={list} className="tab-bar-icons" />
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="stripboard" href={`${url}/stripboard`}>
-          <IonIcon icon={calendar} className='tab-bar-icons'/>
+          <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
         <IonTabButton tab="cast" href={`${url}/cast`}>
-          <IonIcon icon={people} className='tab-bar-icons'/>
+          <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
         <IonTabButton tab="sets" href={`${url}/sets`}>
-          <IonIcon icon={business} className='tab-bar-icons'/>
+          <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="elements" href={`${url}/elements`}>
-          <IonIcon icon={business} className='tab-bar-icons'/>
+          <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="reports" href={`${url}/reports`}>
-          <IonIcon icon={reader} className='tab-bar-icons'/>
+          <IonIcon icon={reader} className="tab-bar-icons" />
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" href={`${url}/settings`}>
-          <IonIcon icon={settings} className='tab-bar-icons'/>
+          <IonIcon icon={settings} className="tab-bar-icons" />
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
       </IonTabBar>

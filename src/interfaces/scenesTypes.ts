@@ -1,7 +1,7 @@
 export interface Character {
   categoryName: string;
   characterName: string;
-  characterNum: number;
+  characterNum: string | null;
 }
 
 export interface Extra {
@@ -15,30 +15,30 @@ export interface Element {
 }
 
 export interface Note {
-  email: string;
-  note: string;
+  email: string | null;
+  note: string | null;
 }
 
 export interface Scene {
-  id: string;
-  projectId: string;
-  episodeNumber: number;
-  sceneNumber: string;
-  sceneType: 'scene' | 'protection';
-  protectionType: 'voice Off' | 'image' | 'stock image' | 'video' | 'stock video' | 'multimedia' | 'other' | null;
-  intOrExtOption: 'INT' | 'EXT' | 'INT/EXT' | 'EXT/INT' | null;
-  dayOrNightOption: 'day' | 'night' | 'sunset' | 'sunrise' | null;
-  locationName: string | null;
-  setName: string;
-  scriptDay: string | null;
-  year: string | null;
-  synopsis: string | null;
-  page: number;
-  pages: number;
-  estimatedSeconds: number | null;
-  characters: Character[];
-  extras: Extra[] | null; // Extra[] | null; ??
-  elements: Element[];
-  notes: Note[];
-  updatedAt: string;
+  id?: string | null;
+  projectId?: string | null;
+  episodeNumber?: string | null;
+  sceneNumber?: string | null;
+  sceneType?: string | null;
+  protectionType?: string| null;
+  intOrExtOption?: string | null;
+  dayOrNightOption?: string | null;
+  locationName?: string | null;
+  setName?: string | null;
+  scriptDay?: string | null;
+  year?: string | null;
+  synopsis?: string | null;
+  page?: number | null;
+  pages?: number | null;
+  estimatedSeconds?: number | null;
+  characters?: Character[] | null;
+  extras?: Extra[] | null;
+  elements?: Element[] | null;
+  notes?: Note[] | null;
+  updatedAt?: string | null;
 }

@@ -9,20 +9,19 @@ interface InputItemProps {
   inputName: string;
 }
 
-const InputItem: React.FC<InputItemProps> = ({ label, placeholder, value, onChange, inputName }) => {
-  return (
-    <IonItem color="tertiary" id={inputName}>
-      <IonInput 
-        placeholder={placeholder} 
-        label={label} 
-        labelPlacement='stacked' 
-        value={value} 
-        onIonChange={onChange}
-        class='add-scene-input'
-        
-      />
-    </IonItem>
-  );
-};
+const InputItem: React.FC<InputItemProps> = ({
+  label, placeholder, value, onChange, inputName,
+}) => (
+  <IonItem color="tertiary" id={inputName}>
+    <IonInput
+      placeholder={placeholder}
+      label={label}
+      labelPlacement="stacked"
+      value={value}
+      onIonChange={onChange}
+      class="add-scene-input"
+    />
+  </IonItem>
+);
 
 export default InputItem;
