@@ -3,32 +3,32 @@ import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { DatabaseSchema } from './database_schema';
+import DatabaseSchema from './database_schema';
 
-export class AppDataBase {
-    private _dbName = 'onewrappdb'
+export default class AppDataBase {
+    private dbName = 'onewrappdb'
 
-    private _dbPassword = ''
+    private dbPassword = ''
 
     private dbInstence;
 
-    private _schemaList;
+    private schemaList;
 
     public schemaByName(nameSchema:any) {
-      return this._schemaList.find((x) => x instanceof nameSchema);
+      return this.schemaList.find((x) => x instanceof nameSchema);
     }
 
-    constructor(_schemaList: DatabaseSchema[]) {
-      this._schemaList = _schemaList;
+    constructor(schemaList: DatabaseSchema[]) {
+      this.schemaList = schemaList;
 
       const storage = wrappedValidateAjvStorage({
         storage: getRxStorageDexie(),
       });
 
       this.dbInstence = createRxDatabase({
-        name: this._dbName,
+        name: this.dbName,
         storage,
-        // password: this._dbPassword,
+        // password: this.dbPassword,
         multiInstance: false,
       });
 
@@ -38,8 +38,6 @@ export class AppDataBase {
 
       // TO-DO: Only use in DEV
       addRxPlugin(RxDBDevModePlugin);
-
-      console.log('[DATABASE CREATION]', 'RXDB succsessfully created');
     }
 
     private async setCollections() {
@@ -47,7 +45,7 @@ export class AppDataBase {
 
       const schemaObject:any = {};
 
-      this._schemaList.forEach((schema) => {
+      this.schemaList.forEach((schema) => {
         schemaObject[schema.SchemaName()] = {
           schema: schema.Schema(),
         };
@@ -57,12 +55,12 @@ export class AppDataBase {
     }
 
     public getCollections() {
-      return this._schemaList;
+      return this.schemaList;
     }
 
   // private doSync() {
-  //     const url_string = window.location.href;
-  //     const url = new URL(url_string);
+  //     const urlstring = window.location.href;
+  //     const url = new URL(urlstring);
   //     const shouldSync = url.searchParams.get('sync');
   //     if (shouldSync && shouldSync.toLowerCase() === 'false') {
   //         return false;

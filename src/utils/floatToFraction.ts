@@ -1,4 +1,4 @@
-export function floatToFraction(number: number) {
+export default function floatToFraction(number: number) {
   const denominator = 8;
   const integerPart = Math.floor(number);
   const fractionalPart = number - integerPart;

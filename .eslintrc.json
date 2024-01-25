@@ -7,7 +7,8 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "extends": [
     "airbnb",
@@ -20,11 +21,17 @@
     "react/jsx-filename-extension": ["warn", { "extensions": [".ts", ".tsx"] }],
     "react/react-in-jsx-scope": "off",
     "import/no-unresolved": "off",
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "import/extensions": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"]
   },
   "overrides": [
     {
-      "files": ["src/**/*Slice.js"],
+      "files": ["src/**/*Slice.ts"],
       "rules": { "no-param-reassign": ["error", { "props": false }] }
     }
   ],

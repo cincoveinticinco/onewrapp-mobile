@@ -1,14 +1,4 @@
-import { DatabaseSchema } from '../database_schema';
-
-export class ScenesSchema extends DatabaseSchema {
-  static schemaName = 'scenes'
-
-  constructor() {
-    const { schemaName } = ScenesSchema;
-    const schemaInput = sceneSchemaInput;
-    super(schemaName, schemaInput);
-  }
-}
+import DatabaseSchema from '../database_schema';
 
 const sceneSchema = {
   title: 'scene schema',
@@ -130,3 +120,13 @@ const sceneSchemaInput = {
     headerFields: ['Authorization'],
   },
 };
+
+export default class ScenesSchema extends DatabaseSchema {
+  static schemaName = 'scenes'
+
+  constructor() {
+    const { schemaName } = ScenesSchema;
+    const schemaInput = sceneSchemaInput;
+    super(schemaName, schemaInput);
+  }
+}

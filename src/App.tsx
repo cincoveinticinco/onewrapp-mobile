@@ -10,9 +10,9 @@ import { AuthContext } from './context/auth';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs';
-import { AppDataBase } from './RXdatabase/database';
-import { ProjectsSchema } from './RXdatabase/schemas/projects';
-import { ScenesSchema } from './RXdatabase/schemas/scenes';
+import AppDataBase from './RXdatabase/database';
+import ProjectsSchema from './RXdatabase/schemas/projects';
+import ScenesSchema from './RXdatabase/schemas/scenes';
 import { DatabaseContext } from './context/database';
 import { ScenesFiltersProvider } from './context/scenesFiltersContext';
 

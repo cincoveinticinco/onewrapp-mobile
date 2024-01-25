@@ -1,6 +1,6 @@
 import { IonButton, IonInput, IonItem } from '@ionic/react';
 import React, { useEffect } from 'react';
-import { fractionToFloat } from '../../../utils/fractionToFloat';
+import fractionToFloat from '../../../utils/fractionToFloat';
 
 interface AddPagesFormProps {
   handleChange: (value: any, field: string) => void

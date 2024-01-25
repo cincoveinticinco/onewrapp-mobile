@@ -1,14 +1,4 @@
-import { DatabaseSchema } from '../database_schema';
-
-export class ProjectsSchema extends DatabaseSchema {
-  static schemaName = 'projects'
-
-  constructor() {
-    const { schemaName } = ProjectsSchema;
-    const schemaInput = projectSchemaInput;
-    super(schemaName, schemaInput);
-  }
-}
+import DatabaseSchema from '../database_schema';
 
 const projectSchema = {
   title: 'project schema',
@@ -61,6 +51,16 @@ const projectSchemaInput = {
     headerFields: ['Authorization'],
   },
 };
+
+export default class ProjectsSchema extends DatabaseSchema {
+  static schemaName = 'projects'
+
+  constructor() {
+    const { schemaName } = ProjectsSchema;
+    const schemaInput = projectSchemaInput;
+    super(schemaName, schemaInput);
+  }
+}
 
 // LOS PROYECTOS QUE ESTEN EN DESARROLLO
 // COLOR BLANCO

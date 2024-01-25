@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  IonItem, IonLabel, IonSelect, IonSelectOption, IonInput,
+  IonItem, IonSelect, IonSelectOption, IonInput,
 } from '@ionic/react';
 
 interface SelectOrInsertItemProps {
@@ -33,8 +33,8 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
     <>
       <IonItem color="tertiary" id={inputName}>
         <IonSelect placeholder="SELECT OR INSERT" label={label} labelPlacement="stacked" interface="popover" value={isInsertMode ? 'INSERT' : selectValue} onIonChange={handleSelectChange}>
-          {options.map((option, index) => (
-            <IonSelectOption key={`selorin-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
+          {options.map((option, i) => (
+            <IonSelectOption key={`selorin-${option}-${i}`} value={option.value}>{option.label}</IonSelectOption>
           ))}
           <IonSelectOption value="INSERT">Insert</IonSelectOption>
         </IonSelect>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonItem, IonLabel, IonInput } from '@ionic/react';
+import { IonItem, IonInput } from '@ionic/react';
 
 interface InputItemProps {
   label: string;
@@ -10,7 +10,11 @@ interface InputItemProps {
 }
 
 const InputItem: React.FC<InputItemProps> = ({
-  label, placeholder, value, onChange, inputName,
+  label,
+  placeholder = '',
+  value,
+  onChange,
+  inputName,
 }) => (
   <IonItem color="tertiary" id={inputName}>
     <IonInput

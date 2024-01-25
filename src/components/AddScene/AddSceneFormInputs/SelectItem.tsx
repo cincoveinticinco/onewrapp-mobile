@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  IonItem, IonLabel, IonSelect, IonSelectOption,
+  IonItem, IonSelect, IonSelectOption,
 } from '@ionic/react';
 
 interface SelectItemProps {
@@ -13,12 +13,17 @@ interface SelectItemProps {
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
-  label, value, onChange, options, disabled, inputName,
+  label,
+  value,
+  onChange,
+  options,
+  disabled = false,
+  inputName,
 }) => (
   <IonItem color="tertiary" id={inputName}>
     <IonSelect placeholder="SELECT TYPE" label={label} labelPlacement="stacked" interface="popover" value={value} onIonChange={onChange} disabled={disabled}>
-      {options.map((option, index) => (
-        <IonSelectOption key={`select-${option}-${index}`} value={option.value}>{option.label}</IonSelectOption>
+      {options.map((option, i) => (
+        <IonSelectOption key={`select-${option}-${i}`} value={option.value}>{option.label}</IonSelectOption>
       ))}
     </IonSelect>
   </IonItem>

@@ -1,10 +1,11 @@
+import React from 'react';
 import {
-  IonButton, IonCheckbox, IonContent, IonHeader, IonIcon, IonItem, IonList, IonPage, IonTitle, IonToolbar,
+  IonButton, IonContent, IonHeader, IonIcon,
+  IonList, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
-import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { appsSharp, chevronBack } from 'ionicons/icons';
-import { useIsMobile } from '../../hooks/useIsMobile';
+import { chevronBack } from 'ionicons/icons';
+import useIsMobile from '../../hooks/useIsMobile';
 import './SortScenes.scss';
 import SortItem from '../../components/SortScenes/SortItem';
 import useHideTabs from '../../hooks/useHideTabs';
@@ -80,8 +81,8 @@ const SortScenes = () => {
       <IonContent color="tertiary">
         <IonList color="tertiary" className="ion-no-padding ion-margin-top sort-items-list">
           {
-          sortOptions.map((sortOption, index) => (
-            <SortItem key={`sort-item-${index}`} sortOption={sortOption} />
+          sortOptions.map((sortOption) => (
+            <SortItem key={sortOption.label} sortOption={sortOption} />
           ))
         }
         </IonList>

@@ -1,24 +1,20 @@
 import React from 'react';
 import {
-  IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol, IonItem, IonNav, IonIcon, IonButton,
+  IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol,
 } from '@ionic/react';
-import { Redirect } from 'react-router';
-import {
-  menu,
-} from 'ionicons/icons';
-import { useAuth } from '../../context/auth';
+// import { useAuth } from '../../context/auth';
 import { projects } from '../../data';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar';
 
-const Projects: React.FC = () => {
-  const { loggedIn } = useAuth();
+const Projects: React.FC = () =>
+// const { loggedIn } = useAuth();
 
-  // if (!loggedIn) {
-  //   return <Redirect to="/login" />;
-  // }
+// if (!loggedIn) {
+//   return <Redirect to="/login" />;
+// }
 
-  return (
+  (
     <IonPage>
       <IonHeader>
         <Toolbar name="Projects" search />
@@ -36,6 +32,4 @@ const Projects: React.FC = () => {
       </IonContent>
     </IonPage>
   );
-};
-
 export default Projects;

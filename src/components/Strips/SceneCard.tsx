@@ -1,16 +1,15 @@
 import React from 'react';
-import { IonRow, IonCol, IonTitle } from '@ionic/react';
+import { IonRow, IonCol } from '@ionic/react';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.css';
-import { floatToFraction } from '../../utils/floatToFraction';
-import { secondsToMinSec } from '../../utils/secondsToMinSec';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
 
 interface SceneCardProps {
   scene: Scene;
-  clickEvent: () => void;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene, clickEvent }) => {
+const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
@@ -35,9 +34,9 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, clickEvent }) => {
       characters.forEach((character) => {
         charactersString += `${character.characterName.toUpperCase()}, `;
       });
-    }
 
-    return charactersString;
+      return charactersString;
+    }
   };
 
   const defineSceneColor = (scene: Scene) => {
@@ -57,7 +56,8 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, clickEvent }) => {
       } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Night') {
         return 'primary';
       }
-      // INT/EXT EXT/INT === EXT
+
+      return 'light';
     }
   };
 
@@ -88,7 +88,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, clickEvent }) => {
   };
 
   return (
-    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => clickEvent()}>
+    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`}>
       <IonCol className="scene-card-col-1">
         <h3 className="scene-card-header">
           {getSceneHeader(scene)}
@@ -99,7 +99,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, clickEvent }) => {
         <p className="scene-card-characters">
           <strong>CHARACTERS:</strong>
           {' '}
-          {getCharacters(scene)}
+          {getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'}
           <br />
           <strong>EXTRAS: </strong>
           {' '}

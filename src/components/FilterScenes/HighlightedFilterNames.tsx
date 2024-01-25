@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface HighlightedFilterOptionProps {
+interface HighlightedFilterNamesProps {
   option: string;
   checked: () => boolean;
 }
 
-const HighlightedFilterNames: React.FC<HighlightedFilterOptionProps> = ({ option, checked }) => {
+const HighlightedFilterNames: React.FC<HighlightedFilterNamesProps> = ({ option, checked }) => {
   const startsWithNumberAndDot = /^[0-9]+\./.test(option);
 
   const defineColor = (isChecked: boolean) => {

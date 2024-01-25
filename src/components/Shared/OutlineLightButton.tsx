@@ -7,7 +7,11 @@ interface OutlineLightButtonProps {
   className?: string
 }
 
-const OutlineLightButton: React.FC<OutlineLightButtonProps> = ({ buttonName, onClick, className }) => (
+const OutlineLightButton: React.FC<OutlineLightButtonProps> = ({
+  buttonName,
+  onClick,
+  className = '',
+}) => (
   <IonButton
     expand="block"
     onClick={onClick}

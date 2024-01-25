@@ -1,12 +1,19 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import {
   IonButton,
-  IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonPage, IonToolbar,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonPage,
+  IonToolbar,
 } from '@ionic/react';
 import './Strips.css';
-import { chevronDownOutline, infinite } from 'ionicons/icons';
+import { chevronDownOutline } from 'ionicons/icons';
 import { useLocation } from 'react-router';
-import scene_data from '../../data/scn_data.json';
+import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import Toolbar from '../../components/Shared/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesFiltersContext from '../../context/scenesFiltersContext';
@@ -25,21 +32,23 @@ const Strips: React.FC = () => {
   const contentRef = React.createRef<HTMLIonContentElement>();
 
   function filterScenes(scenes: Scene[], criteria: any): Scene[] {
-    return scenes.filter((scene: any) => Object.entries(criteria).every(([key, values]: [string, any]) => {
-      if (Array.isArray(scene[key])) {
+    return scenes.filter(
+      (scene: any) => Object.entries(criteria).every(([key, values]: [string, any]) => {
+        if (Array.isArray(scene[key])) {
         // If the property is an array, check if any of the items match the criteria
-        return scene[key].some((item: any) => {
-          if (typeof values[0] === 'object') {
+          return scene[key].some((item: any) => {
+            if (typeof values[0] === 'object') {
             // Handle nested criteria for array elements
-            return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey]));
-          }
-          // Handle criteria for array elements
-          return values.includes(item);
-        });
-      }
-      // If the property is not an array, check if it matches the criteria
-      return values.includes(scene[key]);
-    }));
+              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey]));
+            }
+            // Handle criteria for array elements
+            return values.includes(item);
+          });
+        }
+        // If the property is not an array, check if it matches the criteria
+        return values.includes(scene[key]);
+      }),
+    );
   }
 
   useEffect(() => {
@@ -67,20 +76,13 @@ const Strips: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('tryingToScroll');
     contentRef.current?.scrollToTop();
   }, [thisPath]);
 
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar
-          name="LVE-STRIPS"
-          search
-          addScene
-          filter
-          elipse
-        />
+        <Toolbar name="LVE-STRIPS" search addScene filter elipse />
       </IonHeader>
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
         <IonToolbar color="tertiary" className="sort-strips-toolbar">
@@ -92,18 +94,11 @@ const Strips: React.FC = () => {
         </IonToolbar>
         <Suspense fallback={<div>Loading...</div>}>
           <IonGrid className="scenes-grid">
-            {displayedScenes.map((scene, index) => (
-              <SceneCard key={`scene-item-${index}`} scene={scene} clickEvent={() => console.log(scene)} />
+            {displayedScenes.map((scene, i) => (
+              <SceneCard key={`scene-item-${i}`} scene={scene} />
             ))}
-            <IonInfiniteScroll
-              onIonInfinite={handleInfinite}
-              threshold="100px"
-              disabled={isInfiniteDisabled}
-            >
-              <IonInfiniteScrollContent
-                loadingSpinner="bubbles"
-                loadingText="Loading more scenes..."
-              />
+            <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
+              <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
             </IonInfiniteScroll>
           </IonGrid>
         </Suspense>

@@ -1,4 +1,4 @@
-export function getUniqueValuesFromNestedArray(items: any, arrayKey: any, valueKey: any) {
+export default function getUniqueValuesFromNestedArray(items: any, arrayKey: any, valueKey: any) {
   const uniqueValues = new Map();
 
   items.forEach((item: any) => {

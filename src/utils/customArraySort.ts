@@ -1,4 +1,4 @@
-export function customArraySort(array: string[]): string[] {
+export default function customArraySort(array: string[]): string[] {
   const extractNumber = (str: string): number => {
     const match = str.match(/^(\d+)/);
     return match ? parseInt(match[1], 10) : Infinity;

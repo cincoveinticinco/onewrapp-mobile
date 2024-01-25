@@ -1,5 +1,5 @@
 import {
-  useRouteMatch, Redirect, Route, useParams,
+  useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
 import {
   IonIcon,
@@ -41,7 +41,7 @@ import './AppTabs.css';
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
-  const { loggedIn } = useAuth();
+  // const { loggedIn } = useAuth();
   const { url } = useRouteMatch();
 
   return (

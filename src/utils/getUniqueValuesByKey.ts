@@ -4,7 +4,7 @@ interface SceneWithIndexSignature extends Scene {
   [key: string]: any;
 }
 
-export function getUniqueValuesByKey(array: SceneWithIndexSignature[], key: string | number) {
+function getUniqueValuesByKey(array: SceneWithIndexSignature[], key: string | number) {
   const uniqueValues = new Set();
   array.forEach((item) => {
     if (item[key]) {
@@ -13,3 +13,4 @@ export function getUniqueValuesByKey(array: SceneWithIndexSignature[], key: stri
   });
   return Array.from(uniqueValues);
 }
+export default getUniqueValuesByKey;

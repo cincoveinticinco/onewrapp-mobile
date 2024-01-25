@@ -7,7 +7,7 @@ interface OutlinePrimaryButtonProps {
   className?: string
 }
 
-const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({ buttonName, onClick, className }) => (
+const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({ buttonName, onClick, className = '' }) => (
   <IonButton
     expand="block"
     onClick={onClick}

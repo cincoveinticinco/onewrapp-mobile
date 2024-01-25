@@ -4,27 +4,25 @@ import {
 import React from 'react';
 import { useParams } from 'react-router';
 import { chevronBack } from 'ionicons/icons';
-import { useIsMobile } from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterButtonsSelect from '../../components/FilterScenes/FilterButtonsSelect';
 import useHideTabs from '../../hooks/useHideTabs';
 import ScenesFiltersContext from '../../context/scenesFiltersContext';
 import FilterSceneItem from '../../components/FilterScenes/FilterSceneItem';
-import { getUniqueValuesByKey } from '../../utils/getUniqueValuesByKey';
-import { getUniqueValuesFromNestedArray } from '../../utils/getUniqueValuesFromNestedArray';
-import scene_data from '../../data/scn_data.json';
-import { Character, Scene } from '../../interfaces/scenesTypes';
-import { customArraySort } from '../../utils/customArraySort';
-import { sortArrayAlphabeticaly } from '../../utils/sortArrayAlphabeticaly';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import scene_data from '../../data/scn_data.json'; // eslint-disable-line
+import { Character } from '../../interfaces/scenesTypes';
+import customArraySort from '../../utils/customArraySort';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import useHandleBack from '../../hooks/useHandleBack';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
 
 const FilterScenes = () => {
-  const { id } = useParams<{ id: string }>();
-
   const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
-  const { scenes } = scene_data;
+  const { scenes } = scene_data; // eslint-disable-line
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();
@@ -81,7 +79,9 @@ const FilterScenes = () => {
       }
 
       // Remove the array if it's empty
-      updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey].length > 0);
+      updatedOptions[category] = updatedOptions[category].filter(
+        (opt: any) => opt[nestedKey].length > 0,
+      );
 
       // Remove the category if there are no more categories in the object
       if (updatedOptions[category].length === 0) {
@@ -211,7 +211,7 @@ const FilterScenes = () => {
 
           <FilterSceneItem
             itemOption="EPISODES"
-            filterNames={getUniqueValuesByKey(scenes, 'episodeNumber')}
+            filterNames={getUniqueValuesByKey(scenes, 'episodeNumber').map(String)}
             handleOptionToggle={handleOptionToggle}
             optionKey="episodeNumber"
           />

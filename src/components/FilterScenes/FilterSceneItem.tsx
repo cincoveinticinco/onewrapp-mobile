@@ -1,19 +1,19 @@
+import React, { useState } from 'react';
 import {
-  IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem, IonList, IonModal, IonNavLink, IonRow, IonSearchbar, IonTitle, IonToolbar,
+  IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
+  IonList, IonModal, IonRow, IonSearchbar, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { chevronBack, chevronForward, trash } from 'ionicons/icons';
-import React, { useEffect, useState } from 'react';
+import ScenesFiltersContext from '../../context/scenesFiltersContext';
 import './FilterSceneItem.scss';
-import { useIsMobile } from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/useIsMobile';
 import HighlightedFilterNames from './HighlightedFilterNames';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton';
 import OutlineLightButton from '../Shared/OutlineLightButton';
-import useHandleBack from '../../hooks/useHandleBack';
-import ScenesFiltersContext from '../../context/scenesFiltersContext';
 
 interface FilterSceneItemProps {
   itemOption: string;
-  filterNames: any[];
+  filterNames: string[];
   handleOptionToggle?: (category: string, optionValue: string) => void;
   handleNestedOptionToggle?: (category: string, nestedKey: string, optionValue: string) => void;
   optionKey: string;
@@ -23,10 +23,10 @@ interface FilterSceneItemProps {
 const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   itemOption,
   filterNames,
-  handleOptionToggle,
-  handleNestedOptionToggle,
+  handleOptionToggle = () => {},
+  handleNestedOptionToggle = () => {},
   optionKey,
-  nestedKey,
+  nestedKey = null,
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
   const isMobile = useIsMobile();
@@ -88,28 +88,28 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
       <IonCol size-xs="10" size-sm="10" size-lg="11" size-xl="11" className="ion-flex ion-align-items-center ion-no-margin ion-no-padding">
         <p className="ion-flex ion-align-items-center ion-no-margin">
-          { itemOption }
+          {itemOption}
         </p>
       </IonCol>
       <IonCol size-xs="2" size-sm="2" size-lg="1" size-xl="1" className="ion-no-margin ion-no-padding ion-flex ion-justify-content-end">
         <IonButton id={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`} fill="clear" color="light" className="ion-no-margin ion-no-padding">
           {
-          checkedOptions.length === 0 ? (
-            <p className="ion-no-margin ion-no-padding">View All</p>
-          ) : (
-            <p
-              className="ion-no-margin ion-no-padding"
-              style={{ color: 'var(--ion-color-primary)' }}
-            >
-              {checkedOptions.map((option: string, index: number) => (
-                <span key={`checked-option-${index}`}>
-                  {index > 0 && ', '}
-                  {capitalizeString(option)}
-                </span>
-              ))}
-            </p>
-          )
-        }
+            checkedOptions.length === 0 ? (
+              <p className="ion-no-margin ion-no-padding">View All</p>
+            ) : (
+              <p
+                className="ion-no-margin ion-no-padding"
+                style={{ color: 'var(--ion-color-primary)' }}
+              >
+                {checkedOptions.map((option: string, i: number) => (
+                  <span key={`checked-option-${i}`}>
+                    {i > 0 && ', '}
+                    {capitalizeString(option)}
+                  </span>
+                ))}
+              </p>
+            )
+          }
           <IonIcon color={checkedOptions.length > 0 ? 'primary' : 'light'} icon={chevronForward} />
         </IonButton>
       </IonCol>
@@ -123,32 +123,32 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
             {
               !isMobile
               && (
-              <>
-                <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-                  BACK
-                </IonButton>
-                <IonButton
-                  fill="clear"
-                  color="primary"
-                  slot="end"
-                  onClick={clearFilterOptions}
-                >
-                  RESET
-                </IonButton>
-              </>
+                <>
+                  <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
+                    BACK
+                  </IonButton>
+                  <IonButton
+                    fill="clear"
+                    color="primary"
+                    slot="end"
+                    onClick={clearFilterOptions}
+                  >
+                    RESET
+                  </IonButton>
+                </>
               )
-              }
+            }
 
             {
-                isMobile
-                && (
+              isMobile
+              && (
                 <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
                   <IonIcon icon={chevronBack} color="light" />
                 </IonButton>
-                )
-              }
+              )
+            }
             <IonTitle className="add-strip-toolbar-title">
-              { itemOption.toUpperCase() }
+              {itemOption.toUpperCase()}
             </IonTitle>
           </IonToolbar>
         </IonHeader>
@@ -164,15 +164,15 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
             />
           </IonToolbar>
           <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
-            { filteredItemsOptions.length === 0
+            {filteredItemsOptions.length === 0
               ? (
                 <IonItem color="tertiary">
                   {`There are no coincidences with "${searchText}". Do you want to create a `}
                   <a style={{ marginLeft: '6px' }}>NEW ITEM</a>
                 </IonItem>
               ) : (
-                filteredItemsOptions.map((option, index) => (
-                  <IonItem color="tertiary" key={`filter-item-${index}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
+                filteredItemsOptions.map((option, i) => (
+                  <IonItem color="tertiary" key={`filter-item-${i}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
                     <IonCheckbox
                       slot="start"
                       className="ion-no-margin ion-no-padding"
@@ -186,13 +186,14 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
                       />
                     </IonCheckbox>
                   </IonItem>
-                )))}
+                ))
+              )}
           </IonList>
           <OutlinePrimaryButton buttonName="CONFIRM" onClick={handleBack} className="ion-margin" />
           {
-              isMobile
-              && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />
-            }
+            isMobile
+            && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />
+          }
         </IonContent>
       </IonModal>
     </IonRow>

@@ -1,8 +1,7 @@
-import { RxDatabase } from 'rxdb';
 import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
-import { AppDataBase } from './database';
+import AppDataBase from './database';
 
-export class GraphQLReplicator {
+export default class GraphQLReplicator {
   private database: AppDataBase;
 
   private syncURL = {
@@ -14,7 +13,7 @@ export class GraphQLReplicator {
   constructor(database: AppDataBase) {
     this.database = database;
 
-    this.startReplication;
+    this.startReplication();
   }
 
   public startReplication() {

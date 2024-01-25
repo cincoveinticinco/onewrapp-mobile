@@ -2,11 +2,10 @@ import {
   IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import './AddScene.css';
-import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { chevronBack } from 'ionicons/icons';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import { useIsMobile } from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/useIsMobile';
 import useHideTabs from '../../hooks/useHideTabs';
 
 const AddScene = () => {

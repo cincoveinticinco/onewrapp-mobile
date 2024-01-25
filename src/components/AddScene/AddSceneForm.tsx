@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  IonList, IonItem, IonLabel, IonInput, IonButton, IonIcon,
-} from '@ionic/react';
 import { useForm } from 'react-hook-form';
-
-import { add } from 'ionicons/icons';
 import { useHistory } from 'react-router';
 import InputItem from './AddSceneFormInputs/InputItem';
 import SelectItem from './AddSceneFormInputs/SelectItem';
@@ -14,7 +9,7 @@ import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
 
 import './AddSceneForm.scss';
-import { useIsMobile } from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/useIsMobile';
 import { AddPagesForm } from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 
@@ -47,10 +42,10 @@ const AddScenesForm: React.FC = () => {
   });
 
   const {
-    register,
+    // register,
     handleSubmit,
     formState: { errors },
-    getValues,
+    // getValues,
   } = useForm();
 
   const handleChange = (value: any, field: any) => {
