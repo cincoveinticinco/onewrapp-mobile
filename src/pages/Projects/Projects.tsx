@@ -14,9 +14,9 @@ import Toolbar from '../../components/Shared/Toolbar';
 const Projects: React.FC = () => {
   const { loggedIn } = useAuth();
 
-  if (!loggedIn) {
-    return <Redirect to="/login" />;
-  }
+  // if (!loggedIn) {
+  //   return <Redirect to="/login" />;
+  // }
 
   return (
     <IonPage>
@@ -27,7 +27,7 @@ const Projects: React.FC = () => {
         <IonGrid>
           <IonRow>
             {projects.map((project) => (
-              <IonCol size="6" size-md="3" size-lg="4" size-sm="3" key={project.id} class="ion-no-padding">
+              <IonCol size-xs="6" size-md="3" size-lg="2" size-sm="3" key={project.id} class="ion-no-padding">
                 <ProjectCard project={project} />
               </IonCol>
             ))}
