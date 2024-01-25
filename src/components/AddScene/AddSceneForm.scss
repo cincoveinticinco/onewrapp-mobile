@@ -60,6 +60,14 @@
   }
 }
 
+#add-synopsis-input {
+  grid-column: 1 / 13;
+
+  .native-input {
+    text-align: left;
+  }
+}
+
 .estimated-minutes-input {
   grid-column: 1 / 7;
   display: grid;
@@ -73,7 +81,6 @@
     top: -4px;
     left: 16px;
     z-index: 3;
-    text-wrap: nowrap;
   }
 
   #add-scene-minutes-input {
@@ -122,14 +129,6 @@
 
 #add-set-input {
   grid-column: 1 / 13;
-}
-
-#add-synopsis-input {
-  grid-column: 1 / 13;
-
-  .native-input {
-    text-align: left;
-  }
 }
 
 .submit-scene-button {
@@ -183,7 +182,6 @@
   margin: 0;
   border: 1px solid var(--ion-color-dark);
   border-radius: 0;
-  margin: 0;
 }
 
 .category-items {

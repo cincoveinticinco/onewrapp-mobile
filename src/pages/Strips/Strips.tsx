@@ -39,7 +39,7 @@ const Strips: React.FC = () => {
           return scene[key].some((item: any) => {
             if (typeof values[0] === 'object') {
             // Handle nested criteria for array elements
-              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey])); // eslint-disable-line
+              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey]));
             }
             // Handle criteria for array elements
             return values.includes(item);

@@ -14,7 +14,13 @@
         "ignoreAtRules": ["tailwind", "apply", "variants", "responsive", "screen"]
       }
     ],
-    "csstree/validator": true
+    "csstree/validator": true,
+    "selector-type-no-unknown": [
+      true,
+      {
+        "ignoreTypes": ["/^ion/"]
+      }
+    ]
   },
   "ignoreFiles": ["build/**", "dist/**", "android/**", "**/reset*.css", "**/bootstrap*.css", "**/*.js", "**/*.jsx"]
 }
