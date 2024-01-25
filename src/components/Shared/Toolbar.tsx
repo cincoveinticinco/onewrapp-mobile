@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { IonToolbar, IonButton, IonIcon, IonTitle } from '@ionic/react';
+import { IonToolbar, IonButton, IonIcon, IonTitle, IonRouterLink, IonNavLink } from '@ionic/react';
 import { add, addOutline, ellipsisHorizontal, ellipsisHorizontalOutline, funnel, funnelOutline, menu, menuOutline, search, searchOutline } from 'ionicons/icons';
 import './Toolbar.css';
+import { Link } from 'react-router-dom';
 
 interface ToolbarProps {
   name: string,
@@ -14,10 +15,12 @@ interface ToolbarProps {
 const Toolbar:React.FC<ToolbarProps> = ({ name, search, addScene, filter, elipse}) =>{
   return (
     <IonToolbar color="tertiary" className="toolbar">
-      <IonButton slot="start" fill="clear" className="toolbar-burger-menu ion-no-padding">
+      <IonButton slot="start" fill="clear" className="toolbar-burger-menu ion-margin-bottom">
         <IonIcon icon={menuOutline} className='toolbar-icon' />
       </IonButton>
-      <IonTitle className='toolbar-title ion-no-padding' slot="start">{name}</IonTitle>
+      <Link to="/my/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <IonTitle className='toolbar-title' slot="start" >{name}</IonTitle>
+      </Link>
       {
         search 
         &&
@@ -35,7 +38,7 @@ const Toolbar:React.FC<ToolbarProps> = ({ name, search, addScene, filter, elipse
       {
         filter
         &&
-        <IonButton fill="clear" slot="end" routerLink={'filterscenes'} className='ion-no-padding toolbar-button'>
+        <IonButton fill="clear" slot="end" routerLink={'/my/projects/01/strips/filters'} className='ion-no-padding toolbar-button'>
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
         </IonButton>
       }
