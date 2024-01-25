@@ -2,7 +2,6 @@ import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import ExploreContainer from '../../components/Shared/ExploreContainer';
-import './Cast.css';
 
 const Cast: React.FC = () => (
   <IonPage>

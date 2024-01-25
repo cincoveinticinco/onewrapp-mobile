@@ -5,8 +5,8 @@ import './AddScene.css';
 import { useHistory } from 'react-router';
 import { chevronBack } from 'ionicons/icons';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import useIsMobile from '../../hooks/useIsMobile';
 import useHideTabs from '../../hooks/useHideTabs';
+import useIsMobile from '../../hooks/useIsMobile';
 
 const AddScene = () => {
   const history = useHistory();

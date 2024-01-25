@@ -6,7 +6,6 @@ import {
 import { useHistory } from 'react-router';
 import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
-import './SortScenes.scss';
 import SortItem from '../../components/SortScenes/SortItem';
 import useHideTabs from '../../hooks/useHideTabs';
 

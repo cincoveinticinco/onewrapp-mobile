@@ -3,7 +3,6 @@ import {
 } from '@ionic/react';
 import { appsSharp } from 'ionicons/icons';
 import React from 'react';
-import './SortItem.scss';
 
 interface SortItemProps {
   sortOption: any;
