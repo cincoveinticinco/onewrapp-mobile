@@ -66,6 +66,20 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-dark-shade: #000000;
 	--ion-color-dark-tint: #1a1a1a;
 
+  --ion-color-yellow: #f3fb8c;
+	--ion-color-yellow-rgb: 243,251,140;
+	--ion-color-yellow-contrast: #000000;
+	--ion-color-yellow-contrast-rgb: 0,0,0;
+	--ion-color-yellow-shade: #d6dd7b;
+	--ion-color-yellow-tint: #f4fb98;
+
+  --ion-color-rose: #fdc6f7;
+	--ion-color-rose-rgb: 253,198,247;
+	--ion-color-rose-contrast: #000000;
+	--ion-color-rose-contrast-rgb: 0,0,0;
+	--ion-color-rose-shade: #dfaed9;
+	--ion-color-rose-tint: #fdccf8;
+
   /* CUSTOM 525 VARIABLES */
   
   --525-common-text-size: 12px;
