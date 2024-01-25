@@ -1,6 +1,6 @@
-import { IonButton, IonCardSubtitle, IonCheckbox, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonList, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react'
-import React, { useEffect } from 'react'
-import { useHistory, useParams } from 'react-router';
+import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react'
+import React from 'react'
+import { useParams } from 'react-router';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { chevronBack } from 'ionicons/icons';
 import './FilterScenes.scss';
@@ -14,6 +14,9 @@ import scene_data from '../../data/scn_data.json';
 import { Character, Scene } from '../../interfaces/scenesTypes';
 import { customArraySort } from '../../utils/customArraySort';
 import { sortArrayAlphabeticaly } from '../../utils/sortArrayAlphabeticaly';
+import useHandleBack from '../../hooks/useHandleBack';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
 
 
 const FilterScenes = () => {
@@ -22,15 +25,11 @@ const FilterScenes = () => {
 
   const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
   const scenes = scene_data.scenes;
-  const history = useHistory();
+  const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleFilterOption = (category: string, optionValue: string) => {
+  const handleOptionToggle = (category: string, optionValue: string) => {
     
     setFilterOptions((prevOptions: any) => {
       const updatedOptions = prevOptions[category] ? [...prevOptions[category]] : [];
@@ -54,48 +53,47 @@ const FilterScenes = () => {
     });
   };
 
-const handleNestedFilterOption = (category: string, nestedKey: string, optionValue: string) => {
-  setFilterOptions((prevOptions: any) => {
-    const updatedOptions = { ...prevOptions };
+  const handleNestedOptionToggle = (category: string, nestedKey: string, optionValue: string) => {
+    setFilterOptions((prevOptions: any) => {
+      const updatedOptions = { ...prevOptions };
+  
+      // Create the category if it doesn't exist
+      updatedOptions[category] = updatedOptions[category] || [];
+  
+      // Find the specific object for the nestedKey
+      const nestedKeyObject = updatedOptions[category].find((opt: any) => opt[nestedKey]);
+  
+      // Create the object if it doesn't exist
+      if (!nestedKeyObject) {
+        updatedOptions[category].push({ [nestedKey]: [] });
+      }
+  
+      // Find the specific array for the nestedKey
+      const nestedKeyArray = updatedOptions[category].find((opt: any) => opt[nestedKey]);
+  
+      // Check if optionValue is already in the nestedKey array
+      const valueIndex = nestedKeyArray[nestedKey].indexOf(optionValue);
+  
+      // Toggle the optionValue
+      if (valueIndex > -1) {
+        nestedKeyArray[nestedKey].splice(valueIndex, 1);
+      } else {
+        nestedKeyArray[nestedKey].push(optionValue);
+      }
+  
+      // Remove the array if it's empty
+      updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey].length > 0);
+  
+      // Remove the category if there are no more categories in the object
+      if (updatedOptions[category].length === 0) {
+        delete updatedOptions[category];
+      }
+  
+      return updatedOptions;
+    });
+  };
 
-    // If the category doesn't exist, create it
-    if (!updatedOptions[category]) {
-      updatedOptions[category] = [];
-    }
-
-    const categoryOptions = updatedOptions[category];
-
-    // Check if the nestedKey exists in the categoryOptions
-    const nestedOptions = categoryOptions.find((opt: any) => opt[nestedKey]);
-
-    // If the nestedKey doesn't exist, create it
-    if (!nestedOptions) {
-      updatedOptions[category].push({ [nestedKey]: [] });
-    }
-
-    // Find the specific nestedKey array
-    const nestedKeyArray = updatedOptions[category].find((opt: any) => opt[nestedKey]);
-
-    // Check if the optionValue is already in the nestedKey array
-    const valueIndex = nestedKeyArray[nestedKey].indexOf(optionValue);
-
-    // Toggle the optionValue
-    if (valueIndex > -1) {
-      nestedKeyArray[nestedKey].splice(valueIndex, 1);
-    } else {
-      nestedKeyArray[nestedKey].push(optionValue);
-    }
-
-    // If the nestedKey array is empty, remove it
-    if (nestedKeyArray[nestedKey].length === 0) {
-      updatedOptions[category] = categoryOptions.filter((opt: any) => opt[nestedKey].length > 0);
-    }
-
-    return updatedOptions;
-  });
-};
-
-  const defineFilterButtonClass = (optionValue: string, category: string) => {
+  const getFilterButtonClass = (optionValue: string, category: string) => {
 
     if(filterOptions[category] && filterOptions[category].includes(optionValue)) {
       return 'filled-primary-button';
@@ -104,22 +102,14 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
     }
   }
 
-  const defineCheckedFilterOption = (category: string, optionValue: string, nestedKey?: string) => {
-    if (nestedKey && filterOptions[category]) {
-      // Check if the nestedKey exists in the category options
-      const nestedOptions = filterOptions[category].find((opt: any) => opt[nestedKey]);
-  
-      // Check if the optionValue is present in the nestedKey array
-      return nestedOptions && nestedOptions[nestedKey].includes(optionValue);
-    }
-  
-    // If no nestedKey, check for direct inclusion of optionValue in the category options
-    return filterOptions[category] && filterOptions[category].includes(optionValue);
-  };
-
   const resetFilters = () => {
     setFilterOptions({});
   };
+
+  const handleCancel = () => {
+    resetFilters();
+    handleBack();
+  }
 
   const defineCharactersArray = () => {
     let charactersArray: string[] = [];
@@ -147,12 +137,12 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
     return extrasOrItemsArray;
   }
 
-  const sortedCharactersArray = customArraySort(defineCharactersArray());
-  const sortedExtrasArray = customArraySort(defineExtrasOrItemsArray('extras', 'extraName'));
-  const sortedElementsArray = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'elementName'));
-  const sortedLocationsArray: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
-  const sortedSetsArray: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
-  const sortedElementsCategoryNames: string[] = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'categoryName'))
+  const getSortedCharacterNames = customArraySort(defineCharactersArray());
+  const getSortedExtraNames = customArraySort(defineExtrasOrItemsArray('extras', 'extraName'));
+  const getSortedElementNames = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'elementName'));
+  const getSortedLocationNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
+  const getSortedSetNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
+  const getSortedElementCategoryNames: string[] = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'categoryName'))
 
   return (
     <IonPage color='tertiary'>
@@ -195,13 +185,13 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
               [
                 {
                   optionName: 'SCENES',
-                  handleOption: () => handleFilterOption('sceneType', 'scene'),
-                  class: defineFilterButtonClass('scene', 'sceneType')
+                  handleOption: () => handleOptionToggle('sceneType', 'scene'),
+                  class: getFilterButtonClass('scene', 'sceneType')
                 },
                 {
                   optionName: 'PROTECTION',
-                  handleOption: () => handleFilterOption('sceneType', 'protection'),
-                  class: defineFilterButtonClass('protection', 'sceneType')
+                  handleOption: () => handleOptionToggle('sceneType', 'protection'),
+                  class: getFilterButtonClass('protection', 'sceneType')
                 }
               ]
             }
@@ -210,25 +200,23 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
 
           <FilterSceneItem 
             itemOption='PROTECTION TYPE' 
-            filterOptions={["VOICE OFF", "IMAGE", "STOCK IMAGE", "VIDEO", "STOCK VIDEO", "MULTIMEDIA", "OTHER"]}
-            handleOption={handleFilterOption}
+            filterNames={["VOICE OFF", "IMAGE", "STOCK IMAGE", "VIDEO", "STOCK VIDEO", "MULTIMEDIA", "OTHER"]}
+            handleOptionToggle={handleOptionToggle}
             optionKey='protectionType'
-            defineCheck={defineCheckedFilterOption}
           />
 
           {/* LIST */}
 
           <FilterSceneItem 
             itemOption='EPISODES' 
-            filterOptions={getUniqueValuesByKey(scenes, 'episodeNumber')}
-            handleOption={handleFilterOption}
+            filterNames={getUniqueValuesByKey(scenes, 'episodeNumber')}
+            handleOptionToggle={handleOptionToggle}
             optionKey='episodeNumber'
-            defineCheck={defineCheckedFilterOption}
           />
 
           {/* <FilterSceneItem 
             itemOption='SCENE STATUS' 
-            filterOptions={getUniqueValuesByKey(scenes, 'characters')}
+            filterNames={getUniqueValuesByKey(scenes, 'characters')}
           /> */}
 
           <FilterButtonsSelect
@@ -236,23 +224,23 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
               [
                 {
                   optionName: 'DAY',
-                  handleOption: () => handleFilterOption('dayOrNightOption', 'Day'),
-                  class: defineFilterButtonClass('Day', 'dayOrNightOption')
+                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Day'),
+                  class: getFilterButtonClass('Day', 'dayOrNightOption')
                 },
                 {
                   optionName: 'NIGHT',
-                  handleOption: () => handleFilterOption('dayOrNightOption', 'Night'),
-                  class: defineFilterButtonClass('Night', 'dayOrNightOption')
+                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Night'),
+                  class: getFilterButtonClass('Night', 'dayOrNightOption')
                 },
                 {
                   optionName: 'SUNRISE',
-                  handleOption: () => handleFilterOption('dayOrNightOption', 'Sunrise'),
-                  class: defineFilterButtonClass('Sunrise', 'dayOrNightOption')
+                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Sunrise'),
+                  class: getFilterButtonClass('Sunrise', 'dayOrNightOption')
                 },
                 {
                   optionName: 'SUNSET',
-                  handleOption: () => handleFilterOption('dayOrNightOption', 'Sunset'),
-                  class: defineFilterButtonClass('Sunset', 'dayOrNightOption')
+                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Sunset'),
+                  class: getFilterButtonClass('Sunset', 'dayOrNightOption')
                 }
               ]
             }
@@ -264,13 +252,13 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
               [
                 {
                   optionName: 'INTERIOR',
-                  handleOption: () => handleFilterOption('intOrExtOption', 'Interior'),
-                  class: defineFilterButtonClass('Interior', 'intOrExtOption')
+                  handleOption: () => handleOptionToggle('intOrExtOption', 'Interior'),
+                  class: getFilterButtonClass('Interior', 'intOrExtOption')
                 },
                {
                   optionName: 'EXTERIOR',
-                  handleOption: () => handleFilterOption('intOrExtOption', 'Exterior'),
-                  class: defineFilterButtonClass('Exterior', 'intOrExtOption')
+                  handleOption: () => handleOptionToggle('intOrExtOption', 'Exterior'),
+                  class: getFilterButtonClass('Exterior', 'intOrExtOption')
                 }
               ]
             }
@@ -279,19 +267,17 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
 
           <FilterSceneItem
             itemOption='CHARACTERS'
-            filterOptions={sortedCharactersArray}
-            handleNestedOption={handleNestedFilterOption}
+            filterNames={getSortedCharacterNames}
+            handleNestedOptionToggle={handleNestedOptionToggle}
             optionKey='characters'
-            defineCheck={defineCheckedFilterOption}
             nestedKey='characterName'
           />
 
           <FilterSceneItem
             itemOption='EXTRAS'
-            filterOptions={sortedExtrasArray}
-            handleNestedOption={handleNestedFilterOption}
+            filterNames={getSortedExtraNames}
+            handleNestedOptionToggle={handleNestedOptionToggle}
             optionKey='extras'
-            defineCheck={defineCheckedFilterOption}
             nestedKey='extraName'
           />
 
@@ -299,30 +285,27 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
 
           <FilterSceneItem 
             itemOption='LOCATIONS'
-            filterOptions={sortedLocationsArray}
-            handleOption={handleFilterOption}
+            filterNames={getSortedLocationNames}
+            handleOptionToggle={handleOptionToggle}
             optionKey='locationName'
-            defineCheck={defineCheckedFilterOption}
           />
 
           {/* LOCATION NAME */}
           
           <FilterSceneItem 
             itemOption='SETS' 
-            filterOptions={sortedSetsArray}
-            handleOption={handleFilterOption}
+            filterNames={getSortedSetNames}
+            handleOptionToggle={handleOptionToggle}
             optionKey='setName'
-            defineCheck={defineCheckedFilterOption}
           />
 
           {/* SETS ARE PART FROM LOCATIONS, LOCATION NAME.  SET OR SET */}
 
           <FilterSceneItem 
             itemOption='ELEMENT CATEGORY'
-            filterOptions={sortedElementsCategoryNames}
-            handleNestedOption={handleNestedFilterOption}
+            filterNames={getSortedElementCategoryNames}
+            handleNestedOptionToggle={handleNestedOptionToggle}
             optionKey='elements'
-            defineCheck={defineCheckedFilterOption}
             nestedKey='categoryName'
           />
 
@@ -331,10 +314,9 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
 
           <FilterSceneItem 
             itemOption='ELEMENTS'
-            filterOptions={sortedElementsArray}
-            handleNestedOption={handleNestedFilterOption}
+            filterNames={getSortedElementNames}
+            handleNestedOptionToggle={handleNestedOptionToggle}
             optionKey='elements'
-            defineCheck={defineCheckedFilterOption}
             nestedKey='elementName'
           /> 
             
@@ -344,13 +326,13 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
               [
                 {
                   optionName: 'UNIT 1',
-                  handleOption: () => handleFilterOption('units', 'unit1'),
-                  class: defineFilterButtonClass('unit1', 'units')
+                  handleOption: () => handleOptionToggle('units', 'unit1'),
+                  class: getFilterButtonClass('unit1', 'units')
                 },
                 {
                   optionName: 'UNIT 2',
-                  handleOption: () => handleFilterOption('units', 'unit2'),
-                  class: defineFilterButtonClass('unit2', 'units')
+                  handleOption: () => handleOptionToggle('units', 'unit2'),
+                  class: getFilterButtonClass('unit2', 'units')
                 }
               ]
             }
@@ -359,31 +341,25 @@ const handleNestedFilterOption = (category: string, nestedKey: string, optionVal
 
           {/* <FilterSceneItem 
             itemOption='DATE'
-            filterOptions={getUniqueValuesByKey(scenes, 'date')}
+            filterNames={getUniqueValuesByKey(scenes, 'date')}
           /> */}
 
           <IonRow class='ion-flex ion-justify-content-center filter-button-row'>
             <IonCol size-xs='12' size-sm='4' size-md='4'>
-              <IonButton 
-                expand='block' 
+              <OutlinePrimaryButton
+                buttonName='FILTER'
                 onClick={handleBack}
-                className='outline-primary-button'
-              >
-                FILTER
-              </IonButton>
+              />
             </IonCol>
           </IonRow>
 
           { isMobile && 
           <IonRow>
             <IonCol>
-              <IonButton 
-                expand='block' 
-                onClick={handleBack}
-                className='outline-light-button'
-              >
-                CANCEL
-              </IonButton>
+              <OutlineLightButton
+                buttonName='CANCEL'
+                onClick={handleCancel}
+              />
             </IonCol>
           </IonRow>
           }
