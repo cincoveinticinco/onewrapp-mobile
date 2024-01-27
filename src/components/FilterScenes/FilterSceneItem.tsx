@@ -67,8 +67,21 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
 
   const clearFilterOptions = () => {
     setFilterOptions((prev: any) => {
-      const { [optionKey]: unused_, ...newOptions } = prev;
-      return newOptions;
+      if (prev[optionKey].length === 0) {
+        const { [optionKey]: unused_, ...newOptions } = prev;
+        return newOptions;
+      } else if (nestedKey) {
+        const nestedKeyIndex = prev[optionKey].findIndex((item: any) => item[nestedKey]);
+
+        if (nestedKeyIndex > -1) {
+          const newNestedOptions = prev[optionKey].filter((item: any, i: number) => i !== nestedKeyIndex);
+          return {
+            ...prev,
+            [optionKey]: newNestedOptions,
+          };
+        }
+      }  
+      return prev;
     });
   };
 
