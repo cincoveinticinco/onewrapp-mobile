@@ -1,0 +1,34 @@
+.scenes-grid {
+  display: grid;
+  padding: 0;
+  margin: 0 12px;
+}
+
+.sort-strips-toolbar {
+  padding: 7px;
+}
+
+.sort-strips-button {
+  font-size: var(--525-common-text-size);
+  font-weight: bold;
+}
+
+.no-items-message {
+  position: absolute;
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+  width: 90%;
+  top: 50%;
+  left: 5%;
+  font-size: var(--525-big-title-size);
+
+  .reset-filters-option {
+    text-decoration: none;
+    padding: none;
+    margin: none;
+    width: auto;
+    --padding-top: 0px;
+    font-size: var(--525-big-title-size)
+  }
+}

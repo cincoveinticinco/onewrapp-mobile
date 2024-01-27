@@ -10,14 +10,14 @@ import {
   IonPage,
   IonToolbar,
 } from '@ionic/react';
-import './Strips.css';
+import './Strips.scss';
 import { chevronDownOutline } from 'ionicons/icons';
 import { useLocation } from 'react-router';
 import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import Toolbar from '../../components/Shared/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesFiltersContext from '../../context/scenesFiltersContext';
-import filterScenes from '../../utils/filterScenes';
+import filterScenes from '../../utils/FilterScenesUtils/filterScenes';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
@@ -27,7 +27,7 @@ const Strips: React.FC = () => {
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const { filterOptions } = React.useContext<any>(ScenesFiltersContext);
+  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
   const thisPath = useLocation();
 
   const contentRef = React.createRef<HTMLIonContentElement>();
@@ -56,6 +56,10 @@ const Strips: React.FC = () => {
     (e.target as HTMLIonInfiniteScrollElement).complete();
   };
 
+  const resetFilters = () => {
+    setFilterOptions({});
+  };
+
   useEffect(() => {
     contentRef.current?.scrollToTop();
   }, [thisPath]);
@@ -75,9 +79,16 @@ const Strips: React.FC = () => {
         </IonToolbar>
         {filteredScenes.length === 0 ? (
           <div className="no-items-message">
-            <p>There are not any scenes that match your search. </p>
-            <a href="/" className="create-one-link">Reset Filters </a>
-            ?
+            <p className="ion-no-margin">There are not any scenes that match your search. </p>
+            <IonButton 
+              fill='clear' 
+              color='primary' 
+              className="ion-no-margin reset-filters-option"
+              onClick={resetFilters}
+            >
+              Reset Filters
+            </IonButton>
+            <span>?</span>
           </div>
         ) : (
           <Suspense fallback={<div>Loading...</div>}>
