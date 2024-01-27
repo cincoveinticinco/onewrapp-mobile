@@ -44,8 +44,10 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
 
     if (result && !nestedKey) {
       return result;
-    } if (Array.isArray(result) && result[0] && nestedKey) {
-      return result[0][nestedKey];
+    } if (Array.isArray(result) && result && nestedKey) {
+      const nestedResult = result.find((item: any) => item[nestedKey]);
+      return nestedResult && nestedResult[nestedKey];
+
     }
 
     return [];
@@ -168,15 +170,17 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
               cancelButtonIcon={trash}
             />
           </IonToolbar>
-          <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
-            {filteredItemsOptions.length === 0
-              ? (
-                <IonItem color="tertiary">
-                  {`There are no coincidences with "${searchText}". Do you want to create a `}
-                  <a style={{ marginLeft: '6px' }} href="/">NEW ITEM</a>
-                </IonItem>
-              ) : (
-                filteredItemsOptions.map((option, i) => (
+          {filteredItemsOptions.length === 0 ? (
+            <p className="no-items-message">
+              {`There are no coincidences with "${searchText}". Do you want to create a `}
+              <a style={{ marginLeft: '6px' }} href="/">New One</a> ?
+              CONFIRM
+              CANCEL
+            </p>
+          ) : (
+            <>
+              <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
+                {filteredItemsOptions.map((option, i) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -195,14 +199,12 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
                       />
                     </IonCheckbox>
                   </IonItem>
-                ))
-              )}
-          </IonList>
-          <OutlinePrimaryButton buttonName="CONFIRM" onClick={handleBack} className="ion-margin" />
-          {
-            isMobile
-            && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />
-          }
+                ))}
+              </IonList>
+              <OutlinePrimaryButton buttonName="CONFIRM" onClick={handleBack} className="ion-margin" />
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />}
+            </>
+          )}
         </IonContent>
       </IonModal>
     </IonRow>
