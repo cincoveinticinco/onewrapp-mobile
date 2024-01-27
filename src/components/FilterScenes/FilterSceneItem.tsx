@@ -7,15 +7,14 @@ import { chevronBack, chevronForward, trash } from 'ionicons/icons';
 import ScenesFiltersContext from '../../context/scenesFiltersContext';
 import './FilterSceneItem.scss';
 import useIsMobile from '../../hooks/useIsMobile';
-import HighlightedFilterNames from './HighlightedFilterNames';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton';
 import OutlineLightButton from '../Shared/OutlineLightButton';
 
 interface FilterSceneItemProps {
   itemOption: string;
   filterNames: string[];
-  handleOptionToggle?: (category: string, optionValue: string) => void;
-  handleNestedOptionToggle?: (category: string, nestedKey: string, optionValue: string) => void;
+  handleSingleFilterOption?: (category: string, optionValue: string) => void;
+  handleNestedFilterOption?: (category: string, nestedKey: string, optionValue: string) => void;
   optionKey: string;
   nestedKey?: string;
 }
@@ -23,8 +22,8 @@ interface FilterSceneItemProps {
 const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   itemOption,
   filterNames,
-  handleOptionToggle = () => {},
-  handleNestedOptionToggle = () => {},
+  handleSingleFilterOption = () => {},
+  handleNestedFilterOption = () => {},
   optionKey,
   nestedKey = null,
 }) => {
@@ -47,7 +46,6 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
     } if (Array.isArray(result) && result && nestedKey) {
       const nestedResult = result.find((item: any) => item[nestedKey]);
       return nestedResult && nestedResult[nestedKey];
-
     }
 
     return [];
@@ -58,10 +56,10 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   const isFilterOptionChecked = (option: string) => checkedOptions.includes(removeNumberAndDot(option));
 
   const handleCheckboxToggle = (option: string) => {
-    if (nestedKey && handleNestedOptionToggle) {
-      handleNestedOptionToggle(optionKey, nestedKey, removeNumberAndDot(option));
-    } else if (handleOptionToggle) {
-      handleOptionToggle(optionKey, option);
+    if (nestedKey && handleNestedFilterOption) {
+      handleNestedFilterOption(optionKey, nestedKey, removeNumberAndDot(option));
+    } else if (handleSingleFilterOption) {
+      handleSingleFilterOption(optionKey, option);
     }
   };
 
@@ -70,7 +68,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
       if (prev[optionKey].length === 0) {
         const { [optionKey]: unused_, ...newOptions } = prev;
         return newOptions;
-      } else if (nestedKey) {
+      } if (nestedKey) {
         const nestedKeyIndex = prev[optionKey].findIndex((item: any) => item[nestedKey]);
 
         if (nestedKeyIndex > -1) {
@@ -80,7 +78,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
             [optionKey]: newNestedOptions,
           };
         }
-      }  
+      }
       return prev;
     });
   };
@@ -186,7 +184,9 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
           {filteredItemsOptions.length === 0 ? (
             <p className="no-items-message">
               {`There are no coincidences with "${searchText}". Do you want to create a `}
-              <a style={{ marginLeft: '6px' }} href="/">New One</a> ?
+              <a style={{ marginLeft: '6px' }} href="/">New One</a>
+              {' '}
+              ?
               CONFIRM
               CANCEL
             </p>
@@ -206,10 +206,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isFilterOptionChecked(option)}
                     >
-                      <HighlightedFilterNames
-                        option={option.toUpperCase()}
-                        checked={() => isFilterOptionChecked(option)}
-                      />
+                      {option.toUpperCase()}
                     </IonCheckbox>
                   </IonItem>
                 ))}

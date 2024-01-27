@@ -7,17 +7,19 @@ import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterButtonsSelect from '../../components/FilterScenes/FilterButtonsSelect';
 import useHideTabs from '../../hooks/useHideTabs';
-import ScenesFiltersContext from '../../context/scenesFiltersContext';
+import ScenesFiltersContext, { FilterOptionsInterface } from '../../context/scenesFiltersContext';
 import FilterSceneItem from '../../components/FilterScenes/FilterSceneItem';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import scene_data from '../../data/scn_data.json'; // eslint-disable-line
+  import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import { Character } from '../../interfaces/scenesTypes';
 import customArraySort from '../../utils/customArraySort';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import useHandleBack from '../../hooks/useHandleBack';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
+import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
+import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
 
 const FilterScenes = () => {
   const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
@@ -26,70 +28,17 @@ const FilterScenes = () => {
   const isMobile = useIsMobile();
   useHideTabs();
 
-  const handleOptionToggle = (category: string, optionValue: string) => {
-    setFilterOptions((prevOptions: any) => {
-      const updatedOptions = prevOptions[category] ? [...prevOptions[category]] : [];
-      const valueIndex = updatedOptions.indexOf(optionValue);
-
-      if (valueIndex > -1) {
-        updatedOptions.splice(valueIndex, 1);
-      } else {
-        updatedOptions.push(optionValue);
-      }
-
-      if (updatedOptions.length === 0) {
-        const { [category]: unused_, ...newOptions } = prevOptions;
-        return newOptions;
-      }
-
-      return {
-        ...prevOptions,
-        [category]: updatedOptions,
-      };
+  // Main functions
+  const handleSingleFilterOption = (category: string, optionValue: string) => {
+    setFilterOptions((prevOptions: FilterOptionsInterface) => {
+      const updatedOptions = toggleFilterOption(prevOptions, category, optionValue);
+      return updatedOptions;
     });
   };
 
-  const handleNestedOptionToggle = (category: string, nestedKey: string, optionValue: string) => {
-    setFilterOptions((prevOptions: any) => {
-      const updatedOptions = { ...prevOptions };
-
-      // Create the category if it doesn't exist
-      updatedOptions[category] = updatedOptions[category] || [];
-
-      // Find the specific object for the nestedKey
-      const nestedKeyObject = updatedOptions[category].find((opt: any) => opt[nestedKey]);
-
-      // Create the object if it doesn't exist
-      if (!nestedKeyObject) {
-        updatedOptions[category].push({ [nestedKey]: [] });
-      }
-
-      // Find the specific array for the nestedKey
-      const nestedKeyArray = updatedOptions[category].find((opt: any) => opt[nestedKey]);
-
-      // Check if optionValue is already in the nestedKey array
-      const valueIndex = nestedKeyArray[nestedKey].indexOf(optionValue);
-
-      // Toggle the optionValue
-      if (valueIndex > -1) {
-        nestedKeyArray[nestedKey].splice(valueIndex, 1);
-      } else {
-        nestedKeyArray[nestedKey].push(optionValue);
-      }
-
-      // Remove the array if it's empty
-      updatedOptions[category] = updatedOptions[category].filter((opt: any) => {
-        if (opt[nestedKey] && opt[nestedKey].length === 0) {
-          return false;
-        }
-        return true;
-      });
-
-      // Remove the category if there are no more categories in the object
-      if (updatedOptions[category].length === 0) {
-        delete updatedOptions[category];
-      }
-
+  const handleNestedFilterOption = (category: string, nestedKey: string, optionValue: string) => {
+    setFilterOptions((prevOptions: FilterOptionsInterface) => {
+      const updatedOptions = toggleNestedFilterOption(prevOptions, category, nestedKey, optionValue);
       return updatedOptions;
     });
   };
@@ -147,36 +96,36 @@ const FilterScenes = () => {
       <IonHeader>
         <IonToolbar color="tertiary" className="add-strip-toolbar">
           {
-          !isMobile
-          && (
-          <>
-            <IonButton
-              fill="clear"
-              color="primary"
-              slot="start"
-              onClick={handleBack}
-            >
-              BACK
-            </IonButton>
-            <IonButton
-              fill="clear"
-              color="primary"
-              slot="end"
-              onClick={resetFilters}
-            >
-              RESET
-            </IonButton>
-          </>
-          )
-          }
-          {
-            isMobile
+            !isMobile
             && (
-            <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-              <IonIcon icon={chevronBack} color="light" />
-            </IonButton>
+            <>
+              <IonButton
+                fill="clear"
+                color="primary"
+                slot="start"
+                onClick={handleBack}
+              >
+                BACK
+              </IonButton>
+              <IonButton
+                fill="clear"
+                color="primary"
+                slot="end"
+                onClick={resetFilters}
+              >
+                RESET
+              </IonButton>
+            </>
             )
-          }
+            }
+          {
+              isMobile
+              && (
+              <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
+                <IonIcon icon={chevronBack} color="light" />
+              </IonButton>
+              )
+            }
           <IonTitle className="add-strip-toolbar-title">
             Filter
           </IonTitle>
@@ -186,26 +135,26 @@ const FilterScenes = () => {
         <IonGrid className="ion-no-padding">
           <FilterButtonsSelect
             selectOptions={
-              [
-                {
-                  optionName: 'SCENES',
-                  handleOption: () => handleOptionToggle('sceneType', 'scene'),
-                  class: getFilterButtonClass('scene', 'sceneType'),
-                },
-                {
-                  optionName: 'PROTECTION',
-                  handleOption: () => handleOptionToggle('sceneType', 'protection'),
-                  class: getFilterButtonClass('protection', 'sceneType'),
-                },
-              ]
-            }
+                [
+                  {
+                    optionName: 'SCENES',
+                    handleOption: () => handleSingleFilterOption('sceneType', 'scene'),
+                    class: getFilterButtonClass('scene', 'sceneType'),
+                  },
+                  {
+                    optionName: 'PROTECTION',
+                    handleOption: () => handleSingleFilterOption('sceneType', 'protection'),
+                    class: getFilterButtonClass('protection', 'sceneType'),
+                  },
+                ]
+              }
             groupName="STRIP TYPE"
           />
 
           <FilterSceneItem
             itemOption="PROTECTION TYPE"
             filterNames={['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER']}
-            handleOptionToggle={handleOptionToggle}
+            handleSingleFilterOption={handleSingleFilterOption}
             optionKey="protectionType"
           />
 
@@ -214,65 +163,65 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="EPISODES"
             filterNames={getUniqueValuesByKey(scenes, 'episodeNumber').map(String)}
-            handleOptionToggle={handleOptionToggle}
+            handleSingleFilterOption={handleSingleFilterOption}
             optionKey="episodeNumber"
           />
 
           {/* <FilterSceneItem
-            itemOption='SCENE STATUS'
-            filterNames={getUniqueValuesByKey(scenes, 'characters')}
-          /> */}
+              itemOption='SCENE STATUS'
+              filterNames={getUniqueValuesByKey(scenes, 'characters')}
+            /> */}
 
           <FilterButtonsSelect
             selectOptions={
-              [
-                {
-                  optionName: 'DAY',
-                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Day'),
-                  class: getFilterButtonClass('Day', 'dayOrNightOption'),
-                },
-                {
-                  optionName: 'NIGHT',
-                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Night'),
-                  class: getFilterButtonClass('Night', 'dayOrNightOption'),
-                },
-                {
-                  optionName: 'SUNRISE',
-                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Sunrise'),
-                  class: getFilterButtonClass('Sunrise', 'dayOrNightOption'),
-                },
-                {
-                  optionName: 'SUNSET',
-                  handleOption: () => handleOptionToggle('dayOrNightOption', 'Sunset'),
-                  class: getFilterButtonClass('Sunset', 'dayOrNightOption'),
-                },
-              ]
-            }
+                [
+                  {
+                    optionName: 'DAY',
+                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Day'),
+                    class: getFilterButtonClass('Day', 'dayOrNightOption'),
+                  },
+                  {
+                    optionName: 'NIGHT',
+                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Night'),
+                    class: getFilterButtonClass('Night', 'dayOrNightOption'),
+                  },
+                  {
+                    optionName: 'SUNRISE',
+                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunrise'),
+                    class: getFilterButtonClass('Sunrise', 'dayOrNightOption'),
+                  },
+                  {
+                    optionName: 'SUNSET',
+                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunset'),
+                    class: getFilterButtonClass('Sunset', 'dayOrNightOption'),
+                  },
+                ]
+              }
             groupName="DAY OR NIGHT"
           />
 
           <FilterButtonsSelect
             selectOptions={
-              [
-                {
-                  optionName: 'INTERIOR',
-                  handleOption: () => handleOptionToggle('intOrExtOption', 'Interior'),
-                  class: getFilterButtonClass('Interior', 'intOrExtOption'),
-                },
-                {
-                  optionName: 'EXTERIOR',
-                  handleOption: () => handleOptionToggle('intOrExtOption', 'Exterior'),
-                  class: getFilterButtonClass('Exterior', 'intOrExtOption'),
-                },
-              ]
-            }
+                [
+                  {
+                    optionName: 'INTERIOR',
+                    handleOption: () => handleSingleFilterOption('intOrExtOption', 'Interior'),
+                    class: getFilterButtonClass('Interior', 'intOrExtOption'),
+                  },
+                  {
+                    optionName: 'EXTERIOR',
+                    handleOption: () => handleSingleFilterOption('intOrExtOption', 'Exterior'),
+                    class: getFilterButtonClass('Exterior', 'intOrExtOption'),
+                  },
+                ]
+              }
             groupName="INTERIOR OR EXTERIOR"
           />
 
           <FilterSceneItem
             itemOption="CHARACTERS"
             filterNames={getSortedCharacterNames}
-            handleNestedOptionToggle={handleNestedOptionToggle}
+            handleNestedFilterOption={handleNestedFilterOption}
             optionKey="characters"
             nestedKey="characterName"
           />
@@ -280,7 +229,7 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="EXTRAS"
             filterNames={getSortedExtraNames}
-            handleNestedOptionToggle={handleNestedOptionToggle}
+            handleNestedFilterOption={handleNestedFilterOption}
             optionKey="extras"
             nestedKey="extraName"
           />
@@ -290,7 +239,7 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="LOCATIONS"
             filterNames={getSortedLocationNames}
-            handleOptionToggle={handleOptionToggle}
+            handleSingleFilterOption={handleSingleFilterOption}
             optionKey="locationName"
           />
 
@@ -299,7 +248,7 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="SETS"
             filterNames={getSortedSetNames}
-            handleOptionToggle={handleOptionToggle}
+            handleSingleFilterOption={handleSingleFilterOption}
             optionKey="setName"
           />
 
@@ -308,7 +257,7 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="ELEMENT CATEGORY"
             filterNames={getSortedElementCategoryNames}
-            handleNestedOptionToggle={handleNestedOptionToggle}
+            handleNestedFilterOption={handleNestedFilterOption}
             optionKey="elements"
             nestedKey="categoryName"
           />
@@ -318,34 +267,34 @@ const FilterScenes = () => {
           <FilterSceneItem
             itemOption="ELEMENTS"
             filterNames={getSortedElementNames}
-            handleNestedOptionToggle={handleNestedOptionToggle}
+            handleNestedFilterOption={handleNestedFilterOption}
             optionKey="elements"
             nestedKey="elementName"
           />
 
           {/* CategoryName, Element */}
           {/* <FilterButtonsSelect
-            selectOptions={
-              [
-                {
-                  optionName: 'UNIT 1',
-                  handleOption: () => handleOptionToggle('units', 'unit1'),
-                  class: getFilterButtonClass('unit1', 'units')
-                },
-                {
-                  optionName: 'UNIT 2',
-                  handleOption: () => handleOptionToggle('units', 'unit2'),
-                  class: getFilterButtonClass('unit2', 'units')
-                }
-              ]
-            }
-            groupName='UNITS'
-          /> */}
+              selectOptions={
+                [
+                  {
+                    optionName: 'UNIT 1',
+                    handleOption: () => handleSingleFilterOption('units', 'unit1'),
+                    class: getFilterButtonClass('unit1', 'units')
+                  },
+                  {
+                    optionName: 'UNIT 2',
+                    handleOption: () => handleSingleFilterOption('units', 'unit2'),
+                    class: getFilterButtonClass('unit2', 'units')
+                  }
+                ]
+              }
+              groupName='UNITS'
+            /> */}
 
           {/* <FilterSceneItem
-            itemOption='DATE'
-            filterNames={getUniqueValuesByKey(scenes, 'date')}
-          /> */}
+              itemOption='DATE'
+              filterNames={getUniqueValuesByKey(scenes, 'date')}
+            /> */}
 
           <IonRow class="ion-flex ion-justify-content-center filter-button-row">
             <IonCol size-xs="12" size-sm="4" size-md="4">
@@ -357,16 +306,16 @@ const FilterScenes = () => {
           </IonRow>
 
           { isMobile
-          && (
-          <IonRow>
-            <IonCol>
-              <OutlineLightButton
-                buttonName="CANCEL"
-                onClick={handleCancel}
-              />
-            </IonCol>
-          </IonRow>
-          )}
+            && (
+            <IonRow>
+              <IonCol>
+                <OutlineLightButton
+                  buttonName="CANCEL"
+                  onClick={handleCancel}
+                />
+              </IonCol>
+            </IonRow>
+            )}
         </IonGrid>
       </IonContent>
     </IonPage>
