@@ -17,6 +17,7 @@ import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import Toolbar from '../../components/Shared/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesFiltersContext from '../../context/scenesFiltersContext';
+import filterScenes from '../../utils/filterScenes';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
@@ -30,26 +31,6 @@ const Strips: React.FC = () => {
   const thisPath = useLocation();
 
   const contentRef = React.createRef<HTMLIonContentElement>();
-
-  function filterScenes(scenes: Scene[], criteria: any): Scene[] {
-    return scenes.filter(
-      (scene: any) => Object.entries(criteria).every(([key, values]: [string, any]) => {
-        if (Array.isArray(scene[key])) {
-        // If the property is an array, check if any of the items match the criteria
-          return scene[key].some((item: any) => {
-            if (typeof values[0] === 'object') {
-            // Handle nested criteria for array elements
-              return Object.entries(values[0]).every(([subKey, subValues]: [string, any]) => subValues.includes(item[subKey]));
-            }
-            // Handle criteria for array elements
-            return values.includes(item);
-          });
-        }
-        // If the property is not an array, check if it matches the criteria
-        return values.includes(scene[key]);
-      }),
-    );
-  }
 
   useEffect(() => {
     const newFilteredScenes = filterScenes(scene_data.scenes, filterOptions);
@@ -92,16 +73,24 @@ const Strips: React.FC = () => {
             SORT BY: EPISODE NUMBER
           </IonButton>
         </IonToolbar>
-        <Suspense fallback={<div>Loading...</div>}>
-          <IonGrid className="scenes-grid">
-            {displayedScenes.map((scene, i) => (
-              <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
-            ))}
-            <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
-              <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
-            </IonInfiniteScroll>
-          </IonGrid>
-        </Suspense>
+        {filteredScenes.length === 0 ? (
+          <div className="no-items-message">
+            <p>There are not any scenes that match your search. </p>
+            <a href="/" className="create-one-link">Reset Filters </a>
+            ?
+          </div>
+        ) : (
+          <Suspense fallback={<div>Loading...</div>}>
+            <IonGrid className="scenes-grid">
+              {displayedScenes.map((scene, i) => (
+                <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
+              ))}
+              <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
+                <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
+              </IonInfiniteScroll>
+            </IonGrid>
+          </Suspense>
+        )}
       </IonContent>
     </IonPage>
   );
