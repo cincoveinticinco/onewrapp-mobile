@@ -78,9 +78,7 @@ const FilterScenes = () => {
       }
 
       // Remove the array if it's empty
-      updatedOptions[category] = updatedOptions[category].filter(
-        (opt: any) => opt[nestedKey].length > 0,
-      );
+      // updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey] && opt[nestedKey].length > 0);
 
       // Remove the category if there are no more categories in the object
       if (updatedOptions[category].length === 0) {
