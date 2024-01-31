@@ -13,7 +13,7 @@ import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
 
 const SortScenes = () => {
-  const { setSortOptions } = React.useContext<any>(ScenesContext);
+  const { sortOptions, setSortOptions } = React.useContext<any>(ScenesContext);
 
   const defaultSortPosibilities = [
     {
@@ -77,6 +77,16 @@ const SortScenes = () => {
     setSortOptions(defaultSortOptions);
   };
 
+  const getCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
+    const sortOption = sortOptions.find((option: any) => option[0] === posibility.optionKey);
+    return sortOption;
+  });
+
+  const getNotCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
+    const sortOption = sortOptions.find((option: any) => option[0] === posibility.optionKey);
+    return !sortOption;
+  });
+
   return (
     <IonPage color="tertiary">
       <IonHeader>
@@ -100,24 +110,38 @@ const SortScenes = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent color="tertiary" id="sort-scenes-page">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="sortPosibilities">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
-                {sortPosibilities.map((sortPosibility, index) => (
-                  <SortItem
-                    key={sortPosibility.id}
-                    sortPosibility={sortPosibility}
-                    index={index}
-                    setSortPosibilities={setSortPosibilities}
-                    sortPosibilities={sortPosibilities}
-                  />
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="sortPosibilities">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
+                  {getCheckedSortOptions().map((sortPosibility, index) => (
+
+                    <SortItem
+                      key={sortPosibility.id}
+                      sortPosibility={sortPosibility}
+                      index={index}
+                      setSortPosibilities={setSortPosibilities}
+                      sortPosibilities={sortPosibilities}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <div className="sort-scenes-divider">
+            {getNotCheckedSortOptions().map((sortPosibility, index) => (
+              <SortItem
+                key={sortPosibility.id}
+                sortPosibility={sortPosibility}
+                index={index}
+                setSortPosibilities={setSortPosibilities}
+                sortPosibilities={sortPosibilities}
+              />
+            ))}
+          </div>
+        </>
         <OutlinePrimaryButton buttonName="SORT SCENES" onClick={handleBack} />
       </IonContent>
     </IonPage>

@@ -116,14 +116,18 @@ const SortItem: React.FC<SortItemProps> = ({
     return 'light';
   };
 
-  return (
-    <Draggable draggableId={sortPosibility.id} index={index} isDragDisabled={!isChecked}>
+  return isChecked ? (
+    <Draggable
+      draggableId={sortPosibility.id}
+      index={index}
+      isDragDisabled={!isChecked}
+    >
       {(provided) => (
         <div
           className="checkbox-item-option"
           ref={provided.innerRef}
-          {...provided.draggableProps} // eslint-disable-line
-          {...provided.dragHandleProps} // eslint-disable-line
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
         >
           <IonItem color="tertiary">
             <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding">
@@ -159,6 +163,24 @@ const SortItem: React.FC<SortItemProps> = ({
         </div>
       )}
     </Draggable>
+  ) : (
+    <div className="checkbox-item-option">
+      <IonItem color="tertiary">
+        <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding" disabled={true}>
+          <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon " />
+        </IonButton>
+        <IonCheckbox
+          slot="start"
+          labelPlacement="end"
+          checked={isChecked}
+          onIonChange={(e) => handleCheck(e)}
+        >
+          <span className="sort-item-label">
+            {sortPosibility.label}
+          </span>
+        </IonCheckbox>
+      </IonItem>
+    </div>
   );
 };
 
