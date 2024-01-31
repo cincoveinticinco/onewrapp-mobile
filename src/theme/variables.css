@@ -74,7 +74,13 @@ http://ionicframework.com/docs/theming/ */
 
   --525-common-text-size: 12px;
   --525-common-title-size: 14px;
+  --525-big-title-size: 16px;
   --525-toolbar-title-size: 24px;
+  --525-icons-size: 24px;
+}
+
+ion-modal {
+  --background: var(--ion-color-dark);
 }
 
 /*
