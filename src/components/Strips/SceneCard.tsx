@@ -90,7 +90,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
   };
 
   return (
-    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`}>
+    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
       <IonCol className="scene-card-col-1">
         <h3 className="scene-card-header">
           {getSceneHeader(scene)}
