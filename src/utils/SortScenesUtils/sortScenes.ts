@@ -1,4 +1,4 @@
-import sceneData from '../../data/scn_data.json';
+// import sceneData from '../../data/scn_data.json';
 
 // CRITERIA is an array of criterias, where each criteria is an array with the following structure:
 // [CRITERIAKEY, ASCENDING/DESCENDING]
@@ -67,11 +67,11 @@ export default sortScenes;
 
 // THE FIRST CRITERIA APPLIED IS THE LAST ONE
 
-const scenes = [...sceneData.scenes];
-const sortCriteria = [['dayOrNightOption', 'desc']];
+// const scenes = [...sceneData.scenes];
+// const sortCriteria = [['dayOrNightOption', 'desc']];
 
 // CHECK DAY OR NIGHT OPTION
 
-const sortedScenes = sortScenes(scenes, sortCriteria);
+// const sortedScenes = sortScenes(scenes, sortCriteria);
 
-// console.log('UTILS DISPLAY', sortedScenes);
+// // console.log('UTILS DISPLAY', sortedScenes);

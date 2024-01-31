@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, IonItem,
+  IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
 import SortItem from '../../components/SortScenes/SortItem';
 import useHideTabs from '../../hooks/useHideTabs';
 import './SortScenes.scss';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
 
@@ -103,7 +103,7 @@ const SortScenes = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="sortPosibilities">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
+              <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
                 {sortPosibilities.map((sortPosibility, index) => (
                   <SortItem
                     key={sortPosibility.id}

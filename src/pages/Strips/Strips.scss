@@ -25,10 +25,11 @@
 
   .reset-filters-option {
     text-decoration: none;
-    padding: none;
-    margin: none;
+    margin: 0;
     width: auto;
-    --padding-top: 0px;
-    font-size: var(--525-big-title-size)
+
+    --padding-top: 0;
+
+    font-size: var(--525-big-title-size);
   }
 }

@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from 'react';
-import ScenesContext from '../../context/ScenesContext';
 import './SortItem.scss';
 import { Draggable } from 'react-beautiful-dnd';
 import {
-  IonButton, IonCheckbox, IonItem, IonIcon,
+  IonButton, IonCheckbox, IonItem,
 } from '@ionic/react';
 import { LuGripHorizontal } from 'react-icons/lu';
-import { PiSortAscending, PiSortDescending } from "react-icons/pi";
+import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
+
+import ScenesContext from '../../context/ScenesContext';
 
 interface SortItemProps {
   sortPosibility: any;
@@ -65,6 +66,17 @@ const SortItem: React.FC<SortItemProps> = ({
     setSortOptions(updatedSortOptions);
   }, [ascOrDesc, index]);
 
+  const getSortOptionsLastIndex = () => sortOptions.length - 1;
+
+  const interChangeSortOptions = (currentIndex: number, newIndex: number) => {
+    const lastCheckedIndexOption = getSortOptionsLastIndex();
+    const updatedSortPosibilities = [...sortPosibilities];
+
+    updatedSortPosibilities.splice(newIndex, 0, updatedSortPosibilities.splice(currentIndex, 1)[0]);
+    console.log(`currentIndex: ${currentIndex} newIndex: ${newIndex} lastCheckedIndexOption: ${lastCheckedIndexOption}`);
+    setSortPosibilities(updatedSortPosibilities);
+  };
+
   const handleCheck = (e: any) => {
     const isChecked = e.detail.checked;
     const { optionKey } = sortPosibility;
@@ -88,8 +100,9 @@ const SortItem: React.FC<SortItemProps> = ({
   const filterIsChecked = (optionKey: string) => sortOptions.some((option: any) => option[0] === optionKey);
 
   const toggleAscOrDesc = () => {
-    filterIsChecked(sortPosibility.optionKey)
-    && setAscOrDesc(ascOrDesc === 'desc' ? 'asc' : 'desc');
+    if (filterIsChecked(sortPosibility.optionKey)) {
+      setAscOrDesc(ascOrDesc === 'desc' ? 'asc' : 'desc');
+    }
   };
 
   const getAscOrDescClass = (orderOption: string) => {
@@ -103,25 +116,14 @@ const SortItem: React.FC<SortItemProps> = ({
     return 'light';
   };
 
-  const getSortOptionsLastIndex = () => sortOptions.length - 1;
-
-  const interChangeSortOptions = (currentIndex: number, newIndex: number) => {
-    const lastCheckedIndexOption = getSortOptionsLastIndex();
-    const updatedSortPosibilities = [...sortPosibilities];
-
-    updatedSortPosibilities.splice(newIndex, 0, updatedSortPosibilities.splice(currentIndex, 1)[0]);
-    console.log(`currentIndex: ${currentIndex} newIndex: ${newIndex} lastCheckedIndexOption: ${lastCheckedIndexOption}`);
-    setSortPosibilities(updatedSortPosibilities);
-  };
-
   return (
     <Draggable draggableId={sortPosibility.id} index={index} isDragDisabled={!isChecked}>
       {(provided) => (
         <div
           className="checkbox-item-option"
           ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
+          {...provided.draggableProps} // eslint-disable-line
+          {...provided.dragHandleProps} // eslint-disable-line
         >
           <IonItem color="tertiary">
             <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding">
@@ -143,7 +145,7 @@ const SortItem: React.FC<SortItemProps> = ({
               className={`${getAscOrDescClass('desc')} asc-or-desc-button`}
               onClick={toggleAscOrDesc}
             >
-              <PiSortDescending className='asc-or-desc-icon'/>
+              <PiSortDescending className="asc-or-desc-icon" />
             </IonButton>
             <IonButton
               fill="clear"
@@ -151,7 +153,7 @@ const SortItem: React.FC<SortItemProps> = ({
               className={`${getAscOrDescClass('asc')} asc-or-desc-button`}
               onClick={toggleAscOrDesc}
             >
-              <PiSortAscending className='asc-or-desc-icon'/>
+              <PiSortAscending className="asc-or-desc-icon" />
             </IonButton>
           </IonItem>
         </div>
