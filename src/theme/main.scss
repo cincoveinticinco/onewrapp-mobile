@@ -64,6 +64,11 @@ ion-button.filled-primary-button {
   --border-color: var(--ion-color-primary);
   --border-style: solid;
   --border-width: 1px;
+  --background-activated-opacity: 1;
+
+  &:active {
+    background-color: var(--ion-color-primary);
+  }
 
   @media (min-width: 500px) {
     max-width: 250px;
@@ -81,7 +86,7 @@ ion-toolbar {
 .checkbox-item-option {
   border-bottom: 1px solid black;
   box-shadow: none;
-  outline: 2px solid black;
+  outline: 1px solid black;
 
   ion-checkbox {
     --size: 16px;
