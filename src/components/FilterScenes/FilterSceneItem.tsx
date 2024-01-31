@@ -4,7 +4,7 @@ import {
   IonList, IonModal, IonRow, IonSearchbar, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { chevronBack, chevronForward, trash } from 'ionicons/icons';
-import ScenesFiltersContext from '../../context/scenesFiltersContext';
+import ScenesContext from '../../context/ScenesContext';
 import './FilterSceneItem.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton';
@@ -30,7 +30,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   const modalRef = React.useRef<HTMLIonModalElement>(null);
   const isMobile = useIsMobile();
   const [searchText, setSearchText] = useState('');
-  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
+  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesContext);
 
   const removeNumberAndDot = (selectedOption: string) => {
     const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
@@ -100,7 +100,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   return (
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
       <IonCol size-xs="10" size-sm="10" size-lg="11" size-xl="11" className="ion-flex ion-align-items-center ion-no-margin ion-no-padding">
-        <p className="ion-flex ion-align-items-center ion-no-margin">
+        <p className="ion-flex ion-align-items-center ion-no-margin filter-scene-item-title">
           {itemOption}
         </p>
       </IonCol>

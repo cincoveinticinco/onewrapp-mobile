@@ -14,7 +14,7 @@ import AppDataBase from './RXdatabase/database';
 import ProjectsSchema from './RXdatabase/schemas/projects';
 import ScenesSchema from './RXdatabase/schemas/scenes';
 import DatabaseContext from './context/database';
-import { ScenesFiltersProvider } from './context/scenesFiltersContext';
+import { ScenesContextProvider } from './context/ScenesContext';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -45,7 +45,7 @@ const App: React.FC = () => {
     <IonApp>
       <AuthContext.Provider value={{ loggedIn }}>
         <DatabaseContext.Provider value={{ db: RXdatabase }}>
-          <ScenesFiltersProvider>
+          <ScenesContextProvider>
             <IonReactRouter>
               <IonRouterOutlet>
                 <Route exact path="/login">
@@ -60,7 +60,7 @@ const App: React.FC = () => {
                 <AppTabs />
               </Route>
             </IonReactRouter>
-          </ScenesFiltersProvider>
+          </ScenesContextProvider>
         </DatabaseContext.Provider>
       </AuthContext.Provider>
     </IonApp>

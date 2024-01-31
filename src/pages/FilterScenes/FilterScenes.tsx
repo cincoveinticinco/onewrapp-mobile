@@ -7,7 +7,7 @@ import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterButtonsSelect from '../../components/FilterScenes/FilterButtonsSelect';
 import useHideTabs from '../../hooks/useHideTabs';
-import ScenesFiltersContext, { FilterOptionsInterface } from '../../context/scenesFiltersContext';
+import ScenesContext, { FilterOptionsInterface } from '../../context/ScenesContext';
 import FilterSceneItem from '../../components/FilterScenes/FilterSceneItem';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
@@ -22,7 +22,7 @@ import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNested
 import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
 
 const FilterScenes = () => {
-  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
+  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesContext);
   const { scenes } = scene_data; // eslint-disable-line
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
