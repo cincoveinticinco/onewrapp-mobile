@@ -96,6 +96,8 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   };
 
   const filteredItemsOptions = filterNames.filter((option) => removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase()));
+  const uncheckedFilteredItemsOptions = filteredItemsOptions.filter((option) => !isFilterOptionChecked(option));
+  const checkedItemsOptions = filterNames.filter((option) => isFilterOptionChecked(option));
 
   return (
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
@@ -181,7 +183,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
               cancelButtonIcon={trash}
             />
           </IonToolbar>
-          {filteredItemsOptions.length === 0 ? (
+          {uncheckedFilteredItemsOptions.length === 0 ? (
             <p className="no-items-message">
               {`There are no coincidences with "${searchText}". Do you want to create a `}
               <a style={{ marginLeft: '6px' }} href="/">New One</a>
@@ -193,7 +195,24 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
           ) : (
             <>
               <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
-                {filteredItemsOptions.map((option, i) => (
+              {checkedOptions && checkedItemsOptions.map((option: string, i: number) => (
+                  <IonItem
+                    color="tertiary"
+                    key={`filter-item-${i}`}
+                    className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                  >
+                    <IonCheckbox
+                      slot="start"
+                      className="ion-no-margin ion-no-padding"
+                      labelPlacement="end"
+                      onClick={() => handleCheckboxToggle(option)}
+                      checked={isFilterOptionChecked(option)}
+                    >
+                      {option.toUpperCase()}
+                    </IonCheckbox>
+                  </IonItem>
+                ))}
+                {uncheckedFilteredItemsOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
