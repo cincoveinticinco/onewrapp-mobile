@@ -16,8 +16,9 @@ import { useLocation } from 'react-router';
 import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import Toolbar from '../../components/Shared/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
-import ScenesFiltersContext from '../../context/scenesFiltersContext';
+import ScenesContext from '../../context/ScenesContext';
 import filterScenes from '../../utils/FilterScenesUtils/filterScenes';
+import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
@@ -27,18 +28,18 @@ const Strips: React.FC = () => {
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesFiltersContext);
+  const { filterOptions, setFilterOptions, sortOptions } = React.useContext<any>(ScenesContext);
   const thisPath = useLocation();
 
   const contentRef = React.createRef<HTMLIonContentElement>();
 
   useEffect(() => {
-    const newFilteredScenes = filterScenes(scene_data.scenes, filterOptions);
+    const newFilteredScenes = sortScenes(filterScenes(scene_data.scenes, filterOptions), sortOptions);
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
-  }, [filterOptions]);
+  }, [filterOptions, sortOptions]);
 
   const loadMoreScenes = () => {
     if (currentBatch * BATCH_SIZE >= filteredScenes.length) {
@@ -80,9 +81,9 @@ const Strips: React.FC = () => {
         {filteredScenes.length === 0 ? (
           <div className="no-items-message">
             <p className="ion-no-margin">There are not any scenes that match your search. </p>
-            <IonButton 
-              fill='clear' 
-              color='primary' 
+            <IonButton
+              fill="clear"
+              color="primary"
               className="ion-no-margin reset-filters-option"
               onClick={resetFilters}
             >
