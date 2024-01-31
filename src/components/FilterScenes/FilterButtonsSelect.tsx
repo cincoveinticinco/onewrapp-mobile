@@ -21,7 +21,7 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
   return (
     <IonRow className={`filter-item-container ion-padding${isMobile ? ' ion-margin-top' : ''}`}>
       <IonCol size="12" className="ion-flex ion-justify-content-start filter-button-select-column">
-        <p className="ion-text-start ion-no-margin ion-padding-top">
+        <p className="ion-text-start ion-no-margin ion-padding-top filter-button-select-title">
           { groupName }
         </p>
       </IonCol>
@@ -30,7 +30,7 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
           <IonCol key={`filter-button-select-${optionName}`}>
             <IonButton
               expand="block"
-              className={`${optionClass} `}
+              className={`${optionClass} filter-button-select`}
               onClick={handleOption}
             >
               {optionName}
