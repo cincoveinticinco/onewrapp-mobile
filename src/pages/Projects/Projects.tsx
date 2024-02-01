@@ -5,7 +5,7 @@ import {
 // import { useAuth } from '../../context/auth';
 import projects from '../../data';
 import ProjectCard from '../../components/Projects/ProjectCard';
-import Toolbar from '../../components/Shared/Toolbar';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 
 // const { loggedIn } = useAuth();
 
