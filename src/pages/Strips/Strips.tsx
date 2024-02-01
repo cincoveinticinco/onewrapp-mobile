@@ -11,10 +11,9 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import './Strips.scss';
-import { chevronDownOutline } from 'ionicons/icons';
 import { useLocation } from 'react-router';
 import scene_data from '../../data/scn_data.json'; // eslint-disable-line
-import Toolbar from '../../components/Shared/Toolbar';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
 import filterScenes from '../../utils/FilterScenesUtils/filterScenes';
@@ -68,16 +67,16 @@ const Strips: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name="LVE-STRIPS" search addScene filter elipse />
+        <Toolbar name="LVE-STRIPS" search addScene filter elipse sort />
       </IonHeader>
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
-        <IonToolbar color="tertiary" className="sort-strips-toolbar">
+        {/* <IonToolbar color="tertiary" className="sort-strips-toolbar">
           <IonButton fill="clear" className="reset-button sort-strips-button" routerLink="sortscenes">
             <IonIcon icon={chevronDownOutline} />
             {' '}
             SORT BY: EPISODE NUMBER
           </IonButton>
-        </IonToolbar>
+        </IonToolbar> */}
         {filteredScenes.length === 0 ? (
           <div className="no-items-message">
             <p className="ion-no-margin">There are not any scenes that match your search. </p>
@@ -93,7 +92,7 @@ const Strips: React.FC = () => {
           </div>
         ) : (
           <Suspense fallback={<div>Loading...</div>}>
-            <IonGrid className="scenes-grid">
+            <IonGrid className="scenes-grid ion-margin">
               {displayedScenes.map((scene, i) => (
                 <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
               ))}
