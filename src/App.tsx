@@ -9,7 +9,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { AuthContext } from './context/auth';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
-import AppTabs from './components/Shared/AppTabs';
+import AppTabs from './components/Shared/AppTabs/AppTabs';
 import AppDataBase from './RXdatabase/database';
 import ProjectsSchema from './RXdatabase/schemas/projects';
 import ScenesSchema from './RXdatabase/schemas/scenes';

@@ -5,7 +5,7 @@ import useIsMobile from '../../hooks/useIsMobile';
 import './FilterButtonSelect.scss';
 
 type SelectOptions = {
-  optionName: string,
+  filterName: string,
   handleOption: () => void,
   class: string
 }
@@ -26,14 +26,14 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
         </p>
       </IonCol>
       {
-        selectOptions.map(({ optionName, handleOption, class: optionClass }) => (
-          <IonCol key={`filter-button-select-${optionName}`}>
+        selectOptions.map(({ filterName, handleOption, class: optionClass }) => (
+          <IonCol key={`filter-button-select-${filterName}`}>
             <IonButton
               expand="block"
               className={`${optionClass} filter-button-select`}
               onClick={handleOption}
             >
-              {optionName}
+              {filterName}
             </IonButton>
           </IonCol>
         ))

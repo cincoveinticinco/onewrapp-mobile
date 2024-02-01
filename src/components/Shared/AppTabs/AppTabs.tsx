@@ -14,17 +14,17 @@ import {
   calendar, list, people, business, reader, settings,
 } from 'ionicons/icons';
 // import { useAuth } from '../../context/auth';
-import AddScene from '../../pages/AddScene/AddScene';
-import SortScenes from '../../pages/SortScenes/SortScenes';
-import FilterScenes from '../../pages/FilterScenes/FilterScenes';
-import Calendar from '../../pages/Calendar/Calendar';
-import Cast from '../../pages/Cast/Cast';
-import Elements from '../../pages/Elements/Elements';
-import Reports from '../../pages/Reports/Reports';
-import Settings from '../../pages/Settings/Settings';
-import Sets from '../../pages/Sets/Sets';
-import StripBoard from '../../pages/StripBoard/StripBoard';
-import Strips from '../../pages/Strips/Strips';
+import AddScene from '../../../pages/AddScene/AddScene';
+import SortScenes from '../../../pages/SortScenes/SortScenes';
+import FilterScenes from '../../../pages/FilterScenes/FilterScenes';
+import Calendar from '../../../pages/Calendar/Calendar';
+import Cast from '../../../pages/Cast/Cast';
+import Elements from '../../../pages/Elements/Elements';
+import Reports from '../../../pages/Reports/Reports';
+import Settings from '../../../pages/Settings/Settings';
+import Sets from '../../../pages/Sets/Sets';
+import StripBoard from '../../../pages/StripBoard/StripBoard';
+import Strips from '../../../pages/Strips/Strips';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -36,7 +36,7 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import './AppTabs.css';
+import './AppTabs.scss';
 
 setupIonicReact();
 

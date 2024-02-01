@@ -26,7 +26,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   sort = false,
 }) => (
   <IonToolbar color="tertiary" className="toolbar">
-    <IonButton slot="start" fill="clear" className="toolbar-burger-menu ion-margin-bottom">
+    <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
       <IonIcon icon={menuOutline} className="toolbar-icon" />
     </IonButton>
     <Link to="/my/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
