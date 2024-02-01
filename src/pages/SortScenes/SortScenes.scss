@@ -1,5 +1,14 @@
 #sort-scenes-page {
-  .sort-items-list {
+  .sort-options-wrapper {
     outline: 1px solid black;
+    margin: 0px var(--525-small-margin) 0px var(--525-small-margin);
+  }
+
+  .sort-scenes-button {
+    margin: 10% var(--525-small-margin) 0px var(--525-small-margin);
+
+    @media (min-width: 500px) {
+      margin: 20% auto 10% auto;
+    }
   }
 }

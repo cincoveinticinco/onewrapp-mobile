@@ -10,7 +10,8 @@ import SortItem from '../../components/SortScenes/SortItem';
 import useHideTabs from '../../hooks/useHideTabs';
 import './SortScenes.scss';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 
 const SortScenes = () => {
   const { sortOptions, setSortOptions } = React.useContext<any>(ScenesContext);
@@ -90,27 +91,10 @@ const SortScenes = () => {
   return (
     <IonPage color="tertiary">
       <IonHeader>
-        <IonToolbar color="tertiary" className="add-strip-toolbar">
-          {!isMobile && (
-            <>
-              <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-                BACK
-              </IonButton>
-              <IonButton fill="clear" color="primary" slot="end" onClick={handleReset}>
-                RESET
-              </IonButton>
-            </>
-          )}
-          {isMobile && (
-            <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-              <IonIcon icon={chevronBack} color="light" />
-            </IonButton>
-          )}
-          <IonTitle className="add-strip-toolbar-title">Sort By</IonTitle>
-        </IonToolbar>
+        <ModalToolbar handleBack={handleBack} toolbarTitle="Sort Scenes" clearOptions={handleReset} />
       </IonHeader>
       <IonContent color="tertiary" id="sort-scenes-page">
-        <>
+        <div className='sort-options-wrapper'>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="sortPosibilities">
             {(provided) => (
@@ -140,8 +124,8 @@ const SortScenes = () => {
               />
             ))}
           </div>
-        </>
-        <OutlinePrimaryButton buttonName="SORT SCENES" onClick={handleBack} />
+        </div>
+        <OutlinePrimaryButton buttonName="SORT SCENES" className='sort-scenes-button' onClick={handleBack} />
       </IonContent>
     </IonPage>
   );
