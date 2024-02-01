@@ -1,0 +1,19 @@
+@import "../../../theme/mixins";
+
+#add-scenes-options-modal {
+  @include modal-styling;
+
+  .options-list {
+    outline: 1px solid black;
+    border: 1px solid black;
+    box-shadow: none;
+  }
+}
+
+@media (min-width: 500px) {
+  #add-scenes-options-modal {
+    .modal-confirm-button {
+      margin: 20% auto 10% auto;
+    }
+  }
+}
