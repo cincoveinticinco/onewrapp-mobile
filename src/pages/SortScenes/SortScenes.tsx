@@ -111,31 +111,30 @@ const SortScenes = () => {
       </IonHeader>
       <IonContent color="tertiary" id="sort-scenes-page">
         <>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="sortPosibilities">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
-                  {getCheckedSortOptions().map((sortPosibility, index) => (
-
-                    <SortItem
-                      key={sortPosibility.id}
-                      sortPosibility={sortPosibility}
-                      index={index}
-                      setSortPosibilities={setSortPosibilities}
-                      sortPosibilities={sortPosibilities}
-                    />
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="sortPosibilities">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
+                {getCheckedSortOptions().map((sortPosibility, index) => (
+                  <SortItem
+                    key={sortPosibility.id}
+                    sortPosibility={sortPosibility}
+                    index={index}
+                    setSortPosibilities={setSortPosibilities}
+                    sortPosibilities={sortPosibilities}
+                  />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
           <div className="sort-scenes-divider">
             {getNotCheckedSortOptions().map((sortPosibility, index) => (
               <SortItem
                 key={sortPosibility.id}
                 sortPosibility={sortPosibility}
-                index={index}
+                index={index + getCheckedSortOptions().length}
                 setSortPosibilities={setSortPosibilities}
                 sortPosibilities={sortPosibilities}
               />

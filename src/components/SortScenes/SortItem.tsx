@@ -120,7 +120,6 @@ const SortItem: React.FC<SortItemProps> = ({
     <Draggable
       draggableId={sortPosibility.id}
       index={index}
-      isDragDisabled={!isChecked}
     >
       {(provided) => (
         <div
@@ -131,7 +130,7 @@ const SortItem: React.FC<SortItemProps> = ({
         >
           <IonItem color="tertiary">
             <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding">
-              <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon " />
+              <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
             </IonButton>
             <IonCheckbox
               slot="start"
