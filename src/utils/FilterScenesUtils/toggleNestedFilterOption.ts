@@ -27,6 +27,10 @@ const toggleNestedFilterOption = (prevOptions: FilterOptionsInterface, category:
     updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey].length > 0);
   }
 
+  if (updatedOptions[category].length === 0) {
+    delete updatedOptions[category];
+  }
+
   return updatedOptions;
 };
 
