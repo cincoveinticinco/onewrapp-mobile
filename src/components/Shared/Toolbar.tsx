@@ -3,9 +3,9 @@ import {
   IonToolbar, IonButton, IonIcon, IonTitle,
 } from '@ionic/react';
 import {
-  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline,
+  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline,
 } from 'ionicons/icons';
-import './Toolbar.css';
+import './Toolbar.scss';
 import { Link } from 'react-router-dom';
 
 interface ToolbarProps {
@@ -14,6 +14,7 @@ interface ToolbarProps {
   addScene?: boolean;
   filter?: boolean;
   elipse?: boolean;
+  sort?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -22,6 +23,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   addScene = false,
   filter = false,
   elipse = false,
+  sort = false,
 }) => (
   <IonToolbar color="tertiary" className="toolbar">
     <IonButton slot="start" fill="clear" className="toolbar-burger-menu ion-margin-bottom">
@@ -51,6 +53,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
       && (
         <IonButton fill="clear" slot="end" routerLink="/my/projects/01/strips/filters" className="ion-no-padding toolbar-button">
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
+        </IonButton>
+      )
+    }
+    {
+      sort
+      && (
+        <IonButton fill="clear" slot="end" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button" >
+          <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )
     }

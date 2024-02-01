@@ -28,4 +28,13 @@
 .toolbar-button {
   width: 40px;
   height: 50px;
+  --background-activated-opacity: 0;
+
+  &:active {
+    ion-icon {
+      color: var(--ion-color-primary);
+      font-weight: bolder;
+      transform: scale(1.1);
+    }
+  }
 }
