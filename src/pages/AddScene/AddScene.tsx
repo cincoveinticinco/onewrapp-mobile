@@ -7,6 +7,7 @@ import { chevronBack } from 'ionicons/icons';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import useIsMobile from '../../hooks/useIsMobile';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 
 const AddScene = () => {
   const history = useHistory();
@@ -17,36 +18,14 @@ const AddScene = () => {
     history.goBack();
   };
 
+  const handleSave = () => {
+    console.log('I am saving');
+  };
+
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="tertiary" className="add-strip-toolbar">
-          {
-          !isMobile
-          && (
-          <>
-            <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-              CANCEL
-            </IonButton>
-            <IonButton fill="clear" color="primary" slot="end">
-              SAVE
-            </IonButton>
-          </>
-          )
-          }
-
-          {
-            isMobile
-            && (
-            <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-              <IonIcon icon={chevronBack} color="light" />
-            </IonButton>
-            )
-          }
-          <IonTitle className="add-strip-toolbar-title">
-            Add Strip
-          </IonTitle>
-        </IonToolbar>
+        <ModalToolbar handleBack={handleBack} toolbarTitle="Add Strip" saveOptions={handleSave} />
       </IonHeader>
       <IonContent color="tertiary">
         <AddScenesForm />
