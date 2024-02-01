@@ -1,7 +1,8 @@
 // import sceneData from '../../data/scn_data.json';
 
-// CRITERIA is an array of criterias, where each criteria is an array with the following structure:
-// [CRITERIAKEY, ASCENDING/DESCENDING]
+// each selected sort option is a criteria, and each CRITERIA is an array with the following structure:
+// [CRITERIAKEY, ASCENDING/DESCENDING, SORTORDER]
+// SORT ORDER IS THE ORDER IN WHICH THE CRITERIA IS APPLIED
 
 const sortBySceneNumber = (a: any, b: any, criteriaOrder: string) => {
   const [aNumber, aLetter] = a.match(/(\d+)([A-Z]*)/).slice(1);
@@ -48,8 +49,8 @@ const applySortCriteria = (data: any, criteria: any) => {
   });
 };
 
-const orderSortCriteria = (sortOptions: any[]) => {
-  sortOptions.sort((a, b) => {
+const orderSortOptions = (selectedSortOptions: any[]) => {
+  selectedSortOptions.sort((a, b) => {
     const aOptionIndex = a[2];
     const bOptionIndex = b[2];
     return bOptionIndex - aOptionIndex;
@@ -57,7 +58,7 @@ const orderSortCriteria = (sortOptions: any[]) => {
 };
 
 const sortScenes = (data: any, criterias: any) => {
-  orderSortCriteria(criterias);
+  orderSortOptions(criterias);
   return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
 };
 
@@ -65,7 +66,7 @@ export default sortScenes;
 
 // EXAMPLE
 
-// THE FIRST CRITERIA APPLIED IS THE LAST ONE
+// THE FIRST CRITERIA APPLIED IS THE LAST ONE IN THE ARRAY, AND FOR THAT REASON IT HAS THE HIGHEST SORT ORDER
 
 // const scenes = [...sceneData.scenes];
 // const sortCriteria = [['dayOrNightOption', 'desc']];

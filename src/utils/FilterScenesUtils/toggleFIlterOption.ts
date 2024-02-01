@@ -1,6 +1,6 @@
-import { FilterOptionsInterface } from '../../context/ScenesContext';
+import { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
 
-const toggleFilterOption = (prevOptions: FilterOptionsInterface, category: string, optionValue: string) => {
+const toggleFilterOption = (prevOptions: SelectedFilterOptionsInterface, category: string, optionValue: string) => {
   const updatedOptions: { [key: string]: any[] } = { ...prevOptions };
   const currentOptions: any[] = updatedOptions[category as keyof typeof updatedOptions] || [];
   const optionIndex = currentOptions.indexOf(optionValue);

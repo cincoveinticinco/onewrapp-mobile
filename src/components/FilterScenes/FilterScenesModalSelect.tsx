@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
   IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
-  IonList, IonModal, IonRow, IonSearchbar, IonTitle, IonToolbar,
-} from '@ionic/react';
-import { chevronBack, chevronForward, trash } from 'ionicons/icons';
+  IonList, IonModal, IonRow
+} from '@ionic/react'; 
+import { chevronForward } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
-import './FilterSceneItem.scss';
+import './FilterScenesModalSelect.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
 import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
 
-interface FilterSceneItemProps {
+interface FilterScenesModalSelectProps {
   filterName: string;
   listOfFilters: string[];
   handleSingleFilterOption?: (category: string, optionValue: string) => void;
@@ -21,7 +21,7 @@ interface FilterSceneItemProps {
   nestedKey?: string;
 }
 
-const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
+const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   filterName,
   listOfFilters,
   handleSingleFilterOption = () => {},
@@ -32,7 +32,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   const modalRef = React.useRef<HTMLIonModalElement>(null);
   const isMobile = useIsMobile();
   const [searchText, setSearchText] = useState('');
-  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesContext);
+  const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
 
   const removeNumberAndDot = (selectedOption: string) => {
     const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
@@ -41,7 +41,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   };
 
   const getCheckedOptions = () => {
-    const result = filterOptions[optionKey];
+    const result = selectedFilterOptions[optionKey];
 
     if (result && !nestedKey) {
       return result;
@@ -66,7 +66,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   };
 
   const clearFilterOptions = () => {
-    setFilterOptions((prev: any) => { 
+    setSelectedFilterOptions((prev: any) => { 
         const newFilterOptions = {
           ...prev,
           [optionKey]: [],
@@ -200,4 +200,4 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   );
 };
 
-export default FilterSceneItem;
+export default FilterScenesModalSelect;

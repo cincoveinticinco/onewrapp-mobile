@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 
-export interface FilterOptionsInterface {
+export interface SelectedFilterOptionsInterface {
   sceneType?: string[];
   protectionType?: string[];
   episodeNumber?: string[];
@@ -18,25 +18,25 @@ export interface FilterOptionsInterface {
 type SortOption = [string, string, number];
 
 export interface ScenesContextType {
-  filterOptions: FilterOptionsInterface;
-  setFilterOptions: React.Dispatch<React.SetStateAction<FilterOptionsInterface>>;
-  sortOptions: SortOption[];
-  setSortOptions: React.Dispatch<React.SetStateAction<SortOption[]>>;
+  selectedFilterOptions: SelectedFilterOptionsInterface;
+  setSelectedFilterOptions: React.Dispatch<React.SetStateAction<SelectedFilterOptionsInterface>>;
+  selectedSortOptions: SortOption[];
+  setSelectedSortOptions: React.Dispatch<React.SetStateAction<SortOption[]>>;
 }
 
 const ScenesContext = createContext<ScenesContextType>({
-  filterOptions: {},
-  setFilterOptions: () => {},
-  sortOptions: [],
-  setSortOptions: () => {},
+  selectedFilterOptions: {},
+  setSelectedFilterOptions: () => {},
+  selectedSortOptions: [],
+  setSelectedSortOptions: () => {},
 });
 
 export const defaultSortOptions: SortOption[] = [['episodeNumber', 'asc', 0], ['sceneNumber', 'asc', 1]];
 
 export const ScenesContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [filterOptions, setFilterOptions] = useState<FilterOptionsInterface>({});
-  const [sortOptions, setSortOptions] = useState<SortOption[]>(() => {
-    const savedSortOptions = localStorage.getItem('sortOptions');
+  const [selectedFilterOptions, setSelectedFilterOptions] = useState<SelectedFilterOptionsInterface>({});
+  const [selectedSortOptions, setSelectedSortOptions] = useState<SortOption[]>(() => {
+    const savedSortOptions = localStorage.getItem('selectedSortOptions');
     if (savedSortOptions) {
       return JSON.parse(savedSortOptions);
     }
@@ -44,14 +44,14 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
   });
 
   const contextValue: ScenesContextType = {
-    filterOptions,
-    setFilterOptions,
-    sortOptions,
-    setSortOptions,
+    selectedFilterOptions,
+    setSelectedFilterOptions,
+    selectedSortOptions,
+    setSelectedSortOptions,
   };
 
-  const orderSortOptions = (sortOptions: SortOption[]) => {
-    sortOptions.sort((a, b) => {
+  const orderSortOptions = (selectedSortOptions: SortOption[]) => {
+    selectedSortOptions.sort((a, b) => {
       const aOptionIndex = a[2];
       const bOptionIndex = b[2];
       return bOptionIndex - aOptionIndex;
@@ -59,13 +59,13 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
   };
 
   useEffect(() => {
-    orderSortOptions(sortOptions);
-    localStorage.setItem('sortOptions', JSON.stringify(sortOptions)); // Guardar en localStorage
-  }, [sortOptions]);
+    orderSortOptions(selectedSortOptions);
+    localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions)); // Guardar en localStorage
+  }, [selectedSortOptions]);
 
   useEffect(() => {
-    console.log('FILTER OPTIONS: useEffect', filterOptions);
-  }, [filterOptions]);
+    console.log('FILTER OPTIONS: useEffect', selectedFilterOptions);
+  }, [selectedFilterOptions]);
 
   return (
     <ScenesContext.Provider value={contextValue}>

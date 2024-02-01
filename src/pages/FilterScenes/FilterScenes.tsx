@@ -5,10 +5,10 @@ import React from 'react';
 import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
-import FilterButtonsSelect from '../../components/FilterScenes/FilterButtonsSelect';
+import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
 import useHideTabs from '../../hooks/useHideTabs';
-import ScenesContext, { FilterOptionsInterface } from '../../context/ScenesContext';
-import FilterSceneItem from '../../components/FilterScenes/FilterSceneItem';
+import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
+import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
   import scene_data from '../../data/scn_data.json'; // eslint-disable-line
@@ -23,7 +23,7 @@ import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 
 const FilterScenes = () => {
-  const { filterOptions, setFilterOptions } = React.useContext<any>(ScenesContext);
+  const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { scenes } = scene_data; // eslint-disable-line
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
@@ -31,28 +31,28 @@ const FilterScenes = () => {
 
   // Main functions
   const handleSingleFilterOption = (category: string, optionValue: string) => {
-    setFilterOptions((prevOptions: FilterOptionsInterface) => {
+    setSelectedFilterOptions((prevOptions: SelectedFilterOptionsInterface) => {
       const updatedOptions = toggleFilterOption(prevOptions, category, optionValue);
       return updatedOptions;
     });
   };
 
   const handleNestedFilterOption = (category: string, nestedKey: string, optionValue: string) => {
-    setFilterOptions((prevOptions: FilterOptionsInterface) => {
+    setSelectedFilterOptions((prevOptions: SelectedFilterOptionsInterface) => {
       const updatedOptions = toggleNestedFilterOption(prevOptions, category, nestedKey, optionValue);
       return updatedOptions;
     });
   };
 
   const getFilterButtonClass = (optionValue: string, category: string) => {
-    if (filterOptions[category] && filterOptions[category].includes(optionValue)) {
+    if (selectedFilterOptions[category] && selectedFilterOptions[category].includes(optionValue)) {
       return 'filled-primary-button';
     }
     return 'outline-light-button';
   };
 
   const resetFilters = () => {
-    setFilterOptions({});
+    setSelectedFilterOptions({});
   };
 
   const handleCancel = () => {
@@ -99,7 +99,7 @@ const FilterScenes = () => {
       </IonHeader>
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
-          <FilterButtonsSelect
+          <FilterScenesButtonsSelect
             selectOptions={
                 [
                   {
@@ -117,7 +117,7 @@ const FilterScenes = () => {
             groupName="STRIP TYPE"
           />
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="PROTECTION TYPE"
             listOfFilters={['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER']}
             handleSingleFilterOption={handleSingleFilterOption}
@@ -126,19 +126,19 @@ const FilterScenes = () => {
 
           {/* LIST */}
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="EPISODES"
             listOfFilters={getUniqueValuesByKey(scenes, 'episodeNumber').map(String)}
             handleSingleFilterOption={handleSingleFilterOption}
             optionKey="episodeNumber"
           />
 
-          {/* <FilterSceneItem
+          {/* <FilterScenesModalSelect
               filterName='SCENE STATUS'
               listOfFilters={getUniqueValuesByKey(scenes, 'characters')}
             /> */}
 
-          <FilterButtonsSelect
+          <FilterScenesButtonsSelect
             selectOptions={
                 [
                   {
@@ -166,7 +166,7 @@ const FilterScenes = () => {
             groupName="DAY OR NIGHT"
           />
 
-          <FilterButtonsSelect
+          <FilterScenesButtonsSelect
             selectOptions={
                 [
                   {
@@ -184,7 +184,7 @@ const FilterScenes = () => {
             groupName="INTERIOR OR EXTERIOR"
           />
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="CHARACTERS"
             listOfFilters={getSortedCharacterNames}
             handleNestedFilterOption={handleNestedFilterOption}
@@ -192,7 +192,7 @@ const FilterScenes = () => {
             nestedKey="characterName"
           />
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="EXTRAS"
             listOfFilters={getSortedExtraNames}
             handleNestedFilterOption={handleNestedFilterOption}
@@ -202,7 +202,7 @@ const FilterScenes = () => {
 
           {/* ORDER BY NUMBER, ORDER ALPH, IF NUMBER 1. NAME, ELSE NAME */}
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="LOCATIONS"
             listOfFilters={getSortedLocationNames}
             handleSingleFilterOption={handleSingleFilterOption}
@@ -211,7 +211,7 @@ const FilterScenes = () => {
 
           {/* LOCATION NAME */}
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="SETS"
             listOfFilters={getSortedSetNames}
             handleSingleFilterOption={handleSingleFilterOption}
@@ -220,7 +220,7 @@ const FilterScenes = () => {
 
           {/* SETS ARE PART FROM LOCATIONS, LOCATION NAME.  SET OR SET */}
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="ELEMENT CATEGORY"
             listOfFilters={getSortedElementCategoryNames}
             handleNestedFilterOption={handleNestedFilterOption}
@@ -230,7 +230,7 @@ const FilterScenes = () => {
 
           {/* ELEMENT CATEGORY */}
 
-          <FilterSceneItem
+          <FilterScenesModalSelect
             filterName="ELEMENTS"
             listOfFilters={getSortedElementNames}
             handleNestedFilterOption={handleNestedFilterOption}
@@ -239,7 +239,7 @@ const FilterScenes = () => {
           />
 
           {/* CategoryName, Element */}
-          {/* <FilterButtonsSelect
+          {/* <FilterScenesButtonsSelect
               selectOptions={
                 [
                   {
@@ -257,7 +257,7 @@ const FilterScenes = () => {
               groupName='UNITS'
             /> */}
 
-          {/* <FilterSceneItem
+          {/* <FilterScenesModalSelect
               filterName='DATE'
               listOfFilters={getUniqueValuesByKey(scenes, 'date')}
             /> */}

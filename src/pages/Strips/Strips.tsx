@@ -27,18 +27,18 @@ const Strips: React.FC = () => {
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const { filterOptions, setFilterOptions, sortOptions } = React.useContext<any>(ScenesContext);
+  const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions } = React.useContext<any>(ScenesContext);
   const thisPath = useLocation();
 
   const contentRef = React.createRef<HTMLIonContentElement>();
 
   useEffect(() => {
-    const newFilteredScenes = sortScenes(filterScenes(scene_data.scenes, filterOptions), sortOptions);
+    const newFilteredScenes = sortScenes(filterScenes(scene_data.scenes, selectedFilterOptions), selectedSortOptions);
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
-  }, [filterOptions, sortOptions]);
+  }, [selectedFilterOptions, selectedSortOptions]);
 
   const loadMoreScenes = () => {
     if (currentBatch * BATCH_SIZE >= filteredScenes.length) {
@@ -57,7 +57,7 @@ const Strips: React.FC = () => {
   };
 
   const resetFilters = () => {
-    setFilterOptions({});
+    setSelectedFilterOptions({});
   };
 
   useEffect(() => {

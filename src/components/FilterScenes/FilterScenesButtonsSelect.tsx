@@ -2,7 +2,7 @@ import { IonButton, IonCol, IonRow } from '@ionic/react';
 import React from 'react';
 import useIsMobile from '../../hooks/useIsMobile';
 
-import './FilterButtonSelect.scss';
+import './FilterScenesButtonsSelect.scss';
 
 type SelectOptions = {
   filterName: string,
@@ -10,12 +10,12 @@ type SelectOptions = {
   class: string
 }
 
-interface FilterButtonsSelectProps {
+interface FilterScenesButtonsSelectProps {
   selectOptions: SelectOptions[],
   groupName: string,
 }
 
-const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions, groupName }) => {
+const FilterScenesButtonsSelect: React.FC<FilterScenesButtonsSelectProps> = ({ selectOptions, groupName }) => {
   const isMobile = useIsMobile();
 
   return (
@@ -42,4 +42,4 @@ const FilterButtonsSelect: React.FC<FilterButtonsSelectProps> = ({ selectOptions
   );
 };
 
-export default FilterButtonsSelect;
+export default FilterScenesButtonsSelect;

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
+ IonContent, IonHeader, IonPage
 } from '@ionic/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
-import SortItem from '../../components/SortScenes/SortItem';
+import SortPosibilityCheckbox from '../../components/SortScenes/SortPosibilityCheckbox';
 import useHideTabs from '../../hooks/useHideTabs';
 import './SortScenes.scss';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
@@ -14,7 +13,7 @@ import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/O
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 
 const SortScenes = () => {
-  const { sortOptions, setSortOptions } = React.useContext<any>(ScenesContext);
+  const { selectedSortOptions, setSelectedSortOptions } = React.useContext<any>(ScenesContext);
 
   const defaultSortPosibilities = [
     {
@@ -72,19 +71,19 @@ const SortScenes = () => {
   };
 
   const handleReset = () => {
-    localStorage.removeItem('sortOptions');
+    localStorage.removeItem('selectedSortOptions');
     localStorage.removeItem('sortPosibilitiesOrder');
     setSortPosibilities(defaultSortPosibilities);
-    setSortOptions(defaultSortOptions);
+    setSelectedSortOptions(defaultSortOptions);
   };
 
   const getCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
-    const sortOption = sortOptions.find((option: any) => option[0] === posibility.optionKey);
+    const sortOption = selectedSortOptions.find((option: any) => option[0] === posibility.optionKey);
     return sortOption;
   });
 
   const getNotCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
-    const sortOption = sortOptions.find((option: any) => option[0] === posibility.optionKey);
+    const sortOption = selectedSortOptions.find((option: any) => option[0] === posibility.optionKey);
     return !sortOption;
   });
 
@@ -100,7 +99,7 @@ const SortScenes = () => {
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
                 {getCheckedSortOptions().map((sortPosibility, index) => (
-                  <SortItem
+                  <SortPosibilityCheckbox
                     key={sortPosibility.id}
                     sortPosibility={sortPosibility}
                     index={index}
@@ -115,7 +114,7 @@ const SortScenes = () => {
         </DragDropContext>
           <div className="sort-scenes-divider">
             {getNotCheckedSortOptions().map((sortPosibility, index) => (
-              <SortItem
+              <SortPosibilityCheckbox
                 key={sortPosibility.id}
                 sortPosibility={sortPosibility}
                 index={index + getCheckedSortOptions().length}

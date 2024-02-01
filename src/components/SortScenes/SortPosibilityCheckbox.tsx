@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import './SortItem.scss';
+import './SortPosibilityCheckbox.scss';
 import { Draggable } from 'react-beautiful-dnd';
 import {
   IonButton, IonCheckbox, IonItem,
@@ -9,25 +9,25 @@ import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
 
 import ScenesContext from '../../context/ScenesContext';
 
-interface SortItemProps {
+interface SortPosibilityCheckboxProps {
   sortPosibility: any;
   index: number;
   setSortPosibilities: (array: any[]) => any;
   sortPosibilities: any[];
 }
 
-const SortItem: React.FC<SortItemProps> = ({
+const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
   sortPosibility, index, setSortPosibilities, sortPosibilities,
 }) => {
-  const { sortOptions, setSortOptions } = useContext<any>(ScenesContext);
+  const { selectedSortOptions, setSelectedSortOptions } = useContext<any>(ScenesContext);
   const [sortOrder, setSortOrder] = React.useState<number>(0);
-  const isChecked = sortOptions.some((option: any) => option[0] === sortPosibility.optionKey);
+  const isChecked = selectedSortOptions.some((option: any) => option[0] === sortPosibility.optionKey);
 
   const getInitialAscOrDesc = () => {
-    const optionIndex = sortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
+    const optionIndex = selectedSortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
 
     if (optionIndex !== -1) {
-      const [, ascOrDesc] = sortOptions[optionIndex];
+      const [, ascOrDesc] = selectedSortOptions[optionIndex];
       return ascOrDesc;
     }
 
@@ -42,14 +42,14 @@ const SortItem: React.FC<SortItemProps> = ({
 
   useEffect(() => {
     const updateSortOptions = () => {
-      const findSortOptionIndex = () => sortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
+      const findSortOptionIndex = () => selectedSortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
 
-      const updatedSortOptions = [...sortOptions];
+      const updatedSortOptions = [...selectedSortOptions];
       const updatedSortOptionIndex = findSortOptionIndex();
 
       if (updatedSortOptionIndex !== -1 && updatedSortOptions[updatedSortOptionIndex].length >= 3) {
         updatedSortOptions[updatedSortOptionIndex][2] = sortOrder || index;
-        setSortOptions(updatedSortOptions);
+        setSelectedSortOptions(updatedSortOptions);
       }
     };
 
@@ -57,16 +57,16 @@ const SortItem: React.FC<SortItemProps> = ({
   }, [sortOrder]);
 
   useEffect(() => {
-    const updatedSortOptions = sortOptions.map((option: any) => {
+    const updatedSortOptions = selectedSortOptions.map((option: any) => {
       if (option[0] === sortPosibility.optionKey) {
         return [option[0], ascOrDesc, sortOrder];
       }
       return option;
     });
-    setSortOptions(updatedSortOptions);
+    setSelectedSortOptions(updatedSortOptions);
   }, [ascOrDesc, index]);
 
-  const getSortOptionsLastIndex = () => sortOptions.length - 1;
+  const getSortOptionsLastIndex = () => selectedSortOptions.length - 1;
 
   const interChangeSortOptions = (currentIndex: number, newIndex: number) => {
     const lastCheckedIndexOption = getSortOptionsLastIndex();
@@ -83,21 +83,21 @@ const SortItem: React.FC<SortItemProps> = ({
 
     if (isChecked) {
       interChangeSortOptions(index, getSortOptionsLastIndex() + 1);
-      setSortOptions([...sortOptions, [optionKey, ascOrDesc, sortOrder]]);
+      setSelectedSortOptions([...selectedSortOptions, [optionKey, ascOrDesc, sortOrder]]);
     } else if (sortPosibility.defaultIndex > getSortOptionsLastIndex()) {
-      const newSortOptions = sortOptions.filter((option: any) => option[0] !== optionKey);
+      const newSortOptions = selectedSortOptions.filter((option: any) => option[0] !== optionKey);
       interChangeSortOptions(index, sortPosibility.defaultIndex);
-      setSortOptions(newSortOptions);
+      setSelectedSortOptions(newSortOptions);
     } else if (sortPosibility.defaultIndex <= getSortOptionsLastIndex()) {
-      const newSortOptions = sortOptions.filter((option: any) => option[0] !== optionKey);
+      const newSortOptions = selectedSortOptions.filter((option: any) => option[0] !== optionKey);
       interChangeSortOptions(index, getSortOptionsLastIndex());
-      setSortOptions(newSortOptions);
+      setSelectedSortOptions(newSortOptions);
     }
 
     console.log(sortPosibilities);
   };
 
-  const filterIsChecked = (optionKey: string) => sortOptions.some((option: any) => option[0] === optionKey);
+  const filterIsChecked = (optionKey: string) => selectedSortOptions.some((option: any) => option[0] === optionKey);
 
   const toggleAscOrDesc = () => {
     if (filterIsChecked(sortPosibility.optionKey)) {
@@ -106,10 +106,10 @@ const SortItem: React.FC<SortItemProps> = ({
   };
 
   const getAscOrDescClass = (orderOption: string) => {
-    const optionIndex = sortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
+    const optionIndex = selectedSortOptions.findIndex((option: any) => option[0] === sortPosibility.optionKey);
 
     if (optionIndex !== -1) {
-      const [, ascOrDesc] = sortOptions[optionIndex];
+      const [, ascOrDesc] = selectedSortOptions[optionIndex];
       return ascOrDesc === orderOption ? 'yellow' : 'light';
     }
 
@@ -183,4 +183,4 @@ const SortItem: React.FC<SortItemProps> = ({
   );
 };
 
-export default SortItem;
+export default SortPosibilityCheckbox;
