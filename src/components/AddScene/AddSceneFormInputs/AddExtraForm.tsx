@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddExtraInput from './AddExtraInput';
+import scenesData from '../../../data/scn_data.json';
+import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import InputModal from '../../Shared/InputModal/InputModal';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
-  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const scenes = scenesData.scenes;
+
+  const defineExtrasCategories = () => {
+    const categoriesArray: string[] = [];
+    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'extras', 'categoryName');
+    
+    uniqueValuesArray.forEach((extra) => {
+      const categoryName = extra.categoryName;
+      if(categoryName) {
+        categoriesArray.push(categoryName);
+      }
+    });
+
+    return categoriesArray
+  };
+
+  const sortedExtrasCategories = defineExtrasCategories().sort();
+
+  useEffect(() => {
+    console.log('sortedExtrasCategories', sortedExtrasCategories);
+  }, [])
 
   const toggleForm = (index: number) => {
     const element = document.getElementById(`extra-form-${index}`);
@@ -26,7 +50,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
   const handleOk = (inputData: { categoryName: string }) => {
     const inputElement = document.getElementById('add-extra-category-input');
     if (inputData.categoryName) {
-      setCategories([...categories, inputData.categoryName]);
+      setSelectedCategories([...selectedCategories, inputData.categoryName]);
     }
     if (inputElement) {
       (inputElement as HTMLInputElement).value = '';
@@ -34,8 +58,8 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
   };
 
   // const removeCategory = (categoryName: string) => {
-  //   const updatedCategories = categories.filter((category) => category !== categoryName);
-  //   setCategories(updatedCategories);
+  //   const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
+  //   setSelectedCategories(updatedCategories);
   // };
 
   return (
@@ -44,11 +68,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
         <p className="ion-flex ion-align-items-center">
           Extras / Background Actors
         </p>
-        <IonButton fill="clear" color="light" id="extra-category-alert" slot="end" className="ion-no-padding">
+        <IonButton fill="clear" color="light" id="open-add-scene-extras-categories-modal" slot="end" className="ion-no-padding">
           <IonIcon icon={add} />
         </IonButton>
       </div>
-      <IonAlert
+      {/* <IonAlert
         trigger="extra-category-alert"
         header="Please, enter an extra category name"
         buttons={[
@@ -65,10 +89,16 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
             id: 'add-extra-category-input',
           },
         ]}
+      /> */}
+
+      <InputModal
+        optionName="Extras Categories"
+        listOfOptions={[]}
+        modalTrigger='open-add-scene-extras-categories-modal'
       />
 
       {
-        categories.length === 0
+        selectedCategories.length === 0
         && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
@@ -80,12 +110,12 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
         )
       }
 
-      {categories.length > 0
+      {selectedCategories.length > 0
         && (
         <IonGrid
           className="add-scene-items-card-grid"
         >
-          {categories.map((category, index) => (
+          {selectedCategories.map((category, index) => (
             <IonCard
               key={index}
               color="tertiary"

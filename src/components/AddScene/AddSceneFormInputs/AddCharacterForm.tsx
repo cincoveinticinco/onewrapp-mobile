@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IonButton,
   IonIcon,
@@ -11,26 +11,46 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import AddCharacterInput from './AddCharacterInput';
+import InputModal from '../../Shared/InputModal/InputModal';
+import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import scenesData from '../../../data/scn_data.json'
+import { Character } from '../../../interfaces/scenesTypes';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
-  const [categories, setCategories] = useState<string[]>([]);
+  
+  const [selectedCategories, setCategories] = useState<string[]>([]);
+  
+  const defineCharactersCategories = () => {
+    const scenes = scenesData.scenes;
+    const categoriesArray: string[] = [];
+    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'categoryName');
+    
+    uniqueValuesArray.forEach((character: Character) => {
+      const categoryName = character.categoryName;
+      categoriesArray.push(categoryName);
+    });
 
-  const handleOk = (inputData: { categoryName: string; }) => {
-    const inputElement = document.getElementById('add-category-input');
-    if (inputData.categoryName) {
-      setCategories([...categories, inputData.categoryName]);
-    }
-    if (inputElement) {
-      (inputElement as HTMLInputElement).value = '';
-    }
+    return categoriesArray
   };
 
+  const sortedCharactersCategories = defineCharactersCategories();
+
+  // const handleOk = (inputData: { categoryName: string; }) => {
+  //   const inputElement = document.getElementById('add-category-input');
+  //   if (inputData.categoryName) {
+  //     setCategories([...selectedCategories, inputData.categoryName]);
+  //   }
+  //   if (inputElement) {
+  //     (inputElement as HTMLInputElement).value = '';
+  //   }
+  // };
+
   // const removeCategory = (categoryName: string) => {
-  //   const updatedCategories = categories.filter((category) => category !== categoryName);
+  //   const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
   //   setCategories(updatedCategories);
   // };
 
@@ -40,11 +60,11 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         <p className="ion-flex ion-align-items-center">
           Characters
         </p>
-        <IonButton fill="clear" id="category-alert" slot="end" color="light" className="ion-no-padding">
+        <IonButton fill="clear" id="open-add-scene-character-category-modal" slot="end" color="light" className="ion-no-padding">
           <IonIcon icon={add} />
         </IonButton>
       </div>
-      <IonAlert
+      {/* <IonAlert
         color="tertiary"
         trigger="category-alert"
         header="Please, enter a category name"
@@ -62,10 +82,16 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
             id: 'add-category-input',
           },
         ]}
+      /> */}
+
+      <InputModal
+        optionName="Character Categories"
+        listOfOptions={sortedCharactersCategories}
+        modalTrigger='open-add-scene-character-category-modal'
       />
 
       {
-        categories.length === 0
+        selectedCategories.length === 0
         && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
@@ -77,10 +103,10 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         )
       }
 
-      {categories.length > 0
+      {selectedCategories.length > 0
         && (
         <IonGrid className="add-scene-items-card-grid">
-          {categories.map((category, index) => (
+          {selectedCategories.map((category, index) => (
             <IonCard
               key={index}
               color="tertiary"
