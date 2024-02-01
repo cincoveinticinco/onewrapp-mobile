@@ -1,7 +1,7 @@
 import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
-import ExploreContainer from '../../components/Shared/ExploreContainer';
+import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 
 const Sets: React.FC = () => (
   <IonPage>
