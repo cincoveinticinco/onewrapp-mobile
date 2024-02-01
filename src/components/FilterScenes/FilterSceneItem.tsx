@@ -7,12 +7,14 @@ import { chevronBack, chevronForward, trash } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
 import './FilterSceneItem.scss';
 import useIsMobile from '../../hooks/useIsMobile';
-import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton';
-import OutlineLightButton from '../Shared/OutlineLightButton';
+import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
+import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
 
 interface FilterSceneItemProps {
-  itemOption: string;
-  filterNames: string[];
+  filterName: string;
+  listOfFilters: string[];
   handleSingleFilterOption?: (category: string, optionValue: string) => void;
   handleNestedFilterOption?: (category: string, nestedKey: string, optionValue: string) => void;
   optionKey: string;
@@ -20,8 +22,8 @@ interface FilterSceneItemProps {
 }
 
 const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
-  itemOption,
-  filterNames,
+  filterName,
+  listOfFilters,
   handleSingleFilterOption = () => {},
   handleNestedFilterOption = () => {},
   optionKey,
@@ -64,23 +66,16 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
   };
 
   const clearFilterOptions = () => {
-    setFilterOptions((prev: any) => {
-      if (prev[optionKey].length === 0) {
-        const { [optionKey]: unused_, ...newOptions } = prev;
-        return newOptions;
-      } if (nestedKey) {
-        const nestedKeyIndex = prev[optionKey].findIndex((item: any) => item[nestedKey]);
+    setFilterOptions((prev: any) => { 
+        const newFilterOptions = {
+          ...prev,
+          [optionKey]: [],
+        };
 
-        if (nestedKeyIndex > -1) {
-          const newNestedOptions = prev[optionKey].filter((item: any, i: number) => i !== nestedKeyIndex);
-          return {
-            ...prev,
-            [optionKey]: newNestedOptions,
-          };
-        }
-      }
-      return prev;
-    });
+        delete newFilterOptions[optionKey];
+
+        return newFilterOptions;
+    })
   };
 
   const capitalizeString = (str: string): string => {
@@ -95,20 +90,20 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
     }
   };
 
-  const filteredItemsOptions = filterNames.filter((option) => removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase()));
-  const uncheckedFilteredItemsOptions = filteredItemsOptions.filter((option) => !isFilterOptionChecked(option));
-  const checkedItemsOptions = filterNames.filter((option) => isFilterOptionChecked(option));
+  const filteredFiltersOptions = listOfFilters.filter((option) => removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase()));
+  const uncheckedfilteredFiltersOptions = filteredFiltersOptions.filter((option) => !isFilterOptionChecked(option));
+  const checkedFiltersOptions = listOfFilters.filter((option) => isFilterOptionChecked(option));
 
   return (
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
       <IonCol size-xs="10" size-sm="10" size-lg="11" size-xl="11" className="ion-flex ion-align-items-center ion-no-margin ion-no-padding">
         <p className="ion-flex ion-align-items-center ion-no-margin filter-scene-item-title">
-          {itemOption}
+          {filterName}
         </p>
       </IonCol>
       <IonCol size-xs="2" size-sm="2" size-lg="1" size-xl="1" className="ion-no-margin ion-no-padding ion-flex ion-justify-content-end">
         <IonButton
-          id={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`}
+          id={`open-${filterName.toLowerCase().split(' ').join('-')}-modal`}
           fill="clear"
           color="light"
           className="ion-no-margin ion-no-padding"
@@ -135,55 +130,15 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
       </IonCol>
       <IonModal
         ref={modalRef}
-        trigger={`open-${itemOption.toLowerCase().split(' ').join('-')}-modal`}
+        trigger={`open-${filterName.toLowerCase().split(' ').join('-')}-modal`}
         className="filter-items-modal"
       >
         <IonHeader>
-          <IonToolbar color="tertiary" className="add-strip-toolbar ion-no-padding">
-            {
-              !isMobile
-              && (
-                <>
-                  <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-                    BACK
-                  </IonButton>
-                  <IonButton
-                    fill="clear"
-                    color="primary"
-                    slot="end"
-                    onClick={clearFilterOptions}
-                  >
-                    RESET
-                  </IonButton>
-                </>
-              )
-            }
-
-            {
-              isMobile
-              && (
-                <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-                  <IonIcon icon={chevronBack} color="light" />
-                </IonButton>
-              )
-            }
-            <IonTitle className="add-strip-toolbar-title">
-              {itemOption.toUpperCase()}
-            </IonTitle>
-          </IonToolbar>
+          <ModalToolbar handleBack={handleBack} toolbarTitle={filterName} clearOptions={clearFilterOptions} />
         </IonHeader>
         <IonContent color="tertiary">
-          <IonToolbar color="tertiary">
-            <IonSearchbar
-              className="ion-margin-top filters-search-bar"
-              value={searchText}
-              onIonChange={(e) => setSearchText(e.detail.value!)}
-              placeholder="SEARCH"
-              showCancelButton="focus"
-              cancelButtonIcon={trash}
-            />
-          </IonToolbar>
-          {uncheckedFilteredItemsOptions.length === 0 ? (
+          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
+          {uncheckedfilteredFiltersOptions.length === 0 ? (
             <p className="no-items-message">
               {`There are no coincidences with "${searchText}". Do you want to create a `}
               <a style={{ marginLeft: '6px' }} href="/">New One</a>
@@ -195,7 +150,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
           ) : (
             <>
               <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
-              {checkedOptions && checkedItemsOptions.map((option: string, i: number) => (
+              {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -212,7 +167,7 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
                     </IonCheckbox>
                   </IonItem>
                 ))}
-                {uncheckedFilteredItemsOptions.map((option: string, i: number) => (
+                {uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -230,7 +185,12 @@ const FilterSceneItem: React.FC<FilterSceneItemProps> = ({
                   </IonItem>
                 ))}
               </IonList>
-              <OutlinePrimaryButton buttonName="CONFIRM" onClick={handleBack} className="ion-margin" />
+              <OutlinePrimaryButton 
+                buttonName="CONFIRM" 
+                onClick={handleBack} 
+                className="ion-margin"
+                style={isMobile ? {margin: '16px'} : {margin: '20% auto auto auto'}}
+              />
               {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />}
             </>
           )}
