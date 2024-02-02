@@ -1,0 +1,14 @@
+.delete-button {
+  margin: 6px;
+
+  .delete-button-icon {
+    font-size: var(--525-icons-size);
+    padding: 0px;
+  }
+
+  &:hover, &:active {
+    .delete-button-icon {
+      transform: scale(1.1);
+    }
+  }
+}
