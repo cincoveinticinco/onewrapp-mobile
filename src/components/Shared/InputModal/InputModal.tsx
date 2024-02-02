@@ -11,9 +11,11 @@ interface InputModalProps {
   optionName: string;
   listOfOptions: string[];
   modalTrigger: string;
+  handleCheckboxToggle: (option: string) => void;
+  selectedOptions: string[];
 }
 
-const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, modalTrigger }) => {
+const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, modalTrigger, handleCheckboxToggle, selectedOptions }) => {
   
   const [searchText, setSearchText] = useState('');
 
@@ -26,18 +28,16 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
     }
   };
 
-  const uncheckedOptions = [];
+  const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(option));
 
-  const uncheckedFilteredOptions = listOfOptions;
+  const uncheckedFilteredOptions = uncheckedOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
-  const checkedSelectedOptions: any[] = [];
+  const checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(option));
 
   const clearModalSelections = () => {};
 
-  const handleCheckboxToggle = (option: string) => {};
-
   const isOptionChecked = (option: string) => {
-    return true
+    return selectedOptions.includes(option);
   };
 
   return (
@@ -87,10 +87,10 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
       {uncheckedFilteredOptions.length === 0 ? (
         <p className="no-items-message">
           {`There are no coincidences. Do you want to create a new one ?`}
-          <div className='no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center'>
+          <span className='no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center'>
             <OutlinePrimaryButton buttonName="CREATE NEW" className='ion-margin' onClick={()=> {}}/>
             <OutlineLightButton buttonName="CANCEL" className='ion-margin' onClick={closeModal}/>
-          </div>
+          </span>
         </p>
       ) : (
         <>
@@ -103,7 +103,7 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
               >
                 <IonCheckbox
                   slot="start"
-                  className="ion-no-margin ion-no-padding"
+                  className="ion-no-margin ion-no-padding checkbox-option"
                   labelPlacement="end"
                   onClick={() => handleCheckboxToggle(option)}
                   checked={isOptionChecked(option)}
@@ -120,7 +120,7 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
               >
                 <IonCheckbox
                   slot="start"
-                  className="ion-no-margin ion-no-padding"
+                  className="ion-no-margin ion-no-padding checkbox-option"
                   labelPlacement="end"
                   onClick={() => handleCheckboxToggle(option)}
                   checked={isOptionChecked(option)}
