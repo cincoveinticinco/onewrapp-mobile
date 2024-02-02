@@ -4,49 +4,59 @@ import {
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 import { Character } from '../../../interfaces/scenesTypes';
+import InputModal from '../../Shared/InputModal/InputModal';
+import getCharactersArray from '../../../utils/getCharactersArray';
+import customArraySort from '../../../utils/customArraySort';
+import sceneData from '../../../data/scn_data.json';
+import removeNumberAndDot from '../../../utils/removeNumberAndDot';
 
 interface AddCharacterInputProps {
-  categoryName: string;
+  categoryName: string | null;
   handleSceneChange: (value: any, field: string) => void
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName, handleSceneChange,
 }) => {
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
+
+  const { scenes } = sceneData;
 
   useEffect(() => {
-    handleSceneChange(characters, 'characters');
-  }, [characters]);
+    console.log('SELECTED CHARACTERS', selectedCharacters);
+    handleSceneChange(selectedCharacters, 'characters');
+  }, [selectedCharacters]);
 
   const deleteCharacter = (characterNum: string | null) => {
     if (characterNum) {
-      setCharacters((currentCharacters) => currentCharacters.filter((character: Character) => character.characterNum !== characterNum));
+      setSelectedCharacters((currentCharacters) => currentCharacters.filter((character: Character) => character.characterNum !== characterNum));
     }
   };
 
-  const handleAlertConfirm = (name: string, number: number) => {
-    if (!name || number <= 0) return;
+  const getSortedCharacterNames = customArraySort(getCharactersArray());
 
-    const newCharacter = {
-      categoryName,
-      characterName: name,
-      characterNum: number,
-    };
-
-    const appendCharacter = (currentChars: any, newCharacter: any, number: any) => [
-      ...currentChars,
-      { ...newCharacter, characterNum: number.toString() },
-    ];
-
-    setCharacters((currChars) => appendCharacter(currChars, newCharacter, number));
-  };
+  const toggleCharacters = (character: string) => {
+    const sceneWithCharacter = scenes.find((scene: any) => scene.characters.some((char: any) => char.characterName.toUpperCase() === removeNumberAndDot(character.toUpperCase())));
+  
+    const characterObject = sceneWithCharacter?.characters.find((char: any) => char.characterName.toUpperCase() === removeNumberAndDot(character.toUpperCase()));
+  
+    if (characterObject) {
+      const selectedCharacterObjectIndex = selectedCharacters.findIndex((char: any) => char.characterName === characterObject.characterName);
+      if (selectedCharacterObjectIndex !== -1) {
+        setSelectedCharacters((currentCharacters) => currentCharacters.filter((char: any) => char.characterName !== characterObject.characterName));
+      } else {
+        const newCharacter: any = { ...characterObject };
+        newCharacter.categoryName = newCharacter.categoryName !== 'NO CATEGORY' ? null : categoryName; 
+        setSelectedCharacters((currentCharacters) => [...currentCharacters, newCharacter]);
+      }
+    }
+  }
 
   return (
     <>
-      {characters.length > 0 && (
+      {selectedCharacters.length > 0 && (
         <IonList className="ion-no-padding ion-no-margin">
-          {characters.map((character, index) => (
+          {selectedCharacters.map((character, index) => (
             <IonItem
               key={`character-item-${index}`}
               color="tertiary"
@@ -60,29 +70,12 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
           ))}
         </IonList>
       )}
-      <IonAlert
-        trigger="character-item-alert"
-        header="Add New Character"
-        inputs={[
-          {
-            name: 'name',
-            type: 'text',
-            placeholder: 'Character Name',
-          },
-          {
-            name: 'number',
-            type: 'number',
-            placeholder: 'Character Number',
-          },
-        ]}
-        buttons={[
-          {
-            text: 'Ok',
-            handler: (alertData) => {
-              handleAlertConfirm(alertData.name, parseInt(alertData.number, 10));
-            },
-          },
-        ]}
+      <InputModal
+        optionName='character'
+        listOfOptions={getSortedCharacterNames}
+        modalTrigger='open-character-options-modal'
+        handleCheckboxToggle={toggleCharacters}
+        selectedOptions={selectedCharacters.map((character) => character.characterName)}
       />
     </>
   );

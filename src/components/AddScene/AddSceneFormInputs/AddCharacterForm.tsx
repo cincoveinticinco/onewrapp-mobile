@@ -86,7 +86,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
 
       <InputModal
         optionName="Character Categories"
-        listOfOptions={sortedCharactersCategories}
+        listOfOptions={[...sortedCharactersCategories, 'NO CATEGORY']}
         modalTrigger='open-add-scene-character-category-modal'
         handleCheckboxToggle={toggleSelectedCategory}
         selectedOptions={selectedCategories}
@@ -121,14 +121,14 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
                   </p>
                   <div className='category-buttons-wrapper'>
                     <AddButton
-                      id="character-item-alert"
+                      id="open-character-options-modal"
                     />
                     <DeleteButton
                       onClick={() => { removeCategory(category); }}
                     />
                   </div>
                   
-                </div>
+              </div>
               </IonCardHeader>
               <IonCardContent>
                 <AddCharacterInput
