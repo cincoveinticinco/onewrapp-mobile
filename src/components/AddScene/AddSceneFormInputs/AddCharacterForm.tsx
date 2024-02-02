@@ -9,12 +9,15 @@ import {
   IonCardHeader,
   IonCardContent,
 } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import { add, trash } from 'ionicons/icons';
 import AddCharacterInput from './AddCharacterInput';
 import InputModal from '../../Shared/InputModal/InputModal';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import scenesData from '../../../data/scn_data.json'
 import { Character } from '../../../interfaces/scenesTypes';
+import AddButton from '../../Shared/AddButton/AddButton';
+import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
+import capitalizeString from '../../../utils/capitalizeString';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -22,7 +25,7 @@ interface AddCategoryFormProps {
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
   
-  const [selectedCategories, setCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   
   const defineCharactersCategories = () => {
     const scenes = scenesData.scenes;
@@ -39,20 +42,35 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
 
   const sortedCharactersCategories = defineCharactersCategories();
 
+  const toggleSelectedCategory = (selectedCategory: string) => {
+    const categoryIndex = selectedCategories.indexOf(selectedCategory);
+
+    if (categoryIndex === -1) {
+      setSelectedCategories([...selectedCategories, selectedCategory]);
+    } else {
+      const updatedCategories = selectedCategories.filter((category) => category !== selectedCategory);
+      setSelectedCategories(updatedCategories);
+    }
+  };
+
+  useEffect(() => {
+    console.log('CHAR CATEGORIES', selectedCategories)
+  }, [selectedCategories]);
+
   // const handleOk = (inputData: { categoryName: string; }) => {
   //   const inputElement = document.getElementById('add-category-input');
   //   if (inputData.categoryName) {
-  //     setCategories([...selectedCategories, inputData.categoryName]);
+  //     setSelectedCategories([...selectedCategories, inputData.categoryName]);
   //   }
   //   if (inputElement) {
   //     (inputElement as HTMLInputElement).value = '';
   //   }
   // };
 
-  // const removeCategory = (categoryName: string) => {
-  //   const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
-  //   setCategories(updatedCategories);
-  // };
+  const removeCategory = (categoryName: string) => {
+    const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
+    setSelectedCategories(updatedCategories);
+  };
 
   return (
     <>
@@ -60,34 +78,18 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         <p className="ion-flex ion-align-items-center">
           Characters
         </p>
-        <IonButton fill="clear" id="open-add-scene-character-category-modal" slot="end" color="light" className="ion-no-padding">
-          <IonIcon icon={add} />
-        </IonButton>
+        <AddButton
+          id="open-add-scene-character-category-modal"
+          slot='end'
+        />
       </div>
-      {/* <IonAlert
-        color="tertiary"
-        trigger="category-alert"
-        header="Please, enter a category name"
-        buttons={[
-          {
-            text: 'OK',
-            handler: handleOk,
-          },
-        ]}
-        inputs={[
-          {
-            name: 'categoryName',
-            type: 'text',
-            placeholder: 'Category Name',
-            id: 'add-category-input',
-          },
-        ]}
-      /> */}
 
       <InputModal
         optionName="Character Categories"
         listOfOptions={sortedCharactersCategories}
         modalTrigger='open-add-scene-character-category-modal'
+        handleCheckboxToggle={toggleSelectedCategory}
+        selectedOptions={selectedCategories}
       />
 
       {
@@ -114,17 +116,18 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
             >
               <IonCardHeader className="ion-flex">
                 <div className="ion-flex ion-justify-content-between">
-                  <IonCardSubtitle className="ion-flex ion-align-items-center">
-                    {category}
-                  </IonCardSubtitle>
-                  <IonButton
-                    size="small"
-                    fill="clear"
-                    color="light"
-                    id="character-item-alert"
-                  >
-                    <IonIcon icon={add} />
-                  </IonButton>
+                  <p className="ion-flex ion-align-items-center">
+                    {capitalizeString(category)}
+                  </p>
+                  <div className='category-buttons-wrapper'>
+                    <AddButton
+                      id="character-item-alert"
+                    />
+                    <DeleteButton
+                      onClick={() => { removeCategory(category); }}
+                    />
+                  </div>
+                  
                 </div>
               </IonCardHeader>
               <IonCardContent>

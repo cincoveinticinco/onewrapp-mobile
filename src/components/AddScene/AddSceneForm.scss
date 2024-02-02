@@ -181,6 +181,14 @@
     margin: 0;
     border: 1px solid var(--ion-color-dark);
     border-radius: 0;
+
+    ion-card-header {
+      padding: 0px 16px;
+     
+      p {
+        font-size: var(--525-medium-title-size);
+      }
+    }
   }
   
   .category-items {
@@ -190,7 +198,7 @@
   
   .add-scene-input {
     background-color: transparent;
-    margin: 6px 0;
+    margin: 12px 0;
     border-bottom: 1px solid var(--ion-color-light);
   }
   
@@ -225,6 +233,8 @@
   
     .category-item-title {
       background-color: transparent;
+      padding: 0px 16px;
+      font-size: var(--525-big-title-size);
     }
   
     .add-scene-items-card-grid {

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
 } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import { add, trash } from 'ionicons/icons';
 import AddElementInput from './AddElementInput';
 import InputModal from '../../Shared/InputModal/InputModal';
 import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import AddButton from '../../Shared/AddButton/AddButton';
+import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
+import capitalizeString from '../../../utils/capitalizeString';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -32,10 +35,25 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  useEffect(() => {
+    console.log('ELEMENTS CATEGORIES', selectedCategories)
+  }, [selectedCategories]);
+
   const toggleForm = (index: number) => {
     const element = document.getElementById(`element-form-${index}`);
     if (element) {
       element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    }
+  };
+
+  const toggleSelectedCategory = (selectedCategory: string) => {
+    const categoryIndex = selectedCategories.indexOf(selectedCategory);
+
+    if (categoryIndex === -1) {
+      setSelectedCategories([...selectedCategories, selectedCategory]);
+    } else {
+      const updatedCategories = selectedCategories.filter((category) => category !== selectedCategory);
+      setSelectedCategories(updatedCategories);
     }
   };
 
@@ -49,10 +67,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
   //   }
   // };
 
-  // const removeCategory = (categoryName: string) => {
-  //   const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
-  //   setSelectedCategories(updatedCategories);
-  // };
+  const removeCategory = (categoryName: string) => {
+    const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
+    setSelectedCategories(updatedCategories);
+  };
 
   return (
     <>
@@ -60,9 +78,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         <p className="ion-flex ion-align-items-center">
           Elements
         </p>
-        <IonButton fill="clear" color="light" id="open-add-scene-elements-category-modal" slot="end" className="ion-no-padding">
-          <IonIcon icon={add} />
-        </IonButton>
+        <AddButton
+          id="open-add-scene-elements-category-modal"
+          slot='end'
+        />
       </div>
 
       {/* <IonAlert
@@ -88,6 +107,8 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         optionName="Elements Categories"
         listOfOptions={sortedElementsCategories}
         modalTrigger='open-add-scene-elements-category-modal'
+        handleCheckboxToggle={toggleSelectedCategory}
+        selectedOptions={selectedCategories}
       />
 
       {
@@ -114,17 +135,19 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
             >
               <IonCardHeader className="ion-flex">
                 <div className="ion-flex ion-justify-content-between">
-                  <IonCardSubtitle className="ion-flex ion-align-items-center">
-                    {category}
-                  </IonCardSubtitle>
-                  <IonButton
-                    size="small"
-                    onClick={() => { toggleForm(index); }}
-                    fill="clear"
-                    color="light"
-                  >
-                    <IonIcon icon={add} />
-                  </IonButton>
+                  <p className="ion-flex ion-align-items-center">
+                    {capitalizeString(category)}
+                  </p>
+
+                  <div className='category-buttons-wrapper'>
+                    <AddButton
+                      id="character-item-alert"
+                    />
+                    <DeleteButton
+                      onClick={() => { removeCategory(category); }}
+                    />
+                  </div>
+
                 </div>
               </IonCardHeader>
               <IonCardContent>
