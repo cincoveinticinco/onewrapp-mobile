@@ -11,7 +11,7 @@ import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Sce
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-  import scene_data from '../../data/scn_data.json'; // eslint-disable-line
+  import scenesData from '../../data/scn_data.json'; // eslint-disable-line
 import { Character } from '../../interfaces/scenesTypes';
 import customArraySort from '../../utils/customArraySort';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
@@ -24,7 +24,7 @@ import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
-  const { scenes } = scene_data; // eslint-disable-line
+  const { scenes } = scenesData;
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();
@@ -60,7 +60,7 @@ const FilterScenes = () => {
     handleBack();
   };
 
-  const defineCharactersArray = () => {
+  const getCharactersArray = () => {
     const charactersArray: string[] = [];
     const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'characterName');
 
@@ -85,7 +85,7 @@ const FilterScenes = () => {
     return extrasOrItemsArray;
   };
 
-  const getSortedCharacterNames = customArraySort(defineCharactersArray());
+  const getSortedCharacterNames = customArraySort(getCharactersArray());
   const getSortedExtraNames = customArraySort(defineExtrasOrItemsArray('extras', 'extraName'));
   const getSortedElementNames = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'elementName'));
   const getSortedLocationNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));

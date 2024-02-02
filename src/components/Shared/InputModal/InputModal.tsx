@@ -6,6 +6,8 @@ import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import { chevronBack, trash } from 'ionicons/icons';
 import './InputModal.scss'
 import ModalSearchBar from '../ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../ModalToolbar/ModalToolbar';
+import removeNumberAndDot from '../../../utils/removeNumberAndDot';
 
 interface InputModalProps {
   optionName: string;
@@ -28,16 +30,18 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
     }
   };
 
-  const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(option));
+  const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
+
+  const filteredOptions = listOfOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
   const uncheckedFilteredOptions = uncheckedOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
-  const checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(option));
+  const checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(removeNumberAndDot(option)));
 
   const clearModalSelections = () => {};
 
   const isOptionChecked = (option: string) => {
-    return selectedOptions.includes(option);
+    return selectedOptions.includes(removeNumberAndDot(option));
   };
 
   return (
@@ -47,44 +51,19 @@ const InputModal: React.FC<InputModalProps> = ({ optionName, listOfOptions, moda
     id="add-scenes-options-modal"
   >
     <IonHeader>
-      <IonToolbar color="tertiary" className="add-strip-toolbar ion-no-padding">
-        {
-          !isMobile
-          && (
-            <>
-              <IonButton fill="clear" color="primary" slot="start" onClick={closeModal}>
-                BACK
-              </IonButton>
-              <IonButton
-                fill="clear"
-                color="primary"
-                slot="end"
-                onClick={clearModalSelections}
-              >
-                RESET
-              </IonButton>
-            </>
-          )
-        }
-
-        {
-          isMobile
-          && (
-            <IonButton fill="clear" color="primary" slot="start" onClick={closeModal}>
-              <IonIcon icon={chevronBack} color="light" />
-            </IonButton>
-          )
-        }
-        <IonTitle className="add-strip-toolbar-title">
-          {optionName.toUpperCase()}
-        </IonTitle>
-      </IonToolbar>
+      <ModalToolbar 
+        handleBack={closeModal} 
+        toolbarTitle={optionName} 
+        clearOptions={clearModalSelections}
+      />
     </IonHeader>
     <IonContent color="tertiary">
 
       <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
 
-      {uncheckedFilteredOptions.length === 0 ? (
+      {
+        filteredOptions.length === 0
+        ? (
         <p className="no-items-message">
           {`There are no coincidences. Do you want to create a new one ?`}
           <span className='no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center'>

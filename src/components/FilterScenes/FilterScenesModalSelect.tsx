@@ -12,6 +12,7 @@ import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton'
 import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
 import capitalizeString from '../../utils/capitalizeString';
+import removeNumberAndDot from '../../utils/removeNumberAndDot';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -34,12 +35,6 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   const isMobile = useIsMobile();
   const [searchText, setSearchText] = useState('');
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
-
-  const removeNumberAndDot = (selectedOption: string) => {
-    const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
-    const restPart = selectedOption.replace(numberAndDotPart, '');
-    return numberAndDotPart ? restPart.trim() : selectedOption.trim();
-  };
 
   const getCheckedOptions = () => {
     const result = selectedFilterOptions[optionKey];
