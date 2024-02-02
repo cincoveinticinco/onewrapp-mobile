@@ -11,6 +11,7 @@ import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryB
 import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
 import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
+import capitalizeString from '../../utils/capitalizeString';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -76,12 +77,6 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
         return newFilterOptions;
     })
-  };
-
-  const capitalizeString = (str: string): string => {
-    const words = str.split(' ') || [];
-    const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-    return capitalizedWords.join(' ');
   };
 
   const handleBack = () => {
