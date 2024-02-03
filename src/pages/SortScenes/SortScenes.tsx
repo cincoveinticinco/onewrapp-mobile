@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import {
- IonContent, IonHeader, IonPage
+  IonContent, IonHeader, IonPage,
 } from '@ionic/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -93,10 +93,10 @@ const SortScenes = () => {
         <ModalToolbar handleBack={handleBack} toolbarTitle="Sort Scenes" clearOptions={handleReset} />
       </IonHeader>
       <IonContent color="tertiary" id="sort-scenes-page">
-        <div className='sort-options-wrapper'>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="sortPosibilities">
-            {(provided) => (
+        <div className="sort-options-wrapper">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="sortPosibilities">
+              {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}> { /* eslint-disable-line */}
                 {getCheckedSortOptions().map((sortPosibility, index) => (
                   <SortPosibilityCheckbox
@@ -109,9 +109,9 @@ const SortScenes = () => {
                 ))}
                 {provided.placeholder}
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+              )}
+            </Droppable>
+          </DragDropContext>
           <div className="sort-scenes-divider">
             {getNotCheckedSortOptions().map((sortPosibility, index) => (
               <SortPosibilityCheckbox
@@ -124,7 +124,7 @@ const SortScenes = () => {
             ))}
           </div>
         </div>
-        <OutlinePrimaryButton buttonName="SORT SCENES" className='sort-scenes-button' onClick={handleBack} />
+        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleBack} />
       </IonContent>
     </IonPage>
   );
