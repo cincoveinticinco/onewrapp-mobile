@@ -83,35 +83,35 @@ const AppTabs: React.FC = () => {
         <Redirect exact from={`${url}`} to={`${url}/strips`} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" className="app-tabs-container" color="dark">
-        <IonTabButton tab="calendar" className='tab-bar-buttons' href={`${url}/calendar`}>
+        <IonTabButton tab="calendar" className="tab-bar-buttons" href={`${url}/calendar`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="strips" className='tab-bar-buttons' href={`${url}/strips`}>
+        <IonTabButton tab="strips" className="tab-bar-buttons" href={`${url}/strips`}>
           <IonIcon icon={list} className="tab-bar-icons" />
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="stripboard" className='tab-bar-buttons' href={`${url}/stripboard`}>
+        <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="cast" className='tab-bar-buttons' href={`${url}/cast`}>
+        <IonTabButton tab="cast" className="tab-bar-buttons" href={`${url}/cast`}>
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="sets" className='tab-bar-buttons' href={`${url}/sets`}>
+        <IonTabButton tab="sets" className="tab-bar-buttons" href={`${url}/sets`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="elements" className='tab-bar-buttons' href={`${url}/elements`}>
+        <IonTabButton tab="elements" className="tab-bar-buttons" href={`${url}/elements`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="reports" className='tab-bar-buttons' href={`${url}/reports`}>
+        <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/reports`}>
           <IonIcon icon={reader} className="tab-bar-icons" />
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="settings" className='tab-bar-buttons' href={`${url}/settings`}>
+        <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
