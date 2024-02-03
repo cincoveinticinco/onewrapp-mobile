@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import {
   useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
@@ -37,12 +38,16 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './AppTabs.scss';
+import useIsMobile from '../../../hooks/useIsMobile';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
   // const { loggedIn } = useAuth();
   const { url } = useRouteMatch();
+  const isMobile = useIsMobile();
+
+  const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
   return (
     <IonTabs>
@@ -99,19 +104,19 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="sets" className="tab-bar-buttons" href={`${url}/sets`}>
+        <IonTabButton tab="sets" className={defineButtonClass} href={`${url}/sets`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="elements" className="tab-bar-buttons" href={`${url}/elements`}>
+        <IonTabButton tab="elements" className={defineButtonClass} href={`${url}/elements`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/reports`}>
+        <IonTabButton tab="reports" className={defineButtonClass} href={`${url}/reports`}>
           <IonIcon icon={reader} className="tab-bar-icons" />
           <IonLabel>REPORTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
+        <IonTabButton tab="settings" className={defineButtonClass} href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />
           <IonLabel>SETTINGS</IonLabel>
         </IonTabButton>
@@ -119,4 +124,5 @@ const AppTabs: React.FC = () => {
     </IonTabs>
   );
 };
+
 export default AppTabs;
