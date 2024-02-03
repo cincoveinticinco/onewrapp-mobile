@@ -25,7 +25,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   elipse = false,
   sort = false,
 }) => (
-  <IonToolbar color="tertiary" className="toolbar">
+  <IonToolbar color="tertiary" className="toolbar" id='main-pages-toolbar'>
     <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
       <IonIcon icon={menuOutline} className="toolbar-icon" />
     </IonButton>

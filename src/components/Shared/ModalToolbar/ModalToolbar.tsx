@@ -24,7 +24,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
   const isMobile = useIsMobile();
 
   return (
-    <IonToolbar color="tertiary" id="modal-toolbar ion-no-padding">
+    <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
       {
         !isMobile
         && (
