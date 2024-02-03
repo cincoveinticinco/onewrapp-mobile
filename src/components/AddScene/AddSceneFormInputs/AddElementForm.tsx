@@ -8,12 +8,14 @@ import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNe
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
+import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) => {
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const { scenes } = scenesData;
 
   const defineElementsCategories = () => {
@@ -57,16 +59,24 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
     }
   };
 
+  const handleDropDown = () => {
+    setDropDownIsOpen(!dropDownIsOpen);
+  }
+
+
   return (
     <>
       <div className="category-item-title ion-flex ion-justify-content-between">
         <p className="ion-flex ion-align-items-center">
           Elements
         </p>
-        <AddButton
-          id="elements-categories-alert"
-          slot="end"
-        />
+        <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
+          <AddButton
+            id="elements-category-alert"
+            slot="end"
+          />
+          <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
+        </div>
       </div>
 
       <InputAlert
@@ -90,7 +100,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         )
       }
 
-      {elementsCategories.length > 0
+      {elementsCategories.length > 0 && dropDownIsOpen
         && (
         <IonGrid className="add-scene-items-card-grid">
           {elementsCategories.map((category, index) => (

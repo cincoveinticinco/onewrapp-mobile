@@ -13,17 +13,18 @@ import { Character } from '../../../interfaces/scenesTypes';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
+import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const defineCharactersCategories = () => {
     const { scenes } = scenesData;
     const characterCategoriesArray: string[] = [];
     const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'categoryName');
-
     uniqueCategoryValuesArray.forEach((character: Character) => {
       const { categoryName } = character;
       characterCategoriesArray.push(categoryName);
@@ -55,16 +56,23 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
     },
   ];
 
+  const handleDropDown = () => {
+    setDropDownIsOpen(!dropDownIsOpen);
+  }
+
   return (
     <>
       <div className="category-item-title ion-flex ion-justify-content-between">
         <p className="ion-flex ion-align-items-center">
           Characters
         </p>
-        <AddButton
-          id="characters-category-alert"
-          slot="end"
-        />
+        <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
+          <AddButton
+            id="characters-category-alert"
+            slot="end"
+          />
+          <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
+        </div>
       </div>
 
       <InputAlert
@@ -88,7 +96,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         )
       }
 
-      {characterCategories.length > 0
+      {characterCategories.length > 0 && dropDownIsOpen
         && (
         <IonGrid className="add-scene-items-card-grid">
           {characterCategories.map((category, index) => (
@@ -105,9 +113,8 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
                   <div className="category-buttons-wrapper">
                     <AddButton
                       id={`open-characters-options-modal-${category}`}
-                    />
+                    />                    
                   </div>
-
                 </div>
               </IonCardHeader>
               <AddCharacterInput
