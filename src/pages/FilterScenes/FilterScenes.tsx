@@ -21,6 +21,8 @@ import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/O
 import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
 import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import getCharactersArray from '../../utils/getCharactersArray';
+import getOptionsArray from '../../utils/getOptionsArray';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
@@ -60,42 +62,21 @@ const FilterScenes = () => {
     handleBack();
   };
 
-  const getCharactersArray = () => {
-    const charactersArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'characterName');
-
-    uniqueValuesArray.forEach((character: Character) => {
-      const characterName = character.characterNum ? `${character.characterNum}. ${character.characterName}` : character.characterName;
-      charactersArray.push(characterName);
-    });
-
-    return charactersArray;
-  };
-
-  const defineExtrasOrItemsArray = (key: string, nestedKey: string) => {
-    const extrasOrItemsArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, key, nestedKey);
-
-    uniqueValuesArray.forEach((value: any) => {
-      if (value[nestedKey].length > 1) {
-        extrasOrItemsArray.push(value[nestedKey]);
-      }
-    });
-
-    return extrasOrItemsArray;
-  };
-
-  const getSortedCharacterNames = customArraySort(getCharactersArray());
-  const getSortedExtraNames = customArraySort(defineExtrasOrItemsArray('extras', 'extraName'));
-  const getSortedElementNames = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'elementName'));
+  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'characterName');
+  const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(scenes, 'elements', 'elementName');
+  const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(scenes, 'extras', 'extraName');
+  const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(scenes, 'elements', 'categoryName');
+  const getSortedCharacterNames = customArraySort(getCharactersArray(uniqueCharacterValuesArray));
+  const getSortedExtraNames = customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray));
+  const getSortedElementNames = sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray));
   const getSortedLocationNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
   const getSortedSetNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
-  const getSortedElementCategoryNames: string[] = sortArrayAlphabeticaly(defineExtrasOrItemsArray('elements', 'categoryName'));
+  const getSortedElementCategoryNames: string[] = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
 
   return (
     <IonPage color="tertiary">
       <IonHeader>
-        <ModalToolbar toolbarTitle='Filter' clearOptions={resetFilters} handleBack={handleBack} />
+        <ModalToolbar toolbarTitle="Filter" clearOptions={resetFilters} handleBack={handleBack} />
       </IonHeader>
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
