@@ -11,24 +11,25 @@
     font-size: var(--525-big-title-size);
     height: 100%;
   }
-  
+
   .toolbar-burger-menu {
     position: static;
     font-size: 24px;
     margin: 0;
     height: 100%;
   }
-  
+
   .toolbar-icon {
     font-size: 24px;
     color: #fff;
   }
-  
+
   .toolbar-button {
     width: 40px;
     height: 50px;
+
     --background-activated-opacity: 0;
-  
+
     &:active {
       ion-icon {
         color: var(--ion-color-primary);

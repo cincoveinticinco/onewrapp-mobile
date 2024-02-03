@@ -3,10 +3,11 @@
 
   .delete-button-icon {
     font-size: var(--525-icons-size);
-    padding: 0px;
+    padding: 0;
   }
 
-  &:hover, &:active {
+  &:hover,
+  &:active {
     .delete-button-icon {
       transform: scale(1.1);
     }

@@ -1,11 +1,11 @@
 #sort-scenes-page {
   .sort-options-wrapper {
     outline: 1px solid black;
-    margin: 0px var(--525-small-margin) 0px var(--525-small-margin);
+    margin: 0 var(--525-small-margin) 0 var(--525-small-margin);
   }
 
   .sort-scenes-button {
-    margin: 10% var(--525-small-margin) 0px var(--525-small-margin);
+    margin: 10% var(--525-small-margin) 0 var(--525-small-margin);
 
     @media (min-width: 500px) {
       margin: 20% auto 10% auto;
@@ -16,7 +16,7 @@
 @media (min-width: 500px) {
   #sort-scenes-page {
     .sort-options-wrapper {
-      margin: 0px;
+      margin: 0;
     }
   }
 }
