@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import InputItem from './AddSceneFormInputs/InputItem';
@@ -52,7 +52,7 @@ const AddScenesForm: React.FC = () => {
     if (Array.isArray(formData[field])) {
       setFormData({
         ...formData,
-        [field]: [...new Set([...(formData[field] || []), ...[].concat(value)])],
+        [field]: [...value],
       });
     } else {
       setFormData({ ...formData, [field]: value });
