@@ -159,9 +159,9 @@
   .category-item-title {
     border-top: 1px solid var(--ion-color-dark);
     border-bottom: 1px solid var(--ion-color-dark);
-    padding: 0 12px;
+    padding: 0 16px;
     background-color: #0000001e;
-    font-size: var(--525-common-text-size);
+    font-size: var(--525-big-title-size);
     margin: 0;
     grid-column: 1 / 13;
   }
@@ -179,8 +179,9 @@
     width: 100%;
     grid-template-columns: 1fr;
     margin: 0;
-    border: 1px solid var(--ion-color-dark);
+    outline: 1px solid var(--ion-color-dark);
     border-radius: 0;
+    box-shadow: none;
 
     ion-card-header {
       padding: 0px 16px;
