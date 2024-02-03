@@ -59,7 +59,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     {
       sort
       && (
-        <IonButton fill="clear" slot="end" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button" >
+        <IonButton fill="clear" slot="end" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button">
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )

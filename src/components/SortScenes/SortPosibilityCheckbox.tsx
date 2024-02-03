@@ -165,7 +165,7 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
   ) : (
     <div className="checkbox-item-option">
       <IonItem color="tertiary">
-        <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding" disabled={true}>
+        <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding" disabled>
           <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon " />
         </IonButton>
         <IonCheckbox
