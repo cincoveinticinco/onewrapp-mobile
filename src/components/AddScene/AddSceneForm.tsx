@@ -12,6 +12,8 @@ import './AddSceneForm.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
+import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
 
 const AddScenesForm: React.FC = () => {
   const isMobile = useIsMobile();
@@ -218,25 +220,19 @@ const AddScenesForm: React.FC = () => {
         </IonButton>
       </div> */}
 
-      <button
-        className="submit-scene-button"
-        type="submit"
-        color="tertiary"
-
-      >
-        SAVE
-      </button>
+      <OutlinePrimaryButton
+        buttonName="SAVE"
+        onClick={() => onSubmit()}
+        className='submit-scene-button'
+      />
       {
         isMobile
         && (
-        <button
-          className="cancel-add-scene-button"
-          type="submit"
-          color="tertiary"
+        <OutlineLightButton
+          buttonName="CANCEL"
           onClick={() => history.goBack()}
-        >
-          CANCEL
-        </button>
+          className='cancel-add-scene-button'
+        />
         )
       }
     </form>
