@@ -1,9 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  IonInput, IonItem, IonList, IonButton, IonIcon,
+  IonInput, IonItem, IonList, IonButton, IonIcon, IonCardContent,
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 import { Extra } from '../../../interfaces/scenesTypes';
+import scenesData from '../../../data/scn_data.json';
+import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
+import getOptionsArray from '../../../utils/getOptionsArray';
+import InputModal from '../../Shared/InputModal/InputModal';
+import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import applyFilters from '../../../utils/applyFilters';
+import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddExtraInputProps {
   categoryName: string;
@@ -15,15 +22,16 @@ interface AddExtraInputProps {
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
   categoryName, toggleForm, id, handleSceneChange,
 }) => {
-  const [extras, setExtras] = useState<Extra[]>([]);
+  const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
   const extraNameInputRef = useRef<HTMLIonInputElement>(null);
+  const { scenes } = scenesData;
 
   useEffect(() => {
-    handleSceneChange(extras, 'extras');
-  }, [extras]);
+    handleSceneChange(selectedExtras, 'extras');
+  }, [selectedExtras]);
 
   const deleteExtra = (index: number) => {
-    setExtras((currentExtras) => currentExtras.filter((_, i) => i !== index));
+    setSelectedExtras((currentExtras) => currentExtras.filter((_, i) => i !== index));
   };
 
   const addExtra = () => {
@@ -35,7 +43,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
       extraName: newExtraName,
     };
 
-    setExtras((currentExtras) => [...currentExtras, newExtra]);
+    setSelectedExtras((currentExtras) => [...currentExtras, newExtra]);
     toggleForm(id);
 
     if (extraNameInputRef.current) {
@@ -43,13 +51,37 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     }
   };
 
+  const uniqueExtrasValuesAarray = getUniqueValuesFromNestedArray(scenes, 'extras', 'extraName');
+
+  const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
+
+  const getFilteredElements = applyFilters(uniqueExtrasValuesAarray, { categoryName: [categoryCriteria] });
+
+  const getSortedExtrasNames = sortArrayAlphabeticaly(getOptionsArray('extraName', getFilteredElements));
+
+  const toggleExtra = (extra: string) => {
+    const sceneWithExtra = scenes.find((scene: any) => scene.extras.some((ex: any) => ex.extraName.toUpperCase() === extra.toUpperCase()));
+
+    const extraObject = sceneWithExtra?.extras.find((ex: any) => ex.extraName.toUpperCase() === extra.toUpperCase());
+
+    if (extraObject) {
+      const selectedExtraObjectIndex = selectedExtras.findIndex((ex: any) => ex.extraName === extraObject.extraName);
+      if (selectedExtraObjectIndex !== -1) {
+        setSelectedExtras((currentExtras) => currentExtras.filter((ex: any) => ex.extraName !== extraObject.extraName));
+      } else {
+        const newExtra: any = { ...extraObject };
+        newExtra.categoryName = newExtra.categoryName !== 'NO CATEGORY' ? null : categoryName;
+        setSelectedExtras((currentExtras) => [...currentExtras, newExtra]);
+      }
+    }
+  };
+
+  const contentStyle = selectedExtras.length === 0 ? 'ion-no-padding' : '';
+
   return (
-    <>
-      {extras.length > 0 && (
-        <IonList
-          className="ion-no-padding ion-no-margin"
-        >
-          {extras.map((extra, index) => ( // eslint-disable-next-line react/no-array-index-key
+    <IonCardContent className={contentStyle}>
+        {selectedExtras.length > 0 ? (
+          selectedExtras.map((extra, index) => (
             <IonItem
               key={index}
               color="tertiary"
@@ -60,22 +92,18 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
                 <IonIcon icon={trash} />
               </IonButton>
             </IonItem>
-          ))}
-        </IonList>
-      )}
-      <IonItem
-        style={{ display: 'none' }}
-        id={`extra-form-${id}`}
-        color="tertiary"
-      >
-        <IonInput
-          placeholder="Extra Name"
-          ref={extraNameInputRef}
-          clearInput
-        />
-        <IonButton onClick={addExtra}>Add Extra</IonButton>
-      </IonItem>
-    </>
+          ))
+        ) : (
+          <NoAdded />
+        )}
+      <InputModal
+        optionName={`Extras (  ${categoryName}  )`}
+        listOfOptions={getSortedExtrasNames}
+        modalTrigger={`open-extras-options-modal-${categoryName}`}
+        handleCheckboxToggle={toggleExtra}
+        selectedOptions={selectedExtras.map((extra) => extra.extraName)}
+      />
+    </IonCardContent>
   );
 };
 
