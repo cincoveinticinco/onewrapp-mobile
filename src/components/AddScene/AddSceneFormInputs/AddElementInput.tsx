@@ -1,9 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  IonInput, IonItem, IonList, IonButton, IonIcon,
+  IonCardContent,
+  IonItem,
+  IonList,
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
 import { Element } from '../../../interfaces/scenesTypes';
+import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
+import InputModal from '../../Shared/InputModal/InputModal';
+import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
+import getOptionsArray from '../../../utils/getOptionsArray';
+import sceneData from '../../../data/scn_data.json';
+import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import applyFilters from '../../../utils/applyFilters';
+import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddElementInputProps {
   categoryName: string;
@@ -13,69 +22,105 @@ interface AddElementInputProps {
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
-  categoryName, toggleForm, id, handleSceneChange,
+  categoryName,
+  toggleForm,
+  id,
+  handleSceneChange,
 }) => {
-  const [elements, setElements] = useState<Element[]>([]);
-  const elementNameInputRef = useRef<HTMLIonInputElement>(null);
+  const [selectedElements, setSelectedElements] = useState<Element[]>([]);
+  const { scenes } = sceneData;
 
   useEffect(() => {
-    handleSceneChange(elements, 'elements');
-  }, [elements]);
+    handleSceneChange(selectedElements, 'elements');
+  }, [selectedElements]);
 
-  const deleteElement = (index: number) => {
-    setElements((currentElements) => currentElements.filter((_, i) => i !== index));
+  const deleteElement = (element: string) => {
+    setSelectedElements((currentElements) =>
+      currentElements.filter((el) => el.elementName !== element)
+    );
+    handleSceneChange(selectedElements, 'elements');
   };
 
-  const addElement = () => {
-    const newCharacterName = elementNameInputRef.current?.value as string;
-    if (!newCharacterName) return;
+  const uniqueElementsValuesArray = getUniqueValuesFromNestedArray(
+    scenes,
+    'elements',
+    'elementName'
+  );
 
-    const newElement: Element = {
-      categoryName,
-      elementName: newCharacterName,
-    };
+  const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
 
-    setElements((currentElements) => [...currentElements, newElement]);
-    toggleForm(id);
+  const getFilteredElements = applyFilters(uniqueElementsValuesArray, {
+    categoryName: [categoryCriteria],
+  });
 
-    if (elementNameInputRef.current) {
-      elementNameInputRef.current.value = '';
+  const getSortedElementNames = sortArrayAlphabeticaly(
+    getOptionsArray('elementName', getFilteredElements)
+  );
+
+  const toggleElement = (element: string) => {
+    const sceneWithElement = scenes.find((scene: any) =>
+      scene.elements.some(
+        (el: any) => el.elementName.toUpperCase() === element.toUpperCase()
+      )
+    );
+
+    const elementObject = sceneWithElement?.elements.find(
+      (el: any) => el.elementName.toUpperCase() === element.toUpperCase()
+    );
+
+    if (elementObject) {
+      const selectedElementObjectIndex = selectedElements.findIndex(
+        (el: any) => el.elementName === elementObject.elementName
+      );
+      if (selectedElementObjectIndex !== -1) {
+        setSelectedElements((currentElements) =>
+          currentElements.filter(
+            (el: any) => el.elementName !== elementObject.elementName
+          )
+        );
+      } else {
+        const newElement: any = { ...elementObject };
+        newElement.categoryName =
+          categoryName !== 'NO CATEGORY' ? categoryName : null;
+        setSelectedElements((currentElements) => [
+          ...currentElements,
+          newElement,
+        ]);
+      }
     }
   };
 
+  const contentStyle = selectedElements.length === 0 ? 'ion-no-padding' : '';
+
   return (
-    <>
-      {elements.length > 0 && (
-        <IonList
-          className="ion-no-padding ion-no-margin"
-        >
-          {elements.map((element, index) => (
+    <IonCardContent className={contentStyle}>
+      {selectedElements.length > 0 ? (
+        <IonList className="ion-no-padding ion-no-margin">
+          {selectedElements.map((element, index) => (
             <IonItem
               key={index}
               color="tertiary"
               className="ion-no-margin category-items"
             >
               {element.elementName}
-              <IonButton fill="clear" color="danger" slot="end" onClick={() => deleteElement(index)}>
-                <IonIcon icon={trash} />
-              </IonButton>
+              <DeleteButton
+                onClick={() => deleteElement(element.elementName)}
+                slot="end"
+              />
             </IonItem>
           ))}
         </IonList>
+      ) : (
+        <NoAdded />
       )}
-      <IonItem
-        style={{ display: 'none' }}
-        id={`element-form-${id}`}
-        color="tertiary"
-      >
-        <IonInput
-          placeholder="Element Name"
-          ref={elementNameInputRef}
-          clearInput
-        />
-        <IonButton onClick={addElement}>Add Element</IonButton>
-      </IonItem>
-    </>
+      <InputModal
+        optionName="Elements"
+        listOfOptions={getSortedElementNames}
+        modalTrigger={`open-element-options-modal-${categoryName}`}
+        handleCheckboxToggle={toggleElement}
+        selectedOptions={selectedElements.map((element) => element.elementName)}
+      />
+    </IonCardContent>
   );
 };
 
