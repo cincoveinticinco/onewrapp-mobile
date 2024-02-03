@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import {
-  IonContent, IonHeader, IonPage,
+  IonContent,
 } from '@ionic/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import useIsMobile from '../../hooks/useIsMobile';
 import SortPosibilityCheckbox from '../../components/SortScenes/SortPosibilityCheckbox';
 import useHideTabs from '../../hooks/useHideTabs';
 import './SortScenes.scss';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 
 const SortScenes = () => {
   const { selectedSortOptions, setSelectedSortOptions } = React.useContext<any>(ScenesContext);
@@ -52,7 +51,6 @@ const SortScenes = () => {
   }, [sortPosibilities]);
 
   const history = useHistory();
-  const isMobile = useIsMobile();
   useHideTabs();
 
   const handleBack = () => {
@@ -88,10 +86,7 @@ const SortScenes = () => {
   });
 
   return (
-    <IonPage color="tertiary">
-      <IonHeader>
-        <ModalToolbar handleBack={handleBack} toolbarTitle="Sort Scenes" clearOptions={handleReset} />
-      </IonHeader>
+    <SecondaryPagesLayout resetSelections={handleReset}>
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -126,7 +121,7 @@ const SortScenes = () => {
         </div>
         <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleBack} />
       </IonContent>
-    </IonPage>
+    </SecondaryPagesLayout>
   );
 };
 

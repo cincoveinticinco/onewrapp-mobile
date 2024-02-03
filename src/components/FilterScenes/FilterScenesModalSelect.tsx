@@ -84,7 +84,11 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     }
   };
 
-  const filteredFiltersOptions = listOfFilters.filter((option) => removeNumberAndDot(option.toUpperCase()).includes(searchText.toUpperCase()));
+  const filteredFiltersOptions = listOfFilters.filter((option) => {
+    const upperCaseOption = removeNumberAndDot(option.toUpperCase());
+    return upperCaseOption.includes(searchText.toUpperCase());
+  });
+
   const uncheckedfilteredFiltersOptions = filteredFiltersOptions.filter((option) => !isFilterOptionChecked(option));
   const checkedFiltersOptions = listOfFilters.filter((option) => isFilterOptionChecked(option));
 
@@ -142,7 +146,10 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
             </p>
           ) : (
             <>
-              <IonList color="tertiary" className="ion-no-padding filters-options-list">
+              <IonList
+                color="tertiary"
+                className="ion-no-padding filters-options-list"
+              >
                 {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"

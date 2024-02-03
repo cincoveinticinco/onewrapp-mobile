@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   IonGrid,
   IonCard,
   IonCardSubtitle,
   IonCardHeader,
-  IonCardContent,
   AlertInput,
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';

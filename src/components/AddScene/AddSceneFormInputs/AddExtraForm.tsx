@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, AlertInput,
+  IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
 import AddExtraInput from './AddExtraInput';
 import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
@@ -35,16 +34,16 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([...sortedExtrasCategories, 'NO CATEGORY']);
 
-  const toggleForm = (index: number) => {
-    const element = document.getElementById(`extra-form-${index}`);
-    if (element) {
-      if (element.style.display === 'none') {
-        element.style.display = 'block';
-      } else {
-        element.style.display = 'none';
-      }
-    }
-  };
+  // const toggleForm = (index: number) => {
+  //   const element = document.getElementById(`extra-form-${index}`);
+  //   if (element) {
+  //     if (element.style.display === 'none') {
+  //       element.style.display = 'block';
+  //     } else {
+  //       element.style.display = 'none';
+  //     }
+  //   }
+  // };
 
   const handleOk = (inputData: { categoryName: string }) => {
     const inputElement = document.getElementById('add-extra-category-input');
@@ -121,9 +120,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
               </IonCardHeader>
               <AddExtraInput
                 categoryName={category}
-                toggleForm={toggleForm}
                 handleSceneChange={handleSceneChange}
-                id={index}
               />
             </IonCard>
           ))}

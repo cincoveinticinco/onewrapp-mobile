@@ -16,15 +16,11 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddElementInputProps {
   categoryName: string;
-  toggleForm: (index: number) => void;
   handleSceneChange: (value: any, field: string) => void;
-  id: number;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
   categoryName,
-  toggleForm,
-  id,
   handleSceneChange,
 }) => {
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
@@ -35,16 +31,14 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   }, [selectedElements]);
 
   const deleteElement = (element: string) => {
-    setSelectedElements((currentElements) =>
-      currentElements.filter((el) => el.elementName !== element)
-    );
+    setSelectedElements((currentElements) => currentElements.filter((el) => el.elementName !== element));
     handleSceneChange(selectedElements, 'elements');
   };
 
   const uniqueElementsValuesArray = getUniqueValuesFromNestedArray(
     scenes,
     'elements',
-    'elementName'
+    'elementName',
   );
 
   const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
@@ -54,40 +48,39 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   });
 
   const getSortedElementNames = sortArrayAlphabeticaly(
-    getOptionsArray('elementName', getFilteredElements)
+    getOptionsArray('elementName', getFilteredElements),
   );
 
   const toggleElement = (element: string) => {
-    const sceneWithElement = scenes.find((scene: any) =>
-      scene.elements.some(
-        (el: any) => el.elementName.toUpperCase() === element.toUpperCase()
-      )
-    );
+    const sceneWithElement = scenes.find((scene: any) => scene.elements.some(
+      (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
+    ));
 
     const elementObject = sceneWithElement?.elements.find(
-      (el: any) => el.elementName.toUpperCase() === element.toUpperCase()
+      (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
     );
 
     if (elementObject) {
       const selectedElementObjectIndex = selectedElements.findIndex(
-        (el: any) => el.elementName === elementObject.elementName
+        (el: any) => el.elementName === elementObject.elementName,
       );
       if (selectedElementObjectIndex !== -1) {
-        setSelectedElements((currentElements) =>
-          currentElements.filter(
-            (el: any) => el.elementName !== elementObject.elementName
-          )
-        );
+        setSelectedElements((currentElements) => currentElements.filter(
+          (el: any) => el.elementName !== elementObject.elementName,
+        ));
       } else {
         const newElement: any = { ...elementObject };
-        newElement.categoryName =
-          categoryName !== 'NO CATEGORY' ? categoryName : null;
+        newElement.categoryName = categoryName !== 'NO CATEGORY' ? categoryName : null;
         setSelectedElements((currentElements) => [
           ...currentElements,
           newElement,
         ]);
       }
     }
+  };
+
+  const clearSelections = () => {
+    setSelectedElements([]);
   };
 
   const contentStyle = selectedElements.length === 0 ? 'ion-no-padding' : '';
@@ -119,6 +112,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         modalTrigger={`open-element-options-modal-${categoryName}`}
         handleCheckboxToggle={toggleElement}
         selectedOptions={selectedElements.map((element) => element.elementName)}
+        clearSelections={clearSelections}
       />
     </IonCardContent>
   );

@@ -1,4 +1,4 @@
-import { IonButton} from '@ionic/react';
+import { IonButton } from '@ionic/react';
 import React from 'react';
 import './DeleteButton.scss';
 import { FiTrash } from 'react-icons/fi';

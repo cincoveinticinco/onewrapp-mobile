@@ -1,8 +1,7 @@
 import {
-  IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonPage, IonRow, IonTitle, IonToolbar,
+  IonCol, IonContent, IonGrid, IonRow,
 } from '@ionic/react';
 import React from 'react';
-import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
@@ -11,8 +10,7 @@ import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Sce
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-  import scenesData from '../../data/scn_data.json'; // eslint-disable-line
-import { Character } from '../../interfaces/scenesTypes';
+import scenesData from '../../data/scn_data.json';
 import customArraySort from '../../utils/customArraySort';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import useHandleBack from '../../hooks/useHandleBack';
@@ -20,9 +18,9 @@ import OutlineLightButton from '../../components/Shared/OutlineLightButton/Outli
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
 import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
@@ -69,15 +67,14 @@ const FilterScenes = () => {
   const getSortedCharacterNames = customArraySort(getCharactersArray(uniqueCharacterValuesArray));
   const getSortedExtraNames = customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray));
   const getSortedElementNames = sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray));
-  const getSortedLocationNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
-  const getSortedSetNames: string[] = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
-  const getSortedElementCategoryNames: string[] = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
+  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
+  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
+  const getSortedElementCategoryNames = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
 
   return (
-    <IonPage color="tertiary">
-      <IonHeader>
-        <ModalToolbar toolbarTitle="Filter" clearOptions={resetFilters} handleBack={handleBack} />
-      </IonHeader>
+    <SecondaryPagesLayout
+      resetSelections={resetFilters}
+    >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
           <FilterScenesButtonsSelect
@@ -265,7 +262,7 @@ const FilterScenes = () => {
             )}
         </IonGrid>
       </IonContent>
-    </IonPage>
+    </SecondaryPagesLayout>
   );
 };
 

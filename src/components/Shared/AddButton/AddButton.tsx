@@ -7,7 +7,6 @@ interface AddButtonProps {
   id?: string
   className?: string
   onClick?: () => void
-  size?: 'small' | 'default' | 'large' | undefined
   slot?: 'start' | 'end' | 'icon-only' | undefined
 }
 

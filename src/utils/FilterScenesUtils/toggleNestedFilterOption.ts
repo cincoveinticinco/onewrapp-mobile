@@ -1,6 +1,10 @@
 import { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
 
-const toggleNestedFilterOption = (prevOptions: SelectedFilterOptionsInterface, category: string, nestedKey: string, optionValue: string) => {
+const toggleNestedFilterOption = (
+  prevOptions: SelectedFilterOptionsInterface,
+  category: string, nestedKey: string,
+  optionValue: string,
+) => {
   const updatedOptions: SelectedFilterOptionsInterface = { ...prevOptions };
 
   interface SelectedFilterOptionsInterface {

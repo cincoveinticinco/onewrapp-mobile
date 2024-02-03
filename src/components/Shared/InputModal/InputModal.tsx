@@ -1,14 +1,14 @@
 import {
-  IonButton, IonCheckbox, IonContent, IonHeader, IonIcon, IonItem, IonList, IonModal, IonSearchbar, IonTitle, IonToolbar,
+  IonCheckbox, IonContent, IonItem, IonList,
 } from '@ionic/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import useIsMobile from '../../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './InputModal.scss';
 import ModalSearchBar from '../ModalSearchBar/ModalSearchBar';
-import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import removeNumberAndDot from '../../../utils/removeNumberAndDot';
+import ModalPagesLayout from '../../../Layouts/ModalPagesLayout/ModalPagesLayout';
 
 interface InputModalProps {
   optionName: string;
@@ -16,10 +16,11 @@ interface InputModalProps {
   modalTrigger: string;
   handleCheckboxToggle: (option: string) => void;
   selectedOptions: string[];
+  clearSelections: () => void;
 }
 
 const InputModal: React.FC<InputModalProps> = ({
-  optionName, listOfOptions, modalTrigger, handleCheckboxToggle, selectedOptions,
+  optionName, listOfOptions, modalTrigger, handleCheckboxToggle, selectedOptions, clearSelections,
 }) => {
   const [searchText, setSearchText] = useState('');
 
@@ -44,27 +45,18 @@ const InputModal: React.FC<InputModalProps> = ({
 
   const checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(removeNumberAndDot(option)));
 
-  const clearModalSelections = () => {};
-
   const isOptionChecked = (option: string) => selectedOptions.includes(removeNumberAndDot(option));
 
   return (
-    <IonModal
-      ref={modalRef}
-      trigger={modalTrigger}
-      id="add-scenes-options-modal"
+
+    <ModalPagesLayout
+      modalId="add-scenes-options-modal"
+      modalTrigger={modalTrigger}
+      clearModalSelections={clearSelections}
+      modalTitle={optionName}
     >
-      <IonHeader>
-        <ModalToolbar
-          handleBack={closeModal}
-          toolbarTitle={optionName}
-          clearOptions={clearModalSelections}
-        />
-      </IonHeader>
       <IonContent color="tertiary">
-
         <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
-
         {
         filteredOptions.length === 0
           ? (
@@ -121,9 +113,9 @@ const InputModal: React.FC<InputModalProps> = ({
               {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin" />}
             </>
           )
-}
+        }
       </IonContent>
-    </IonModal>
+    </ModalPagesLayout>
   );
 };
 

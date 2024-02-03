@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, AlertInput,
+  IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
 import AddElementInput from './AddElementInput';
 import scenesData from '../../../data/scn_data.json';
@@ -32,12 +32,12 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
 
   const [elementsCategories, setElementsCategories] = useState<string[]>([...sortedElementsCategories, 'NO CATEGORY']);
 
-  const toggleForm = (index: number) => {
-    const element = document.getElementById(`element-form-${index}`);
-    if (element) {
-      element.style.display = element.style.display === 'none' ? 'block' : 'none';
-    }
-  };
+  // const toggleForm = (index: number) => {
+  //   const element = document.getElementById(`element-form-${index}`);
+  //   if (element) {
+  //     element.style.display = element.style.display === 'none' ? 'block' : 'none';
+  //   }
+  // };
 
   const alertInputs: AlertInput[] = [
     {
@@ -115,10 +115,8 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
               </IonCardHeader>
               <AddElementInput
                 categoryName={category}
-                id={index}
-                toggleForm={toggleForm}
                 handleSceneChange={handleSceneChange}
-                />
+              />
             </IonCard>
           ))}
         </IonGrid>

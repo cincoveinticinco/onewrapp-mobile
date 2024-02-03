@@ -1,4 +1,3 @@
-import scenesData from '../data/scn_data.json';
 import { Character } from '../interfaces/scenesTypes';
 
 const getCharactersArray = (uniqueValuesArray: any[]) => {

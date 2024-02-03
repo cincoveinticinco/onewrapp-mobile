@@ -34,7 +34,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   const deleteCharacter = (characterNum: string | null) => {
     if (characterNum) {
       const updatedCharacters = selectedCharacters.filter(
-        (character: Character) => character.characterNum !== characterNum
+        (character: Character) => character.characterNum !== characterNum,
       );
       setSelectedCharacters(updatedCharacters);
     }
@@ -43,7 +43,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(
     scenes,
     'characters',
-    'characterName'
+    'characterName',
   );
 
   const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
@@ -53,44 +53,41 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   });
 
   const getSortedCharacterNames = customArraySort(
-    getCharactersArray(getFilteredCharacters)
+    getCharactersArray(getFilteredCharacters),
   );
 
   const toggleCharacters = (character: string) => {
-    const sceneWithCharacter = scenes.find((scene: any) =>
-      scene.characters.some(
-        (char: any) =>
-          char.characterName.toUpperCase() ===
-          removeNumberAndDot(character.toUpperCase())
-      )
-    );
+    const sceneWithCharacter = scenes.find((scene: any) => scene.characters.some(
+      (char: any) => char.characterName.toUpperCase()
+          === removeNumberAndDot(character.toUpperCase()),
+    ));
 
     const characterObject = sceneWithCharacter?.characters.find(
-      (char: any) =>
-        char.characterName.toUpperCase() ===
-        removeNumberAndDot(character.toUpperCase())
+      (char: any) => char.characterName.toUpperCase()
+        === removeNumberAndDot(character.toUpperCase()),
     );
 
     if (characterObject) {
       const selectedCharacterObjectIndex = selectedCharacters.findIndex(
-        (char: any) => char.characterName === characterObject.characterName
+        (char: any) => char.characterName === characterObject.characterName,
       );
       if (selectedCharacterObjectIndex !== -1) {
-        setSelectedCharacters((currentCharacters) =>
-          currentCharacters.filter(
-            (char: any) => char.characterName !== characterObject.characterName
-          )
-        );
+        setSelectedCharacters((currentCharacters) => currentCharacters.filter(
+          (char: any) => char.characterName !== characterObject.characterName,
+        ));
       } else {
         const newCharacter: any = { ...characterObject };
-        newCharacter.categoryName =
-          categoryName !== 'NO CATEGORY' ? categoryName : null;
+        newCharacter.categoryName = categoryName !== 'NO CATEGORY' ? categoryName : null;
         setSelectedCharacters((currentCharacters) => [
           ...currentCharacters,
           newCharacter,
         ]);
       }
     }
+  };
+
+  const clearSelections = () => {
+    setSelectedCharacters([]);
   };
 
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
@@ -122,8 +119,9 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         modalTrigger={`open-characters-options-modal-${categoryName}`}
         handleCheckboxToggle={toggleCharacters}
         selectedOptions={selectedCharacters.map(
-          (character) => character.characterName
+          (character) => character.characterName,
         )}
+        clearSelections={clearSelections}
       />
     </IonCardContent>
   );

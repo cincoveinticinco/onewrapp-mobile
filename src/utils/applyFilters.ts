@@ -1,6 +1,6 @@
 const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
   if (Array.isArray(dataObject[optionKey])) {
-    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => dataObjectItem[nestedOptionKey] === option))));
+    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => dataObjectItem[nestedOptionKey] === option)))); // eslint-disable-line max-len
   }
 
   if (optionValues === null) {

@@ -2,7 +2,7 @@ import {
   IonButton, IonIcon, IonTitle, IonToolbar,
 } from '@ionic/react';
 import React from 'react';
-import { chevronBack, save } from 'ionicons/icons';
+import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/useIsMobile';
 import './ModalToolbar.scss';
 

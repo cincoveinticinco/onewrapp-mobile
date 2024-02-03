@@ -125,8 +125,8 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
         <div
           className="checkbox-item-option"
           ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
+          {...provided.draggableProps}  // eslint-disable-line
+          {...provided.dragHandleProps} // eslint-disable-line
         >
           <IonItem color="tertiary">
             <IonButton fill="clear" slot="start" color="light" className="ion-no-margin ion-no-padding">

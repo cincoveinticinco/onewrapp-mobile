@@ -3,22 +3,17 @@ import {
   IonButton,
   IonContent,
   IonGrid,
-  IonHeader,
-  IonIcon,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  IonPage,
-  IonToolbar,
 } from '@ionic/react';
 import './Strips.scss';
 import { useLocation } from 'react-router';
 import scene_data from '../../data/scn_data.json'; // eslint-disable-line
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortScenes from '../../utils/SortScenesUtils/sortScenes';
-import MainPagesLayout from '../../Layouts/MainPagesLayout';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
