@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
   IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
-  IonList, IonModal, IonRow
-} from '@ionic/react'; 
+  IonList, IonModal, IonRow,
+} from '@ionic/react';
 import { chevronForward } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
 import './FilterScenesModalSelect.scss';
@@ -62,16 +62,20 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   };
 
   const clearFilterOptions = () => {
-    setSelectedFilterOptions((prev: any) => { 
-        const newFilterOptions = {
-          ...prev,
-          [optionKey]: [],
-        };
+    setSelectedFilterOptions((prev: any) => {
+      const newFilterOptions = {
+        ...prev,
+        [optionKey]: [],
+      };
 
-        delete newFilterOptions[optionKey];
+      delete newFilterOptions[optionKey];
 
-        return newFilterOptions;
-    })
+      return newFilterOptions;
+    });
+  };
+
+  const clearSearchText = () => {
+    setSearchText('');
   };
 
   const handleBack = () => {
@@ -130,17 +134,16 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
           {uncheckedfilteredFiltersOptions.length === 0 ? (
             <p className="no-items-message">
-              {`There are no coincidences with "${searchText}". Do you want to create a `}
-              <a style={{ marginLeft: '6px' }} href="/">New One</a>
-              {' '}
-              ?
-              CONFIRM
-              CANCEL
+              There are no coincidences. Do you want to create a new one ?
+              <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
+                <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin" onClick={() => {}} />
+                <OutlineLightButton buttonName="CANCEL" className="ion-margin" onClick={clearSearchText} />
+              </span>
             </p>
           ) : (
             <>
-              <IonList color="tertiary" className="ion-no-padding ion-margin filters-options-list">
-              {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
+              <IonList color="tertiary" className="ion-no-padding filters-options-list">
+                {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -175,11 +178,11 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                   </IonItem>
                 ))}
               </IonList>
-              <OutlinePrimaryButton 
-                buttonName="CONFIRM" 
-                onClick={handleBack} 
+              <OutlinePrimaryButton
+                buttonName="CONFIRM"
+                onClick={handleBack}
                 className="ion-margin"
-                style={isMobile ? {margin: '16px'} : {margin: '20% auto auto auto'}}
+                style={isMobile ? { margin: '16px' } : { margin: '20% auto auto auto' }}
               />
               {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />}
             </>
