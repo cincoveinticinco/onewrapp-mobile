@@ -102,7 +102,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
               color="tertiary"
               className="ion-no-margin category-items"
             >
-              {`${character.characterNum ? character.characterNum + '.' : ''} ${character.characterName}`}
+              {`${character.characterNum ? character.characterNum + '.' : ''} ${character.characterName.toUpperCase()}`}
               <DeleteButton
                 onClick={() => deleteCharacter(character.characterNum)}
                 slot="end"

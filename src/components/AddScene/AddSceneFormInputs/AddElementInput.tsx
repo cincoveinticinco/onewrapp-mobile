@@ -95,7 +95,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
               color="tertiary"
               className="ion-no-margin category-items"
             >
-              {element.elementName}
+              {element.elementName.toUpperCase()}
               <DeleteButton
                 onClick={() => deleteElement(element.elementName)}
                 slot="end"

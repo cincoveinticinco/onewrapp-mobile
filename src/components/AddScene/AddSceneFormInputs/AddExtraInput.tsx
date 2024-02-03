@@ -89,7 +89,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
             color="tertiary"
             className="ion-no-margin category-items"
           >
-            {extra.extraName}
+            {extra.extraName.toUpperCase()}
             <IonButton color="danger" fill="clear" slot="end" onClick={() => deleteExtra(index)}>
               <IonIcon icon={trash} />
             </IonButton>
