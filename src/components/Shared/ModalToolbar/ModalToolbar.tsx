@@ -32,27 +32,6 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
             <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
               BACK
             </IonButton>
-            {
-              clearOptions
-              && (
-              <IonButton
-                fill="clear"
-                color="primary"
-                slot="end"
-                onClick={clearOptions}
-              >
-                RESET
-              </IonButton>
-              )
-            }
-            {
-              saveOptions
-              && (
-              <IonButton fill="clear" color="primary" slot="end" onClick={saveOptions}>
-                SAVE
-              </IonButton>
-              )
-}
           </>
         )
       }
@@ -68,6 +47,29 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
       <IonTitle className="modal-toolbar-title">
         {toolbarTitle.toUpperCase()}
       </IonTitle>
+
+      {
+        clearOptions
+        && (
+        <IonButton
+          fill="clear"
+          color="primary"
+          slot="end"
+          onClick={clearOptions}
+        >
+          RESET
+        </IonButton>
+        )
+      }
+      {
+        saveOptions
+        && (
+        <IonButton fill="clear" color="primary" slot="end" onClick={saveOptions}>
+          SAVE
+        </IonButton>
+        )
+      }
+      
     </IonToolbar>
   );
 };

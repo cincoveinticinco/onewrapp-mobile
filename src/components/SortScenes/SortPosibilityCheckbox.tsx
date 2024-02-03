@@ -145,7 +145,7 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
             <IonButton
               fill="clear"
               slot="end"
-              className={`${getAscOrDescClass('desc')} asc-or-desc-button`}
+              className={`${getAscOrDescClass('desc')} asc-or-desc-button ion-no-padding ion-no-margin`}
               onClick={toggleAscOrDesc}
             >
               <PiSortDescending className="asc-or-desc-icon" />
@@ -153,7 +153,7 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
             <IonButton
               fill="clear"
               slot="end"
-              className={`${getAscOrDescClass('asc')} asc-or-desc-button`}
+              className={`${getAscOrDescClass('asc')} asc-or-desc-button ion-no-padding ion-no-margin`}
               onClick={toggleAscOrDesc}
             >
               <PiSortAscending className="asc-or-desc-icon" />
