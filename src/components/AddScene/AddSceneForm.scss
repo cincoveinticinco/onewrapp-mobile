@@ -159,7 +159,7 @@
   .category-item-title {
     border-top: 1px solid var(--ion-color-dark);
     border-bottom: 1px solid var(--ion-color-dark);
-    padding: 0 16px;
+    padding: 0 0px 0px 16px;
     background-color: #0000001e;
     font-size: var(--525-big-title-size);
     margin: 0;
@@ -234,7 +234,7 @@
 
     .category-item-title {
       background-color: transparent;
-      padding: 0 16px;
+      padding: 0 0px 0px 16px;
       font-size: var(--525-big-title-size);
     }
 
