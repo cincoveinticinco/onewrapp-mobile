@@ -16,7 +16,7 @@ import scene_data from '../../data/scn_data.json'; // eslint-disable-line
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
-import filterScenes from '../../utils/FilterScenesUtils/filterScenes';
+import applyFilters from '../../utils/applyFilters';
 import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
@@ -33,7 +33,7 @@ const Strips: React.FC = () => {
   const contentRef = React.createRef<HTMLIonContentElement>();
 
   useEffect(() => {
-    const newFilteredScenes = sortScenes(filterScenes(scene_data.scenes, selectedFilterOptions), selectedSortOptions);
+    const newFilteredScenes = sortScenes(applyFilters(scene_data.scenes, selectedFilterOptions), selectedSortOptions);
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
