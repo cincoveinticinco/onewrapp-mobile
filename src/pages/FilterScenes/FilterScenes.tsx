@@ -74,6 +74,7 @@ const FilterScenes = () => {
   return (
     <SecondaryPagesLayout
       resetSelections={resetFilters}
+      pageTitle = "FILTER"
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">

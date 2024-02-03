@@ -12,7 +12,7 @@ const AddScene = () => {
   };
 
   return (
-    <SecondaryPagesLayout saveOptions={handleSave}>
+    <SecondaryPagesLayout saveOptions={handleSave} pageTitle='Add Strip'>
       <IonContent color="tertiary">
         <AddScenesForm />
       </IonContent>

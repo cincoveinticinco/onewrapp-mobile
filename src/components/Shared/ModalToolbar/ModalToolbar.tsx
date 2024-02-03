@@ -69,7 +69,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         </IonButton>
         )
       }
-      
+
     </IonToolbar>
   );
 };
