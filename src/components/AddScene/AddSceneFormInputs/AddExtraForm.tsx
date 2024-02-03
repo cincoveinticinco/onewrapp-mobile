@@ -1,54 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
+  IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
-import { add, trash } from 'ionicons/icons';
 import AddExtraInput from './AddExtraInput';
 import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import InputModal from '../../Shared/InputModal/InputModal';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
+import InputAlert from '../../Shared/InputAlert/InputAlert';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const scenes = scenesData.scenes;
+  const { scenes } = scenesData;
 
   const defineExtrasCategories = () => {
     const categoriesArray: string[] = [];
     const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'extras', 'categoryName');
-    
+
     uniqueValuesArray.forEach((extra) => {
-      const categoryName = extra.categoryName;
-      if(categoryName) {
+      const { categoryName } = extra;
+      if (categoryName) {
         categoriesArray.push(categoryName);
       }
     });
 
-    return categoriesArray
+    return categoriesArray;
   };
 
   const sortedExtrasCategories = defineExtrasCategories().sort();
 
-  const toggleSelectedCategory = (selectedCategory: string) => {
-    const categoryIndex = selectedCategories.indexOf(selectedCategory);
-
-    if (categoryIndex === -1) {
-      setSelectedCategories([...selectedCategories, selectedCategory]);
-    } else {
-      const updatedCategories = selectedCategories.filter((category) => category !== selectedCategory);
-      setSelectedCategories(updatedCategories);
-    }
-  };
-
-  useEffect(() => {
-    console.log('EXTRAS CATEGORIES', selectedCategories)
-  }, [selectedCategories]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([...sortedExtrasCategories, 'NO CATEGORY']);
 
   const toggleForm = (index: number) => {
     const element = document.getElementById(`extra-form-${index}`);
@@ -71,10 +56,14 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
     }
   };
 
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
-    setSelectedCategories(updatedCategories);
-  };
+  const alertInputs: AlertInput[] = [
+    {
+      name: 'categoryName',
+      type: 'text',
+      placeholder: 'Category Name',
+      id: 'add-extra-category-input',
+    },
+  ];
 
   return (
     <>
@@ -83,37 +72,17 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
           Extras / Background Actors
         </p>
         <AddButton
-          id="open-add-scene-extras-categories-modal"
-          slot='end'
+          id="extras-category-alert"
+          slot="end"
         />
       </div>
-      {/* <IonAlert
-        trigger="extra-category-alert"
-        header="Please, enter an extra category name"
-        buttons={[
-          {
-            text: 'OK',
-            handler: handleOk,
-          },
-        ]}
-        inputs={[
-          {
-            name: 'categoryName',
-            type: 'text',
-            placeholder: 'Extra Category Name',
-            id: 'add-extra-category-input',
-          },
-        ]}
-      /> */}
-
-      <InputModal
-        optionName="Extras Categories"
-        listOfOptions={[]}
-        modalTrigger='open-add-scene-extras-categories-modal'
-        handleCheckboxToggle={toggleSelectedCategory}
-        selectedOptions={selectedCategories}
+      <InputAlert
+        handleOk={handleOk}
+        inputs={alertInputs}
+        trigger="extras-category-alert"
+        header="Add Category"
+        message="Please enter the name of the category you want to add"
       />
-
       {
         selectedCategories.length === 0
         && (
@@ -136,30 +105,26 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
             <IonCard
               key={index}
               color="tertiary"
+              className="add-scene-items-card ion-no-border"
             >
               <IonCardHeader className="ion-flex">
                 <div className="ion-flex ion-justify-content-between">
                   <p className="ion-flex ion-align-items-center">
                     {capitalizeString(category)}
                   </p>
-                  <div className='category-buttons-wrapper'>
+                  <div className="category-buttons-wrapper">
                     <AddButton
-                      id="character-item-alert"
-                    />
-                    <DeleteButton
-                      onClick={() => { removeCategory(category); }}
+                      id={`open-extras-options-modal-${category}`}
                     />
                   </div>
                 </div>
               </IonCardHeader>
-              <IonCardContent>
-                <AddExtraInput
-                  categoryName={category}
-                  toggleForm={toggleForm}
-                  handleSceneChange={handleSceneChange}
-                  id={index}
-                />
-              </IonCardContent>
+              <AddExtraInput
+                categoryName={category}
+                toggleForm={toggleForm}
+                handleSceneChange={handleSceneChange}
+                id={index}
+              />
             </IonCard>
           ))}
         </IonGrid>
