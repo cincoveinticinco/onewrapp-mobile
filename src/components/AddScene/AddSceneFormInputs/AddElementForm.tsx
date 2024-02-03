@@ -1,43 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IonButton, IonIcon, IonAlert, IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle,
+  IonGrid, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
-import { add, trash } from 'ionicons/icons';
 import AddElementInput from './AddElementInput';
-import InputModal from '../../Shared/InputModal/InputModal';
 import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../Shared/AddButton/AddButton';
-import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import capitalizeString from '../../../utils/capitalizeString';
+import InputAlert from '../../Shared/InputAlert/InputAlert';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) => {
-  
-  const scenes = scenesData.scenes;
+  const { scenes } = scenesData;
 
   const defineElementsCategories = () => {
     const categoriesArray: string[] = [];
     const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'elements', 'categoryName');
-    
+
     uniqueValuesArray.forEach((element) => {
-      const categoryName = element.categoryName;
+      const { categoryName } = element;
       categoriesArray.push(categoryName);
     });
 
-    return categoriesArray
+    return categoriesArray;
   };
 
   const sortedElementsCategories = defineElementsCategories().sort();
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
-  useEffect(() => {
-    console.log('ELEMENTS CATEGORIES', selectedCategories)
-  }, [selectedCategories]);
+  const [elementsCategories, setElementsCategories] = useState<string[]>([...sortedElementsCategories, 'NO CATEGORY']);
 
   const toggleForm = (index: number) => {
     const element = document.getElementById(`element-form-${index}`);
@@ -46,30 +39,22 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
     }
   };
 
-  const toggleSelectedCategory = (selectedCategory: string) => {
-    const categoryIndex = selectedCategories.indexOf(selectedCategory);
+  const alertInputs: AlertInput[] = [
+    {
+      name: 'categoryName',
+      type: 'text',
+      placeholder: 'Category Name',
+    },
+  ];
 
-    if (categoryIndex === -1) {
-      setSelectedCategories([...selectedCategories, selectedCategory]);
-    } else {
-      const updatedCategories = selectedCategories.filter((category) => category !== selectedCategory);
-      setSelectedCategories(updatedCategories);
+  const handleOk = (inputData: { categoryName: string }) => {
+    const inputElement = document.getElementById('add-element-category-input');
+    if (inputData.categoryName) {
+      setElementsCategories([...elementsCategories, inputData.categoryName]);
     }
-  };
-
-  // const handleOk = (inputData: { categoryName: string }) => {
-  //   const inputElement = document.getElementById('add-element-category-input');
-  //   if (inputData.categoryName) {
-  //     setSelectedCategories([...selectedCategories, inputData.categoryName]);
-  //   }
-  //   if (inputElement) {
-  //     (inputElement as HTMLInputElement).value = '';
-  //   }
-  // };
-
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
-    setSelectedCategories(updatedCategories);
+    if (inputElement) {
+      (inputElement as HTMLInputElement).value = '';
+    }
   };
 
   return (
@@ -79,40 +64,21 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
           Elements
         </p>
         <AddButton
-          id="open-add-scene-elements-category-modal"
-          slot='end'
+          id="elements-categories-alert"
+          slot="end"
         />
       </div>
 
-      {/* <IonAlert
-        trigger="element-category-alert"
-        header="Please, enter an element category name"
-        buttons={[
-          {
-            text: 'OK',
-            handler: handleOk,
-          },
-        ]}
-        inputs={[
-          {
-            name: 'categoryName',
-            type: 'text',
-            placeholder: 'Element Category Name',
-            id: 'add-element-category-input',
-          },
-        ]}
-      /> */}
-
-      <InputModal
-        optionName="Elements Categories"
-        listOfOptions={sortedElementsCategories}
-        modalTrigger='open-add-scene-elements-category-modal'
-        handleCheckboxToggle={toggleSelectedCategory}
-        selectedOptions={selectedCategories}
+      <InputAlert
+        handleOk={handleOk}
+        inputs={alertInputs}
+        trigger="elements-categories-alert"
+        header="Add Category"
+        message="Please enter the name of the category you want to add"
       />
 
       {
-        selectedCategories.length === 0
+        elementsCategories.length === 0
         && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
@@ -124,10 +90,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         )
       }
 
-      {selectedCategories.length > 0
+      {elementsCategories.length > 0
         && (
         <IonGrid className="add-scene-items-card-grid">
-          {selectedCategories.map((category, index) => (
+          {elementsCategories.map((category, index) => (
             <IonCard
               key={index}
               color="tertiary"
@@ -139,25 +105,20 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
                     {capitalizeString(category)}
                   </p>
 
-                  <div className='category-buttons-wrapper'>
+                  <div className="category-buttons-wrapper">
                     <AddButton
-                      id="character-item-alert"
-                    />
-                    <DeleteButton
-                      onClick={() => { removeCategory(category); }}
+                      id={`open-element-options-modal-${category}`}
                     />
                   </div>
 
                 </div>
               </IonCardHeader>
-              <IonCardContent>
-                <AddElementInput
-                  categoryName={category}
-                  id={index}
-                  toggleForm={toggleForm}
-                  handleSceneChange={handleSceneChange}
+              <AddElementInput
+                categoryName={category}
+                id={index}
+                toggleForm={toggleForm}
+                handleSceneChange={handleSceneChange}
                 />
-              </IonCardContent>
             </IonCard>
           ))}
         </IonGrid>
