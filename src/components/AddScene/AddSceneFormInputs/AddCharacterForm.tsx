@@ -1,76 +1,60 @@
 import { useEffect, useState } from 'react';
 import {
-  IonButton,
-  IonIcon,
-  IonAlert,
   IonGrid,
   IonCard,
   IonCardSubtitle,
   IonCardHeader,
   IonCardContent,
+  AlertInput,
 } from '@ionic/react';
-import { add, trash } from 'ionicons/icons';
 import AddCharacterInput from './AddCharacterInput';
-import InputModal from '../../Shared/InputModal/InputModal';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import scenesData from '../../../data/scn_data.json'
+import scenesData from '../../../data/scn_data.json';
 import { Character } from '../../../interfaces/scenesTypes';
 import AddButton from '../../Shared/AddButton/AddButton';
-import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import capitalizeString from '../../../utils/capitalizeString';
+import InputAlert from '../../Shared/InputAlert/InputAlert';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
 }
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
-  
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  
   const defineCharactersCategories = () => {
-    const scenes = scenesData.scenes;
-    const categoriesArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'categoryName');
-    
-    uniqueValuesArray.forEach((character: Character) => {
-      const categoryName = character.categoryName;
-      categoriesArray.push(categoryName);
+    const { scenes } = scenesData;
+    const characterCategoriesArray: string[] = [];
+    const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'categoryName');
+
+    uniqueCategoryValuesArray.forEach((character: Character) => {
+      const { categoryName } = character;
+      characterCategoriesArray.push(categoryName);
     });
 
-    return categoriesArray
+    return characterCategoriesArray;
   };
 
-  const sortedCharactersCategories = defineCharactersCategories();
+  const sortedCharactersCategories = defineCharactersCategories().sort();
 
-  const toggleSelectedCategory = (selectedCategory: string) => {
-    const categoryIndex = selectedCategories.indexOf(selectedCategory);
+  const [characterCategories, setCharacterCategories] = useState<string[]>([...sortedCharactersCategories, 'NO CATEGORY']);
 
-    if (categoryIndex === -1) {
-      setSelectedCategories([...selectedCategories, selectedCategory]);
-    } else {
-      const updatedCategories = selectedCategories.filter((category) => category !== selectedCategory);
-      setSelectedCategories(updatedCategories);
+  const handleOk = (inputData: { categoryName: string; }) => {
+    const inputElement = document.getElementById('add-category-input');
+    if (inputData.categoryName) {
+      setCharacterCategories([...characterCategories, inputData.categoryName]);
+    }
+    if (inputElement) {
+      (inputElement as HTMLInputElement).value = '';
     }
   };
 
-  useEffect(() => {
-    console.log('CHAR CATEGORIES', selectedCategories)
-  }, [selectedCategories]);
-
-  // const handleOk = (inputData: { categoryName: string; }) => {
-  //   const inputElement = document.getElementById('add-category-input');
-  //   if (inputData.categoryName) {
-  //     setSelectedCategories([...selectedCategories, inputData.categoryName]);
-  //   }
-  //   if (inputElement) {
-  //     (inputElement as HTMLInputElement).value = '';
-  //   }
-  // };
-
-  const removeCategory = (categoryName: string) => {
-    const updatedCategories = selectedCategories.filter((category) => category !== categoryName);
-    setSelectedCategories(updatedCategories);
-  };
+  const alertInputs: AlertInput[] = [
+    {
+      name: 'categoryName',
+      type: 'text',
+      placeholder: 'Category Name',
+      id: 'add-category-input',
+    },
+  ];
 
   return (
     <>
@@ -79,21 +63,21 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
           Characters
         </p>
         <AddButton
-          id="open-add-scene-character-category-modal"
-          slot='end'
+          id="characters-category-alert"
+          slot="end"
         />
       </div>
 
-      <InputModal
-        optionName="Character Categories"
-        listOfOptions={[...sortedCharactersCategories, 'NO CATEGORY']}
-        modalTrigger='open-add-scene-character-category-modal'
-        handleCheckboxToggle={toggleSelectedCategory}
-        selectedOptions={selectedCategories}
+      <InputAlert
+        handleOk={handleOk}
+        inputs={alertInputs}
+        trigger="characters-category-alert"
+        header="Add Category"
+        message="Please enter the name of the category you want to add"
       />
 
       {
-        selectedCategories.length === 0
+        characterCategories.length === 0
         && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
@@ -105,10 +89,10 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         )
       }
 
-      {selectedCategories.length > 0
+      {characterCategories.length > 0
         && (
         <IonGrid className="add-scene-items-card-grid">
-          {selectedCategories.map((category, index) => (
+          {characterCategories.map((category, index) => (
             <IonCard
               key={index}
               color="tertiary"
@@ -119,24 +103,18 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
                   <p className="ion-flex ion-align-items-center">
                     {capitalizeString(category)}
                   </p>
-                  <div className='category-buttons-wrapper'>
+                  <div className="category-buttons-wrapper">
                     <AddButton
-                      id="open-character-options-modal"
-                    />
-                    <DeleteButton
-                      onClick={() => { removeCategory(category); }}
+                      id={`open-characters-options-modal-${category}`}
                     />
                   </div>
-                  
-              </div>
-              </IonCardHeader>
-              <IonCardContent>
-                <AddCharacterInput
-                  categoryName={category}
-                  handleSceneChange={handleSceneChange}
-                />
-              </IonCardContent>
 
+                </div>
+              </IonCardHeader>
+              <AddCharacterInput
+                categoryName={category}
+                handleSceneChange={handleSceneChange}
+              />
             </IonCard>
           ))}
         </IonGrid>
