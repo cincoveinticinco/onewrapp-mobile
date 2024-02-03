@@ -18,6 +18,7 @@ import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortScenes from '../../utils/SortScenesUtils/sortScenes';
+import MainPagesLayout from '../../Layouts/MainPagesLayout';
 
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
@@ -65,18 +66,8 @@ const Strips: React.FC = () => {
   }, [thisPath]);
 
   return (
-    <IonPage>
-      <IonHeader>
-        <Toolbar name="LVE-STRIPS" search addScene filter elipse sort />
-      </IonHeader>
+    <MainPagesLayout>
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
-        {/* <IonToolbar color="tertiary" className="sort-strips-toolbar">
-          <IonButton fill="clear" className="reset-button sort-strips-button" routerLink="sortscenes">
-            <IonIcon icon={chevronDownOutline} />
-            {' '}
-            SORT BY: EPISODE NUMBER
-          </IonButton>
-        </IonToolbar> */}
         {filteredScenes.length === 0 ? (
           <div className="no-items-message">
             <p className="ion-no-margin">There are not any scenes that match your search. </p>
@@ -103,7 +94,7 @@ const Strips: React.FC = () => {
           </Suspense>
         )}
       </IonContent>
-    </IonPage>
+    </MainPagesLayout>
   );
 };
 
