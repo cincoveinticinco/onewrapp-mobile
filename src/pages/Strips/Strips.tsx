@@ -8,7 +8,7 @@ import {
 } from '@ionic/react';
 import './Strips.scss';
 import { useLocation } from 'react-router';
-import scene_data from '../../data/scn_data.json'; // eslint-disable-line
+import scenesData from '../../data/scn_data.json'; // eslint-disable-line
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
@@ -29,7 +29,7 @@ const Strips: React.FC = () => {
   const contentRef = React.createRef<HTMLIonContentElement>();
 
   useEffect(() => {
-    const newFilteredScenes = sortScenes(applyFilters(scene_data.scenes, selectedFilterOptions), selectedSortOptions);
+    const newFilteredScenes = sortScenes(applyFilters(scenesData.scenes, selectedFilterOptions), selectedSortOptions);
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
@@ -63,31 +63,32 @@ const Strips: React.FC = () => {
   return (
     <MainPagesLayout>
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
-        {filteredScenes.length === 0 ? (
-          <div className="no-items-message">
-            <p className="ion-no-margin">There are not any scenes that match your search. </p>
-            <IonButton
-              fill="clear"
-              color="primary"
-              className="ion-no-margin reset-filters-option"
-              onClick={resetFilters}
-            >
-              Reset Filters
-            </IonButton>
-            <span>?</span>
-          </div>
-        ) : (
-          <Suspense fallback={<div>Loading...</div>}>
-            <IonGrid className="scenes-grid ion-margin">
-              {displayedScenes.map((scene, i) => (
-                <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
-              ))}
-              <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
-                <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
-              </IonInfiniteScroll>
-            </IonGrid>
-          </Suspense>
-        )}
+        <Suspense fallback={<div>Loading...</div>}>
+          {filteredScenes.length === 0 ? (
+            <div className="no-items-message">
+              <p className="ion-no-margin">There are not any scenes that match your search. </p>
+              <IonButton
+                fill="clear"
+                color="primary"
+                className="ion-no-margin reset-filters-option"
+                onClick={resetFilters}
+              >
+                Reset Filters
+              </IonButton>
+              <span>?</span>
+            </div>
+          ) : (
+            
+              <IonGrid className="scenes-grid ion-margin">
+                {displayedScenes.map((scene, i) => (
+                  <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
+                ))}
+                <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
+                  <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
+                </IonInfiniteScroll>
+              </IonGrid> 
+          )}
+        </Suspense>
       </IonContent>
     </MainPagesLayout>
   );
