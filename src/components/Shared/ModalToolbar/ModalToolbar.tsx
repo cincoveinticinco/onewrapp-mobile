@@ -1,8 +1,10 @@
-import { IonButton, IonIcon, IonTitle, IonToolbar } from '@ionic/react'
-import React from 'react'
-import useIsMobile from '../../../hooks/useIsMobile'
-import { chevronBack, save } from 'ionicons/icons'
-import './ModalToolbar.scss'
+import {
+  IonButton, IonIcon, IonTitle, IonToolbar,
+} from '@ionic/react';
+import React from 'react';
+import { chevronBack, save } from 'ionicons/icons';
+import useIsMobile from '../../../hooks/useIsMobile';
+import './ModalToolbar.scss';
 
 interface ModalToolbarProps {
   clearOptions?: () => void
@@ -16,10 +18,10 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     clearOptions,
     handleBack,
     toolbarTitle,
-    saveOptions
-  }
+    saveOptions,
+  },
 ) => {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <IonToolbar color="tertiary" id="modal-toolbar ion-no-padding">
@@ -31,7 +33,8 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
               BACK
             </IonButton>
             {
-              clearOptions && 
+              clearOptions
+              && (
               <IonButton
                 fill="clear"
                 color="primary"
@@ -40,12 +43,16 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
               >
                 RESET
               </IonButton>
+              )
             }
             {
-              saveOptions && 
+              saveOptions
+              && (
               <IonButton fill="clear" color="primary" slot="end" onClick={saveOptions}>
                 SAVE
-              </IonButton>}
+              </IonButton>
+              )
+}
           </>
         )
       }
@@ -62,7 +69,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         {toolbarTitle.toUpperCase()}
       </IonTitle>
     </IonToolbar>
-  )
-}
+  );
+};
 
-export default ModalToolbar
+export default ModalToolbar;
