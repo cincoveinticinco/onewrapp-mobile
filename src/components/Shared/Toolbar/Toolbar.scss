@@ -42,17 +42,17 @@
 
   .toolbar-search-wrapper {
     display: flex;
-    width: auto;
+    width: 30px;
     transition: all 1s ease-in-out;
     border-radius: 30px;
     overflow: hidden;
     .toolbar-search-input {
-      display: none;
+      opacity: 0;
     }
   }
 
   .toolbar-search-wrapper.search {
-    width: 250px;
+    width: 100%;
     border: 1px solid var(--ion-color-light);
     height: 30px;
     border-radius: 30px;
@@ -68,7 +68,7 @@
     }
 
     .toolbar-search-input {
-      display: flex;
+      opacity: 1;
       text-align: left;
       width: auto;
     }
