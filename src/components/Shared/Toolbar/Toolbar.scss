@@ -25,8 +25,8 @@
   }
 
   .toolbar-button {
-    width: 40px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     border-radius: 100%;
 
     --background-activated-opacity: 0;
@@ -42,10 +42,13 @@
 
   .toolbar-search-wrapper {
     display: flex;
-    width: 50px;
+    width: auto;
     transition: all 1s ease-in-out;
     border-radius: 30px;
     overflow: hidden;
+    .toolbar-search-input {
+      display: none;
+    }
   }
 
   .toolbar-search-wrapper.search {
@@ -65,6 +68,7 @@
     }
 
     .toolbar-search-input {
+      display: flex;
       text-align: left;
       width: auto;
     }
