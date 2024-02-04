@@ -7,7 +7,6 @@ import {
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../../context/auth';
 import useHandleBack from '../../../hooks/useHandleBack';
 
 interface ToolbarProps {
