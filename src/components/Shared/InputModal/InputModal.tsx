@@ -110,7 +110,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 onClick={closeModal}
                 className="ion-margin modal-confirm-button"
               />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin" />}
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button" />}
             </>
           )
         }

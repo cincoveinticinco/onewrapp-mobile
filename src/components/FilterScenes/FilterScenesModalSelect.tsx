@@ -189,9 +189,9 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 buttonName="CONFIRM"
                 onClick={handleBack}
                 className="ion-margin"
-                style={isMobile ? { margin: '16px' } : { margin: '20% auto auto auto' }}
+                style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
               />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin" />}
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin cancel-filter-scenes-modal" />}
             </>
           )}
         </IonContent>
