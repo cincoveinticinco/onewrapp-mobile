@@ -85,11 +85,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
-      {elipse && (
-        <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button">
-          <IonIcon icon={ellipsisHorizontalOutline} className="toolbar-ellipsis-icon toolbar-icon" />
-        </IonButton>
-      )}
+      {/* {elipse && (
+        // <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button">
+        //   <IonIcon icon={ellipsisHorizontalOutline} className="toolbar-ellipsis-icon toolbar-icon" />
+        // </IonButton>
+      )} */}
     </IonToolbar>
 )};
 
