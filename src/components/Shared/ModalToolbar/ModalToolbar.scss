@@ -6,7 +6,10 @@
   align-items: center;
 
   .modal-toolbar-title {
+    position: static;
     text-align: left;
+    padding: 0px;
+    font-size: var(--525-big-title-size);
   }
 }
 

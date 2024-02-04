@@ -66,7 +66,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
             <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon"/>
           </IonButton>
-          <IonInput className="toolbar-search-input" placeholder="" disabled={!searchMode}/>
+          <IonInput className="toolbar-search-input" placeholder="" disabled={!searchMode} autoFocus={true}/>
         </div>
       )}
       {addScene && (
