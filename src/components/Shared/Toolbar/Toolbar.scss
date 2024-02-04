@@ -38,4 +38,42 @@
       }
     }
   }
+
+  .toolbar-search-wrapper {
+    display: flex;
+    width: 50px;
+    transition: all 1s ease-in-out;
+    border-radius: 30px;
+    overflow: hidden;
+  }
+
+  .toolbar-search-wrapper.search {
+    width: 200px;
+    border: 1px solid var(--ion-color-light);
+    height: 30px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+
+    .toolbar-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+    }
+
+    .toolbar-search-input {
+      text-align: left;
+      width: auto;
+    }
+  }
+}
+
+@media (min-width: 500px) {
+  #main-pages-toolbar {
+    .toolbar-search-wrapper.search {
+      width: 300px;
+    }
+  }
 }
