@@ -27,7 +27,7 @@ const FilterScenesButtonsSelect: React.FC<FilterScenesButtonsSelectProps> = ({ s
       </IonCol>
       {
         selectOptions.map(({ filterName, handleOption, class: optionClass }) => (
-          <IonCol key={`filter-button-select-${filterName}`}>
+          <IonCol key={`filter-button-select-${filterName}`} size-xs="6" size-sm={selectOptions.length > 2 ? "3" : "6"}> 
             <IonButton
               expand="block"
               className={`${optionClass} filter-button-select`}
