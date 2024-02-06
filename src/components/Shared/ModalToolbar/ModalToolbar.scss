@@ -1,5 +1,6 @@
 #modal-toolbar {
-  border-bottom: 1px solid #000;
+  border-bottom: 3px solid transparent;
+  --border-style: none;
   height: 50px;
   display: flex;
   justify-content: center;

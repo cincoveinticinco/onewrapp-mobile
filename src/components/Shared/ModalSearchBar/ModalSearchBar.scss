@@ -1,6 +1,8 @@
 .search-bar-toolbar {
   position: fixed;
-  top: 50px;
+  top: 45px;
+  border-bottom: 2px solid black;
+  
   .search-bar {
     text-align: center;
     --border-radius: 50px;
