@@ -6,16 +6,18 @@ interface OutlinePrimaryButtonProps {
   onClick: () => void
   className?: string
   style?: { [key: string]: string }
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({
-  buttonName, onClick, className = '', style = {},
+  buttonName, onClick, className = '', style = {}, type
 }) => (
   <IonButton
     expand="block"
     onClick={onClick}
     className={`outline-primary-button ${className}`}
     style={style}
+    type={type}
   >
     {buttonName}
   </IonButton>
