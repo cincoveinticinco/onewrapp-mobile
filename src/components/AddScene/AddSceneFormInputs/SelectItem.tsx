@@ -63,7 +63,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
           interface="alert"
           value={watchValue(fieldName)}
           onIonChange={(e) => {setValue(fieldName, e.detail.value)}}
-          className={showError ? 'error' : ''}
+          className={(showError ? 'error' : '')}
+          mode='ios'
           disabled={disabled}
         >
           {options.map((option, index) => (
