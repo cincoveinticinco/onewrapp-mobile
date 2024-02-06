@@ -17,21 +17,22 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 interface AddElementInputProps {
   categoryName: string;
   handleSceneChange: (value: any, field: string) => void;
+  selectedElements: any;
+  setSelectedElements: (value: any) => void;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
   categoryName,
   handleSceneChange,
+  selectedElements,
+  setSelectedElements,
 }) => {
-  const [selectedElements, setSelectedElements] = useState<Element[]>([]);
   const { scenes } = sceneData;
 
-  useEffect(() => {
-    handleSceneChange(selectedElements, 'elements');
-  }, [selectedElements]);
+
 
   const deleteElement = (element: string) => {
-    setSelectedElements((currentElements) => currentElements.filter((el) => el.elementName !== element));
+    setSelectedElements((currentElements: any) => currentElements.filter((el: any) => el.elementName !== element));
     handleSceneChange(selectedElements, 'elements');
   };
 
@@ -65,13 +66,13 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         (el: any) => el.elementName === elementObject.elementName,
       );
       if (selectedElementObjectIndex !== -1) {
-        setSelectedElements((currentElements) => currentElements.filter(
+        setSelectedElements((currentElements: any) => currentElements.filter(
           (el: any) => el.elementName !== elementObject.elementName,
         ));
       } else {
         const newElement: any = { ...elementObject };
         newElement.categoryName = categoryName !== 'NO CATEGORY' ? categoryName : null;
-        setSelectedElements((currentElements) => [
+        setSelectedElements((currentElements: any) => [
           ...currentElements,
           newElement,
         ]);
@@ -89,7 +90,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     <IonCardContent className={contentStyle}>
       {selectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {selectedElements.map((element, index) => (
+          {selectedElements.map((element: any, index: number) => (
             <IonItem
               key={index}
               color="tertiary"
@@ -111,8 +112,9 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         listOfOptions={getSortedElementNames}
         modalTrigger={`open-element-options-modal-${categoryName}`}
         handleCheckboxToggle={toggleElement}
-        selectedOptions={selectedElements.map((element) => element.elementName)}
+        selectedOptions={selectedElements.map((element: any) => element.elementName)}
         clearSelections={clearSelections}
+        canCreateNew={true}
       />
     </IonCardContent>
   );

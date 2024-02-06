@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
@@ -9,6 +9,7 @@ import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
+import { Extra } from '../../../interfaces/scenesTypes';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -17,6 +18,11 @@ interface AddExtraFormProps {
 const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
   const { scenes } = scenesData;
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
+  const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
+
+  useEffect(() => {
+    handleSceneChange(selectedExtras, 'extras');
+  }, [selectedExtras]);
 
   const defineExtrasCategories = () => {
     const categoriesArray: string[] = [];
@@ -131,6 +137,8 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
               <AddExtraInput
                 categoryName={category}
                 handleSceneChange={handleSceneChange}
+                selectedExtras={selectedExtras}
+                setSelectedExtras={setSelectedExtras}
               />
             </IonCard>
           ))}

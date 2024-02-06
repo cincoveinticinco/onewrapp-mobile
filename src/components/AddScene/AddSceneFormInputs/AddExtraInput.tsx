@@ -15,21 +15,18 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 interface AddExtraInputProps {
   categoryName: string;
   handleSceneChange: (value: any, field: string) => void;
+  selectedExtras: any;
+  setSelectedExtras: (value: any) => void;
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, handleSceneChange,
+  categoryName, handleSceneChange, selectedExtras, setSelectedExtras,
 }) => {
-  const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
   const { scenes } = scenesData;
 
-  useEffect(() => {
-    handleSceneChange(selectedExtras, 'extras');
-  }, [selectedExtras]);
-
   const deleteExtra = (index: number) => {
-    setSelectedExtras((currentExtras) => currentExtras.filter((_, i) => i !== index));
+    setSelectedExtras((currentExtras: any) => currentExtras.filter((_: any, i: any) => i !== index));
   };
 
   // const addExtra = () => {
@@ -65,11 +62,11 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     if (extraObject) {
       const selectedExtraObjectIndex = selectedExtras.findIndex((ex: any) => ex.extraName === extraObject.extraName);
       if (selectedExtraObjectIndex !== -1) {
-        setSelectedExtras((currentExtras) => currentExtras.filter((ex: any) => ex.extraName !== extraObject.extraName));
+        setSelectedExtras((currentExtras: any) => currentExtras.filter((ex: any) => ex.extraName !== extraObject.extraName));
       } else {
         const newExtra: any = { ...extraObject };
         newExtra.categoryName = newExtra.categoryName !== 'NO CATEGORY' ? null : categoryName;
-        setSelectedExtras((currentExtras) => [...currentExtras, newExtra]);
+        setSelectedExtras((currentExtras: any) => [...currentExtras, newExtra]);
       }
     }
   };
@@ -83,7 +80,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
   return (
     <IonCardContent className={contentStyle}>
       {selectedExtras.length > 0 ? (
-        selectedExtras.map((extra, index) => (
+        selectedExtras.map((extra: any, index: number) => (
           <IonItem
             key={index}
             color="tertiary"
@@ -103,8 +100,9 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
         listOfOptions={getSortedExtrasNames}
         modalTrigger={`open-extras-options-modal-${categoryName}`}
         handleCheckboxToggle={toggleExtra}
-        selectedOptions={selectedExtras.map((extra) => extra.extraName)}
+        selectedOptions={selectedExtras.map((extra: any) => extra.extraName)}
         clearSelections={clearSelections}
+        canCreateNew={true}
       />
     </IonCardContent>
   );

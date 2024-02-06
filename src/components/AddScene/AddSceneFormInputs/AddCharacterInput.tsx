@@ -18,23 +18,24 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 interface AddCharacterInputProps {
   categoryName: string | null;
   handleSceneChange: (value: any, field: string) => void;
+  selectedCharacters: any;
+  setSelectedCharacters: (value: any) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   handleSceneChange,
+  selectedCharacters,
+  setSelectedCharacters,
 }) => {
-  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { scenes } = sceneData;
+  
+  const filterSelectedCharacters = selectedCharacters.filter((character: any) => character.categoryName === categoryName);
 
-  useEffect(() => {
-    handleSceneChange(selectedCharacters, 'characters');
-  }, [selectedCharacters]);
-
-  const deleteCharacter = (characterNum: string | null) => {
-    if (characterNum) {
+  const deleteCharacter = (characterName: string | null) => {
+    if (characterName) {
       const updatedCharacters = selectedCharacters.filter(
-        (character: Character) => character.characterNum !== characterNum,
+        (character: Character) => character.characterName !== characterName,
       );
       setSelectedCharacters(updatedCharacters);
     }
@@ -72,16 +73,18 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         (char: any) => char.characterName === characterObject.characterName,
       );
       if (selectedCharacterObjectIndex !== -1) {
-        setSelectedCharacters((currentCharacters) => currentCharacters.filter(
+        setSelectedCharacters((currentCharacters: any) => currentCharacters.filter(
           (char: any) => char.characterName !== characterObject.characterName,
         ));
-      } else {
+      } else if(selectedCharacterObjectIndex === -1) {
         const newCharacter: any = { ...characterObject };
-        newCharacter.categoryName = categoryName !== 'NO CATEGORY' ? categoryName : null;
-        setSelectedCharacters((currentCharacters) => [
+        
+        setSelectedCharacters((currentCharacters: any) => {
+          console.log('currentCharacters', currentCharacters);
+         return [
           ...currentCharacters,
           newCharacter,
-        ]);
+        ]});
       }
     }
   };
@@ -94,17 +97,17 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
 
   return (
     <IonCardContent className={contentStyle}>
-      {selectedCharacters.length > 0 ? (
+      {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {selectedCharacters.map((character, index) => (
+          {filterSelectedCharacters.map((character: any, index: number) => (
             <IonItem
-              key={`character-item-${index}`}
+              key={`character-item-${index}-category-${categoryName}`}
               color="tertiary"
               className="ion-no-margin category-items"
             >
               {`${character.characterNum ? character.characterNum + '.' : ''} ${character.characterName.toUpperCase()}`}
               <DeleteButton
-                onClick={() => deleteCharacter(character.characterNum)}
+                onClick={() => deleteCharacter(character.characterName)}
                 slot="end"
               />
             </IonItem>
@@ -119,9 +122,10 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         modalTrigger={`open-characters-options-modal-${categoryName}`}
         handleCheckboxToggle={toggleCharacters}
         selectedOptions={selectedCharacters.map(
-          (character) => character.characterName,
+          (character: any) => character.characterName,
         )}
         clearSelections={clearSelections}
+        canCreateNew={true}
       />
     </IonCardContent>
   );

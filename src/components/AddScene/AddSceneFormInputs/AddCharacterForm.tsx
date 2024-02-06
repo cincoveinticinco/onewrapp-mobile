@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IonGrid,
   IonCard,
@@ -21,6 +21,12 @@ interface AddCategoryFormProps {
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
+  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
+
+  useEffect(() => {
+    handleSceneChange(selectedCharacters, 'characters');
+  }, [selectedCharacters]);
+
   const defineCharactersCategories = () => {
     const { scenes } = scenesData;
     const characterCategoriesArray: string[] = [];
@@ -52,7 +58,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
       name: 'categoryName',
       type: 'text',
       placeholder: 'Category Name',
-      id: 'add-category-input',
+      id: 'add-category-input',      
     },
   ];
 
@@ -101,7 +107,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         <IonGrid className="add-scene-items-card-grid">
           {characterCategories.map((category, index) => (
             <IonCard
-              key={index}
+              key={`category-item-${index}-category-${category}`}
               color="tertiary"
               className="add-scene-items-card ion-no-border"
             >
@@ -120,6 +126,8 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
               <AddCharacterInput
                 categoryName={category}
                 handleSceneChange={handleSceneChange}
+                selectedCharacters={selectedCharacters}
+                setSelectedCharacters={setSelectedCharacters}
               />
             </IonCard>
           ))}

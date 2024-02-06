@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
@@ -17,6 +17,11 @@ interface AddElementFormProps {
 const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const { scenes } = scenesData;
+  const [selectedElements, setSelectedElements] = useState<Element[]>([]);
+
+  useEffect(() => {
+    handleSceneChange(selectedElements, 'elements');
+  }, [selectedElements]);
 
   const defineElementsCategories = () => {
     const categoriesArray: string[] = [];
@@ -72,7 +77,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         </p>
         <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
           <AddButton
-            id="elements-category-alert"
+            id="elements-categories-alert"
             slot="end"
           />
           <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
@@ -126,6 +131,8 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
               <AddElementInput
                 categoryName={category}
                 handleSceneChange={handleSceneChange}
+                selectedElements={selectedElements}
+                setSelectedElements={setSelectedElements}
               />
             </IonCard>
           ))}
