@@ -1,31 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonItem, IonInput } from '@ionic/react';
+import { Controller, FieldValues } from 'react-hook-form';
 
 interface InputItemProps {
   label: string;
   placeholder?: string;
-  value: any;
-  onChange: (event: CustomEvent) => void;
+  control: any;
+  fieldName: string;
   inputName: string;
+  displayError?: boolean;
+  setValue: any;
+  validate?: any;
+  watch: any;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
   label,
   placeholder = '',
-  value,
-  onChange,
+  control,
+  fieldName,
   inputName,
-}) => (
-  <IonItem color="tertiary" id={inputName}>
-    <IonInput
-      placeholder={placeholder}
-      label={label}
-      labelPlacement="stacked"
-      value={value}
-      onIonChange={onChange}
-      class="add-scene-input"
-    />
-  </IonItem>
-);
+  displayError = false,
+  setValue,
+  validate,
+  watch
+}) => {
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    console.log([fieldName], displayError, showError)
+  }, [displayError, showError]);
+  
+  useEffect(() => {
+    setShowError(displayError);
+  }, [displayError]);
+
+
+
+  return (
+    <IonItem color="tertiary" id={inputName}>
+      <Controller
+        control={control}
+        name={fieldName}
+        rules={
+          {
+            validate: (validate ? validate : null)
+          }
+        }
+        render={({ field }) => (
+          <IonInput
+            placeholder={showError ? label : placeholder}
+            label={showError ? 'REQUIRED' : label}
+            labelPlacement="stacked"
+            value={field.value}
+            onIonChange={(e) => { 
+              if(validate && !validate(e.detail.value) === true) {
+                setShowError(true);
+              } else {
+                setShowError(false);
+              }
+              setValue(fieldName, e.detail.value)
+            }}
+            className={'add-scene-input' + (showError ? ' error' : '')}
+          />
+        )}
+      />
+    </IonItem>
+  );
+};
 
 export default InputItem;
