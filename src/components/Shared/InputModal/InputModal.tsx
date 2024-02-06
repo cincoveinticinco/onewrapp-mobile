@@ -99,6 +99,7 @@ const InputModal: React.FC<InputModalProps> = ({
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                    onClick={() => handleCheckboxToggle(option)}
                   >
                     <IonCheckbox
                       slot="start"
@@ -116,6 +117,7 @@ const InputModal: React.FC<InputModalProps> = ({
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                    onClick={() => handleCheckboxToggle(option)}
                   >
                     <IonCheckbox
                       slot="start"
