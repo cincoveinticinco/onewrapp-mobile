@@ -17,6 +17,11 @@
   display: flex;
 }
 
+.ion-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 /* BUTTONS GENERAL STYLES */
 
 .reset-button {

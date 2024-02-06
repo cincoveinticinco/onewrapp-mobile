@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import InputItem from './AddSceneFormInputs/InputItem';
@@ -7,17 +7,21 @@ import SelectOrInsertItem from './AddSceneFormInputs/SelectOrInsertItem';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
-
+import scenesData from '../../data/scn_data.json'
 import './AddSceneForm.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
 const AddScenesForm: React.FC = () => {
   const isMobile = useIsMobile();
   const history = useHistory();
+
+  const { scenes } = scenesData;
 
   const [formData, setFormData]: any[] = useState({
     id: null,
@@ -44,121 +48,167 @@ const AddScenesForm: React.FC = () => {
   });
 
   const {
-    // register,
+    control,
+    register,
     handleSubmit,
-    // formState: { errors },
-    // getValues,
-  } = useForm();
+    formState: { errors },
+    getValues,
+    setValue,
+    getFieldState,
+    watch
+  } = useForm({ defaultValues: formData });
 
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {
-      setFormData({
-        ...formData,
-        [field]: [...value],
-      });
+      setValue(field, [...value]);
     } else {
-      setFormData({ ...formData, [field]: value });
+      setValue(field, value);
     }
   };
 
-  const onSubmit = (): void => {
-    console.log(formData);
+  const onSubmit = (formData: any): void => {
+    console.log(['ERRORS'], errors)
+    console.log(['FORM DATA'], formData)
   };
+
+  const getDisabled = () => {
+    return watch('sceneType') === 'protection' ? false : true;
+  }
+
+  let formErrors = watch('errors');
+
+  const sceneTypeValidation = (value: any) => {
+    return value !== null ? true : 'Scene Type is required *';
+  }
+
+  const episodeNUmberValidation = (value: any) => {
+    return value !== null ? true : 'required *';
+  }
+
+  const sceneNumberValidation = (value: any) => {
+    return value !== null ? true : 'required *';
+  }
+
+  useEffect(() => {
+    console.log(['FORM ERRORS'], formErrors)
+  }, [formErrors]);
+
+  const handleSetValue = (field: string, value: any) => {
+    if(value === "") {
+      return setValue(field, null);
+    }
+
+    return setValue(field, value);
+  }
+
+  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
+  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
+
+  const sceneTypeOptions = ["scene", "protection"];
+  const protectionTypeValues = ["voice Off", "image", "stock image", "video", "stock video", "multimedia", "other"];
+  const dayNightOptions = ["day", "night", "sunset", "sunrise"];
+  const intExtOptions = ["INT", "EXT", "INT/EXT", "EXT/INT"];
+  const locationOptions = getSortedLocationNames;
+  const setOptions = getSortedSetNames;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form">
+      
       <SelectItem
         label="SCENE TYPE *"
-        value={formData.sceneType}
-        onChange={(e) => handleChange(e.detail.value, 'sceneType')}
-        options={[
-          { label: 'Scene', value: 'scene' },
-          { label: 'Protection', value: 'protection' },
-        ]}
+        options={sceneTypeOptions}
         inputName="add-scene-type-input"
+        displayError={errors['sceneType'] ? true : false}
+        fieldName='sceneType'
+        control={control}
+        setValue={handleSetValue}
+        watchValue={watch}
+        validate={sceneTypeValidation}
       />
 
       <SelectItem
         label="PROTECTION TYPE"
-        value={formData.protectionType}
-        onChange={(e) => handleChange(e.detail.value, 'protectionType')}
-        disabled={formData.sceneType !== 'protection'}
-        options={[
-          { label: 'Voice Off', value: 'voice Off' },
-          { label: 'Image', value: 'image' },
-          { label: 'Stock Image', value: 'stock image' },
-          { label: 'Video', value: 'video' },
-          { label: 'Stock Video', value: 'stock video' },
-          { label: 'Multimedia', value: 'multimedia' },
-          { label: 'Other', value: 'other' },
-        ]}
+        disabled={getDisabled()}
+        options={protectionTypeValues}
         inputName="add-protection-type-input"
+        fieldName="protectionType"
+        watchValue={watch}
+        control={control}
+        setValue={handleSetValue}
       />
 
       <InputItem
         label="EPISODE *"
-        placeholder="INSERT"
-        value={formData.episodeNumber}
-        onChange={(e) => handleChange(e.detail.value, 'episodeNumber')}
+        placeholder="EPISODE"
+        control={control}
+        fieldName="episodeNumber"
+        setValue={handleSetValue}
         inputName="add-episode-input"
+        displayError={errors['episodeNumber'] ? true : false}
+        validate={episodeNUmberValidation}
+        watch={watch}
       />
 
       <InputItem
         label="SCENE *"
         placeholder="INSERT"
-        value={formData.sceneNumber}
-        onChange={(e) => handleChange(e.detail.value, 'sceneNumber')}
+        control={control}
+        fieldName="sceneNumber"
+        setValue={handleSetValue}
         inputName="add-scene-number-input"
+        displayError={errors['sceneNumber'] ? true : false}
+        validate={sceneNumberValidation}
+        watch={watch}
       />
 
       <InputItem
         label="SCRIPT DAY"
         placeholder="INSERT"
-        value={formData.scriptDay}
-        onChange={(e) => handleChange(e.detail.value, 'scriptDay')}
+        control={control}
+        fieldName="scriptDay"
+        setValue={handleSetValue}
         inputName="add-script-day-input"
+        watch={watch}
       />
 
       <InputItem
         label="YEAR"
         placeholder="INSERT"
-        value={formData.year}
-        onChange={(e) => handleChange(e.detail.value, 'year')}
+        control={control}
+        fieldName="year"
+        setValue={handleSetValue}
         inputName="add-year-input"
+        watch={watch}
       />
 
       <SelectItem
         label="DAY/NIGHT"
-        value={formData.dayOrNightOption}
-        onChange={(e) => handleChange(e.detail.value, 'dayOrNightOption')}
-        options={[
-          { label: 'Day', value: 'day' },
-          { label: 'Night', value: 'night' },
-          { label: 'Sunset', value: 'sunset' },
-          { label: 'Sunrise', value: 'sunrise' },
-        ]}
+        options={dayNightOptions}
         inputName="add-day-night-input"
+        fieldName='dayOrNightOption'
+        control={control}
+        watchValue={watch}
+        setValue={handleSetValue}
       />
 
       <SelectItem
         label="INT/EXT"
-        value={formData.intOrExtOption}
-        onChange={(e) => handleChange(e.detail.value, 'intOrExtOption')}
-        options={[
-          { label: 'Interior', value: 'INT' },
-          { label: 'Exterior', value: 'EXT' },
-          { label: 'Interior/Exterior', value: 'INT/EXT' },
-          { label: 'Exterior/Interior', value: 'EXT/INT' },
-        ]}
+        options={intExtOptions}
         inputName="add-int-ext-input"
+        fieldName='intOrExtOption'
+        control={control}
+        setValue={handleSetValue}
+        watchValue={watch}
       />
 
       <InputItem
         label="SCRIPT PAGE"
         placeholder="INSERT"
-        value={formData.page}
-        onChange={(e) => handleChange(e.detail.value, 'page')}
+        control={control}
+        fieldName="scriptPage"
+        setValue={handleSetValue}
         inputName="add-page-input"
+        watch={watch}
       />
 
       <AddPagesForm
@@ -169,42 +219,36 @@ const AddScenesForm: React.FC = () => {
         handleChange={handleChange}
       />
 
-      {/* 12FR */}
-
-      <SelectOrInsertItem
+      <SelectItem
         label="LOCATION"
-        selectValue={formData.locationName}
-        inputPlaceholder="INSERT LOCATION NAME"
-        onInputChange={(e) => handleChange(e.detail.value, 'locationName')}
-        onSelectChange={(e) => handleChange(e.detail.value, 'locationName')}
-        options={[
-          { label: 'Option 1', value: 'option 1' },
-          { label: 'Option 2', value: 'option 2' },
-          // THIS VALUE CAN BE EXTRACTEED FROM SCENES
-        ]}
+        control={control}
+        fieldName="locationName"
+        options={locationOptions}
         inputName="add-location-input"
+        watchValue={watch}
+        setValue={handleSetValue}
+        canCreateNew={true}
       />
 
-      <SelectOrInsertItem
+      <SelectItem
         label="SET"
-        selectValue={formData.setName}
-        inputPlaceholder="INSERT SET NAME"
-        onInputChange={(e) => handleChange(e.detail.value, 'setName')}
-        onSelectChange={(e) => handleChange(e.detail.value, 'setName')}
-        options={[
-          { label: 'Option 1', value: 'option 1' },
-          { label: 'Option 2', value: 'option 2' },
-          // THIS VALUE CAN BE EXTRACTEED FROM SCENES
-        ]}
+        control={control}
+        fieldName="setName"
+        options={setOptions}
         inputName="add-set-input"
+        watchValue={watch}
+        setValue={handleSetValue}
+        canCreateNew={true}
       />
 
       <InputItem
         label="DESCRIPTION/SYNOPSIS"
         placeholder="INSERT"
-        value={formData.synopsis}
-        onChange={(e) => handleChange(e.detail.value, 'synopsis')}
+        control={control}
+        fieldName="synopsis"
+        setValue={handleSetValue} 
         inputName="add-synopsis-input"
+        watch={watch}
       />
 
       <AddCharacterForm handleSceneChange={handleChange} />
@@ -222,8 +266,9 @@ const AddScenesForm: React.FC = () => {
 
       <OutlinePrimaryButton
         buttonName="SAVE"
-        onClick={() => onSubmit()}
         className='submit-scene-button'
+        type="submit"
+        onClick={() => onSubmit(getValues())}
       />
       {
         isMobile

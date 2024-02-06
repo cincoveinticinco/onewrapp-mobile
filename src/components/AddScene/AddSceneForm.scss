@@ -1,3 +1,16 @@
+.select-alert {
+  display: none !important;
+
+  .alert-wrapper {
+    border: 1px solid var(--ion-color-danger);
+  }
+}
+
+label {
+  text-transform: uppercase;
+}
+
+
 .add-scene-form {
   width: 100%;
   display: grid;
@@ -8,8 +21,17 @@
     border-bottom: 1px solid var(--ion-color-light);
   }
 
+  ion-select.error {
+    color: var(--ion-color-danger)
+  }
+
+  ion-input.error {
+    color: var(--ion-color-danger)
+  }
+
   #add-scene-type-input {
     grid-column: 1 / 7;
+    position: relative;
   }
 
   #add-protection-type-input {
@@ -246,6 +268,9 @@
 
     #add-scene-type-input {
       grid-column: 1 / 7;
+      position: relative;
+      display: flex !important;
+      flex-direction: column !important;
     }
 
     #add-protection-type-input {
