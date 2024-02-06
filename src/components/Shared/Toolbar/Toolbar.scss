@@ -4,12 +4,22 @@
   height: 50px;
 
   .toolbar-title {
+    opacity: 1;
     width: auto;
     position: static;
     padding: 0;
     text-align: left;
     font-size: var(--525-big-title-size);
     height: 100%;
+    transition: all 1.3s ease-in-out;
+
+    &.hidden {
+      opacity: 0;
+    }
+
+    &:active {
+      color: var(--ion-color-primary);
+    }
   }
 
   .toolbar-burger-menu {
@@ -52,7 +62,7 @@
   }
 
   .toolbar-search-wrapper.search {
-    width: 100%;
+    width: 250px;
     border: 1px solid var(--ion-color-light);
     height: 30px;
     border-radius: 30px;
@@ -71,6 +81,9 @@
       opacity: 1;
       text-align: left;
       width: auto;
+      display: flex;
+      align-items: center;
+      width: 100%;
     }
   }
 }

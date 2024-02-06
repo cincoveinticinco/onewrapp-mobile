@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
@@ -35,8 +35,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   setSearchMode = () => {},
 }) => {
 
+  const searchRef = useRef<HTMLIonInputElement>(null);
+
   const toggleSearchMode = () => {
     setSearchMode(!searchMode);
+    searchRef.current?.setFocus();
   }
 
   useEffect(() => {
@@ -52,7 +55,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonIcon icon={menuOutline} className="toolbar-icon" />
         </IonButton>}
         <Link to="/my/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <IonTitle className="toolbar-title" slot="start">{name}</IonTitle>
+          <IonTitle className={`toolbar-title ${ searchMode ? 'hidden' : ''}` } slot="start">{name}</IonTitle>
         </Link>
       {
         back && 
@@ -66,7 +69,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
             <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon"/>
           </IonButton>
-          <IonInput className="toolbar-search-input" placeholder="" autoFocus={true}/>
+          <IonInput className="toolbar-search-input" placeholder="" ref={searchRef} />
         </div>
       )}
       {addScene && (
