@@ -66,21 +66,21 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
             <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon"/>
           </IonButton>
-          <IonInput className="toolbar-search-input" placeholder="" disabled={!searchMode} autoFocus={true}/>
+          <IonInput className="toolbar-search-input" placeholder="" autoFocus={true}/>
         </div>
       )}
       {addScene && (
-        <IonButton fill="clear" slot="end" routerLink="addscene" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button">
           <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
         </IonButton>
       )}
       {filter && (
-        <IonButton fill="clear" slot="end" routerLink="/my/projects/01/strips/filters" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/01/strips/filters" className="ion-no-padding toolbar-button">
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
         </IonButton>
       )}
       {sort && (
-        <IonButton fill="clear" slot="end" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button">
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
