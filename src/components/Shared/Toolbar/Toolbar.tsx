@@ -8,6 +8,7 @@ import {
 import './Toolbar.scss';
 import { Link } from 'react-router-dom';
 import useHandleBack from '../../../hooks/useHandleBack';
+import useIsMobile from '../../../hooks/useIsMobile';
 
 interface ToolbarProps {
   name: string;
@@ -35,6 +36,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
   setSearchMode = () => {},
 }) => {
 
+  const isMobile = useIsMobile();
+
   const searchRef = useRef<HTMLIonInputElement>(null);
 
   const toggleSearchMode = () => {
@@ -54,8 +57,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
         menu && <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
           <IonIcon icon={menuOutline} className="toolbar-icon" />
         </IonButton>}
-        <Link to="/my/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <IonTitle className={`toolbar-title ${ searchMode ? 'hidden' : ''}` } slot="start">{name}</IonTitle>
+        <Link to="/my/projects" className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <IonTitle className={`toolbar-title ${ isMobile && searchMode ? 'hidden' : ''}` } slot="start">{name}</IonTitle>
         </Link>
       {
         back && 
