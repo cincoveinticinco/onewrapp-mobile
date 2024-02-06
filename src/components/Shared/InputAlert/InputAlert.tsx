@@ -1,5 +1,6 @@
 import { AlertInput, IonAlert } from '@ionic/react';
 import React from 'react';
+import './InputAlert.scss';
 
 interface InputAlertProps {
   handleOk: (inputData: any) => void;
@@ -19,14 +20,20 @@ const InputAlert:React.FC<InputAlertProps> = ({
   message,
 }) => (
   <IonAlert
-    color="tertiary"
+    color="dark"
     trigger={trigger}
     header={header}
+    className='input-alert'
     buttons={[
       {
-        text: 'OK',
+        text: 'confirm',
         handler: handleOk,
       },
+      {
+        text: 'cancel',
+        role: 'cancel',
+        cssClass: 'secondary',
+      }
     ]}
     inputs={inputs}
     subHeader={subHeader}
