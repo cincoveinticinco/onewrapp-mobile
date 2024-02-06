@@ -1,15 +1,19 @@
-.search-bar {
-  text-align: center;
-
-  --border-radius: 50px;
-
-  .searchbar-input-container {
-    ion-icon {
-      padding: 0 8px;
+.search-bar-toolbar {
+  position: fixed;
+  top: 50px;
+  .search-bar {
+    text-align: center;
+    --border-radius: 50px;
+  
+    .searchbar-input-container {
+      ion-icon {
+        padding: 0 8px;
+      }
+    }
+  
+    .searchbar-cancel-button {
+      color: red;
     }
   }
-
-  .searchbar-cancel-button {
-    color: red;
-  }
+  
 }

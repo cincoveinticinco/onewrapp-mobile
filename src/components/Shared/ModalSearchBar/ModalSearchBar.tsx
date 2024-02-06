@@ -9,7 +9,7 @@ const ModalSearchBar = ({
   searchText: string,
   setSearchText: (searchText: string) => void
 }) => (
-  <IonToolbar color="tertiary">
+  <IonToolbar color="tertiary" className='search-bar-toolbar'>
     <IonSearchbar
       className="ion-margin-top search-bar"
       value={searchText}
