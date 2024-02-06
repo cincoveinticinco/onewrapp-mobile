@@ -1,7 +1,7 @@
 import {
-  IonCheckbox, IonContent, IonItem, IonList,
+  IonCheckbox, IonContent, IonHeader, IonItem, IonList, IonModal,
 } from '@ionic/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useIsMobile from '../../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
@@ -9,6 +9,8 @@ import './InputModal.scss';
 import ModalSearchBar from '../ModalSearchBar/ModalSearchBar';
 import removeNumberAndDot from '../../../utils/removeNumberAndDot';
 import ModalPagesLayout from '../../../Layouts/ModalPagesLayout/ModalPagesLayout';
+import useHandleBack from '../../../hooks/useHandleBack';
+import ModalToolbar from '../ModalToolbar/ModalToolbar';
 
 interface InputModalProps {
   optionName: string;
@@ -17,25 +19,35 @@ interface InputModalProps {
   handleCheckboxToggle: (option: string) => void;
   selectedOptions: string[];
   clearSelections: () => void;
+  multipleSelections?: boolean;
+  canCreateNew?: boolean;
 }
 
 const InputModal: React.FC<InputModalProps> = ({
-  optionName, listOfOptions, modalTrigger, handleCheckboxToggle, selectedOptions, clearSelections,
+  optionName, 
+  listOfOptions, 
+  modalTrigger, 
+  handleCheckboxToggle, 
+  selectedOptions, 
+  clearSelections,
+  multipleSelections = true,
+  canCreateNew = false
 }) => {
   const [searchText, setSearchText] = useState('');
 
   const modalRef = useRef<HTMLIonModalElement>(null);
+
   const isMobile = useIsMobile();
+
+  const clearSearchTextModal = () => {
+    setSearchText('');
+  };
 
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
-  };
-
-  const clearSearchTextModal = () => {
-    setSearchText('');
-  };
+  }
 
   const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
 
@@ -48,17 +60,29 @@ const InputModal: React.FC<InputModalProps> = ({
   const isOptionChecked = (option: string) => selectedOptions.includes(removeNumberAndDot(option));
 
   return (
-
-    <ModalPagesLayout
-      modalId="add-scenes-options-modal"
-      modalTrigger={modalTrigger}
-      clearModalSelections={clearSelections}
-      modalTitle={optionName}
+    <IonModal
+      ref={modalRef}
+      trigger={modalTrigger}
+      id='add-scenes-options-modal'
     >
+    <IonHeader>
+      <ModalToolbar
+        handleBack={closeModal}
+        toolbarTitle={optionName}
+        clearOptions={clearSelections}
+      />
+    </IonHeader>
       <IonContent color="tertiary">
         <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
         {
-        filteredOptions.length === 0
+          filteredOptions.length === 0 && !canCreateNew && (
+            <p className="no-items-message">
+              There are no coincidences.
+            </p>
+          )
+        }
+        {
+          filteredOptions.length === 0 && canCreateNew
           ? (
             <p className="no-items-message">
               There are no coincidences. Do you want to create a new one ?
@@ -70,7 +94,7 @@ const InputModal: React.FC<InputModalProps> = ({
           ) : (
             <>
               <IonList color="tertiary" className="ion-no-padding ion-margin options-list">
-                {checkedSelectedOptions && checkedSelectedOptions.map((option: string, i: number) => (
+                {checkedSelectedOptions.map((option: string, i: number) => (
                   <IonItem
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -99,6 +123,7 @@ const InputModal: React.FC<InputModalProps> = ({
                       labelPlacement="end"
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isOptionChecked(option)}
+                      disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                     >
                       {option.toUpperCase()}
                     </IonCheckbox>
@@ -115,7 +140,7 @@ const InputModal: React.FC<InputModalProps> = ({
           )
         }
       </IonContent>
-    </ModalPagesLayout>
+      </IonModal>
   );
 };
 
