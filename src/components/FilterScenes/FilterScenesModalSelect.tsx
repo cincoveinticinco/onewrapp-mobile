@@ -141,7 +141,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               There are no coincidences. Do you want to create a new one ?
               <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
                 <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin" onClick={() => {}} />
-                <OutlineLightButton buttonName="CANCEL" className="ion-margin" onClick={clearSearchText} />
+                <OutlineLightButton buttonName="CANCEL" className="ion-margin-left cancel-button" onClick={clearSearchText} />
               </span>
             </p>
           ) : (
@@ -191,7 +191,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 className="ion-margin"
                 style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
               />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin cancel-filter-scenes-modal" />}
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
             </>
           )}
         </IonContent>

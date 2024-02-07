@@ -44,8 +44,7 @@ ion-button.outline-light-button {
   --border-color: var(--ion-color-light);
   --border-style: solid;
   --border-width: 1px;
-
-  height: 30px;
+  height: 40px;
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
@@ -81,6 +80,7 @@ ion-button.filled-primary-button {
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
+  height: 40px;
 
   &:active {
     background-color: var(--ion-color-primary);
@@ -89,6 +89,22 @@ ion-button.filled-primary-button {
   @media (min-width: 500px) {
     max-width: 250px;
   }
+}
+
+.cancel-button {
+  --background-activated: transparent !important;
+
+  &:active,
+  &:hover,
+  &:focus {
+    --color: var(--ion-color-danger);
+    --border-radius: 0;
+    --border-color: var(--ion-color-danger);
+      background-color: transparent !important;
+      border-color: 1px solid var(--ion-color-danger);
+      color: var(--ion-color-danger);
+      background-color: transparent;
+    }
 }
 
 ion-toolbar {
@@ -100,6 +116,8 @@ ion-toolbar {
 .checkbox-item-option {
   box-shadow: none;
   border-bottom: 1px solid rgb(0, 0, 0) !important;
+  background-color: var(--ion-color-tertiary);
+  cursor: pointer;
 
   .checkbox-option {
     background-color: transparent;
@@ -115,5 +133,35 @@ ion-toolbar {
     border-radius: 100%;
     margin: 12px;
     padding: 6px;
+  }
+
+  &:active,
+  &:focus {
+    filter: sepia(20%);
+  }
+}
+
+.no-items-message {
+  position: absolute;
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+  width: 90%;
+  top: 10%;
+  left: 5%;
+  font-size: var(--525-medium-title-size);
+
+  ion-button {
+    margin: 12px;
+  }
+
+  .reset-filters-option {
+    text-decoration: none;
+    margin: 0;
+    width: auto;
+
+    --padding-top: 0;
+
+    font-size: var(--525-medium-title-size);
   }
 }

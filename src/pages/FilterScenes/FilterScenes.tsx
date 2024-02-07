@@ -257,7 +257,7 @@ const FilterScenes = () => {
                 <OutlineLightButton
                   buttonName="CANCEL"
                   onClick={handleCancel}
-                  className='cancel-filter-scenes-button'
+                  className='cancel-filter-scenes-button cancel-button'
                 />
               </IonCol>
             </IonRow>

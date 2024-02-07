@@ -276,7 +276,7 @@ const AddScenesForm: React.FC = () => {
         <OutlineLightButton
           buttonName="CANCEL"
           onClick={() => history.goBack()}
-          className='cancel-add-scene-button'
+          className='cancel-add-scene-button cancel-button'
         />
         )
       }

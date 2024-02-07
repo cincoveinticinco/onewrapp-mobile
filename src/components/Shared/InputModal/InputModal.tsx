@@ -87,15 +87,15 @@ const InputModal: React.FC<InputModalProps> = ({
             <p className="no-items-message">
               There are no coincidences. Do you want to create a new one ?
               <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
-                <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin" onClick={() => {}} />
-                <OutlineLightButton buttonName="CANCEL" className="ion-margin" onClick={clearSearchTextModal} />
+                <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin no-items-confirm" onClick={() => {}} />
+                <OutlineLightButton buttonName="CANCEL" className="ion-margin cancel-button no-items-cancel" onClick={clearSearchTextModal} />
               </span>
             </p>
           ) : (
             <>
               <IonList color="tertiary" className="ion-no-padding ion-margin options-list">
                 {checkedSelectedOptions.map((option: string, i: number) => (
-                  <IonItem
+                  <div
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
@@ -105,15 +105,14 @@ const InputModal: React.FC<InputModalProps> = ({
                       slot="start"
                       className="ion-no-margin ion-no-padding checkbox-option"
                       labelPlacement="end"
-                      onClick={() => handleCheckboxToggle(option)}
                       checked={isOptionChecked(option)}
                     >
                       {option.toUpperCase()}
                     </IonCheckbox>
-                  </IonItem>
+                  </div>
                 ))}
                 {uncheckedFilteredOptions.map((option: string, i: number) => (
-                  <IonItem
+                  <div
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
@@ -123,13 +122,12 @@ const InputModal: React.FC<InputModalProps> = ({
                       slot="start"
                       className="ion-no-margin ion-no-padding checkbox-option"
                       labelPlacement="end"
-                      onClick={() => handleCheckboxToggle(option)}
                       checked={isOptionChecked(option)}
                       disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                     >
                       {option.toUpperCase()}
                     </IonCheckbox>
-                  </IonItem>
+                  </div>
                 ))}
               </IonList>
               <OutlinePrimaryButton
@@ -137,7 +135,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 onClick={closeModal}
                 className="ion-margin modal-confirm-button"
               />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button" />}
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button cancel-button" />}
             </>
           )
         }

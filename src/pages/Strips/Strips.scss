@@ -13,23 +13,3 @@
   font-weight: bold;
 }
 
-.no-items-message {
-  position: absolute;
-  text-align: center;
-  align-self: center;
-  justify-self: center;
-  width: 90%;
-  top: 10%;
-  left: 5%;
-  font-size: var(--525-medium-title-size);
-
-  .reset-filters-option {
-    text-decoration: none;
-    margin: 0;
-    width: auto;
-
-    --padding-top: 0;
-
-    font-size: var(--525-medium-title-size);
-  }
-}
