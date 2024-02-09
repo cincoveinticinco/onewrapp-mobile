@@ -14,7 +14,7 @@ const sceneSchema = {
       type: 'string',
     },
     episodeNumber: {
-      type: 'integer',
+      type: 'string',
     },
     sceneNumber: {
       type: 'string',
@@ -25,15 +25,15 @@ const sceneSchema = {
     },
     protectionType: {
       type: ['string', 'null'],
-      enum: ['voice Off', 'image', 'stock image', 'video', 'stock video', 'multimedia', 'other'],
+      enum: ['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER', null],
     },
     intOrExtOption: {
       type: ['string', 'null'],
-      enum: ['INT', 'EXT', 'INT/EXT', 'EXT/INT'],
+      enum: ['INT', 'EXT', 'INT/EXT', 'EXT/INT', null],
     },
     dayOrNightOption: {
       type: ['string', 'null'],
-      enum: ['day', 'night', 'sunset', 'sunrise'],
+      enum: ['day', 'night', 'sunset', 'sunrise', null],
     },
     locationName: {
       type: ['string', 'null'],
@@ -51,13 +51,13 @@ const sceneSchema = {
       type: ['string', 'null'],
     },
     page: {
-      type: 'integer',
+      type: ['string', 'null'], // DIFERENT FROM THE MODEL
     },
     pages: {
-      type: 'number',
+      type: ['number', 'null'],
     },
     estimatedSeconds: {
-      type: 'integer',
+      type: ['integer', 'null'],
     },
     characters: {
       type: 'array',
@@ -66,7 +66,7 @@ const sceneSchema = {
         properties: {
           categoryName: { type: 'string' }, // UNIQUE
           characterName: { type: 'string' },
-          characterNum: { type: 'integer' },
+          characterNum: { type: ['string', 'null'] }, /// DIFFERENT FROM MODEL
         },
       },
     },
@@ -85,7 +85,7 @@ const sceneSchema = {
       items: {
         type: 'object',
         properties: {
-          categoryName: { type: 'string' },
+          categoryName: { type: ['string', 'null'] },
           elementName: { type: 'string' },
         },
       },
