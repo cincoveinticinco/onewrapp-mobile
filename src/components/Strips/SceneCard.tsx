@@ -96,7 +96,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
           {getSceneHeader(scene)}
         </h3>
         <p className="scene-card-synopsis">
-          {scene.synopsis}
+          {(scene.synopsis)?.toUpperCase()}
         </p>
         <p className="scene-card-characters">
           <strong>CHARACTERS:</strong>
