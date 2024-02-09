@@ -4,15 +4,24 @@ import minSecToSeconds from '../../../utils/minSecToSeconds';
 
 interface AddSecondsFormProps {
   handleChange: (value: any, field: string) => void
+  observedField: number
 }
 
-const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange }) => {
+const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedField }) => {
   const [minutes, setMinutes]: any[] = React.useState(null);
   const [seconds, setSeconds]: any[] = React.useState(null);
 
   useEffect(() => {
+    if (!observedField) {
+      setMinutes(null);
+      setSeconds(null);
+    }
+  }, [observedField]);
+
+  useEffect(() => {
     handleChange(minSecToSeconds(minutes, seconds), 'estimatedSeconds');
   }, [minutes, seconds]);
+
   return (
     <div className="estimated-minutes-input">
       <p id="estimated-minutes-label">ESTIMATED TIME (MM:SS)</p>
