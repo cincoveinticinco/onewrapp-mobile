@@ -17,11 +17,18 @@ import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
+  observedCharacters: Character[];
 }
 
-const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange }) => {
+const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
+
+  useEffect(() => {
+    if (!observedCharacters) {
+      setSelectedCharacters([]);
+    }
+  }, [observedCharacters]);
 
   useEffect(() => {
     handleSceneChange(selectedCharacters, 'characters');
@@ -58,13 +65,13 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
       name: 'categoryName',
       type: 'text',
       placeholder: 'Category Name',
-      id: 'add-category-input',      
+      id: 'add-category-input',
     },
   ];
 
   const handleDropDown = () => {
     setDropDownIsOpen(!dropDownIsOpen);
-  }
+  };
 
   return (
     <>
@@ -72,12 +79,12 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
         <p className="ion-flex ion-align-items-center">
           Characters
         </p>
-        <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
+        <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
             id="characters-category-alert"
             slot="end"
           />
-          <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
+          <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
         </div>
       </div>
 
@@ -119,13 +126,12 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange })
                   <div className="category-buttons-wrapper">
                     <AddButton
                       id={`open-characters-options-modal-${category}`}
-                    />                    
+                    />
                   </div>
                 </div>
               </IonCardHeader>
               <AddCharacterInput
                 categoryName={category}
-                handleSceneChange={handleSceneChange}
                 selectedCharacters={selectedCharacters}
                 setSelectedCharacters={setSelectedCharacters}
               />

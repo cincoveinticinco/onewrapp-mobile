@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   IonCardContent,
   IonItem,
@@ -17,20 +17,23 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
-  handleSceneChange: (value: any, field: string) => void;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
-  handleSceneChange,
   selectedCharacters,
   setSelectedCharacters,
 }) => {
   const { scenes } = sceneData;
-  
-  const filterSelectedCharacters = selectedCharacters.filter((character: any) => character.categoryName === categoryName);
+
+  const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
+    if (categoryName === 'NO CATEGORY') {
+      return character.categoryName === null;
+    }
+    return character.categoryName === categoryName;
+  });
 
   const deleteCharacter = (characterName: string | null) => {
     if (characterName) {
@@ -76,15 +79,16 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         setSelectedCharacters((currentCharacters: any) => currentCharacters.filter(
           (char: any) => char.characterName !== characterObject.characterName,
         ));
-      } else if(selectedCharacterObjectIndex === -1) {
+      } else if (selectedCharacterObjectIndex === -1) {
         const newCharacter: any = { ...characterObject };
-        
+
         setSelectedCharacters((currentCharacters: any) => {
           console.log('currentCharacters', currentCharacters);
-         return [
-          ...currentCharacters,
-          newCharacter,
-        ]});
+          return [
+            ...currentCharacters,
+            newCharacter,
+          ];
+        });
       }
     }
   };
@@ -105,7 +109,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
               color="tertiary"
               className="ion-no-margin category-items"
             >
-              {`${character.characterNum ? character.characterNum + '.' : ''} ${character.characterName.toUpperCase()}`}
+              {`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}
               <DeleteButton
                 onClick={() => deleteCharacter(character.characterName)}
                 slot="end"
@@ -125,7 +129,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
           (character: any) => character.characterName,
         )}
         clearSelections={clearSelections}
-        canCreateNew={true}
+        canCreateNew
       />
     </IonCardContent>
   );
