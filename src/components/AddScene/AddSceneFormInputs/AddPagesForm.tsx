@@ -4,11 +4,19 @@ import fractionToFloat from '../../../utils/fractionToFloat';
 
 interface AddPagesFormProps {
   handleChange: (value: any, field: string) => void
+  observedField: number | null;
 }
 
-const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange }) => {
+const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField }) => {
   const [pageInteger, setPageInteger] = React.useState(0);
   const [pageFraction, setPageFraction] = React.useState(0);
+
+  useEffect(() => {
+    if (!observedField) {
+      setPageInteger(0);
+      setPageFraction(0);
+    }
+  }, [observedField]);
 
   useEffect(() => {
     handleChange(fractionToFloat(pageInteger, pageFraction), 'pages');
