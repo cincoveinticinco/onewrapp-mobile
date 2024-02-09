@@ -3,14 +3,14 @@ import React from 'react';
 
 interface OutlinePrimaryButtonProps {
   buttonName: string,
-  onClick: () => void
+  onClick?: () => void
   className?: string
   style?: { [key: string]: string }
   type?: 'button' | 'submit' | 'reset'
 }
 
 const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({
-  buttonName, onClick, className = '', style = {}, type
+  buttonName, onClick, className = '', style = {}, type,
 }) => (
   <IonButton
     expand="block"
