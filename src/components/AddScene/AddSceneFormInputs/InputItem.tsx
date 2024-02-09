@@ -11,7 +11,7 @@ interface InputItemProps {
   displayError?: boolean;
   setValue: any;
   validate?: any;
-  watch: any;
+  type?: any;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -23,19 +23,14 @@ const InputItem: React.FC<InputItemProps> = ({
   displayError = false,
   setValue,
   validate,
-  watch
+  type = 'text',
+
 }) => {
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    console.log([fieldName], displayError, showError)
-  }, [displayError, showError]);
-  
-  useEffect(() => {
     setShowError(displayError);
   }, [displayError]);
-
-
 
   return (
     <IonItem color="tertiary" id={inputName}>
@@ -44,24 +39,25 @@ const InputItem: React.FC<InputItemProps> = ({
         name={fieldName}
         rules={
           {
-            validate: (validate ? validate : null)
+            validate: (validate || null),
           }
         }
         render={({ field }) => (
           <IonInput
             placeholder={showError ? label : placeholder}
+            type={type}
             label={showError ? 'REQUIRED' : label}
             labelPlacement="stacked"
             value={field.value}
-            onIonChange={(e) => { 
-              if(validate && !validate(e.detail.value) === true) {
+            onIonChange={(e) => {
+              if (validate && !validate(e.detail.value) === true) {
                 setShowError(true);
               } else {
                 setShowError(false);
               }
-              setValue(fieldName, e.detail.value)
+              setValue(fieldName, e.detail.value);
             }}
-            className={'add-scene-input' + (showError ? ' error' : '')}
+            className={`add-scene-input${showError ? ' error' : ''}`}
           />
         )}
       />
