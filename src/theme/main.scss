@@ -142,7 +142,6 @@ ion-toolbar {
 }
 
 .no-items-message {
-  position: absolute;
   text-align: center;
   align-self: center;
   justify-self: center;
@@ -150,9 +149,12 @@ ion-toolbar {
   top: 10%;
   left: 5%;
   font-size: var(--525-medium-title-size);
+  margin: auto;
+  padding: 16px;
 
   ion-button {
     margin: 12px;
+    max-width: 150px;
   }
 
   .reset-filters-option {

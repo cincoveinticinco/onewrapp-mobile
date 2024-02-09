@@ -137,15 +137,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
-          {uncheckedfilteredFiltersOptions.length === 0 ? (
-            <p className="no-items-message">
-              There are no coincidences. Do you want to create a new one ?
-              <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
-                <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin" onClick={() => {}} />
-                <OutlineLightButton buttonName="CANCEL" className="ion-margin-left cancel-button" onClick={clearSearchText} />
-              </span>
-            </p>
-          ) : (
+          {
             <>
               <IonList
                 color="tertiary"
@@ -187,6 +179,13 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                   </div>
                 ))}
               </IonList>
+              {
+                uncheckedfilteredFiltersOptions.length === 0 &&
+                <p className="no-items-message">
+                  There are no coincidences. Do you want to 
+                  <span onClick={() => setSearchText('')} style={{color: "var(--ion-color-primary)"}}>reset </span>?
+                </p>
+              }
               <OutlinePrimaryButton
                 buttonName="CONFIRM"
                 onClick={handleBack}
@@ -195,7 +194,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               />
               {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
             </>
-          )}
+          }
         </IonContent>
       </IonModal>
     </IonRow>
