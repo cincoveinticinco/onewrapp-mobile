@@ -13,6 +13,7 @@ import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
 import capitalizeString from '../../utils/capitalizeString';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
+import truncateString from '../../utils/truncateString';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -135,7 +136,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           <ModalToolbar handleBack={handleBack} toolbarTitle={filterName} clearOptions={clearFilterOptions} />
         </IonHeader>
         <IonContent color="tertiary">
-          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
+          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
           {uncheckedfilteredFiltersOptions.length === 0 ? (
             <p className="no-items-message">
               There are no coincidences. Do you want to create a new one ?
@@ -149,9 +150,10 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               <IonList
                 color="tertiary"
                 className="ion-no-padding filters-options-list"
+                style={listOfFilters.length > 10 ? { marginTop: '100px' } : {}}
               >
                 {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
-                  <IonItem
+                  <div
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
@@ -163,12 +165,12 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isFilterOptionChecked(option)}
                     >
-                      {option.toUpperCase()}
+                      {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
                     </IonCheckbox>
-                  </IonItem>
+                  </div>
                 ))}
                 {uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
-                  <IonItem
+                  <div
                     color="tertiary"
                     key={`filter-item-${i}`}
                     className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
@@ -180,9 +182,9 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isFilterOptionChecked(option)}
                     >
-                      {option.toUpperCase()}
+                      {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
                     </IonCheckbox>
-                  </IonItem>
+                  </div>
                 ))}
               </IonList>
               <OutlinePrimaryButton

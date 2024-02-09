@@ -11,6 +11,7 @@ import removeNumberAndDot from '../../../utils/removeNumberAndDot';
 import ModalPagesLayout from '../../../Layouts/ModalPagesLayout/ModalPagesLayout';
 import useHandleBack from '../../../hooks/useHandleBack';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
+import truncateString from '../../../utils/truncateString';
 
 interface InputModalProps {
   optionName: string;
@@ -73,7 +74,7 @@ const InputModal: React.FC<InputModalProps> = ({
         />
       </IonHeader>
       <IonContent color="tertiary">
-        <ModalSearchBar searchText={searchText} setSearchText={setSearchText} />
+        <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10 }/>
         {
           filteredOptions.length === 0 && !canCreateNew && (
             <p className="no-items-message">
@@ -93,7 +94,7 @@ const InputModal: React.FC<InputModalProps> = ({
               </p>
             ) : (
               <>
-                <IonList color="tertiary" className="ion-no-padding ion-margin options-list">
+                <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={listOfOptions.length > 10 ? {marginTop: "100px"} : {}}>
                   {checkedSelectedOptions.map((option: string, i: number) => (
                     <div
                       color="tertiary"
@@ -107,7 +108,7 @@ const InputModal: React.FC<InputModalProps> = ({
                         labelPlacement="end"
                         checked={isOptionChecked(option)}
                       >
-                        {option.toUpperCase()}
+                        {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
                       </IonCheckbox>
                     </div>
                   ))}
@@ -125,7 +126,7 @@ const InputModal: React.FC<InputModalProps> = ({
                         checked={isOptionChecked(option)}
                         disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                       >
-                        {option.toUpperCase()}
+                        {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
                       </IonCheckbox>
                     </div>
                   ))}
