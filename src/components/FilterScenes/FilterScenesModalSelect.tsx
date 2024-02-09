@@ -14,6 +14,7 @@ import ModalToolbar from '../Shared/ModalToolbar/ModalToolbar';
 import capitalizeString from '../../utils/capitalizeString';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import truncateString from '../../utils/truncateString';
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -75,10 +76,6 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     });
   };
 
-  const clearSearchText = () => {
-    setSearchText('');
-  };
-
   const handleBack = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
@@ -92,6 +89,23 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
   const uncheckedfilteredFiltersOptions = filteredFiltersOptions.filter((option) => !isFilterOptionChecked(option));
   const checkedFiltersOptions = listOfFilters.filter((option) => isFilterOptionChecked(option));
+
+  const getListStyles = () => {
+    
+    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
+      return { border: 'none', outline: 'none', marginTop: '100px'};
+    }
+
+    if (listOfFilters.length > 10) {
+      return { marginTop: '100px' };
+    }
+
+    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length <= 10) {
+      return {};
+    }
+
+    return {};
+  }
 
   return (
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
@@ -142,7 +156,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               <IonList
                 color="tertiary"
                 className="ion-no-padding filters-options-list"
-                style={listOfFilters.length > 10 ? { marginTop: '100px' } : {}}
+                style={getListStyles()}
               >
                 {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
                   <div
@@ -157,11 +171,14 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isFilterOptionChecked(option)}
                     >
-                      {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
+                      {isMobile ? truncateString(option.toUpperCase(), 30) : (
+                        <HighlightedText text={option} searchTerm={searchText} />
+                      )}
                     </IonCheckbox>
                   </div>
                 ))}
-                {uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
+                {
+                  uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
                   <div
                     color="tertiary"
                     key={`filter-item-${i}`}
@@ -174,7 +191,9 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                       onClick={() => handleCheckboxToggle(option)}
                       checked={isFilterOptionChecked(option)}
                     >
-                      {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
+                      {isMobile ? truncateString(option.toUpperCase(), 30) : (
+                        <HighlightedText text={option} searchTerm={searchText} />
+                      )}
                     </IonCheckbox>
                   </div>
                 ))}
@@ -183,7 +202,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 uncheckedfilteredFiltersOptions.length === 0 &&
                 <p className="no-items-message">
                   There are no coincidences. Do you want to 
-                  <span onClick={() => setSearchText('')} style={{color: "var(--ion-color-primary)"}}>reset </span>?
+                  <span onClick={() => setSearchText('')} style={{color: "var(--ion-color-primary)"}}> reset search </span>?
                 </p>
               }
               <OutlinePrimaryButton
@@ -200,5 +219,12 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     </IonRow>
   );
 };
+
+// Nuevo componente para resaltar el texto que coincide con la búsqueda
+
+interface HighlightedTextProps {
+  text: string;
+  searchTerm: string;
+}
 
 export default FilterScenesModalSelect;

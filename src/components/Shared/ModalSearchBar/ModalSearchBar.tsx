@@ -17,7 +17,7 @@ const ModalSearchBar = ({
         {/* NO LESS THAN 10 */}
         <IonSearchbar
           className="ion-margin-top search-bar"
-          value={searchText}
+          value={searchText.toUpperCase()}
           onIonChange={(e) => setSearchText(e.detail.value!)}
           onIonInput={(e) => setSearchText(e.detail.value!)}
           placeholder="SEARCH"

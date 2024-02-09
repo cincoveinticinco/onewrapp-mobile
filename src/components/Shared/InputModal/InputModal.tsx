@@ -12,6 +12,7 @@ import ModalPagesLayout from '../../../Layouts/ModalPagesLayout/ModalPagesLayout
 import useHandleBack from '../../../hooks/useHandleBack';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import truncateString from '../../../utils/truncateString';
+import HighlightedText from '../HighlightedText/HighlightedText';
 
 interface InputModalProps {
   optionName: string;
@@ -50,6 +51,23 @@ const InputModal: React.FC<InputModalProps> = ({
     }
   };
 
+  const getListStyles = () => {
+    
+    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
+      return { border: 'none', outline: 'none', marginTop: '100px'};
+    }
+
+    if (listOfOptions.length > 10) {
+      return { marginTop: '100px' };
+    }
+
+    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length <= 10) {
+      return {};
+    }
+
+    return {};
+  }
+
   const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
 
   const filteredOptions = listOfOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
@@ -84,7 +102,7 @@ const InputModal: React.FC<InputModalProps> = ({
         }
         {
           <>
-            <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={listOfOptions.length > 10 ? { marginTop: '100px' } : {}}>
+            <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
               {checkedSelectedOptions.map((option: string, i: number) => (
                 <div
                   color="tertiary"
@@ -116,7 +134,7 @@ const InputModal: React.FC<InputModalProps> = ({
                     checked={isOptionChecked(option)}
                     disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                   >
-                    {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
+                     <HighlightedText text={option} searchTerm={searchText} />
                   </IonCheckbox>
                 </div>
               ))}
