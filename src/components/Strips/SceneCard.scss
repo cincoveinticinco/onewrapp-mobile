@@ -4,6 +4,7 @@
   display: grid;
   background-color: var(--ion-color-light);
   grid-template-columns: repeat(12, 1fr);
+  margin: 0px;
 }
 
 .scene-theme-dark {
@@ -85,4 +86,49 @@
   color: white;
   font-weight: bold;
   font-size: 8px;
+}
+
+.scene-card-item {
+
+  &::part(native) {
+    --ion-safe-area-right: 0px;
+    --inner-padding-end: 0px;
+  }
+}
+
+.scene-card-options {
+  background-color: var(--ion-color-dark);
+  .buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    @media (min-width: 500px) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    ion-button {
+      padding: 6px;
+      margin: 0px;
+      min-height: 0px;
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+
+      &::part(native) {
+        padding: 0px;
+        height: 20px !important;
+        min-height: 20px;
+      }
+
+      .button-icon {
+        font-size: var(--525-icons-size);
+
+        &.ban,
+        &.trash {
+          color: var(--ion-color-danger);
+        }
+      }
+    }
+  }
 }

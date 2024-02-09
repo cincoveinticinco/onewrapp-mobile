@@ -1,9 +1,11 @@
 import React from 'react';
-import { IonRow, IonCol } from '@ionic/react';
+import { IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon } from '@ionic/react';
 import { Scene } from '../../interfaces/scenesTypes';
-import './SceneCard.css';
+import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
+import { banOutline, eyeOutline } from 'ionicons/icons';
+import { FiTrash } from "react-icons/fi";
 
 interface SceneCardProps {
   scene: Scene;
@@ -90,39 +92,60 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
   };
 
   return (
-    <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
-      <IonCol className="scene-card-col-1">
-        <h3 className="scene-card-header">
-          {getSceneHeader(scene)}
-        </h3>
-        <p className="scene-card-synopsis">
-          {(scene.synopsis)?.toUpperCase()}
-        </p>
-        <p className="scene-card-characters">
-          <strong>CHARACTERS:</strong>
-          {' '}
-          {getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'}
-          <br />
-          <strong>EXTRAS: </strong>
-          {' '}
-          {getExtras(scene)}
-        </p>
-      </IonCol>
-      <IonCol className="scene-card-col-2">
-        <p className="ion-no-margin">
-          <strong>P: </strong>
-          {' '}
-          {getPageNumber(scene) || 'N/A'}
-        </p>
-        <p className="ion-no-margin">
-          <strong>M: </strong>
-          {' '}
-          {scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}
-        </p>
-      </IonCol>
-      <IonCol className="scene-card-col-3 center-flex-row">
-        <p className="assignament-date"> NOT ASSIGNED </p>
-      </IonCol>
+    <IonRow>
+      <IonItemSliding className='ion-no-margin ion-no-padding'>
+        <IonItem className='ion-no-margin ion-no-padding scene-card-item'>
+          <IonGrid className='ion-no-margin ion-no-padding'>
+            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
+              <IonCol className="scene-card-col-1">
+                <h3 className="scene-card-header">
+                  {getSceneHeader(scene)}
+                </h3>
+                <p className="scene-card-synopsis">
+                  {(scene.synopsis)?.toUpperCase()}
+                </p>
+                <p className="scene-card-characters">
+                  <strong>CHARACTERS:</strong>
+                  {' '}
+                  {getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'}
+                  <br />
+                  <strong>EXTRAS: </strong>
+                  {' '}
+                  {getExtras(scene)}
+                </p>
+              </IonCol>
+              <IonCol className="scene-card-col-2">
+                <p className="ion-no-margin">
+                  <strong>P: </strong>
+                  {' '}
+                  {getPageNumber(scene) || 'N/A'}
+                </p>
+                <p className="ion-no-margin">
+                  <strong>M: </strong>
+                  {' '}
+                  {scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}
+                </p>
+              </IonCol>
+              <IonCol className="scene-card-col-3 center-flex-row">
+                <p className="assignament-date"> NOT ASSIGNED </p>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </IonItem>
+        <IonItemOptions class='scene-card-options'>
+          <div className='buttons-wrapper'> 
+            <IonButton fill='clear'>
+              <IonIcon icon={eyeOutline} className='button-icon view'/>
+            </IonButton>
+            <IonButton fill='clear'>
+              <IonIcon icon={banOutline} className='button-icon ban'/>
+            </IonButton>
+            <IonButton fill='clear'>
+              <FiTrash className='button-icon trash'/>
+            </IonButton>
+          </div>
+        </IonItemOptions>
+      </IonItemSliding>
     </IonRow>
   );
 };
