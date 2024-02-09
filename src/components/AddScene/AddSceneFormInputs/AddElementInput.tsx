@@ -4,7 +4,6 @@ import {
   IonItem,
   IonList,
 } from '@ionic/react';
-import { Element } from '../../../interfaces/scenesTypes';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import InputModal from '../../Shared/InputModal/InputModal';
 import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
@@ -16,24 +15,26 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddElementInputProps {
   categoryName: string;
-  handleSceneChange: (value: any, field: string) => void;
   selectedElements: any;
   setSelectedElements: (value: any) => void;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
   categoryName,
-  handleSceneChange,
   selectedElements,
   setSelectedElements,
 }) => {
   const { scenes } = sceneData;
 
-
+  const filterSelectedElements = selectedElements.filter((element: any) => {
+    if (categoryName === 'NO CATEGORY') {
+      return element.categoryName === null;
+    }
+    return element.categoryName === categoryName;
+  });
 
   const deleteElement = (element: string) => {
     setSelectedElements((currentElements: any) => currentElements.filter((el: any) => el.elementName !== element));
-    handleSceneChange(selectedElements, 'elements');
   };
 
   const uniqueElementsValuesArray = getUniqueValuesFromNestedArray(
@@ -88,9 +89,9 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
 
   return (
     <IonCardContent className={contentStyle}>
-      {selectedElements.length > 0 ? (
+      {filterSelectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {selectedElements.map((element: any, index: number) => (
+          {filterSelectedElements.map((element: any, index: number) => (
             <IonItem
               key={index}
               color="tertiary"
@@ -114,7 +115,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         handleCheckboxToggle={toggleElement}
         selectedOptions={selectedElements.map((element: any) => element.elementName)}
         clearSelections={clearSelections}
-        canCreateNew={true}
+        canCreateNew
       />
     </IonCardContent>
   );

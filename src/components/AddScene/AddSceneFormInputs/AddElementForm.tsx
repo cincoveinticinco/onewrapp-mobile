@@ -12,12 +12,19 @@ import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
+  observedElements: Element[];
 }
 
-const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) => {
+const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const { scenes } = scenesData;
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
+
+  useEffect(() => {
+    if (!observedElements) {
+      setSelectedElements([]);
+    }
+  }, [observedElements]);
 
   useEffect(() => {
     handleSceneChange(selectedElements, 'elements');
@@ -66,8 +73,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
 
   const handleDropDown = () => {
     setDropDownIsOpen(!dropDownIsOpen);
-  }
-
+  };
 
   return (
     <>
@@ -75,12 +81,12 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
         <p className="ion-flex ion-align-items-center">
           Elements
         </p>
-        <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
+        <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
             id="elements-categories-alert"
             slot="end"
           />
-          <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
+          <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
         </div>
       </div>
 
@@ -130,7 +136,6 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange }) =>
               </IonCardHeader>
               <AddElementInput
                 categoryName={category}
-                handleSceneChange={handleSceneChange}
                 selectedElements={selectedElements}
                 setSelectedElements={setSelectedElements}
               />
