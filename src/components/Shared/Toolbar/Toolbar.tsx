@@ -21,6 +21,8 @@ interface ToolbarProps {
   sort?: boolean;
   searchMode?: boolean;
   setSearchMode?: (searchMode: boolean) => void;
+  setSearchText?: (searchText: string) => void;
+  searchText?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -34,6 +36,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
   sort = false,
   searchMode = false,
   setSearchMode = () => {},
+  setSearchText = () => {},
+  searchText = '',
 }) => {
   const isMobile = useIsMobile();
 
@@ -54,16 +58,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonIcon icon={menuOutline} className="toolbar-icon" />
         </IonButton>
         )
-}
-      <Link to="/my/projects" className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+      }
+      <div className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
         <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">{name}</IonTitle>
-      </Link>
+      </div>
       {
         back
 
         && (
-        <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button">
-          <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" onClick={handleBack} />
+        <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack} >
+          <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" />
         </IonButton>
         )
       }
@@ -72,7 +76,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
             <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
-          <IonInput className="toolbar-search-input" placeholder="" ref={searchRef} />
+          <IonInput 
+            value={searchText.toUpperCase()}
+            onIonInput={(e) => setSearchText(e.detail.value!)}
+            onIonChange={(e) => setSearchText(e.detail.value!)} 
+            className="toolbar-search-input" 
+            placeholder="" 
+            ref={searchRef} />
         </div>
       )}
       {addScene && (

@@ -5,9 +5,11 @@ import useIsMobile from '../../hooks/useIsMobile';
 
 interface MainPagesLayoutProps {
   children: React.ReactNode
+  searchText?: string
+  setSearchText?: (searchText: string) => void
 }
 
-const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children }) => {
+const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText }) => {
   const [searchMode, setSearchMode] = React.useState(false);
   const isMobile = useIsMobile();
 
@@ -16,8 +18,7 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children }) => {
       <IonHeader>
         <Toolbar
           name="LVE-STRIPS"
-          menu={!isMobile}
-          back={isMobile}
+          back
           search
           addScene
           filter
@@ -25,6 +26,8 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children }) => {
           sort
           searchMode={searchMode}
           setSearchMode={setSearchMode}
+          setSearchText={setSearchText}
+          searchText={searchText}
         />
       </IonHeader>
       {children}

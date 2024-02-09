@@ -17,7 +17,7 @@ const Projects: React.FC = () => (
 
   <IonPage>
     <IonHeader>
-      <Toolbar name="Projects" search menu />
+      <Toolbar name="PROJECTS" search menu />
     </IonHeader>
     <IonContent className="ion-padding" color="tertiary">
       <IonGrid>

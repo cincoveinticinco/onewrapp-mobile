@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon } from '@ionic/react';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
@@ -6,12 +6,14 @@ import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { banOutline, eyeOutline } from 'ionicons/icons';
 import { FiTrash } from "react-icons/fi";
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 
 interface SceneCardProps {
   scene: Scene;
+  searchText?: string;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
+const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
@@ -99,31 +101,31 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene }) => {
             <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
               <IonCol className="scene-card-col-1">
                 <h3 className="scene-card-header">
-                  {getSceneHeader(scene)}
+                  <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} />
                 </h3>
                 <p className="scene-card-synopsis">
-                  {(scene.synopsis)?.toUpperCase()}
+                  <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} />
                 </p>
                 <p className="scene-card-characters">
                   <strong>CHARACTERS:</strong>
                   {' '}
-                  {getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'}
+                  <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} />
                   <br />
                   <strong>EXTRAS: </strong>
                   {' '}
-                  {getExtras(scene)}
+                  <HighlightedText text={getExtras(scene)} searchTerm={searchText} />
                 </p>
               </IonCol>
               <IonCol className="scene-card-col-2">
                 <p className="ion-no-margin">
                   <strong>P: </strong>
                   {' '}
-                  {getPageNumber(scene) || 'N/A'}
+                  <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} />
                 </p>
                 <p className="ion-no-margin">
                   <strong>M: </strong>
                   {' '}
-                  {scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'}
+                  <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} />
                 </p>
               </IonCol>
               <IonCol className="scene-card-col-3 center-flex-row">
