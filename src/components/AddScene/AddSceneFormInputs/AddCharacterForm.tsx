@@ -27,6 +27,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
   useEffect(() => {
     if (!observedCharacters) {
       setSelectedCharacters([]);
+      setDropDownIsOpen(false);
     }
   }, [observedCharacters]);
 

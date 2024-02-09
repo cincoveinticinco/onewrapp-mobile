@@ -23,6 +23,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
   useEffect(() => {
     if (!observedExtras) {
       setSelectedExtras([]);
+      setDropDownIsOpen(false);
     }
   }, [observedExtras]);
 
