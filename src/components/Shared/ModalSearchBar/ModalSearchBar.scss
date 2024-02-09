@@ -7,6 +7,7 @@
   .search-bar {
     text-align: center;
     --border-radius: 50px;
+    text-transform: uppercase;
   
     .searchbar-input-container {
       ion-icon {
@@ -15,7 +16,7 @@
     }
   
     .searchbar-cancel-button {
-      color: red;
+      color: var(--ion-color-danger);
     }
   }
   

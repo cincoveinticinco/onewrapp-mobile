@@ -1,5 +1,5 @@
 import { IonSearchbar, IonToolbar } from '@ionic/react';
-import { trash } from 'ionicons/icons';
+import { chevronBackOutline, trash } from 'ionicons/icons';
 import './ModalSearchBar.scss';
 
 const ModalSearchBar = ({
@@ -22,7 +22,8 @@ const ModalSearchBar = ({
           onIonInput={(e) => setSearchText(e.detail.value!)}
           placeholder="SEARCH"
           showCancelButton="focus"
-          cancelButtonIcon={trash}
+          cancelButtonIcon={chevronBackOutline}
+          mode="md"
         />
       </IonToolbar>
     )}
