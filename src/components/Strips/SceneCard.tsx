@@ -30,6 +30,12 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     return sceneHeader.toUpperCase();
   }
 
+  const sceneFlatString = useMemo(() => {
+    return `${scene.sceneNumber} ${scene.synopsis} ${scene.locationName} ${scene.intOrExtOption} ${scene.dayOrNightOption} ${scene.scriptDay} ${scene.year} ${scene.episodeNumber} ${scene.sceneNumber} ${scene.intOrExtOption} ${scene.locationName} ${scene.setName} ${scene.dayOrNightOption} ${scene.scriptDay} ${scene.year}`;
+  }, [scene]);
+
+  const sceneMatchesSearchText = sceneFlatString.toLowerCase().includes(searchText?.toLowerCase() || '');
+
   const getCharacters = (scene: Scene) => {
     const { characters } = scene;
     let charactersString = '';
@@ -94,7 +100,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
   };
 
   return (
-    <IonRow>
+    <IonRow style={!sceneMatchesSearchText ? { display: 'none'} : {}} className = "scene-card-row">
       <IonItemSliding className='ion-no-margin ion-no-padding'>
         <IonItem className='ion-no-margin ion-no-padding scene-card-item'>
           <IonGrid className='ion-no-margin ion-no-padding'>
