@@ -23,17 +23,19 @@ const InputAlert:React.FC<InputAlertProps> = ({
     color="dark"
     trigger={trigger}
     header={header}
-    className='input-alert'
+    className="input-alert"
+    mode="ios"
     buttons={[
       {
         text: 'confirm',
         handler: handleOk,
+        cssClass: 'primary',
       },
       {
         text: 'cancel',
         role: 'cancel',
         cssClass: 'secondary',
-      }
+      },
     ]}
     inputs={inputs}
     subHeader={subHeader}
