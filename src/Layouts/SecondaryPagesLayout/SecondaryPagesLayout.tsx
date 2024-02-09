@@ -11,7 +11,9 @@ interface SecondaryPagesLayoutProps {
   pageTitle: string
 }
 
-const SecondaryPagesLayout: React.FC<SecondaryPagesLayoutProps> = ({ children, resetSelections, saveOptions, pageTitle }) => {
+const SecondaryPagesLayout: React.FC<SecondaryPagesLayoutProps> = ({
+  children, resetSelections, saveOptions, pageTitle,
+}) => {
   const handleBack = useHandleBack();
 
   return (

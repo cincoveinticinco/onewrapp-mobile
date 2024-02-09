@@ -1,9 +1,9 @@
 import { IonContent } from '@ionic/react';
 import './AddScene.css';
+import { useRef } from 'react';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import { useRef } from 'react';
 
 const AddScene = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -16,7 +16,7 @@ const AddScene = () => {
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
-  }
+  };
 
   return (
     <SecondaryPagesLayout saveOptions={handleSave} pageTitle="Add Scene">

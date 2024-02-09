@@ -74,7 +74,7 @@ const FilterScenes = () => {
   return (
     <SecondaryPagesLayout
       resetSelections={resetFilters}
-      pageTitle = "FILTER"
+      pageTitle="FILTER"
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
@@ -257,7 +257,7 @@ const FilterScenes = () => {
                 <OutlineLightButton
                   buttonName="CANCEL"
                   onClick={handleCancel}
-                  className='cancel-filter-scenes-button cancel-button'
+                  className="cancel-filter-scenes-button cancel-button"
                 />
               </IonCol>
             </IonRow>

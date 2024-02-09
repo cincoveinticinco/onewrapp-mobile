@@ -103,7 +103,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
   const insertScene = async (formData: any) => {
     try {
       formData.id = uuidv4();
-  
+
       const sceneExists = await oneWrapDb?.scenes.findOne({
         selector: {
           projectId,
@@ -111,17 +111,17 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
           sceneNumber: formData.sceneNumber,
         },
       }).exec();
-  
+
       if (sceneExists) {
         errorToast('Scene already exists');
         scrollToTop();
         return;
       }
-  
+
       console.log('Inserting scene:', formData);
       await oneWrapDb?.scenes.insert(formData);
       createdSceneToast();
-  
+
       reset();
       history.push('/my/projects/01/strips');
     } catch (error: any) {
@@ -130,7 +130,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
       scrollToTop();
     }
 
-    scrollToTop()
+    scrollToTop();
   };
 
   const handleChange = (value: any, field: any) => {
@@ -142,7 +142,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
   };
 
   const onSubmit = (formData: any): void => {
-    insertScene(formData)
+    insertScene(formData);
   };
 
   const getDisabled = () => (watch('sceneType') !== 'protection');

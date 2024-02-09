@@ -74,7 +74,7 @@ const InputModal: React.FC<InputModalProps> = ({
         />
       </IonHeader>
       <IonContent color="tertiary">
-        <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10 }/>
+        <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10} />
         {
           filteredOptions.length === 0 && !canCreateNew && (
             <p className="no-items-message">
@@ -94,7 +94,7 @@ const InputModal: React.FC<InputModalProps> = ({
               </p>
             ) : (
               <>
-                <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={listOfOptions.length > 10 ? {marginTop: "100px"} : {}}>
+                <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={listOfOptions.length > 10 ? { marginTop: '100px' } : {}}>
                   {checkedSelectedOptions.map((option: string, i: number) => (
                     <div
                       color="tertiary"

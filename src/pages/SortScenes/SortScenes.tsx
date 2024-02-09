@@ -86,7 +86,7 @@ const SortScenes = () => {
   });
 
   return (
-    <SecondaryPagesLayout resetSelections={handleReset} pageTitle='SORT BY'>
+    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY">
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>

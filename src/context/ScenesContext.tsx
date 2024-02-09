@@ -63,10 +63,6 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions)); // Guardar en localStorage
   }, [selectedSortOptions]);
 
-  useEffect(() => {
-    console.log('FILTER OPTIONS: useEffect', selectedFilterOptions);
-  }, [selectedFilterOptions]);
-
   return (
     <ScenesContext.Provider value={contextValue}>
       {children}

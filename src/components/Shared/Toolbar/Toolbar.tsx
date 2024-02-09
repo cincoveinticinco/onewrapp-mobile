@@ -35,7 +35,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
   searchMode = false,
   setSearchMode = () => {},
 }) => {
-
   const isMobile = useIsMobile();
 
   const searchRef = useRef<HTMLIonInputElement>(null);
@@ -43,34 +42,35 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const toggleSearchMode = () => {
     setSearchMode(!searchMode);
     searchRef.current?.setFocus();
-  }
+  };
 
-  useEffect(() => {
-    console.log(searchMode)
-  }, [searchMode]);
+  const handleBack = useHandleBack();
 
-  const handleBack = useHandleBack()
-  
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
       {
-        menu && <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
+        menu && (
+        <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
           <IonIcon icon={menuOutline} className="toolbar-icon" />
-        </IonButton>}
-        <Link to="/my/projects" className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <IonTitle className={`toolbar-title ${ isMobile && searchMode ? 'hidden' : ''}` } slot="start">{name}</IonTitle>
-        </Link>
+        </IonButton>
+        )
+}
+      <Link to="/my/projects" className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">{name}</IonTitle>
+      </Link>
       {
-        back && 
-      
+        back
+
+        && (
         <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button">
           <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" onClick={handleBack} />
         </IonButton>
+        )
       }
       {search && (
         <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
-            <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon"/>
+            <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
           <IonInput className="toolbar-search-input" placeholder="" ref={searchRef} />
         </div>
@@ -96,6 +96,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         // </IonButton>
       )} */}
     </IonToolbar>
-)};
+  );
+};
 
 export default Toolbar;

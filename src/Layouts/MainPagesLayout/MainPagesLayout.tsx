@@ -8,28 +8,28 @@ interface MainPagesLayoutProps {
 }
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children }) => {
-  
   const [searchMode, setSearchMode] = React.useState(false);
   const isMobile = useIsMobile();
 
   return (
     <IonPage>
       <IonHeader>
-      <Toolbar 
-        name="LVE-STRIPS"
-        menu={!isMobile}
-        back={isMobile}
-        search 
-        addScene 
-        filter 
-        elipse 
-        sort 
-        searchMode={searchMode} 
-        setSearchMode={setSearchMode}
-      />
+        <Toolbar
+          name="LVE-STRIPS"
+          menu={!isMobile}
+          back={isMobile}
+          search
+          addScene
+          filter
+          elipse
+          sort
+          searchMode={searchMode}
+          setSearchMode={setSearchMode}
+        />
       </IonHeader>
       {children}
     </IonPage>
-)};
+  );
+};
 
 export default MainPagesLayout;
