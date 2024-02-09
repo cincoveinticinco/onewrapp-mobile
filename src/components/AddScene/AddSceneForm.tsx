@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
+import { checkmarkCircle, closeCircle } from 'ionicons/icons';
+import { v4 as uuidv4 } from 'uuid';
+import { useIonToast } from '@ionic/react';
 import InputItem from './AddSceneFormInputs/InputItem';
 import SelectItem from './AddSceneFormInputs/SelectItem';
-import SelectOrInsertItem from './AddSceneFormInputs/SelectOrInsertItem';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
-import scenesData from '../../data/scn_data.json'
+import scenesData from '../../data/scn_data.json';
 import './AddSceneForm.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
@@ -17,15 +19,56 @@ import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton'
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
-const AddScenesForm: React.FC = () => {
+import DatabaseContext from '../../context/database';
+
+interface AddScenesFormProps {
+  scrollToTop: () => void;
+}
+
+const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
   const isMobile = useIsMobile();
   const history = useHistory();
+  const projectId = '01';
+  const updatedAt = new Date().toISOString();
 
   const { scenes } = scenesData;
 
-  const [formData, setFormData]: any[] = useState({
+  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
+  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
+
+  const sceneTypeOptions = ['scene', 'protection'];
+  const protectionTypeValues = ['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER'];
+  const dayNightOptions = ['day', 'night', 'sunset', 'sunrise'];
+  const intExtOptions = ['INT', 'EXT', 'INT/EXT', 'EXT/INT'];
+  const locationOptions = getSortedLocationNames;
+  const setOptions = getSortedSetNames;
+
+  const { oneWrapDb } = useContext(DatabaseContext);
+  const [presentToast] = useIonToast();
+
+  const createdSceneToast = () => {
+    presentToast({
+      message: 'Scene Successfully Created',
+      duration: 2000,
+      icon: checkmarkCircle,
+      position: 'top',
+      cssClass: 'success-toast',
+    });
+  };
+
+  const errorToast = (errorMessage: string) => {
+    presentToast({
+      message: errorMessage,
+      duration: 2000,
+      position: 'top',
+      icon: closeCircle,
+      cssClass: 'error-toast',
+    });
+  };
+
+  const [formData, _]: any[] = useState({
+    projectId,
     id: null,
-    projectId: null,
     episodeNumber: null,
     sceneNumber: null,
     sceneType: null,
@@ -43,20 +86,52 @@ const AddScenesForm: React.FC = () => {
     characters: null,
     extras: null,
     elements: null,
-    notes: null,
-    updatedAt: null,
+    notes: [],
+    updatedAt,
   });
 
   const {
     control,
-    register,
     handleSubmit,
     formState: { errors },
-    getValues,
+    reset,
     setValue,
-    getFieldState,
-    watch
+    watch,
+
   } = useForm({ defaultValues: formData });
+
+  const insertScene = async (formData: any) => {
+    try {
+      formData.id = uuidv4();
+  
+      const sceneExists = await oneWrapDb?.scenes.findOne({
+        selector: {
+          projectId,
+          episodeNumber: formData.episodeNumber,
+          sceneNumber: formData.sceneNumber,
+        },
+      }).exec();
+  
+      if (sceneExists) {
+        errorToast('Scene already exists');
+        scrollToTop();
+        return;
+      }
+  
+      console.log('Inserting scene:', formData);
+      await oneWrapDb?.scenes.insert(formData);
+      createdSceneToast();
+  
+      reset();
+      history.push('/my/projects/01/strips');
+    } catch (error: any) {
+      console.log('Error inserting scene:', error);
+      errorToast(error ? error.message : 'Error inserting scene');
+      scrollToTop();
+    }
+
+    scrollToTop()
+  };
 
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {
@@ -67,59 +142,36 @@ const AddScenesForm: React.FC = () => {
   };
 
   const onSubmit = (formData: any): void => {
-    console.log(['ERRORS'], errors)
-    console.log(['FORM DATA'], formData)
+    insertScene(formData)
   };
 
-  const getDisabled = () => {
-    return watch('sceneType') === 'protection' ? false : true;
-  }
+  const getDisabled = () => (watch('sceneType') !== 'protection');
 
-  let formErrors = watch('errors');
+  const sceneTypeValidation = (value: any) => (value !== null ? true : 'SCENE TYPE IS REQUIRED *');
 
-  const sceneTypeValidation = (value: any) => {
-    return value !== null ? true : 'Scene Type is required *';
-  }
+  const episodeNUmberValidation = (value: any) => (value !== null ? true : 'REQUIRED *');
 
-  const episodeNUmberValidation = (value: any) => {
-    return value !== null ? true : 'required *';
-  }
+  const sceneNumberValidation = (value: any) => (value !== null ? true : 'REQUIRED *');
 
-  const sceneNumberValidation = (value: any) => {
-    return value !== null ? true : 'required *';
-  }
-
-  useEffect(() => {
-    console.log(['FORM ERRORS'], formErrors)
-  }, [formErrors]);
+  const setNameValidation = (value: any) => (value !== null ? true : 'REQUIRED *');
 
   const handleSetValue = (field: string, value: any) => {
-    if(value === "") {
+    if (value === '') {
       return setValue(field, null);
     }
 
     return setValue(field, value);
-  }
-
-  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
-  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
-
-  const sceneTypeOptions = ["scene", "protection"];
-  const protectionTypeValues = ["voice Off", "image", "stock image", "video", "stock video", "multimedia", "other"];
-  const dayNightOptions = ["day", "night", "sunset", "sunrise"];
-  const intExtOptions = ["INT", "EXT", "INT/EXT", "EXT/INT"];
-  const locationOptions = getSortedLocationNames;
-  const setOptions = getSortedSetNames;
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form">
-      
+
       <SelectItem
         label="SCENE TYPE *"
         options={sceneTypeOptions}
         inputName="add-scene-type-input"
-        displayError={errors['sceneType'] ? true : false}
-        fieldName='sceneType'
+        displayError={!!errors.sceneType}
+        fieldName="sceneType"
         control={control}
         setValue={handleSetValue}
         watchValue={watch}
@@ -142,11 +194,11 @@ const AddScenesForm: React.FC = () => {
         placeholder="EPISODE"
         control={control}
         fieldName="episodeNumber"
+        type="number"
         setValue={handleSetValue}
         inputName="add-episode-input"
-        displayError={errors['episodeNumber'] ? true : false}
+        displayError={!!errors.episodeNumber}
         validate={episodeNUmberValidation}
-        watch={watch}
       />
 
       <InputItem
@@ -156,9 +208,8 @@ const AddScenesForm: React.FC = () => {
         fieldName="sceneNumber"
         setValue={handleSetValue}
         inputName="add-scene-number-input"
-        displayError={errors['sceneNumber'] ? true : false}
+        displayError={!!errors.sceneNumber}
         validate={sceneNumberValidation}
-        watch={watch}
       />
 
       <InputItem
@@ -168,7 +219,6 @@ const AddScenesForm: React.FC = () => {
         fieldName="scriptDay"
         setValue={handleSetValue}
         inputName="add-script-day-input"
-        watch={watch}
       />
 
       <InputItem
@@ -178,14 +228,13 @@ const AddScenesForm: React.FC = () => {
         fieldName="year"
         setValue={handleSetValue}
         inputName="add-year-input"
-        watch={watch}
       />
 
       <SelectItem
         label="DAY/NIGHT"
         options={dayNightOptions}
         inputName="add-day-night-input"
-        fieldName='dayOrNightOption'
+        fieldName="dayOrNightOption"
         control={control}
         watchValue={watch}
         setValue={handleSetValue}
@@ -195,7 +244,7 @@ const AddScenesForm: React.FC = () => {
         label="INT/EXT"
         options={intExtOptions}
         inputName="add-int-ext-input"
-        fieldName='intOrExtOption'
+        fieldName="intOrExtOption"
         control={control}
         setValue={handleSetValue}
         watchValue={watch}
@@ -205,18 +254,20 @@ const AddScenesForm: React.FC = () => {
         label="SCRIPT PAGE"
         placeholder="INSERT"
         control={control}
-        fieldName="scriptPage"
+        fieldName="page"
+        type="number"
         setValue={handleSetValue}
         inputName="add-page-input"
-        watch={watch}
       />
 
       <AddPagesForm
         handleChange={handleChange}
+        observedField={watch('pages')}
       />
 
       <AddSecondsForm
         handleChange={handleChange}
+        observedField={watch('estimatedSeconds')}
       />
 
       <SelectItem
@@ -227,18 +278,20 @@ const AddScenesForm: React.FC = () => {
         inputName="add-location-input"
         watchValue={watch}
         setValue={handleSetValue}
-        canCreateNew={true}
+        canCreateNew
       />
 
       <SelectItem
-        label="SET"
+        label="SET *"
         control={control}
         fieldName="setName"
         options={setOptions}
         inputName="add-set-input"
         watchValue={watch}
         setValue={handleSetValue}
-        canCreateNew={true}
+        canCreateNew
+        displayError={!!errors.setName}
+        validate={setNameValidation}
       />
 
       <InputItem
@@ -246,16 +299,24 @@ const AddScenesForm: React.FC = () => {
         placeholder="INSERT"
         control={control}
         fieldName="synopsis"
-        setValue={handleSetValue} 
+        setValue={handleSetValue}
         inputName="add-synopsis-input"
-        watch={watch}
       />
 
-      <AddCharacterForm handleSceneChange={handleChange} />
+      <AddCharacterForm
+        handleSceneChange={handleChange}
+        observedCharacters={watch('characters')}
+      />
 
-      <AddElementForm handleSceneChange={handleChange} />
+      <AddElementForm
+        handleSceneChange={handleChange}
+        observedElements={watch('elements')}
+      />
 
-      <AddExtraForm handleSceneChange={handleChange} />
+      <AddExtraForm
+        handleSceneChange={handleChange}
+        observedExtras={watch('extras')}
+      />
 
       {/* <div color="tertiary">
         Notes
@@ -266,9 +327,11 @@ const AddScenesForm: React.FC = () => {
 
       <OutlinePrimaryButton
         buttonName="SAVE"
-        className='submit-scene-button'
+        className="submit-scene-button"
         type="submit"
-        onClick={() => onSubmit(getValues())}
+        onClick={() => {
+          scrollToTop();
+        }}
       />
       {
         isMobile
@@ -276,7 +339,7 @@ const AddScenesForm: React.FC = () => {
         <OutlineLightButton
           buttonName="CANCEL"
           onClick={() => history.goBack()}
-          className='cancel-add-scene-button cancel-button'
+          className="cancel-add-scene-button cancel-button"
         />
         )
       }
