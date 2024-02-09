@@ -1,4 +1,6 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, {
+  useEffect, useState, Suspense, useContext, useRef,
+} from 'react';
 import {
   IonButton,
   IonContent,
@@ -14,27 +16,32 @@ import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import DatabaseContext from '../../context/database';
+
 const SceneCard = React.lazy(() => import('../../components/Strips/SceneCard'));
 
+const BATCH_SIZE = 20;
+
 const Strips: React.FC = () => {
-  const BATCH_SIZE = 20;
+  const { offlineScenes } = useContext(DatabaseContext);
   const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
   const [scenesReady, setScenesReady] = useState(false);
-  const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions } = React.useContext<any>(ScenesContext);
+  const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions } = useContext<any>(ScenesContext);
   const thisPath = useLocation();
-  const contentRef = React.createRef<HTMLIonContentElement>();
+  const contentRef = useRef<HTMLIonContentElement>(null);
 
   useEffect(() => {
-    const newFilteredScenes = sortScenes(applyFilters(scenesData.scenes, selectedFilterOptions), selectedSortOptions);
+    const concatedScenes = [...scenesData.scenes, ...offlineScenes];
+    const newFilteredScenes = sortScenes(applyFilters((concatedScenes), selectedFilterOptions || {}), selectedSortOptions);
     setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions]);
+  }, [selectedFilterOptions, selectedSortOptions, offlineScenes]);
 
   const loadMoreScenes = () => {
     if (currentBatch * BATCH_SIZE >= filteredScenes.length) {
@@ -79,7 +86,7 @@ const Strips: React.FC = () => {
               </div>
             ) : (
               <IonGrid className="scenes-grid ion-margin">
-                {displayedScenes.map((scene, i) => (
+                {displayedScenes.map((scene:any, i: any) => (
                   <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} />
                 ))}
                 <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
