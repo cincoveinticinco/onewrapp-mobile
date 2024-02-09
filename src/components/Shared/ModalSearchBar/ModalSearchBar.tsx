@@ -19,6 +19,7 @@ const ModalSearchBar = ({
           className="ion-margin-top search-bar"
           value={searchText}
           onIonChange={(e) => setSearchText(e.detail.value!)}
+          onIonInput={(e) => setSearchText(e.detail.value!)}
           placeholder="SEARCH"
           showCancelButton="focus"
           cancelButtonIcon={trash}
