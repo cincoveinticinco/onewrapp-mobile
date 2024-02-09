@@ -13,12 +13,18 @@ import { Extra } from '../../../interfaces/scenesTypes';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
+  observedExtras: Extra[];
 }
 
-const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
+const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras }) => {
   const { scenes } = scenesData;
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
+  useEffect(() => {
+    if (!observedExtras) {
+      setSelectedExtras([]);
+    }
+  }, [observedExtras]);
 
   useEffect(() => {
     handleSceneChange(selectedExtras, 'extras');
@@ -74,8 +80,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
 
   const handleDropDown = () => {
     setDropDownIsOpen(!dropDownIsOpen);
-  }
-
+  };
 
   return (
     <>
@@ -83,12 +88,12 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
         <p className="ion-flex ion-align-items-center">
           Extras / Background Actors
         </p>
-        <div className='categories-card-buttons-wrapper ion-flex ion-align-items-center'>
+        <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
             id="extras-category-alert"
             slot="end"
           />
-          <DropDownButton open={ dropDownIsOpen } handleDropDown={handleDropDown} />
+          <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
         </div>
       </div>
       <InputAlert
@@ -136,7 +141,6 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange }) => {
               </IonCardHeader>
               <AddExtraInput
                 categoryName={category}
-                handleSceneChange={handleSceneChange}
                 selectedExtras={selectedExtras}
                 setSelectedExtras={setSelectedExtras}
               />

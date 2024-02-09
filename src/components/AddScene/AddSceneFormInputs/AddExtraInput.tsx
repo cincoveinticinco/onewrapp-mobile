@@ -14,37 +14,26 @@ import NoAdded from '../../Shared/NoAdded/NoAdded';
 
 interface AddExtraInputProps {
   categoryName: string;
-  handleSceneChange: (value: any, field: string) => void;
   selectedExtras: any;
   setSelectedExtras: (value: any) => void;
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, handleSceneChange, selectedExtras, setSelectedExtras,
+  categoryName, selectedExtras, setSelectedExtras,
 }) => {
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
   const { scenes } = scenesData;
 
+  const filterSelectedExtras = selectedExtras.filter((extra: any) => {
+    if (categoryName === 'NO CATEGORY') {
+      return extra.categoryName === null;
+    }
+    return extra.categoryName === categoryName;
+  });
+
   const deleteExtra = (index: number) => {
     setSelectedExtras((currentExtras: any) => currentExtras.filter((_: any, i: any) => i !== index));
   };
-
-  // const addExtra = () => {
-  //   const newExtraName = extraNameInputRef.current?.value as string;
-  //   if (!newExtraName) return;
-
-  //   const newExtra: Extra = {
-  //     categoryName,
-  //     extraName: newExtraName,
-  //   };
-
-  //   setSelectedExtras((currentExtras) => [...currentExtras, newExtra]);
-  //   toggleForm(id);
-
-  //   if (extraNameInputRef.current) {
-  //     extraNameInputRef.current.value = '';
-  //   }
-  // };
 
   const uniqueExtrasValuesAarray = getUniqueValuesFromNestedArray(scenes, 'extras', 'extraName');
 
@@ -79,8 +68,8 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
 
   return (
     <IonCardContent className={contentStyle}>
-      {selectedExtras.length > 0 ? (
-        selectedExtras.map((extra: any, index: number) => (
+      {filterSelectedExtras.length > 0 ? (
+        filterSelectedExtras.map((extra: any, index: number) => (
           <IonItem
             key={index}
             color="tertiary"
@@ -102,7 +91,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
         handleCheckboxToggle={toggleExtra}
         selectedOptions={selectedExtras.map((extra: any) => extra.extraName)}
         clearSelections={clearSelections}
-        canCreateNew={true}
+        canCreateNew
       />
     </IonCardContent>
   );
