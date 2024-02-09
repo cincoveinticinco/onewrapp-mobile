@@ -3,45 +3,50 @@ import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
+import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
+import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 import DatabaseSchema from './database_schema';
+
+addRxPlugin(RxDBMigrationPlugin);
+addRxPlugin(RxDBDevModePlugin);
+addRxPlugin(RxDBQueryBuilderPlugin);
+addRxPlugin(RxDBUpdatePlugin);
+addRxPlugin(RxDBLeaderElectionPlugin);
 
 export default class AppDataBase {
     private dbName = 'onewrappdb'
 
     private dbPassword = ''
 
-    private dbInstence;
+    private dbInstance: Promise<any>;
 
     private schemaList;
-
-    public schemaByName(nameSchema:any) {
-      return this.schemaList.find((x) => x instanceof nameSchema);
-    }
 
     constructor(schemaList: DatabaseSchema[]) {
       this.schemaList = schemaList;
 
+      this.dbInstance = this.initializeDatabase();
+    }
+
+    private async initializeDatabase() {
       const storage = wrappedValidateAjvStorage({
         storage: getRxStorageDexie(),
       });
 
-      this.dbInstence = createRxDatabase({
+      const dbInstence = await createRxDatabase({
         name: this.dbName,
         storage,
-        // password: this.dbPassword,
         multiInstance: false,
       });
 
-      this.setCollections();
+      await this.setCollections(dbInstence);
 
-      addRxPlugin(RxDBMigrationPlugin);
-
-      // TO-DO: Only use in DEV
-      addRxPlugin(RxDBDevModePlugin);
+      return dbInstence;
     }
 
-    private async setCollections() {
-      const persistentStorage = await this.dbInstence;
+    private async setCollections(database: any) {
+      const persistentStorage = await database;
 
       const schemaObject:any = {};
 
@@ -54,18 +59,11 @@ export default class AppDataBase {
       await persistentStorage.addCollections({ ...schemaObject });
     }
 
+    public async getDatabaseInstance() {
+      return this.dbInstance;
+    }
+
     public getCollections() {
       return this.schemaList;
     }
-
-  // private doSync() {
-  //     const urlstring = window.location.href;
-  //     const url = new URL(urlstring);
-  //     const shouldSync = url.searchParams.get('sync');
-  //     if (shouldSync && shouldSync.toLowerCase() === 'false') {
-  //         return false;
-  //     } else {
-  //         return true;
-  //     }
-  // }
 }
