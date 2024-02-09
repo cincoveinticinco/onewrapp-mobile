@@ -10,10 +10,6 @@ import { AuthContext } from './context/auth';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs/AppTabs';
-import AppDataBase from './RXdatabase/database';
-import ProjectsSchema from './RXdatabase/schemas/projects';
-import ScenesSchema from './RXdatabase/schemas/scenes';
-import DatabaseContext from './context/database';
 import { ScenesContextProvider } from './context/ScenesContext';
 
 import '@ionic/react/css/core.css';
@@ -27,24 +23,17 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
+import { DatabaseContextProvider } from './context/database';
 
 setupIonicReact();
-
-const sceneCollection = new ScenesSchema();
-const projectCollection = new ProjectsSchema();
-
-const RXdatabase = new AppDataBase([
-  sceneCollection,
-  projectCollection,
-]);
 
 const App: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   return (
     <IonApp>
-      <AuthContext.Provider value={{ loggedIn }}>
-        <DatabaseContext.Provider value={{ db: RXdatabase }}>
+      <DatabaseContextProvider>
+        <AuthContext.Provider value={{ loggedIn }}>
           <ScenesContextProvider>
             <IonReactRouter>
               <IonRouterOutlet>
@@ -61,8 +50,10 @@ const App: React.FC = () => {
               </Route>
             </IonReactRouter>
           </ScenesContextProvider>
-        </DatabaseContext.Provider>
-      </AuthContext.Provider>
+        </AuthContext.Provider>
+        '
+      </DatabaseContextProvider>
+      '
     </IonApp>
   );
 };
