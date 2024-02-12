@@ -32,12 +32,7 @@ const Strips: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-<<<<<<< HEAD
   const concatedScenes = [...scenesData.scenes, ...offlineScenes];
-=======
-  const [numberOfVisibleCards, setNumberOfVisibleCards] = useState(0);
-
->>>>>>> 41a07d1 (Add uppercase text transform and update cancel button color***)
 
   useEffect(() => {
     const newFilteredScenes = sortScenes(applyFilters((concatedScenes), selectedFilterOptions || {}), selectedSortOptions);
@@ -79,7 +74,6 @@ const Strips: React.FC = () => {
   }, [thisPath]);
 
   useEffect(() => {
-<<<<<<< HEAD
     if(searchText) {
       const newFilteredScenes = filterScenes(filteredScenes, searchText);
       setDisplayedScenes(newFilteredScenes);
@@ -94,18 +88,6 @@ const Strips: React.FC = () => {
   }, [displayedScenes]);
 
 
-=======
-    const sceneCards = document.querySelectorAll('.scene-card-row');
-    let count = 0;
-    sceneCards.forEach(card => {
-      if (window.getComputedStyle(card).display !== 'none') {
-        count++;
-      }
-    });
-    setNumberOfVisibleCards(count);
-  }, [displayedScenes]);
-
->>>>>>> 41a07d1 (Add uppercase text transform and update cancel button color***)
   return (
     <MainPagesLayout 
       searchText={searchText}
