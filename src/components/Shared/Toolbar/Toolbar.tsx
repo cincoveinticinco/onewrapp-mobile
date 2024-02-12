@@ -78,13 +78,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </IonButton>
           <IonInput 
             value={searchText.toUpperCase()}
-<<<<<<< HEAD
-            onIonInput={(e) => setSearchText(e.detail.value!)}
-            onIonChange={(e) => setSearchText(e.detail.value!)} 
-=======
             // onIonInput={(e) => setSearchText(e.detail.value!)}
             // onIonChange={(e) => setSearchText(e.detail.value!)} 
->>>>>>> 41a07d1 (Add uppercase text transform and update cancel button color***)
             className="toolbar-search-input" 
             placeholder="" 
             ref={searchRef} />
