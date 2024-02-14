@@ -3,10 +3,9 @@ import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
 import {
-  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline, chevronBack,
+  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline, chevronBack, chevronBackCircle, chevronBackOutline,
 } from 'ionicons/icons';
 import './Toolbar.scss';
-import { Link } from 'react-router-dom';
 import useHandleBack from '../../../hooks/useHandleBack';
 import useIsMobile from '../../../hooks/useIsMobile';
 
@@ -74,7 +73,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
       {search && (
         <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
-            <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon" />
+            <IonIcon color={searchMode ? 'danger' : 'light'} icon={searchMode ? chevronBackOutline : searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
           <IonInput 
             value={searchText}
@@ -82,7 +81,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
             onIonChange={(e) => setSearchText(e.detail.value!)} 
             className="toolbar-search-input" 
             placeholder=""
-            ref={searchRef} />
+            ref={searchRef}
+            clearInput={true}
+          />
         </div>
       )}
       {addScene && (
