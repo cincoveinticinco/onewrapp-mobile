@@ -4,7 +4,7 @@ import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, eyeOutline } from 'ionicons/icons';
+import { banOutline, eyeOutline, pencilOutline } from 'ionicons/icons';
 import { FiTrash } from "react-icons/fi";
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 
@@ -137,7 +137,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
         <IonItemOptions class='scene-card-options'>
           <div className='buttons-wrapper'> 
             <IonButton fill='clear'>
-              <IonIcon icon={eyeOutline} className='button-icon view'/>
+              <IonIcon icon={pencilOutline} className='button-icon view'/>
             </IonButton>
             <IonButton fill='clear'>
               <IonIcon icon={banOutline} className='button-icon ban'/>
