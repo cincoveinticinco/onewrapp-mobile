@@ -6,6 +6,10 @@
   grid-template-columns: repeat(12, 1fr);
   margin: 0px;
   min-height: 120px;
+
+  @media (min-width: 500px) {
+    min-height: auto;
+  }
 }
 
 .scene-theme-dark {
