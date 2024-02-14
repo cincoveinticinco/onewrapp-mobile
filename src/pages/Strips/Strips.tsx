@@ -10,7 +10,6 @@ import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
-import { search } from 'ionicons/icons';
 
 const BATCH_SIZE = 30;
 const DEBOUNCE_DELAY = 300;
@@ -27,7 +26,7 @@ const Strips: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
 
-  const concatedScenes = useMemo(() => (!offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes]), [offlineScenes]);
+  const concatedScenes = useMemo(() => (!offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
 
   useEffect(() => {
     const newFilteredScenes = () => {
@@ -72,6 +71,7 @@ const Strips: React.FC = () => {
       const filterCriteria = {
         $or: {
           characters: [{ characterName: [searchText] }],
+          extras: [{ extraName: [searchText] }],
           locationName: [searchText],
           setName: [searchText],
           synopsis: [searchText],
