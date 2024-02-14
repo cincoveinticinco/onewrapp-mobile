@@ -91,7 +91,6 @@ const Strips: React.FC = () => {
           intOrExtOption: [searchText],
           dayOrNightOption: [searchText],
           episodeSceneNumber: [searchText]
-          episodeSceneNumber: [searchText]
         },
       };
 
@@ -111,9 +110,6 @@ const Strips: React.FC = () => {
     filterScenesBySearchText(searchText);
   }, [searchText, filterScenesBySearchText]);
 
-  const history = useHistory();
-
-  const handleBack = () => history.push(`/my/projects`);
 
   const history = useHistory();
 
@@ -123,7 +119,6 @@ const Strips: React.FC = () => {
     <MainPagesLayout
       searchText={searchText}
       setSearchText={setSearchText}
-      handleBack={handleBack}
       handleBack={handleBack}
     >
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
