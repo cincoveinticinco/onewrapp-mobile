@@ -3,7 +3,7 @@ import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
 import {
-  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline, chevronBack, chevronBackCircle, chevronBackOutline, caretBackOutline,
+  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline, chevronBack, chevronBackCircle, chevronBackOutline, caretBackOutline, caretForward,
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import useHandleBack from '../../../hooks/useHandleBack';
@@ -77,13 +77,13 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       )}
       {search && (
         <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
-          <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
-            <IonIcon color={searchMode ? 'danger' : 'light'} icon={searchMode ? caretBackOutline : searchOutline} className="toolbar-search-icon toolbar-icon" />
+          <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
+            <IonIcon color={searchMode ? 'danger' : 'light'} icon={searchMode ? caretForward : searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
           <IonInput
             value={searchText}
             onIonInput={handleSearchInput}
-            onIonChange={(e) => setSearchText(e.detail.value!)}
+            // onIonChange={(e) => setSearchText(e.detail.value!)}
             className="toolbar-search-input"
             placeholder=""
             ref={searchRef}

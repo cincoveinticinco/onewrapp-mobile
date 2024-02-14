@@ -10,7 +10,6 @@ import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
-import { search } from 'ionicons/icons';
 
 const BATCH_SIZE = 50;
 
@@ -26,19 +25,20 @@ const Strips: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
 
-  const concatedScenes = [...scenesData.scenes, ...offlineScenes];
+  const concatedScenes = useMemo(() => (!offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
+  
+  const newFilteredScenes = useMemo(() => {
+    if (Object.keys(selectedFilterOptions).length === 0) {
+      return sortScenes(concatedScenes, selectedSortOptions);
+    } else {
+      return sortScenes(applyFilters(concatedScenes, selectedFilterOptions), selectedSortOptions);
+    }
+  }, [concatedScenes, selectedFilterOptions, selectedSortOptions]);
 
   useEffect(() => {
-    const newFilteredScenes = () => {
-      if (Object.keys(selectedFilterOptions).length === 0) {
-        return sortScenes(concatedScenes, selectedSortOptions);
-      } else {
-        return sortScenes(applyFilters(concatedScenes, selectedFilterOptions), selectedSortOptions);
-      }
-    };
-    setFilteredScenes(newFilteredScenes());
+    setFilteredScenes(newFilteredScenes);
     setCurrentBatch(1);
-    setDisplayedScenes(newFilteredScenes().slice(0, BATCH_SIZE));
+    setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
   }, [selectedFilterOptions, selectedSortOptions, offlineScenes, concatedScenes]);

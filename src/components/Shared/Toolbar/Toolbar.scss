@@ -58,7 +58,7 @@
   .toolbar-search-wrapper {
     display: flex;
     width: 30px;
-    transition: all 1s ease-in-out;
+    transition: all .5s ease;
     border-radius: 30px;
     overflow: hidden;
     .toolbar-search-input {
