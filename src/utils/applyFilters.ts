@@ -19,7 +19,9 @@ const applyFilters = (data: any, options: any) => {
 
     return data.filter((dataObject: any) =>
       Object.entries(orOptions).some(([optionKey, optionValues]: [string, any]) =>
-        matchOption(dataObject, optionKey, optionValues)
+        optionValues.flatMap((innerOption: any) =>
+          matchOption(dataObject, optionKey, [innerOption])
+        ).some((result: any) => result)
       )
     );
   } else {

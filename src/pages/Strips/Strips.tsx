@@ -11,7 +11,7 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 20;
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -27,11 +27,20 @@ const Strips: React.FC = () => {
 
   const concatedScenes = useMemo(() => ([...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
   
+
+  const memoizedApplyFilters = useCallback(
+    (data: any, options: any) => {
+      const filteredData = applyFilters(data, options);
+      return filteredData;
+    },
+    []
+  );
+
   const newFilteredScenes = useMemo(() => {
     if (Object.keys(selectedFilterOptions).length === 0) {
       return sortScenes(concatedScenes, selectedSortOptions);
     } else {
-      return sortScenes(applyFilters(concatedScenes, selectedFilterOptions), selectedSortOptions);
+      return sortScenes(memoizedApplyFilters(concatedScenes, selectedFilterOptions), selectedSortOptions);
     }
   }, [concatedScenes, selectedFilterOptions, selectedSortOptions]);
 
