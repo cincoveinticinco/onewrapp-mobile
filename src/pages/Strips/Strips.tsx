@@ -26,7 +26,7 @@ const Strips: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
 
-  const concatedScenes = useMemo(() => (!offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
+  const concatedScenes = [...scenesData.scenes, ...offlineScenes];
 
   useEffect(() => {
     const newFilteredScenes = () => {
@@ -96,9 +96,7 @@ const Strips: React.FC = () => {
   );
 
   useEffect(() => {
-    if(searchText.length > 1) {
-      filterScenesBySearchText(searchText);
-    }
+    filterScenesBySearchText(searchText);
   }, [searchText, filterScenesBySearchText]);
 
   return (
