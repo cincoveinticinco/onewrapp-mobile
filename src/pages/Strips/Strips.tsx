@@ -73,7 +73,7 @@ const Strips: React.FC = () => {
   useEffect(() => {
     contentRef.current?.scrollToTop();
     setCurrentBatch(1);
-  }, [thisPath, newFilteredScenes]);
+  }, [thisPath]);
 
   const filterScenesBySearchText = useCallback(
     (searchText: string) => {
