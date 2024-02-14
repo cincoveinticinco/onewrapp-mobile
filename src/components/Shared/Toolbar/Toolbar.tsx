@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
@@ -32,12 +32,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   search = false,
   addScene = false,
   filter = false,
-  elipse = false,
   sort = false,
   searchMode = false,
   setSearchMode = () => {},
   setSearchText = () => {},
-  searchText = '',
+  searchText,
 }) => {
   const isMobile = useIsMobile();
 
@@ -59,6 +58,10 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   };
 
   const handleBack = useHandleBack();
+
+  useEffect(() => {
+    console.log(searchText);
+  }, [searchText]);
 
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
