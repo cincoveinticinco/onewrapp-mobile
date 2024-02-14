@@ -1,13 +1,5 @@
-import React, {
-  useEffect, useState, Suspense, useContext, useRef,
-} from 'react';
-import {
-  IonButton,
-  IonContent,
-  IonGrid,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-} from '@ionic/react';
+import React, { useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback } from 'react';
+import { IonButton, IonContent, IonGrid, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import './Strips.scss';
 import { useLocation } from 'react-router';
 import scenesData from '../../data/scn_data.json';
@@ -20,6 +12,7 @@ import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 
 const BATCH_SIZE = 30;
+const DEBOUNCE_DELAY = 300;
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -32,23 +25,44 @@ const Strips: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-  const concatedScenes = [...scenesData.scenes, ...offlineScenes];
+  const concatedScenes = useMemo(() => !offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes], [scenesData.scenes, offlineScenes]);
+
+  const filterScenesBySearchText = useCallback(
+    (searchText: string) => {
+      const filterCriteria = {
+        characters: [{ characterName: [searchText] }],
+      };
+      if (searchText.length > 0) {
+        setSelectedFilterOptions(filterCriteria);
+      } else {
+        setSelectedFilterOptions({});
+      }
+    },
+    [setSelectedFilterOptions]
+  );
+
+  const debouncedFilterScenesBySearchText = useRef(
+    debounce(filterScenesBySearchText, DEBOUNCE_DELAY)
+  ).current;
 
   useEffect(() => {
-    const newFilteredScenes = sortScenes(applyFilters((concatedScenes), selectedFilterOptions || {}), selectedSortOptions);
-    setFilteredScenes(newFilteredScenes);
+    debouncedFilterScenesBySearchText(searchText);
+  }, [searchText, debouncedFilterScenesBySearchText]);
+
+  useEffect(() => {
+    const newFilteredScenes = () => {
+      if (Object.keys(selectedFilterOptions).length === 0) {
+        return sortScenes(concatedScenes, selectedSortOptions)
+      } else {
+        return sortScenes(applyFilters(filteredScenes, selectedFilterOptions), selectedSortOptions)
+      }
+    };
+    setFilteredScenes(newFilteredScenes());
     setCurrentBatch(1);
-    setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
+    setDisplayedScenes(newFilteredScenes().slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions, offlineScenes]);
-
-  const filterScenes = (scenes: Scene[], searchText: string) => {
-    return scenes.filter(scene => {
-      const sceneFlatString = `${scene.sceneNumber} ${scene.synopsis} ${scene.locationName} ${scene.intOrExtOption} ${scene.dayOrNightOption} ${scene.scriptDay} ${scene.year} ${scene.episodeNumber} ${scene.sceneNumber} ${scene.intOrExtOption} ${scene.locationName} ${scene.setName} ${scene.dayOrNightOption} ${scene.scriptDay} ${scene.year}`;
-      return sceneFlatString.toLowerCase().includes(searchText.toLowerCase());
-    });
-  };
+  }, [selectedFilterOptions, selectedSortOptions, offlineScenes, filteredScenes, concatedScenes]);
 
   const loadMoreScenes = () => {
     if (currentBatch * BATCH_SIZE >= filteredScenes.length) {
@@ -73,23 +87,8 @@ const Strips: React.FC = () => {
     contentRef.current?.scrollToTop();
   }, [thisPath]);
 
-  useEffect(() => {
-    if(searchText) {
-      const newFilteredScenes = filterScenes(filteredScenes, searchText);
-      setDisplayedScenes(newFilteredScenes);
-    }
-  })
-
-  useEffect(() => {
-    console.log(displayedScenes.length)
-    if(displayedScenes.length < 10) {
-      loadMoreScenes();
-    }
-  }, [displayedScenes]);
-
-
   return (
-    <MainPagesLayout 
+    <MainPagesLayout
       searchText={searchText}
       setSearchText={setSearchText}
     >
@@ -111,8 +110,8 @@ const Strips: React.FC = () => {
               </div>
             ) : (
               <IonGrid className="scenes-grid ion-margin">
-                {displayedScenes.map((scene:any, i: any) => (
-                  <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} searchText={searchText}/>
+                {displayedScenes.map((scene: any, i: any) => (
+                  <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} searchText={searchText} />
                 ))}
                 <IonInfiniteScroll onIonInfinite={handleInfinite} threshold="100px" disabled={isInfiniteDisabled}>
                   <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Loading more scenes..." />
@@ -129,3 +128,15 @@ const Strips: React.FC = () => {
 };
 
 export default Strips;
+
+function debounce(func: Function, delay: number) {
+  let timeoutId: NodeJS.Timeout;
+  return function (...args: any[]) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+}

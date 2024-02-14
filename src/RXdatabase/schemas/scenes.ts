@@ -64,7 +64,7 @@ const sceneSchema = {
       items: {
         type: 'object',
         properties: {
-          categoryName: { type: 'string' }, // UNIQUE
+          categoryName: { type: 'string' },
           characterName: { type: 'string' },
           characterNum: { type: ['string', 'null'] }, /// DIFFERENT FROM MODEL
         },

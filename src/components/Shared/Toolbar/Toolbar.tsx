@@ -77,11 +77,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <IonIcon icon={searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
           <IonInput 
-            value={searchText.toUpperCase()}
-            // onIonInput={(e) => setSearchText(e.detail.value!)}
-            // onIonChange={(e) => setSearchText(e.detail.value!)} 
+            value={searchText}
+            onIonInput={(e) => setSearchText(e.detail.value!)}
+            onIonChange={(e) => setSearchText(e.detail.value!)} 
             className="toolbar-search-input" 
-            placeholder="" 
+            placeholder=""
             ref={searchRef} />
         </div>
       )}
