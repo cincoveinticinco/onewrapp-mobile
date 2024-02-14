@@ -12,7 +12,6 @@ import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 
 const BATCH_SIZE = 30;
-const DEBOUNCE_DELAY = 300;
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -66,9 +65,10 @@ const Strips: React.FC = () => {
     contentRef.current?.scrollToTop();
   }, [thisPath]);
 
-  const debouncedFilterScenesBySearchText = useCallback(
-    debounce((searchText: string) => {
+  const filterScenesBySearchText = useCallback(
+    (searchText: string) => {
       const filterCriteria = {
+        ...selectedFilterOptions,
         $or: {
           characters: [{ characterName: [searchText] }],
           extras: [{ extraName: [searchText] }],
@@ -90,13 +90,13 @@ const Strips: React.FC = () => {
       } else {
         setSelectedFilterOptions({});
       }
-    }, DEBOUNCE_DELAY),
+    },
     [setSelectedFilterOptions]
   );
 
   useEffect(() => {
-    debouncedFilterScenesBySearchText(searchText);
-  }, [searchText, debouncedFilterScenesBySearchText]);
+    filterScenesBySearchText(searchText);
+  }, [searchText, filterScenesBySearchText]);
 
   return (
     <MainPagesLayout
@@ -139,15 +139,3 @@ const Strips: React.FC = () => {
 };
 
 export default Strips;
-
-function debounce(func: Function, delay: number) {
-  let timeoutId: NodeJS.Timeout;
-  return function (...args: any[]) {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func.apply(null, args);
-    }, delay);
-  };
-}

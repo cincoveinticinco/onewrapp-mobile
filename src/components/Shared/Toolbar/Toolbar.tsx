@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useRef } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
@@ -8,6 +8,7 @@ import {
 import './Toolbar.scss';
 import useHandleBack from '../../../hooks/useHandleBack';
 import useIsMobile from '../../../hooks/useIsMobile';
+import { debounce } from 'lodash';
 
 interface ToolbarProps {
   name: string;
@@ -24,7 +25,7 @@ interface ToolbarProps {
   searchText?: string;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
+const Toolbar: React.FC<ToolbarProps> = memo(({
   name,
   menu,
   back = false,
@@ -39,6 +40,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   searchText = '',
 }) => {
   const isMobile = useIsMobile();
+
+  const debouncedSetSearchText = debounce(setSearchText, 300);
+  const handleSearchInput = (e: any) => {
+    debouncedSetSearchText(e.detail.value);
+  };
 
   const searchRef = useRef<HTMLIonInputElement>(null);
 
@@ -56,35 +62,29 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
-      {
-        menu && (
+      {menu && (
         <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
           <IonIcon icon={menuOutline} className="toolbar-icon" />
         </IonButton>
-        )
-      }
+      )}
       <div className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
         <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">{name}</IonTitle>
       </div>
-      {
-        back
-
-        && (
-        <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack} >
+      {back && (
+        <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
           <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" />
         </IonButton>
-        )
-      }
+      )}
       {search && (
         <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
           <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
             <IonIcon color={searchMode ? 'danger' : 'light'} icon={searchMode ? caretBackOutline : searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
-          <IonInput 
+          <IonInput
             value={searchText}
-            onIonInput={(e) => setSearchText(e.detail.value!)}
-            onIonChange={(e) => setSearchText(e.detail.value!)} 
-            className="toolbar-search-input" 
+            onIonInput={handleSearchInput}
+            onIonChange={(e) => setSearchText(e.detail.value!)}
+            className="toolbar-search-input"
             placeholder=""
             ref={searchRef}
             clearInput={true}
@@ -113,6 +113,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
       )} */}
     </IonToolbar>
   );
-};
+});
 
 export default Toolbar;
