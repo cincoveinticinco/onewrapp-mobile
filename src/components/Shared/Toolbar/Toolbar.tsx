@@ -42,7 +42,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
 
-  const debouncedSetSearchText = debounce(setSearchText, 10);
+  const debouncedSetSearchText = debounce(setSearchText, 0);
   const handleSearchInput = (e: any) => {
     debouncedSetSearchText(e.detail.value);
   };
