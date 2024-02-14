@@ -116,7 +116,7 @@ const InputModal: React.FC<InputModalProps> = ({
                     labelPlacement="end"
                     checked={isOptionChecked(option)}
                   >
-                    {isMobile ? truncateString(option.toUpperCase(), 30) : option.toUpperCase()}
+                    <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
                   </IonCheckbox>
                 </div>
               ))}
@@ -134,7 +134,7 @@ const InputModal: React.FC<InputModalProps> = ({
                     checked={isOptionChecked(option)}
                     disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                   >
-                     <HighlightedText text={option} searchTerm={searchText} />
+                      <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
                   </IonCheckbox>
                 </div>
               ))}
