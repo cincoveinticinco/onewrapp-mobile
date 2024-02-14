@@ -27,6 +27,7 @@ const Strips: React.FC = () => {
 
   const concatedScenes = useMemo(() => ([...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
   
+
   const memoizedApplyFilters = useCallback(
     (data: any, options: any) => {
       const filteredData = applyFilters(data, options);
@@ -49,7 +50,7 @@ const Strips: React.FC = () => {
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions]);
+  }, [selectedFilterOptions, selectedSortOptions ]);
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
@@ -72,7 +73,6 @@ const Strips: React.FC = () => {
 
   useEffect(() => {
     contentRef.current?.scrollToTop();
-    setCurrentBatch(1);
   }, [thisPath]);
 
   const filterScenesBySearchText = useCallback(
