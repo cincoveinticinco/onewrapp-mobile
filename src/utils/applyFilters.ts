@@ -14,6 +14,11 @@ const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
 };
 
 const applyFilters = (data: any, options: any) => {
+  // Create episodeSceneNumber temporarily
+  data.forEach((dataObject: any) => {
+    dataObject['episodeSceneNumber'] = `${dataObject.episodeNumber}.${dataObject.sceneNumber}`;
+  });
+
   if ('$or' in options) {
     const orOptions = options['$or'];
 
@@ -25,14 +30,13 @@ const applyFilters = (data: any, options: any) => {
       )
     );
   } else {
+    
     return data.filter((dataObject: any) =>
-    Object.entries(options).every(([optionKey, optionValues]: [string, any]) =>
-      matchOption(dataObject, optionKey, optionValues)
-    )
+      Object.entries(options).every(([optionKey, optionValues]: [string, any]) =>
+        matchOption(dataObject, optionKey, optionValues)
+      )
     );
   }
-
-  
 };
 
 export default applyFilters;

@@ -7,11 +7,11 @@ interface MainPagesLayoutProps {
   children: React.ReactNode
   searchText?: string
   setSearchText?: (searchText: string) => void
+  handleBack?: () => void
 }
 
-const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText }) => {
+const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText, handleBack }) => {
   const [searchMode, setSearchMode] = React.useState(false);
-  const isMobile = useIsMobile();
 
   return (
     <IonPage>
@@ -28,6 +28,7 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText,
           setSearchMode={setSearchMode}
           setSearchText={setSearchText}
           searchText={searchText}
+          handleBack={handleBack}
         />
       </IonHeader>
       {children}

@@ -23,6 +23,7 @@ interface ToolbarProps {
   setSearchMode?: (searchMode: boolean) => void;
   setSearchText?: (searchText: string) => void;
   searchText?: string;
+  handleBack?: () => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -37,6 +38,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   setSearchMode = () => {},
   setSearchText = () => {},
   searchText,
+  handleBack,
 }) => {
   const isMobile = useIsMobile();
 
@@ -57,7 +59,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
     }
   };
 
-  const handleBack = useHandleBack();
 
   useEffect(() => {
     console.log(searchText);

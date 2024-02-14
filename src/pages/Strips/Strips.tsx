@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback } from 'react';
 import { IonButton, IonContent, IonGrid, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import './Strips.scss';
-import { useLocation, useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import scenesData from '../../data/scn_data.json';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
@@ -49,7 +49,7 @@ const Strips: React.FC = () => {
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions ]);
+  }, [selectedFilterOptions, selectedSortOptions]);
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
@@ -71,9 +71,15 @@ const Strips: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('currentBatch', currentBatch);
     contentRef.current?.scrollToTop();
-    setCurrentBatch(0);
-  }, [thisPath]);
+    return () => {
+      setCurrentBatch(1);
+      setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
+      setInfiniteDisabled(false);
+      setScenesReady(true);
+    }
+  }, [thisPath, newFilteredScenes]);
 
   const filterScenesBySearchText = useCallback(
     (searchText: string) => {
@@ -89,6 +95,7 @@ const Strips: React.FC = () => {
           sceneNumber: [searchText],
           intOrExtOption: [searchText],
           dayOrNightOption: [searchText],
+          episodeSceneNumber: [searchText]
         },
       };
 
@@ -108,10 +115,15 @@ const Strips: React.FC = () => {
     filterScenesBySearchText(searchText);
   }, [searchText, filterScenesBySearchText]);
 
+  const history = useHistory();
+
+  const handleBack = () => history.push(`/my/projects`);
+
   return (
     <MainPagesLayout
       searchText={searchText}
       setSearchText={setSearchText}
+      handleBack={handleBack}
     >
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
         <Suspense fallback={<div>Loading...</div>}>
