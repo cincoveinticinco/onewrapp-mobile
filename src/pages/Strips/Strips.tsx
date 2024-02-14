@@ -41,7 +41,7 @@ const Strips: React.FC = () => {
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions, offlineScenes, concatedScenes]);
+  }, [selectedFilterOptions, selectedSortOptions ]);
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
