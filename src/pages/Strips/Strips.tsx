@@ -10,6 +10,7 @@ import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
+import { search } from 'ionicons/icons';
 
 const BATCH_SIZE = 50;
 
@@ -95,7 +96,9 @@ const Strips: React.FC = () => {
   );
 
   useEffect(() => {
-    filterScenesBySearchText(searchText);
+    if(searchText.length > 1) {
+      filterScenesBySearchText(searchText);
+    }
   }, [searchText, filterScenesBySearchText]);
 
   return (
