@@ -10,6 +10,7 @@ import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
+import { search } from 'ionicons/icons';
 
 const BATCH_SIZE = 30;
 const DEBOUNCE_DELAY = 300;
@@ -25,36 +26,15 @@ const Strips: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-  const concatedScenes = useMemo(() => !offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes], [scenesData.scenes, offlineScenes]);
 
-  const filterScenesBySearchText = useCallback(
-    (searchText: string) => {
-      const filterCriteria = {
-        characters: [{ characterName: [searchText] }],
-      };
-      if (searchText.length > 0) {
-        setSelectedFilterOptions(filterCriteria);
-      } else {
-        setSelectedFilterOptions({});
-      }
-    },
-    [setSelectedFilterOptions]
-  );
-
-  const debouncedFilterScenesBySearchText = useRef(
-    debounce(filterScenesBySearchText, DEBOUNCE_DELAY)
-  ).current;
-
-  useEffect(() => {
-    debouncedFilterScenesBySearchText(searchText);
-  }, [searchText, debouncedFilterScenesBySearchText]);
+  const concatedScenes = useMemo(() => (!offlineScenes ? [] : [...scenesData.scenes, ...offlineScenes]), [offlineScenes]);
 
   useEffect(() => {
     const newFilteredScenes = () => {
       if (Object.keys(selectedFilterOptions).length === 0) {
-        return sortScenes(concatedScenes, selectedSortOptions)
+        return sortScenes(concatedScenes, selectedSortOptions);
       } else {
-        return sortScenes(applyFilters(filteredScenes, selectedFilterOptions), selectedSortOptions)
+        return sortScenes(applyFilters(concatedScenes, selectedFilterOptions), selectedSortOptions);
       }
     };
     setFilteredScenes(newFilteredScenes());
@@ -62,7 +42,11 @@ const Strips: React.FC = () => {
     setDisplayedScenes(newFilteredScenes().slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
     setScenesReady(true);
-  }, [selectedFilterOptions, selectedSortOptions, offlineScenes, filteredScenes, concatedScenes]);
+  }, [selectedFilterOptions, selectedSortOptions, offlineScenes, concatedScenes]);
+
+  const resetFilters = () => {
+    setSelectedFilterOptions({});
+  }
 
   const loadMoreScenes = () => {
     if (currentBatch * BATCH_SIZE >= filteredScenes.length) {
@@ -74,18 +58,45 @@ const Strips: React.FC = () => {
     setCurrentBatch(currentBatch + 1);
   };
 
-  const handleInfinite = async (e: CustomEvent<void>) => {
+  const handleInfinite = (e: CustomEvent<void>) => {
     loadMoreScenes();
     (e.target as HTMLIonInfiniteScrollElement).complete();
-  };
-
-  const resetFilters = () => {
-    setSelectedFilterOptions({});
   };
 
   useEffect(() => {
     contentRef.current?.scrollToTop();
   }, [thisPath]);
+
+  const debouncedFilterScenesBySearchText = useCallback(
+    debounce((searchText: string) => {
+      const filterCriteria = {
+        $or: {
+          characters: [{ characterName: [searchText] }],
+          locationName: [searchText],
+          setName: [searchText],
+          synopsis: [searchText],
+          episodeNumber: [searchText],
+          sceneNumber: [searchText],
+          intOrExtOption: [searchText],
+          dayOrNightOption: [searchText],
+        },
+      };
+
+      if (searchText.length > 0) {
+        setSelectedFilterOptions({
+          ...selectedFilterOptions,
+          ...filterCriteria,
+        });
+      } else {
+        setSelectedFilterOptions({});
+      }
+    }, DEBOUNCE_DELAY),
+    [setSelectedFilterOptions]
+  );
+
+  useEffect(() => {
+    debouncedFilterScenesBySearchText(searchText);
+  }, [searchText, debouncedFilterScenesBySearchText]);
 
   return (
     <MainPagesLayout
