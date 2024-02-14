@@ -78,7 +78,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       {search && (
         <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
           <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={toggleSearchMode}>
-            <IonIcon color={searchMode ? 'danger' : 'light'} icon={searchMode ? caretForward : searchOutline} className="toolbar-search-icon toolbar-icon" />
+            <IonIcon color={searchMode ? 'primary' : 'light'} icon={searchMode ? caretForward : searchOutline} className="toolbar-search-icon toolbar-icon" />
           </IonButton>
           <IonInput
             value={searchText}
