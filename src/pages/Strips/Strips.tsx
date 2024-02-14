@@ -73,12 +73,7 @@ const Strips: React.FC = () => {
   useEffect(() => {
     console.log('currentBatch', currentBatch);
     contentRef.current?.scrollToTop();
-    return () => {
-      setCurrentBatch(1);
-      setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
-      setInfiniteDisabled(false);
-      setScenesReady(true);
-    }
+    setCurrentBatch(1);
   }, [thisPath, newFilteredScenes]);
 
   const filterScenesBySearchText = useCallback(
@@ -95,6 +90,7 @@ const Strips: React.FC = () => {
           sceneNumber: [searchText],
           intOrExtOption: [searchText],
           dayOrNightOption: [searchText],
+          episodeSceneNumber: [searchText]
           episodeSceneNumber: [searchText]
         },
       };
@@ -119,10 +115,15 @@ const Strips: React.FC = () => {
 
   const handleBack = () => history.push(`/my/projects`);
 
+  const history = useHistory();
+
+  const handleBack = () => history.push(`/my/projects`);
+
   return (
     <MainPagesLayout
       searchText={searchText}
       setSearchText={setSearchText}
+      handleBack={handleBack}
       handleBack={handleBack}
     >
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
