@@ -1,12 +1,13 @@
 const normalizeString = (string: string) => string ? string.toLowerCase().replace(/ /g, '') : '';
 
 const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
-  if (Array.isArray(dataObject[optionKey])) {
-    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => normalizeString(dataObjectItem[nestedOptionKey]).includes( normalizeString(option))))));
+
+  if (optionValues[0] === null) {
+    return dataObject[optionKey] === null;
   }
 
-  if (optionValues === null) {
-    return dataObject[optionKey] === null;
+  if (Array.isArray(dataObject[optionKey])) {
+    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => normalizeString(dataObjectItem[nestedOptionKey]).includes( normalizeString(option))))));
   }
 
   return dataObject[optionKey] && optionValues.some((option: any) => normalizeString(dataObject[optionKey]).includes(normalizeString(option)));

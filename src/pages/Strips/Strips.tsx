@@ -11,7 +11,7 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 
-const BATCH_SIZE = 30;
+const BATCH_SIZE = 50;
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
