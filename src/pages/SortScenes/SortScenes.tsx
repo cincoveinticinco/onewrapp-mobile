@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import {
   IonContent,
 } from '@ionic/react';
@@ -53,9 +53,9 @@ const SortScenes = () => {
   const history = useHistory();
   useHideTabs();
 
-  const handleBack = () => {
-    history.goBack();
-  };
+  const { id } = useParams<{ id: string }>();
+ 
+  const handleBack = () => history.push(`/my/projects/${id}/strips`);
 
   const onDragEnd = (result: any) => {
     if (!result.destination) {
@@ -86,7 +86,7 @@ const SortScenes = () => {
   });
 
   return (
-    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY">
+    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleBack={handleBack}>
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>

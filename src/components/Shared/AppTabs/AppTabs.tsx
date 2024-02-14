@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  useRouteMatch, Redirect, Route,
+  useRouteMatch, Redirect, Route, useParams,
 } from 'react-router-dom';
 import {
   IonIcon,
@@ -44,9 +44,11 @@ setupIonicReact();
 
 const AppTabs: React.FC = () => {
   // const { loggedIn } = useAuth();
-  const { url } = useRouteMatch();
+
   const isMobile = useIsMobile();
 
+  const url = `/my/projects/:id`;
+  
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
   return (

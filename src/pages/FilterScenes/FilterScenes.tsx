@@ -1,7 +1,7 @@
 import {
   IonCol, IonContent, IonGrid, IonRow,
 } from '@ionic/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
@@ -21,11 +21,14 @@ import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption
 import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
+import { useHistory, useParams } from 'react-router';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { scenes } = scenesData;
-  const handleBack = useHandleBack();
+  const history = useHistory();
+  const { id } = useParams<{ id: string }>();
+  const handleBack = () => history.push(`/my/projects/${id}/strips`);
   const isMobile = useIsMobile();
   useHideTabs();
 
@@ -75,6 +78,7 @@ const FilterScenes = () => {
     <SecondaryPagesLayout
       resetSelections={resetFilters}
       pageTitle="FILTER"
+      handleBack={handleBack}
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">

@@ -44,10 +44,10 @@ const App: React.FC = () => {
                   <Projects />
                 </Route>
                 <Redirect exact path="/" to="/my/projects" />
+                <Route path="/my/projects/:id">
+                  <AppTabs />
+                </Route>
               </IonRouterOutlet>
-              <Route path="/my/projects/:id">
-                <AppTabs />
-              </Route>
             </IonReactRouter>
           </ScenesContextProvider>
         </AuthContext.Provider>

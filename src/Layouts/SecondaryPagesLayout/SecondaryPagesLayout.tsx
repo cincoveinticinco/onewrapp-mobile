@@ -3,18 +3,19 @@ import React from 'react';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import useHandleBack from '../../hooks/useHandleBack';
 import capitalizeString from '../../utils/capitalizeString';
+import { useParams } from 'react-router';
 
 interface SecondaryPagesLayoutProps {
   children: React.ReactNode
   resetSelections?: () => void
   saveOptions?: () => void
   pageTitle: string
+  handleBack: () => void
 }
 
 const SecondaryPagesLayout: React.FC<SecondaryPagesLayoutProps> = ({
-  children, resetSelections, saveOptions, pageTitle,
+  children, resetSelections, saveOptions, pageTitle, handleBack
 }) => {
-  const handleBack = useHandleBack();
 
   return (
     <IonPage color="tertiary">

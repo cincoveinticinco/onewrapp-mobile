@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback } from 'react';
 import { IonButton, IonContent, IonGrid, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import './Strips.scss';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import scenesData from '../../data/scn_data.json';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScenesContext from '../../context/ScenesContext';
@@ -27,7 +27,6 @@ const Strips: React.FC = () => {
 
   const concatedScenes = useMemo(() => ([...scenesData.scenes, ...offlineScenes]), [offlineScenes, scenesData.scenes]);
   
-
   const memoizedApplyFilters = useCallback(
     (data: any, options: any) => {
       const filteredData = applyFilters(data, options);
@@ -73,6 +72,7 @@ const Strips: React.FC = () => {
 
   useEffect(() => {
     contentRef.current?.scrollToTop();
+    setCurrentBatch(0);
   }, [thisPath]);
 
   const filterScenesBySearchText = useCallback(
