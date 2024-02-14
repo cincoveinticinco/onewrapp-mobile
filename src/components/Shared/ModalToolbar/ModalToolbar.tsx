@@ -30,7 +30,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         && (
           <>
             <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
-              BACK
+              CONFIRM
             </IonButton>
           </>
         )

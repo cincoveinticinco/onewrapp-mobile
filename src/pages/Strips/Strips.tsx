@@ -71,7 +71,6 @@ const Strips: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('currentBatch', currentBatch);
     contentRef.current?.scrollToTop();
     setCurrentBatch(1);
   }, [thisPath, newFilteredScenes]);
