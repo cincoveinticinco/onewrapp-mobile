@@ -2,7 +2,7 @@ const normalizeString = (string: string) => string ? string.toLowerCase().replac
 
 const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
   if (Array.isArray(dataObject[optionKey])) {
-    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => dataObject[nestedOptionKey] ? normalizeString(dataObjectItem[nestedOptionKey]).includes( normalizeString(option)) : false))));
+    return optionValues.every((nestedOptionObject: any) => Object.entries(nestedOptionObject).every(([nestedOptionKey, nestedOptionArray]: any[]) => nestedOptionArray.every((option: any) => dataObject[optionKey].some((dataObjectItem: any) => normalizeString(dataObjectItem[nestedOptionKey]).includes( normalizeString(option))))));
   }
 
   if (optionValues === null) {
