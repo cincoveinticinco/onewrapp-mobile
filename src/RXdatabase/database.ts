@@ -34,15 +34,15 @@ export default class AppDataBase {
         storage: getRxStorageDexie(),
       });
 
-      const dbInstence = await createRxDatabase({
+      const dbInstance = await createRxDatabase({
         name: this.dbName,
         storage,
         multiInstance: false,
       });
 
-      await this.setCollections(dbInstence);
+      await this.setCollections(dbInstance);
 
-      return dbInstence;
+      return dbInstance;
     }
 
     private async setCollections(database: any) {
@@ -53,6 +53,9 @@ export default class AppDataBase {
       this.schemaList.forEach((schema) => {
         schemaObject[schema.SchemaName()] = {
           schema: schema.Schema(),
+          migrationStrategies: {
+            1: () => null,
+          },
         };
       });
 
