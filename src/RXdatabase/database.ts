@@ -53,9 +53,6 @@ export default class AppDataBase {
       this.schemaList.forEach((schema) => {
         schemaObject[schema.SchemaName()] = {
           schema: schema.Schema(),
-          migrationStrategies: {
-            1: () => null,
-          },
         };
       });
 
