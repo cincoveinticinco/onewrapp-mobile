@@ -1,7 +1,7 @@
 import {
   IonCol, IonContent, IonGrid, IonRow,
 } from '@ionic/react';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
@@ -10,10 +10,8 @@ import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Sce
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import scenesData from '../../data/scn_data.json';
 import customArraySort from '../../utils/customArraySort';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import useHandleBack from '../../hooks/useHandleBack';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
@@ -22,13 +20,15 @@ import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { useHistory, useParams } from 'react-router';
+import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
+import DatabaseContext from '../../context/database';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
-  const { scenes } = scenesData;
+  const { offlineScenes } = useContext(DatabaseContext);
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const handleBack = () => history.push(`/my/projects/${id}/strips`);
+  const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
   const isMobile = useIsMobile();
   useHideTabs();
 
@@ -56,29 +56,30 @@ const FilterScenes = () => {
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
+    handleConfirm();
   };
 
   const handleCancel = () => {
     resetFilters();
-    handleBack();
+    handleConfirm();
   };
 
-  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'characterName');
-  const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(scenes, 'elements', 'elementName');
-  const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(scenes, 'extras', 'extraName');
-  const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(scenes, 'elements', 'categoryName');
+  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+  const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+  const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+  const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
   const getSortedCharacterNames = customArraySort(getCharactersArray(uniqueCharacterValuesArray));
   const getSortedExtraNames = customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray));
   const getSortedElementNames = sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray));
-  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
-  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
+  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
+  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
   const getSortedElementCategoryNames = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
 
   return (
     <SecondaryPagesLayout
       resetSelections={resetFilters}
       pageTitle="FILTER"
-      handleBack={handleBack}
+      handleConfirm={handleConfirm}
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
@@ -102,7 +103,7 @@ const FilterScenes = () => {
 
           <FilterScenesModalSelect
             filterName="PROTECTION TYPE"
-            listOfFilters={['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER']}
+            listOfFilters={ProtectionTypeEnumArray}
             handleSingleFilterOption={handleSingleFilterOption}
             optionKey="protectionType"
           />
@@ -111,14 +112,14 @@ const FilterScenes = () => {
 
           <FilterScenesModalSelect
             filterName="EPISODES"
-            listOfFilters={getUniqueValuesByKey(scenes, 'episodeNumber').map(String)}
+            listOfFilters={getUniqueValuesByKey(offlineScenes, 'episodeNumber').map(String)}
             handleSingleFilterOption={handleSingleFilterOption}
             optionKey="episodeNumber"
           />
 
           {/* <FilterScenesModalSelect
               filterName='SCENE STATUS'
-              listOfFilters={getUniqueValuesByKey(scenes, 'characters')}
+              listOfFilters={getUniqueValuesByKey(offlineScenes, 'characters')}
             /> */}
 
           <FilterScenesButtonsSelect
@@ -242,14 +243,14 @@ const FilterScenes = () => {
 
           {/* <FilterScenesModalSelect
               filterName='DATE'
-              listOfFilters={getUniqueValuesByKey(scenes, 'date')}
+              listOfFilters={getUniqueValuesByKey(offlineScenes, 'date')}
             /> */}
 
           <IonRow class="ion-flex ion-justify-content-center filter-button-row">
             <IonCol size-xs="12" size-sm="4" size-md="4">
               <OutlinePrimaryButton
                 buttonName="FILTER"
-                onClick={handleBack}
+                onClick={handleConfirm}
               />
             </IonCol>
           </IonRow>

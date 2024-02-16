@@ -55,7 +55,7 @@ const SortScenes = () => {
 
   const { id } = useParams<{ id: string }>();
  
-  const handleBack = () => history.push(`/my/projects/${id}/strips`);
+  const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
 
   const onDragEnd = (result: any) => {
     if (!result.destination) {
@@ -73,6 +73,7 @@ const SortScenes = () => {
     localStorage.removeItem('sortPosibilitiesOrder');
     setSortPosibilities(defaultSortPosibilities);
     setSelectedSortOptions(defaultSortOptions);
+    handleConfirm();
   };
 
   const getCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
@@ -86,7 +87,7 @@ const SortScenes = () => {
   });
 
   return (
-    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleBack={handleBack}>
+    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleConfirm={handleConfirm}>
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -119,7 +120,7 @@ const SortScenes = () => {
             ))}
           </div>
         </div>
-        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleBack} />
+        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleConfirm} />
       </IonContent>
     </SecondaryPagesLayout>
   );

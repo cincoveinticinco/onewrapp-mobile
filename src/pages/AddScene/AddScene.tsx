@@ -6,14 +6,10 @@ import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { useHistory, useParams } from 'react-router';
 
-const AddScene = () => {
+const AddScene: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
 
   useHideTabs();
-
-  const handleSave = () => {
-    console.log('I am saving');
-  };
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
@@ -23,12 +19,12 @@ const AddScene = () => {
 
   const history = useHistory();
 
-  const handleBack = () => history.push(`/my/projects/${id}/strips`);
+  const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
 
   return (
-    <SecondaryPagesLayout saveOptions={handleSave} pageTitle="Add Scene" handleBack={handleBack}>
+    <SecondaryPagesLayout resetSelections={handleConfirm} pageTitle="Add Scene" handleConfirm={handleConfirm}>
       <IonContent color="tertiary" ref={contentRef}>
-        <AddScenesForm scrollToTop={() => scrollToTop()} />
+        <AddScenesForm scrollToTop={() => scrollToTop()} editMode= {false}/>
       </IonContent>
     </SecondaryPagesLayout>
   );
