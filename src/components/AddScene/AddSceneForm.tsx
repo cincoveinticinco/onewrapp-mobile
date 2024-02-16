@@ -219,7 +219,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       />
 
       <SelectItem
-        editMode
+        editMode={editMode}
         label="PROTECTION TYPE"
         disabled={getDisabled()}
         options={protectionTypeValues}
@@ -272,7 +272,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       />
 
       <SelectItem
-        editMode
+        editMode={editMode}
         label="DAY/NIGHT"
         options={dayNightOptions}
         inputName="add-day-night-input"
@@ -283,7 +283,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       />
 
       <SelectItem
-        editMode
+        editMode={editMode}
         label="INT/EXT"
         options={intExtOptions}
         inputName="add-int-ext-input"
@@ -314,7 +314,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       />
 
       <SelectItem
-        editMode
+        editMode={editMode}
         label="LOCATION"
         control={control}
         fieldName="locationName"
@@ -326,7 +326,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       />
 
       <SelectItem
-        editMode
+        editMode={editMode}
         label="SET *"
         control={control}
         fieldName="setName"
