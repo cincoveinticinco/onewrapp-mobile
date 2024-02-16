@@ -10,17 +10,17 @@ interface SecondaryPagesLayoutProps {
   resetSelections?: () => void
   saveOptions?: () => void
   pageTitle: string
-  handleBack: () => void
+  handleConfirm: () => void
 }
 
 const SecondaryPagesLayout: React.FC<SecondaryPagesLayoutProps> = ({
-  children, resetSelections, saveOptions, pageTitle, handleBack
+  children, resetSelections, saveOptions, pageTitle, handleConfirm
 }) => {
 
   return (
     <IonPage color="tertiary">
       <IonHeader>
-        <ModalToolbar toolbarTitle={capitalizeString(pageTitle)} clearOptions={resetSelections} handleBack={handleBack} saveOptions={saveOptions} />
+        <ModalToolbar toolbarTitle={capitalizeString(pageTitle)} clearOptions={resetSelections} handleConfirm={handleConfirm}/>
       </IonHeader>
       {children}
     </IonPage>

@@ -29,7 +29,7 @@ const ModalPagesLayout: React.FC<ModalPagesLayoutProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleBack={closeModal}
+          handleConfirm={closeModal}
           toolbarTitle={modalTitle}
           clearOptions={clearModalSelections}
         />
