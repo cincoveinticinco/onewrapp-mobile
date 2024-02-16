@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   IonCardContent,
   IonItem,
@@ -8,12 +8,12 @@ import { Character } from '../../../interfaces/scenesTypes';
 import InputModal from '../../Shared/InputModal/InputModal';
 import getCharactersArray from '../../../utils/getCharactersArray';
 import customArraySort from '../../../utils/customArraySort';
-import sceneData from '../../../data/scn_data.json';
 import removeNumberAndDot from '../../../utils/removeNumberAndDot';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import applyFilters from '../../../utils/applyFilters';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
+import DatabaseContext from '../../../context/database';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
@@ -26,8 +26,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   selectedCharacters,
   setSelectedCharacters,
 }) => {
-  const { scenes } = sceneData;
-
+  const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
     if (categoryName === 'NO CATEGORY') {
       return character.categoryName === null;
@@ -45,23 +44,27 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   };
 
   const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(
-    scenes,
+    offlineScenes,
     'characters',
     'characterName',
   );
 
   const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
 
-  const getFilteredCharacters = applyFilters(uniqueCharacterValuesArray, {
+  const getFilteredCharacters = applyFilters(
+    uniqueCharacterValuesArray,
+     {
     categoryName: [categoryCriteria],
-  });
+    },
+    false
+    );
 
   const getSortedCharacterNames = customArraySort(
     getCharactersArray(getFilteredCharacters),
   );
 
   const toggleCharacters = (character: string) => {
-    const sceneWithCharacter = scenes.find((scene: any) => scene.characters.some(
+    const sceneWithCharacter = offlineScenes.find((scene: any) => scene.characters.some(
       (char: any) => char.characterName.toUpperCase()
           === removeNumberAndDot(character.toUpperCase()),
     ));

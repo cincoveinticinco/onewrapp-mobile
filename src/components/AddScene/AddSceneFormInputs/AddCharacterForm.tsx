@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   IonGrid,
   IonCard,
@@ -8,12 +8,12 @@ import {
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import scenesData from '../../../data/scn_data.json';
 import { Character } from '../../../interfaces/scenesTypes';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
+import DatabaseContext from '../../../context/database';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -23,6 +23,7 @@ interface AddCategoryFormProps {
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
+  const { offlineScenes } = useContext(DatabaseContext);
 
   useEffect(() => {
     if (!observedCharacters) {
@@ -35,21 +36,22 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
     handleSceneChange(selectedCharacters, 'characters');
   }, [selectedCharacters]);
 
-  const defineCharactersCategories = () => {
-    const { scenes } = scenesData;
-    const characterCategoriesArray: string[] = [];
-    const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(scenes, 'characters', 'categoryName');
-    uniqueCategoryValuesArray.forEach((character: Character) => {
-      const { categoryName } = character;
-      characterCategoriesArray.push(categoryName);
-    });
+  useEffect(() => {
+    const defineCharactersCategories = () => {
+      const characterCategoriesArray: string[] = [];
+      const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
+      uniqueCategoryValuesArray.forEach((character: Character) => {
+        const { categoryName } = character;
+        characterCategoriesArray.push(categoryName);
+      });
 
-    return characterCategoriesArray;
-  };
+      return characterCategoriesArray.sort();
+    };
 
-  const sortedCharactersCategories = defineCharactersCategories().sort();
+    setCharacterCategories(defineCharactersCategories());
+  }, [offlineScenes]);
 
-  const [characterCategories, setCharacterCategories] = useState<string[]>([...sortedCharactersCategories, 'NO CATEGORY']);
+  const [characterCategories, setCharacterCategories] = useState<string[]>([]);
 
   const handleOk = (inputData: { categoryName: string; }) => {
     const inputElement = document.getElementById('add-category-input');
@@ -113,7 +115,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
       {characterCategories.length > 0 && dropDownIsOpen
         && (
         <IonGrid className="add-scene-items-card-grid">
-          {characterCategories.map((category, index) => (
+          {[...characterCategories, 'NO CATEGORY'].map((category, index) => (
             <IonCard
               key={`category-item-${index}-category-${category}`}
               color="tertiary"
