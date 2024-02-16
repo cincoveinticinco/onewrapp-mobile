@@ -13,11 +13,13 @@ const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
   return dataObject[optionKey] && optionValues.some((option: any) => normalizeString(dataObject[optionKey]).includes(normalizeString(option)));
 };
 
-const applyFilters = (data: any, options: any) => {
-  // Create episodeSceneNumber temporarily
-  data.forEach((dataObject: any) => {
-    dataObject['episodeSceneNumber'] = `${dataObject.episodeNumber}.${dataObject.sceneNumber}`;
-  });
+const applyFilters = (data: any, options: any, extraKey = true) => {
+  
+  if(extraKey) {
+    data.forEach((dataObject: any) => {
+      dataObject['episodeSceneNumber'] = `${dataObject.episodeNumber}.${dataObject.sceneNumber}`;
+    });
+  }
 
   if ('$or' in options) {
     const orOptions = options['$or'];
