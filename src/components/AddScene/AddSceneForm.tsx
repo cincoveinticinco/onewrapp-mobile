@@ -18,7 +18,7 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
 import DatabaseContext from '../../context/database';
-import { DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnumArray } from '../../Ennums/ennums';
+import { DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray } from '../../Ennums/ennums';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;
@@ -26,9 +26,10 @@ interface AddScenesFormProps {
 }
 
 const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) => {
+  const { id } = useParams<{ id: string }>();
   const isMobile = useIsMobile();
   const history = useHistory();
-  const projectId = 163;
+  const projectId = parseInt(id);
   const updatedAt = new Date().toISOString();
   const { offlineScenes } = useContext(DatabaseContext);
 
@@ -132,7 +133,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       successMessageSceneToast();
 
       reset();
-      history.push('/my/projects/163/strips');
+      history.push(`/my/projects/${id}/strips`);
     } catch (error: any) {
       console.log('Error inserting scene:', error);
       errorToast(error ? error.message : 'Error inserting scene');
@@ -150,7 +151,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
 
         successMessageSceneToast();
         reset();
-        history.push('/my/projects/163/strips');
+        history.push(`/my/projects/${id}/strips`);
     } catch (error: any) {
         console.log('Error updating scene:', error);
         errorToast(error ? error.message : 'Error updating scene');
@@ -173,7 +174,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
     editMode && sceneId ? updateScene(formData) : insertScene(formData);
   };
 
-  const getDisabled = () => (watch('sceneType') !== 'protection');
+  const getDisabled = () => (watch('sceneType') !== SceneTypeEnum.PROTECTION);
 
   const sceneTypeValidation = (value: any) => (value !== null ? true : 'SCENE TYPE IS REQUIRED *');
 
