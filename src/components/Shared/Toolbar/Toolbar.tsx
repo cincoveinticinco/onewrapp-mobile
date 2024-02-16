@@ -3,7 +3,7 @@ import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
 import {
-  menuOutline, searchOutline, addOutline, funnelOutline, ellipsisHorizontalOutline, swapVerticalOutline, chevronBack, chevronBackCircle, chevronBackOutline, caretBackOutline, caretForward,
+  menuOutline, searchOutline, addOutline, funnelOutline,swapVerticalOutline, chevronBack, caretForward,
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import useHandleBack from '../../../hooks/useHandleBack';
@@ -59,7 +59,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
     }
   };
 
-
   useEffect(() => {
     console.log(searchText);
   }, [searchText]);
@@ -101,12 +100,12 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       {filter && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/01/strips/filters" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/163/strips/filters" className="ion-no-padding toolbar-button">
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
         </IonButton>
       )}
       {sort && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/01/sortscenes" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/163/sortscenes" className="ion-no-padding toolbar-button">
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
