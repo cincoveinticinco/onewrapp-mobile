@@ -16,7 +16,7 @@ import HighlightedText from '../HighlightedText/HighlightedText';
 
 interface InputModalProps {
   optionName: string;
-  listOfOptions: string[];
+  listOfOptions: (string)[];
   modalTrigger: string;
   handleCheckboxToggle: (option: string) => void;
   selectedOptions: string[];
@@ -50,6 +50,11 @@ const InputModal: React.FC<InputModalProps> = ({
       modalRef.current.dismiss();
     }
   };
+
+  const cancelInputModal = () => {
+    clearSelections();
+    closeModal();
+  }
 
   const getListStyles = () => {
     
@@ -86,9 +91,9 @@ const InputModal: React.FC<InputModalProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleBack={closeModal}
+          handleConfirm={closeModal}
           toolbarTitle={optionName}
-          clearOptions={clearSelections}
+          clearOptions={cancelInputModal}
         />
       </IonHeader>
       <IonContent color="tertiary">
