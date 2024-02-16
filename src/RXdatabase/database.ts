@@ -15,7 +15,7 @@ addRxPlugin(RxDBUpdatePlugin);
 addRxPlugin(RxDBLeaderElectionPlugin);
 
 export default class AppDataBase {
-    private dbName = 'onewrappmobiledb'
+    private dbName = 'onewrappdb'
 
     private dbPassword = ''
 
