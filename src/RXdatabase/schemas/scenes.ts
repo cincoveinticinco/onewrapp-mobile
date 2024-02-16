@@ -8,7 +8,7 @@ import {
 
 const sceneSchema = {
   title: 'scene schema',
-  version: 0,
+  version: 1,
   type: 'object',
   primaryKey: 'id',
   properties: {
