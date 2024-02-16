@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
 import AddElementInput from './AddElementInput';
-import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
+import DatabaseContext from '../../../context/database';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -16,8 +16,8 @@ interface AddElementFormProps {
 }
 
 const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements }) => {
+  const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
-  const { scenes } = scenesData;
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
 
   const defineElementsCategories = () => {
     const categoriesArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'elements', 'categoryName');
+    const uniqueValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
 
     uniqueValuesArray.forEach((element) => {
       const { categoryName } = element;
@@ -43,16 +43,12 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
     return categoriesArray;
   };
 
-  const sortedElementsCategories = defineElementsCategories().sort();
+  useEffect(() => {
+    const sortedCategories = defineElementsCategories().sort();
+    setElementsCategories([...sortedCategories, 'NO CATEGORY']);
+  }, [offlineScenes]);
 
-  const [elementsCategories, setElementsCategories] = useState<string[]>([...sortedElementsCategories, 'NO CATEGORY']);
-
-  // const toggleForm = (index: number) => {
-  //   const element = document.getElementById(`element-form-${index}`);
-  //   if (element) {
-  //     element.style.display = element.style.display === 'none' ? 'block' : 'none';
-  //   }
-  // };
+  const [elementsCategories, setElementsCategories] = useState<string[]>([]);
 
   const alertInputs: AlertInput[] = [
     {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   IonCardContent,
   IonItem,
@@ -8,10 +8,10 @@ import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import InputModal from '../../Shared/InputModal/InputModal';
 import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
 import getOptionsArray from '../../../utils/getOptionsArray';
-import sceneData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import applyFilters from '../../../utils/applyFilters';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
+import DatabaseContext from '../../../context/database';
 
 interface AddElementInputProps {
   categoryName: string;
@@ -24,7 +24,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   selectedElements,
   setSelectedElements,
 }) => {
-  const { scenes } = sceneData;
+  const { offlineScenes } = useContext(DatabaseContext); 
 
   const filterSelectedElements = selectedElements.filter((element: any) => {
     if (categoryName === 'NO CATEGORY') {
@@ -38,23 +38,28 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   };
 
   const uniqueElementsValuesArray = getUniqueValuesFromNestedArray(
-    scenes,
+    offlineScenes,
     'elements',
     'elementName',
   );
 
   const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
 
-  const getFilteredElements = applyFilters(uniqueElementsValuesArray, {
+  const getFilteredElements = applyFilters(
+    uniqueElementsValuesArray, 
+    {
     categoryName: [categoryCriteria],
-  });
+    },
+    false
+  );
+  
 
   const getSortedElementNames = sortArrayAlphabeticaly(
     getOptionsArray('elementName', getFilteredElements),
   );
 
   const toggleElement = (element: string) => {
-    const sceneWithElement = scenes.find((scene: any) => scene.elements.some(
+    const sceneWithElement = offlineScenes.find((scene: any) => scene.elements.some(
       (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
     ));
 
