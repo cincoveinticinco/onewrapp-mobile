@@ -132,7 +132,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       successMessageSceneToast();
 
       reset();
-      history.push('/my/project/163/strips');
+      history.push('/my/projects/163/strips');
     } catch (error: any) {
       console.log('Error inserting scene:', error);
       errorToast(error ? error.message : 'Error inserting scene');
