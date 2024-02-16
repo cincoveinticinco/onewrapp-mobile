@@ -67,6 +67,14 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     return 'light';
   };
 
+  const defineHighlightColor = (scene: Scene) => {
+    const sceneColor = defineSceneColor(scene);
+
+    if (sceneColor === 'success' || sceneColor === 'primary') {
+      return 'black';
+    }
+  }
+
   const getExtras = (scene: Scene) => {
     const { extras } = scene;
     let extrasString = '';
@@ -101,31 +109,31 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
             <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
               <IonCol className="scene-card-col-1">
                 <h3 className="scene-card-header">
-                  <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} />
+                  <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </h3>
                 <p className="scene-card-synopsis">
-                  <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} />
+                  <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </p>
                 <p className="scene-card-characters">
                   <strong>CHARACTERS:</strong>
                   {' '}
-                  <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} />
+                  <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                   <br />
                   <strong>EXTRAS: </strong>
                   {' '}
-                  <HighlightedText text={getExtras(scene)} searchTerm={searchText} />
+                  <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </p>
               </IonCol>
               <IonCol className="scene-card-col-2">
                 <p className="ion-no-margin">
                   <strong>P: </strong>
                   {' '}
-                  <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} />
+                  <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </p>
                 <p className="ion-no-margin">
                   <strong>M: </strong>
                   {' '}
-                  <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} />
+                  <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </p>
               </IonCol>
               <IonCol className="scene-card-col-3 center-flex-row">
