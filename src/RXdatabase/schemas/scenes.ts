@@ -17,7 +17,7 @@ const sceneSchema = {
       maxLength: 250,
     },
     projectId: {
-      type: 'string',
+      type: 'number',
     },
     episodeNumber: {
       type: 'string',
@@ -110,8 +110,9 @@ const sceneSchema = {
       items: {
         type: 'object',
         properties: {
-          email: { type: 'string' },
-          note: { type: 'string' },
+          email: { type: ['string', 'null'] },
+          note: { type: ['string', 'null' ]},
+          updatedAt: { type: ['string', 'null' ]},
         },
       },
     },
