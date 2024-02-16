@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
 import AddExtraInput from './AddExtraInput';
-import scenesData from '../../../data/scn_data.json';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import { Extra } from '../../../interfaces/scenesTypes';
+import DatabaseContext from '../../../context/database';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -17,9 +17,10 @@ interface AddExtraFormProps {
 }
 
 const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras }) => {
-  const { scenes } = scenesData;
+  const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
+
   useEffect(() => {
     if (!observedExtras) {
       setSelectedExtras([]);
@@ -33,11 +34,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
 
   const defineExtrasCategories = () => {
     const categoriesArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(scenes, 'extras', 'categoryName');
+    const uniqueValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName');
 
     uniqueValuesArray.forEach((extra) => {
       const { categoryName } = extra;
-      if (categoryName) {
+      if (categoryName && !categoriesArray.includes(categoryName)) {
         categoriesArray.push(categoryName);
       }
     });
@@ -45,20 +46,21 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
     return categoriesArray;
   };
 
-  const sortedExtrasCategories = defineExtrasCategories().sort();
+  useEffect(() => {
+    const sortedCategories = defineExtrasCategories().sort();
+    setSelectedCategories([...sortedCategories, 'NO CATEGORY']);
+  }, [offlineScenes]);
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([...sortedExtrasCategories, 'NO CATEGORY']);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // const toggleForm = (index: number) => {
-  //   const element = document.getElementById(`extra-form-${index}`);
-  //   if (element) {
-  //     if (element.style.display === 'none') {
-  //       element.style.display = 'block';
-  //     } else {
-  //       element.style.display = 'none';
-  //     }
-  //   }
-  // };
+  const alertInputs: AlertInput[] = [
+    {
+      name: 'categoryName',
+      type: 'text',
+      placeholder: 'Category Name',
+      id: 'add-extra-category-input',
+    },
+  ];
 
   const handleOk = (inputData: { categoryName: string }) => {
     const inputElement = document.getElementById('add-extra-category-input');
@@ -69,15 +71,6 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
       (inputElement as HTMLInputElement).value = '';
     }
   };
-
-  const alertInputs: AlertInput[] = [
-    {
-      name: 'categoryName',
-      type: 'text',
-      placeholder: 'Category Name',
-      id: 'add-extra-category-input',
-    },
-  ];
 
   const handleDropDown = () => {
     setDropDownIsOpen(!dropDownIsOpen);
