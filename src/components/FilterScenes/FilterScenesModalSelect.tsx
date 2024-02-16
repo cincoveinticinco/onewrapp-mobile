@@ -76,7 +76,14 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     });
   };
 
-  const handleBack = () => {
+  const cancelInputModal = () => {
+    clearFilterOptions();
+    if (modalRef.current) {
+      modalRef.current.dismiss();
+    }
+  }
+
+  const handleConfirm = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
@@ -147,7 +154,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         className="filter-items-modal"
       >
         <IonHeader>
-          <ModalToolbar handleBack={handleBack} toolbarTitle={filterName} clearOptions={clearFilterOptions} />
+          <ModalToolbar handleConfirm={handleConfirm} toolbarTitle={filterName} clearOptions={cancelInputModal} />
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
@@ -207,11 +214,11 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               }
               <OutlinePrimaryButton
                 buttonName="CONFIRM"
-                onClick={handleBack}
+                onClick={handleConfirm}
                 className="ion-margin"
                 style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
               />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleBack} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
+              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleConfirm} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
             </>
           }
         </IonContent>
@@ -219,12 +226,5 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     </IonRow>
   );
 };
-
-// Nuevo componente para resaltar el texto que coincide con la búsqueda
-
-interface HighlightedTextProps {
-  text: string;
-  searchTerm: string;
-}
 
 export default FilterScenesModalSelect;
