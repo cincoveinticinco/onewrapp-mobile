@@ -14,8 +14,8 @@ export enum ProtectionTypeEnum {
 }
 
 export enum IntOrExtOptionEnum {
-  INT = 'INT',
-  EXT = 'EXT',
+  INT = 'INTERIOR',
+  EXT = 'EXTERIOR',
   INT_EXT = 'INT/EXT',
   EXT_INT = 'EXT/INT',
 }
