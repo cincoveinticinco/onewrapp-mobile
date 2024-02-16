@@ -108,13 +108,13 @@ const Strips: React.FC = () => {
 
   const history = useHistory();
 
-  const handleConfirm = () => history.push(`/my/projects`);
+  const handleBack= () => history.push(`/my/projects`);
 
   return (
     <MainPagesLayout
       searchText={searchText}
       setSearchText={setSearchText}
-      handleConfirm={handleConfirm}
+      handleBack={handleBack}
     >
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
         <Suspense fallback={<div>Loading scenes...</div>}>
