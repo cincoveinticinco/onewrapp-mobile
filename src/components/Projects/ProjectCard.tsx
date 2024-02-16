@@ -5,7 +5,7 @@ import {
 import './ProjectCard.css';
 
 interface Project {
-  id: string;
+  id: number;
   projName: string;
   projAbreviation: string;
   season: number | null;
