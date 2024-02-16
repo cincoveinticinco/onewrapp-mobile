@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
-import { IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon } from '@ionic/react';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast } from '@ionic/react';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, pencilOutline } from 'ionicons/icons';
+import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import { FiTrash } from "react-icons/fi";
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import DatabaseContext from '../../context/database';
 
 interface SceneCardProps {
   scene: Scene;
@@ -15,6 +16,21 @@ interface SceneCardProps {
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
+  const { oneWrapDb } = useContext(DatabaseContext);
+
+  const [presentToast] = useIonToast();
+
+  const successMessageSceneToast = (message: string) => {
+    presentToast({
+      message: message,
+      duration: 2000,
+      icon: checkmarkCircle,
+      position: 'top',
+      cssClass: 'success-toast',
+    });
+  };
+
+
   const interior = IntOrExtOptionEnum.INT;
   const exterior = IntOrExtOptionEnum.EXT;
   const intExt = IntOrExtOptionEnum.INT_EXT;
@@ -111,6 +127,16 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     return pageFraction;
   };
 
+  const deleteScene = async () => {
+    try {
+      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.id } }).exec();
+      await sceneToDelete?.remove();
+      successMessageSceneToast('Scene deleted successfully');
+    } catch (error) {
+      console.error('Error deleting scene:', error);
+    }
+  }
+
   return (
     <IonRow className = "scene-card-row">
       <IonItemSliding className='ion-no-margin ion-no-padding'>
@@ -160,7 +186,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
             <IonButton fill='clear'>
               <IonIcon icon={banOutline} className='button-icon ban'/>
             </IonButton>
-            <IonButton fill='clear'>
+            <IonButton fill='clear' onClick={deleteScene}>
               <FiTrash className='button-icon trash'/>
             </IonButton>
           </div>
