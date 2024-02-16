@@ -12,6 +12,16 @@
     padding: 0px;
     font-size: var(--525-big-title-size);
   }
+
+  .cancel-button {
+    
+    &:active,
+    &:hover,
+    &:focus,
+    &::after {
+      --ion-color-base: var(--ion-color-danger) !important;
+    }
+  }
 }
 
 @media (min-width: 500px) {

@@ -8,7 +8,7 @@ import './ModalToolbar.scss';
 
 interface ModalToolbarProps {
   clearOptions?: () => void
-  handleBack: () => void
+  handleConfirm: () => void
   toolbarTitle: string
   saveOptions?: () => void
 }
@@ -16,7 +16,7 @@ interface ModalToolbarProps {
 const ModalToolbar: React.FC<ModalToolbarProps> = (
   {
     clearOptions,
-    handleBack,
+    handleConfirm,
     toolbarTitle,
     saveOptions,
   },
@@ -25,11 +25,9 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
 
   return (
     <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
-      {
-        !isMobile
-        && (
+      { (
           <>
-            <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
+            <IonButton fill="clear" color="primary" slot="end" onClick={handleConfirm}>
               CONFIRM
             </IonButton>
           </>
@@ -39,7 +37,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
       {
         isMobile
         && (
-          <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
+          <IonButton fill="clear" color="primary" slot="start" onClick={handleConfirm}>
             <IonIcon icon={chevronBack} color="light" />
           </IonButton>
         )
@@ -49,15 +47,17 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
       </IonTitle>
 
       {
+        !isMobile &&
         clearOptions
         && (
         <IonButton
           fill="clear"
           color="primary"
-          slot="end"
+          slot= {isMobile ? 'end' : 'start'}
           onClick={clearOptions}
+          className='cancel-button'
         >
-          RESET
+          CANCEL
         </IonButton>
         )
       }
