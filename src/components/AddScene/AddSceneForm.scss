@@ -29,24 +29,29 @@ label {
     color: var(--ion-color-danger)
   }
 
-  #add-scene-type-input {
+  #add-scene-type-input,
+  #edit-add-scene-type-input {
     grid-column: 1 / 7;
     position: relative;
   }
 
-  #add-protection-type-input {
+  #add-protection-type-input,
+  #edit-add-protection-type-input {
     grid-column: 7 / 13;
   }
 
-  #add-day-night-input {
+  #add-day-night-input,
+  #edit-add-day-night-input {
     grid-column: 1 / 7;
   }
 
-  #add-episode-input {
+  #add-episode-input,
+  #edit-add-episode-input {
     grid-column: 1 / 4;
   }
 
-  #add-scene-number-input {
+  #add-scene-number-input,
+  #edit-add-scene-number-input {
     grid-column: 4 / 7;
   }
 
@@ -58,7 +63,8 @@ label {
     grid-column: 10 / 13;
   }
 
-  #add-int-ext-input {
+  #add-int-ext-input,
+  #edit-add-int-ext-input {
     grid-column: 7 / 13;
   }
 
@@ -81,7 +87,8 @@ label {
     }
   }
 
-  #add-synopsis-input {
+  #add-synopsis-input,
+  #edit-synopsis-input {
     grid-column: 1 / 13;
 
     .native-input {
@@ -144,11 +151,13 @@ label {
     padding-bottom: 30%;
   }
 
-  #add-location-input {
+  #add-location-input,
+  #edit-add-location-input {
     grid-column: 7 / 13;
   }
 
-  #add-set-input {
+  #add-set-input,
+  #edit-add-set-input {
     grid-column: 1 / 13;
   }
 
@@ -266,30 +275,36 @@ label {
       grid-template-columns: 1fr 1fr;
     }
 
-    #add-scene-type-input {
+    #add-scene-type-input,
+    #edit-scene-type-input {
       grid-column: 1 / 7;
       position: relative;
       display: flex !important;
       flex-direction: column !important;
     }
 
-    #add-protection-type-input {
+    #add-protection-type-input,
+    #edit-protection-type-input {
       grid-column: 7 / 13;
     }
 
-    #add-day-night-input {
+    #add-day-night-input,
+    #edit-add-day-night-input {
       grid-column: 1 / 7;
     }
 
-    #add-episode-input {
+    #add-episode-input,
+    #edit-add-episode-input {
       grid-column: 1 / 4;
     }
 
-    #add-scene-number-input {
+    #add-scene-number-input,
+    #edit-add-scene-number-input {
       grid-column: 4 / 7;
     }
 
-    #add-script-day-input {
+    #add-script-day-input,
+    #edit-script-day-input {
       grid-column: 7 / 10;
     }
 
@@ -330,11 +345,13 @@ label {
       margin: auto;
     }
 
-    #add-location-input {
+    #add-location-input,
+    #edit-add-location-input {
       grid-column: 1 / 7;
     }
 
-    #add-set-input {
+    #add-set-input,
+    #edit-add-set-input {
       grid-column: 7 / 13;
     }
 

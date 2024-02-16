@@ -17,12 +17,14 @@ interface AddElementInputProps {
   categoryName: string;
   selectedElements: any;
   setSelectedElements: (value: any) => void;
+  modalTrigger: string;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
   categoryName,
   selectedElements,
   setSelectedElements,
+  modalTrigger,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext); 
 
@@ -116,7 +118,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       <InputModal
         optionName="Elements"
         listOfOptions={getSortedElementNames}
-        modalTrigger={`open-element-options-modal-${categoryName}`}
+        modalTrigger={modalTrigger}
         handleCheckboxToggle={toggleElement}
         selectedOptions={selectedElements.map((element: any) => element.elementName)}
         clearSelections={clearSelections}

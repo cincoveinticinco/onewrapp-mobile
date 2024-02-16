@@ -14,9 +14,10 @@ import DatabaseContext from '../../../context/database';
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedExtras: Extra[];
+  editMode?: boolean;
 }
 
-const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras }) => {
+const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras, editMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
@@ -84,7 +85,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id="extras-category-alert"
+            id={editMode ? 'open-extras-category-alert-edit' : 'open-extras-category-alert'}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
@@ -93,7 +94,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger="extras-category-alert"
+        trigger={editMode ? 'open-extras-category-alert-edit' : 'open-extras-category-alert'}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -128,7 +129,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
                   </p>
                   <div className="category-buttons-wrapper">
                     <AddButton
-                      id={`open-extras-options-modal-${category}`}
+                      id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
                     />
                   </div>
                 </div>
@@ -137,6 +138,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
                 categoryName={category}
                 selectedExtras={selectedExtras}
                 setSelectedExtras={setSelectedExtras}
+                modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
               />
             </IonCard>
           ))}

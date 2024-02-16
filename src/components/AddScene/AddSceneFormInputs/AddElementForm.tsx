@@ -13,9 +13,10 @@ import DatabaseContext from '../../../context/database';
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedElements: Element[];
+  editMode?: boolean;
 }
 
-const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements }) => {
+const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements, editMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
@@ -80,7 +81,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id="elements-categories-alert"
+            id={editMode ? 'open-element-options-modal-edit' : 'open-element-options-modal'}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
@@ -90,7 +91,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger="elements-categories-alert"
+        trigger={editMode ? 'open-element-options-modal-edit' : 'open-element-options-modal'}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -125,7 +126,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
 
                   <div className="category-buttons-wrapper">
                     <AddButton
-                      id={`open-element-options-modal-${category}`}
+                      id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
                     />
                   </div>
 
@@ -135,6 +136,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
                 categoryName={category}
                 selectedElements={selectedElements}
                 setSelectedElements={setSelectedElements}
+                modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
               />
             </IonCard>
           ))}

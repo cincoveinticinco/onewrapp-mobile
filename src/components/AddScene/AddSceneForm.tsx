@@ -351,16 +351,19 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       <AddCharacterForm
         handleSceneChange={handleChange}
         observedCharacters={watch('characters')}
+        editMode={editMode}
       />
 
       <AddElementForm
         handleSceneChange={handleChange}
         observedElements={watch('elements')}
+        editMode={editMode}
       />
 
       <AddExtraForm
         handleSceneChange={handleChange}
         observedExtras={watch('extras')}
+        editMode={editMode}
       />
 
       {/* <div color="tertiary">

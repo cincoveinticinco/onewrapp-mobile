@@ -19,12 +19,14 @@ interface AddCharacterInputProps {
   categoryName: string | null;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
+  modalTrigger: string;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   selectedCharacters,
   setSelectedCharacters,
+  modalTrigger
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
@@ -126,7 +128,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       <InputModal
         optionName={`Characters (  ${categoryName}  )`}
         listOfOptions={getSortedCharacterNames}
-        modalTrigger={`open-characters-options-modal-${categoryName}`}
+        modalTrigger={modalTrigger}
         handleCheckboxToggle={toggleCharacters}
         selectedOptions={selectedCharacters.map(
           (character: any) => character.characterName,

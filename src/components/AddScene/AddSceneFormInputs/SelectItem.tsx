@@ -49,7 +49,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   };
 
   return (
-    <IonItem color="tertiary" id={inputName}>
+    <IonItem color="tertiary" id={editMode ? `edit-${inputName}` : inputName}>
       <Controller
         control={control}
         name={fieldName}
@@ -77,7 +77,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
       <InputModal
         optionName={label}
         listOfOptions={options}
-        modalTrigger={inputName}
+        modalTrigger={editMode ? `edit-${inputName}` : inputName}
         handleCheckboxToggle={handleSelectCheckbox}
         selectedOptions={[watchValue(fieldName)]}
         clearSelections={() => setValue(fieldName, null)}

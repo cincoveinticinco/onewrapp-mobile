@@ -16,10 +16,11 @@ interface AddExtraInputProps {
   categoryName: string;
   selectedExtras: any;
   setSelectedExtras: (value: any) => void;
+  modalTrigger: string;
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, selectedExtras, setSelectedExtras,
+  categoryName, selectedExtras, setSelectedExtras, modalTrigger
 }) => {
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
   const { offlineScenes } = useContext(DatabaseContext)
@@ -87,7 +88,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
       <InputModal
         optionName={`Extras (  ${categoryName}  )`}
         listOfOptions={getSortedExtrasNames}
-        modalTrigger={`open-extras-options-modal-${categoryName}`}
+        modalTrigger={modalTrigger}
         handleCheckboxToggle={toggleExtra}
         selectedOptions={selectedExtras.map((extra: any) => extra.extraName)}
         clearSelections={clearSelections}

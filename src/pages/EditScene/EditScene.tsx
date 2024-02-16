@@ -21,7 +21,7 @@ const EditScene: React.FC = () => {
   const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
 
   return (
-    <SecondaryPagesLayout resetSelections={handleConfirm} pageTitle="Add Scene" handleConfirm={handleConfirm}>
+    <SecondaryPagesLayout resetSelections={handleConfirm} pageTitle="Edit Scene" handleConfirm={handleConfirm}>
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm scrollToTop={() => scrollToTop()} editMode= {true}/>
       </IonContent>

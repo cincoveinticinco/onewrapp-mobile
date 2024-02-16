@@ -18,9 +18,10 @@ import DatabaseContext from '../../../context/database';
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedCharacters: Character[];
+  editMode?: boolean;
 }
 
-const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters }) => {
+const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters, editMode }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
@@ -84,7 +85,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id="characters-category-alert"
+            id={editMode ? 'characters-categories-alert-edit' : 'characters-categories-alert'}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
@@ -94,7 +95,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger="characters-category-alert"
+        trigger={editMode ? 'characters-categories-alert-edit' : 'characters-categories-alert'}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -128,7 +129,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
                   </p>
                   <div className="category-buttons-wrapper">
                     <AddButton
-                      id={`open-characters-options-modal-${category}`}
+                      id={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
                     />
                   </div>
                 </div>
@@ -137,6 +138,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
                 categoryName={category}
                 selectedCharacters={selectedCharacters}
                 setSelectedCharacters={setSelectedCharacters}
+                modalTrigger={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
               />
             </IonCard>
           ))}
