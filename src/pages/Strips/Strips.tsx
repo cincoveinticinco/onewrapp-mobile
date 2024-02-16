@@ -9,6 +9,7 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
+import { of } from 'rxjs';
 
 const BATCH_SIZE = 15;
 
@@ -46,8 +47,8 @@ const Strips: React.FC = () => {
     setCurrentBatch(1);
     setDisplayedScenes(newFilteredScenes.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
-    setLoading(false); // Marca la carga como completada
-  }, [selectedFilterOptions, selectedSortOptions, newFilteredScenes]);
+    offlineScenes.length > 0 ? setLoading(false) : setLoading(true);
+  }, [selectedFilterOptions, selectedSortOptions, newFilteredScenes ]);
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
@@ -117,7 +118,7 @@ const Strips: React.FC = () => {
       handleBack={handleBack}
     >
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
-        <Suspense fallback={<div>Loading scenes...</div>}>
+        <Suspense fallback={<div>Loading scene...</div>}>
           {loading ? (
             <div>Loading scenes...</div>
           ) : error ? (
