@@ -23,6 +23,7 @@ interface InputModalProps {
   clearSelections: () => void;
   multipleSelections?: boolean;
   canCreateNew?: boolean;
+  editMode?: boolean;
 }
 
 const InputModal: React.FC<InputModalProps> = ({
@@ -34,6 +35,7 @@ const InputModal: React.FC<InputModalProps> = ({
   clearSelections,
   multipleSelections = true,
   canCreateNew = false,
+  editMode = false,
 }) => {
   const [searchText, setSearchText] = useState('');
 
@@ -93,7 +95,7 @@ const InputModal: React.FC<InputModalProps> = ({
         <ModalToolbar
           handleConfirm={closeModal}
           toolbarTitle={optionName}
-          clearOptions={cancelInputModal}
+          clearOptions={editMode ? closeModal : cancelInputModal}
         />
       </IonHeader>
       <IonContent color="tertiary">

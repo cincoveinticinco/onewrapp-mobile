@@ -15,6 +15,7 @@ interface SelectItemProps {
   validate?: any;
   watchValue: any;
   canCreateNew?: boolean;
+  editMode?: boolean;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -29,6 +30,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   validate = () => true,
   watchValue,
   canCreateNew,
+  editMode
 }) => {
   const [showError, setShowError] = React.useState(false);
 
@@ -81,6 +83,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
         clearSelections={() => setValue(fieldName, null)}
         multipleSelections={false}
         canCreateNew={canCreateNew}
+        editMode={editMode}
       />
     </IonItem>
   );
