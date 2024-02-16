@@ -4,9 +4,10 @@ import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, eyeOutline, pencilOutline } from 'ionicons/icons';
+import { banOutline, pencilOutline } from 'ionicons/icons';
 import { FiTrash } from "react-icons/fi";
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import { DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum } from '../../Ennums/ennums';
 
 interface SceneCardProps {
   scene: Scene;
@@ -14,6 +15,15 @@ interface SceneCardProps {
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
+  const interior = IntOrExtOptionEnum.INT;
+  const exterior = IntOrExtOptionEnum.EXT;
+  const intExt = IntOrExtOptionEnum.INT_EXT;
+  const extInt = IntOrExtOptionEnum.EXT_INT;
+  const protectionType = SceneTypeEnum.PROTECTION;
+  const sceneType = SceneTypeEnum.SCENE;
+  const day = DayOrNightOptionEnum.DAY;
+  const night = DayOrNightOptionEnum.NIGHT;
+
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
@@ -46,20 +56,20 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
   };
 
   const defineSceneColor = (scene: Scene) => {
-    const intOrExt: any = ['EXTERIOR', 'INT/EXT', 'EXT/INT'];
+    const intOrExt: any = [exterior, intExt, extInt];
 
-    if (scene.sceneType === 'protection') {
+    if (scene.sceneType === protectionType) {
       return 'rose';
-    } if (scene.sceneType === 'scene') {
+    } if (scene.sceneType === sceneType) {
       if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
         return 'dark';
-      } if (scene.intOrExtOption === 'Interior' && scene.dayOrNightOption === 'Day') {
+      } if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
         return 'light';
-      } if (scene.intOrExtOption === 'Interior' && scene.dayOrNightOption === 'Night') {
+      } if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
         return 'success';
-      } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Day') {
+      } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
         return 'yellow';
-      } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === 'Night') {
+      } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
         return 'primary';
       }
     }
