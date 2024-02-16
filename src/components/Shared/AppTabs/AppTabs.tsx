@@ -57,6 +57,9 @@ const AppTabs: React.FC = () => {
         <Route exact path={`${url}/addscene`}>
           <AddScene />
         </Route>
+        <Route exact path={`${url}/editscene/:sceneId`}>
+          <AddScene />
+        </Route>
         <Route exact path={`${url}/sortscenes`}>
           <SortScenes />
         </Route>
