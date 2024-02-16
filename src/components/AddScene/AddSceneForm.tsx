@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { checkmarkCircle, closeCircle } from 'ionicons/icons';
-import { v4 as uuidv4 } from 'uuid';
 import { useIonToast } from '@ionic/react';
 import InputItem from './AddSceneFormInputs/InputItem';
 import SelectItem from './AddSceneFormInputs/SelectItem';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
-import scenesData from '../../data/scn_data.json';
 import './AddSceneForm.scss';
 import useIsMobile from '../../hooks/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
@@ -20,53 +18,21 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
 import DatabaseContext from '../../context/database';
+import { DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnumArray } from '../../Ennums/ennums';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;
+  editMode?: boolean;
 }
 
-const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
+const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) => {
   const isMobile = useIsMobile();
   const history = useHistory();
-  const projectId = '01';
+  const projectId = 163;
   const updatedAt = new Date().toISOString();
+  const { offlineScenes } = useContext(DatabaseContext);
 
-  const { scenes } = scenesData;
-
-  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'locationName'));
-  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(scenes, 'setName'));
-
-  const sceneTypeOptions = ['scene', 'protection'];
-  const protectionTypeValues = ['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER'];
-  const dayNightOptions = ['day', 'night', 'sunset', 'sunrise'];
-  const intExtOptions = ['INT', 'EXT', 'INT/EXT', 'EXT/INT'];
-  const locationOptions = getSortedLocationNames;
-  const setOptions = getSortedSetNames;
-
-  const { oneWrapDb } = useContext(DatabaseContext);
-  const [presentToast] = useIonToast();
-
-  const createdSceneToast = () => {
-    presentToast({
-      message: 'Scene Successfully Created',
-      duration: 2000,
-      icon: checkmarkCircle,
-      position: 'top',
-      cssClass: 'success-toast',
-    });
-  };
-
-  const errorToast = (errorMessage: string) => {
-    presentToast({
-      message: errorMessage,
-      duration: 2000,
-      position: 'top',
-      icon: closeCircle,
-      cssClass: 'error-toast',
-    });
-  };
-
-  const [formData, _]: any[] = useState({
+  const sceneDefaultValues = {
     projectId,
     id: null,
     episodeNumber: null,
@@ -88,7 +54,51 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
     elements: null,
     notes: [],
     updatedAt,
-  });
+  }
+
+  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
+  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
+
+  const sceneTypeOptions =  SceneTypeEnumArray;
+  const protectionTypeValues = ProtectionTypeEnumArray;
+  const dayNightOptions = DayOrNightOptionEnumArray;
+  const intExtOptions = IntOrExtOptionEnumArray;
+  const locationOptions = getSortedLocationNames;
+  const setOptions = getSortedSetNames;
+
+  const { oneWrapDb } = useContext(DatabaseContext);
+  const [presentToast] = useIonToast();
+  const { sceneId }: any = useParams()
+
+  const successMessageSceneToast = () => {
+    presentToast({
+      message: 'Scene Successfully Created',
+      duration: 2000,
+      icon: checkmarkCircle,
+      position: 'top',
+      cssClass: 'success-toast',
+    });
+  };
+
+  const errorToast = (errorMessage: string) => {
+    presentToast({
+      message: errorMessage,
+      duration: 2000,
+      position: 'top',
+      icon: closeCircle,
+      cssClass: 'error-toast',
+    });
+  };
+
+  const getExistingScene = () => {
+    return sceneDefaultValues
+  }
+
+  const [formData, _]: any[] = useState(
+    editMode && sceneId ? 
+    sceneDefaultValues :
+    getExistingScene()
+  );
 
   const {
     control,
@@ -97,12 +107,11 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
     reset,
     setValue,
     watch,
-
   } = useForm({ defaultValues: formData });
 
   const insertScene = async (formData: any) => {
     try {
-      formData.id = uuidv4();
+      formData.id = `${watch('projectId')}.${watch('episodeNumber')}.${watch('sceneNumber')}`;
 
       const sceneExists = await oneWrapDb?.scenes.findOne({
         selector: {
@@ -120,10 +129,10 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
 
       console.log('Inserting scene:', formData);
       await oneWrapDb?.scenes.insert(formData);
-      createdSceneToast();
+      successMessageSceneToast();
 
       reset();
-      history.push('/my/projects/01/strips');
+      history.push('/my/project/163/strips');
     } catch (error: any) {
       console.log('Error inserting scene:', error);
       errorToast(error ? error.message : 'Error inserting scene');
@@ -132,6 +141,25 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
 
     scrollToTop();
   };
+
+  const updateScene = async (formData: any) => {
+    try {
+        console.log('Updating scene:', formData);
+
+        await oneWrapDb?.scenes.upsert(formData);
+
+        successMessageSceneToast();
+        reset();
+        history.push('/my/projects/163/strips');
+    } catch (error: any) {
+        console.log('Error updating scene:', error);
+        errorToast(error ? error.message : 'Error updating scene');
+        scrollToTop();
+    }
+
+    scrollToTop();
+};
+
 
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {
@@ -142,7 +170,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
   };
 
   const onSubmit = (formData: any): void => {
-    insertScene(formData);
+    editMode && sceneId ? updateScene(formData) : insertScene(formData);
   };
 
   const getDisabled = () => (watch('sceneType') !== 'protection');
@@ -326,7 +354,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop }) => {
       </div> */}
 
       <OutlinePrimaryButton
-        buttonName="SAVE"
+        buttonName={editMode ? 'UPDATE SCENE' : 'ADD SCENE'}
         className="submit-scene-button"
         type="submit"
         onClick={() => {
