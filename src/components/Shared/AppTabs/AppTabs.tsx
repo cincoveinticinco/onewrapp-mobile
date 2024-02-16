@@ -39,6 +39,7 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './AppTabs.scss';
 import useIsMobile from '../../../hooks/useIsMobile';
+import EditScene from '../../../pages/EditScene/EditScene';
 
 setupIonicReact();
 
@@ -58,7 +59,7 @@ const AppTabs: React.FC = () => {
           <AddScene />
         </Route>
         <Route exact path={`${url}/editscene/:sceneId`}>
-          <AddScene />
+          <EditScene />
         </Route>
         <Route exact path={`${url}/sortscenes`}>
           <SortScenes />

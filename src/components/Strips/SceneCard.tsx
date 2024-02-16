@@ -154,7 +154,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
         </IonItem>
         <IonItemOptions class='scene-card-options'>
           <div className='buttons-wrapper'> 
-            <IonButton fill='clear'>
+            <IonButton fill='clear' routerLink={`/my/projects/163/editscene/${scene.id}`}>
               <IonIcon icon={pencilOutline} className='button-icon view'/>
             </IonButton>
             <IonButton fill='clear'>

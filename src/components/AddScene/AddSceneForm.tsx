@@ -31,7 +31,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
   const history = useHistory();
   const projectId = parseInt(id);
   const updatedAt = new Date().toISOString();
-  const { offlineScenes } = useContext(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
 
   const sceneDefaultValues = {
     projectId,
@@ -55,7 +55,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
     elements: null,
     notes: [],
     updatedAt,
-  }
+  };
 
   const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
   const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
@@ -67,13 +67,12 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
   const locationOptions = getSortedLocationNames;
   const setOptions = getSortedSetNames;
 
-  const { oneWrapDb } = useContext(DatabaseContext);
   const [presentToast] = useIonToast();
-  const { sceneId }: any = useParams()
+  const { sceneId }: any = useParams();
 
-  const successMessageSceneToast = () => {
+  const successMessageSceneToast = (message: string) => {
     presentToast({
-      message: 'Scene Successfully Created',
+      message: message,
       duration: 2000,
       icon: checkmarkCircle,
       position: 'top',
@@ -91,15 +90,27 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
     });
   };
 
-  const getExistingScene = () => {
-    return sceneDefaultValues
-  }
+  const getExistingScene = async () => {
+    const scene = await oneWrapDb.scenes.findOne({ selector: { id: sceneId } }).exec();
+    console.log('Existing scene:', scene._data);
+    return scene._data;
+  };
 
-  const [formData, _]: any[] = useState(
-    editMode && sceneId ? 
-    sceneDefaultValues :
-    getExistingScene()
-  );
+  const [formData, _] = useState<any>(sceneDefaultValues);
+
+
+  useEffect(() => {
+    const fetchScene = async () => {
+      if (editMode && sceneId) {
+        const existingScene = await getExistingScene();
+        Object.keys(existingScene).forEach((key) => {
+          setValue(key, existingScene[key]);
+        });
+      }
+    };
+
+    fetchScene();
+  }, [editMode, sceneId]); 
 
   const {
     control,
@@ -130,7 +141,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
 
       console.log('Inserting scene:', formData);
       await oneWrapDb?.scenes.insert(formData);
-      successMessageSceneToast();
+      successMessageSceneToast("Scene created successfully!");
 
       reset();
       history.push(`/my/projects/${id}/strips`);
@@ -145,22 +156,21 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
 
   const updateScene = async (formData: any) => {
     try {
-        console.log('Updating scene:', formData);
+      console.log('Updating scene:', formData);
 
-        await oneWrapDb?.scenes.upsert(formData);
+      await oneWrapDb?.scenes.upsert(formData);
 
-        successMessageSceneToast();
-        reset();
-        history.push(`/my/projects/${id}/strips`);
+      successMessageSceneToast("Scene updated successfully!");
+      reset();
+      history.push(`/my/projects/${id}/strips`);
     } catch (error: any) {
-        console.log('Error updating scene:', error);
-        errorToast(error ? error.message : 'Error updating scene');
-        scrollToTop();
+      console.log('Error updating scene:', error);
+      errorToast(error ? error.message : 'Error updating scene');
+      scrollToTop();
     }
 
     scrollToTop();
-};
-
+  };
 
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {
