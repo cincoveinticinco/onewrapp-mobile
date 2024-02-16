@@ -1,4 +1,10 @@
 import DatabaseSchema from '../database_schema';
+import {
+  ProtectionTypeEnumArray,
+  IntOrExtOptionEnumArray,
+  DayOrNightOptionEnumArray,
+  SceneTypeEnum,
+} from '../../Ennums/ennums';
 
 const sceneSchema = {
   title: 'scene schema',
@@ -7,7 +13,7 @@ const sceneSchema = {
   primaryKey: 'id',
   properties: {
     id: {
-      type: 'string',
+      type: 'string', //PROJECT ID. EPISODE NUMBER. SCENE NUMBER// UPPER CASE
       maxLength: 250,
     },
     projectId: {
@@ -21,19 +27,28 @@ const sceneSchema = {
     },
     sceneType: {
       type: 'string',
-      enum: ['scene', 'protection'],
+      enum: [SceneTypeEnum.SCENE, SceneTypeEnum.PROTECTION],
     },
     protectionType: {
       type: ['string', 'null'],
-      enum: ['VOICE OFF', 'IMAGE', 'STOCK IMAGE', 'VIDEO', 'STOCK VIDEO', 'MULTIMEDIA', 'OTHER', null],
+      enum: [
+        ...ProtectionTypeEnumArray,
+        null,
+      ],
     },
     intOrExtOption: {
       type: ['string', 'null'],
-      enum: ['INT', 'EXT', 'INT/EXT', 'EXT/INT', null],
+      enum: [
+        ...IntOrExtOptionEnumArray,
+        null,
+      ],
     },
     dayOrNightOption: {
       type: ['string', 'null'],
-      enum: ['day', 'night', 'sunset', 'sunrise', null],
+      enum: [
+        ...DayOrNightOptionEnumArray,
+        null,
+      ],
     },
     locationName: {
       type: ['string', 'null'],
@@ -51,7 +66,7 @@ const sceneSchema = {
       type: ['string', 'null'],
     },
     page: {
-      type: ['string', 'null'], // DIFERENT FROM THE MODEL
+      type: ['string', 'null'],
     },
     pages: {
       type: ['number', 'null'],
@@ -66,13 +81,13 @@ const sceneSchema = {
         properties: {
           categoryName: { type: 'string' },
           characterName: { type: 'string' },
-          characterNum: { type: ['string', 'null'] }, /// DIFFERENT FROM MODEL
+          characterNum: { type: ['string', 'null'] },
         },
       },
     },
     extras: {
       type: 'array',
-      iitems: {
+      items: {
         type: 'object',
         properties: {
           categoryName: { type: ['string', 'null'] },
@@ -122,7 +137,7 @@ const sceneSchemaInput = {
 };
 
 export default class ScenesSchema extends DatabaseSchema {
-  static schemaName = 'scenes'
+  static schemaName = 'scenes';
 
   constructor() {
     const { schemaName } = ScenesSchema;
