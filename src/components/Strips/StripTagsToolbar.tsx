@@ -7,15 +7,23 @@ import './StripTagsToolbar.scss';
 const StripTagsToolbar = () => {
   const { selectedFilterOptions } = useContext(ScenesContext);
 
-  const depuredFilterOptions = Object.entries(selectedFilterOptions).filter(([key, unused_]) => {
-    return key !== '$or'
-  })
+  const depuredFilterOptions = () => {
+    const newFilterOptions: any = {
+      ...selectedFilterOptions
+    }
+
+    if(newFilterOptions['$or']) {
+      delete newFilterOptions['$or']
+    }
+
+    return newFilterOptions
+  }
 
   // Get all selected filter options and flatten them
-  const flattenedSelectedFilterOptions = Object.values(depuredFilterOptions).flat();
+  const flattenedSelectedFilterOptions = Object.values(depuredFilterOptions()).flat();
 
   // Flatten the filter options that are objects
-  const flattenedStrings = flattenedSelectedFilterOptions.map((item) => {
+  const flattenedStrings = flattenedSelectedFilterOptions.map((item: any) => {
     if (typeof item === 'string') {
       return item;
     }
