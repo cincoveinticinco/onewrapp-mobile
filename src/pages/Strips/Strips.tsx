@@ -10,6 +10,7 @@ import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
 import { of } from 'rxjs';
+import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 
 const BATCH_SIZE = 15;
 
@@ -117,6 +118,7 @@ const Strips: React.FC = () => {
       setSearchText={setSearchText}
       handleBack={handleBack}
     >
+      <StripTagsToolbar />
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
         <Suspense fallback={<div>Loading scene...</div>}>
           {loading ? (
