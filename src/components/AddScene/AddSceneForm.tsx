@@ -161,7 +161,6 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
       await oneWrapDb?.scenes.upsert(formData);
 
       successMessageSceneToast("Scene updated successfully!");
-      reset();
       history.push(`/my/projects/${id}/strips`);
     } catch (error: any) {
       console.log('Error updating scene:', error);
