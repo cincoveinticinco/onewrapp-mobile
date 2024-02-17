@@ -21,14 +21,14 @@ const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
   }
 
   const clearOption = (filterTag: string, filterOptions: SelectedFilterOptionsInterface) => {
+    const optionKey: any = findKeyByValue(filterOptions, filterTag)
+
     Object.entries(filterOptions).forEach(([key, value]) => {
-      if (value.every((val: any[]) => typeof val === 'string')) {
+      if (optionKey && filterOptions[optionKey].every((el) => typeof el === 'string')) {
         if(value.length  <= 1) {
           const newFilterOptions: SelectedFilterOptionsInterface = {
             ...filterOptions
           }
-
-          const optionKey: any = findKeyByValue(filterOptions, filterTag)
 
           delete newFilterOptions[optionKey]
 
@@ -36,13 +36,13 @@ const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
             ...newFilterOptions
           })
         } else {
-          const filteredOptionArray = filterOptions[key].filter((option) => {
+          const filteredOptionArray = filterOptions[optionKey].filter((option) => {
             return option !== filterTag
           })
 
           setSelectedFilterOptions({
             ...filterOptions,
-            [key]: filteredOptionArray
+            [optionKey]: filteredOptionArray
           })
         }
       } else if(value.every((val: any) => typeof val === 'object')) {
