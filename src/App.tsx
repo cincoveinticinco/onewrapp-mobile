@@ -51,9 +51,7 @@ const App: React.FC = () => {
             </IonReactRouter>
           </ScenesContextProvider>
         </AuthContext.Provider>
-        '
       </DatabaseContextProvider>
-      '
     </IonApp>
   );
 };
