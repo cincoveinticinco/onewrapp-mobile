@@ -12,6 +12,10 @@ interface StripTagProps {
 const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
   const { selectedFilterOptions, setSelectedFilterOptions } = useContext(ScenesContext);
 
+  function findKeyByValue(obj: any, value: any) {
+    return Object.keys(obj).find(key => obj[key].includes(value));
+  }
+
   interface SelectedFilterOptionsInterface {
     [key: string]: any[];
   }
@@ -24,7 +28,9 @@ const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
             ...filterOptions
           }
 
-          delete newFilterOptions[key]
+          const optionKey: any = findKeyByValue(filterOptions, filterTag)
+
+          delete newFilterOptions[optionKey]
 
           setSelectedFilterOptions({
             ...newFilterOptions
