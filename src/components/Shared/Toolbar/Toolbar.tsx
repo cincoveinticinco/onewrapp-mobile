@@ -42,9 +42,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
 
-  const debouncedSetSearchText = debounce(setSearchText, 0);
   const handleSearchInput = (e: any) => {
-    debouncedSetSearchText(e.detail.value);
+    setSearchText(e.detail.value);
   };
 
   const searchRef = useRef<HTMLIonInputElement>(null);
