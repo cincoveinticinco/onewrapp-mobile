@@ -9,7 +9,6 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
-import { of } from 'rxjs';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 
 const BATCH_SIZE = 15;
