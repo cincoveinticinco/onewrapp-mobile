@@ -21,13 +21,20 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
+  const [extrasFetched, setExtrasFetched] = useState(false);
 
   useEffect(() => {
     if (!observedExtras) {
-      setSelectedExtras([]);
       setDropDownIsOpen(false);
     }
   }, [observedExtras]);
+
+  useEffect(() => {
+    if(observedExtras && selectedExtras.length === 0 && !extrasFetched) {
+      setSelectedExtras(observedExtras);
+      setExtrasFetched(true);
+    }
+  }, [observedExtras, extrasFetched]);
 
   useEffect(() => {
     handleSceneChange(selectedExtras, 'extras');
