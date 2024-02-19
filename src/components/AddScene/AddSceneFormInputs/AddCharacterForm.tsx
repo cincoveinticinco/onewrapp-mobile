@@ -25,22 +25,31 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
+  const [charactersFetched, setCharactersFetched] = useState(false);
 
   useEffect(() => {
     if (!observedCharacters) {
-      setSelectedCharacters([]);
       setDropDownIsOpen(false);
     }
   }, [observedCharacters]);
+
+
+  useEffect(() => {
+    if(observedCharacters && selectedCharacters.length === 0 && !charactersFetched) {
+      setSelectedCharacters(observedCharacters);
+      setCharactersFetched(true);
+    }
+  }, [observedCharacters, charactersFetched]);
 
   useEffect(() => {
     handleSceneChange(selectedCharacters, 'characters');
   }, [selectedCharacters]);
 
+  const characterCategoriesArray: string[] = [];
+  const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
+
   useEffect(() => {
     const defineCharactersCategories = () => {
-      const characterCategoriesArray: string[] = [];
-      const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
       uniqueCategoryValuesArray.forEach((character: Character) => {
         const { categoryName } = character;
         characterCategoriesArray.push(categoryName);
