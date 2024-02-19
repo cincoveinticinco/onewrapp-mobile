@@ -37,7 +37,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
       {
         isMobile
         && (
-          <IonButton fill="clear" color="primary" slot="start" onClick={handleConfirm}>
+          <IonButton fill="clear" color="primary" slot="start" onClick={clearOptions}>
             <IonIcon icon={chevronBack} color="light" />
           </IonButton>
         )
