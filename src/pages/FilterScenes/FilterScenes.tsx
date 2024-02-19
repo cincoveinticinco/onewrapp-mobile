@@ -22,13 +22,12 @@ import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPa
 import { useHistory, useParams } from 'react-router';
 import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
+import useHandleBack from '../../hooks/useHandleBack';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { offlineScenes } = useContext(DatabaseContext);
-  const history = useHistory();
-  const { id } = useParams<{ id: string }>();
-  const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
+  const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();
 
@@ -56,12 +55,12 @@ const FilterScenes = () => {
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
-    handleConfirm();
+    handleBack();
   };
 
   const handleCancel = () => {
     resetFilters();
-    handleConfirm();
+    handleBack();
   };
 
   const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
@@ -79,7 +78,7 @@ const FilterScenes = () => {
     <SecondaryPagesLayout
       resetSelections={resetFilters}
       pageTitle="FILTER"
-      handleConfirm={handleConfirm}
+      handleConfirm={handleBack}
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
@@ -250,7 +249,7 @@ const FilterScenes = () => {
             <IonCol size-xs="12" size-sm="4" size-md="4">
               <OutlinePrimaryButton
                 buttonName="FILTER"
-                onClick={handleConfirm}
+                onClick={handleBack}
               />
             </IonCol>
           </IonRow>
