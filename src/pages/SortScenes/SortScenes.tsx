@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useHistory, useParams } from 'react-router';
 import {
   IonContent,
 } from '@ionic/react';
@@ -10,6 +9,7 @@ import './SortScenes.scss';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
+import useHandleBack from '../../hooks/useHandleBack';
 
 const SortScenes = () => {
   const { selectedSortOptions, setSelectedSortOptions } = React.useContext<any>(ScenesContext);
@@ -49,13 +49,8 @@ const SortScenes = () => {
   useEffect(() => {
     localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
   }, [sortPosibilities]);
-
-  const history = useHistory();
-  useHideTabs();
-
-  const { id } = useParams<{ id: string }>();
  
-  const handleConfirm = () => history.push(`/my/projects/${id}/strips`);
+  const handleConfirm = useHandleBack();
 
   const onDragEnd = (result: any) => {
     if (!result.destination) {
@@ -85,6 +80,8 @@ const SortScenes = () => {
     const sortOption = selectedSortOptions.find((option: any) => option[0] === posibility.optionKey);
     return !sortOption;
   });
+
+  useHideTabs()
 
   return (
     <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleConfirm={handleConfirm}>
