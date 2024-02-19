@@ -20,13 +20,20 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
+  const [elementsFetched, setElementsFetched] = useState(false);
 
   useEffect(() => {
     if (!observedElements) {
-      setSelectedElements([]);
       setDropDownIsOpen(false);
     }
   }, [observedElements]);
+
+  useEffect(() => {
+    if(observedElements && selectedElements.length === 0 && !elementsFetched) {
+      setSelectedElements(observedElements);
+      setElementsFetched(true);
+    }
+  }, [observedElements, elementsFetched]);
 
   useEffect(() => {
     handleSceneChange(selectedElements, 'elements');
