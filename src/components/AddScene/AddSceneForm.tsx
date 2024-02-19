@@ -23,39 +23,33 @@ import { DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumA
 interface AddScenesFormProps {
   scrollToTop: () => void;
   editMode?: boolean;
+  sceneFormId: string;
+  handleSubmit: any;
+  control: any;
+  errors: any;
+  reset: any;
+  setValue: any;
+  watch: any;
+  formData: any;
+  onSubmit: any;
 }
 
-const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) => {
-  const { id } = useParams<{ id: string }>();
+const AddScenesForm: React.FC<AddScenesFormProps> = ({ 
+  scrollToTop, 
+  editMode, 
+  sceneFormId,
+  handleSubmit,
+  control,
+  errors,
+  reset,
+  setValue,
+  watch,
+  formData,
+  onSubmit,
+}) => {
   const isMobile = useIsMobile();
   const history = useHistory();
-  const projectId = parseInt(id);
-  const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
-
-  const sceneDefaultValues = {
-    projectId,
-    id: null,
-    episodeNumber: null,
-    sceneNumber: null,
-    sceneType: null,
-    protectionType: null,
-    intOrExtOption: null,
-    dayOrNightOption: null,
-    locationName: null,
-    setName: null,
-    scriptDay: null,
-    year: null,
-    synopsis: null,
-    page: null,
-    pages: null,
-    estimatedSeconds: null,
-    characters: null,
-    extras: null,
-    elements: null,
-    notes: [],
-    updatedAt,
-  };
+  const { offlineScenes } = useContext(DatabaseContext);
 
   const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
   const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
@@ -67,120 +61,12 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
   const locationOptions = getSortedLocationNames;
   const setOptions = getSortedSetNames;
 
-  const [presentToast] = useIonToast();
-  const { sceneId }: any = useParams();
-
-  const successMessageSceneToast = (message: string) => {
-    presentToast({
-      message: message,
-      duration: 2000,
-      icon: checkmarkCircle,
-      position: 'top',
-      cssClass: 'success-toast',
-    });
-  };
-
-  const errorToast = (errorMessage: string) => {
-    presentToast({
-      message: errorMessage,
-      duration: 2000,
-      position: 'top',
-      icon: closeCircle,
-      cssClass: 'error-toast',
-    });
-  };
-
-  const getExistingScene = async () => {
-    const scene = await oneWrapDb.scenes.findOne({ selector: { id: sceneId } }).exec();
-    console.log('Existing scene:', scene._data);
-    return scene._data;
-  };
-
-  const [formData, _] = useState<any>(sceneDefaultValues);
-
-
-  useEffect(() => {
-    const fetchScene = async () => {
-      if (editMode && sceneId) {
-        const existingScene = await getExistingScene();
-        Object.keys(existingScene).forEach((key) => {
-          setValue(key, existingScene[key]);
-        });
-      }
-    };
-
-    fetchScene();
-  }, [editMode, sceneId]); 
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm({ defaultValues: formData });
-
-  const insertScene = async (formData: any) => {
-    try {
-      formData.id = `${watch('projectId')}.${watch('episodeNumber')}.${watch('sceneNumber')}`;
-
-      const sceneExists = await oneWrapDb?.scenes.findOne({
-        selector: {
-          projectId,
-          episodeNumber: formData.episodeNumber,
-          sceneNumber: formData.sceneNumber,
-        },
-      }).exec();
-
-      if (sceneExists) {
-        errorToast('Scene already exists');
-        scrollToTop();
-        return;
-      }
-
-      console.log('Inserting scene:', formData);
-      await oneWrapDb?.scenes.insert(formData);
-      successMessageSceneToast("Scene created successfully!");
-
-      reset();
-      history.push(`/my/projects/${id}/strips`);
-    } catch (error: any) {
-      console.log('Error inserting scene:', error);
-      errorToast(error ? error.message : 'Error inserting scene');
-      scrollToTop();
-    }
-
-    scrollToTop();
-  };
-
-  const updateScene = async (formData: any) => {
-    try {
-      console.log('Updating scene:', formData);
-
-      await oneWrapDb?.scenes.upsert(formData);
-
-      successMessageSceneToast("Scene updated successfully!");
-      history.push(`/my/projects/${id}/strips`);
-    } catch (error: any) {
-      console.log('Error updating scene:', error);
-      errorToast(error ? error.message : 'Error updating scene');
-      scrollToTop();
-    }
-
-    scrollToTop();
-  };
-
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {
       setValue(field, [...value]);
     } else {
       setValue(field, value);
     }
-  };
-
-  const onSubmit = (formData: any): void => {
-    editMode && sceneId ? updateScene(formData) : insertScene(formData);
   };
 
   const getDisabled = () => (watch('sceneType') !== SceneTypeEnum.PROTECTION);
@@ -193,6 +79,8 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
 
   const setNameValidation = (value: any) => (value !== null ? true : 'REQUIRED *');
 
+  const protectionTypeValidation = (value: any) => (value !== null ? true : 'REQUIRED *');
+
   const handleSetValue = (field: string, value: any) => {
     if (value === '') {
       return setValue(field, null);
@@ -202,7 +90,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form">
+    <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form" id={sceneFormId}>
 
       <SelectItem
         editMode={editMode}
@@ -224,8 +112,10 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({ scrollToTop, editMode }) 
         options={protectionTypeValues}
         inputName="add-protection-type-input"
         fieldName="protectionType"
+        displayError={!!errors.protectionType && !getDisabled()}
         watchValue={watch}
         control={control}
+        validate={getDisabled() ? () => true : protectionTypeValidation}
         setValue={handleSetValue}
       />
 
