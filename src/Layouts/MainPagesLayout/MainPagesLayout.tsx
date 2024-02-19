@@ -1,7 +1,6 @@
 import { IonHeader, IonPage } from '@ionic/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import useIsMobile from '../../hooks/useIsMobile';
 
 interface MainPagesLayoutProps {
   children: React.ReactNode
