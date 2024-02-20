@@ -11,7 +11,6 @@ import {
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
-  IonCardTitle,
   IonCardContent,
 } from '@ionic/react';
 import DatabaseContext from '../../context/database';
@@ -26,12 +25,13 @@ const Elements: React.FC = () => {
   const categoriesData = useMemo(() => {
     const uniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
     const uniqueCategoriesStrings = uniqueCategories.map((element: any) => element.categoryName);
+    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
 
     return uniqueCategoriesStrings.map((categoryName: string) => {
-      const categoryScenes = offlineScenes.filter((scene: any) => scene._data.categoryName === categoryName);
+      const categoryScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.categoryName === categoryName));
       return {
         categoryName,
-        elementsQuantity: getUniqueValuesByKey(categoryScenes, '_data.elementName').length,
+        elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName).length,
         scenesQuantity: categoryScenes.length,
         protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
         pagesSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
@@ -46,7 +46,7 @@ const Elements: React.FC = () => {
     const uniqueElementsStrings = uniqueElements.map((element: any) => element.elementName);
 
     return uniqueElementsStrings.map((elementName: string) => {
-      const elementScenes = offlineScenes.filter((scene: any) => scene._data.elementName === elementName);
+      const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
       return {
         elementName,
         scenesQuantity: elementScenes.length,
@@ -71,10 +71,10 @@ const Elements: React.FC = () => {
         <IonToolbar color='tertiary'>
           <IonSegment value={activeSection} onIonChange={handleIonChange}>
             <IonSegmentButton value="category" color='primary'>
-              <IonLabel>By Category</IonLabel>
+              <IonLabel>{`By Category (${categoriesData.length})`}</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="element" color='primary'>
-              <IonLabel>By Element Name</IonLabel>
+              <IonLabel>{`By Element Name (${elementsData.length})`}</IonLabel>
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
