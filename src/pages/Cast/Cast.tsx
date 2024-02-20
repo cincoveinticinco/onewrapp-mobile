@@ -71,8 +71,7 @@ const Cast: React.FC = () => {
         {cast.map((character, index) => (
           <IonCard key={index}>
             <IonCardHeader>
-              <IonCardSubtitle>{character.characterName}</IonCardSubtitle>
-              <IonCardTitle>{character.role}</IonCardTitle>
+              <IonCardSubtitle>{character.characterName.toUpperCase()}</IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>
               <p>Sets Quantity: {character.setsQuantity}</p>
