@@ -94,7 +94,7 @@ const AppTabs: React.FC = () => {
         <Redirect exact from={`${url}`} to={`${url}/strips`} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" className="app-tabs-container" color="dark">
-        <IonTabButton tab="calendar" className="tab-bar-buttons" href={`${url}/calendar`}>
+        <IonTabButton tab="calendar" className={defineButtonClass} href={`${url}/calendar`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
@@ -110,11 +110,11 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="sets" className={defineButtonClass} href={`${url}/sets`}>
+        <IonTabButton tab="sets" className="tab-bar-buttons" href={`${url}/sets`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="elements" className={defineButtonClass} href={`${url}/elements`}>
+        <IonTabButton tab="elements" className="tab-bar-buttons" href={`${url}/elements`}>
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
