@@ -50,7 +50,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     const scriptDay = scene.scriptDay || '';
     const year = scene.year || '';
 
-    const sceneHeader = `${episodeNumber}.${sceneNumber} ${intOrExt}. ${locationName}. ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
+    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (episodeNumber + '.'): ''} ${sceneNumber} ${intOrExt ? (intOrExt + '.') : ''} ${locationName ? (locationName + '.') : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
       year})` : ''}`;
 
     return sceneHeader.toUpperCase();
