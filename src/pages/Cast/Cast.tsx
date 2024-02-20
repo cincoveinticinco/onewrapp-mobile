@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -20,7 +20,7 @@ const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
 
-  useEffect(() => {
+  const processedCast = useMemo(() => {
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
         const hasCharacter = scene._data.characters.some(
@@ -31,7 +31,7 @@ const Cast: React.FC = () => {
         }
         return acc;
       }, []);
-  
+
       const setsQuantity: number = getUniqueValuesByKey(scenes, 'setName').length;
       const locationsQuantity: number = getUniqueValuesByKey(scenes, 'locationName').length;
       const pagesSum: number = scenes.reduce((acc, scene) => acc + (scene.pages || 0), 0);
@@ -39,7 +39,7 @@ const Cast: React.FC = () => {
       const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber').length;
       const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE).length;
       const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION).length;
-  
+
       return {
         ...character,
         setsQuantity,
@@ -51,11 +51,14 @@ const Cast: React.FC = () => {
         protectionQuantity,
       };
     };
-  
+
     const uniqueCharacters: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-    const cast: any[] = uniqueCharacters.map(processCharacter);
-    setCast(cast.sort((a, b) => a.characterName.localeCompare(b.characterName)));
+    return uniqueCharacters.map(processCharacter).sort((a, b) => a.characterName.localeCompare(b.characterName));
   }, [offlineScenes]);
+
+  useEffect(() => {
+    setCast(processedCast);
+  }, [processedCast]);
 
   return (
     <IonPage>
