@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -8,7 +8,6 @@ import {
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
-  IonCardTitle,
   IonCardContent,
 } from '@ionic/react';
 import DatabaseContext from '../../context/database';
@@ -19,7 +18,7 @@ const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [sets, setSets] = useState<any[]>([]);
 
-  useEffect(() => {
+  const processedSets = useMemo(() => {
     const processSet = (setName: string) => {
       const setScenes = offlineScenes.filter((scene: any) => scene._data.setName === setName);
 
@@ -42,9 +41,12 @@ const Sets: React.FC = () => {
     };
 
     const uniqueSetNames: any[] = getUniqueValuesByKey(offlineScenes, 'setName');
-    const sets: any[] = uniqueSetNames.map(processSet);
-    setSets(sets.sort((a, b) => a.setName.localeCompare(b.setName)));
+    return uniqueSetNames.map(processSet).sort((a, b) => a.setName.localeCompare(b.setName));
   }, [offlineScenes]);
+
+  useEffect(() => {
+    setSets(processedSets);
+  }, [processedSets]);
 
   return (
     <IonPage>
