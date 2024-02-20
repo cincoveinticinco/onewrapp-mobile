@@ -17,6 +17,7 @@ import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -24,7 +25,7 @@ const Elements: React.FC = () => {
 
   const categoriesData = useMemo(() => {
     const uniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
-    const uniqueCategoriesStrings = uniqueCategories.map((element: any) => element.categoryName);
+    const uniqueCategoriesStrings = sortArrayAlphabeticaly(uniqueCategories.map((element: any) => element.categoryName));
     const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
 
     return uniqueCategoriesStrings.map((categoryName: string) => {
@@ -43,7 +44,7 @@ const Elements: React.FC = () => {
 
   const elementsData = useMemo(() => {
     const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes,'elements', 'elementName');
-    const uniqueElementsStrings = uniqueElements.map((element: any) => element.elementName);
+    const uniqueElementsStrings = sortArrayAlphabeticaly(uniqueElements.map((element: any) => element.elementName));
 
     return uniqueElementsStrings.map((elementName: string) => {
       const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
