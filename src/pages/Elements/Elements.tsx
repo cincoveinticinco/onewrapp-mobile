@@ -69,12 +69,12 @@ const Elements: React.FC = () => {
           <IonTitle>ELEMENTS</IonTitle>
         </IonToolbar>
         <IonToolbar color='tertiary'>
-          <IonSegment value={activeSection} onIonChange={handleIonChange}>
+          <IonSegment value={activeSection} onIonChange={handleIonChange} mode='md'>
             <IonSegmentButton value="category" color='primary'>
               <IonLabel>{`By Category (${categoriesData.length})`}</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="element" color='primary'>
-              <IonLabel>{`By Element Name (${elementsData.length})`}</IonLabel>
+              <IonLabel>{`By Element (${elementsData.length})`}</IonLabel>
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
@@ -85,7 +85,7 @@ const Elements: React.FC = () => {
             {categoriesData.map((category, index) => (
               <IonCard key={index}>
                 <IonCardHeader>
-                  <IonCardSubtitle>{category.categoryName}</IonCardSubtitle>
+                  <IonCardSubtitle>{category.categoryName.toUpperCase()}</IonCardSubtitle>
                 </IonCardHeader>
                 <IonCardContent>
                   <p>Elements Quantity: {category.elementsQuantity}</p>
@@ -104,7 +104,7 @@ const Elements: React.FC = () => {
             {elementsData.map((element, index) => (
               <IonCard key={index}>
                 <IonCardHeader>
-                  <IonCardSubtitle>{element.elementName}</IonCardSubtitle>
+                  <IonCardSubtitle>{element.elementName.toUpperCase()}</IonCardSubtitle>
                 </IonCardHeader>
                 <IonCardContent>
                   <p>Scenes Quantity: {element.scenesQuantity}</p>
