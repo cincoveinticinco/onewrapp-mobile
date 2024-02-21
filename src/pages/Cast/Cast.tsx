@@ -1,5 +1,5 @@
 import React, {
-  useContext, useEffect, useState, useMemo,
+  useContext, useEffect, useState, useMemo, useRef,
 } from 'react';
 import {
   IonContent,
@@ -16,12 +16,17 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import useHandleBack from '../../hooks/useHandleBack';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import { useLocation } from 'react-router';
+import useScrollToTop from '../../hooks/useScrollToTop';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any[]>([]);
+  const thisPath = useLocation();
+  const contentRef = useRef<HTMLIonContentElement>(null);
+  useScrollToTop(contentRef, thisPath);
 
   const handleBack = useHandleBack();
 
@@ -74,7 +79,7 @@ const Cast: React.FC = () => {
       title="CAST"
       search
     >
-      <IonContent color="tertiary" fullscreen>
+      <IonContent color="tertiary" fullscreen ref={contentRef}>
         <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
           {displayedCast.map((character, index) => (
             <IonCard key={index}>

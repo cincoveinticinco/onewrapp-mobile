@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useMemo, useCallback,
+  useContext, useState, useMemo, useCallback, useRef,
 } from 'react';
 import {
   IonContent,
@@ -21,12 +21,17 @@ import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import { useLocation } from 'react-router';
+import useScrollToTop from '../../hooks/useScrollToTop';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [activeSection, setActiveSection] = useState<string>('category');
   const [displayedElements, setDisplayedElements] = useState<any[]>([]);
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
+  const thisPath = useLocation();
+  const contentRef = useRef<HTMLIonContentElement>(null);
+  useScrollToTop(contentRef, thisPath);
 
   const categoriesData = useMemo(() => {
     const uniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');

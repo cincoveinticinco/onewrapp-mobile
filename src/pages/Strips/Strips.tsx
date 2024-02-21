@@ -13,6 +13,7 @@ import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import useScrollToTop from '../../hooks/useScrollToTop';
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -49,9 +50,9 @@ const Strips: React.FC = () => {
     setSelectedFilterOptions({});
   };
 
-  useEffect(() => {
-    contentRef.current?.scrollToTop();
-  }, [thisPath]);
+  // SCROLL TO TOP
+
+  useScrollToTop(contentRef, thisPath);
 
   const filterScenesBySearchText = useCallback(
     (searchText: string) => {

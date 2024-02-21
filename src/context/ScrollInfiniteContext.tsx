@@ -1,5 +1,6 @@
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router';
 
 interface ScrollInfiniteContextProps {
   children: React.ReactNode
@@ -30,6 +31,15 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
   useEffect(() => {
     setDisplayedData(filteredData.slice(0, BATCH_SIZE));
   }, [filteredData]);
+
+  const thisPath = useLocation();
+
+  useEffect(() => {
+    setCurrentBatch(0);
+    setDisplayedData(filteredData.slice(0, BATCH_SIZE));
+    setInfiniteDisabled(false);
+    console.log('CHANGING PATH', currentBatch, thisPath)
+  }, [thisPath]);
 
   return (
     <div>

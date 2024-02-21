@@ -1,5 +1,5 @@
 import React, {
-  useContext, useEffect, useState, useMemo,
+  useContext, useEffect, useState, useMemo, useRef,
 } from 'react';
 import {
   IonContent,
@@ -14,12 +14,17 @@ import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import { useLocation } from 'react-router';
+import useScrollToTop from '../../hooks/useScrollToTop';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [setsSearchText, setSetsSearchText] = useState('');
   const [filteredSets, setFilteredSets] = useState<any[]>([]);
   const [displayedSets, setDisplayedSets] = useState<any[]>([]);
+  const thisPath = useLocation();
+  const contentRef = useRef<HTMLIonContentElement>(null);
+  useScrollToTop(contentRef, thisPath);
 
   const processedSets = useMemo(() => {
     const processSet = (setName: string) => {
@@ -58,7 +63,7 @@ const Sets: React.FC = () => {
       title="SETS"
       search
     >
-      <IonContent color="tertiary" fullscreen>
+      <IonContent color="tertiary" fullscreen ref={contentRef}>
         <ScrollInfiniteContext setDisplayedData={setDisplayedSets} filteredData={filteredSets}>
           {displayedSets.map((set, index) => (
             <IonCard key={index}>
