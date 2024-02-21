@@ -15,10 +15,13 @@ import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
+import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [setsSearchText, setSetsSearchText] = useState('');
+  const [filteredSets, setFilteredSets] = useState<any[]>([]);
+  const [displayedSets, setDisplayedSets] = useState<any[]>([]);
 
   const processedSets = useMemo(() => {
     const processSet = (setName: string) => {
@@ -45,12 +48,9 @@ const Sets: React.FC = () => {
     return uniqueSetNames.map(processSet).sort((a, b) => a.setName.localeCompare(b.setName));
   }, [offlineScenes]);
 
-  const filteredSets = useMemo(() => {
-    if (setsSearchText === '') {
-      return processedSets;
-    } else {
-      return processedSets.filter((set) => set.setName.toLowerCase().includes(setsSearchText.toLowerCase()));
-    }
+  useEffect(() => {
+    const filteredSets = setsSearchText.length > 0 ? processedSets.filter((set) => set.setName.toLowerCase().includes(setsSearchText.toLowerCase())) : processedSets;
+    setFilteredSets(filteredSets);
   }, [processedSets, setsSearchText]);
 
   return (
@@ -61,23 +61,25 @@ const Sets: React.FC = () => {
       search
     >
       <IonContent color="tertiary" fullscreen>
-        {filteredSets.map((set, index) => (
-          <IonCard key={index}>
-            <IonCardHeader>
-              <IonCardSubtitle>
-                <HighlightedText text={set.setName} searchTerm={setsSearchText} />
-              </IonCardSubtitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <p>Characters Length: {set.charactersLength}</p>
-              <p>Scenes Quantity: {set.scenesQuantity}</p>
-              <p>Protection Quantity: {set.protectionQuantity}</p>
-              <p>Pages Sum: {set.pagesSum}</p>
-              <p>Estimated Time Sum: {set.estimatedTimeSum}</p>
-              <p>Episodes Quantity: {set.episodesQuantity}</p>
-            </IonCardContent>
-          </IonCard>
-        ))}
+        <ScrollInfiniteContext setDisplayedData={setDisplayedSets} filteredData={filteredSets}>
+          {displayedSets.map((set, index) => (
+            <IonCard key={index}>
+              <IonCardHeader>
+                <IonCardSubtitle>
+                  <HighlightedText text={set.setName} searchTerm={setsSearchText} />
+                </IonCardSubtitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <p>Characters Length: {set.charactersLength}</p>
+                <p>Scenes Quantity: {set.scenesQuantity}</p>
+                <p>Protection Quantity: {set.protectionQuantity}</p>
+                <p>Pages Sum: {set.pagesSum}</p>
+                <p>Estimated Time Sum: {set.estimatedTimeSum}</p>
+                <p>Episodes Quantity: {set.episodesQuantity}</p>
+              </IonCardContent>
+            </IonCard>
+          ))}
+        </ScrollInfiniteContext>
       </IonContent>
     </MainPagesLayout>
   );
