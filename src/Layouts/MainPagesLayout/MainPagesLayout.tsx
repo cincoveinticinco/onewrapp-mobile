@@ -7,22 +7,28 @@ interface MainPagesLayoutProps {
   searchText?: string
   setSearchText?: (searchText: string) => void
   handleBack?: () => void
+  search?: boolean
+  add?: boolean
+  filter?: boolean
+  elipse?: boolean
+  sort?: boolean
+  title: string
 }
 
-const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText, handleBack }) => {
+const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title }) => {
   const [searchMode, setSearchMode] = React.useState(false);
 
   return (
     <IonPage>
       <IonHeader>
         <Toolbar
-          name="LVE-STRIPS"
+          name={title}
           back
-          search
-          addScene
-          filter
-          elipse
-          sort
+          search = {search}
+          addScene = {add}
+          filter = {filter}
+          elipse = {elipse}
+          sort = {sort}
           searchMode={searchMode}
           setSearchMode={setSearchMode}
           setSearchText={setSearchText}
