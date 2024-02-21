@@ -13,11 +13,13 @@ import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import useHandleBack from '../../hooks/useHandleBack';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
+import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
   const [castSearchText, setCastSearchText] = useState('');
+  const [displayedCast, setDisplayedCast] = useState<any[]>([]);
 
   const handleBack = useHandleBack();
 
@@ -72,24 +74,26 @@ const Cast: React.FC = () => {
        search
       >
       <IonContent color="tertiary" fullscreen>
-        {cast.map((character, index) => (
-          <IonCard key={index}>
-            <IonCardHeader>
-              <IonCardSubtitle>
-                {<HighlightedText text={character.characterName} searchTerm={castSearchText}/>}
-              </IonCardSubtitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <p>Sets Quantity: {character.setsQuantity}</p>
-              <p>Locations Quantity: {character.locationsQuantity}</p>
-              <p>Pages Sum: {character.pagesSum}</p>
-              <p>Estimated Time Sum: {character.estimatedTimeSum}</p>
-              <p>Episodes Quantity: {character.episodesQuantity}</p>
-              <p>Scenes Quantity: {character.scenesQuantity}</p>
-              <p>Protection Quantity: {character.protectionQuantity}</p>
-            </IonCardContent>
-          </IonCard>
-        ))}
+        <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
+          {displayedCast.map((character, index) => (
+            <IonCard key={index}>
+              <IonCardHeader>
+                <IonCardSubtitle>
+                  {<HighlightedText text={character.characterName} searchTerm={castSearchText}/>}
+                </IonCardSubtitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <p>Sets Quantity: {character.setsQuantity}</p>
+                <p>Locations Quantity: {character.locationsQuantity}</p>
+                <p>Pages Sum: {character.pagesSum}</p>
+                <p>Estimated Time Sum: {character.estimatedTimeSum}</p>
+                <p>Episodes Quantity: {character.episodesQuantity}</p>
+                <p>Scenes Quantity: {character.scenesQuantity}</p>
+                <p>Protection Quantity: {character.protectionQuantity}</p>
+              </IonCardContent>
+            </IonCard>
+          ))}
+        </ScrollInfiniteContext>
       </IonContent>
     </MainPagesLayout>
   );
