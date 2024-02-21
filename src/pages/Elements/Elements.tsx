@@ -18,10 +18,13 @@ import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [activeSection, setActiveSection] = useState<string>('category');
+  const [displayedElements, setDisplayedElements] = useState<any[]>([]);
+  const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
 
   const categoriesData = useMemo(() => {
     const uniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
@@ -83,39 +86,43 @@ const Elements: React.FC = () => {
       <IonContent color="tertiary" fullscreen>
         {activeSection === 'category' && (
           <>
-            {categoriesData.map((category, index) => (
-              <IonCard key={index}>
-                <IonCardHeader>
-                  <IonCardSubtitle>{category.categoryName.toUpperCase()}</IonCardSubtitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <p>Elements Quantity: {category.elementsQuantity}</p>
-                  <p>Scenes Quantity: {category.scenesQuantity}</p>
-                  <p>Protection Quantity: {category.protectionQuantity}</p>
-                  <p>Pages Sum: {category.pagesSum}</p>
-                  <p>Estimated Time Sum: {category.estimatedTimeSum}</p>
-                  <p>Episodes Quantity: {category.episodesQuantity}</p>
-                </IonCardContent>
-              </IonCard>
-            ))}
+            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={categoriesData}>
+              {displayedCategories.map((category, index) => (
+                <IonCard key={index}>
+                  <IonCardHeader>
+                    <IonCardSubtitle>{category.categoryName.toUpperCase()}</IonCardSubtitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <p>Elements Quantity: {category.elementsQuantity}</p>
+                    <p>Scenes Quantity: {category.scenesQuantity}</p>
+                    <p>Protection Quantity: {category.protectionQuantity}</p>
+                    <p>Pages Sum: {category.pagesSum}</p>
+                    <p>Estimated Time Sum: {category.estimatedTimeSum}</p>
+                    <p>Episodes Quantity: {category.episodesQuantity}</p>
+                  </IonCardContent>
+                </IonCard>
+              ))}
+            </ScrollInfiniteContext>
           </>
         )}
         {activeSection === 'element' && (
           <>
-            {elementsData.map((element, index) => (
-              <IonCard key={index}>
-                <IonCardHeader>
-                  <IonCardSubtitle>{element.elementName.toUpperCase()}</IonCardSubtitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <p>Scenes Quantity: {element.scenesQuantity}</p>
-                  <p>Protection Quantity: {element.protectionQuantity}</p>
-                  <p>Pages Sum: {element.pagesSum}</p>
-                  <p>Estimated Time Sum: {element.estimatedTimeSum}</p>
-                  <p>Episodes Quantity: {element.episodesQuantity}</p>
-                </IonCardContent>
-              </IonCard>
-            ))}
+            <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={elementsData}>
+              {displayedElements.map((element, index) => (
+                <IonCard key={index}>
+                  <IonCardHeader>
+                    <IonCardSubtitle>{element.elementName.toUpperCase()}</IonCardSubtitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <p>Scenes Quantity: {element.scenesQuantity}</p>
+                    <p>Protection Quantity: {element.protectionQuantity}</p>
+                    <p>Pages Sum: {element.pagesSum}</p>
+                    <p>Estimated Time Sum: {element.estimatedTimeSum}</p>
+                    <p>Episodes Quantity: {element.episodesQuantity}</p>
+                  </IonCardContent>
+                </IonCard>
+              ))}
+            </ScrollInfiniteContext>
           </>
         )}
       </IonContent>
