@@ -44,6 +44,7 @@ ion-button.outline-light-button {
   --border-color: var(--ion-color-light);
   --border-style: solid;
   --border-width: 1px;
+
   height: 40px;
   min-width: 120px;
   margin: 6px auto;
@@ -58,7 +59,7 @@ ion-button.filled-primary-button {
   --border-style: solid;
   --border-width: 1px;
 
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
@@ -76,7 +77,7 @@ ion-button.filled-primary-button {
   --border-width: 1px;
   --background-activated-opacity: 1;
 
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
@@ -100,11 +101,11 @@ ion-button.filled-primary-button {
     --color: var(--ion-color-danger);
     --border-radius: 0;
     --border-color: var(--ion-color-danger);
-      background-color: transparent !important;
-      border-color: 1px solid var(--ion-color-danger);
-      color: var(--ion-color-danger);
-      background-color: transparent;
-    }
+
+    background-color: transparent !important;
+    border-color: 1px solid var(--ion-color-danger);
+    color: var(--ion-color-danger);
+  }
 }
 
 ion-toolbar {

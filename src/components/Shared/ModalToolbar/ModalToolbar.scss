@@ -1,6 +1,5 @@
 #modal-toolbar {
-  border-bottom: 0px solid transparent;
-
+  border-bottom: 0 solid transparent;
   height: 50px;
   display: flex;
   justify-content: center;
@@ -9,12 +8,11 @@
   .modal-toolbar-title {
     position: static;
     text-align: left;
-    padding: 0px;
+    padding: 0;
     font-size: var(--525-big-title-size);
   }
 
   .cancel-button {
-    
     &:active,
     &:hover,
     &:focus,

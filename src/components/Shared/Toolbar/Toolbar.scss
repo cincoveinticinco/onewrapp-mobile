@@ -5,6 +5,7 @@
 
   .toolbar-title-link {
     color: var(--ion-color-primary);
+
     .toolbar-title {
       opacity: 1;
       width: auto;
@@ -14,7 +15,7 @@
       font-size: var(--525-big-title-size);
       height: 100%;
       transition: opacity 1.3s ease-in-out;
-  
+
       &.hidden {
         opacity: 0;
       }
@@ -58,9 +59,10 @@
   .toolbar-search-wrapper {
     display: flex;
     width: 30px;
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     border-radius: 30px;
     overflow: hidden;
+
     .toolbar-search-input {
       opacity: 0;
     }
@@ -86,7 +88,6 @@
     .toolbar-search-input {
       opacity: 1;
       text-align: left;
-      width: auto;
       display: flex;
       align-items: center;
       width: 100%;

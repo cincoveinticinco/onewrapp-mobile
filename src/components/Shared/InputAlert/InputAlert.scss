@@ -4,8 +4,8 @@
   --box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
   --padding-start: 20px;
   --padding-end: 20px;
-  border-radius: 20px;
 
+  border-radius: 20px;
 
   .alert-wrapper {
     position: fixed;
@@ -13,7 +13,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    margin: 0px;
+    margin: 0;
     max-height: none;
     max-width: none;
 
@@ -22,16 +22,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0px;
-      padding: 0px;
+      margin: 0;
+      padding: 0;
       height: 50px;
-      
+
       .alert-title {
         font-size: var(--525-big-title-size);
         text-transform: uppercase;
         color: var(--ion-color-light);
-        margin: 0px;
-        padding: 0px;
+        margin: 0;
+        padding: 0;
         padding: 6px;
       }
     }
@@ -39,14 +39,15 @@
     .alert-message {
       color: var(--ion-color-light);
       font-size: var(--525-common-title-size);
-      margin: 5% 0px 0px 0px;
+      margin: 5% 0 0 0;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     .alert-input-group {
-      padding: 0px;
+      padding: 0;
+
       .alert-input-wrapper {
         margin: auto;
         display: flex;
@@ -75,7 +76,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      
 
       @media (min-width: 500px) {
         flex-direction: row;
@@ -96,32 +96,17 @@
         @media (min-width: 500px) {
           width: 120px !important;
           max-width: 120px !important;
-          margin: 0px important;
         }
-      
 
         &:active,
         &:focus {
           background-color: var(--ion-color-primary);
           color: var(--ion-color-light);
         }
-        
+
         .alert-button-inner {
           display: flex;
           justify-content: center;
-        }
-
-        &.secondary {
-          border: 1px solid var(--ion-color-light);
-          color: var(--ion-color-light);
-          margin: 6px auto;
-
-          &:active,
-          &:focus {
-            border-color: 1px solid var(--ion-color-danger);
-            color: var(--ion-color-danger);
-            background-color: transparent;
-          }
         }
 
         &.primary {
@@ -131,7 +116,17 @@
         }
 
         &.secondary {
+          border: 1px solid var(--ion-color-light);
+          color: var(--ion-color-light);
+          margin: 6px auto;
           margin: 12px;
+
+          &:active,
+          &:focus {
+            border-color: 1px solid var(--ion-color-danger);
+            color: var(--ion-color-danger);
+            background-color: transparent;
+          }
         }
       }
     }
