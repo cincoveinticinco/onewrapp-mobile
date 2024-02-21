@@ -1,10 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import {
   IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
