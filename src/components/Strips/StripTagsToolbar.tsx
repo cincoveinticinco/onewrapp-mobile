@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
-import ScenesContext from '../../context/ScenesContext';
 import { IonList } from '@ionic/react';
+import ScenesContext from '../../context/ScenesContext';
 import StripTag from './StripTag';
 import './StripTagsToolbar.scss';
 
@@ -9,15 +9,15 @@ const StripTagsToolbar = () => {
 
   const depuredFilterOptions = () => {
     const newFilterOptions: any = {
-      ...selectedFilterOptions
+      ...selectedFilterOptions,
+    };
+
+    if (newFilterOptions.$or) {
+      delete newFilterOptions.$or;
     }
 
-    if(newFilterOptions['$or']) {
-      delete newFilterOptions['$or']
-    }
-
-    return newFilterOptions
-  }
+    return newFilterOptions;
+  };
 
   // Get all selected filter options and flatten them
   const flattenedSelectedFilterOptions = Object.values(depuredFilterOptions()).flat();
@@ -27,18 +27,18 @@ const StripTagsToolbar = () => {
     if (typeof item === 'string') {
       return item;
     }
-    
+
     if (typeof item === 'object') {
       return Object.values(item).flat();
     }
   });
-  
+
   const filterOptionsStrings = flattenedStrings.flat();
 
   return (
     <>
       {filterOptionsStrings && filterOptionsStrings.length > 0 && (
-        <IonList color='tertiary' className='list-of-tags-filters'>
+        <IonList color="tertiary" className="list-of-tags-filters">
           {filterOptionsStrings.map((string: any) => (
             <StripTag key={`${Math.random()}`} tagKey={`${Math.random()}`} filterOption={string} />
           ))}

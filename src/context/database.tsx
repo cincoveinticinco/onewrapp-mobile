@@ -63,7 +63,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           updatedAt: new Date().toISOString(),
         };
 
-        if(!sceneExists) {
+        if (!sceneExists) {
           await dbInstance.scenes.insert(updatedScene);
         }
       });

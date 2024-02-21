@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import { IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast } from '@ionic/react';
+import {
+  IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
+} from '@ionic/react';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
-import { FiTrash } from "react-icons/fi";
+import { FiTrash } from 'react-icons/fi';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
-import { DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import {
+  DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum,
+} from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 
 interface SceneCardProps {
@@ -15,21 +19,20 @@ interface SceneCardProps {
   searchText?: string;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
+const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
   const { oneWrapDb } = useContext(DatabaseContext);
 
   const [presentToast] = useIonToast();
 
   const successMessageSceneToast = (message: string) => {
     presentToast({
-      message: message,
+      message,
       duration: 2000,
       icon: checkmarkCircle,
       position: 'top',
       cssClass: 'success-toast',
     });
   };
-
 
   const interior = IntOrExtOptionEnum.INT;
   const exterior = IntOrExtOptionEnum.EXT;
@@ -50,7 +53,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     const scriptDay = scene.scriptDay || '';
     const year = scene.year || '';
 
-    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (episodeNumber + '.'): ''} ${sceneNumber} ${intOrExt ? (intOrExt + '.') : ''} ${locationName ? (locationName + '.') : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
+    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (`${episodeNumber}.`) : ''} ${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
       year})` : ''}`;
 
     return sceneHeader.toUpperCase();
@@ -99,7 +102,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     if (sceneColor === 'success' || sceneColor === 'primary') {
       return 'black';
     }
-  }
+  };
 
   const getExtras = (scene: Scene) => {
     const { extras } = scene;
@@ -135,13 +138,13 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
     } catch (error) {
       console.error('Error deleting scene:', error);
     }
-  }
+  };
 
   return (
-    <IonRow className = "scene-card-row">
-      <IonItemSliding className='ion-no-margin ion-no-padding'>
-        <IonItem className='ion-no-margin ion-no-padding scene-card-item'>
-          <IonGrid className='ion-no-margin ion-no-padding'>
+    <IonRow className="scene-card-row">
+      <IonItemSliding className="ion-no-margin ion-no-padding">
+        <IonItem className="ion-no-margin ion-no-padding scene-card-item">
+          <IonGrid className="ion-no-margin ion-no-padding">
             <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
               <IonCol className="scene-card-col-1">
                 <h3 className="scene-card-header">
@@ -178,16 +181,16 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = ''}) => {
             </IonRow>
           </IonGrid>
         </IonItem>
-        <IonItemOptions class='scene-card-options'>
-          <div className='buttons-wrapper'> 
-            <IonButton fill='clear' routerLink={`/my/projects/163/editscene/${scene.id}`}>
-              <IonIcon icon={pencilOutline} className='button-icon view'/>
+        <IonItemOptions class="scene-card-options">
+          <div className="buttons-wrapper">
+            <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
+              <IonIcon icon={pencilOutline} className="button-icon view" />
             </IonButton>
-            <IonButton fill='clear'>
-              <IonIcon icon={banOutline} className='button-icon ban'/>
+            <IonButton fill="clear">
+              <IonIcon icon={banOutline} className="button-icon ban" />
             </IonButton>
-            <IonButton fill='clear' onClick={deleteScene}>
-              <FiTrash className='button-icon trash'/>
+            <IonButton fill="clear" onClick={deleteScene}>
+              <FiTrash className="button-icon trash" />
             </IonButton>
           </div>
         </IonItemOptions>

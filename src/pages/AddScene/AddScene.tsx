@@ -1,12 +1,14 @@
 import { IonContent } from '@ionic/react';
 import './AddScene.css';
-import { useContext, useEffect, useRef, useState } from 'react';
+import {
+  useContext, useEffect, useRef, useState,
+} from 'react';
+import { useHistory, useParams } from 'react-router';
+import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import { useHistory, useParams } from 'react-router';
 import useHandleBack from '../../hooks/useHandleBack';
-import { useForm } from 'react-hook-form';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
@@ -56,10 +58,9 @@ const AddScene: React.FC = () => {
     watch,
   } = useForm({ defaultValues: formData });
 
+  const sceneFormId = 'add-scene-form-id';
 
-  const sceneFormId = 'add-scene-form-id'
-
-  const handleBack = useHandleBack()
+  const handleBack = useHandleBack();
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
@@ -85,7 +86,7 @@ const AddScene: React.FC = () => {
 
       console.log('Inserting scene:', formData);
       await oneWrapDb?.scenes.insert(formData);
-      successMessageToast("Scene created successfully!");
+      successMessageToast('Scene created successfully!');
 
       reset();
       handleBack();
@@ -106,16 +107,16 @@ const AddScene: React.FC = () => {
   const handleConfirm = () => {
     scrollToTop();
     handleSubmit(onSubmit)();
-  }
+  };
 
   useHideTabs();
 
   return (
     <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Add Scene" handleConfirm={handleConfirm}>
       <IonContent color="tertiary" ref={contentRef}>
-        <AddScenesForm 
-          scrollToTop={() => scrollToTop()} 
-          editMode= {false} 
+        <AddScenesForm
+          scrollToTop={() => scrollToTop()}
+          editMode={false}
           sceneFormId={sceneFormId}
           handleSubmit={handleSubmit}
           control={control}

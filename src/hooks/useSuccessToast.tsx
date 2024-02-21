@@ -7,7 +7,7 @@ const useSuccessToast = () => {
 
   const successMessageToast = (message: string) => {
     presentToast({
-      message: message,
+      message,
       duration: 2000,
       icon: checkmarkCircle,
       position: 'top',

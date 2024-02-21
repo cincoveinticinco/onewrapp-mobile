@@ -1,4 +1,6 @@
-import React, { useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback } from 'react';
+import React, {
+  useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
+} from 'react';
 import { IonButton, IonContent, IonGrid } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
@@ -28,25 +30,24 @@ const Strips: React.FC = () => {
       const filteredData = applyFilters(data, options);
       return filteredData;
     },
-    []
+    [],
   );
 
   const newFilteredScenes = useMemo(() => {
     if (Object.keys(selectedFilterOptions).length === 0) {
       return sortScenes(offlineScenes, selectedSortOptions);
-    } else {
-      return sortScenes(memoizedApplyFilters(offlineScenes, selectedFilterOptions), selectedSortOptions);
     }
+    return sortScenes(memoizedApplyFilters(offlineScenes, selectedFilterOptions), selectedSortOptions);
   }, [offlineScenes, selectedFilterOptions, selectedSortOptions]);
 
   useEffect(() => {
     setFilteredScenes(newFilteredScenes);
     offlineScenes.length > 0 ? setLoading(false) : setLoading(true);
-  }, [selectedFilterOptions, selectedSortOptions, newFilteredScenes ]);
+  }, [selectedFilterOptions, selectedSortOptions, newFilteredScenes]);
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
-  }
+  };
 
   useEffect(() => {
     contentRef.current?.scrollToTop();
@@ -66,7 +67,7 @@ const Strips: React.FC = () => {
           sceneNumber: [searchText],
           intOrExtOption: [searchText],
           dayOrNightOption: [searchText],
-          episodeSceneNumber: [searchText]
+          episodeSceneNumber: [searchText],
         },
       };
 
@@ -79,7 +80,7 @@ const Strips: React.FC = () => {
         setSelectedFilterOptions({});
       }
     },
-    [setSelectedFilterOptions]
+    [setSelectedFilterOptions],
   );
 
   useEffect(() => {
@@ -88,7 +89,7 @@ const Strips: React.FC = () => {
 
   const history = useHistory();
 
-  const handleBack= () => history.push(`/my/projects`);
+  const handleBack = () => history.push('/my/projects');
 
   return (
     <MainPagesLayout
@@ -103,38 +104,38 @@ const Strips: React.FC = () => {
     >
       <StripTagsToolbar />
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
-          <Suspense fallback={<div>Loading scene...</div>}>
-            {loading ? (
-              <div>Loading scenes...</div>
-            ) : error ? (
-              <div>Error loading scenes. Please try again later.</div>
-            ) : (
-              <>
-                {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
-                  <div className="no-items-message">
-                    <p className="ion-no-margin">There are not any scenes that match your search. </p>
-                    <IonButton
-                      fill="clear"
-                      color="primary"
-                      className="ion-no-margin reset-filters-option"
-                      onClick={resetFilters}
-                    >
-                      Reset Filters
-                    </IonButton>
-                    <span>?</span>
-                  </div>
-                ) : (
-                  <IonGrid className="scenes-grid ion-margin">
-                    <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes}>
-                      {displayedScenes.map((scene: any, i: any) => (
-                        <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} searchText={searchText} />
-                      ))}
-                    </ScrollInfiniteContext>
-                  </IonGrid>
-                )}
-              </>
-            )}
-          </Suspense>
+        <Suspense fallback={<div>Loading scene...</div>}>
+          {loading ? (
+            <div>Loading scenes...</div>
+          ) : error ? (
+            <div>Error loading scenes. Please try again later.</div>
+          ) : (
+            <>
+              {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
+                <div className="no-items-message">
+                  <p className="ion-no-margin">There are not any scenes that match your search. </p>
+                  <IonButton
+                    fill="clear"
+                    color="primary"
+                    className="ion-no-margin reset-filters-option"
+                    onClick={resetFilters}
+                  >
+                    Reset Filters
+                  </IonButton>
+                  <span>?</span>
+                </div>
+              ) : (
+                <IonGrid className="scenes-grid ion-margin">
+                  <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes}>
+                    {displayedScenes.map((scene: any, i: any) => (
+                      <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} searchText={searchText} />
+                    ))}
+                  </ScrollInfiniteContext>
+                </IonGrid>
+              )}
+            </>
+          )}
+        </Suspense>
       </IonContent>
     </MainPagesLayout>
   );

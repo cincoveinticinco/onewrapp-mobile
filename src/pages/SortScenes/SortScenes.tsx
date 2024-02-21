@@ -49,7 +49,7 @@ const SortScenes = () => {
   useEffect(() => {
     localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
   }, [sortPosibilities]);
- 
+
   const handleConfirm = useHandleBack();
 
   const onDragEnd = (result: any) => {
@@ -81,7 +81,7 @@ const SortScenes = () => {
     return !sortOption;
   });
 
-  useHideTabs()
+  useHideTabs();
 
   return (
     <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleConfirm={handleConfirm}>

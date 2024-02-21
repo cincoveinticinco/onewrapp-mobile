@@ -7,7 +7,7 @@ const useErrorToast = () => {
 
   const errorMessageToast = (message: string) => {
     presentToast({
-      message: message,
+      message,
       duration: 2000,
       position: 'top',
       icon: closeCircle,

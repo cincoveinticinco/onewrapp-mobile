@@ -81,7 +81,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
-  }
+  };
 
   const handleConfirm = () => {
     if (modalRef.current) {
@@ -98,9 +98,8 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   const checkedFiltersOptions = listOfFilters.filter((option) => isFilterOptionChecked(option));
 
   const getListStyles = () => {
-    
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
-      return { border: 'none', outline: 'none', marginTop: '100px'};
+      return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
     if (listOfFilters.length > 10) {
@@ -112,7 +111,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     }
 
     return {};
-  }
+  };
 
   return (
     <IonRow className="ion-padding-start ion-padding-end filters-items-rows">
@@ -158,69 +157,71 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
-          {
-            <>
-              <IonList
-                color="tertiary"
-                className="ion-no-padding filters-options-list"
-                style={getListStyles()}
-              >
-                {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
-                  <div
-                    color="tertiary"
-                    key={`filter-item-${i}`}
-                    className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+          <>
+            <IonList
+              color="tertiary"
+              className="ion-no-padding filters-options-list"
+              style={getListStyles()}
+            >
+              {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
+                <div
+                  color="tertiary"
+                  key={`filter-item-${i}`}
+                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                >
+                  <IonCheckbox
+                    slot="start"
+                    className="ion-no-margin ion-no-padding"
+                    labelPlacement="end"
+                    onClick={() => handleCheckboxToggle(option)}
+                    checked={isFilterOptionChecked(option)}
                   >
-                    <IonCheckbox
-                      slot="start"
-                      className="ion-no-margin ion-no-padding"
-                      labelPlacement="end"
-                      onClick={() => handleCheckboxToggle(option)}
-                      checked={isFilterOptionChecked(option)}
-                    >
-                      {isMobile ? truncateString(option.toUpperCase(), 30) : (
-                        <HighlightedText text={option} searchTerm={searchText} />
-                      )}
-                    </IonCheckbox>
-                  </div>
-                ))}
-                {
-                  uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
-                  <div
-                    color="tertiary"
-                    key={`filter-item-${i}`}
-                    className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                  >
-                    <IonCheckbox
-                      slot="start"
-                      className="ion-no-margin ion-no-padding"
-                      labelPlacement="end"
-                      onClick={() => handleCheckboxToggle(option)}
-                      checked={isFilterOptionChecked(option)}
-                    >
-                      {isMobile ? truncateString(option.toUpperCase(), 30) : (
-                        <HighlightedText text={option} searchTerm={searchText} />
-                      )}
-                    </IonCheckbox>
-                  </div>
-                ))}
-              </IonList>
+                    {isMobile ? truncateString(option.toUpperCase(), 30) : (
+                      <HighlightedText text={option} searchTerm={searchText} />
+                    )}
+                  </IonCheckbox>
+                </div>
+              ))}
               {
-                uncheckedfilteredFiltersOptions.length === 0 &&
+                  uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
+                    <div
+                      color="tertiary"
+                      key={`filter-item-${i}`}
+                      className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                    >
+                      <IonCheckbox
+                        slot="start"
+                        className="ion-no-margin ion-no-padding"
+                        labelPlacement="end"
+                        onClick={() => handleCheckboxToggle(option)}
+                        checked={isFilterOptionChecked(option)}
+                      >
+                        {isMobile ? truncateString(option.toUpperCase(), 30) : (
+                          <HighlightedText text={option} searchTerm={searchText} />
+                        )}
+                      </IonCheckbox>
+                    </div>
+                  ))
+}
+            </IonList>
+            {
+                uncheckedfilteredFiltersOptions.length === 0
+                && (
                 <p className="no-items-message">
-                  There are no coincidences. Do you want to 
-                  <span onClick={() => setSearchText('')} style={{color: "var(--ion-color-primary)"}}> reset search </span>?
+                  There are no coincidences. Do you want to
+                  <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}> reset search </span>
+                  ?
                 </p>
+                )
               }
-              <OutlinePrimaryButton
-                buttonName="CONFIRM"
-                onClick={handleConfirm}
-                className="ion-margin"
-                style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
-              />
-              {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleConfirm} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
-            </>
-          }
+            <OutlinePrimaryButton
+              buttonName="CONFIRM"
+              onClick={handleConfirm}
+              className="ion-margin"
+              style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
+            />
+            {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleConfirm} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
+          </>
         </IonContent>
       </IonModal>
     </IonRow>

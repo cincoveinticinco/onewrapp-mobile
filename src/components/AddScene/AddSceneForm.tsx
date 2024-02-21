@@ -18,7 +18,9 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
 import DatabaseContext from '../../context/database';
-import { DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray } from '../../Ennums/ennums';
+import {
+  DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
+} from '../../Ennums/ennums';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;
@@ -34,9 +36,9 @@ interface AddScenesFormProps {
   onSubmit: any;
 }
 
-const AddScenesForm: React.FC<AddScenesFormProps> = ({ 
-  scrollToTop, 
-  editMode, 
+const AddScenesForm: React.FC<AddScenesFormProps> = ({
+  scrollToTop,
+  editMode,
   sceneFormId,
   handleSubmit,
   control,
@@ -54,7 +56,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
   const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
   const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
 
-  const sceneTypeOptions =  SceneTypeEnumArray;
+  const sceneTypeOptions = SceneTypeEnumArray;
   const protectionTypeValues = ProtectionTypeEnumArray;
   const dayNightOptions = DayOrNightOptionEnumArray;
   const intExtOptions = IntOrExtOptionEnumArray;

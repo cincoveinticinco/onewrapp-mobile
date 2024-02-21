@@ -30,7 +30,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
   }, [observedExtras]);
 
   useEffect(() => {
-    if(observedExtras && selectedExtras.length === 0 && !extrasFetched) {
+    if (observedExtras && selectedExtras.length === 0 && !extrasFetched) {
       setSelectedExtras(observedExtras);
       setExtrasFetched(true);
     }

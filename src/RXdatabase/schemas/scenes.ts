@@ -111,8 +111,8 @@ const sceneSchema = {
         type: 'object',
         properties: {
           email: { type: ['string', 'null'] },
-          note: { type: ['string', 'null' ]},
-          updatedAt: { type: ['string', 'null' ]},
+          note: { type: ['string', 'null'] },
+          updatedAt: { type: ['string', 'null'] },
         },
       },
     },

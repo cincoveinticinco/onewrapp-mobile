@@ -25,14 +25,11 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
 
   return (
     <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
-      { (
-          <>
-            <IonButton fill="clear" color="primary" slot="end" onClick={handleConfirm}>
-              CONFIRM
-            </IonButton>
-          </>
-        )
-      }
+      <>
+        <IonButton fill="clear" color="primary" slot="end" onClick={handleConfirm}>
+          CONFIRM
+        </IonButton>
+      </>
 
       {
         isMobile
@@ -47,15 +44,15 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
       </IonTitle>
 
       {
-        !isMobile &&
-        clearOptions
+        !isMobile
+        && clearOptions
         && (
         <IonButton
           fill="clear"
           color="primary"
-          slot= {isMobile ? 'end' : 'start'}
+          slot={isMobile ? 'end' : 'start'}
           onClick={clearOptions}
-          className='cancel-button'
+          className="cancel-button"
         >
           CANCEL
         </IonButton>

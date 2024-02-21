@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, {
+  useContext, useEffect, useState, useMemo,
+} from 'react';
 import {
   IonContent,
   IonCard,
@@ -24,11 +26,10 @@ const Cast: React.FC = () => {
   const handleBack = useHandleBack();
 
   const processedCast = useMemo(() => {
-    
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
         const hasCharacter = scene._data.characters.some(
-          (sceneCharacter: any) => sceneCharacter.characterName === character.characterName
+          (sceneCharacter: any) => sceneCharacter.characterName === character.characterName,
         );
         if (hasCharacter) {
           acc.push(scene._data);
@@ -67,29 +68,50 @@ const Cast: React.FC = () => {
 
   return (
     <MainPagesLayout
-       searchText={castSearchText}
-       setSearchText={setCastSearchText}
-       handleBack={handleBack}
-       title="CAST"
-       search
-      >
+      searchText={castSearchText}
+      setSearchText={setCastSearchText}
+      handleBack={handleBack}
+      title="CAST"
+      search
+    >
       <IonContent color="tertiary" fullscreen>
         <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
           {displayedCast.map((character, index) => (
             <IonCard key={index}>
               <IonCardHeader>
                 <IonCardSubtitle>
-                  {<HighlightedText text={character.characterName} searchTerm={castSearchText}/>}
+                  <HighlightedText text={character.characterName} searchTerm={castSearchText} />
                 </IonCardSubtitle>
               </IonCardHeader>
               <IonCardContent>
-                <p>Sets Quantity: {character.setsQuantity}</p>
-                <p>Locations Quantity: {character.locationsQuantity}</p>
-                <p>Pages Sum: {character.pagesSum}</p>
-                <p>Estimated Time Sum: {character.estimatedTimeSum}</p>
-                <p>Episodes Quantity: {character.episodesQuantity}</p>
-                <p>Scenes Quantity: {character.scenesQuantity}</p>
-                <p>Protection Quantity: {character.protectionQuantity}</p>
+                <p>
+                  Sets Quantity:
+                  {character.setsQuantity}
+                </p>
+                <p>
+                  Locations Quantity:
+                  {character.locationsQuantity}
+                </p>
+                <p>
+                  Pages Sum:
+                  {character.pagesSum}
+                </p>
+                <p>
+                  Estimated Time Sum:
+                  {character.estimatedTimeSum}
+                </p>
+                <p>
+                  Episodes Quantity:
+                  {character.episodesQuantity}
+                </p>
+                <p>
+                  Scenes Quantity:
+                  {character.scenesQuantity}
+                </p>
+                <p>
+                  Protection Quantity:
+                  {character.protectionQuantity}
+                </p>
               </IonCardContent>
             </IonCard>
           ))}
@@ -97,6 +119,6 @@ const Cast: React.FC = () => {
       </IonContent>
     </MainPagesLayout>
   );
-}
+};
 
 export default Cast;

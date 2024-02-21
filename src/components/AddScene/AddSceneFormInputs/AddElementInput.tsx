@@ -26,7 +26,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   setSelectedElements,
   modalTrigger,
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext); 
+  const { offlineScenes } = useContext(DatabaseContext);
 
   const filterSelectedElements = selectedElements.filter((element: any) => {
     if (categoryName === 'NO CATEGORY') {
@@ -48,13 +48,12 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
 
   const getFilteredElements = applyFilters(
-    uniqueElementsValuesArray, 
+    uniqueElementsValuesArray,
     {
-    categoryName: [categoryCriteria],
+      categoryName: [categoryCriteria],
     },
-    false
+    false,
   );
-  
 
   const getSortedElementNames = sortArrayAlphabeticaly(
     getOptionsArray('elementName', getFilteredElements),

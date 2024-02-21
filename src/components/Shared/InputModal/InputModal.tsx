@@ -56,12 +56,11 @@ const InputModal: React.FC<InputModalProps> = ({
   const cancelInputModal = () => {
     clearSelections();
     closeModal();
-  }
+  };
 
   const getListStyles = () => {
-    
     if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
-      return { border: 'none', outline: 'none', marginTop: '100px'};
+      return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
     if (listOfOptions.length > 10) {
@@ -73,7 +72,7 @@ const InputModal: React.FC<InputModalProps> = ({
     }
 
     return {};
-  }
+  };
 
   const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
 
@@ -101,53 +100,56 @@ const InputModal: React.FC<InputModalProps> = ({
       <IonContent color="tertiary">
         <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10} />
         {
-           filteredOptions.length === 0 &&
+           filteredOptions.length === 0
+           && (
            <p className="no-items-message">
-             There are no coincidences. Do you want to 
-             <span onClick={() => setSearchText('')} style={{color: "var(--ion-color-primary)"}}>reset </span>?
+             There are no coincidences. Do you want to
+             <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}>reset </span>
+             ?
            </p>
+           )
         }
-        {
-          <>
-            <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
-              {checkedSelectedOptions.map((option: string, i: number) => (
-                <div
-                  color="tertiary"
-                  key={`filter-item-${i}`}
-                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                  onClick={() => handleCheckboxToggle(option)}
+        <>
+          <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
+            {checkedSelectedOptions.map((option: string, i: number) => (
+              <div
+                color="tertiary"
+                key={`filter-item-${i}`}
+                className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                onClick={() => handleCheckboxToggle(option)}
+              >
+                <IonCheckbox
+                  slot="start"
+                  className="ion-no-margin ion-no-padding checkbox-option"
+                  labelPlacement="end"
+                  checked={isOptionChecked(option)}
                 >
-                  <IonCheckbox
-                    slot="start"
-                    className="ion-no-margin ion-no-padding checkbox-option"
-                    labelPlacement="end"
-                    checked={isOptionChecked(option)}
-                  >
-                    <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
-                  </IonCheckbox>
-                </div>
-              ))}
-              {uncheckedFilteredOptions.map((option: string, i: number) => (
-                <div
-                  color="tertiary"
-                  key={`filter-item-${i}`}
-                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                  onClick={() => handleCheckboxToggle(option)}
+                  <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
+                </IonCheckbox>
+              </div>
+            ))}
+            {uncheckedFilteredOptions.map((option: string, i: number) => (
+              <div
+                color="tertiary"
+                key={`filter-item-${i}`}
+                className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                onClick={() => handleCheckboxToggle(option)}
+              >
+                <IonCheckbox
+                  slot="start"
+                  className="ion-no-margin ion-no-padding checkbox-option"
+                  labelPlacement="end"
+                  checked={isOptionChecked(option)}
+                  disabled={!multipleSelections && checkedSelectedOptions.length > 0}
                 >
-                  <IonCheckbox
-                    slot="start"
-                    className="ion-no-margin ion-no-padding checkbox-option"
-                    labelPlacement="end"
-                    checked={isOptionChecked(option)}
-                    disabled={!multipleSelections && checkedSelectedOptions.length > 0}
-                  >
-                      <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
-                  </IonCheckbox>
-                </div>
-              ))}
-            </IonList>
-            {
-              filteredOptions.length === 0 && canCreateNew &&
+                  <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
+                </IonCheckbox>
+              </div>
+            ))}
+          </IonList>
+          {
+              filteredOptions.length === 0 && canCreateNew
+                && (
                 <p className="no-items-message">
                   There are no coincidences. Do you want to create a new one ?
                   <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
@@ -155,15 +157,15 @@ const InputModal: React.FC<InputModalProps> = ({
                     <OutlineLightButton buttonName="CANCEL" className="ion-margin cancel-button no-items-cancel" onClick={clearSearchTextModal} />
                   </span>
                 </p>
+                )
             }
-            <OutlinePrimaryButton
-              buttonName="CONFIRM"
-              onClick={closeModal}
-              className="ion-margin modal-confirm-button"
-            />
-            {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button cancel-button" />}
-          </>
-        }
+          <OutlinePrimaryButton
+            buttonName="CONFIRM"
+            onClick={closeModal}
+            className="ion-margin modal-confirm-button"
+          />
+          {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button cancel-button" />}
+        </>
       </IonContent>
     </IonModal>
   );

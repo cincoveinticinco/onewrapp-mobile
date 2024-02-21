@@ -3,12 +3,12 @@ import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
 import {
-  menuOutline, searchOutline, addOutline, funnelOutline,swapVerticalOutline, chevronBack, caretForward,
+  menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
 } from 'ionicons/icons';
 import './Toolbar.scss';
+import { debounce } from 'lodash';
 import useHandleBack from '../../../hooks/useHandleBack';
 import useIsMobile from '../../../hooks/useIsMobile';
-import { debounce } from 'lodash';
 
 interface ToolbarProps {
   name: string;
@@ -89,7 +89,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
             className="toolbar-search-input"
             placeholder=""
             ref={searchRef}
-            clearInput={true}
+            clearInput
           />
         </div>
       )}

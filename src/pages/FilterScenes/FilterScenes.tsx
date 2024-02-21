@@ -2,6 +2,7 @@ import {
   IonCol, IonContent, IonGrid, IonRow,
 } from '@ionic/react';
 import React, { useContext, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
@@ -19,7 +20,6 @@ import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption
 import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import { useHistory, useParams } from 'react-router';
 import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 import useHandleBack from '../../hooks/useHandleBack';

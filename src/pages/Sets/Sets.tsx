@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, {
+  useContext, useEffect, useState, useMemo,
+} from 'react';
 import {
   IonContent,
   IonCard,
@@ -28,7 +30,7 @@ const Sets: React.FC = () => {
       const pagesSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
       const estimatedTimeSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
       const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
-      
+
       return {
         setName,
         charactersLength,
@@ -66,12 +68,30 @@ const Sets: React.FC = () => {
                 </IonCardSubtitle>
               </IonCardHeader>
               <IonCardContent>
-                <p>Characters Length: {set.charactersLength}</p>
-                <p>Scenes Quantity: {set.scenesQuantity}</p>
-                <p>Protection Quantity: {set.protectionQuantity}</p>
-                <p>Pages Sum: {set.pagesSum}</p>
-                <p>Estimated Time Sum: {set.estimatedTimeSum}</p>
-                <p>Episodes Quantity: {set.episodesQuantity}</p>
+                <p>
+                  Characters Length:
+                  {set.charactersLength}
+                </p>
+                <p>
+                  Scenes Quantity:
+                  {set.scenesQuantity}
+                </p>
+                <p>
+                  Protection Quantity:
+                  {set.protectionQuantity}
+                </p>
+                <p>
+                  Pages Sum:
+                  {set.pagesSum}
+                </p>
+                <p>
+                  Estimated Time Sum:
+                  {set.estimatedTimeSum}
+                </p>
+                <p>
+                  Episodes Quantity:
+                  {set.episodesQuantity}
+                </p>
               </IonCardContent>
             </IonCard>
           ))}
@@ -79,7 +99,6 @@ const Sets: React.FC = () => {
       </IonContent>
     </MainPagesLayout>
   );
-}
+};
 
 export default Sets;
-

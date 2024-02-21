@@ -15,7 +15,9 @@ interface MainPagesLayoutProps {
   title: string
 }
 
-const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title }) => {
+const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
+  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title,
+}) => {
   const [searchMode, setSearchMode] = React.useState(false);
 
   return (
@@ -24,11 +26,11 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({ children, searchText,
         <Toolbar
           name={title}
           back
-          search = {search}
-          addScene = {add}
-          filter = {filter}
-          elipse = {elipse}
-          sort = {sort}
+          search={search}
+          addScene={add}
+          filter={filter}
+          elipse={elipse}
+          sort={sort}
           searchMode={searchMode}
           setSearchMode={setSearchMode}
           setSearchText={setSearchText}

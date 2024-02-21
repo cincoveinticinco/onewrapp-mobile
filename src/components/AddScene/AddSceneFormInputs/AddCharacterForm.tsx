@@ -33,9 +33,8 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
     }
   }, [observedCharacters]);
 
-
   useEffect(() => {
-    if(observedCharacters && selectedCharacters.length === 0 && !charactersFetched) {
+    if (observedCharacters && selectedCharacters.length === 0 && !charactersFetched) {
       setSelectedCharacters(observedCharacters);
       setCharactersFetched(true);
     }

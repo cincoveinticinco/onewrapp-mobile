@@ -1,4 +1,6 @@
-import React, { useContext, useState, useMemo, useCallback } from 'react';
+import React, {
+  useContext, useState, useMemo, useCallback,
+} from 'react';
 import {
   IonContent,
   IonHeader,
@@ -46,7 +48,7 @@ const Elements: React.FC = () => {
   }, [offlineScenes]);
 
   const elementsData = useMemo(() => {
-    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes,'elements', 'elementName');
+    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
     const uniqueElementsStrings = sortArrayAlphabeticaly(uniqueElements.map((element: any) => element.elementName));
 
     return uniqueElementsStrings.map((elementName: string) => {
@@ -72,12 +74,12 @@ const Elements: React.FC = () => {
         <IonToolbar color="tertiary">
           <IonTitle>ELEMENTS</IonTitle>
         </IonToolbar>
-        <IonToolbar color='tertiary'>
-          <IonSegment value={activeSection} onIonChange={handleIonChange} mode='md'>
-            <IonSegmentButton value="category" color='primary'>
+        <IonToolbar color="tertiary">
+          <IonSegment value={activeSection} onIonChange={handleIonChange} mode="md">
+            <IonSegmentButton value="category" color="primary">
               <IonLabel>{`By Category (${categoriesData.length})`}</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton value="element" color='primary'>
+            <IonSegmentButton value="element" color="primary">
               <IonLabel>{`By Element (${elementsData.length})`}</IonLabel>
             </IonSegmentButton>
           </IonSegment>
@@ -93,12 +95,30 @@ const Elements: React.FC = () => {
                     <IonCardSubtitle>{category.categoryName.toUpperCase()}</IonCardSubtitle>
                   </IonCardHeader>
                   <IonCardContent>
-                    <p>Elements Quantity: {category.elementsQuantity}</p>
-                    <p>Scenes Quantity: {category.scenesQuantity}</p>
-                    <p>Protection Quantity: {category.protectionQuantity}</p>
-                    <p>Pages Sum: {category.pagesSum}</p>
-                    <p>Estimated Time Sum: {category.estimatedTimeSum}</p>
-                    <p>Episodes Quantity: {category.episodesQuantity}</p>
+                    <p>
+                      Elements Quantity:
+                      {category.elementsQuantity}
+                    </p>
+                    <p>
+                      Scenes Quantity:
+                      {category.scenesQuantity}
+                    </p>
+                    <p>
+                      Protection Quantity:
+                      {category.protectionQuantity}
+                    </p>
+                    <p>
+                      Pages Sum:
+                      {category.pagesSum}
+                    </p>
+                    <p>
+                      Estimated Time Sum:
+                      {category.estimatedTimeSum}
+                    </p>
+                    <p>
+                      Episodes Quantity:
+                      {category.episodesQuantity}
+                    </p>
                   </IonCardContent>
                 </IonCard>
               ))}
@@ -114,11 +134,26 @@ const Elements: React.FC = () => {
                     <IonCardSubtitle>{element.elementName.toUpperCase()}</IonCardSubtitle>
                   </IonCardHeader>
                   <IonCardContent>
-                    <p>Scenes Quantity: {element.scenesQuantity}</p>
-                    <p>Protection Quantity: {element.protectionQuantity}</p>
-                    <p>Pages Sum: {element.pagesSum}</p>
-                    <p>Estimated Time Sum: {element.estimatedTimeSum}</p>
-                    <p>Episodes Quantity: {element.episodesQuantity}</p>
+                    <p>
+                      Scenes Quantity:
+                      {element.scenesQuantity}
+                    </p>
+                    <p>
+                      Protection Quantity:
+                      {element.protectionQuantity}
+                    </p>
+                    <p>
+                      Pages Sum:
+                      {element.pagesSum}
+                    </p>
+                    <p>
+                      Estimated Time Sum:
+                      {element.estimatedTimeSum}
+                    </p>
+                    <p>
+                      Episodes Quantity:
+                      {element.episodesQuantity}
+                    </p>
                   </IonCardContent>
                 </IonCard>
               ))}
@@ -128,6 +163,6 @@ const Elements: React.FC = () => {
       </IonContent>
     </IonPage>
   );
-}
+};
 
 export default Elements;

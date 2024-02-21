@@ -1,5 +1,5 @@
-import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react'
-import React, { useEffect } from 'react'
+import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
+import React, { useEffect } from 'react';
 
 interface ScrollInfiniteContextProps {
   children: React.ReactNode
@@ -10,7 +10,7 @@ interface ScrollInfiniteContextProps {
 const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children, setDisplayedData, filteredData }) => {
   const BATCH_SIZE = 10;
   const [currentBatch, setCurrentBatch] = React.useState(0);
-  const [ isInfiniteDisabled, setInfiniteDisabled ] = React.useState(false);
+  const [isInfiniteDisabled, setInfiniteDisabled] = React.useState(false);
 
   const loadMoreData = () => {
     if (currentBatch * BATCH_SIZE >= filteredData.length) {
@@ -38,7 +38,7 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
         <IonInfiniteScrollContent loadingText="Loading more elements..." />
       </IonInfiniteScroll>
     </div>
-  )
-}
+  );
+};
 
-export default ScrollInfiniteContext
+export default ScrollInfiniteContext;

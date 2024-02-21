@@ -20,10 +20,10 @@ interface AddExtraInputProps {
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, selectedExtras, setSelectedExtras, modalTrigger
+  categoryName, selectedExtras, setSelectedExtras, modalTrigger,
 }) => {
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
-  const { offlineScenes } = useContext(DatabaseContext)
+  const { offlineScenes } = useContext(DatabaseContext);
 
   const filterSelectedExtras = selectedExtras.filter((extra: any) => {
     if (categoryName === 'NO CATEGORY') {

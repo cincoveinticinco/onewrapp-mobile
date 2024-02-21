@@ -30,7 +30,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   validate = () => true,
   watchValue,
   canCreateNew,
-  editMode
+  editMode,
 }) => {
   const [showError, setShowError] = React.useState(false);
 

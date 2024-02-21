@@ -48,8 +48,8 @@ const AppTabs: React.FC = () => {
 
   const isMobile = useIsMobile();
 
-  const url = useRouteMatch().url;
-  
+  const { url } = useRouteMatch();
+
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
   return (

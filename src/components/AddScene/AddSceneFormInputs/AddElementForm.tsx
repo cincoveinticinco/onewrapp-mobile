@@ -29,7 +29,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
   }, [observedElements]);
 
   useEffect(() => {
-    if(observedElements && selectedElements.length === 0 && !elementsFetched) {
+    if (observedElements && selectedElements.length === 0 && !elementsFetched) {
       setSelectedElements(observedElements);
       setElementsFetched(true);
     }

@@ -26,7 +26,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   selectedCharacters,
   setSelectedCharacters,
-  modalTrigger
+  modalTrigger,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
@@ -55,11 +55,11 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
 
   const getFilteredCharacters = applyFilters(
     uniqueCharacterValuesArray,
-     {
-    categoryName: [categoryCriteria],
+    {
+      categoryName: [categoryCriteria],
     },
-    false
-    );
+    false,
+  );
 
   const getSortedCharacterNames = customArraySort(
     getCharactersArray(getFilteredCharacters),
