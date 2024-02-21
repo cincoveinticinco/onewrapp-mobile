@@ -1,26 +1,28 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import {
   IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
-  IonCardTitle,
   IonCardContent,
 } from '@ionic/react';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import { SceneTypeEnum } from '../../Ennums/ennums';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import useHandleBack from '../../hooks/useHandleBack';
+import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
+  const [castSearchText, setCastSearchText] = useState('');
+
+  const handleBack = useHandleBack();
 
   const processedCast = useMemo(() => {
+    
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
         const hasCharacter = scene._data.characters.some(
@@ -57,21 +59,25 @@ const Cast: React.FC = () => {
   }, [offlineScenes]);
 
   useEffect(() => {
-    setCast(processedCast);
-  }, [processedCast]);
+    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character) => character.characterName.toLowerCase().includes(castSearchText.toLowerCase())) : processedCast;
+    setCast(filteredCast);
+  }, [processedCast, castSearchText]);
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar color="tertiary">
-          <IonTitle>CAST</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <MainPagesLayout
+       searchText={castSearchText}
+       setSearchText={setCastSearchText}
+       handleBack={handleBack}
+       title="CAST"
+       search
+      >
       <IonContent color="tertiary" fullscreen>
         {cast.map((character, index) => (
           <IonCard key={index}>
             <IonCardHeader>
-              <IonCardSubtitle>{character.characterName.toUpperCase()}</IonCardSubtitle>
+              <IonCardSubtitle>
+                {<HighlightedText text={character.characterName} searchTerm={castSearchText}/>}
+              </IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>
               <p>Sets Quantity: {character.setsQuantity}</p>
@@ -85,7 +91,7 @@ const Cast: React.FC = () => {
           </IonCard>
         ))}
       </IonContent>
-    </IonPage>
+    </MainPagesLayout>
   );
 }
 
