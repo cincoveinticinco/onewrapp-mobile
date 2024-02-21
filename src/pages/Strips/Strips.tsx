@@ -116,6 +116,11 @@ const Strips: React.FC = () => {
       searchText={searchText}
       setSearchText={setSearchText}
       handleBack={handleBack}
+      search
+      add
+      filter
+      sort
+      title="LVE STRIPS"
     >
       <StripTagsToolbar />
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">

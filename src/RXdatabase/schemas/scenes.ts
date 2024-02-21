@@ -13,7 +13,7 @@ const sceneSchema = {
   primaryKey: 'id',
   properties: {
     id: {
-      type: 'string', //PROJECT ID. EPISODE NUMBER. SCENE NUMBER// UPPER CASE
+      type: 'string',
       maxLength: 250,
     },
     projectId: {
@@ -146,3 +146,7 @@ export default class ScenesSchema extends DatabaseSchema {
     super(schemaName, schemaInput);
   }
 }
+
+// IF PROTECTION, PROTECTION TYPE IS REQUIRED
+
+// WHITE TEXT AND COLOR BLACK
