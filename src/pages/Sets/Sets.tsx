@@ -13,22 +13,23 @@ import {
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const [sets, setSets] = useState<any[]>([]);
+  const [setsSearchText, setSetsSearchText] = useState('');
 
   const processedSets = useMemo(() => {
     const processSet = (setName: string) => {
       const setScenes = offlineScenes.filter((scene: any) => scene._data.setName === setName);
-
       const charactersLength = setScenes.reduce((acc: number, scene: any) => acc + scene._data.characters.length, 0);
       const scenesQuantity = setScenes.length;
       const protectionQuantity = setScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
       const pagesSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
       const estimatedTimeSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
       const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
-
+      
       return {
         setName,
         charactersLength,
@@ -44,22 +45,28 @@ const Sets: React.FC = () => {
     return uniqueSetNames.map(processSet).sort((a, b) => a.setName.localeCompare(b.setName));
   }, [offlineScenes]);
 
-  useEffect(() => {
-    setSets(processedSets);
-  }, [processedSets]);
+  const filteredSets = useMemo(() => {
+    if (setsSearchText === '') {
+      return processedSets;
+    } else {
+      return processedSets.filter((set) => set.setName.toLowerCase().includes(setsSearchText.toLowerCase()));
+    }
+  }, [processedSets, setsSearchText]);
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar color="tertiary">
-          <IonTitle>SETS</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <MainPagesLayout
+      searchText={setsSearchText}
+      setSearchText={setSetsSearchText}
+      title="SETS"
+      search
+    >
       <IonContent color="tertiary" fullscreen>
-        {sets.map((set, index) => (
+        {filteredSets.map((set, index) => (
           <IonCard key={index}>
             <IonCardHeader>
-              <IonCardSubtitle>{set.setName}</IonCardSubtitle>
+              <IonCardSubtitle>
+                <HighlightedText text={set.setName} searchTerm={setsSearchText} />
+              </IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>
               <p>Characters Length: {set.charactersLength}</p>
@@ -72,8 +79,9 @@ const Sets: React.FC = () => {
           </IonCard>
         ))}
       </IonContent>
-    </IonPage>
+    </MainPagesLayout>
   );
 }
 
 export default Sets;
+
