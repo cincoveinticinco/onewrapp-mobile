@@ -23,6 +23,8 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -48,6 +50,7 @@ const Elements: React.FC = () => {
         pagesSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
         estimatedTimeSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
         episodesQuantity: getUniqueValuesByKey(categoryScenes, 'episodeNumber').length,
+        participation: ((categoryScenes.length / offlineScenes.length) * 100).toFixed(2),
       };
     });
   }, [offlineScenes]);
@@ -65,6 +68,7 @@ const Elements: React.FC = () => {
         pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
         estimatedTimeSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
         episodesQuantity: getUniqueValuesByKey(elementScenes, 'episodeNumber').length,
+        participation: ((elementScenes.length / offlineScenes.length) * 100).toFixed(2),
       };
     });
   }, [offlineScenes]);
@@ -101,28 +105,25 @@ const Elements: React.FC = () => {
                   </IonCardHeader>
                   <IonCardContent>
                     <p>
-                      Elements Quantity:
-                      {category.elementsQuantity}
+                      <strong>Elements Quantity:</strong> {category.elementsQuantity}
                     </p>
                     <p>
-                      Scenes Quantity:
-                      {category.scenesQuantity}
+                      <strong>Scenes Quantity:</strong> {category.scenesQuantity}
                     </p>
                     <p>
-                      Protection Quantity:
-                      {category.protectionQuantity}
+                      <strong>Protection Quantity:</strong> {category.protectionQuantity}
                     </p>
                     <p>
-                      Pages Sum:
-                      {category.pagesSum}
+                      <strong>Pages Sum:</strong> {floatToFraction(category.pagesSum)}
                     </p>
                     <p>
-                      Estimated Time Sum:
-                      {category.estimatedTimeSum}
+                      <strong>Estimated Time Sum:</strong> {secondsToMinSec(category.estimatedTimeSum)}
                     </p>
                     <p>
-                      Episodes Quantity:
-                      {category.episodesQuantity}
+                      <strong>Episodes Quantity:</strong> {category.episodesQuantity}
+                    </p>
+                    <p>
+                      <strong>Participation:</strong> {category.participation}%
                     </p>
                   </IonCardContent>
                 </IonCard>
@@ -140,24 +141,22 @@ const Elements: React.FC = () => {
                   </IonCardHeader>
                   <IonCardContent>
                     <p>
-                      Scenes Quantity:
-                      {element.scenesQuantity}
+                      <strong>Scenes Quantity:</strong> {element.scenesQuantity}
                     </p>
                     <p>
-                      Protection Quantity:
-                      {element.protectionQuantity}
+                      <strong>Protection Quantity:</strong> {element.protectionQuantity}
                     </p>
                     <p>
-                      Pages Sum:
-                      {element.pagesSum}
+                      <strong>Pages Sum:</strong> {floatToFraction(element.pagesSum)}
                     </p>
                     <p>
-                      Estimated Time Sum:
-                      {element.estimatedTimeSum}
+                      <strong>Estimated Time Sum:</strong> {secondsToMinSec(element.estimatedTimeSum)}
                     </p>
                     <p>
-                      Episodes Quantity:
-                      {element.episodesQuantity}
+                      <strong>Episodes Quantity:</strong> {element.episodesQuantity}
+                    </p>
+                    <p>
+                      <strong>Participation:</strong> {element.participation}%
                     </p>
                   </IonCardContent>
                 </IonCard>

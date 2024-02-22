@@ -16,6 +16,8 @@ import HighlightedText from '../../components/Shared/HighlightedText/Highlighted
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -35,6 +37,7 @@ const Sets: React.FC = () => {
       const pagesSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
       const estimatedTimeSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
       const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
+      const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
 
       return {
         setName,
@@ -44,6 +47,7 @@ const Sets: React.FC = () => {
         pagesSum,
         estimatedTimeSum,
         episodesQuantity,
+        participation
       };
     };
 
@@ -74,28 +78,25 @@ const Sets: React.FC = () => {
               </IonCardHeader>
               <IonCardContent>
                 <p>
-                  Characters Length:
-                  {set.charactersLength}
+                  <strong>Characters Length:</strong> {set.charactersLength}
                 </p>
                 <p>
-                  Scenes Quantity:
-                  {set.scenesQuantity}
+                  <strong>Scenes Quantity:</strong> {set.scenesQuantity}
                 </p>
                 <p>
-                  Protection Quantity:
-                  {set.protectionQuantity}
+                  <strong>Protection Quantity:</strong> {set.protectionQuantity}
                 </p>
                 <p>
-                  Pages Sum:
-                  {set.pagesSum}
+                  <strong>Pages Sum:</strong> {floatToFraction(set.pagesSum)}
                 </p>
                 <p>
-                  Estimated Time Sum:
-                  {set.estimatedTimeSum}
+                  <strong>Estimated Time Sum:</strong> {secondsToMinSec(set.estimatedTimeSum)}
                 </p>
                 <p>
-                  Episodes Quantity:
-                  {set.episodesQuantity}
+                  <strong>Episodes Quantity:</strong> {set.episodesQuantity}
+                </p>
+                <p>
+                  <strong>Participation:</strong> {set.participation}%
                 </p>
               </IonCardContent>
             </IonCard>
