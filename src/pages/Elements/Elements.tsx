@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useMemo, useCallback, useRef,
+  useContext, useState, useMemo, useCallback, useRef, useEffect,
 } from 'react';
 import {
   IonContent,
@@ -25,12 +25,20 @@ import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
+import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import { search } from 'ionicons/icons';
+import { filter } from 'lodash';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [activeSection, setActiveSection] = useState<string>('category');
   const [displayedElements, setDisplayedElements] = useState<any[]>([]);
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
+  const [filteredElements, setFilteredElements] = useState<any[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState('');
+
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
@@ -77,12 +85,28 @@ const Elements: React.FC = () => {
     setActiveSection(e.detail.value!);
   }, []);
 
+  useEffect(() => {
+    setFilteredCategories(categoriesData);
+    setFilteredElements(elementsData);
+  }, [
+    categoriesData,
+    elementsData,
+  ]);
+
+  useEffect(() => {
+    if(searchText.length > 0 && activeSection === 'category') {
+      const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
+      setFilteredCategories(newFilteredCategories);
+    } else if (searchText.length > 0 && activeSection === 'element') {
+      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
+      setFilteredElements(newFilteredElements);
+    }
+  }, [searchText]);
+
+
   return (
-    <IonPage>
+    <MainPagesLayout search searchText={searchText} setSearchText={setSearchText} title="ELEMENTS">
       <IonHeader>
-        <IonToolbar color="tertiary">
-          <IonTitle>ELEMENTS</IonTitle>
-        </IonToolbar>
         <IonToolbar color="tertiary">
           <IonSegment value={activeSection} onIonChange={handleIonChange} mode="md">
             <IonSegmentButton value="category" color="primary">
@@ -97,11 +121,13 @@ const Elements: React.FC = () => {
       <IonContent color="tertiary" fullscreen>
         {activeSection === 'category' && (
           <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={categoriesData}>
+            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories}>
               {displayedCategories.map((category, index) => (
                 <IonCard key={index}>
                   <IonCardHeader>
-                    <IonCardSubtitle>{category.categoryName.toUpperCase()}</IonCardSubtitle>
+                    <IonCardSubtitle>
+                      <HighlightedText text={category.categoryName || ''} searchTerm={searchText} />
+                    </IonCardSubtitle>
                   </IonCardHeader>
                   <IonCardContent>
                     <p>
@@ -133,11 +159,13 @@ const Elements: React.FC = () => {
         )}
         {activeSection === 'element' && (
           <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={elementsData}>
+            <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={filteredElements}>
               {displayedElements.map((element, index) => (
                 <IonCard key={index}>
                   <IonCardHeader>
-                    <IonCardSubtitle>{element.elementName.toUpperCase()}</IonCardSubtitle>
+                    <IonCardSubtitle>
+                      <HighlightedText text={element.elementName || ''} searchTerm={searchText} />
+                    </IonCardSubtitle>
                   </IonCardHeader>
                   <IonCardContent>
                     <p>
@@ -165,7 +193,7 @@ const Elements: React.FC = () => {
           </>
         )}
       </IonContent>
-    </IonPage>
+    </MainPagesLayout>
   );
 };
 
