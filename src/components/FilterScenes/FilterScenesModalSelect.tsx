@@ -83,7 +83,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     }
   };
 
-  const handleConfirm = () => {
+  const handleSave = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
@@ -153,7 +153,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         className="filter-items-modal"
       >
         <IonHeader>
-          <ModalToolbar handleConfirm={handleConfirm} toolbarTitle={filterName} clearOptions={cancelInputModal} />
+          <ModalToolbar handleSave={handleSave} toolbarTitle={filterName} handleReset={cancelInputModal} />
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
@@ -215,12 +215,12 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 )
               }
             <OutlinePrimaryButton
-              buttonName="CONFIRM"
-              onClick={handleConfirm}
+              buttonName="FILTER"
+              onClick={handleSave}
               className="ion-margin"
               style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
             />
-            {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleConfirm} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
+            {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleSave} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
           </>
         </IonContent>
       </IonModal>

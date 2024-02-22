@@ -5,36 +5,35 @@ import React from 'react';
 import { chevronBack } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/useIsMobile';
 import './ModalToolbar.scss';
+import useHandleBack from '../../../hooks/useHandleBack';
 
 interface ModalToolbarProps {
-  clearOptions?: () => void
-  handleConfirm: () => void
+  handleReset?: () => void
   toolbarTitle: string
-  saveOptions?: () => void
+  handleSave?: () => void
+  showReset?: boolean
+  handleSaveName?: string
 }
 
 const ModalToolbar: React.FC<ModalToolbarProps> = (
   {
-    clearOptions,
-    handleConfirm,
+    handleReset,
     toolbarTitle,
-    saveOptions,
+    handleSave,
+    showReset=false,
+    handleSaveName,
   },
 ) => {
+
   const isMobile = useIsMobile();
+  const handleBack = useHandleBack();
 
   return (
     <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
-      <>
-        <IonButton fill="clear" color="primary" slot="end" onClick={handleConfirm}>
-          CONFIRM
-        </IonButton>
-      </>
-
       {
         isMobile
         && (
-          <IonButton fill="clear" color="primary" slot="start" onClick={clearOptions}>
+          <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
             <IonIcon icon={chevronBack} color="light" />
           </IonButton>
         )
@@ -45,24 +44,24 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
 
       {
         !isMobile
-        && clearOptions
+        && handleReset
         && (
         <IonButton
           fill="clear"
           color="primary"
           slot={isMobile ? 'end' : 'start'}
-          onClick={clearOptions}
+          onClick={showReset ? handleReset : handleBack}
           className="cancel-button"
         >
-          CANCEL
+          {showReset ? 'RESET' : 'CANCEL'}
         </IonButton>
         )
       }
       {
-        saveOptions
+        handleSave
         && (
-        <IonButton fill="clear" color="primary" slot="end" onClick={saveOptions}>
-          SAVE
+        <IonButton fill="clear" color="primary" slot="end" onClick={handleSave}>
+          {handleSaveName || 'SAVE'}
         </IonButton>
         )
       }

@@ -92,9 +92,9 @@ const InputModal: React.FC<InputModalProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleConfirm={closeModal}
+          handleSave={closeModal}
           toolbarTitle={optionName}
-          clearOptions={editMode ? closeModal : cancelInputModal}
+          handleReset={editMode ? closeModal : cancelInputModal}
         />
       </IonHeader>
       <IonContent color="tertiary">
@@ -160,7 +160,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 )
             }
           <OutlinePrimaryButton
-            buttonName="CONFIRM"
+            buttonName="SAVE"
             onClick={closeModal}
             className="ion-margin modal-confirm-button"
           />

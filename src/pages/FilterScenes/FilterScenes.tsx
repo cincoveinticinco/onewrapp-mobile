@@ -27,6 +27,7 @@ import useHandleBack from '../../hooks/useHandleBack';
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { offlineScenes } = useContext(DatabaseContext);
+  const [ showReset, setShowReset ] = React.useState(false);
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();
@@ -55,11 +56,9 @@ const FilterScenes = () => {
 
   const resetFilters = () => {
     setSelectedFilterOptions({});
-    handleBack();
   };
 
   const handleCancel = () => {
-    resetFilters();
     handleBack();
   };
 
@@ -74,11 +73,20 @@ const FilterScenes = () => {
   const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
   const getSortedElementCategoryNames = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
 
+  useEffect(() => {
+    if (Object.entries(selectedFilterOptions).length > 0) {
+      setShowReset(true);
+    } else {
+      setShowReset(false);
+    }
+  }, [selectedFilterOptions]);
+
   return (
     <SecondaryPagesLayout
       resetSelections={resetFilters}
       pageTitle="FILTER"
-      handleConfirm={handleBack}
+      handleSave={handleBack}
+      showReset={showReset}
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
@@ -248,7 +256,7 @@ const FilterScenes = () => {
           <IonRow class="ion-flex ion-justify-content-center filter-button-row">
             <IonCol size-xs="12" size-sm="4" size-md="4">
               <OutlinePrimaryButton
-                buttonName="FILTER"
+                buttonName="SAVE"
                 onClick={handleBack}
               />
             </IonCol>
@@ -259,8 +267,8 @@ const FilterScenes = () => {
             <IonRow>
               <IonCol>
                 <OutlineLightButton
-                  buttonName="CANCEL"
-                  onClick={handleCancel}
+                  buttonName={showReset ? 'RESET' : 'CANCEL'}
+                  onClick={showReset ? resetFilters : handleCancel}
                   className="cancel-filter-scenes-button cancel-button"
                 />
               </IonCol>

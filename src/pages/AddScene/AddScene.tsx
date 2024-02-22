@@ -104,7 +104,7 @@ const AddScene: React.FC = () => {
     insertScene(formData);
   };
 
-  const handleConfirm = () => {
+  const handleSave = () => {
     scrollToTop();
     handleSubmit(onSubmit)();
   };
@@ -112,7 +112,7 @@ const AddScene: React.FC = () => {
   useHideTabs();
 
   return (
-    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Add Scene" handleConfirm={handleConfirm}>
+    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Add Scene" handleSave={handleSave}>
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}

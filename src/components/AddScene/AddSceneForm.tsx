@@ -265,7 +265,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
       </div> */}
 
       <OutlinePrimaryButton
-        buttonName={editMode ? 'UPDATE SCENE' : 'ADD SCENE'}
+        buttonName="SAVE"
         className="submit-scene-button"
         type="submit"
         onClick={() => {

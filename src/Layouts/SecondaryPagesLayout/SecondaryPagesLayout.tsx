@@ -6,17 +6,18 @@ import capitalizeString from '../../utils/capitalizeString';
 interface SecondaryPagesLayoutProps {
   children: React.ReactNode
   resetSelections?: () => void
-  saveOptions?: () => void
   pageTitle: string
-  handleConfirm: any
+  handleSave: any
+  showReset?: boolean
+  handleSaveName?: string
 }
 
 const SecondaryPagesLayout: React.FC<SecondaryPagesLayoutProps> = ({
-  children, resetSelections, saveOptions, pageTitle, handleConfirm,
+  children, resetSelections, pageTitle, handleSave, showReset = false, handleSaveName,
 }) => (
   <IonPage color="tertiary">
     <IonHeader>
-      <ModalToolbar toolbarTitle={capitalizeString(pageTitle)} clearOptions={resetSelections} handleConfirm={handleConfirm} />
+      <ModalToolbar toolbarTitle={capitalizeString(pageTitle)} handleReset={resetSelections} handleSave={handleSave} showReset={showReset} handleSaveName={handleSaveName} />
     </IonHeader>
     {children}
   </IonPage>

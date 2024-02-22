@@ -15,6 +15,30 @@ interface MainPagesLayoutProps {
   title: string
 }
 
+/// INSTED OF CONFIRM FILTER
+
+/// INSTEAD OF CANCEL RESET
+
+/// UPDATE SCENE => SAVE
+
+/// TIME AND PAGES FORMATTED
+
+/// EDIT NAMES, EXAMPLE: CHANGE CHARACTER NAME IN CHARACTERS PAGE // EDIT CHARACTER NUMBER
+
+// CHARACTER WITH MOST SETS, SCENES => SORTS
+
+/// ALWAYS CHARACTER WITH CHARACTER NUMBER
+
+/// CHARACTERS SORT (NUMBER, ALPHABETICALLY) // DEFAULT
+
+// SET :
+
+// CAST, SCENES, ELEMENTS PARTICIPATION: EXAMPLE: SCENES QUANTITY/ CHARACTER SCENES PARTICIPATION QUANTITY % WITH ONE DECIMAL
+
+// LOCATION
+
+// REPORTS PDF
+
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
   children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title,
 }) => {

@@ -10,9 +10,12 @@ import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import useHandleBack from '../../hooks/useHandleBack';
+import useIsMobile from '../../hooks/useIsMobile';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 
 const SortScenes = () => {
   const { selectedSortOptions, setSelectedSortOptions } = React.useContext<any>(ScenesContext);
+  const [ showReset, setShowReset ] = React.useState(false);
 
   const defaultSortPosibilities = [
     {
@@ -50,7 +53,7 @@ const SortScenes = () => {
     localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
   }, [sortPosibilities]);
 
-  const handleConfirm = useHandleBack();
+  const handleSave = useHandleBack();
 
   const onDragEnd = (result: any) => {
     if (!result.destination) {
@@ -68,7 +71,7 @@ const SortScenes = () => {
     localStorage.removeItem('sortPosibilitiesOrder');
     setSortPosibilities(defaultSortPosibilities);
     setSelectedSortOptions(defaultSortOptions);
-    handleConfirm();
+    setShowReset(false);
   };
 
   const getCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
@@ -83,8 +86,16 @@ const SortScenes = () => {
 
   useHideTabs();
 
+  useEffect(() => {
+    if (JSON.stringify(selectedSortOptions) !== JSON.stringify(defaultSortOptions)) {
+      setShowReset(true);
+    } else {
+      setShowReset(false);
+    }
+  },[selectedSortOptions]);
+
   return (
-    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT BY" handleConfirm={handleConfirm}>
+    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT" handleSave={handleSave} handleSaveName='SORT' showReset={showReset}>
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -117,7 +128,14 @@ const SortScenes = () => {
             ))}
           </div>
         </div>
-        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleConfirm} />
+        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleSave} />
+        {useIsMobile() &&
+          <OutlineLightButton
+            buttonName={showReset ? 'RESET' : 'CANCEL'}
+            onClick={showReset ? handleReset : handleSave}
+            className="cancel-filter-scenes-button cancel-button"
+          />
+        }
       </IonContent>
     </SecondaryPagesLayout>
   );

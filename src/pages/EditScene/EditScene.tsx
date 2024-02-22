@@ -120,13 +120,13 @@ const EditScene: React.FC = () => {
     sceneId ? updateScene(formData) : console.error('No sceneId found');
   };
 
-  const handleConfirm = () => {
+  const handleSave = () => {
     scrollToTop();
     handleSubmit(onSubmit)();
   };
 
   return (
-    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Edit Scene" handleConfirm={handleConfirm}>
+    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Edit Scene" handleSave={handleSave}>
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}
