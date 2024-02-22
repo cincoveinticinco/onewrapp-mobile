@@ -84,14 +84,12 @@ const AddScene: React.FC = () => {
         return;
       }
 
-      console.log('Inserting scene:', formData);
       await oneWrapDb?.scenes.insert(formData);
       successMessageToast('Scene created successfully!');
 
       reset();
       handleBack();
     } catch (error: any) {
-      console.log('Error inserting scene:', error);
       errorToast(error ? error.message : 'Error inserting scene');
       scrollToTop();
     }

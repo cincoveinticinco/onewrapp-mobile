@@ -84,7 +84,7 @@ const FilterScenes = () => {
   return (
     <SecondaryPagesLayout
       resetSelections={resetFilters}
-      pageTitle="FILTER"
+      pageTitle="FILTERS"
       handleSave={handleBack}
       showReset={showReset}
     >

@@ -26,8 +26,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       try {
         const dbInstance = await RXdatabase.getDatabaseInstance();
         setOneWrapRXdatabase(dbInstance);
-        console.log('Database instance:', dbInstance);
-
         await loadSeeds(dbInstance);
       } catch (error) {
         console.error('Error al obtener la instancia de la base de datos:', error);

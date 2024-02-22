@@ -48,7 +48,6 @@ const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
           const newSubArray = value.filter((option) => option !== val);
 
           Object.entries(val).forEach(([subKey, subValue]: any[]) => {
-            console.log();
             if (subValue.length <= 1) {
               if (newSubArray.length <= 1) {
                 const newFilterOptions = {

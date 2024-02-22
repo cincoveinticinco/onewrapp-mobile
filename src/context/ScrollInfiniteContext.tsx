@@ -38,7 +38,6 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
     setCurrentBatch(0);
     setDisplayedData(filteredData.slice(0, BATCH_SIZE));
     setInfiniteDisabled(false);
-    console.log('CHANGING PATH', currentBatch, thisPath)
   }, [thisPath]);
 
   useEffect(() => {

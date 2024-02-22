@@ -51,7 +51,6 @@ const EditScene: React.FC = () => {
 
   const getExistingScene = async () => {
     const scene = await oneWrapDb.scenes.findOne({ selector: { id: sceneId } }).exec();
-    console.log('Existing scene:', scene._data);
     return scene._data;
   };
 
@@ -59,7 +58,6 @@ const EditScene: React.FC = () => {
     const fetchScene = async () => {
       if (sceneId) {
         const existingScene = await getExistingScene();
-        console.log(existingScene);
         Object.keys(existingScene).forEach((key) => {
           setValue(key, existingScene[key]);
           setFormData({ ...formData, [key]: existingScene[key] });
@@ -77,18 +75,7 @@ const EditScene: React.FC = () => {
     reset,
     setValue,
     watch,
-    getValues,
   } = useForm({ defaultValues: formData });
-
-  const currentValues = getValues();
-
-  useEffect(() => {
-    console.log('Current values:', currentValues);
-  }, [currentValues]);
-
-  const handleSetValue = (fieldName: string, value: any) => {
-    setValue(fieldName, value);
-  };
 
   useHideTabs();
 
@@ -100,14 +87,10 @@ const EditScene: React.FC = () => {
 
   const updateScene = async (formData: any) => {
     try {
-      console.log('Updating scene:', formData);
-
       await oneWrapDb?.scenes.upsert(formData);
-
       successMessageToast('Scene updated successfully!');
       handleBack();
     } catch (error: any) {
-      console.log('Error updating scene:', error);
       errorToast(error ? error.message : 'Error updating scene');
       scrollToTop();
     }

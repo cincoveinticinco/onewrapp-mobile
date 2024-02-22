@@ -9,11 +9,6 @@ const getOptionsArray = (nestedKey: string, uniqueValuesArray: any[]) => {
     });
   }
 
-  if (!Array.isArray(uniqueValuesArray)) {
-    console.log('ALEEEERTTTTTT!!!!!!!!!!!!!!!!!');
-    console.log('uniqueValuesArray is not an array', uniqueValuesArray, nestedKey);
-  }
-
   return extrasOrItemsArray;
 };
 

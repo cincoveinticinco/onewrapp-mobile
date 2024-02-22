@@ -57,11 +57,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       searchRef.current?.setFocus();
     }
   };
-
-  useEffect(() => {
-    console.log(searchText);
-  }, [searchText]);
-
+  
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
       {menu && (

@@ -69,11 +69,9 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
   const getSortOptionsLastIndex = () => selectedSortOptions.length - 1;
 
   const interChangeSortOptions = (currentIndex: number, newIndex: number) => {
-    const lastCheckedIndexOption = getSortOptionsLastIndex();
     const updatedSortPosibilities = [...sortPosibilities];
 
     updatedSortPosibilities.splice(newIndex, 0, updatedSortPosibilities.splice(currentIndex, 1)[0]);
-    console.log(`currentIndex: ${currentIndex} newIndex: ${newIndex} lastCheckedIndexOption: ${lastCheckedIndexOption}`);
     setSortPosibilities(updatedSortPosibilities);
   };
 
@@ -93,8 +91,6 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
       interChangeSortOptions(index, getSortOptionsLastIndex());
       setSelectedSortOptions(newSortOptions);
     }
-
-    console.log(sortPosibilities);
   };
 
   const filterIsChecked = (optionKey: string) => selectedSortOptions.some((option: any) => option[0] === optionKey);

@@ -88,7 +88,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         const newCharacter: any = { ...characterObject };
 
         setSelectedCharacters((currentCharacters: any) => {
-          console.log('currentCharacters', currentCharacters);
           return [
             ...currentCharacters,
             newCharacter,
