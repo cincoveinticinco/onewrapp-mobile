@@ -51,6 +51,7 @@ const Cast: React.FC = () => {
       const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber').length;
       const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE).length;
       const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION).length;
+      const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
 
       return {
         ...character,
@@ -61,6 +62,7 @@ const Cast: React.FC = () => {
         episodesQuantity,
         scenesQuantity,
         protectionQuantity,
+        participation
       };
     };
 
@@ -113,7 +115,7 @@ const Cast: React.FC = () => {
                   <strong>Protection Quantity:</strong> {character.protectionQuantity}
                 </p>
                 <p>
-                  <strong>Participation:</strong> {((character.scenesQuantity / offlineScenes.length) * 100).toFixed(1)}%
+                  <strong>Participation:</strong> {character.participation}%
                 </p>
               </IonCardContent>
             </IonCard>
