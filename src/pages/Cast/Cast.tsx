@@ -18,6 +18,8 @@ import HighlightedText from '../../components/Shared/HighlightedText/Highlighted
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -90,32 +92,28 @@ const Cast: React.FC = () => {
               </IonCardHeader>
               <IonCardContent>
                 <p>
-                  Sets Quantity:
-                  {character.setsQuantity}
+                  <strong>Sets Quantity:</strong> {character.setsQuantity}
                 </p>
                 <p>
-                  Locations Quantity:
-                  {character.locationsQuantity}
+                  <strong>Locations Quantity:</strong> {character.locationsQuantity}
                 </p>
                 <p>
-                  Pages Sum:
-                  {character.pagesSum}
+                  <strong>Pages Sum:</strong> {floatToFraction(character.pagesSum)}
                 </p>
                 <p>
-                  Estimated Time Sum:
-                  {character.estimatedTimeSum}
+                  <strong>Estimated Time Sum:</strong> {secondsToMinSec(character.estimatedTimeSum)}
                 </p>
                 <p>
-                  Episodes Quantity:
-                  {character.episodesQuantity}
+                  <strong>Episodes Quantity:</strong> {character.episodesQuantity}
                 </p>
                 <p>
-                  Scenes Quantity:
-                  {character.scenesQuantity}
+                  <strong>Scenes Quantity:</strong> {character.scenesQuantity}
                 </p>
                 <p>
-                  Protection Quantity:
-                  {character.protectionQuantity}
+                  <strong>Protection Quantity:</strong> {character.protectionQuantity}
+                </p>
+                <p>
+                  <strong>Participation:</strong> {((character.scenesQuantity / offlineScenes.length) * 100).toFixed(1)}%
                 </p>
               </IonCardContent>
             </IonCard>
