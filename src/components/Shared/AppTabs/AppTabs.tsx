@@ -48,6 +48,7 @@ const AppTabs: React.FC = () => {
 
   const isMobile = useIsMobile();
 
+  const urlString = '/my/projects/:id' as any;
   const { url } = useRouteMatch();
 
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
@@ -55,43 +56,43 @@ const AppTabs: React.FC = () => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route exact path={`${url}/addscene`}>
+        <Route exact path={`${urlString}/addscene`}>
           <AddScene />
         </Route>
-        <Route exact path={`${url}/editscene/:sceneId`}>
+        <Route exact path={`${urlString}/editscene/:sceneId`}>
           <EditScene />
         </Route>
-        <Route exact path={`${url}/sortscenes`}>
+        <Route exact path={`${urlString}/sortscenes`}>
           <SortScenes />
         </Route>
-        <Route exact path={`${url}/strips/filters`}>
+        <Route exact path={`${urlString}/strips/filters`}>
           <FilterScenes />
         </Route>
-        <Route exact path={`${url}/calendar`}>
+        <Route exact path={`${urlString}/calendar`}>
           <Calendar />
         </Route>
-        <Route exact path={`${url}/strips`}>
+        <Route exact path={`${urlString}/strips`}>
           <Strips />
         </Route>
-        <Route exact path={`${url}/stripboard`}>
+        <Route exact path={`${urlString}/stripboard`}>
           <StripBoard />
         </Route>
-        <Route exact path={`${url}/cast`}>
+        <Route exact path={`${urlString}/cast`}>
           <Cast />
         </Route>
-        <Route exact path={`${url}/sets`}>
+        <Route exact path={`${urlString}/sets`}>
           <Sets />
         </Route>
-        <Route exact path={`${url}/elements`}>
+        <Route exact path={`${urlString}/elements`}>
           <Elements />
         </Route>
-        <Route exact path={`${url}/reports`}>
+        <Route exact path={`${urlString}/reports`}>
           <Reports />
         </Route>
-        <Route exact path={`${url}/settings`}>
+        <Route exact path={`${urlString}/settings`}>
           <Settings />
         </Route>
-        <Redirect exact from={`${url}`} to={`${url}/strips`} />
+        <Redirect exact from={`${urlString}`} to={`${urlString}/strips`} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" className="app-tabs-container" color="dark">
         <IonTabButton tab="calendar" className={defineButtonClass} href={`${url}/calendar`}>
