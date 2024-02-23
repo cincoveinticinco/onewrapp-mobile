@@ -20,6 +20,7 @@ import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
+import sortScenes from '../../utils/SortScenesUtils/sortScenes';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -29,6 +30,7 @@ const Cast: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
+  const [selectedSortOptions, setSelectedSortOptions] = useState<any>([['participation', 'desc', 0]]);
 
   const handleBack = useHandleBack();
 
@@ -72,7 +74,7 @@ const Cast: React.FC = () => {
 
   useEffect(() => {
     const filteredCast = castSearchText.length > 0 ? processedCast.filter((character) => character.characterName.toLowerCase().includes(castSearchText.toLowerCase())) : processedCast;
-    setCast(filteredCast);
+    setCast(sortScenes(filteredCast, selectedSortOptions));
   }, [processedCast, castSearchText]);
 
   return (
@@ -82,6 +84,7 @@ const Cast: React.FC = () => {
       handleBack={handleBack}
       title="CAST"
       search
+      sort
     >
       <IonContent color="tertiary" fullscreen ref={contentRef}>
         <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
