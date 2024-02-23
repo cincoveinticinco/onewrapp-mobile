@@ -66,6 +66,7 @@ const Sets: React.FC = () => {
       setSearchText={setSetsSearchText}
       title="SETS"
       search
+      sort
     >
       <IonContent color="tertiary" fullscreen ref={contentRef}>
         <ScrollInfiniteContext setDisplayedData={setDisplayedSets} filteredData={filteredSets}>
