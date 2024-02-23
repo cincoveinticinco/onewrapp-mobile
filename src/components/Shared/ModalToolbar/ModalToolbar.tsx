@@ -13,6 +13,7 @@ interface ModalToolbarProps {
   handleSave?: () => void
   showReset?: boolean
   handleSaveName?: string
+  handleBack: () => void
 }
 
 const ModalToolbar: React.FC<ModalToolbarProps> = (
@@ -22,11 +23,11 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     handleSave,
     showReset=false,
     handleSaveName,
+    handleBack
   },
 ) => {
 
   const isMobile = useIsMobile();
-  const handleBack = useHandleBack();
 
   return (
     <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
