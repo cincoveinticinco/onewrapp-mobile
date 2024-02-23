@@ -31,7 +31,7 @@ const ScenesContext = createContext<ScenesContextType>({
   setSelectedSortOptions: () => {},
 });
 
-export const defaultSortOptions: SortOption[] = [['episodeNumber', 'asc', 0], ['sceneNumber', 'asc', 1]];
+export const defaultSortOptions: SortOption[] = [['sceneNumber', 'asc', 1], ['episodeNumber', 'asc', 0]];
 
 export const ScenesContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedFilterOptions, setSelectedFilterOptions] = useState<SelectedFilterOptionsInterface>({});
@@ -60,7 +60,7 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     orderSortOptions(selectedSortOptions);
-    localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions)); // Guardar en localStorage
+    localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
   }, [selectedSortOptions]);
 
   return (
