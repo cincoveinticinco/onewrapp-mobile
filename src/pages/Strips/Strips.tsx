@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { IonButton, IonContent, IonGrid } from '@ionic/react';
 import './Strips.scss';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortScenes from '../../utils/SortScenesUtils/sortScenes';
@@ -25,6 +25,7 @@ const Strips: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
+  const { id } = useParams<{ id: string }>();
 
   const memoizedApplyFilters = useCallback(
     (data: any, options: any) => {
@@ -102,6 +103,7 @@ const Strips: React.FC = () => {
       filter
       sort
       title="LVE STRIPS"
+      sortRoute={`/my/projects/${id}/sortscenes`}
     >
       <StripTagsToolbar />
       <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
