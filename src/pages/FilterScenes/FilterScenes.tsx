@@ -87,6 +87,7 @@ const FilterScenes = () => {
       pageTitle="FILTERS"
       handleSave={handleBack}
       showReset={showReset}
+      handleBack={handleBack}
     >
       <IonContent color="tertiary">
         <IonGrid className="ion-no-padding">
