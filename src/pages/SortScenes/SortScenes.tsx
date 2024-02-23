@@ -16,6 +16,7 @@ import OutlineLightButton from '../../components/Shared/OutlineLightButton/Outli
 const SortScenes = () => {
   const { selectedSortOptions, setSelectedSortOptions } = React.useContext<any>(ScenesContext);
   const [ showReset, setShowReset ] = React.useState(false);
+  const handleBack = useHandleBack();
 
   const defaultSortPosibilities = [
     {
@@ -95,7 +96,13 @@ const SortScenes = () => {
   },[selectedSortOptions]);
 
   return (
-    <SecondaryPagesLayout resetSelections={handleReset} pageTitle="SORT" handleSave={handleSave} handleSaveName='SORT' showReset={showReset}>
+    <SecondaryPagesLayout 
+      resetSelections={handleReset} 
+      pageTitle="SORT" 
+      handleSave={handleSave} 
+      showReset={showReset}
+      handleBack={handleBack}
+    >
       <IonContent color="tertiary" id="sort-scenes-page">
         <div className="sort-options-wrapper">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -128,7 +135,7 @@ const SortScenes = () => {
             ))}
           </div>
         </div>
-        <OutlinePrimaryButton buttonName="SORT SCENES" className="sort-scenes-button" onClick={handleSave} />
+        <OutlinePrimaryButton buttonName="SAVE" className="sort-scenes-button" onClick={handleSave} />
         {useIsMobile() &&
           <OutlineLightButton
             buttonName={showReset ? 'RESET' : 'CANCEL'}
