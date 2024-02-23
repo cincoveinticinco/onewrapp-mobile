@@ -53,11 +53,6 @@ const InputModal: React.FC<InputModalProps> = ({
     }
   };
 
-  const cancelInputModal = () => {
-    clearSelections();
-    closeModal();
-  };
-
   const getListStyles = () => {
     if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
       return { border: 'none', outline: 'none', marginTop: '100px' };
@@ -94,7 +89,9 @@ const InputModal: React.FC<InputModalProps> = ({
         <ModalToolbar
           handleSave={closeModal}
           toolbarTitle={optionName}
-          handleReset={editMode ? closeModal : cancelInputModal}
+          handleReset={clearSelections}
+          handleBack={closeModal}
+          showReset={selectedOptions.length > 0}
         />
       </IonHeader>
       <IonContent color="tertiary">
