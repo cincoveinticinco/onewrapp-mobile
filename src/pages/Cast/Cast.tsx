@@ -30,10 +30,15 @@ const Cast: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
-  const [selectedSortOptions, setSelectedSortOptions] = useState<any>([['participation', 'desc', 0]]);
+  const [selectedSortOptions, setSelectedSortOptions] = useState<any>([]);
+
+  /// REMOVE SYMBOLS
+  /// LOCATION AND ELEMENTS CATEGORY
+  /// CREATE NEW CHARACTERS
 
   const handleBack = useHandleBack();
 
+  // REMOVE NULL
   const processedCast = useMemo(() => {
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
@@ -80,6 +85,11 @@ const Cast: React.FC = () => {
     setCast(sortScenes(filteredCast, selectedSortOptions));
   }, [processedCast, castSearchText]);
 
+  const getCharacterNum = (character: any) => {
+    const characterNum = character.characterNum ? `${character.characterNum}.` : '';
+    return characterNum;
+  }
+
   return (
     <MainPagesLayout
       searchText={castSearchText}
@@ -95,7 +105,7 @@ const Cast: React.FC = () => {
             <IonCard key={index}>
               <IonCardHeader>
                 <IonCardSubtitle>
-                  <HighlightedText text={`${character.characterNum}. ${character.characterName}`} searchTerm={castSearchText} />
+                  <HighlightedText text={`${getCharacterNum(character)} ${character.characterName}`} searchTerm={castSearchText} />
                 </IonCardSubtitle>
               </IonCardHeader>
               <IonCardContent>
