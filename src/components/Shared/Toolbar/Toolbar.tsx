@@ -24,6 +24,7 @@ interface ToolbarProps {
   setSearchText?: (searchText: string) => void;
   searchText?: string;
   handleBack?: () => void;
+  sortRoute?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -39,6 +40,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   setSearchText = () => {},
   searchText,
   handleBack,
+  sortRoute
 }) => {
   const isMobile = useIsMobile();
 
@@ -57,7 +59,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       searchRef.current?.setFocus();
     }
   };
-  
+
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
       {menu && (
@@ -100,7 +102,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       {sort && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/163/sortscenes" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink={sortRoute} className="ion-no-padding toolbar-button">
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
