@@ -77,7 +77,6 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   };
 
   const cancelInputModal = () => {
-    clearFilterOptions();
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
@@ -153,7 +152,12 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         className="filter-items-modal"
       >
         <IonHeader>
-          <ModalToolbar handleSave={handleSave} toolbarTitle={filterName} handleReset={cancelInputModal} />
+          <ModalToolbar 
+            handleBack={cancelInputModal} 
+            handleSave={handleSave} 
+            toolbarTitle={filterName} 
+            handleReset={clearFilterOptions}
+            showReset={Object.entries(selectedFilterOptions).length > 0} />
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
