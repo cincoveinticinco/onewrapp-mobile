@@ -13,6 +13,7 @@ interface MainPagesLayoutProps {
   elipse?: boolean
   sort?: boolean
   title: string
+  sortRoute?: string
 }
 
 /// INSTED OF CONFIRM FILTER
@@ -40,7 +41,7 @@ interface MainPagesLayoutProps {
 // REPORTS PDF
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title,
+  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortRoute
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
 
@@ -60,6 +61,7 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
           setSearchText={setSearchText}
           searchText={searchText}
           handleBack={handleBack}
+          sortRoute={sortRoute}
         />
       </IonHeader>
       {children}
