@@ -73,7 +73,10 @@ const Cast: React.FC = () => {
   }, [offlineScenes]);
 
   useEffect(() => {
-    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character) => character.characterName.toLowerCase().includes(castSearchText.toLowerCase())) : processedCast;
+    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character) => {
+      const characterHeader = `${character.characterNum}. ${character.characterName}`;
+      return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
+    }) : processedCast;
     setCast(sortScenes(filteredCast, selectedSortOptions));
   }, [processedCast, castSearchText]);
 
