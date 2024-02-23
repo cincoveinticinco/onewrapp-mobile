@@ -105,7 +105,7 @@ const Elements: React.FC = () => {
 
 
   return (
-    <MainPagesLayout search searchText={searchText} setSearchText={setSearchText} title="ELEMENTS">
+    <MainPagesLayout search sort searchText={searchText} setSearchText={setSearchText} title="ELEMENTS">
       <IonHeader>
         <IonToolbar color="tertiary">
           <IonSegment value={activeSection} onIonChange={handleIonChange} mode="md">
