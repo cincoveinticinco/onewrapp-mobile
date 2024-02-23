@@ -92,7 +92,7 @@ const Cast: React.FC = () => {
             <IonCard key={index}>
               <IonCardHeader>
                 <IonCardSubtitle>
-                  <HighlightedText text={character.characterName} searchTerm={castSearchText} />
+                  <HighlightedText text={`${character.characterNum}. ${character.characterName}`} searchTerm={castSearchText} />
                 </IonCardSubtitle>
               </IonCardHeader>
               <IonCardContent>
