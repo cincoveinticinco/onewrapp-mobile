@@ -110,7 +110,12 @@ const AddScene: React.FC = () => {
   useHideTabs();
 
   return (
-    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Add Scene" handleSave={handleSave}>
+    <SecondaryPagesLayout 
+      handleBack={handleBack} 
+      pageTitle="Add Scene"
+      handleSave={handleSave}
+      resetSelections={handleBack}
+    >
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}
