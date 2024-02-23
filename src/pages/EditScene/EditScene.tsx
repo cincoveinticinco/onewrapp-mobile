@@ -109,7 +109,12 @@ const EditScene: React.FC = () => {
   };
 
   return (
-    <SecondaryPagesLayout resetSelections={handleBack} pageTitle="Edit Scene" handleSave={handleSave}>
+    <SecondaryPagesLayout 
+      resetSelections={handleBack} 
+      pageTitle="Edit Scene" 
+      handleSave={handleSave}
+      handleBack={handleBack}
+    >
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}
