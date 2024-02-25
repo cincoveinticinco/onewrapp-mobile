@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useRef } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
@@ -6,8 +6,6 @@ import {
   menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
 } from 'ionicons/icons';
 import './Toolbar.scss';
-import { debounce } from 'lodash';
-import useHandleBack from '../../../hooks/useHandleBack';
 import useIsMobile from '../../../hooks/useIsMobile';
 
 interface ToolbarProps {
@@ -24,7 +22,7 @@ interface ToolbarProps {
   setSearchText?: (searchText: string) => void;
   searchText?: string;
   handleBack?: () => void;
-  sortRoute?: string;
+  sortTrigger?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -40,7 +38,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   setSearchText = () => {},
   searchText,
   handleBack,
-  sortRoute
+  sortTrigger
 }) => {
   const isMobile = useIsMobile();
 
@@ -102,7 +100,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       {sort && (
-        <IonButton fill="clear" slot="end" color="light" routerLink={sortRoute} className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" id={sortTrigger} className="ion-no-padding toolbar-button">
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
