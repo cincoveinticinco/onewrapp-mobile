@@ -7,6 +7,7 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardContent,
+  IonCardTitle,
 } from '@ionic/react';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
@@ -160,8 +161,11 @@ const Cast: React.FC = () => {
             {displayedCast.map((character, index) => (
               <IonCard key={index}>
                 <IonCardHeader>
-                  <IonCardSubtitle>
+                  <IonCardTitle>
                     <HighlightedText text={`${getCharacterNum(character)} ${character.characterName}`} searchTerm={castSearchText} />
+                  </IonCardTitle>
+                  <IonCardSubtitle>
+                    {character.categoryName ? character.categoryName.toUpperCase() : ''}
                   </IonCardSubtitle>
                 </IonCardHeader>
                 <IonCardContent>
