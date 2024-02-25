@@ -35,6 +35,23 @@ const applySortCriteria = (data: any, criteria: any) => {
     return data.sort((a: any, b: any) => sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder));
   }
 
+  if (criteriaKey === 'characterNum') {
+    return data.sort((a: any, b: any) => {
+      const aNumber = a.characterNum ? a.characterNum.split('.')[0] : '';
+      const bNumber = b.characterNum ? b.characterNum.split('.')[0] : '';
+
+      if (aNumber === '' && bNumber === '') {
+        return 0;
+      } else if (aNumber === '') {
+        return criteriaOrder === 'asc' ? 1 : -1;
+      } else if (bNumber === '') {
+        return criteriaOrder === 'asc' ? -1 : 1;
+      } else {
+        return criteriaOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
+      }
+    });
+  }
+
   return data.sort((a: any, b: any) => {
     const aValue = !Number.isNaN(Number.parseFloat(a[criteriaKey])) ? Number.parseFloat(a[criteriaKey]) : a[criteriaKey];
     const bValue = !Number.isNaN(Number.parseFloat(b[criteriaKey])) ? Number.parseFloat(b[criteriaKey]) : b[criteriaKey];
@@ -57,12 +74,12 @@ const orderSortOptions = (selectedSortOptions: any[]) => {
   });
 };
 
-const sortScenes = (data: any, criterias: any) => {
+const sortByCriterias = (data: any, criterias: any) => {
   orderSortOptions(criterias);
   return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
 };
 
-export default sortScenes;
+export default sortByCriterias;
 
 // EXAMPLE
 
