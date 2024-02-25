@@ -7,19 +7,20 @@ import {
 import { LuGripHorizontal } from 'react-icons/lu';
 import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
 
-import ScenesContext from '../../context/ScenesContext';
+import ScenesContext from '../../../context/ScenesContext';
 
 interface SortPosibilityCheckboxProps {
   sortPosibility: any;
   index: number;
   setSortPosibilities: (array: any[]) => any;
   sortPosibilities: any[];
+  selectedSortOptions: any[];
+  setSelectedSortOptions: (array: any[]) => any;
 }
 
 const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
-  sortPosibility, index, setSortPosibilities, sortPosibilities,
+  sortPosibility, index, setSortPosibilities, sortPosibilities, selectedSortOptions, setSelectedSortOptions,
 }) => {
-  const { selectedSortOptions, setSelectedSortOptions } = useContext<any>(ScenesContext);
   const [sortOrder, setSortOrder] = React.useState<number>(0);
   const isChecked = selectedSortOptions.some((option: any) => option[0] === sortPosibility.optionKey);
 
