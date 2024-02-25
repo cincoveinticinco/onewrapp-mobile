@@ -20,7 +20,9 @@ import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import sortScenes from '../../utils/SortScenesUtils/sortScenes';
+import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -30,7 +32,7 @@ const Cast: React.FC = () => {
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
-  const [selectedSortOptions, setSelectedSortOptions] = useState<any>([]);
+  const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
 
   /// REMOVE SYMBOLS
   /// LOCATION AND ELEMENTS CATEGORY
@@ -38,7 +40,7 @@ const Cast: React.FC = () => {
 
   const handleBack = useHandleBack();
 
-  // REMOVE NULL
+  // REMOVE NULL CHARACTERS
   const processedCast = useMemo(() => {
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
@@ -74,71 +76,136 @@ const Cast: React.FC = () => {
     };
 
     const uniqueCharacters: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-    return uniqueCharacters.map(processCharacter).sort((a, b) => a.characterName.localeCompare(b.characterName));
-  }, [offlineScenes]);
+    return sortByCriterias(uniqueCharacters.map(processCharacter), castSelectedSortOptions);
+  }, [offlineScenes, castSelectedSortOptions]);
 
   useEffect(() => {
-    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character) => {
+    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
       return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
-    setCast(sortScenes(filteredCast, selectedSortOptions));
-  }, [processedCast, castSearchText]);
+    setCast(filteredCast);
+  }, [processedCast, castSearchText, processedCast]);
 
   const getCharacterNum = (character: any) => {
     const characterNum = character.characterNum ? `${character.characterNum}.` : '';
     return characterNum;
   }
 
+  const defaultSortPosibilitiesOrder = [
+    {
+      id: 'CHARACTER_NUM', label: 'CHARACTER NUM', optionKey: 'characterNum', defaultIndex: 0,
+    },
+    {
+      id: 'CHARACTER_NAME', label: 'CHARACTER NAME', optionKey: 'characterName', defaultIndex: 1,
+    },
+    {
+      id: 'SETS_QUANTITY', label: 'SETS QUANTITY', optionKey: 'setsQuantity', defaultIndex: 2,
+    },
+    {
+      id: 'LOCATIONS_QUANTITY', label: 'LOCATIONS QUANTITY', optionKey: 'locationsQuantity', defaultIndex: 3,
+    },
+    {
+      id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 4,
+    },
+    {
+      id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 5,
+    },
+    {
+      id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 6,
+    },
+    {
+      id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 7,
+    },
+    {
+      id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 8,
+    },
+    {
+      id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 9,
+    }
+  ];
+
+  const clearSortSelections = () => {
+    localStorage.removeItem('castSelectedSortOptions');
+    localStorage.removeItem('castSortPosibilitiesOrder');
+    setCastSelectedSortOptions(castDefaultSortOptions);
+    setCastSortPosibilities(defaultSortPosibilitiesOrder);
+  }
+
+  const [castSortPosibilities, setCastSortPosibilities] = React.useState<any[]>(() => {
+    const savedOrder = localStorage.getItem('castSortPosibilitiesOrder');
+    if (savedOrder) {
+      return JSON.parse(savedOrder);
+    }
+    return defaultSortPosibilitiesOrder;
+  })
+
+  useEffect(() => {
+    localStorage.setItem('castSortPosibilitiesOrder', JSON.stringify(castSortPosibilities));
+  }, [castSortPosibilities]);
+
   return (
-    <MainPagesLayout
-      searchText={castSearchText}
-      setSearchText={setCastSearchText}
-      handleBack={handleBack}
-      title="CAST"
-      search
-      sort
-    >
-      <IonContent color="tertiary" fullscreen ref={contentRef}>
-        <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
-          {displayedCast.map((character, index) => (
-            <IonCard key={index}>
-              <IonCardHeader>
-                <IonCardSubtitle>
-                  <HighlightedText text={`${getCharacterNum(character)} ${character.characterName}`} searchTerm={castSearchText} />
-                </IonCardSubtitle>
-              </IonCardHeader>
-              <IonCardContent>
-                <p>
-                  <strong>Sets Quantity:</strong> {character.setsQuantity}
-                </p>
-                <p>
-                  <strong>Locations Quantity:</strong> {character.locationsQuantity}
-                </p>
-                <p>
-                  <strong>Pages Sum:</strong> {floatToFraction(character.pagesSum)}
-                </p>
-                <p>
-                  <strong>Estimated Time Sum:</strong> {secondsToMinSec(character.estimatedTimeSum)}
-                </p>
-                <p>
-                  <strong>Episodes Quantity:</strong> {character.episodesQuantity}
-                </p>
-                <p>
-                  <strong>Scenes Quantity:</strong> {character.scenesQuantity}
-                </p>
-                <p>
-                  <strong>Protection Quantity:</strong> {character.protectionQuantity}
-                </p>
-                <p>
-                  <strong>Participation:</strong> {character.participation}%
-                </p>
-              </IonCardContent>
-            </IonCard>
-          ))}
-        </ScrollInfiniteContext>
-      </IonContent>
-    </MainPagesLayout>
+    <>
+      <MainPagesLayout
+        searchText={castSearchText}
+        setSearchText={setCastSearchText}
+        handleBack={handleBack}
+        title="CAST"
+        search
+        sort
+        sortTrigger="sort-cast-modal-trigger"
+      >
+        <IonContent color="tertiary" fullscreen ref={contentRef}>
+          <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
+            {displayedCast.map((character, index) => (
+              <IonCard key={index}>
+                <IonCardHeader>
+                  <IonCardSubtitle>
+                    <HighlightedText text={`${getCharacterNum(character)} ${character.characterName}`} searchTerm={castSearchText} />
+                  </IonCardSubtitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  <p>
+                    <strong>Sets Quantity:</strong> {character.setsQuantity}
+                  </p>
+                  <p>
+                    <strong>Locations Quantity:</strong> {character.locationsQuantity}
+                  </p>
+                  <p>
+                    <strong>Pages Sum:</strong> {floatToFraction(character.pagesSum)}
+                  </p>
+                  <p>
+                    <strong>Estimated Time Sum:</strong> {secondsToMinSec(character.estimatedTimeSum)}
+                  </p>
+                  <p>
+                    <strong>Episodes Quantity:</strong> {character.episodesQuantity}
+                  </p>
+                  <p>
+                    <strong>Scenes Quantity:</strong> {character.scenesQuantity}
+                  </p>
+                  <p>
+                    <strong>Protection Quantity:</strong> {character.protectionQuantity}
+                  </p>
+                  <p>
+                    <strong>Participation:</strong> {character.participation}%
+                  </p>
+                </IonCardContent>
+              </IonCard>
+            ))}
+          </ScrollInfiniteContext>
+        </IonContent>
+      </MainPagesLayout>
+      <InputSortModal
+        pageName="Sort Cast"
+        modalTrigger="sort-cast-modal-trigger"
+        defaultSortOptions={castDefaultSortOptions}
+        setSelectedSortOptions={setCastSelectedSortOptions}
+        selectedSortOptions={castSelectedSortOptions}
+        clearSelections={clearSortSelections}   
+        setSortPosibilities={setCastSortPosibilities}
+        sortPosibilities={castSortPosibilities}
+      />
+    </>
   );
 };
 
