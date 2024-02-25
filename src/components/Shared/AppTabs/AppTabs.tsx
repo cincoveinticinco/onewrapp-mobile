@@ -16,7 +16,6 @@ import {
 } from 'ionicons/icons';
 // import { useAuth } from '../../context/auth';
 import AddScene from '../../../pages/AddScene/AddScene';
-import SortScenes from '../../../pages/SortScenes/SortScenes';
 import FilterScenes from '../../../pages/FilterScenes/FilterScenes';
 import Calendar from '../../../pages/Calendar/Calendar';
 import Cast from '../../../pages/Cast/Cast';
@@ -61,9 +60,6 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route exact path={`${urlString}/editscene/:sceneId`}>
           <EditScene />
-        </Route>
-        <Route exact path={`${urlString}/sortscenes`}>
-          <SortScenes />
         </Route>
         <Route exact path={`${urlString}/strips/filters`}>
           <FilterScenes />
