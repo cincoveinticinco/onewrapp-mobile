@@ -22,6 +22,8 @@ export interface ScenesContextType {
   setSelectedFilterOptions: React.Dispatch<React.SetStateAction<SelectedFilterOptionsInterface>>;
   selectedSortOptions: SortOption[];
   setSelectedSortOptions: React.Dispatch<React.SetStateAction<SortOption[]>>;
+  castSelectedSortOptions: SortOption[];
+  setCastSelectedSortOptions: React.Dispatch<React.SetStateAction<SortOption[]>>;
 }
 
 const ScenesContext = createContext<ScenesContextType>({
@@ -29,10 +31,12 @@ const ScenesContext = createContext<ScenesContextType>({
   setSelectedFilterOptions: () => {},
   selectedSortOptions: [],
   setSelectedSortOptions: () => {},
+  castSelectedSortOptions: [],
+  setCastSelectedSortOptions: () => {},
 });
 
 export const defaultSortOptions: SortOption[] = [['sceneNumber', 'asc', 1], ['episodeNumber', 'asc', 0]];
-
+export const castDefaultSortOptions: SortOption[] = [['characterName', 'asc', 1], ['characterNum', 'asc', 0]];
 export const ScenesContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedFilterOptions, setSelectedFilterOptions] = useState<SelectedFilterOptionsInterface>({});
   const [selectedSortOptions, setSelectedSortOptions] = useState<SortOption[]>(() => {
@@ -43,11 +47,21 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
     return defaultSortOptions;
   });
 
+  const [castSelectedSortOptions, setCastSelectedSortOptions] = useState<SortOption[]>(() => {
+    const savedSortOptions = localStorage.getItem('castSelectedSortOptions');
+    if (savedSortOptions) {
+      return JSON.parse(savedSortOptions);
+    }
+    return castDefaultSortOptions;
+  });
+
   const contextValue: ScenesContextType = {
     selectedFilterOptions,
     setSelectedFilterOptions,
     selectedSortOptions,
     setSelectedSortOptions,
+    castSelectedSortOptions,
+    setCastSelectedSortOptions
   };
 
   const orderSortOptions = (selectedSortOptions: SortOption[]) => {
@@ -62,6 +76,15 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
     orderSortOptions(selectedSortOptions);
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
   }, [selectedSortOptions]);
+
+  useEffect(() => {
+    orderSortOptions(castSelectedSortOptions);
+    localStorage.setItem('castSelectedSortOptions', JSON.stringify(castSelectedSortOptions));
+  }, [castSelectedSortOptions]);
+
+  useEffect(() => {
+    console.log('selectedFilterOptions', selectedFilterOptions);
+  }, [selectedFilterOptions]);
 
   return (
     <ScenesContext.Provider value={contextValue}>
