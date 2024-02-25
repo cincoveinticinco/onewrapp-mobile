@@ -1,15 +1,13 @@
 import {
   IonCheckbox, IonContent, IonHeader, IonItem, IonList, IonModal,
 } from '@ionic/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import useIsMobile from '../../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './InputModal.scss';
 import ModalSearchBar from '../ModalSearchBar/ModalSearchBar';
 import removeNumberAndDot from '../../../utils/removeNumberAndDot';
-import ModalPagesLayout from '../../../Layouts/ModalPagesLayout/ModalPagesLayout';
-import useHandleBack from '../../../hooks/useHandleBack';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import truncateString from '../../../utils/truncateString';
 import HighlightedText from '../HighlightedText/HighlightedText';
