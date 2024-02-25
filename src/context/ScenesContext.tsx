@@ -76,7 +76,7 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
     if (savedSortOptions) {
       return JSON.parse(savedSortOptions);
     }
-    return defaultSortOptions;
+    return setsDefaultSortOptions;
   });
 
   const [elementsSelectedSortOptions, setElementsSelectedSortOptions] = useState<SortOption[]>(() => {
