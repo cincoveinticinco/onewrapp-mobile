@@ -14,6 +14,7 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardContent,
+  IonCardTitle,
 } from '@ionic/react';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
@@ -128,9 +129,11 @@ const Elements: React.FC = () => {
     const uniqueElementsStrings = sortArrayAlphabeticaly(uniqueElements.map((element: any) => element.elementName));
 
     const newElementsData =  uniqueElementsStrings.map((elementName: string) => {
+      const elementCategory = uniqueElements.find((element: any) => element.elementName === elementName)?.categoryName;
       const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
       return {
         elementName,
+        elementCategory,
         scenesQuantity: elementScenes.length,
         protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
         pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
@@ -195,9 +198,9 @@ const Elements: React.FC = () => {
                 {displayedCategories.map((category, index) => (
                   <IonCard key={index}>
                     <IonCardHeader>
-                      <IonCardSubtitle>
+                      <IonCardTitle>
                         <HighlightedText text={category.categoryName || ''} searchTerm={searchText} />
-                      </IonCardSubtitle>
+                      </IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
                       <p>
@@ -233,8 +236,11 @@ const Elements: React.FC = () => {
                 {displayedElements.map((element, index) => (
                   <IonCard key={index}>
                     <IonCardHeader>
+                      <IonCardTitle>
+                        <HighlightedText text={element.elementName || 'N/A'} searchTerm={searchText} />
+                      </IonCardTitle>
                       <IonCardSubtitle>
-                        <HighlightedText text={element.elementName || ''} searchTerm={searchText} />
+                        {element.elementCategory.toUpperCase() || 'NO CATEGORY'}
                       </IonCardSubtitle>
                     </IonCardHeader>
                     <IonCardContent>
