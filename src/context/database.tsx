@@ -49,23 +49,29 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const loadSeeds = async (dbInstance: any) => {
     try {
-      scenesSeeds.scenes.forEach(async (scene: any) => {
-        const sceneExists = await dbInstance.scenes.findOne({
-          selector: {
-            id: scene.id,
-          },
-        }).exec();
-
-        const updatedScene = {
-          ...scene,
-          updatedAt: new Date().toISOString(),
-        };
-
-        if (!sceneExists) {
-          await dbInstance.scenes.insert(updatedScene);
-        }
-      });
-      console.log('Seeds loaded successfully');
+      const scenesToInsert = scenesSeeds.scenes.map((scene: any) => ({
+        ...scene,
+        updatedAt: new Date().toISOString(),
+      }));
+  
+      // Check for existing scenes
+      const existingScenes = await dbInstance.scenes.find({
+        selector: {
+          id: { $in: scenesToInsert.map((scene: any) => scene.id) },
+        },
+      }).exec();
+  
+      const existingSceneIds = existingScenes.map((scene: any) => scene.id);
+  
+      // Filter out scenes that already exist
+      const scenesToBulkInsert = scenesToInsert.filter((scene: any) => !existingSceneIds.includes(scene.id));
+  
+      if (scenesToBulkInsert.length > 0) {
+        await dbInstance.scenes.bulkInsert(scenesToBulkInsert);
+        console.log(`${scenesToBulkInsert.length} new scenes inserted successfully`);
+      } else {
+        console.log('No new scenes to insert');
+      }
     } catch (error) {
       console.error('Error loading seeds:', error);
     }
