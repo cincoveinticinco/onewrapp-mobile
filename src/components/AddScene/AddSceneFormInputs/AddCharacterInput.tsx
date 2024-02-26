@@ -61,8 +61,12 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     false,
   );
 
+  const newSelectedCharacters = selectedCharacters.filter(
+    (character: any) => !getFilteredCharacters.some((characterObject: any) => characterObject.characterName === character.characterName),
+  )
+
   const getSortedCharacterNames = customArraySort(
-    getCharactersArray(getFilteredCharacters),
+    getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters, ...newSelectedCharacters] : getFilteredCharacters),
   );
 
   const toggleCharacters = (character: string) => {
@@ -99,6 +103,25 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     setSelectedCharacters([]);
   };
 
+  const formInputs = [
+    {
+      label: 'Character Number', 
+      type: 'text', 
+      fieldName: 'characterNum',
+      placeholder: 'INSERT', 
+      required: true,
+      inputName: 'add-character-number-input'
+    },
+    {
+      label: 'Character Name', 
+      type: 'text', 
+      fieldName: 'characterName',
+      placeholder: 'INSERT', 
+      required: true,
+      inputName: 'add-character-name-input'
+    },
+  ]
+
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
 
   return (
@@ -130,8 +153,13 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         selectedOptions={selectedCharacters.map(
           (character: any) => character.characterName,
         )}
+        setSelectedOptions={setSelectedCharacters}
         clearSelections={clearSelections}
         canCreateNew
+        createNewTrigger="characters-categories-alert"
+        optionCategory={categoryName || 'NO CATEGORY'}
+        formInputs={formInputs}
+        existentOptions={uniqueCharacterValuesArray}
       />
     </IonCardContent>
   );
