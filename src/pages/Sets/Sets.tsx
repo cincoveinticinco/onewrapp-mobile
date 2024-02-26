@@ -9,23 +9,24 @@ import {
   IonCardContent,
   IonCardTitle,
 } from '@ionic/react';
+import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import SetCard from '../../components/Sets/SetCard';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const { setsSelectedSortOptions, setSetsSelectedSortOptions} = useContext(ScenesContext);
+  const { setsSelectedSortOptions, setSetsSelectedSortOptions } = useContext(ScenesContext);
   const [setsSearchText, setSetsSearchText] = useState('');
   const [filteredSets, setFilteredSets] = useState<any[]>([]);
   const [displayedSets, setDisplayedSets] = useState<any[]>([]);
@@ -34,16 +35,34 @@ const Sets: React.FC = () => {
   useScrollToTop(contentRef, thisPath);
 
   const defaultSortPosibilitiesOrder = [
-    {id: 'SET_NAME', label: 'Set Name', optionKey: 'setName', defaultIndex: 0},
-    {id: 'LOCATION_NAME', label: 'Location Name', optionKey: 'locationName', defaultIndex: 1},
-    {id: 'CHARACTERS_LENGTH', label: 'Characters Length', optionKey: 'charactersLength', defaultIndex: 2},
-    {id: 'SCENES_QUANTITY', label: 'Scenes Quantity', optionKey: 'scenesQuantity', defaultIndex: 3},
-    {id: 'PROTECTION_QUANTITY', label: 'Protection Quantity', optionKey: 'protectionQuantity', defaultIndex: 4},
-    {id: 'PAGES_SUM', label: 'Pages Sum', optionKey: 'pagesSum', defaultIndex: 5},
-    {id: 'ESTIMATED_TIME_SUM', label: 'Estimated Time Sum', optionKey: 'estimatedTimeSum', defaultIndex: 6},
-    {id: 'EPISODES_QUANTITY', label: 'Episodes Quantity', optionKey: 'episodesQuantity', defaultIndex: 7},
-    {id: 'PARTICIPATION', label: 'Participation', optionKey: 'participation', defaultIndex: 8},
-  ]
+    {
+      id: 'SET_NAME', label: 'Set Name', optionKey: 'setName', defaultIndex: 0,
+    },
+    {
+      id: 'LOCATION_NAME', label: 'Location Name', optionKey: 'locationName', defaultIndex: 1,
+    },
+    {
+      id: 'CHARACTERS_LENGTH', label: 'Characters Length', optionKey: 'charactersLength', defaultIndex: 2,
+    },
+    {
+      id: 'SCENES_QUANTITY', label: 'Scenes Quantity', optionKey: 'scenesQuantity', defaultIndex: 3,
+    },
+    {
+      id: 'PROTECTION_QUANTITY', label: 'Protection Quantity', optionKey: 'protectionQuantity', defaultIndex: 4,
+    },
+    {
+      id: 'PAGES_SUM', label: 'Pages Sum', optionKey: 'pagesSum', defaultIndex: 5,
+    },
+    {
+      id: 'ESTIMATED_TIME_SUM', label: 'Estimated Time Sum', optionKey: 'estimatedTimeSum', defaultIndex: 6,
+    },
+    {
+      id: 'EPISODES_QUANTITY', label: 'Episodes Quantity', optionKey: 'episodesQuantity', defaultIndex: 7,
+    },
+    {
+      id: 'PARTICIPATION', label: 'Participation', optionKey: 'participation', defaultIndex: 8,
+    },
+  ];
 
   const [setsSortPosibilities, setSetsSortPosibilities] = useState<any[]>(() => {
     const savedSortPosibilities = localStorage.getItem('setsSortPosibilities');
@@ -67,7 +86,7 @@ const Sets: React.FC = () => {
       const estimatedTimeSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
       const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
       const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
-      const locationName = setScenes[0]._data.locationName;
+      const { locationName } = setScenes[0]._data;
 
       return {
         setName,
@@ -78,12 +97,12 @@ const Sets: React.FC = () => {
         estimatedTimeSum,
         episodesQuantity,
         participation,
-        locationName
+        locationName,
       };
     };
 
     const uniqueSetNames: any[] = getUniqueValuesByKey(offlineScenes, 'setName');
-    return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions)
+    return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions);
   }, [offlineScenes, setsSelectedSortOptions]);
 
   useEffect(() => {
@@ -96,7 +115,7 @@ const Sets: React.FC = () => {
     localStorage.removeItem('setsSortPosibilities');
     setSetsSelectedSortOptions(setsDefaultSortOptions);
     setSetsSortPosibilities(defaultSortPosibilitiesOrder);
-  }
+  };
 
   return (
     <>
@@ -106,44 +125,12 @@ const Sets: React.FC = () => {
         title="SETS"
         search
         sort
-        sortTrigger='sort-sets-modal-trigger'
+        sortTrigger="sort-sets-modal-trigger"
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           <ScrollInfiniteContext setDisplayedData={setDisplayedSets} filteredData={filteredSets}>
             {displayedSets.map((set, index) => (
-              <IonCard key={index}>
-                <IonCardHeader>
-                  <IonCardTitle>
-                  <HighlightedText text={set.setName} searchTerm={setsSearchText} />
-                  </IonCardTitle>
-                  <IonCardSubtitle>
-                    {set.locationName.toUpperCase() || ''}
-                  </IonCardSubtitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <p>
-                    <strong>Characters Length:</strong> {set.charactersLength}
-                  </p>
-                  <p>
-                    <strong>Scenes Quantity:</strong> {set.scenesQuantity}
-                  </p>
-                  <p>
-                    <strong>Protection Quantity:</strong> {set.protectionQuantity}
-                  </p>
-                  <p>
-                    <strong>Pages Sum:</strong> {floatToFraction(set.pagesSum)}
-                  </p>
-                  <p>
-                    <strong>Estimated Time Sum:</strong> {secondsToMinSec(set.estimatedTimeSum)}
-                  </p>
-                  <p>
-                    <strong>Episodes Quantity:</strong> {set.episodesQuantity}
-                  </p>
-                  <p>
-                    <strong>Participation:</strong> {set.participation}%
-                  </p>
-                </IonCardContent>
-              </IonCard>
+              <SetCard key={index} set={set} searchText={setsSearchText} />
             ))}
           </ScrollInfiniteContext>
         </IonContent>
