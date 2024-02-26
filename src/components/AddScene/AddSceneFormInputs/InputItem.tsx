@@ -12,6 +12,7 @@ interface InputItemProps {
   setValue: any;
   validate?: any;
   type?: any;
+  errorMessage?: string;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -24,9 +25,9 @@ const InputItem: React.FC<InputItemProps> = ({
   setValue,
   validate,
   type = 'text',
-
+  errorMessage = 'REQUIRED *'
 }) => {
-  const [showError, setShowError] = useState(false);
+  const [showError, setShowError] = useState(displayError);
 
   useEffect(() => {
     setShowError(displayError);
@@ -46,11 +47,11 @@ const InputItem: React.FC<InputItemProps> = ({
           <IonInput
             placeholder={showError ? label : placeholder}
             type={type}
-            label={showError ? 'REQUIRED' : label}
+            label={showError ? errorMessage : label}
             labelPlacement="stacked"
             value={field.value}
-            onIonChange={(e) => {
-              if (validate && !validate(e.detail.value) === true) {
+            onIonInput={(e) => {
+              if (validate && validate(e.detail.value) !== true) {
                 setShowError(true);
               } else {
                 setShowError(false);
