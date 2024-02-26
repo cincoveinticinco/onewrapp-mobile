@@ -107,6 +107,10 @@ const Strips: React.FC = () => {
 
   const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
 
+  useEffect(() => {
+    localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
+  }, [sortPosibilities])
+
   return (
     <>
       <MainPagesLayout
