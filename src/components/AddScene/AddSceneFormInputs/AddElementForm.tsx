@@ -24,7 +24,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
 
   useEffect(() => {
     if (!observedElements) {
-      setDropDownIsOpen(false);
+      setDropDownIsOpen(true);
     }
   }, [observedElements]);
 
