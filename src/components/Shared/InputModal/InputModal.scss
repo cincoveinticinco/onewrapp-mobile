@@ -3,6 +3,10 @@
 #add-scenes-options-modal {
   @include modal-styling;
 
+  ion-input.error {
+    color: var(--ion-color-danger);
+  }
+
   .options-list {
     outline: 1px solid black;
     border: 1px solid black;
@@ -21,12 +25,43 @@
   .cancel-input-modal-button {
     margin-bottom: 5%;
   }
+
+  .add-new-option-buttons-container {
+    margin: 16px;
+
+    .modal-confirm-button {
+      margin: 0px;
+      width: 100%;
+    }
+  
+    .cancel-input-modal-button {
+      margin-bottom: 0px;
+      width: 100%;
+    }
+  }
 }
 
 @media (min-width: 500px) {
   #add-scenes-options-modal {
     .modal-confirm-button {
       margin: 20% auto 10% auto;
+    }
+    
+    .add-new-option-buttons-container {
+      display: flex;
+      justify-content: space-between;
+      width: 40%;
+      margin: 10% auto;
+  
+      .modal-confirm-button {
+        margin: 0px;
+        width: 20%;
+      }
+    
+      .cancel-input-modal-button {
+        margin: 0px;
+        width: 20%;
+      }
     }
   }
 }
