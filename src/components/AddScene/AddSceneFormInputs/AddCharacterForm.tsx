@@ -29,7 +29,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
 
   useEffect(() => {
     if (!observedCharacters) {
-      setDropDownIsOpen(false);
+      setDropDownIsOpen(true);
     }
   }, [observedCharacters]);
 
@@ -46,6 +46,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
 
   const characterCategoriesArray: string[] = [];
   const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
+
 
   useEffect(() => {
     const defineCharactersCategories = () => {
