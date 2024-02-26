@@ -136,7 +136,7 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
               onIonChange={(e) => handleCheck(e)}
             >
               <span className="sort-item-label">
-                {sortPosibility.label}
+                {sortPosibility.label.toUpperCase()}
               </span>
             </IonCheckbox>
             <IonButton
@@ -172,7 +172,7 @@ const SortPosibilityCheckbox: React.FC<SortPosibilityCheckboxProps> = ({
           onIonChange={(e) => handleCheck(e)}
         >
           <span className="sort-item-label">
-            {sortPosibility.label}
+            {sortPosibility.label.toUpperCase()}
           </span>
         </IonCheckbox>
       </IonItem>
