@@ -16,13 +16,13 @@ import {
   IonCardContent,
   IonCardTitle,
 } from '@ionic/react';
+import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
@@ -31,6 +31,8 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import CategoryCard from '../../components/Elements/CategoryCard';
+import ElementCard from '../../components/Elements/ElementCard';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -40,32 +42,62 @@ const Elements: React.FC = () => {
   const [filteredElements, setFilteredElements] = useState<any[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
   const [searchText, setSearchText] = useState('');
-  const { elementsSelectedSortOptions, setElementsSelectedSortOptions, elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions } = useContext(ScenesContext);
+  const {
+    elementsSelectedSortOptions, setElementsSelectedSortOptions, elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions,
+  } = useContext(ScenesContext);
 
   const defaultElementsSortPosibilities = [
-    {id: 'ELEMENT_NAME', label: 'ELEMENT NAME', optionKey: 'elementName', defaultIndex: 0},
-    {id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 1},
-    {id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 2},
-    {id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 3},
-    {id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 4},
-    {id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 5},
-    {id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 6},
+    {
+      id: 'ELEMENT_NAME', label: 'ELEMENT NAME', optionKey: 'elementName', defaultIndex: 0,
+    },
+    {
+      id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 1,
+    },
+    {
+      id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 2,
+    },
+    {
+      id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 3,
+    },
+    {
+      id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 4,
+    },
+    {
+      id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 5,
+    },
+    {
+      id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 6,
+    },
   ];
 
   const defaultElementsCategoriesSortPosibilities = [
-    {id: 'CATEGORY_NAME', label: 'CATEGORY NAME', optionKey: 'categoryName', defaultIndex: 0},
-    {id: 'ELEMENTS_QUANTITY', label: 'ELEMENTS QUANTITY', optionKey: 'elementsQuantity', defaultIndex: 1},
-    {id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 2},
-    {id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 3},
-    {id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 4},
-    {id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 5},
-    {id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 6},
-    {id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 7},
+    {
+      id: 'CATEGORY_NAME', label: 'CATEGORY NAME', optionKey: 'categoryName', defaultIndex: 0,
+    },
+    {
+      id: 'ELEMENTS_QUANTITY', label: 'ELEMENTS QUANTITY', optionKey: 'elementsQuantity', defaultIndex: 1,
+    },
+    {
+      id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 2,
+    },
+    {
+      id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 3,
+    },
+    {
+      id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 4,
+    },
+    {
+      id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 5,
+    },
+    {
+      id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 6,
+    },
+    {
+      id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 7,
+    },
   ];
 
-  const [elementsSortPosibilities, setElementsSortPosibilities] = useState<any[]>(() => {
-    return defaultElementsSortPosibilities;
-  });
+  const [elementsSortPosibilities, setElementsSortPosibilities] = useState<any[]>(() => defaultElementsSortPosibilities);
 
   const [elementsCategoriesSortPosibilities, setElementsCategoriesSortPosibilities] = useState<any[]>(() => {
     const savedSortOptions = localStorage.getItem('categoriesSortPosibilities');
@@ -77,26 +109,25 @@ const Elements: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem('elementsSortPosibilities', JSON.stringify(elementsSortPosibilities));
-  }, [elementsSortPosibilities])
+  }, [elementsSortPosibilities]);
 
   useEffect(() => {
     localStorage.setItem('elementsCategoriesSortPosibilities', JSON.stringify(elementsCategoriesSortPosibilities));
-  }, [elementsCategoriesSortPosibilities])
-
+  }, [elementsCategoriesSortPosibilities]);
 
   const clearSelectedElementsSortOptions = () => {
     localStorage.removeItem('elementsSelectedSortOptions');
     localStorage.removeItem('elementsSortPosibilities');
     setElementsSelectedSortOptions(elementsDefaultSortOptions);
     setElementsSortPosibilities(defaultElementsSortPosibilities);
-  }
+  };
 
   const clearSelectedCategoriesSortOptions = () => {
     localStorage.removeItem('elementsCategoriesSelectedSortOptions');
     localStorage.removeItem('elementsCategoriesSortPosibilities');
     setElementsCategoriesSelectedSortOptions(elementsCategoriesDefaultSortOptions);
     setElementsCategoriesSortPosibilities(defaultElementsCategoriesSortPosibilities);
-  }
+  };
 
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -128,7 +159,7 @@ const Elements: React.FC = () => {
     const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
     const uniqueElementsStrings = sortArrayAlphabeticaly(uniqueElements.map((element: any) => element.elementName));
 
-    const newElementsData =  uniqueElementsStrings.map((elementName: string) => {
+    const newElementsData = uniqueElementsStrings.map((elementName: string) => {
       const elementCategory = uniqueElements.find((element: any) => element.elementName === elementName)?.categoryName;
       const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
       return {
@@ -159,7 +190,7 @@ const Elements: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if(searchText.length > 0 && activeSection === 'category') {
+    if (searchText.length > 0 && activeSection === 'category') {
       const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredCategories(newFilteredCategories);
     } else if (searchText.length > 0 && activeSection === 'element') {
@@ -168,16 +199,15 @@ const Elements: React.FC = () => {
     }
   }, [searchText]);
 
-
   return (
     <>
-      <MainPagesLayout 
-      search 
-      sort 
-      searchText={searchText} 
-      setSearchText={setSearchText} 
-      title="ELEMENTS" 
-      sortTrigger={activeSection === 'category' ? "elements-categories-sort-options" : "elements-sort-options"}
+      <MainPagesLayout
+        search
+        sort
+        searchText={searchText}
+        setSearchText={setSearchText}
+        title="ELEMENTS"
+        sortTrigger={activeSection === 'category' ? 'elements-categories-sort-options' : 'elements-sort-options'}
       >
         <IonHeader>
           <IonToolbar color="tertiary">
@@ -196,85 +226,27 @@ const Elements: React.FC = () => {
             <>
               <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories}>
                 {displayedCategories.map((category, index) => (
-                  <IonCard key={index}>
-                    <IonCardHeader>
-                      <IonCardTitle>
-                        <HighlightedText text={category.categoryName || ''} searchTerm={searchText} />
-                      </IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <p>
-                        <strong>Elements Quantity:</strong> {category.elementsQuantity}
-                      </p>
-                      <p>
-                        <strong>Scenes Quantity:</strong> {category.scenesQuantity}
-                      </p>
-                      <p>
-                        <strong>Protection Quantity:</strong> {category.protectionQuantity}
-                      </p>
-                      <p>
-                        <strong>Pages Sum:</strong> {floatToFraction(category.pagesSum)}
-                      </p>
-                      <p>
-                        <strong>Estimated Time Sum:</strong> {secondsToMinSec(category.estimatedTimeSum)}
-                      </p>
-                      <p>
-                        <strong>Episodes Quantity:</strong> {category.episodesQuantity}
-                      </p>
-                      <p>
-                        <strong>Participation:</strong> {category.participation}%
-                      </p>
-                    </IonCardContent>
-                  </IonCard>
+                  <ElementCard key={index} data={category} searchText={searchText} section="category" />
                 ))}
               </ScrollInfiniteContext>
             </>
           )}
           {activeSection === 'element' && (
-            <>
-              <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={filteredElements}>
-                {displayedElements.map((element, index) => (
-                  <IonCard key={index}>
-                    <IonCardHeader>
-                      <IonCardTitle>
-                        <HighlightedText text={element.elementName || 'N/A'} searchTerm={searchText} />
-                      </IonCardTitle>
-                      <IonCardSubtitle>
-                        {element.elementCategory.toUpperCase() || 'NO CATEGORY'}
-                      </IonCardSubtitle>
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <p>
-                        <strong>Scenes Quantity:</strong> {element.scenesQuantity}
-                      </p>
-                      <p>
-                        <strong>Protection Quantity:</strong> {element.protectionQuantity}
-                      </p>
-                      <p>
-                        <strong>Pages Sum:</strong> {floatToFraction(element.pagesSum)}
-                      </p>
-                      <p>
-                        <strong>Estimated Time Sum:</strong> {secondsToMinSec(element.estimatedTimeSum)}
-                      </p>
-                      <p>
-                        <strong>Episodes Quantity:</strong> {element.episodesQuantity}
-                      </p>
-                      <p>
-                        <strong>Participation:</strong> {element.participation}%
-                      </p>
-                    </IonCardContent>
-                  </IonCard>
-                ))}
-              </ScrollInfiniteContext>
-            </>
+          <>
+            <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={filteredElements}>
+              {displayedElements.map((element, index) => (
+                <ElementCard key={index} data={element} searchText={searchText} section="element" />
+              ))}
+            </ScrollInfiniteContext>
+          </>
           )}
         </IonContent>
       </MainPagesLayout>
       <InputSortModal
         clearSelections={activeSection === 'category' ? clearSelectedCategoriesSortOptions : clearSelectedElementsSortOptions}
         defaultSortOptions={activeSection === 'category' ? elementsCategoriesDefaultSortOptions : elementsDefaultSortOptions}
-        modalTrigger={activeSection === 'category' ? "elements-categories-sort-options" : "elements-sort-options"}
-        pageName={activeSection === 'category' ? "Sort Categories" : "Sort Elements"}
+        modalTrigger={activeSection === 'category' ? 'elements-categories-sort-options' : 'elements-sort-options'}
+        pageName={activeSection === 'category' ? 'Sort Categories' : 'Sort Elements'}
         sortPosibilities={activeSection === 'category' ? elementsCategoriesSortPosibilities : elementsSortPosibilities}
         setSortPosibilities={activeSection === 'category' ? setElementsCategoriesSortPosibilities : setElementsSortPosibilities}
         selectedSortOptions={activeSection === 'category' ? elementsCategoriesSelectedSortOptions : elementsSelectedSortOptions}
