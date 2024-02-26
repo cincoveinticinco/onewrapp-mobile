@@ -9,6 +9,7 @@ import {
   IonCardContent,
   IonCardTitle,
 } from '@ionic/react';
+import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
@@ -17,13 +18,13 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import useHandleBack from '../../hooks/useHandleBack';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import { useLocation } from 'react-router';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
+import CastCard from '../../components/Cast/CastCard';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -72,7 +73,7 @@ const Cast: React.FC = () => {
         episodesQuantity,
         scenesQuantity,
         protectionQuantity,
-        participation
+        participation,
       };
     };
 
@@ -91,7 +92,7 @@ const Cast: React.FC = () => {
   const getCharacterNum = (character: any) => {
     const characterNum = character.characterNum ? `${character.characterNum}.` : '';
     return characterNum;
-  }
+  };
 
   const defaultSortPosibilitiesOrder = [
     {
@@ -123,7 +124,7 @@ const Cast: React.FC = () => {
     },
     {
       id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 9,
-    }
+    },
   ];
 
   const clearSortSelections = () => {
@@ -131,7 +132,7 @@ const Cast: React.FC = () => {
     localStorage.removeItem('castSortPosibilitiesOrder');
     setCastSelectedSortOptions(castDefaultSortOptions);
     setCastSortPosibilities(defaultSortPosibilitiesOrder);
-  }
+  };
 
   const [castSortPosibilities, setCastSortPosibilities] = React.useState<any[]>(() => {
     const savedOrder = localStorage.getItem('castSortPosibilitiesOrder');
@@ -139,7 +140,7 @@ const Cast: React.FC = () => {
       return JSON.parse(savedOrder);
     }
     return defaultSortPosibilitiesOrder;
-  })
+  });
 
   useEffect(() => {
     localStorage.setItem('castSortPosibilitiesOrder', JSON.stringify(castSortPosibilities));
@@ -159,42 +160,7 @@ const Cast: React.FC = () => {
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
             {displayedCast.map((character, index) => (
-              <IonCard key={index}>
-                <IonCardHeader>
-                  <IonCardTitle>
-                    <HighlightedText text={`${getCharacterNum(character)} ${character.characterName}`} searchTerm={castSearchText} />
-                  </IonCardTitle>
-                  <IonCardSubtitle>
-                    {character.categoryName ? character.categoryName.toUpperCase() : ''}
-                  </IonCardSubtitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <p>
-                    <strong>Sets Quantity:</strong> {character.setsQuantity}
-                  </p>
-                  <p>
-                    <strong>Locations Quantity:</strong> {character.locationsQuantity}
-                  </p>
-                  <p>
-                    <strong>Pages Sum:</strong> {floatToFraction(character.pagesSum)}
-                  </p>
-                  <p>
-                    <strong>Estimated Time Sum:</strong> {secondsToMinSec(character.estimatedTimeSum)}
-                  </p>
-                  <p>
-                    <strong>Episodes Quantity:</strong> {character.episodesQuantity}
-                  </p>
-                  <p>
-                    <strong>Scenes Quantity:</strong> {character.scenesQuantity}
-                  </p>
-                  <p>
-                    <strong>Protection Quantity:</strong> {character.protectionQuantity}
-                  </p>
-                  <p>
-                    <strong>Participation:</strong> {character.participation}%
-                  </p>
-                </IonCardContent>
-              </IonCard>
+              <CastCard key={index} character={character} searchText={castSearchText} />
             ))}
           </ScrollInfiniteContext>
         </IonContent>
@@ -205,7 +171,7 @@ const Cast: React.FC = () => {
         defaultSortOptions={castDefaultSortOptions}
         setSelectedSortOptions={setCastSelectedSortOptions}
         selectedSortOptions={castSelectedSortOptions}
-        clearSelections={clearSortSelections}   
+        clearSelections={clearSortSelections}
         setSortPosibilities={setCastSortPosibilities}
         sortPosibilities={castSortPosibilities}
       />
