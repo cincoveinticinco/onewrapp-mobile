@@ -198,9 +198,9 @@ const InputModal: React.FC<InputModalProps> = ({
                   control={control}
                   fieldName={input.fieldName}
                   inputName={input.inputName}
-                  displayError={showError && input.fieldName !== 'characterNum'}
+                  displayError={input.fieldName !== 'characterNum' ? showError : false}
                   setValue={setNewOptionValue}
-                  validate={(value: string) => handleValidation(value, input.fieldName)}
+                  validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName)}
                   type={input.type}
                   errorMessage={errorMessage}
                 />
