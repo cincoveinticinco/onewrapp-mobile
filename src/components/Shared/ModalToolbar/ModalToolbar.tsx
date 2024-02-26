@@ -21,12 +21,11 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     handleReset,
     toolbarTitle,
     handleSave,
-    showReset=false,
+    showReset = false,
     handleSaveName,
-    handleBack
+    handleBack,
   },
 ) => {
-
   const isMobile = useIsMobile();
 
   return (

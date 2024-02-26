@@ -41,10 +41,10 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
   }, [thisPath]);
 
   useEffect(() => {
-    if(filteredData.length > currentBatch * BATCH_SIZE) {
+    if (filteredData.length > currentBatch * BATCH_SIZE) {
       setInfiniteDisabled(false);
     }
-  }, [filteredData])
+  }, [filteredData]);
 
   return (
     <div>

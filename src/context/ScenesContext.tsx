@@ -85,7 +85,7 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
       return JSON.parse(savedSortOptions);
     }
     return elementsDefaultSortOptions;
-  })
+  });
 
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<SortOption[]>(() => {
     const savedSortOptions = localStorage.getItem('elementsCategoriesSelectedSortOptions');
@@ -93,7 +93,7 @@ export const ScenesContextProvider = ({ children }: { children: React.ReactNode 
       return JSON.parse(savedSortOptions);
     }
     return elementsCategoriesDefaultSortOptions;
-  })
+  });
 
   const contextValue: ScenesContextType = {
     selectedFilterOptions,

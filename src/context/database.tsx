@@ -53,19 +53,19 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         ...scene,
         updatedAt: new Date().toISOString(),
       }));
-  
+
       // Check for existing scenes
       const existingScenes = await dbInstance.scenes.find({
         selector: {
           id: { $in: scenesToInsert.map((scene: any) => scene.id) },
         },
       }).exec();
-  
+
       const existingSceneIds = existingScenes.map((scene: any) => scene.id);
-  
+
       // Filter out scenes that already exist
       const scenesToBulkInsert = scenesToInsert.filter((scene: any) => !existingSceneIds.includes(scene.id));
-  
+
       if (scenesToBulkInsert.length > 0) {
         await dbInstance.scenes.bulkInsert(scenesToBulkInsert);
         console.log(`${scenesToBulkInsert.length} new scenes inserted successfully`);

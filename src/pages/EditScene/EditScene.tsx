@@ -109,9 +109,9 @@ const EditScene: React.FC = () => {
   };
 
   return (
-    <SecondaryPagesLayout 
-      resetSelections={handleBack} 
-      pageTitle="Edit Scene" 
+    <SecondaryPagesLayout
+      resetSelections={handleBack}
+      pageTitle="Edit Scene"
       handleSave={handleSave}
       handleBack={handleBack}
     >

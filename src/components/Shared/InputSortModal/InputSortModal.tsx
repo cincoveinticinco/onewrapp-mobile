@@ -29,9 +29,9 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
   selectedSortOptions,
   setSelectedSortOptions,
   sortPosibilities,
-  setSortPosibilities
+  setSortPosibilities,
 }) => {
-  const [ showReset, setShowReset ] = React.useState(false);
+  const [showReset, setShowReset] = React.useState(false);
   const modalRef = useRef<HTMLIonModalElement>(null);
 
   const onDragEnd = (result: any) => {
@@ -45,8 +45,7 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
     setSortPosibilities(items);
   };
 
-  const getCheckedSortOptions = () => 
-  sortPosibilities.filter((posibility) => {
+  const getCheckedSortOptions = () => sortPosibilities.filter((posibility) => {
     const sortOption = selectedSortOptions.find((option: any) => option[0] === posibility.optionKey);
     return sortOption;
   });
@@ -61,7 +60,7 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
       modalRef.current.dismiss();
     }
   };
-  
+
   useEffect(() => {
     if (JSON.stringify(selectedSortOptions) !== JSON.stringify(defaultSortOptions)) {
       setShowReset(true);
@@ -74,8 +73,8 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
     <IonModal
       ref={modalRef}
       trigger={modalTrigger}
-      mode='ios'
-      className='sort-modal'
+      mode="ios"
+      className="sort-modal"
     >
       <IonHeader>
         <ModalToolbar
@@ -123,13 +122,14 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
           </div>
         </div>
         <OutlinePrimaryButton buttonName="SAVE" className="sort-scenes-button" onClick={closeModal} />
-        {useIsMobile() &&
+        {useIsMobile()
+          && (
           <OutlineLightButton
             buttonName={showReset ? 'RESET' : 'CANCEL'}
             onClick={showReset ? clearSelections : closeModal}
             className="cancel-filter-scenes-button cancel-button"
           />
-        }
+          )}
       </IonContent>
     </IonModal>
   );

@@ -1,4 +1,6 @@
-import React, { useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback } from 'react';
+import React, {
+  useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
+} from 'react';
 import { IonButton, IonContent, IonGrid } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
@@ -16,7 +18,9 @@ import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions } = useContext<any>(ScenesContext);
+  const {
+    selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
+  } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -109,7 +113,7 @@ const Strips: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
-  }, [sortPosibilities])
+  }, [sortPosibilities]);
 
   return (
     <>

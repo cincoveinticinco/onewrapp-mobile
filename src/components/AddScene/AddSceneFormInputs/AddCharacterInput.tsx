@@ -87,12 +87,10 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       } else if (selectedCharacterObjectIndex === -1) {
         const newCharacter: any = { ...characterObject };
 
-        setSelectedCharacters((currentCharacters: any) => {
-          return [
-            ...currentCharacters,
-            newCharacter,
-          ];
-        });
+        setSelectedCharacters((currentCharacters: any) => [
+          ...currentCharacters,
+          newCharacter,
+        ]);
       }
     }
   };

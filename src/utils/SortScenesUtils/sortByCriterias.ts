@@ -42,13 +42,12 @@ const applySortCriteria = (data: any, criteria: any) => {
 
       if (aNumber === '' && bNumber === '') {
         return 0;
-      } else if (aNumber === '') {
+      } if (aNumber === '') {
         return criteriaOrder === 'asc' ? 1 : -1;
-      } else if (bNumber === '') {
+      } if (bNumber === '') {
         return criteriaOrder === 'asc' ? -1 : 1;
-      } else {
-        return criteriaOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
       }
+      return criteriaOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
     });
   }
 

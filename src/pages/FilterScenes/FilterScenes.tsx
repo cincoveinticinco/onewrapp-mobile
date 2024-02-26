@@ -27,7 +27,7 @@ import useHandleBack from '../../hooks/useHandleBack';
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { offlineScenes } = useContext(DatabaseContext);
-  const [ showReset, setShowReset ] = React.useState(false);
+  const [showReset, setShowReset] = React.useState(false);
   const handleBack = useHandleBack();
   const isMobile = useIsMobile();
   useHideTabs();

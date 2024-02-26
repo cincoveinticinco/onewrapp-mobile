@@ -110,8 +110,8 @@ const AddScene: React.FC = () => {
   useHideTabs();
 
   return (
-    <SecondaryPagesLayout 
-      handleBack={handleBack} 
+    <SecondaryPagesLayout
+      handleBack={handleBack}
       pageTitle="Add Scene"
       handleSave={handleSave}
       resetSelections={handleBack}

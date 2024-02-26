@@ -152,12 +152,13 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         className="filter-items-modal"
       >
         <IonHeader>
-          <ModalToolbar 
-            handleBack={cancelInputModal} 
-            handleSave={handleSave} 
-            toolbarTitle={filterName} 
+          <ModalToolbar
+            handleBack={cancelInputModal}
+            handleSave={handleSave}
+            toolbarTitle={filterName}
             handleReset={clearFilterOptions}
-            showReset={Object.entries(selectedFilterOptions).length > 0} />
+            showReset={Object.entries(selectedFilterOptions).length > 0}
+          />
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />

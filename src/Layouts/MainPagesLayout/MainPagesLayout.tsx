@@ -41,7 +41,7 @@ interface MainPagesLayoutProps {
 // REPORTS PDF
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger
+  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger,
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
 

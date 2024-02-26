@@ -38,7 +38,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   setSearchText = () => {},
   searchText,
   handleBack,
-  sortTrigger
+  sortTrigger,
 }) => {
   const isMobile = useIsMobile();
 
