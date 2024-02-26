@@ -3,7 +3,7 @@ import React from 'react';
 
 interface OutlineLightButtonProps {
   buttonName: string,
-  onClick: () => void
+  onClick: any
   className?: string
 }
 
