@@ -120,32 +120,34 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
         && (
         <IonGrid className="add-scene-items-card-grid">
           {elementsCategories.map((category, index) => (
-            <IonCard
-              key={index}
-              color="tertiary"
-              className="add-scene-items-card ion-no-border"
-            >
-              <IonCardHeader className="ion-flex">
-                <div className="ion-flex ion-justify-content-between">
-                  <p className="ion-flex ion-align-items-center">
-                    {capitalizeString(category)}
-                  </p>
+            category && (
+              <IonCard
+                key={index}
+                color="tertiary"
+                className="add-scene-items-card ion-no-border"
+              >
+                <IonCardHeader className="ion-flex">
+                  <div className="ion-flex ion-justify-content-between">
+                    <p className="ion-flex ion-align-items-center">
+                      {capitalizeString(category)}
+                    </p>
 
-                  <div className="category-buttons-wrapper">
-                    <AddButton
-                      id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
-                    />
+                    <div className="category-buttons-wrapper">
+                      <AddButton
+                        id={editMode ? `open-elements-alert-edit-${category}` : `open-elements-alert-${category}`}
+                      />
+                    </div>
+
                   </div>
-
-                </div>
-              </IonCardHeader>
-              <AddElementInput
-                categoryName={category}
-                selectedElements={selectedElements}
-                setSelectedElements={setSelectedElements}
-                modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
-              />
-            </IonCard>
+                </IonCardHeader>
+                <AddElementInput
+                  categoryName={category}
+                  selectedElements={selectedElements}
+                  setSelectedElements={setSelectedElements}
+                  modalTrigger={editMode ? `open-elements-alert-edit-${category}` : `open-elements-alert-${category}`}
+                />
+              </IonCard>
+            )
           ))}
         </IonGrid>
         )}
