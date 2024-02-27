@@ -3,6 +3,16 @@
 #add-scenes-options-modal {
   @include modal-styling;
 
+  .add-new-option-description {
+    text-align: center;
+    margin: 5% 16px 5% 16px;
+    font-size: var(--525-common-title-size);
+  }
+
+  ion-input {
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+
   ion-input.error {
     color: var(--ion-color-danger);
   }
@@ -28,6 +38,7 @@
 
   .add-new-option-buttons-container {
     margin: 16px;
+    margin-top: 5%;
 
     .modal-confirm-button {
       margin: 0px;

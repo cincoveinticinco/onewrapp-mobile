@@ -2,6 +2,9 @@ import {
   IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonList, IonModal,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
+import { search } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
@@ -12,8 +15,6 @@ import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import truncateString from '../../../utils/truncateString';
 import HighlightedText from '../HighlightedText/HighlightedText';
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
-import { useForm } from 'react-hook-form';
-import { set } from 'lodash';
 
 interface FormInputsProps {
   label: string;
@@ -34,7 +35,6 @@ interface InputModalProps {
   multipleSelections?: boolean;
   canCreateNew?: boolean;
   editMode?: boolean;
-  createNewTrigger?: string;
   optionCategory?: string;
   formInputs?: FormInputsProps[];
   existentOptions?: any[];
@@ -52,10 +52,10 @@ const InputModal: React.FC<InputModalProps> = ({
   canCreateNew = false,
   optionCategory,
   formInputs,
-  existentOptions
+  existentOptions,
 }) => {
   const [searchText, setSearchText] = useState('');
-  const [createNewMode, setCreateNewMode] = useState(false)
+  const [createNewMode, setCreateNewMode] = useState(false);
 
   const modalRef = useRef<HTMLIonModalElement>(null);
 
@@ -88,94 +88,90 @@ const InputModal: React.FC<InputModalProps> = ({
     return {};
   };
 
-  let uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
+  const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
 
-  let filteredOptions = listOfOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
+  const filteredOptions = listOfOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
   let uncheckedFilteredOptions = uncheckedOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
-  let checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(removeNumberAndDot(option)));
+  const checkedSelectedOptions: any[] = listOfOptions.filter((option: string) => selectedOptions.includes(removeNumberAndDot(option)));
 
-  let isOptionChecked = (option: string) => selectedOptions.includes(removeNumberAndDot(option));
+  const isOptionChecked = (option: string) => selectedOptions.includes(removeNumberAndDot(option));
 
-  let defaultFormValues: any = {}
+  const defaultFormValues: any = {};
 
   formInputs?.forEach((input: any) => {
-    defaultFormValues[input.fieldName] = null
-  })
+    defaultFormValues[input.fieldName] = null;
+  });
 
-  const [errorMessage, setErrorMessage] = useState('REQUIRED *')
-  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('REQUIRED *');
+  const [showError, setShowError] = useState(false);
 
   const {
     control,
     formState: { errors },
     handleSubmit,
     setValue,
-    resetField
+    resetField,
   } = useForm({
-    defaultValues: defaultFormValues
-  })
+    defaultValues: defaultFormValues,
+  });
 
   const handleSaveNewOption = (newOptionArgument: any) => {
     formInputs?.forEach((input: any) => {
-      resetField(input.fieldName)
-    })
-    newOptionArgument.categoryName = optionCategory === 'NO CATEGORY' ? null : optionCategory
-    setCreateNewMode(false)
-    setShowError(false)
-    setSearchText('')
-    setSelectedOptions((prev: any) => [...prev, newOptionArgument])
-    closeModal()
-  }
+      resetField(input.fieldName);
+    });
+    newOptionArgument.categoryName = optionCategory === 'NO CATEGORY' ? null : optionCategory;
+    setCreateNewMode(false);
+    setShowError(false);
+    setSearchText('');
+    setSelectedOptions((prev: any) => [...prev, newOptionArgument]);
+    closeModal();
+  };
 
   const setNewOptionValue = (fieldName: string, value: string) => {
-    if((value === '' || !value) && fieldName !== 'characterNum') {
-      return setValue(fieldName, null)
-    } else {
-      return setValue(fieldName, value)
+    if ((value === '' || !value) && fieldName !== 'characterNum') {
+      return setValue(fieldName, null);
     }
-  }
+    return setValue(fieldName, value);
+  };
 
   const handleValidation = (value: string, fieldName: string) => {
-    if(fieldName === 'characterNum') {
-      return true
+    if (fieldName === 'characterNum') {
+      return true;
     }
 
-    if((value === '' || !value) && fieldName !== 'characterNum') {
-      setShowError(true)
-      setErrorMessage('REQUIRED *')
-      return 'This field is required'
+    if ((value === '' || !value) && fieldName !== 'characterNum') {
+      setShowError(true);
+      setErrorMessage('REQUIRED *');
+      return 'This field is required';
     }
 
     const optionExists = existentOptions?.findIndex((option: any) => {
-      if(option[fieldName]) {
-        return option[fieldName].toLowerCase() === value.toLowerCase()
+      if (option[fieldName]) {
+        return option[fieldName].toLowerCase() === value.toLowerCase();
       }
-    })
+    });
 
-    const optionExistsInSelected = selectedOptions.findIndex((option: string) => {
-      return option.toLowerCase() === value.toLowerCase()
-    })
-
+    const optionExistsInSelected = selectedOptions.findIndex((option: string) => option.toLowerCase() === value.toLowerCase());
 
     if (fieldName !== 'characterNum' && (optionExists && optionExists > -1) || (optionExistsInSelected > -1)) {
-      setShowError(true)
-      setErrorMessage('ALREADY EXISTS *')
-      return 'This option already exists'
+      setShowError(true);
+      setErrorMessage('ALREADY EXISTS *');
+      return 'This option already exists';
     }
 
-    return true
-  }
+    return true;
+  };
 
   const cancelForm = () => {
     setCreateNewMode(false);
     formInputs?.forEach((input: any) => {
-      setValue(input.fieldName, null)
-    })
-    setShowError(false)
-    setSearchText('')
-  }
+      setValue(input.fieldName, null);
+    });
+    setShowError(false);
+    setSearchText('');
+  };
 
   return (
     <IonModal
@@ -194,9 +190,12 @@ const InputModal: React.FC<InputModalProps> = ({
       </IonHeader>
       {canCreateNew && createNewMode ? (
         <IonContent color="tertiary">
-            {
-              formInputs &&
-              formInputs.map((input: any, i: any) => (
+          <IonHeader className="add-new-option-description" mode="ios">
+            Please, fill the form to create a new option
+          </IonHeader>
+          {
+              formInputs
+              && formInputs.map((input: any, i: any) => (
                 <InputItem
                   key={i}
                   label={input.label}
@@ -212,25 +211,26 @@ const InputModal: React.FC<InputModalProps> = ({
                 />
               ))
             }
-            <div className='add-new-option-buttons-container'>       
-              <OutlinePrimaryButton
-                buttonName="SAVE"
-                onClick={handleSubmit(handleSaveNewOption)}
-                className="ion-margin modal-confirm-button"
-              />
+          <div className="add-new-option-buttons-container">
+            <OutlinePrimaryButton
+              buttonName="SAVE"
+              onClick={handleSubmit(handleSaveNewOption)}
+              className="ion-margin modal-confirm-button"
+            />
 
-              <OutlineLightButton 
-                buttonName="CANCEL" 
-                onClick={cancelForm}
-                className="ion-margin cancel-input-modal-button cancel-button" 
-              />
-            </div>
+            <OutlineLightButton
+              buttonName="CANCEL"
+              onClick={cancelForm}
+              className="ion-margin cancel-input-modal-button cancel-button"
+            />
+          </div>
         </IonContent>
       ) : (
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10} />
           {
-            filteredOptions.length === 0
+            searchText.length > 0
+            && filteredOptions.length === 0
             && (
             <p className="no-items-message">
               There are no coincidences. Do you want to
@@ -289,13 +289,15 @@ const InputModal: React.FC<InputModalProps> = ({
                 </p>
                 )
               }
-            { 
-              filteredOptions.length > 0 &&
+            {
+              filteredOptions.length > 0
+              && (
               <OutlinePrimaryButton
                 buttonName="SAVE"
                 onClick={closeModal}
                 className="ion-margin modal-confirm-button"
               />
+              )
             }
             {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button cancel-button" />}
           </>
