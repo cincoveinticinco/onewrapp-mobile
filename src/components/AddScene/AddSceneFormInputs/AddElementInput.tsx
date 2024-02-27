@@ -93,6 +93,17 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
 
   const contentStyle = selectedElements.length === 0 ? 'ion-no-padding' : '';
 
+  const formInputs = [
+    {
+      label: 'Element Name',
+      type: 'text',
+      fieldName: 'elementName',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-element-name-input',
+    },
+  ];
+
   return (
     <IonCardContent className={contentStyle}>
       {filterSelectedElements.length > 0 ? (
@@ -122,6 +133,10 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         selectedOptions={selectedElements.map((element: any) => element.elementName)}
         clearSelections={clearSelections}
         canCreateNew
+        setSelectedOptions={setSelectedElements}
+        formInputs={formInputs}
+        optionCategory={categoryName || 'NO CATEGORY'}
+        existentOptions={uniqueElementsValuesArray}
       />
     </IonCardContent>
   );
