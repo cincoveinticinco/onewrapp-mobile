@@ -4,17 +4,10 @@ import React, {
 import {
   IonContent,
   IonHeader,
-  IonPage,
-  IonTitle,
   IonToolbar,
   IonSegment,
   IonSegmentButton,
   IonLabel,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
-  IonCardTitle,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
@@ -24,14 +17,10 @@ import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNeste
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/useScrollToTop';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import CategoryCard from '../../components/Elements/CategoryCard';
 import ElementCard from '../../components/Elements/ElementCard';
 
 const Elements: React.FC = () => {
