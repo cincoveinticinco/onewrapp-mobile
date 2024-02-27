@@ -67,6 +67,17 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
 
   const contentStyle = selectedExtras.length === 0 ? 'ion-no-padding' : '';
 
+  const formInputs = [
+    {
+      label: 'Extra Name',
+      type: 'text',
+      fieldName: 'extraName',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-extra-name-input',
+    },
+  ];
+
   return (
     <IonCardContent className={contentStyle}>
       {filterSelectedExtras.length > 0 ? (
@@ -93,6 +104,10 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
         selectedOptions={selectedExtras.map((extra: any) => extra.extraName)}
         clearSelections={clearSelections}
         canCreateNew
+        setSelectedOptions={setSelectedExtras}
+        formInputs={formInputs}
+        optionCategory={categoryName || 'NO CATEGORY'}
+        existentOptions={uniqueExtrasValuesAarray}
       />
     </IonCardContent>
   );
