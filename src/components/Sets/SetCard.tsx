@@ -34,7 +34,7 @@ const SetCard: React.FC<SetCardProps> = ({ set, searchText }) => (
         <HighlightedText text={set.setName} searchTerm={searchText} />
       </IonCardTitle>
       <IonCardSubtitle>
-        {set.locationName.toUpperCase() || ''}
+        {set.locationName ? set.locationName.toUpperCase() : 'NO LOCATION'}
       </IonCardSubtitle>
     </IonCardHeader>
     <IonCardContent>
