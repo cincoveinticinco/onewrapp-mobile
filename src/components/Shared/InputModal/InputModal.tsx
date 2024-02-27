@@ -1,7 +1,7 @@
 import {
   IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonList, IonModal,
 } from '@ionic/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useIsMobile from '../../../hooks/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
@@ -13,6 +13,7 @@ import truncateString from '../../../utils/truncateString';
 import HighlightedText from '../HighlightedText/HighlightedText';
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
 
 interface FormInputsProps {
   label: string;
@@ -28,7 +29,7 @@ interface InputModalProps {
   modalTrigger: string;
   handleCheckboxToggle: (option: string) => void;
   selectedOptions: string[];
-  setSelectedOptions?: (options: string[]) => void;
+  setSelectedOptions?: any;
   clearSelections: () => void;
   multipleSelections?: boolean;
   canCreateNew?: boolean;
@@ -117,13 +118,15 @@ const InputModal: React.FC<InputModalProps> = ({
   })
 
   const handleSaveNewOption = (newOptionArgument: any) => {
-    newOptionArgument.categoryName = optionCategory
-    setSelectedOptions ? setSelectedOptions([...selectedOptions, newOptionArgument]) : ''
-    setCreateNewMode(false)
-    setSearchText('')
     formInputs?.forEach((input: any) => {
       resetField(input.fieldName)
     })
+    newOptionArgument.categoryName = optionCategory === 'NO CATEGORY' ? null : optionCategory
+    setCreateNewMode(false)
+    setShowError(false)
+    setSearchText('')
+    setSelectedOptions((prev: any) => [...prev, newOptionArgument])
+    closeModal()
   }
 
   const setNewOptionValue = (fieldName: string, value: string) => {
@@ -151,8 +154,12 @@ const InputModal: React.FC<InputModalProps> = ({
       }
     })
 
-    if (fieldName !== 'characterNum' && optionExists && optionExists > -1) {
-      console.log('SETTING TO ALREADY EXISTS')
+    const optionExistsInSelected = selectedOptions.findIndex((option: string) => {
+      return option.toLowerCase() === value.toLowerCase()
+    })
+
+
+    if (fieldName !== 'characterNum' && (optionExists && optionExists > -1) || (optionExistsInSelected > -1)) {
       setShowError(true)
       setErrorMessage('ALREADY EXISTS *')
       return 'This option already exists'
@@ -164,12 +171,11 @@ const InputModal: React.FC<InputModalProps> = ({
   const cancelForm = () => {
     setCreateNewMode(false);
     formInputs?.forEach((input: any) => {
-      resetField(input.fieldName)
+      setValue(input.fieldName, null)
     })
+    setShowError(false)
     setSearchText('')
   }
-
-  console.log('SELECTED OPTIONS', optionName,selectedOptions)
 
   return (
     <IonModal
@@ -183,7 +189,7 @@ const InputModal: React.FC<InputModalProps> = ({
           toolbarTitle={optionName}
           handleReset={clearSelections}
           handleBack={closeModal}
-          showReset={selectedOptions.length > 0 && selectedOptions[0] !== null}
+          showReset={false}
         />
       </IonHeader>
       {canCreateNew && createNewMode ? (
@@ -272,22 +278,25 @@ const InputModal: React.FC<InputModalProps> = ({
               ))}
             </IonList>
             {
-                filteredOptions.length === 0 && canCreateNew
-                  && (
-                  <p className="no-items-message">
-                    There are no coincidences. Do you want to create a new one ?
-                    <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
-                      <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin no-items-confirm" onClick={() => setCreateNewMode(true)} />
-                      <OutlineLightButton buttonName="CANCEL" className="ion-margin cancel-button no-items-cancel" onClick={clearSearchTextModal} />
-                    </span>
-                  </p>
-                  )
+              filteredOptions.length === 0 && canCreateNew
+                && (
+                <p className="no-items-message">
+                  There are no coincidences. Do you want to create a new one ?
+                  <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
+                    <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin no-items-confirm" onClick={() => setCreateNewMode(true)} />
+                    <OutlineLightButton buttonName="CANCEL" className="ion-margin cancel-button no-items-cancel" onClick={clearSearchTextModal} />
+                  </span>
+                </p>
+                )
               }
-            <OutlinePrimaryButton
-              buttonName="SAVE"
-              onClick={closeModal}
-              className="ion-margin modal-confirm-button"
-            />
+            { 
+              filteredOptions.length > 0 &&
+              <OutlinePrimaryButton
+                buttonName="SAVE"
+                onClick={closeModal}
+                className="ion-margin modal-confirm-button"
+              />
+            }
             {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={closeModal} className="ion-margin cancel-input-modal-button cancel-button" />}
           </>
         </IonContent>

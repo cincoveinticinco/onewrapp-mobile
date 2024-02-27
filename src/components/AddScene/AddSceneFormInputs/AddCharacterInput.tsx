@@ -61,12 +61,8 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     false,
   );
 
-  const newSelectedCharacters = selectedCharacters.filter(
-    (character: any) => !getFilteredCharacters.some((characterObject: any) => characterObject.characterName === character.characterName),
-  )
-
   const getSortedCharacterNames = customArraySort(
-    getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters, ...newSelectedCharacters] : getFilteredCharacters),
+    getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters] : getFilteredCharacters),
   );
 
   const toggleCharacters = (character: string) => {
@@ -78,7 +74,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     const characterObject = sceneWithCharacter?.characters.find(
       (char: any) => char.characterName.toUpperCase()
         === removeNumberAndDot(character.toUpperCase()),
-    );
+    )
 
     if (characterObject) {
       const selectedCharacterObjectIndex = selectedCharacters.findIndex(
