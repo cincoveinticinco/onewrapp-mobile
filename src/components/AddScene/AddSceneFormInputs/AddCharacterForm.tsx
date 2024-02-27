@@ -47,7 +47,6 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
   const characterCategoriesArray: string[] = [];
   const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
 
-
   useEffect(() => {
     const defineCharactersCategories = () => {
       uniqueCategoryValuesArray.forEach((character: Character) => {
@@ -122,37 +121,38 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
         )
       }
 
-      {characterCategories.length > 0 && dropDownIsOpen
-        && (
+      {characterCategories.length > 0 && dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
           {[...characterCategories, 'NO CATEGORY'].map((category, index) => (
-            <IonCard
-              key={`category-item-${index}-category-${category}`}
-              color="tertiary"
-              className="add-scene-items-card ion-no-border"
-            >
-              <IonCardHeader className="ion-flex">
-                <div className="ion-flex ion-justify-content-between">
-                  <p className="ion-flex ion-align-items-center">
-                    {capitalizeString(category)}
-                  </p>
-                  <div className="category-buttons-wrapper">
-                    <AddButton
-                      id={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
-                    />
+            category && (
+              <IonCard
+                key={`category-item-${index}-category-${category}`}
+                color="tertiary"
+                className="add-scene-items-card ion-no-border"
+              >
+                <IonCardHeader className="ion-flex">
+                  <div className="ion-flex ion-justify-content-between">
+                    <p className="ion-flex ion-align-items-center">
+                      {category && capitalizeString(category)}
+                    </p>
+                    <div className="category-buttons-wrapper">
+                      <AddButton
+                        id={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
+                      />
+                    </div>
                   </div>
-                </div>
-              </IonCardHeader>
-              <AddCharacterInput
-                categoryName={category}
-                selectedCharacters={selectedCharacters}
-                setSelectedCharacters={setSelectedCharacters}
-                modalTrigger={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
-              />
-            </IonCard>
+                </IonCardHeader>
+                <AddCharacterInput
+                  categoryName={category}
+                  selectedCharacters={selectedCharacters}
+                  setSelectedCharacters={setSelectedCharacters}
+                  modalTrigger={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
+                />
+              </IonCard>
+            )
           ))}
         </IonGrid>
-        )}
+      )}
     </>
   );
 };
