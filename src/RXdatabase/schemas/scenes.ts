@@ -79,7 +79,7 @@ const sceneSchema = {
       items: {
         type: 'object',
         properties: {
-          categoryName: { type: 'string' },
+          categoryName: { type: ['string', 'null'] },
           characterName: { type: 'string' },
           characterNum: { type: ['string', 'null'] },
         },
