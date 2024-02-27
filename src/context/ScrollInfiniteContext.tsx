@@ -9,7 +9,7 @@ interface ScrollInfiniteContextProps {
 }
 
 const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children, setDisplayedData, filteredData }) => {
-  const BATCH_SIZE = 10;
+  const BATCH_SIZE = 15;
   const [currentBatch, setCurrentBatch] = React.useState(0);
   const [isInfiniteDisabled, setInfiniteDisabled] = React.useState(false);
 
