@@ -91,6 +91,7 @@ const AddScene: React.FC = () => {
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error inserting scene');
+      console.log(error);
       scrollToTop();
     }
 
