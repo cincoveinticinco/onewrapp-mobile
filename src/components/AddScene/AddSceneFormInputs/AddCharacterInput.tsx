@@ -74,7 +74,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     const characterObject = sceneWithCharacter?.characters.find(
       (char: any) => char.characterName.toUpperCase()
         === removeNumberAndDot(character.toUpperCase()),
-    )
+    );
 
     if (characterObject) {
       const selectedCharacterObjectIndex = selectedCharacters.findIndex(
@@ -101,22 +101,22 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
 
   const formInputs = [
     {
-      label: 'Character Number', 
-      type: 'text', 
+      label: 'Character Number',
+      type: 'text',
       fieldName: 'characterNum',
-      placeholder: 'INSERT', 
+      placeholder: 'INSERT',
       required: true,
-      inputName: 'add-character-number-input'
+      inputName: 'add-character-number-input',
     },
     {
-      label: 'Character Name', 
-      type: 'text', 
+      label: 'Character Name',
+      type: 'text',
       fieldName: 'characterName',
-      placeholder: 'INSERT', 
+      placeholder: 'INSERT',
       required: true,
-      inputName: 'add-character-name-input'
+      inputName: 'add-character-name-input',
     },
-  ]
+  ];
 
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
 
@@ -152,7 +152,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         setSelectedOptions={setSelectedCharacters}
         clearSelections={clearSelections}
         canCreateNew
-        createNewTrigger="characters-categories-alert"
         optionCategory={categoryName || 'NO CATEGORY'}
         formInputs={formInputs}
         existentOptions={uniqueCharacterValuesArray}
