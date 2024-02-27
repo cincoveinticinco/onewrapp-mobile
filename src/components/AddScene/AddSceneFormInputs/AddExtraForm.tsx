@@ -124,30 +124,32 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
           className="add-scene-items-card-grid"
         >
           {selectedCategories.map((category, index) => (
-            <IonCard
-              key={index}
-              color="tertiary"
-              className="add-scene-items-card ion-no-border"
-            >
-              <IonCardHeader className="ion-flex">
-                <div className="ion-flex ion-justify-content-between">
-                  <p className="ion-flex ion-align-items-center">
-                    {capitalizeString(category)}
-                  </p>
-                  <div className="category-buttons-wrapper">
-                    <AddButton
-                      id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
-                    />
+            category && (
+              <IonCard
+                key={index}
+                color="tertiary"
+                className="add-scene-items-card ion-no-border"
+              >
+                <IonCardHeader className="ion-flex">
+                  <div className="ion-flex ion-justify-content-between">
+                    <p className="ion-flex ion-align-items-center">
+                      {capitalizeString(category)}
+                    </p>
+                    <div className="category-buttons-wrapper">
+                      <AddButton
+                        id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
+                      />
+                    </div>
                   </div>
-                </div>
-              </IonCardHeader>
-              <AddExtraInput
-                categoryName={category}
-                selectedExtras={selectedExtras}
-                setSelectedExtras={setSelectedExtras}
-                modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
-              />
-            </IonCard>
+                </IonCardHeader>
+                <AddExtraInput
+                  categoryName={category}
+                  selectedExtras={selectedExtras}
+                  setSelectedExtras={setSelectedExtras}
+                  modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
+                />
+              </IonCard>
+            )
           ))}
         </IonGrid>
         )}
