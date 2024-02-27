@@ -25,7 +25,7 @@ const InputItem: React.FC<InputItemProps> = ({
   setValue,
   validate,
   type = 'text',
-  errorMessage = 'REQUIRED *'
+  errorMessage = 'REQUIRED *',
 }) => {
   const [showError, setShowError] = useState(displayError);
 
