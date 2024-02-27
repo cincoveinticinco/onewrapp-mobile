@@ -130,7 +130,7 @@ const Elements: React.FC = () => {
     const newCategoriesData = uniqueCategoriesStrings.map((categoryName: string) => {
       const categoryScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.categoryName === categoryName));
       return {
-        categoryName,
+        categoryName: categoryName || 'NO CATEGORY',
         elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName).length,
         scenesQuantity: categoryScenes.length,
         protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
@@ -153,7 +153,7 @@ const Elements: React.FC = () => {
       const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
       return {
         elementName,
-        elementCategory,
+        elementCategory: elementCategory || 'NO CATEGORY',
         scenesQuantity: elementScenes.length,
         protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
         pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
