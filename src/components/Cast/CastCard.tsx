@@ -42,7 +42,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
           />
         </IonCardTitle>
         <IonCardSubtitle>
-          {character.categoryName ? character.categoryName.toUpperCase() : ''}
+          {character.categoryName ? character.categoryName.toUpperCase() : 'NO CATEGORY'}
         </IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
