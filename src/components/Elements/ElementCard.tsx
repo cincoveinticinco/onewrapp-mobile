@@ -17,11 +17,14 @@ interface ElementCardProps {
 }
 
 const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section }) => (
-  <IonCard mode='md'>
+  <IonCard mode="md">
     <IonCardHeader>
       <IonCardTitle>
-        <HighlightedText text={section === 'category' ? data.categoryName : data.elementName.length > 1 ? data.elementName : 
-      'N/A'} searchTerm={searchText} />
+        <HighlightedText
+          text={section === 'category' ? (data.categoryName) : data.elementName.length > 1 ? data.elementName
+            : 'N/A'}
+          searchTerm={searchText}
+        />
       </IonCardTitle>
       {section === 'element' && (
       <IonCardSubtitle>
