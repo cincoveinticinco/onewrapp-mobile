@@ -3,11 +3,6 @@ import React, {
 } from 'react';
 import {
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
-  IonCardTitle,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
@@ -25,17 +20,19 @@ import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
 import CastCard from '../../components/Cast/CastCard';
+import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
+import './Cast.scss';
 
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
   const [castSearchText, setCastSearchText] = useState('');
-  const [displayedCast, setDisplayedCast] = useState<any[]>([]);
+  const [displayedCast, setDisplayedCast] = useState<any>({});
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
   const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
-
+  const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
   /// REMOVE SYMBOLS
   /// LOCATION AND ELEMENTS CATEGORY
   /// CREATE NEW CHARACTERS
@@ -65,7 +62,9 @@ const Cast: React.FC = () => {
       const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(0);
 
       return {
-        ...character,
+        characterNum: character.characterNum,
+        characterName: character.characterName,
+        categoryName: character.categoryName || 'NO CATEGORY',
         setsQuantity,
         locationsQuantity,
         pagesSum,
@@ -87,7 +86,7 @@ const Cast: React.FC = () => {
       return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
     setCast(filteredCast);
-  }, [processedCast, castSearchText, processedCast]);
+  }, [processedCast, castSearchText]);
 
   const getCharacterNum = (character: any) => {
     const characterNum = character.characterNum ? `${character.characterNum}.` : '';
@@ -146,6 +145,32 @@ const Cast: React.FC = () => {
     localStorage.setItem('castSortPosibilitiesOrder', JSON.stringify(castSortPosibilities));
   }, [castSortPosibilities]);
 
+  const characterCategoriesArray: any[] = getUniqueValuesByKey(cast, 'categoryName');
+
+  const filterCastByCategory = (category: string) => {
+    return cast.filter((character: any) => character.categoryName === category);
+  }
+
+  useEffect(() => {
+    characterCategoriesArray.forEach((category: string) => {
+      setDropDownIsOpen((prev: any) => ({ ...prev, [category]: true}));
+    })
+  }, [cast])
+
+  const handleDropDown = (category: string) => { 
+    setDropDownIsOpen((prev: any) => ({ ...prev, [category]: !prev[category]}));
+  }
+
+  useEffect(() => {
+    characterCategoriesArray.forEach((category: string) => {
+      setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
+    })
+  }, [cast])
+
+  const handleSetDisplayedCast = (category: string) => {
+    setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
+  }
+
   return (
     <>
       <MainPagesLayout
@@ -157,15 +182,32 @@ const Cast: React.FC = () => {
         sort
         sortTrigger="sort-cast-modal-trigger"
       >
-        <IonContent color="tertiary" fullscreen ref={contentRef}>
-          <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
-            <div style={{margin: '16px 6px'}}>
-              {displayedCast.map((character, index) => (
-                <CastCard key={index} character={character} searchText={castSearchText} />
-              ))}
+      <IonContent color="tertiary" fullscreen ref={contentRef} className='cast-page-content'>
+        {characterCategoriesArray.map((category: string, index: number) => (
+          <>
+          <div key={`cast-dropdown-${category}-${index}`} className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start">
+            <p className="ion-flex ion-align-items-center">
+              {category}
+            </p>
+            <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
+              <DropDownButton open={dropDownIsOpen[category]} handleDropDown={() => handleDropDown(category)} />
             </div>
-          </ScrollInfiniteContext>
-        </IonContent>
+          </div>
+            {dropDownIsOpen[category] && (
+              <div style={{ margin: '0px 12px' }} className='cast-cards-wrapper'>
+                <ScrollInfiniteContext setDisplayedData={() => handleSetDisplayedCast(category)} filteredData={filterCastByCategory(category)}>
+                  { 
+                    displayedCast[category] &&
+                    displayedCast[category].map((character: any, index: number) => (
+                      <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
+                    ))
+                  }
+                </ScrollInfiniteContext>
+              </div>
+            )}
+          </>
+        ))}
+      </IonContent>
       </MainPagesLayout>
       <InputSortModal
         pageName="Sort Cast"
