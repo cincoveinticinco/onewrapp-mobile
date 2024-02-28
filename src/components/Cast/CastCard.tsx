@@ -53,9 +53,6 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ')
-    console.log('value', value)
-    console.log('integer', integer)
-    console.log('fraction', fraction)
     return {
       integer,
       fraction
