@@ -87,7 +87,11 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
 
   return (
     <>
-      <div className="category-item-title ion-flex ion-justify-content-between">
+      <div 
+        className="category-item-title ion-flex ion-justify-content-between" 
+        onClick={handleDropDown}
+        style={{backgroundColor: 'var(--ion-color-tertiary-shade)'}}
+      >
         <p className="ion-flex ion-align-items-center">
           Characters
         </p>
@@ -96,7 +100,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
             id={editMode ? 'characters-categories-alert-edit' : 'characters-categories-alert'}
             slot="end"
           />
-          <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
+          <DropDownButton open={dropDownIsOpen} />
         </div>
       </div>
 
