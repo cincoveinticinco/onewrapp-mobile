@@ -4,11 +4,10 @@ import React from 'react';
 
 interface DropDownButtonProps {
   open: boolean
-  handleDropDown: () => void
 }
 
-const DropDownButton: React.FC<DropDownButtonProps> = ({ open, handleDropDown }) => (
-  <IonButton fill="clear" color={open ? 'primary' : 'light'} slot="start" onClick={handleDropDown}>
+const DropDownButton: React.FC<DropDownButtonProps> = ({ open }) => (
+  <IonButton fill="clear" color={open ? 'primary' : 'light'} slot="start">
     {!open ? <IonIcon icon={caretDownOutline} /> : <IonIcon icon={caretUpOutline} />}
   </IonButton>
 );
