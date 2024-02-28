@@ -1,5 +1,9 @@
 /* CUSTOMIZED FLEX STYLES */
 
+.input-wrapper {
+  flex-wrap: nowrap !important;
+}
+
 .center-flex-row {
   display: flex;
   justify-content: center;

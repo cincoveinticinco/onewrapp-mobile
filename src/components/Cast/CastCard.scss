@@ -1,17 +1,23 @@
 .cast-card {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background-color: var(--ion-color-dark);
   margin: 0px;
   border: 1px solid var(--ion-color-tertiary);
+  padding: 0px;
+  --inner-padding-end: 0px;
+  min-height: 120px;
 
   .cast-card-content {
     margin: 0px;
     padding: 0px;
-    flex-basis: 60%;
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-end;
+    color: var(--ion-color-light);
+    height: 100%;
+    width: 48%;
+    flex-wrap: wrap;
 
     .info-label {
       display: flex;
@@ -21,6 +27,7 @@
       margin: 0px;
       padding: 0px;
       margin: 6px;
+      color: var(--ion-color-light);
       min-width: 10%;
   
       .value-part {
@@ -42,24 +49,24 @@
   }
 
   .cast-card-header {
-    flex-basis: 30%;
     padding: 0px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    height: 100%;
     margin: 12px;
+    Width: 23%;
 
     .cast-card-header-title {
       font-size: var(--525-common-title-size);
       font-weight: bolder;
+      padding: 0px;
     }
     .cast-card-header-subtitle {
       font-size: var(--525-small-text-size);
       font-weight: lighter;
       padding: 0px;
       margin: 0px;
+      margin-top: 6px;
     }
   }
 
@@ -70,17 +77,102 @@
     margin: 6px;
     background-color: var(--ion-color-primary);
     flex-basis: 50px;
+    margin: 12px;
   }
 }
 
+.cast-card-item-options {
+  background-color: var(--ion-color-light);
+
+  .buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (min-width: 500px) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    ion-button {
+      padding: 6px;
+      margin: 0;
+      min-height: 0;
+
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+
+      &::part(native) {
+        padding: 0;
+        height: 20px !important;
+        min-height: 20px;
+      }
+
+      .button-icon {
+        font-size: var(--525-icons-size);
+
+        &.ban,
+        &.trash {
+          color: var(--ion-color-danger);
+        }
+      }
+    }
+  }
+}
+
+
 @media (min-width: 500px) {
   .cast-card {
+    min-height: 80px;
     .cast-card-content {
-      flex-basis: 75%;
+      width: 64%;
+
+      .info-label {
+        min-width: 9%;
+      }
     }
 
     .cast-card-header {
-      flex-basis: 25%;
+      width: 17%;
+    }
+  }
+}
+
+@media (min-width: 800px) {
+  .cast-card {
+    .cast-card-content {
+      width: 66%;
+
+      .info-label {
+        min-width: 10%;
+      }
+    }
+
+    .cast-card-header {
+      width: 20%;
+    }
+
+    .cast-card-image {
+      min-width: 70px;
+      min-height: 70px;
+      flex-basis: 70px;
+    
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .cast-card {
+    .cast-card-content {
+      width: 58%;
+
+      .info-label {
+        min-width: 50px;
+      }
+    }
+
+    .cast-card-header {
+      width: 30%;
     }
   }
 }
