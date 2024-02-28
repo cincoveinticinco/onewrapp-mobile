@@ -33,6 +33,7 @@ const Cast: React.FC = () => {
   useScrollToTop(contentRef, thisPath);
   const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
   /// REMOVE SYMBOLS
   /// LOCATION AND ELEMENTS CATEGORY
   /// CREATE NEW CHARACTERS
@@ -79,6 +80,12 @@ const Cast: React.FC = () => {
     const uniqueCharacters: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
     return sortByCriterias(uniqueCharacters.map(processCharacter), castSelectedSortOptions);
   }, [offlineScenes, castSelectedSortOptions]);
+
+  useEffect(() => {
+    if(processedCast.length > 0) {
+      setIsLoading(false);
+    }
+  }, [isLoading, processedCast]);
 
   useEffect(() => {
     const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
@@ -171,6 +178,9 @@ const Cast: React.FC = () => {
     setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
   }
 
+  // HIDDE PICTURE
+  // 4 X 4
+
   return (
     <>
       <MainPagesLayout
@@ -185,24 +195,22 @@ const Cast: React.FC = () => {
       <IonContent color="tertiary" fullscreen ref={contentRef} className='cast-page-content'>
         {characterCategoriesArray.map((category: string, index: number) => (
           <>
-          <div key={`cast-dropdown-${category}-${index}`} className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start">
+          <div key={`cast-dropdown-${category}-${index}`} className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start" onClick={() => handleDropDown(category)}>
             <p className="ion-flex ion-align-items-center">
-              {category}
+              {category + ' (' + filterCastByCategory(category).length + ')'}
             </p>
             <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-              <DropDownButton open={dropDownIsOpen[category]} handleDropDown={() => handleDropDown(category)} />
+              <DropDownButton open={dropDownIsOpen[category]} />
             </div>
           </div>
             {dropDownIsOpen[category] && (
-              <div style={{ margin: '0px 12px' }} className='cast-cards-wrapper'>
-                <ScrollInfiniteContext setDisplayedData={() => handleSetDisplayedCast(category)} filteredData={filterCastByCategory(category)}>
-                  { 
-                    displayedCast[category] &&
-                    displayedCast[category].map((character: any, index: number) => (
-                      <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
-                    ))
-                  }
-                </ScrollInfiniteContext>
+              <div style={{ margin: '0px 0px' }} className='cast-cards-wrapper'>
+                { 
+                  displayedCast[category] &&
+                  displayedCast[category].map((character: any, index: number) => (
+                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
+                  ))
+                }
               </div>
             )}
           </>
