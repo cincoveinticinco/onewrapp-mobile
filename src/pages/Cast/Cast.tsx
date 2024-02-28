@@ -62,7 +62,7 @@ const Cast: React.FC = () => {
       const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber').length;
       const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE).length;
       const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION).length;
-      const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
+      const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(0);
 
       return {
         ...character,

@@ -71,7 +71,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-rose-tint: #fdccf8;
 
   /* CUSTOM 525 VARIABLES */
-
+  --525-small-text-size: 9px;
   --525-common-text-size: 12px;
   --525-common-title-size: 14px;
   --525-medium-title-size: 18px;
