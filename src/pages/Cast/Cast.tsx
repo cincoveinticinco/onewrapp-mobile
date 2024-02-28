@@ -159,9 +159,11 @@ const Cast: React.FC = () => {
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           <ScrollInfiniteContext setDisplayedData={setDisplayedCast} filteredData={cast}>
-            {displayedCast.map((character, index) => (
-              <CastCard key={index} character={character} searchText={castSearchText} />
-            ))}
+            <div style={{margin: '16px 6px'}}>
+              {displayedCast.map((character, index) => (
+                <CastCard key={index} character={character} searchText={castSearchText} />
+              ))}
+            </div>
           </ScrollInfiniteContext>
         </IonContent>
       </MainPagesLayout>
