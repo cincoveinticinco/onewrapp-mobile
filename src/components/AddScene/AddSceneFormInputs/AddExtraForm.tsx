@@ -86,7 +86,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
 
   return (
     <>
-      <div className="category-item-title ion-flex ion-justify-content-between">
+      <div 
+        className="category-item-title ion-flex ion-justify-content-between" 
+        onClick={handleDropDown}
+        style={{backgroundColor: 'var(--ion-color-tertiary-shade)'}}
+      >
         <p className="ion-flex ion-align-items-center">
           Extras / Background Actors
         </p>
@@ -95,7 +99,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
             id={editMode ? 'open-extras-category-alert-edit' : 'open-extras-category-alert'}
             slot="end"
           />
-          <DropDownButton open={dropDownIsOpen} handleDropDown={handleDropDown} />
+          <DropDownButton open={dropDownIsOpen} />
         </div>
       </div>
       <InputAlert
