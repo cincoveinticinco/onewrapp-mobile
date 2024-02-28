@@ -63,6 +63,7 @@
           font-size: var(--525-common-title-size);
           width: calc(100% - 32px) !important;
           max-width: calc(100% - 32px) !important;
+          color: var(--ion-color-light);
 
           &::placeholder {
             text-transform: uppercase;
