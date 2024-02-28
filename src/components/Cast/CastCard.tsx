@@ -84,29 +84,31 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   return (
     <IonItemSliding>
       <IonItem mode="md" className='cast-card ion-no-margin ion-no-padding ion-nowrap' color='dark'>
-        <div className='cast-card-image'>
-          {/* EMPTY TEMPORARY */}
-        </div>
-        <div color='dark' className='cast-card-header'>
-          <IonTitle className='cast-card-header-title'>
-            <HighlightedText
-              text={`${getCharacterNum(character)} ${character.characterName}`}
-              searchTerm={searchText}
-            />
-          </IonTitle>
-          <p className='cast-card-header-subtitle'>
-            TALENT NOT ASSIGNED
-          </p>
-        </div>
-        <div className='cast-card-content'>
-          <InfoLabel label='PART' value={character.participation} symbol='%'/>
-          <InfoLabel label='LOC.' value={character.locationsQuantity}/>
-          <InfoLabel label='SETS' value={character.setsQuantity} />
-          <InfoLabel label='EP.' value={character.episodesQuantity} />
-          <InfoLabel label='SCN.' value={character.scenesQuantity} />
-          <InfoLabel label='PROT.' value={character.protectionQuantity} />
-          <InfoLabel label='PAGES' value={integerPart} symbol={fractionPart} />
-          <InfoLabel label='TIME' value={minutes} symbol={':' + seconds} />
+        <div className='cast-card-wrapper'>
+          <div className='cast-card-image'>
+            {/* EMPTY TEMPORARY */}
+          </div>
+          <div color='dark' className='cast-card-header'>
+            <IonTitle className='cast-card-header-title'>
+              <HighlightedText
+                text={`${getCharacterNum(character)} ${character.characterName}`}
+                searchTerm={searchText}
+              />
+            </IonTitle>
+            <p className='cast-card-header-subtitle'>
+              TALENT NOT ASSIGNED
+            </p>
+          </div>
+          <div className='cast-card-content'>
+            <InfoLabel label='PART' value={character.participation} symbol='%'/>
+            <InfoLabel label='LOC.' value={character.locationsQuantity}/>
+            <InfoLabel label='SETS' value={character.setsQuantity} />
+            <InfoLabel label='EP.' value={character.episodesQuantity} />
+            <InfoLabel label='SCN.' value={character.scenesQuantity} />
+            <InfoLabel label='PAGES' value={integerPart} symbol={fractionPart} />
+            <InfoLabel label='PROT.' value={character.protectionQuantity} />
+            <InfoLabel label='TIME' value={minutes} symbol={':' + seconds} />
+          </div>
         </div>
       </IonItem>
       <IonItemOptions className='cast-card-item-options'>
