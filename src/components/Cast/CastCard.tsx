@@ -1,10 +1,5 @@
 import React from 'react';
 import {
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
-  IonCardTitle,
   IonItemSliding,
   IonItemOptions,
   IonButton,
@@ -80,7 +75,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
 
   return (
     <IonItemSliding>
-      <IonItem mode="md" className='cast-card ion-no-margin ion-no-padding ion-nowrap' color='dark'>
+      <IonItem mode="md" className='cast-card ion-no-margin ion-no-padding ion-nowrap' color='tertiary'>
         <div className='cast-card-wrapper'>
           <div className='cast-card-image'>
             {/* EMPTY TEMPORARY */}
