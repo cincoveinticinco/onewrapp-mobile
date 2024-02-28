@@ -1,12 +1,14 @@
 
+@import '../../theme/mixins';
+
 .cast-card {
   --inner-padding-end: 0px;
 
   .cast-card-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-color: var(--ion-color-dark);
+    justify-content: space-between;
+    background-color: transparent;
     margin: 0px;
     border: 1px solid var(--ion-color-tertiary);
     padding: 0px;
@@ -19,12 +21,12 @@
     .cast-card-content {
       margin: 0px;
       padding: 0px;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       justify-content: flex-end;
       color: var(--ion-color-light);
       height: 100%;
-      min-width: 58%;
-      flex-wrap: wrap;
+      min-width: 50%;
   
       .info-label {
         display: flex;
@@ -35,7 +37,7 @@
         padding: 0px;
         margin: 6px;
         color: var(--ion-color-light);
-        min-width: 25px;
+        max-width: 25px;
     
         .value-part {
           font-size: 18px;
@@ -62,6 +64,7 @@
       justify-content: center;
       margin: 0px;
       width: 26%;
+      margin-left: 36px;
   
       .cast-card-header-title {
         font-size: var(--525-common-title-size);
@@ -86,85 +89,13 @@
       background-color: var(--ion-color-primary);
       flex-basis: 50px;
       margin: 12px;
-    }
-  }
-    .cast-card-item-options {
-    background-color: var(--ion-color-light);
-  
-    .buttons-wrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-  
-      @media (min-width: 500px) {
-        flex-direction: row;
-        align-items: center;
-      }
-  
-      ion-button {
-        padding: 6px;
-        margin: 0;
-        min-height: 0;
-  
-        --padding-top: 6px;
-        --padding-bottom: 6px;
-  
-        &::part(native) {
-          padding: 0;
-          height: 20px !important;
-          min-height: 20px;
-        }
-  
-        .button-icon {
-          font-size: var(--525-icons-size);
-  
-          &.ban,
-          &.trash {
-            color: var(--ion-color-danger);
-          }
-        }
-      }
+      display: none;
     }
   }
 }
 
 .cast-card-item-options {
-  background-color: var(--ion-color-light);
-
-  .buttons-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    @media (min-width: 500px) {
-      flex-direction: row;
-      align-items: center;
-    }
-
-    ion-button {
-      padding: 6px;
-      margin: 0;
-      min-height: 0;
-
-      --padding-top: 6px;
-      --padding-bottom: 6px;
-
-      &::part(native) {
-        padding: 0;
-        height: 20px !important;
-        min-height: 20px;
-      }
-
-      .button-icon {
-        font-size: var(--525-icons-size);
-
-        &.ban,
-        &.trash {
-          color: var(--ion-color-danger);
-        }
-      }
-    }
-  }
+  @include slide-card-item-options;
 }
 
 @media (min-width: 500px) {
@@ -186,6 +117,11 @@
       .cast-card-header {
         width: auto;
         margin: 0px;
+      }
+
+      .cast-card-image {
+        display: flex;
+        margin-left: 24px;
       }
     }
   }
