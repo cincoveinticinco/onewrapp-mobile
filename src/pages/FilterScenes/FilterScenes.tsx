@@ -1,5 +1,5 @@
 import {
-  IonCol, IonContent, IonGrid, IonRow,
+  IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave,
 } from '@ionic/react';
 import React, { useContext, useEffect } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
@@ -32,11 +32,15 @@ const FilterScenes = () => {
   const history = useHistory();
   const handleBack = () => history.push(`/my/projects/${id}/strips`);
   const isMobile = useIsMobile();
-  const { hideTabs } = useHideTabs();
+  const { hideTabs, showTabs } = useHideTabs();
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     hideTabs();
-  },[])
+  })
+  
+  useIonViewDidLeave(() => {
+    showTabs();
+  });
 
   // Main functions
   const handleSingleFilterOption = (category: string, optionValue: string) => {

@@ -15,8 +15,6 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import useShowTabs from '../../hooks/useShowTabs';
-import useHideTabs from '../../hooks/useHideTabs';
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -28,12 +26,7 @@ const Strips: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, unused_] = useState(false);
   const history = useHistory();
-  const { showTabs } = useHideTabs();
-  const thisPath = useLocation();
-
-  useEffect(() => {
-    showTabs()
-  }, [thisPath]);
+  useScrollToTop(contentRef, useLocation());
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 

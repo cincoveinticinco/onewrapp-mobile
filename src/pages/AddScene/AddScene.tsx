@@ -1,4 +1,4 @@
-import { IonContent } from '@ionic/react';
+import { IonContent, useIonViewDidEnter, useIonViewDidLeave } from '@ionic/react';
 import './AddScene.css';
 import {
   useContext, useEffect, useRef, useState,
@@ -109,11 +109,15 @@ const AddScene: React.FC = () => {
     handleSubmit(onSubmit)();
   };
 
-  const { hideTabs } = useHideTabs();
+  const { hideTabs, showTabs } = useHideTabs();
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     hideTabs();
-  }, [])
+  });
+
+  useIonViewDidLeave(() => {
+    showTabs()
+  })
 
   return (
     <SecondaryPagesLayout
@@ -122,7 +126,7 @@ const AddScene: React.FC = () => {
       handleSave={handleSave}
       resetSelections={handleBack}
     >
-      <IonContent color="tertiary" ref={contentRef}>
+      <IonContent color="tertiary" ref={contentRef} style={{zIndex: '20'}}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}
           editMode={false}

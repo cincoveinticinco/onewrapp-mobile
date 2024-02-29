@@ -1,4 +1,4 @@
-import { IonContent } from '@ionic/react';
+import { IonContent, useIonViewDidEnter, useIonViewDidLeave } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
@@ -107,11 +107,15 @@ const EditScene: React.FC = () => {
     handleSubmit(onSubmit)();
   };
 
-  const { hideTabs } = useHideTabs();
+  const { hideTabs, showTabs } = useHideTabs();
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     hideTabs();
-  }, []);
+  });
+
+  useIonViewDidLeave(() => {
+    showTabs()
+  });
 
   return (
     <SecondaryPagesLayout
