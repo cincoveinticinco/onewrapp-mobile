@@ -26,6 +26,7 @@ import './Cast.scss';
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
+  const [filteredCast, setFilteredCast] = useState<any>({});
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
   const thisPath = useLocation();
@@ -168,18 +169,28 @@ const Cast: React.FC = () => {
     setDropDownIsOpen((prev: any) => ({ ...prev, [category]: !prev[category]}));
   }
 
+  function removeDuplicatesFromArray(array: any[]) {
+    const uniqueSet = new Set(array);
+    const uniqueArray = [...uniqueSet];
+    return uniqueArray;
+  }
+
   useEffect(() => {
     characterCategoriesArray.forEach((category: string) => {
-      setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
+      setDisplayedCast((prev: any) => ({ ...prev, [category]: []}));
     })
   }, [cast])
 
-  const handleSetDisplayedCast = (category: string) => {
-    setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
+  const handleSetDisplayedCast = (category: string, newElements: any[]) => {
+    
+   return setDisplayedCast((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...prev[category], ...newElements])}));
   }
 
-  // HIDDE PICTURE
-  // 4 X 4
+  useEffect(() => {
+    characterCategoriesArray.forEach((category: string) => {
+      setFilteredCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category)}));
+    })
+  }, [cast])
 
   return (
     <>
@@ -194,26 +205,32 @@ const Cast: React.FC = () => {
       >
       <IonContent color="tertiary" fullscreen ref={contentRef} className='cast-page-content'>
         {characterCategoriesArray.map((category: string, index: number) => (
-          <>
-          <div key={`cast-dropdown-${category}-${index}`} className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start" onClick={() => handleDropDown(category)}>
-            <p className="ion-flex ion-align-items-center">
-              {category + ' (' + filterCastByCategory(category).length + ')'}
-            </p>
-            <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-              <DropDownButton open={dropDownIsOpen[category]} />
+          <div key={`cast-dropdown-${category}-${index}`}>
+            <div className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start" onClick={() => handleDropDown(category)}>
+              <p className="ion-flex ion-align-items-center">
+                {category + ' (' + filterCastByCategory(category).length + ')'}
+              </p>
+              <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
+                <DropDownButton open={dropDownIsOpen[category]} />
+              </div>
             </div>
-          </div>
             {dropDownIsOpen[category] && (
-              <div style={{ margin: '0px 0px' }} className='cast-cards-wrapper'>
-                { 
-                  displayedCast[category] &&
-                  displayedCast[category].map((character: any, index: number) => (
-                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
-                  ))
-                }
+              <div style={{ margin: '0px 0px' }} className='cast-cards-wrapper ion-content-scroll-host'>
+                <ScrollInfiniteContext
+                  filteredData={filteredCast[category]}
+                  setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
+                  batchSize={10}
+                >
+                  { 
+                    displayedCast[category] &&
+                    displayedCast[category].map((character: any, index: number) => (
+                      <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
+                    ))
+                  }
+                </ScrollInfiniteContext>
               </div>
             )}
-          </>
+          </div>
         ))}
       </IonContent>
       </MainPagesLayout>
