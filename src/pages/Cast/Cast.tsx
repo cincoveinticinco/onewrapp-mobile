@@ -23,6 +23,7 @@ import './Cast.scss';
 const Cast: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [cast, setCast] = useState<any[]>([]);
+  const [extras, setExtras] = useState<any[]>([]);
   const [filteredCast, setFilteredCast] = useState<any>({});
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
@@ -79,8 +80,47 @@ const Cast: React.FC = () => {
     return sortByCriterias(uniqueCharacters.map(processCharacter), castSelectedSortOptions);
   }, [offlineScenes, castSelectedSortOptions]);
 
+  const processedExtras = useMemo(() => {
+    const processExtra = (extra: any) => {
+      const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
+        const hasExtra = scene._data.extras.some(
+          (sceneExtra: any) => sceneExtra.extraName === extra.extraName,
+        );
+        if (hasExtra) {
+          acc.push(scene._data);
+        }
+        return acc;
+      }, []);
+
+      const setsQuantity: number = getUniqueValuesByKey(scenes, 'setName').length;
+      const locationsQuantity: number = getUniqueValuesByKey(scenes, 'locationName').length;
+      const pagesSum: number = scenes.reduce((acc, scene) => acc + (scene.pages || 0), 0);
+      const estimatedTimeSum: number = scenes.reduce((acc, scene) => acc + (scene.estimatedSeconds || 0), 0);
+      const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber').length;
+      const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE).length;
+      const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION).length;
+      const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(0);
+
+      return {
+        extraName: extra.extraName,
+        categoryName: extra.categoryName || 'NO CATEGORY',
+        setsQuantity,
+        locationsQuantity,
+        pagesSum,
+        estimatedTimeSum,
+        episodesQuantity,
+        scenesQuantity,
+        protectionQuantity,
+        participation,
+      };
+    };
+
+    const uniqueExtras: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+    return sortByCriterias(uniqueExtras.map(processExtra), castSelectedSortOptions);
+  },[offlineScenes, castSelectedSortOptions])
+
   useEffect(() => {
-    if(processedCast.length > 0) {
+    if(processedCast.length > 0 && processedExtras.length > 0) {
       setIsLoading(false);
     }
   }, [isLoading, processedCast]);
@@ -90,8 +130,13 @@ const Cast: React.FC = () => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
       return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
+
     setCast(filteredCast);
   }, [processedCast, castSearchText]);
+
+  useEffect(() => {
+    console.log(processedExtras)
+  }, [processedExtras]);
 
   const getCharacterNum = (character: any) => {
     const characterNum = character.characterNum ? `${character.characterNum}.` : '';
@@ -163,7 +208,7 @@ const Cast: React.FC = () => {
   }, [cast])
 
   const handleDropDown = (category: string) => { 
-    setDropDownIsOpen((prev: any) => ({ ...prev, [category]: !prev[category]}));
+    setDropDownIsOpen((prev: any) => ({ ...prev, [category]: (prev[category] ? !prev[category] : true)}));
   }
 
   function removeDuplicatesFromArray(array: any[]) {
@@ -183,7 +228,7 @@ const Cast: React.FC = () => {
 
   const handleSetDisplayedCast = (category: string, newElements: any[]) => {
     
-   return setDisplayedCast((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...prev[category], ...newElements])}));
+   return setDisplayedCast((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...(prev[category] ? prev[category] : []), ...newElements])}));
   }
 
   useEffect(() => {
