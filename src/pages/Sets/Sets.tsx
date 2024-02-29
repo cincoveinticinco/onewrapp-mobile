@@ -2,23 +2,15 @@ import React, {
   useContext, useEffect, useState, useMemo, useRef,
 } from 'react';
 import {
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
-  IonCardTitle,
+  IonContent
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/useScrollToTop';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -116,6 +108,9 @@ const Sets: React.FC = () => {
     setSetsSelectedSortOptions(setsDefaultSortOptions);
     setSetsSortPosibilities(defaultSortPosibilitiesOrder);
   };
+
+  // LOCATION CARD
+  // ...ALL - LOCATION - CHARACTERS
 
   return (
     <>
