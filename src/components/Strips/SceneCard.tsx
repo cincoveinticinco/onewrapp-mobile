@@ -197,7 +197,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
         </IonItemOptions>
       </IonItemSliding>
       <InputAlert
-        header='Delete Scene'
+        header="Delete Scene"
         message="Are you sure you want to delete this scene?"
         handleOk={() => deleteScene()}
         inputs={[]}

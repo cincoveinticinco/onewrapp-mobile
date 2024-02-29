@@ -300,12 +300,16 @@ const InputModal: React.FC<InputModalProps> = ({
               )
             }
             {
-              isMobile && 
-              filteredOptions.length > 0 &&
-              <OutlineLightButton 
-                buttonName="CANCEL" 
-                onClick={closeModal} 
-                className="ion-margin cancel-input-modal-button cancel-button" />}
+              isMobile
+              && filteredOptions.length > 0
+              && (
+              <OutlineLightButton
+                buttonName="CANCEL"
+                onClick={closeModal}
+                className="ion-margin cancel-input-modal-button cancel-button"
+              />
+              )
+}
           </>
         </IonContent>
       )}

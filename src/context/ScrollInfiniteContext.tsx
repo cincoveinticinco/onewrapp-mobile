@@ -11,7 +11,9 @@ interface ScrollInfiniteContextProps {
 
 const BATCH_SIZE = 15;
 
-const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children, setDisplayedData, filteredData, batchSize = BATCH_SIZE }) => {
+const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({
+  children, setDisplayedData, filteredData, batchSize = BATCH_SIZE,
+}) => {
   const [currentBatch, setCurrentBatch] = React.useState(0);
   const [isInfiniteDisabled, setInfiniteDisabled] = React.useState(false);
 
@@ -52,10 +54,10 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
     <div>
       {children}
       {filteredData.length > batchSize && (
-         <IonInfiniteScroll onIonInfinite={handleInfinite} disabled={isInfiniteDisabled} threshold="100px">
-         <IonInfiniteScrollContent loadingText="Loading more elements..." />
-       </IonInfiniteScroll>
-       )}
+      <IonInfiniteScroll onIonInfinite={handleInfinite} disabled={isInfiniteDisabled} threshold="100px">
+        <IonInfiniteScrollContent loadingText="Loading more elements..." />
+      </IonInfiniteScroll>
+      )}
     </div>
   );
 };

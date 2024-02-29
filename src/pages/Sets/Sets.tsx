@@ -2,7 +2,7 @@ import React, {
   useContext, useEffect, useState, useMemo, useRef,
 } from 'react';
 import {
-  IonContent
+  IonContent,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';

@@ -87,10 +87,10 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
 
   return (
     <>
-      <div 
-        className="category-item-title ion-flex ion-justify-content-between" 
+      <div
+        className="category-item-title ion-flex ion-justify-content-between"
         onClick={handleDropDown}
-        style={{backgroundColor: 'var(--ion-color-tertiary-shade)'}}
+        style={{ backgroundColor: 'var(--ion-color-tertiary-shade)' }}
       >
         <p className="ion-flex ion-align-items-center">
           Characters
