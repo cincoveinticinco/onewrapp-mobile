@@ -71,6 +71,7 @@
         font-weight: bolder;
         padding: 0px;
       }
+
       .cast-card-header-subtitle {
         font-size: var(--525-small-text-size);
         font-weight: lighter;
@@ -98,7 +99,7 @@
   @include slide-card-item-options;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 600px) {
   .cast-card {
     .cast-card-wrapper {
       min-height: 80px;
