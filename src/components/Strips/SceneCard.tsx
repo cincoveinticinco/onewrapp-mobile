@@ -13,6 +13,7 @@ import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum,
 } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
+import InputAlert from '../Shared/InputAlert/InputAlert';
 
 interface SceneCardProps {
   scene: Scene;
@@ -189,12 +190,19 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
             <IonButton fill="clear">
               <IonIcon icon={banOutline} className="button-icon ban" />
             </IonButton>
-            <IonButton fill="clear" onClick={deleteScene}>
+            <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
               <FiTrash className="button-icon trash" />
             </IonButton>
           </div>
         </IonItemOptions>
       </IonItemSliding>
+      <InputAlert
+        header='Delete Scene'
+        message="Are you sure you want to delete this scene?"
+        handleOk={() => deleteScene()}
+        inputs={[]}
+        trigger={`open-delete-scene-alert-${scene.id}`}
+      />
     </IonRow>
   );
 };
