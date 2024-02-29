@@ -13,10 +13,11 @@ import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
 
 const EditScene: React.FC = () => {
-  const handleBack = useHandleBack();
+  const history = useHistory();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id);
+  const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
   const updatedAt = new Date().toISOString();
   const { oneWrapDb } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();
