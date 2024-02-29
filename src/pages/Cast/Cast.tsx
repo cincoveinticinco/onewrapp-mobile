@@ -179,7 +179,7 @@ const Cast: React.FC = () => {
             category="EXTRAS"
             isOpen={dropDownIsOpen.EXTRAS}
             onToggle={() => handleDropDown('EXTRAS')}
-            count={processedExtras.length}
+            count={extras.length}
           >
             <ScrollInfiniteContext
               filteredData={extras}
