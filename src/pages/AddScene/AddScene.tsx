@@ -1,14 +1,13 @@
 import { IonContent } from '@ionic/react';
 import './AddScene.css';
 import {
-  useContext, useEffect, useRef, useState,
+  useContext, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import useHandleBack from '../../hooks/useHandleBack';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout'
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
@@ -60,7 +59,9 @@ const AddScene: React.FC = () => {
 
   const sceneFormId = 'add-scene-form-id';
 
-  const handleBack = useHandleBack();
+  const history = useHistory();
+
+  const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
