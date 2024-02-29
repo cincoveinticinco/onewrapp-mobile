@@ -219,7 +219,7 @@ const Cast: React.FC = () => {
                 <ScrollInfiniteContext
                   filteredData={filteredCast[category]}
                   setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
-                  batchSize={10}
+                  batchSize={5}
                 >
                   { 
                     displayedCast[category] &&

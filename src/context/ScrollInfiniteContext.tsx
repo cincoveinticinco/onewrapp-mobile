@@ -27,7 +27,8 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
 
   const handleInfinite = (e: CustomEvent<void>) => {
     loadMoreData();
-        (e.target as HTMLIonInfiniteScrollElement).complete();
+    console.log('LOADING MORE DATA', currentBatch, batchSize);
+    (e.target as HTMLIonInfiniteScrollElement).complete();
   };
 
   useEffect(() => {

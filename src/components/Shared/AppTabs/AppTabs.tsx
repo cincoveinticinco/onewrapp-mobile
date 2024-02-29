@@ -52,6 +52,9 @@ const AppTabs: React.FC = () => {
 
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
+
+  // EXACT PATHS
+  
   return (
     <IonTabs>
       <IonRouterOutlet>
