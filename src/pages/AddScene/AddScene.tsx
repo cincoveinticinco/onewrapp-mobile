@@ -109,15 +109,10 @@ const AddScene: React.FC = () => {
     handleSubmit(onSubmit)();
   };
 
-  const { hideTabs, showTabs } = useHideTabs();
-  const thisPath = useLocation();
+  const { hideTabs } = useHideTabs();
 
   useEffect(() => {
     hideTabs();
-
-    return () => {
-      showTabs();
-    }
   }, [])
 
   return (
