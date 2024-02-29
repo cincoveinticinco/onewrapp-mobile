@@ -162,7 +162,7 @@ const Cast: React.FC = () => {
               <ScrollInfiniteContext
                 filteredData={filteredCast[category]}
                 setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
-                batchSize={5}
+                batchSize={7}
               >
                 {
                   displayedCast[category]
@@ -184,7 +184,7 @@ const Cast: React.FC = () => {
             <ScrollInfiniteContext
               filteredData={extras}
               setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
-              batchSize={5}
+              batchSize={7}
             >
               {
                 dropDownIsOpen.EXTRAS
