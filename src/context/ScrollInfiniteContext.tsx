@@ -27,7 +27,6 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
 
   const handleInfinite = (e: CustomEvent<void>) => {
     loadMoreData();
-    console.log('LOADING MORE DATA', currentBatch, batchSize);
     (e.target as HTMLIonInfiniteScrollElement).complete();
   };
 
@@ -52,9 +51,11 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({ children,
   return (
     <div>
       {children}
-      <IonInfiniteScroll onIonInfinite={handleInfinite} disabled={isInfiniteDisabled} threshold="100px">
-        <IonInfiniteScrollContent loadingText="Loading more elements..." />
-      </IonInfiniteScroll>
+      {filteredData.length > batchSize && (
+         <IonInfiniteScroll onIonInfinite={handleInfinite} disabled={isInfiniteDisabled} threshold="100px">
+         <IonInfiniteScrollContent loadingText="Loading more elements..." />
+       </IonInfiniteScroll>
+       )}
     </div>
   );
 };
