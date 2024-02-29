@@ -93,7 +93,6 @@ const Cast: React.FC = () => {
     }) : processedExtras;
 
     setExtras(filteredExtras);
-    console.log(extras)
   }, [processedExtras, castSearchText]); // Filter Extras by search text
 
   useEffect(() => {
