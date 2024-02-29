@@ -11,11 +11,8 @@ import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNeste
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import useHandleBack from '../../hooks/useHandleBack';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/useScrollToTop';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
@@ -176,8 +173,11 @@ const Cast: React.FC = () => {
   }
 
   useEffect(() => {
+    if(isLoading) {
+      return;
+    }
     characterCategoriesArray.forEach((category: string) => {
-      setDisplayedCast((prev: any) => ({ ...prev, [category]: []}));
+      setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category).slice(0, 5)}));
     })
   }, [cast])
 
