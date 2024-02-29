@@ -8,7 +8,7 @@ import {
   IonTitle,
 } from '@ionic/react';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
-import './CastCard.scss'
+import './CastCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { FiTrash } from 'react-icons/fi';
@@ -16,6 +16,7 @@ import { banOutline, pencilOutline } from 'ionicons/icons';
 
 interface Cast {
   characterNum: string;
+  extraName: string;
   characterName: string;
   setsQuantity: number;
   locationsQuantity: number;
@@ -33,13 +34,13 @@ interface CastCardProps {
   searchText: string;
 }
 
-const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol}) => (
-  <p className='info-label'>
-    <span className='value-part'>
+const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
+  <p className="info-label">
+    <span className="value-part">
       {value}
-      <span className='symbol-part'>{symbol}</span>
+      <span className="symbol-part">{symbol}</span>
     </span>
-    <span className='label-part'>{label}</span>
+    <span className="label-part">{label}</span>
   </p>
 );
 
@@ -47,12 +48,12 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
 
   const divideIntegerFromFraction = (value: string) => {
-    const [integer, fraction] = value.split(' ')
+    const [integer, fraction] = value.split(' ');
     return {
       integer,
-      fraction
-    }
-  }
+      fraction,
+    };
+  };
 
   const fraction = floatToFraction(character.pagesSum);
 
@@ -60,61 +61,61 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   const integerPart = divideIntegerFromFraction(fraction).integer;
 
   const divideMinutesFromSeconds = (value: string) => {
-    //24:00
+    // 24:00
     const [minutes, seconds] = value.split(':');
     return {
       minutes,
-      seconds
-    }
-  }
+      seconds,
+    };
+  };
 
   const minutesSeconds = secondsToMinSec(character.estimatedTimeSum);
 
-  const minutes = divideMinutesFromSeconds(minutesSeconds).minutes;
-  const seconds = divideMinutesFromSeconds(minutesSeconds).seconds;
+  const { minutes } = divideMinutesFromSeconds(minutesSeconds);
+  const { seconds } = divideMinutesFromSeconds(minutesSeconds);
 
   return (
     <IonItemSliding>
-      <IonItem mode="md" className='cast-card ion-no-margin ion-no-padding ion-nowrap' color='tertiary'>
-        <div className='cast-card-wrapper'>
-          <div className='cast-card-image'>
+      <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
+        <div className="cast-card-wrapper">
+          <div className="cast-card-image">
             {/* EMPTY TEMPORARY */}
           </div>
-          <div color='dark' className='cast-card-header'>
-            <IonTitle className='cast-card-header-title'>
+          <div color="dark" className="cast-card-header">
+            <IonTitle className="cast-card-header-title">
               <HighlightedText
-                text={`${getCharacterNum(character)} ${character.characterName}`}
+                text={`${getCharacterNum(character)} ${character.characterName || character.extraName}`}
                 searchTerm={searchText}
               />
             </IonTitle>
-            <p className='cast-card-header-subtitle'>
+            <p className="cast-card-header-subtitle">
               TALENT NOT ASSIGNED
             </p>
           </div>
-          <div className='cast-card-content'>
-            <InfoLabel label='PART' value={character.participation} symbol='%'/>
-            <InfoLabel label='LOC.' value={character.locationsQuantity}/>
-            <InfoLabel label='SETS' value={character.setsQuantity} />
-            <InfoLabel label='EP.' value={character.episodesQuantity} />
-            <InfoLabel label='SCN.' value={character.scenesQuantity} />
-            <InfoLabel label='PAGES' value={integerPart} symbol={fractionPart} />
-            <InfoLabel label='PROT.' value={character.protectionQuantity} />
-            <InfoLabel label='TIME' value={minutes} symbol={':' + seconds} />
+          <div className="cast-card-content">
+            <InfoLabel label="PART" value={character.participation} symbol="%" />
+            <InfoLabel label="LOC." value={character.locationsQuantity} />
+            <InfoLabel label="SETS" value={character.setsQuantity} />
+            <InfoLabel label="EP." value={character.episodesQuantity} />
+            <InfoLabel label="SCN." value={character.scenesQuantity} />
+            <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+            <InfoLabel label="PROT." value={character.protectionQuantity} />
+            <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
           </div>
         </div>
       </IonItem>
-      <IonItemOptions className='cast-card-item-options'>
+      <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-            <IonButton fill="clear">
-              <IonIcon icon={pencilOutline} className="button-icon view" />
-            </IonButton>
-            <IonButton fill="clear">
-              <IonIcon icon={banOutline} className="button-icon ban" />
-            </IonButton>
-            <IonButton fill="clear">
-              <FiTrash className="button-icon trash" />
-            </IonButton>
-          </div>
+          <IonButton fill="clear">
+            <IonIcon icon={pencilOutline} className="button-icon view" />
+          </IonButton>
+          <IonButton fill="clear">
+            <IonIcon icon={banOutline} className="button-icon ban" />
+          </IonButton>
+          <IonButton fill="clear">
+            <FiTrash className="button-icon trash" />
+          </IonButton>
+        </div>
       </IonItemOptions>
     </IonItemSliding>
   );
