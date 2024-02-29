@@ -1,9 +1,9 @@
 import { IonContent } from '@ionic/react';
 import './AddScene.css';
 import {
-  useContext, useRef, useState,
+  useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
@@ -109,7 +109,16 @@ const AddScene: React.FC = () => {
     handleSubmit(onSubmit)();
   };
 
-  useHideTabs();
+  const { hideTabs, showTabs } = useHideTabs();
+  const thisPath = useLocation();
+
+  useEffect(() => {
+    hideTabs();
+
+    return () => {
+      showTabs();
+    }
+  }, [])
 
   return (
     <SecondaryPagesLayout

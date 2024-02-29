@@ -55,7 +55,7 @@ const AppTabs: React.FC = () => {
   // EXACT PATHS
 
   return (
-    <IonTabs>
+    <IonTabs className='ion-tabs'>
       <IonRouterOutlet>
         <Route exact path={`${urlString}/addscene`}>
           <AddScene />

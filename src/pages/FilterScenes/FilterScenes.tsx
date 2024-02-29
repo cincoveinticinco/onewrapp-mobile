@@ -2,7 +2,7 @@ import {
   IonCol, IonContent, IonGrid, IonRow,
 } from '@ionic/react';
 import React, { useContext, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
@@ -28,9 +28,15 @@ const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
   const { offlineScenes } = useContext(DatabaseContext);
   const [showReset, setShowReset] = React.useState(false);
-  const handleBack = useHandleBack();
+  const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+  const handleBack = () => history.push(`/my/projects/${id}/strips`);
   const isMobile = useIsMobile();
-  useHideTabs();
+  const { hideTabs } = useHideTabs();
+
+  useEffect(() => {
+    hideTabs();
+  },[])
 
   // Main functions
   const handleSingleFilterOption = (category: string, optionValue: string) => {

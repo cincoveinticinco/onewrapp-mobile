@@ -1,20 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const useHideTabs = () => {
-  useEffect(() => {
+  const hideTabs = () => {
     const element = document.querySelector('.app-tabs-container');
     if (element instanceof HTMLElement) {
-      element.style.display = 'none';
+      element.classList.add('hide-tabs')
     }
+  }
 
-    return () => {
-      if (element) {
-        if (element instanceof HTMLElement) {
-          element.style.display = '';
-        }
-      }
-    };
-  }, []);
+  const showTabs = () => {
+    const element = document.querySelector('.app-tabs-container');
+    if (element instanceof HTMLElement) {
+      element.classList.remove('hide-tabs');
+    }
+  }
+
+  return { hideTabs, showTabs }
 };
 
 export default useHideTabs;

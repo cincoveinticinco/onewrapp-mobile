@@ -2,7 +2,7 @@ import { IonContent } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
@@ -75,9 +75,7 @@ const EditScene: React.FC = () => {
     reset,
     setValue,
     watch,
-  } = useForm({ defaultValues: formData });
-
-  useHideTabs();
+  } = useForm({ defaultValues: formData })
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
@@ -107,6 +105,12 @@ const EditScene: React.FC = () => {
     scrollToTop();
     handleSubmit(onSubmit)();
   };
+
+  const { hideTabs } = useHideTabs();
+
+  useEffect(() => {
+    hideTabs();
+  }, []);
 
   return (
     <SecondaryPagesLayout
