@@ -3,11 +3,6 @@ import React, {
 } from 'react';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
@@ -22,15 +17,18 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
+import './Elements.scss'
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const [activeSection, setActiveSection] = useState<string>('category');
-  const [displayedElements, setDisplayedElements] = useState<any[]>([]);
+  const [displayedElements, setDisplayedElements] = useState<any>({});
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
   const [filteredElements, setFilteredElements] = useState<any[]>([]);
+  const [elements, setElements] = useState<any>({});
   const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
+
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions, elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions,
   } = useContext(ScenesContext);
@@ -166,27 +164,73 @@ const Elements: React.FC = () => {
     return sortByCriterias(newElementsData, elementsSelectedSortOptions);
   }, [offlineScenes, elementsSelectedSortOptions]);
 
-  const handleIonChange = useCallback((e: any) => {
-    setActiveSection(e.detail.value!);
-  }, []);
-
   useEffect(() => {
     setFilteredCategories(categoriesData);
-    setFilteredElements(elementsData);
   }, [
     categoriesData,
+  ]);
+
+  useEffect(() => {
+    setFilteredElements(elementsData);
+  }, [
     elementsData,
   ]);
 
   useEffect(() => {
-    if (searchText.length > 0 && activeSection === 'category') {
+    if (searchText.length > 0) {
       const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredCategories(newFilteredCategories);
-    } else if (searchText.length > 0 && activeSection === 'element') {
       const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredElements(newFilteredElements);
     }
   }, [searchText]);
+
+  const filterElementsByCategory = (elements: any[], categoryName: string) => {
+    return elements.filter((element: any) => element.categoryName === categoryName);
+  }
+
+  useEffect(() => {
+    categoriesData.forEach((category: any) => {
+      category.categoryName = category.categoryName || 'NO CATEGORY';
+      setDisplayedElements({
+        ...displayedElements,
+        [category.categoryName]: []
+      })
+    })
+  }, [categoriesData])
+
+  useEffect(() => {
+    categoriesData.forEach((category: any) => {
+      category.categoryName = category.categoryName || 'NO CATEGORY';
+      setIsDropDownOpen((prev: any) => ({ ...prev, [category.categoryName]: false }));
+    })
+  }, [categoriesData])
+
+  useEffect(() => {
+    if(categoriesData.length > 0 && filteredElements.length > 0) {
+      const updatedElements: any = {}; // Nuevo objeto de elementos actualizado
+  
+      categoriesData.forEach((category: any) => {
+        category.categoryName = category.categoryName || 'NO CATEGORY';
+        const newElements = filteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
+        updatedElements[category.categoryName] = newElements;
+      });
+
+      console.log(updatedElements)
+  
+      setElements(updatedElements); // Establecer el nuevo objeto de elementos
+    }
+
+    console.log(elements)
+  }, [categoriesData, filteredElements]);
+
+  const removeDuplicatesFromArray = (array: any[]) => {
+    const uniqueSet = new Set(array);
+    const uniqueArray = [...uniqueSet];
+    return uniqueArray;
+  }
+
+  const handleSetDisplayedElements= (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...(prev[category] ? prev[category] : []), ...newElements]) }));
 
   return (
     <>
@@ -196,50 +240,46 @@ const Elements: React.FC = () => {
         searchText={searchText}
         setSearchText={setSearchText}
         title="ELEMENTS"
-        sortTrigger={activeSection === 'category' ? 'elements-categories-sort-options' : 'elements-sort-options'}
+        sortTrigger={'elements-sort-options'}
       >
-        <IonHeader>
-          <IonToolbar color="tertiary">
-            <IonSegment value={activeSection} onIonChange={handleIonChange} mode="md">
-              <IonSegmentButton value="category" color="primary">
-                <IonLabel>{`By Category (${categoriesData.length})`}</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="element" color="primary">
-                <IonLabel>{`By Element (${elementsData.length})`}</IonLabel>
-              </IonSegmentButton>
-            </IonSegment>
-          </IonToolbar>
-        </IonHeader>
         <IonContent color="tertiary" fullscreen>
-          {activeSection === 'category' && (
-            <>
-              <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories}>
-                {displayedCategories.map((category, index) => (
-                  <ElementCard key={index} data={category} searchText={searchText} section="category" />
-                ))}
-              </ScrollInfiniteContext>
-            </>
-          )}
-          {activeSection === 'element' && (
           <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedElements} filteredData={filteredElements}>
-              {displayedElements.map((element, index) => (
-                <ElementCard key={index} data={element} searchText={searchText} section="element" />
+            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} >
+              {displayedCategories.map((category, index) => (
+                <>
+                <ElementCard key={index} data={category} searchText={searchText} section="category" isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
+                  ...isDropDownOpen,
+                  [category.categoryName]: !isDropDownOpen[category.categoryName]
+                })}/>
+                <div className='ion-content-scroll-host elements-card-wrapper'>
+                  {
+                    isDropDownOpen[category.categoryName] &&
+                    <ScrollInfiniteContext 
+                      setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName, newElements)} 
+                      filteredData={elements[category.categoryName]}
+                      batchSize={9}
+                      >
+                        {(displayedElements[category.categoryName] || []).map((element: any, index: any) => (
+                          <ElementCard key={index} data={element} searchText={searchText} section="element" />
+                        ))}
+                      </ScrollInfiniteContext>
+                  }
+                </div>
+                </>    
               ))}
             </ScrollInfiniteContext>
           </>
-          )}
         </IonContent>
       </MainPagesLayout>
       <InputSortModal
-        clearSelections={activeSection === 'category' ? clearSelectedCategoriesSortOptions : clearSelectedElementsSortOptions}
-        defaultSortOptions={activeSection === 'category' ? elementsCategoriesDefaultSortOptions : elementsDefaultSortOptions}
-        modalTrigger={activeSection === 'category' ? 'elements-categories-sort-options' : 'elements-sort-options'}
-        pageName={activeSection === 'category' ? 'Sort Categories' : 'Sort Elements'}
-        sortPosibilities={activeSection === 'category' ? elementsCategoriesSortPosibilities : elementsSortPosibilities}
-        setSortPosibilities={activeSection === 'category' ? setElementsCategoriesSortPosibilities : setElementsSortPosibilities}
-        selectedSortOptions={activeSection === 'category' ? elementsCategoriesSelectedSortOptions : elementsSelectedSortOptions}
-        setSelectedSortOptions={activeSection === 'category' ? setElementsCategoriesSelectedSortOptions : setElementsSelectedSortOptions}
+        clearSelections={clearSelectedElementsSortOptions}
+        defaultSortOptions={elementsDefaultSortOptions}
+        modalTrigger={'elements-sort-options'}
+        pageName={'Sort Elements'}
+        sortPosibilities={ elementsSortPosibilities}
+        setSortPosibilities={setElementsSortPosibilities}
+        selectedSortOptions={ elementsSelectedSortOptions}
+        setSelectedSortOptions={setElementsSelectedSortOptions}
       />
     </>
   );

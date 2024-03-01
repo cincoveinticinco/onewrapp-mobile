@@ -93,7 +93,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
             </p>
           </div>
           <div className="cast-card-content">
-            <InfoLabel label="PART" value={character.participation} symbol="%" />
+            <InfoLabel label="PART." value={character.participation} symbol="%" />
             <InfoLabel label="LOC." value={character.locationsQuantity} />
             <InfoLabel label="SETS" value={character.setsQuantity} />
             <InfoLabel label="EP." value={character.episodesQuantity} />
