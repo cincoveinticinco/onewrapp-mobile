@@ -202,13 +202,13 @@ const Elements: React.FC = () => {
   useEffect(() => {
     categoriesData.forEach((category: any) => {
       category.categoryName = category.categoryName || 'NO CATEGORY';
-      setIsDropDownOpen((prev: any) => ({ ...prev, [category.categoryName]: false }));
+      setIsDropDownOpen((prev: any) => ({ ...prev, [category.categoryName]: true }));
     })
   }, [categoriesData])
 
   useEffect(() => {
     if(categoriesData.length > 0 && filteredElements.length > 0) {
-      const updatedElements: any = {}; // Nuevo objeto de elementos actualizado
+      const updatedElements: any = {};
   
       categoriesData.forEach((category: any) => {
         category.categoryName = category.categoryName || 'NO CATEGORY';
@@ -218,7 +218,7 @@ const Elements: React.FC = () => {
 
       console.log(updatedElements)
   
-      setElements(updatedElements); // Establecer el nuevo objeto de elementos
+      setElements(updatedElements);
     }
 
     console.log(elements)
@@ -244,7 +244,7 @@ const Elements: React.FC = () => {
       >
         <IonContent color="tertiary" fullscreen>
           <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} >
+            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={3}>
               {displayedCategories.map((category, index) => (
                 <>
                 <ElementCard key={index} data={category} searchText={searchText} section="category" isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
