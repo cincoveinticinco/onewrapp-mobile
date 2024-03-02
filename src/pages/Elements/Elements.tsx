@@ -178,12 +178,24 @@ const Elements: React.FC = () => {
 
   useEffect(() => {
     if (searchText.length > 0) {
-      const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
-      setFilteredCategories(newFilteredCategories);
+      // const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
+      // setFilteredCategories(newFilteredCategories);
       const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredElements(newFilteredElements);
+      if(categoriesData.length > 0) {
+        const updatedElements: any = {};
+        categoriesData.forEach((category: any) => {
+          const newElements = newFilteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
+          updatedElements[category.categoryName] = newElements;
+        });
+        setElements(updatedElements);
+      }
     }
   }, [searchText]);
+
+  useEffect(() => {
+    console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', elements)
+  }, [elements])
 
   const filterElementsByCategory = (elements: any[], categoryName: string) => {
     return elements.filter((element: any) => element.categoryName === categoryName);
@@ -213,24 +225,23 @@ const Elements: React.FC = () => {
       categoriesData.forEach((category: any) => {
         category.categoryName = category.categoryName || 'NO CATEGORY';
         const newElements = filteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
-        updatedElements[category.categoryName] = newElements;
+        updatedElements[category.categoryName] = newElements
       });
-
-      console.log(updatedElements)
   
       setElements(updatedElements);
     }
-
-    console.log(elements)
   }, [categoriesData, filteredElements]);
 
   const removeDuplicatesFromArray = (array: any[]) => {
-    const uniqueSet = new Set(array);
-    const uniqueArray = [...uniqueSet];
-    return uniqueArray;
+    if(array) {
+      const uniqueSet = new Set(array);
+      const uniqueArray = [...uniqueSet];
+      return uniqueArray;
+    }
   }
 
-  const handleSetDisplayedElements= (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...(prev[category] ? prev[category] : []), ...newElements]) }));
+  const handleSetDisplayedElements= (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...newElements]) }));
+
 
   return (
     <>
@@ -244,28 +255,36 @@ const Elements: React.FC = () => {
       >
         <IonContent color="tertiary" fullscreen>
           <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={3}>
+            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
               {displayedCategories.map((category, index) => (
-                <>
-                <ElementCard key={index} data={category} searchText={searchText} section="category" isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
-                  ...isDropDownOpen,
-                  [category.categoryName]: !isDropDownOpen[category.categoryName]
-                })}/>
-                <div className='ion-content-scroll-host elements-card-wrapper'>
-                  {
-                    isDropDownOpen[category.categoryName] &&
-                    <ScrollInfiniteContext 
-                      setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName, newElements)} 
-                      filteredData={elements[category.categoryName]}
-                      batchSize={9}
-                      >
-                        {(displayedElements[category.categoryName] || []).map((element: any, index: any) => (
-                          <ElementCard key={index} data={element} searchText={searchText} section="element" />
-                        ))}
+                <div key={category + index}>
+                  <ElementCard 
+                  data={category} 
+                  searchText={searchText} 
+                  section="category"
+                  isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
+                    ...isDropDownOpen,
+                    [category.categoryName]: !isDropDownOpen[category.categoryName]
+                  })}
+                  elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
+                  />
+                  <div className='ion-content-scroll-host elements-card-wrapper'>
+                    {
+                      isDropDownOpen[category.categoryName] &&
+                      <ScrollInfiniteContext 
+                        setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName, newElements)} 
+                        filteredData={elements[category.categoryName]}
+                        batchSize={9}
+                        >
+                          {
+                            displayedElements[category.categoryName] &&
+                            displayedElements[category.categoryName].map((element: any, index: any) => (
+                            <ElementCard key={index} data={element} searchText={searchText} section="element" />
+                          ))}
                       </ScrollInfiniteContext>
-                  }
-                </div>
-                </>    
+                    }
+                  </div>
+                </div>    
               ))}
             </ScrollInfiniteContext>
           </>

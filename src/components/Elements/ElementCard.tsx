@@ -14,6 +14,7 @@ import floatToFraction from '../../utils/floatToFraction';
 import { FiTrash } from 'react-icons/fi';
 import { banOutline, pencilOutline } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
+import useIsMobile from '../../hooks/useIsMobile';
 
 interface Element {
   elementName: string;
@@ -34,6 +35,7 @@ interface ElementCardProps {
   section: 'category' | 'element';
   isOpen?: boolean;
   onClick?: () => void;
+  elementsQuantity?: number;
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -46,7 +48,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick }) => {
+const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity }) => {
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -90,7 +92,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
           <div color="dark" className="element-card-header">
             <IonTitle className="element-card-header-title">
               <HighlightedText
-                text={elementName() || (data.categoryName + ' (' + data.elementsQuantity + ')') || ''}
+                text={elementName() || (data.categoryName + ' (' + elementsQuantity + ')') || ''}
                 searchTerm={searchText}
               />
             </IonTitle>
@@ -101,19 +103,12 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
             )}
           </div>
           <div className="element-card-content">
-            {
-              section !== 'category' &&
-              <InfoLabel label='SCN.' value={data.scenesQuantity} />
-            }
-            <InfoLabel label="PROT." value={data.protectionQuantity} />
+            <InfoLabel label='SCN.' value={data.scenesQuantity} />
+            <InfoLabel label='PROT.' value={data.protectionQuantity} />
             <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
             <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
             <InfoLabel label="EP" value={data.episodesQuantity} />
             <InfoLabel label="PART." value={`${data.participation}%`} />
-            {
-              section === 'category' &&
-              <DropDownButton open={isOpen} />
-            }
           </div>
         </div>
       </IonItem>
