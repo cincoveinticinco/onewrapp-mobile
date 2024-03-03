@@ -14,14 +14,17 @@ import useScrollToTop from '../../hooks/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import SetCard from '../../components/Sets/SetCard';
+import SetCard from '../../components/Sets/LocationSetCard';
+import LocationSetCard from '../../components/Sets/LocationSetCard';
 
 const Sets: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const { setsSelectedSortOptions, setSetsSelectedSortOptions } = useContext(ScenesContext);
   const [setsSearchText, setSetsSearchText] = useState('');
   const [filteredSets, setFilteredSets] = useState<any[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<any[]>([]);
   const [displayedSets, setDisplayedSets] = useState<any[]>([]);
+  const [displayedLocations, setDisplayedLocations] = useState<any[]>([]);
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
@@ -97,10 +100,35 @@ const Sets: React.FC = () => {
     return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions);
   }, [offlineScenes, setsSelectedSortOptions]);
 
+  const processedLocations = useMemo(() => {
+    const processLocation = (locationName: string) => {
+      const locationScenes = offlineScenes.filter((scene: any) => scene._data.locationName === locationName);
+      const scenesQuantity = locationScenes.length;
+      const protectionQuantity = locationScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
+      const pagesSum = locationScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
+      const estimatedTimeSum = locationScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
+      const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber').length;
+      const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
+
+      return {
+        locationName,
+        scenesQuantity,
+        protectionQuantity,
+        pagesSum,
+        estimatedTimeSum,
+        episodesQuantity,
+        participation,
+      };
+    };
+
+    const uniqueLocationNames: any[] = getUniqueValuesByKey(offlineScenes, 'locationName');
+    return sortByCriterias(uniqueLocationNames.map(processLocation), setsSelectedSortOptions);
+  }, [offlineScenes]);
+
   useEffect(() => {
-    const filteredSets = setsSearchText.length > 0 ? processedSets.filter((set: any) => set.setName.toLowerCase().includes(setsSearchText.toLowerCase())) : processedSets;
-    setFilteredSets(filteredSets);
-  }, [processedSets, setsSearchText]);
+    const filteredLocations = processedLocations;
+    setFilteredLocations(filteredLocations); 
+  }, [processedLocations]);
 
   const cleartSortSelections = () => {
     localStorage.removeItem('setsSelectedSortOptions');
@@ -123,9 +151,9 @@ const Sets: React.FC = () => {
         sortTrigger="sort-sets-modal-trigger"
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
-          <ScrollInfiniteContext setDisplayedData={setDisplayedSets} filteredData={filteredSets}>
-            {displayedSets.map((set, index) => (
-              <SetCard key={index} set={set} searchText={setsSearchText} />
+          <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations}>
+            {displayedLocations.map((location, index) => (
+              <LocationSetCard key={index} location={location} searchText='' />
             ))}
           </ScrollInfiniteContext>
         </IonContent>

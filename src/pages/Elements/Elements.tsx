@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useMemo, useCallback, useRef, useEffect,
+  useContext, useState, useMemo, useRef, useEffect,
 } from 'react';
 import {
   IonContent,
@@ -186,10 +186,6 @@ const Elements: React.FC = () => {
       setFilteredElements(elementsData);
     }
   }, [searchText]);
-
-  const filterElementsByCategory = (elements: any[], categoryName: string) => {
-    return elements.filter((element: any) => element.categoryName === categoryName);
-  }
 
   useEffect(() => {
     categoriesData.forEach((category: any) => {
