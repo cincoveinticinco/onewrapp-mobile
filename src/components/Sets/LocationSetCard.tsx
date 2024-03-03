@@ -40,6 +40,8 @@ interface LocationSetCardProps {
   set?: Set;
   searchText: string;
   location?: Location;
+  setsQuantity?: number;
+  onClick?: () => void;
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -52,7 +54,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location }) => {
+const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick}) => {
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -74,13 +76,20 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const { minutes, seconds } = divideMinutesFromSeconds(secondsToMinSec(set ? set.estimatedTimeSum : location ? location.estimatedTimeSum : 0));
 
+  const getOnclick = () => {
+    if (set) {
+      return
+    } else if (location && onClick) {
+      return onClick()
+    }
+  }
   return (
-    <IonItemSliding>
+    <IonItemSliding onClick={() => getOnclick()}>
       <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
         <div className={set ? "location-set-card-wrapper set" : "location-set-card-wrapper location"}>
           <div className="location-set-card-header">
             <IonTitle className="location-set-card-header-title">
-              <HighlightedText text={set ? set.setName : location ? location?.locationName : 'NO LOCATION'} searchTerm={searchText} />
+              <HighlightedText text={set ? set.setName : location ? (location?.locationName + ' (' + setsQuantity + ')') : 'NO LOCATION'} searchTerm={searchText} />
             </IonTitle>
             {set && (
               <IonTitle className="location-set-card-header-subtitle">
