@@ -182,20 +182,10 @@ const Elements: React.FC = () => {
       // setFilteredCategories(newFilteredCategories);
       const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredElements(newFilteredElements);
-      if(categoriesData.length > 0) {
-        const updatedElements: any = {};
-        categoriesData.forEach((category: any) => {
-          const newElements = newFilteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
-          updatedElements[category.categoryName] = newElements;
-        });
-        setElements(updatedElements);
-      }
+    } else {
+      setFilteredElements(elementsData);
     }
   }, [searchText]);
-
-  useEffect(() => {
-    console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', elements)
-  }, [elements])
 
   const filterElementsByCategory = (elements: any[], categoryName: string) => {
     return elements.filter((element: any) => element.categoryName === categoryName);
@@ -219,7 +209,7 @@ const Elements: React.FC = () => {
   }, [categoriesData])
 
   useEffect(() => {
-    if(categoriesData.length > 0 && filteredElements.length > 0) {
+    if(categoriesData.length > 0  && filteredElements.length > 0) {
       const updatedElements: any = {};
   
       categoriesData.forEach((category: any) => {
@@ -258,16 +248,19 @@ const Elements: React.FC = () => {
             <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
               {displayedCategories.map((category, index) => (
                 <div key={category + index}>
-                  <ElementCard 
-                  data={category} 
-                  searchText={searchText} 
-                  section="category"
-                  isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
-                    ...isDropDownOpen,
-                    [category.categoryName]: !isDropDownOpen[category.categoryName]
-                  })}
-                  elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
-                  />
+                  {
+                    elements[category.categoryName].length > 0 &&
+                    <ElementCard 
+                      data={category} 
+                      searchText={searchText} 
+                      section="category"
+                      isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
+                        ...isDropDownOpen,
+                        [category.categoryName]: !isDropDownOpen[category.categoryName]
+                      })}
+                      elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
+                    />
+                  }
                   <div className='ion-content-scroll-host elements-card-wrapper'>
                     {
                       isDropDownOpen[category.categoryName] &&
