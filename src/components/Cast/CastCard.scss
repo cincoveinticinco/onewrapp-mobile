@@ -6,27 +6,30 @@
 
   .cast-card-wrapper {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
     background-color: transparent;
     margin: 0px;
-    border: 1px solid var(--ion-color-tertiary);
     padding: 0px;
     min-height: 120px;
     flex-wrap: nowrap;
     width: 100%;
     max-width: 100%;
     padding-right: 12px;
+    border-bottom: .3px solid black;
   
     .cast-card-content {
       margin: 0px;
       padding: 0px;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-columns: repeat(8, 1fr);
       justify-content: flex-end;
       color: var(--ion-color-light);
       height: 100%;
-      min-width: 50%;
+      min-width: 90%;
+      flex-basis: 50%;
+      margin-left: 24px;
   
       .info-label {
         display: flex;
@@ -63,8 +66,10 @@
       flex-direction: column;
       justify-content: center;
       margin: 0px;
-      width: 26%;
-      margin-left: 36px;
+      width: 100%;
+      margin-left: 24px;
+      flex-basis: 50%;
+      padding: 12px 0px;
   
       .cast-card-header-title {
         font-size: var(--525-common-title-size);
@@ -103,11 +108,16 @@
   .cast-card {
     .cast-card-wrapper {
       min-height: 80px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
 
       .cast-card-content {
-        width: 75%;
-        display: flex;
+        display: grid;
         justify-content: flex-end;
+        min-width: auto;
+        min-height: 100%;
+
   
         .info-label {
           min-width: 35px;
@@ -118,6 +128,7 @@
       .cast-card-header {
         width: auto;
         margin: 0px;
+        width: 30%;
       }
 
       .cast-card-image {
@@ -131,6 +142,8 @@
 @media (min-width: 800px) {
   .cast-card {
     .cast-card-wrapper {
+      flex-direction: row;
+
       .cast-card-content {
         width: 68%;
   
@@ -141,12 +154,6 @@
   
       .cast-card-header {
         width: 20%;
-      }
-  
-      .cast-card-image {
-        min-width: 70px;
-        min-height: 70px;
-        flex-basis: 70px;
       }
     }
   }

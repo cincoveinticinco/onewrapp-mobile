@@ -44,6 +44,14 @@ interface LocationSetCardProps {
   onClick?: () => void;
 }
 
+// EP, ....
+// REMOVE CHARACTER LENGTH
+
+// LOCATION || SET
+// HEADER
+// CONTENT
+// CHAR SORT, CATEGORY
+
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
   <p className="info-label">
     <span className="value-part">
