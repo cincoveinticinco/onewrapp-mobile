@@ -96,11 +96,11 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
                 searchTerm={searchText}
               />
             </IonTitle>
-            {section === 'element' && (
+            {/* {section === 'element' && (
               <p className="element-card-header-subtitle">
                 {data.category ? data.category.toUpperCase() : 'NO CATEGORY'}
               </p>
-            )}
+            )} */}
           </div>
           <div className="element-card-content">
             <InfoLabel label='SCN.' value={data.scenesQuantity} />

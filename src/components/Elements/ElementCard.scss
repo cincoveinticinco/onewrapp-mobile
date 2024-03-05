@@ -17,15 +17,16 @@
     flex-wrap: nowrap;
     width: 100%;
     max-width: 100%;
+    padding: 12px;
     padding-right: 16px;
     padding-left: 24px;
     border-bottom: 1.5px solid var(--ion-color-tertiary-shade);
 
     &.category {
       background-color: var(--ion-color-tertiary-shade);
-      padding-left: 16px;
-      padding-right: 16px;
+      padding: 16px;
       cursor: pointer;
+      border-top: 1.5px solid var(--ion-color-dark);
       border-bottom: 1.5px solid var(--ion-color-dark);
 
       &:focus,
@@ -37,23 +38,19 @@
     .element-card-content {
       margin: 0px;
       padding: 0px;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      justify-content: flex-end;
+      display: flex;
+      justify-content: space-between;
       color: var(--ion-color-light);
       height: 100%;
       min-width: 100%;
-      flex-basis: 50%;
-  
+
       .info-label {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         margin: 0px;
-        padding: 0px;
         color: var(--ion-color-light);
-        max-width: 25px;
     
         .value-part {
           font-size: 18px;
@@ -118,21 +115,28 @@
   .element-card {
     .element-card-wrapper {
       min-height: 80px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
 
       .element-card-content {
-        width: 75%;
-        display: flex;
-        justify-content: flex-end;
+        display: grid;
+        grid-auto-flow: column;
+        min-width: 40%;
+        width: 40%;
+        flex-basis: 40%;
   
         .info-label {
-          min-width: 35px;
-          max-width: 40px;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
         }
       }
   
       .element-card-header {
         width: auto;
         margin: 0px;
+        min-width: 40%;
       }
 
       .element-card-image {
@@ -146,22 +150,9 @@
 @media (min-width: 800px) {
   .element-card {
     .element-card-wrapper {
-      .element-card-content {
-        width: 68%;
-  
-        .info-label {
-          min-width: 7%;
-        }
-      }
   
       .element-card-header {
         width: 20%;
-      }
-  
-      .element-card-image {
-        min-width: 70px;
-        min-height: 70px;
-        flex-basis: 70px;
       }
     }
   }
@@ -174,7 +165,7 @@
         width: 64%;
   
         .info-label {
-          min-width: 50px;
+          min-width: 30px;
         }
       }
   
