@@ -212,6 +212,7 @@ import { set } from 'lodash';
                       sets[location.locationName] ? sets[location.locationName].length : 0
                       }
                       onClick={() => toggleDropDown(location.locationName)}
+                      isOpen={dropDownIsOpen[location.locationName]}
                     />
                   }
                   {

@@ -49,6 +49,8 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity }) => {
+  const isMobile = useIsMobile();
+  
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -109,6 +111,11 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
             <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
             <InfoLabel label="EP" value={data.episodesQuantity} />
             <InfoLabel label="PART." value={`${data.participation}%`} />
+            {
+              section === 'category' && 
+              !isMobile &&
+              <DropDownButton open={isOpen} />
+            }
           </div>
         </div>
       </IonItem>

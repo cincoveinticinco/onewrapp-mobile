@@ -6,8 +6,9 @@
 
   .location-set-card-wrapper {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
     background-color: transparent;
     margin: 0px;
     border: 1px solid var(--ion-color-tertiary);
@@ -16,14 +17,17 @@
     flex-wrap: nowrap;
     width: 100%;
     max-width: 100%;
-    padding-right: 12px;
-    padding-left: 36px;
+    padding: 12px;
+    padding-right: 16px;
+    padding-left: 24px;
+    border-bottom: 1.5px solid var(--ion-color-tertiary-shade);
 
     &.location {
       background-color: var(--ion-color-tertiary-shade);
-      padding-left: 12px;
-      padding-right: 12px;
+      padding: 16px;
       cursor: pointer;
+      border-top: 1.5px solid var(--ion-color-dark);
+      border-bottom: 1.5px solid var(--ion-color-dark);
 
       &:focus,
       &:active {
@@ -34,27 +38,19 @@
     .location-set-card-content {
       margin: 0px;
       padding: 0px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
+      justify-content: space-between;
       color: var(--ion-color-light);
       height: 100%;
-      min-width: 50%;
-      
-      
+      min-width: 100%;
+
       .info-label {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         margin: 0px;
-        padding: 0px;
-        margin: 6px;
         color: var(--ion-color-light);
-        max-width: 25px;
-
-        &:last-child {
-          grid-column: 3;
-        }
     
         .value-part {
           font-size: 18px;
@@ -80,7 +76,7 @@
       flex-direction: column;
       justify-content: center;
       margin: 0px;
-      max-width: 40%;
+      width: 100%;
   
       .location-set-card-header-title {
         font-size: var(--525-common-title-size);
@@ -119,21 +115,35 @@
   .location-set-card {
     .location-set-card-wrapper {
       min-height: 80px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      &.location {
+        .location-set-card-content {
+          min-width: 50%;
+        }
+      }
 
       .location-set-card-content {
-        width: 75%;
-        display: flex;
-        justify-content: flex-end;
+        display: grid;
+        grid-auto-flow: column;
+        min-width: 45%;
+        width: 45%;
+        flex-basis: 45%;
   
         .info-label {
-          min-width: 35px;
-          max-width: 40px;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
         }
       }
   
       .location-set-card-header {
         width: auto;
         margin: 0px;
+        min-width: 45%;
+        flex-basis: 45%;
       }
 
       .location-set-card-image {
@@ -147,22 +157,9 @@
 @media (min-width: 800px) {
   .location-set-card {
     .location-set-card-wrapper {
-      .location-set-card-content {
-        width: 68%;
-  
-        .info-label {
-          min-width: 7%;
-        }
-      }
   
       .location-set-card-header {
         width: 20%;
-      }
-  
-      .location-set-card-image {
-        min-width: 70px;
-        min-height: 70px;
-        flex-basis: 70px;
       }
     }
   }
@@ -175,7 +172,7 @@
         width: 64%;
   
         .info-label {
-          min-width: 50px;
+          min-width: 30px;
         }
       }
   

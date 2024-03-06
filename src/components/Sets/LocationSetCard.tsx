@@ -13,6 +13,8 @@ import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { banOutline, pencilOutline } from 'ionicons/icons';
 import { FiTrash } from 'react-icons/fi';
+import useIsMobile from '../../hooks/useIsMobile';
+import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 
 interface Set {
   setName: string;
@@ -42,6 +44,7 @@ interface LocationSetCardProps {
   location?: Location;
   setsQuantity?: number;
   onClick?: () => void;
+  isOpen?: boolean;
 }
 
 // EP, ....
@@ -62,7 +65,9 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick}) => {
+const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen}) => {
+  const isMobile = useIsMobile();
+
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -99,16 +104,15 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
             <IonTitle className="location-set-card-header-title">
               <HighlightedText text={set ? set.setName : location ? (location?.locationName + ' (' + setsQuantity + ')') : 'NO LOCATION'} searchTerm={searchText} />
             </IonTitle>
-            {set && (
+            {/* {set && (
               <IonTitle className="location-set-card-header-subtitle">
                 {set.locationName ? set.locationName.toUpperCase() : 'NO LOCATION'}
               </IonTitle>
-            )}
+            )} */}
           </div>
           <div className="location-set-card-content">
             {set ? (
               <>
-                <InfoLabel label="CHAR." value={set.charactersLength} />
                 <InfoLabel label="SCN." value={set.scenesQuantity} />
                 <InfoLabel label="PROT." value={set.protectionQuantity} />
                 <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
@@ -125,6 +129,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
                   <InfoLabel label="TIME" value={minutes} symbol={seconds} />
                   <InfoLabel label="EP." value={location.episodesQuantity} />
                   <InfoLabel label="PART." value={`${location.participation}%`} />
+                  {
+                    !isMobile && 
+                    <DropDownButton open={isOpen || false} />
+                  }
                 </>
               )
             )}

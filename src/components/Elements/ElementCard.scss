@@ -119,12 +119,20 @@
       align-items: center;
       justify-content: space-between;
 
+      &.category {
+        .element-card-content {
+          min-width: 50%;
+          width: 50%;
+          flex-basis: 50%;
+        }
+      }
+
       .element-card-content {
         display: grid;
         grid-auto-flow: column;
-        min-width: 40%;
-        width: 40%;
-        flex-basis: 40%;
+        min-width: 45%;
+        width: 45%;
+        flex-basis: 45%;
   
         .info-label {
           align-items: center;
