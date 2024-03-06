@@ -102,17 +102,32 @@ const Cast: React.FC = () => {
   // Efects
 
   useEffect(() => {
-    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
-      const characterHeader = removeAccents(character.characterHeader).toLowerCase();
-      const searchText = removeAccents(castSearchText).toLowerCase();
-      
-      return characterHeader.includes(searchText) || character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
-    }) : processedCast;
+    setCast(processedCast);
+  }, [processedCast]);
 
-    setCast(filteredCast);
-    setFilteredCategories(filteredCategories.filter(filterCategories));
+  useEffect(() => {
+    if(castSearchText.length > 0) {
+      const filteredCast = processedCast.filter((character: any) => {
+        const characterHeader = removeAccents(character.characterHeader).toLowerCase();
+        const searchText = removeAccents(castSearchText).toLowerCase();
+        
+        return characterHeader.includes(searchText) || character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
+      });
+  
+      setCast(filteredCast);
+    } else {
+      setCast(processedCast);
+    }
 
-  }, [processedCast, castSearchText]); // Filter Cast by search text
+  }, [castSearchText]); // Filter Cast by search text
+
+  useEffect(() => {
+    if(castSearchText.length > 0) {
+      setFilteredCategories(filteredCategories.filter(filterCategories));
+    } else {
+      setFilteredCategories(characterCategoriesArray);
+    }
+  }, [castSearchText]); // Filter categories by search text
 
   useEffect(() => {
     const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
