@@ -172,6 +172,13 @@ const Elements: React.FC = () => {
   ]);
 
   useEffect(() => {
+    setFilteredElements(elementsData);
+  }, [
+    elementsData,
+  ]);
+
+  useEffect(() => {
+    if (searchText.length > 0) {
     const newFilteredCategories = () => {
       if (searchText.length > 0) {
         return categoriesData.filter((category: any) => {
@@ -183,26 +190,14 @@ const Elements: React.FC = () => {
           return normalizedCategoryName.includes(normalizedSearchText) || elementsByCategory.some((element: any) => {
             const normalizedElementName = removeAccents(element.elementName).toLowerCase();
             return normalizedElementName.includes(normalizedSearchText);
-          });
+          })
         });
-      }
+      }}
 
-      return categoriesData;
-    }
+      setFilteredCategories(newFilteredCategories);
 
-    setFilteredCategories(newFilteredCategories());
-
-  }, [searchText])
-
-  useEffect(() => {
-    setFilteredElements(elementsData);
-  }, [
-    elementsData,
-  ]);
-
-  useEffect(() => {
-    if (searchText.length > 0) {
-      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
+      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()) || element.elementCategory.toLowerCase().includes(searchText.toLowerCase()));
+      
       setFilteredElements(newFilteredElements);
     } else {
       setFilteredElements(elementsData);
