@@ -104,6 +104,11 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
             <IonTitle className="location-set-card-header-title">
               <HighlightedText text={set ? set.setName : location ? (location?.locationName + ' (' + setsQuantity + ')') : 'NO LOCATION'} searchTerm={searchText} />
             </IonTitle>
+            {
+              location &&
+              isMobile &&
+              <DropDownButton open={isOpen || false} />
+            }
             {/* {set && (
               <IonTitle className="location-set-card-header-subtitle">
                 {set.locationName ? set.locationName.toUpperCase() : 'NO LOCATION'}
