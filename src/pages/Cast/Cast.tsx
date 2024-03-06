@@ -91,7 +91,7 @@ const Cast: React.FC = () => {
     // Check if any character in the category matches the search text
     const includesCharacter = processedCast.some((character: any) => {
       return (
-        character.categoryName.toLowerCase() === lowerCategory &&
+        character.categoryName.toLowerCase() === lowerCategory ||
         removeAccents(character.characterHeader).toLowerCase().includes(searchText)
       );
     });
@@ -119,7 +119,7 @@ const Cast: React.FC = () => {
       setCast(processedCast);
     }
 
-  }, [castSearchText]); // Filter Cast by search text
+  }, [processedCast, castSearchText]); // Filter Cast by search text
 
   useEffect(() => {
     if(castSearchText.length > 0) {
