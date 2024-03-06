@@ -18,6 +18,7 @@
   import LocationSetCard from '../../components/Sets/LocationSetCard';
   import './Sets.scss'
 import { set } from 'lodash';
+import removeAccents from '../../utils/removeAccents';
 
   const Sets: React.FC = () => {
     const { offlineScenes } = useContext(DatabaseContext);
@@ -131,9 +132,22 @@ import { set } from 'lodash';
     }, [offlineScenes]);
 
     useEffect(() => {
-      const filteredLocations = processedLocations;
+      const filteredLocations = processedLocations ? processedLocations.filter((location: any) => {
+        const normalizedSearchText = removeAccents(setsSearchText.toLowerCase());
+        const normalizedLocation = removeAccents(location.locationName.toLowerCase());
+
+        const includesSet = processedSets.some((set: any) => {
+          const normalizedSetLocation = removeAccents(set.locationName.toLowerCase());
+          const normalizedSetName = removeAccents(set.setName.toLowerCase());
+
+          return normalizedSetLocation === normalizedLocation &&
+          normalizedSetName.includes(normalizedSearchText);
+        })
+
+        return includesSet || normalizedLocation.includes(normalizedSearchText);
+      }) : processedLocations;  
       setFilteredLocations(filteredLocations); 
-    }, [processedLocations]);
+    }, [processedLocations, setsSearchText]);
 
     useEffect(() => {
       const filteredSets = setsSearchText === '' ? processedSets : processedSets.filter((set: any) => set.setName.toLowerCase().includes(setsSearchText.toLowerCase()));
@@ -207,7 +221,7 @@ import { set } from 'lodash';
                     sets[location.locationName].length > 0 &&
                     <LocationSetCard 
                       location={location} 
-                      searchText='' 
+                      searchText={setsSearchText}
                       setsQuantity={
                       sets[location.locationName] ? sets[location.locationName].length : 0
                       }
