@@ -18,6 +18,7 @@ import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSor
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
 import './Elements.scss'
+import removeAccents from '../../utils/removeAccents';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -171,6 +172,29 @@ const Elements: React.FC = () => {
   ]);
 
   useEffect(() => {
+    const newFilteredCategories = () => {
+      if (searchText.length > 0) {
+        return categoriesData.filter((category: any) => {
+          const normalizedCategoryName = removeAccents(category.categoryName).toLowerCase();
+          const normalizedSearchText = removeAccents(searchText).toLowerCase();
+          const elementsByCategory = elementsData.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
+          
+
+          return normalizedCategoryName.includes(normalizedSearchText) || elementsByCategory.some((element: any) => {
+            const normalizedElementName = removeAccents(element.elementName).toLowerCase();
+            return normalizedElementName.includes(normalizedSearchText);
+          });
+        });
+      }
+
+      return categoriesData;
+    }
+
+    setFilteredCategories(newFilteredCategories());
+
+  }, [searchText])
+
+  useEffect(() => {
     setFilteredElements(elementsData);
   }, [
     elementsData,
@@ -178,8 +202,6 @@ const Elements: React.FC = () => {
 
   useEffect(() => {
     if (searchText.length > 0) {
-      // const newFilteredCategories = categoriesData.filter((category: any) => category.categoryName.toLowerCase().includes(searchText.toLowerCase()));
-      // setFilteredCategories(newFilteredCategories);
       const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredElements(newFilteredElements);
     } else {
