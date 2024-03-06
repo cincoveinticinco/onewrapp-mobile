@@ -75,7 +75,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   const { seconds } = divideMinutesFromSeconds(minutesSeconds);
 
   return (
-    <IonItemSliding>
+    <IonItemSliding onClick={() => console.log(character)}>
       <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
         <div className="cast-card-wrapper">
           <div className="cast-card-image">

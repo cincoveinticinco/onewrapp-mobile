@@ -21,6 +21,7 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
+import { filter, set } from 'lodash';
 
 const Cast: React.FC = () => {
 
@@ -32,6 +33,7 @@ const Cast: React.FC = () => {
 
   const [cast, setCast] = useState<any[]>([]);
   const [extras, setExtras] = useState<any[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<any>([]);
   const [filteredCast, setFilteredCast] = useState<any>({});
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
@@ -75,21 +77,47 @@ const Cast: React.FC = () => {
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
+  // Function to filter categories with search text
+
+  const filterCategories = (category: string) => {
+    const searchText = castSearchText.toLowerCase();
+    const lowerCategory = category.toLowerCase();
+
+    // Check if the category name includes the search text
+    const includesCategory = lowerCategory.includes(searchText);
+
+    // Check if any character in the category matches the search text
+    const includesCharacter = processedCast.some((character: any) => {
+      return (
+        character.categoryName.toLowerCase() === lowerCategory &&
+        character.characterName.toLowerCase().includes(searchText)
+      );
+    });
+
+    return includesCategory || includesCharacter;
+  };
+
   // Efects
 
   useEffect(() => {
     const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
-      return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
+      
+      return characterHeader.toLowerCase().includes(castSearchText.toLowerCase()) || 
+            character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
 
     setCast(filteredCast);
+    setFilteredCategories(filteredCategories.filter(filterCategories));
+
   }, [processedCast, castSearchText]); // Filter Cast by search text
 
   useEffect(() => {
     const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
       const extraHeader = `${extra.extraName}`;
-      return extraHeader.toLowerCase().includes(castSearchText.toLowerCase());
+      const category = 'EXTRAS'
+      return extraHeader.toLowerCase().includes(castSearchText.toLowerCase()) || category.toLowerCase().includes(castSearchText.toLowerCase());
+
     }) : processedExtras;
 
     setExtras(filteredExtras);
@@ -135,6 +163,12 @@ const Cast: React.FC = () => {
     });
 
   }, [cast]);
+
+  useEffect(() => {
+    if (characterCategoriesArray && castSearchText.length === 0) {
+      setFilteredCategories(characterCategoriesArray );
+    }
+  }, [cast]);
   
   // Render
 
@@ -150,13 +184,15 @@ const Cast: React.FC = () => {
         sortTrigger="sort-cast-modal-trigger"
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
-          {characterCategoriesArray.map((category: string, index: number) => (
+          {
+            filteredCategories.map((category: string, index: number) => (
             <DropDownCast
               key={`cast-dropdown-${category}-${index}`}
               category={category}
               isOpen={dropDownIsOpen[category]}
               onToggle={() => handleDropDown(category)}
               count={filterCastByCategory(category).length}
+              searchTerm={castSearchText}
             >
               <ScrollInfiniteContext
                 filteredData={filteredCast[category]}
@@ -179,6 +215,7 @@ const Cast: React.FC = () => {
             isOpen={dropDownIsOpen.EXTRAS}
             onToggle={() => handleDropDown('EXTRAS')}
             count={extras.length}
+            searchTerm={castSearchText}
           >
             <ScrollInfiniteContext
               filteredData={extras}
