@@ -22,6 +22,8 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 import { filter, set } from 'lodash';
+import removeAccents from '../../utils/removeAccents';
+import { search } from 'ionicons/icons';
 
 const Cast: React.FC = () => {
 
@@ -80,7 +82,7 @@ const Cast: React.FC = () => {
   // Function to filter categories with search text
 
   const filterCategories = (category: string) => {
-    const searchText = castSearchText.toLowerCase();
+    const searchText = removeAccents(castSearchText).toLowerCase();
     const lowerCategory = category.toLowerCase();
 
     // Check if the category name includes the search text
@@ -90,7 +92,7 @@ const Cast: React.FC = () => {
     const includesCharacter = processedCast.some((character: any) => {
       return (
         character.categoryName.toLowerCase() === lowerCategory &&
-        character.characterName.toLowerCase().includes(searchText)
+        removeAccents(character.characterHeader).toLowerCase().includes(searchText)
       );
     });
 
@@ -101,10 +103,10 @@ const Cast: React.FC = () => {
 
   useEffect(() => {
     const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
-      const characterHeader = `${character.characterNum}. ${character.characterName}`;
+      const characterHeader = removeAccents(character.characterHeader).toLowerCase();
+      const searchText = removeAccents(castSearchText).toLowerCase();
       
-      return characterHeader.toLowerCase().includes(castSearchText.toLowerCase()) || 
-            character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
+      return characterHeader.includes(searchText) || character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
 
     setCast(filteredCast);
@@ -114,9 +116,10 @@ const Cast: React.FC = () => {
 
   useEffect(() => {
     const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
-      const extraHeader = `${extra.extraName}`;
+      const extraHeader = removeAccents(extra.extraName).toLowerCase();
+      const searchText = removeAccents(castSearchText).toLowerCase();
       const category = 'EXTRAS'
-      return extraHeader.toLowerCase().includes(castSearchText.toLowerCase()) || category.toLowerCase().includes(castSearchText.toLowerCase());
+      return extraHeader.includes(searchText) || category.toLowerCase().includes(castSearchText.toLowerCase());
 
     }) : processedExtras;
 
@@ -191,7 +194,7 @@ const Cast: React.FC = () => {
               category={category}
               isOpen={dropDownIsOpen[category]}
               onToggle={() => handleDropDown(category)}
-              count={filterCastByCategory(category).length}
+              count={filteredCast[category].length}
               searchTerm={castSearchText}
             >
               <ScrollInfiniteContext

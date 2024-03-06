@@ -38,6 +38,7 @@ const useProcessedCast = () => {
       const participation: string = ((scenesQuantity / offlineScenes.length) * 100).toFixed(0);
 
       return {
+        characterHeader: character.characterNum ? `${character.characterNum}. ${character.characterName}` : character.characterName,
         characterNum: character.characterNum,
         characterName: character.characterName,
         categoryName: character.categoryName || 'NO CATEGORY',
