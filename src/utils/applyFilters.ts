@@ -1,4 +1,6 @@
-const normalizeString = (string: string) => (string ? string.toLowerCase().replace(/ /g, '') : '');
+import removeAccents from "./removeAccents";
+
+const normalizeString = (string: string) => (string ? removeAccents(string.toLowerCase().replace(/ /g, '')) : '');
 
 const matchOption = (dataObject: any, optionKey: any, optionValues: any) => {
   if (optionValues[0] === null) {
