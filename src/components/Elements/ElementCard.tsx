@@ -98,6 +98,11 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
                 searchTerm={searchText}
               />
             </IonTitle>
+            {
+              section === 'category' &&
+              isMobile &&
+              <DropDownButton open={isOpen} />
+            }
             {/* {section === 'element' && (
               <p className="element-card-header-subtitle">
                 {data.category ? data.category.toUpperCase() : 'NO CATEGORY'}

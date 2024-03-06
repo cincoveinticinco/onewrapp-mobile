@@ -73,10 +73,13 @@
     .element-card-header {
       padding: 0px;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       margin: 0px;
-      width: 50%;
+      width: 100%;
+
+      ion-button {
+        margin-right: -14px;
+      }
   
       .element-card-header-title {
         font-size: var(--525-common-title-size);
