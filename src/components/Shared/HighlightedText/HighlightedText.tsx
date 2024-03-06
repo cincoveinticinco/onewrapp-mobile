@@ -1,5 +1,6 @@
 import React from 'react';
 import './HighlightedText.scss';
+import removeAccents from '../../../utils/removeAccents';
 
 interface HighlightedTextProps {
   text: string;
@@ -8,17 +9,28 @@ interface HighlightedTextProps {
 }
 
 const HighlightedText: React.FC<HighlightedTextProps> = ({ text, searchTerm, highlightColor = 'var(--ion-color-primary)' }) => {
-  const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+  const normalizedSearchText = removeAccents(searchTerm).toLowerCase()
+  const normalizedText = removeAccents(text).toLowerCase()
+  const parts = normalizedText.split(new RegExp(`(${normalizedSearchText})`, 'gi'));
+
+  const getOriginalPart = (part: string) => {
+    const partIndex = normalizedText.indexOf(part.toLowerCase());
+    return text.substring(partIndex, partIndex + part.length);
+  }
 
   return (
     <span className="highlighted-text">
-      {parts.map((part: any, index: any) => (
-        part.toUpperCase() === searchTerm.toUpperCase() ? (
-          <mark style={{ color: highlightColor }} key={index}>{part.toUpperCase() }</mark>
+      {
+        searchTerm &&
+        parts.map((part: any, index: any) => (
+        removeAccents(part.toUpperCase()) === removeAccents(searchTerm.toUpperCase()) ? (
+          <mark style={{ color: highlightColor }} key={index}>{getOriginalPart(part).toUpperCase()}</mark>
         ) : (
-          part.toUpperCase()
+          getOriginalPart(part).toUpperCase()
         )
-      ))}
+      ))
+      }
+      {text && !searchTerm && text.toUpperCase()}
     </span>
   );
 };
