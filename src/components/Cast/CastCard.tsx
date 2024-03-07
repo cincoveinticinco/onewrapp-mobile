@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   IonItemSliding,
   IonItemOptions,
@@ -6,14 +6,17 @@ import {
   IonIcon,
   IonItem,
   IonTitle,
+  useIonToast,
 } from '@ionic/react';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './CastCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { FiTrash } from 'react-icons/fi';
-import { banOutline, pencilOutline } from 'ionicons/icons';
+import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
+import DatabaseContext from '../../context/database';
+import InputAlert from '../Shared/InputAlert/InputAlert';
 
 interface Cast {
   characterNum: string;
@@ -46,6 +49,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
+  const { oneWrapDb } = useContext<any>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
 
   const divideIntegerFromFraction = (value: string) => {
@@ -75,6 +79,18 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   const { minutes } = divideMinutesFromSeconds(minutesSeconds);
   const { seconds } = divideMinutesFromSeconds(minutesSeconds);
 
+  const [presentToast] = useIonToast();
+
+  const successMessageSceneToast = (message: string) => {
+    presentToast({
+      message,
+      duration: 2000,
+      icon: checkmarkCircle,
+      position: 'top',
+      cssClass: 'success-toast',
+    });
+  };
+
   const formInputs = [
     {
       label: 'Character Number',
@@ -99,8 +115,41 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
     characterName: character.characterName,
   }
 
+  const scenesToEdit = () =>  oneWrapDb.scenes.find({
+    selector: {
+      'characters.characterName': character.characterName,
+    }
+  }).exec();
+
+  const deleteCharacter = async () => {
+    try {
+      const scenes = await scenesToEdit();
+      const updatedScenes: any = [];
+  
+      scenes.forEach((scene: any) => {
+        const updatedScene = { ...scene._data };
+  
+        updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName);
+        
+        console.log('Updated Scene:', updatedScene);
+        
+        updatedScenes.push(updatedScene);
+      });
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+  
+      console.log('Bulk update result:', result);
+  
+      console.log('Character deleted');
+
+      successMessageSceneToast(`${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <IonItemSliding onClick={() => console.log(character)}>
+    <IonItemSliding>
       <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
         <div className="cast-card-wrapper">
           <div className="cast-card-image">
@@ -134,10 +183,10 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
           <IonButton fill="clear" id={`edit-cast-${character.characterName}`}>
             <IonIcon icon={pencilOutline} className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear">
+          <IonButton fill="clear" onClick={() => scenesToEdit().then((values: any) => console.log(values))}>
             <IonIcon icon={banOutline} className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear">
+          <IonButton fill="clear" id={`delete-cast-${character.characterName}`}>
             <FiTrash className="button-icon trash" />
           </IonButton>
         </div>
@@ -150,6 +199,15 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
         title='Edit Character'
         defaultFormValues={defaultValues}
       />
+
+      <InputAlert
+        header="Delete Scene"
+        message={`Are you sure you want to delete ${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} character from all the scenes?`}
+        handleOk={() => deleteCharacter()}
+        inputs={[]}
+        trigger={`delete-cast-${character.characterName}`}
+      />
+
     </IonItemSliding>
   );
 };
