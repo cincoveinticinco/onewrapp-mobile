@@ -29,14 +29,15 @@ const Elements: React.FC = () => {
   const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
+  const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
 
   const {
-    elementsSelectedSortOptions, setElementsSelectedSortOptions, elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions,
+    elementsSelectedSortOptions, setElementsSelectedSortOptions
   } = useContext(ScenesContext);
 
   const defaultElementsSortPosibilities = [
     {
-      id: 'ELEMENT_NAME', label: 'ELEMENT NAME', optionKey: 'elementName', defaultIndex: 0,
+      id: 'NAME', label: 'NAME', optionKey: ('elementName' || 'categoryName'), defaultIndex: 0,
     },
     {
       id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 1,
@@ -87,21 +88,9 @@ const Elements: React.FC = () => {
 
   const [elementsSortPosibilities, setElementsSortPosibilities] = useState<any[]>(() => defaultElementsSortPosibilities);
 
-  const [elementsCategoriesSortPosibilities, setElementsCategoriesSortPosibilities] = useState<any[]>(() => {
-    const savedSortOptions = localStorage.getItem('categoriesSortPosibilities');
-    if (savedSortOptions) {
-      return JSON.parse(savedSortOptions);
-    }
-    return defaultElementsCategoriesSortPosibilities;
-  });
-
   useEffect(() => {
     localStorage.setItem('elementsSortPosibilities', JSON.stringify(elementsSortPosibilities));
   }, [elementsSortPosibilities]);
-
-  useEffect(() => {
-    localStorage.setItem('elementsCategoriesSortPosibilities', JSON.stringify(elementsCategoriesSortPosibilities));
-  }, [elementsCategoriesSortPosibilities]);
 
   const clearSelectedElementsSortOptions = () => {
     localStorage.removeItem('elementsSelectedSortOptions');
@@ -114,7 +103,6 @@ const Elements: React.FC = () => {
     localStorage.removeItem('elementsCategoriesSelectedSortOptions');
     localStorage.removeItem('elementsCategoriesSortPosibilities');
     setElementsCategoriesSelectedSortOptions(elementsCategoriesDefaultSortOptions);
-    setElementsCategoriesSortPosibilities(defaultElementsCategoriesSortPosibilities);
   };
 
   const thisPath = useLocation();
@@ -166,6 +154,30 @@ const Elements: React.FC = () => {
   }, [offlineScenes, elementsSelectedSortOptions]);
 
   useEffect(() => {
+    const categoriesSelectedSortOptions = () => {
+      const elementNameIndex = elementsSelectedSortOptions.findIndex((option: any) => {
+        return option.some((element: any) => element === 'elementName');
+      })
+      const categorySortOptions: any = []
+
+      elementsSelectedSortOptions.forEach((option: any) => {
+        let optionIndex = elementsSelectedSortOptions.indexOf(option);
+        if(elementNameIndex !== optionIndex) {
+          categorySortOptions.push(option);
+        } else {
+          const newCategoryOption = ['categoryName', elementsSelectedSortOptions[elementNameIndex][1], elementsSelectedSortOptions[elementNameIndex][2]];
+          categorySortOptions.push(newCategoryOption);
+        }
+      })
+      return categorySortOptions;
+    }
+
+    console.log(categoriesSelectedSortOptions())
+
+    setElementsCategoriesSelectedSortOptions(categoriesSelectedSortOptions());
+  },[elementsSelectedSortOptions]);
+
+  useEffect(() => {
     setFilteredCategories(categoriesData);
   }, [
     categoriesData,
@@ -196,8 +208,7 @@ const Elements: React.FC = () => {
 
       setFilteredCategories(newFilteredCategories);
 
-      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()) || element.elementCategory.toLowerCase().includes(searchText.toLowerCase()));
-      
+      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()) || element.elementCategory.toLowerCase().includes(searchText.toLowerCase()))
       setFilteredElements(newFilteredElements);
     } else {
       setFilteredElements(elementsData);
