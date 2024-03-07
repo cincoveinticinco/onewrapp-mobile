@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   IonItemSliding,
   IonItemOptions,
@@ -15,6 +15,10 @@ import { banOutline, pencilOutline } from 'ionicons/icons';
 import { FiTrash } from 'react-icons/fi';
 import useIsMobile from '../../hooks/useIsMobile';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
+import EditionModal from '../Shared/EditionModal/EditionModal';
+import DatabaseContext from '../../context/database';
+import useErrorToast from '../../hooks/useErrorToast';
+import useSuccessToast from '../../hooks/useSuccessToast';
 
 interface Set {
   setName: string;
@@ -67,6 +71,93 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 
 const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen}) => {
   const isMobile = useIsMobile();
+  const { oneWrapDb } = useContext<any>(DatabaseContext)
+  const errorMessageToast = useErrorToast()
+  const successMessageToast = useSuccessToast()
+
+  const locationInputs = [
+    {
+      label: 'Location Name',
+      type: 'text',
+      fieldName: 'locationName',
+      placeholder: 'Location Name',
+      required: true,
+      inputName: `edit-${location?.locationName || ''}-location-input`
+    }
+  ]
+
+  const setInputs = [
+    {
+      label: 'Set Name',
+      type: 'text',
+      fieldName: 'setName',
+      placeholder: 'Set Name',
+      required: true,
+      inputName: `edit-${set?.setName || ''}-set-input`
+    }
+  ]
+
+  const defaultFormValuesForSets = {
+    setName: set?.setName,
+  }
+
+  const defaultFormValuesForLocations = {
+    locationName: location?.locationName || null,
+  }
+
+  const scenesToEditWithLocation = () => oneWrapDb.scenes.find({
+    selector: {
+      locationName: location?.locationName
+    }
+  }).exec()
+
+  const scenesToEditWithSet = () => oneWrapDb.scenes.find({
+    selector: {
+      setName: set?.setName
+    }
+  }).exec()
+
+  const editLocation = async (newLocation: any) => {
+    try {
+      const scenes = await scenesToEditWithLocation()
+      const updatedScenes: any = []
+
+      scenes.forEach((scene: any) => {
+        const updatedScene = {...scene._data}
+
+        updatedScene.locationName = newLocation.locationName
+        updatedScenes.push(updatedScene)
+      })
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
+
+      console.log('result', result)
+      successMessageToast('Location updated successfully')
+    } catch (error) {
+      errorMessageToast('Error updating location')
+    }
+  }
+
+  const editSet = async (newSet: any) => {
+    try {
+      const scenes = await scenesToEditWithSet()
+      const updatedScenes: any = []
+
+      scenes.forEach((scene: any) => {
+        const updatedScene = {...scene._data}
+
+        updatedScene.setName = newSet.setName
+        updatedScenes.push(updatedScene)
+      })
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
+
+      console.log('result', result)
+      successMessageToast('Set updated successfully')
+    } catch (error) {
+      errorMessageToast('Error updating set')
+    }
+  }
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -146,7 +237,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       </IonItem>
       <IonItemOptions className="location-set-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear">
+          <IonButton fill="clear" id={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}>
             <IonIcon icon={pencilOutline} className="button-icon view" />
           </IonButton>
           <IonButton fill="clear">
@@ -157,6 +248,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
           </IonButton>
         </div>
       </IonItemOptions>
+
+      <EditionModal
+        formInputs={location ? locationInputs : setInputs}
+        handleEdition={location ? editLocation : editSet}
+        title={location ? 'Edit Location' : 'Edit Set'}
+        modalTrigger={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}
+        defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
+      />
     </IonItemSliding>
   );
 };
