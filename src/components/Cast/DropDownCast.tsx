@@ -8,7 +8,7 @@ interface DropDownCastProps {
   onToggle: () => void
   count: number
   children: React.ReactNode
-  searchTerm: string
+  searchTerm?: string
 }
 
 const DropDownCast: React.FC<DropDownCastProps> = ({
@@ -17,7 +17,7 @@ const DropDownCast: React.FC<DropDownCastProps> = ({
   <div key={`cast-dropdown-${category}`}>
     <div className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start" onClick={onToggle}>
       <p className="ion-flex ion-align-items-center">
-        <HighlightedText text={`${category} (${count})`} searchTerm={searchTerm}/>
+        <HighlightedText text={`${category} (${count})`} searchTerm={searchTerm || ''}/>
       </p>
       <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
         <DropDownButton open={isOpen} />

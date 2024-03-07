@@ -21,9 +21,6 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import { filter, set } from 'lodash';
-import removeAccents from '../../utils/removeAccents';
-import { search } from 'ionicons/icons';
 
 const Cast: React.FC = () => {
 
@@ -35,7 +32,6 @@ const Cast: React.FC = () => {
 
   const [cast, setCast] = useState<any[]>([]);
   const [extras, setExtras] = useState<any[]>([]);
-  const [filteredCategories, setFilteredCategories] = useState<any>([]);
   const [filteredCast, setFilteredCast] = useState<any>({});
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
@@ -79,63 +75,21 @@ const Cast: React.FC = () => {
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
-  // Function to filter categories with search text
-
-  const filterCategories = (category: string) => {
-    const searchText = removeAccents(castSearchText).toLowerCase();
-    const lowerCategory = category.toLowerCase();
-
-    // Check if the category name includes the search text
-    const includesCategory = lowerCategory.includes(searchText);
-
-    // Check if any character in the category matches the search text
-    const includesCharacter = processedCast.some((character: any) => {
-      return (
-        character.categoryName.toLowerCase() === lowerCategory ||
-        removeAccents(character.characterHeader).toLowerCase().includes(searchText)
-      );
-    });
-
-    return includesCategory || includesCharacter;
-  };
-
   // Efects
 
   useEffect(() => {
-    setCast(processedCast);
-  }, [processedCast]);
+    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
+      const characterHeader = `${character.characterNum}. ${character.characterName}`;
+      return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
+    }) : processedCast;
 
-  useEffect(() => {
-    if(castSearchText.length > 0) {
-      const filteredCast = processedCast.filter((character: any) => {
-        const characterHeader = removeAccents(character.characterHeader).toLowerCase();
-        const searchText = removeAccents(castSearchText).toLowerCase();
-        
-        return characterHeader.includes(searchText) || character.categoryName.toLowerCase().includes(castSearchText.toLowerCase());
-      });
-  
-      setCast(filteredCast);
-    } else {
-      setCast(processedCast);
-    }
-
+    setCast(filteredCast);
   }, [processedCast, castSearchText]); // Filter Cast by search text
 
   useEffect(() => {
-    if(castSearchText.length > 0) {
-      setFilteredCategories(filteredCategories.filter(filterCategories));
-    } else {
-      setFilteredCategories(characterCategoriesArray);
-    }
-  }, [castSearchText]); // Filter categories by search text
-
-  useEffect(() => {
     const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
-      const extraHeader = removeAccents(extra.extraName).toLowerCase();
-      const searchText = removeAccents(castSearchText).toLowerCase();
-      const category = 'EXTRAS'
-      return extraHeader.includes(searchText) || category.toLowerCase().includes(castSearchText.toLowerCase());
-
+      const extraHeader = `${extra.extraName}`;
+      return extraHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedExtras;
 
     setExtras(filteredExtras);
@@ -181,12 +135,6 @@ const Cast: React.FC = () => {
     });
 
   }, [cast]);
-
-  useEffect(() => {
-    if (characterCategoriesArray && castSearchText.length === 0) {
-      setFilteredCategories(characterCategoriesArray );
-    }
-  }, [cast]);
   
   // Render
 
@@ -202,15 +150,14 @@ const Cast: React.FC = () => {
         sortTrigger="sort-cast-modal-trigger"
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
-          {
-            filteredCategories.map((category: string, index: number) => (
+          {characterCategoriesArray.map((category: string, index: number) => (
             <DropDownCast
               key={`cast-dropdown-${category}-${index}`}
               category={category}
               isOpen={dropDownIsOpen[category]}
               onToggle={() => handleDropDown(category)}
-              count={filteredCast[category].length}
-              searchTerm={castSearchText}
+              count={filterCastByCategory(category).length}
+              
             >
               <ScrollInfiniteContext
                 filteredData={filteredCast[category]}
@@ -233,7 +180,6 @@ const Cast: React.FC = () => {
             isOpen={dropDownIsOpen.EXTRAS}
             onToggle={() => handleDropDown('EXTRAS')}
             count={extras.length}
-            searchTerm={castSearchText}
           >
             <ScrollInfiniteContext
               filteredData={extras}
