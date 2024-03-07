@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonModal } from '@ionic/react'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ModalToolbar from '../ModalToolbar/ModalToolbar'
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
@@ -26,11 +26,23 @@ const EditionModal: React.FC<EditionModalProps> = ({
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
   const [showError, setShowError] = useState(false);
 
+
+  const resetFormValues = () => {
+    formInputs.forEach((input: any) => {
+      setValue(input.fieldName, defaultFormValues[input.fieldName]);
+    })
+  }
+
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
+      resetFormValues();
     }
   };
+
+  useEffect(() => {
+    resetFormValues()
+  }, [modalTrigger]);
 
   const {
     control,
