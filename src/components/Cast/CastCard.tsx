@@ -13,6 +13,7 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { FiTrash } from 'react-icons/fi';
 import { banOutline, pencilOutline } from 'ionicons/icons';
+import EditionModal from '../Shared/EditionModal/EditionModal';
 
 interface Cast {
   characterNum: string;
@@ -74,6 +75,30 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
   const { minutes } = divideMinutesFromSeconds(minutesSeconds);
   const { seconds } = divideMinutesFromSeconds(minutesSeconds);
 
+  const formInputs = [
+    {
+      label: 'Character Number',
+      type: 'text',
+      fieldName: 'characterNum',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-character-number-input',
+    },
+    {
+      label: 'Character Name',
+      type: 'text',
+      fieldName: 'characterName',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-character-name-input',
+    },
+  ]
+
+  const defaultValues = {
+    characterNum: character.characterNum,
+    characterName: character.characterName,
+  }
+
   return (
     <IonItemSliding onClick={() => console.log(character)}>
       <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -106,7 +131,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
       </IonItem>
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear">
+          <IonButton fill="clear" id={`edit-cast-${character.characterName}`}>
             <IonIcon icon={pencilOutline} className="button-icon view" />
           </IonButton>
           <IonButton fill="clear">
@@ -117,6 +142,14 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
           </IonButton>
         </div>
       </IonItemOptions>
+
+      <EditionModal
+        formInputs={formInputs}
+        handleEdition={() => {}}
+        modalTrigger={`edit-cast-${character.characterName}`}
+        title='Edit Character'
+        defaultFormValues={defaultValues}
+      />
     </IonItemSliding>
   );
 };
