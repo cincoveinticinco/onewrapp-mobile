@@ -60,6 +60,11 @@ const EditionModal: React.FC<EditionModalProps> = ({
     return true;
   };
 
+  const submitEdition = (formData: any) => {
+    handleEdition(formData);
+    closeModal();
+  }
+
   return (
     <IonModal
       ref={modalRef}
@@ -100,7 +105,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
           <div className="add-new-option-buttons-container">
             <OutlinePrimaryButton
               buttonName="SAVE"
-              onClick={handleSubmit(handleEdition)}
+              onClick={handleSubmit(submitEdition)}
               className="ion-margin modal-confirm-button"
             />
 

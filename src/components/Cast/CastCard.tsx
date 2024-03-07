@@ -148,6 +148,34 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
     }
   };
 
+  const editCharacter = async (newCharacter: any) => {
+    try {
+      const scenes = await scenesToEdit();
+      const updatedScenes: any = [];
+  
+      scenes.forEach((scene: any) => {
+        const updatedScene = { ...scene._data };
+
+        newCharacter.categoryName = character.categoryName;
+  
+        updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName).concat(newCharacter);
+        
+        updatedScenes.push(updatedScene);
+      });
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+  
+      console.log('Bulk update result:', result);
+  
+      console.log('Character deleted');
+
+      successMessageSceneToast(`${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <IonItemSliding>
       <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -194,7 +222,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
 
       <EditionModal
         formInputs={formInputs}
-        handleEdition={() => {}}
+        handleEdition={editCharacter}
         modalTrigger={`edit-cast-${character.characterName}`}
         title='Edit Character'
         defaultFormValues={defaultValues}
