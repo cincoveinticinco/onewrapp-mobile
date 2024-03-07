@@ -150,7 +150,13 @@ import removeAccents from '../../utils/removeAccents';
     }, [processedLocations, setsSearchText]);
 
     useEffect(() => {
-      const filteredSets = setsSearchText === '' ? processedSets : processedSets.filter((set: any) => removeAccents(set.setName.toLowerCase()).includes(removeAccents(setsSearchText.toLowerCase())));
+      const filteredSets = setsSearchText === ''
+        ? processedSets
+        : processedSets.filter((set: any) =>
+        removeAccents(set.setName.toLowerCase()).includes(
+          removeAccents(setsSearchText.toLowerCase())
+        )
+          );
       setFilteredSets(filteredSets);
     }, [processedSets, setsSearchText]);
 
