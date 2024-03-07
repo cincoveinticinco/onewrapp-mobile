@@ -77,7 +77,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
       </IonHeader>
       <IonContent color="tertiary">
           <IonHeader className="add-new-option-description" mode="ios">
-            Please, fill the form to create a new option
+            Please Add The New information
           </IonHeader>
           {
               formInputs
