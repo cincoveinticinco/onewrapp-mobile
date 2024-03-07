@@ -23,6 +23,7 @@ import removeAccents from '../../utils/removeAccents';
   const Sets: React.FC = () => {
     const { offlineScenes } = useContext(DatabaseContext);
     const { setsSelectedSortOptions, setSetsSelectedSortOptions } = useContext(ScenesContext);
+    const [locationsSelectedSortOptions, setLocationsSelectedSortOptions] = useState<any[]>([]);
     const [setsSearchText, setSetsSearchText] = useState('');
     const [sets, setSets] = useState<any>({});
     const [filteredSets, setFilteredSets] = useState<any[]>([]);
@@ -37,13 +38,7 @@ import removeAccents from '../../utils/removeAccents';
 
     const defaultSortPosibilitiesOrder = [
       {
-        id: 'SET_NAME', label: 'Set Name', optionKey: 'setName', defaultIndex: 0,
-      },
-      {
-        id: 'LOCATION_NAME', label: 'Location Name', optionKey: 'locationName', defaultIndex: 1,
-      },
-      {
-        id: 'CHARACTERS_LENGTH', label: 'Characters Length', optionKey: 'charactersLength', defaultIndex: 2,
+        id: 'NAME', label: 'Name', optionKey: 'setName', defaultIndex: 0,
       },
       {
         id: 'SCENES_QUANTITY', label: 'Scenes Quantity', optionKey: 'scenesQuantity', defaultIndex: 3,
@@ -77,6 +72,9 @@ import removeAccents from '../../utils/removeAccents';
       localStorage.setItem('setsSortPosibilities', JSON.stringify(setsSortPosibilities));
     }, [setsSortPosibilities]);
 
+    useEffect(() => {
+
+    }, [setsSelectedSortOptions])
     const processedSets = useMemo(() => {
       const processSet = (setName: string) => {
         const setScenes = offlineScenes.filter((scene: any) => scene._data.setName === setName);
@@ -107,7 +105,9 @@ import removeAccents from '../../utils/removeAccents';
     }, [offlineScenes, setsSelectedSortOptions]);
 
     const processedLocations = useMemo(() => {
-      const processLocation = (locationName: string) => {
+      const uniqueLocationNames: any[] = getUniqueValuesByKey(offlineScenes, 'locationName');
+    
+      const processedLocationsData = uniqueLocationNames.map((locationName: string) => {
         const locationScenes = offlineScenes.filter((scene: any) => scene._data.locationName === locationName);
         const scenesQuantity = locationScenes.length;
         const protectionQuantity = locationScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
@@ -115,21 +115,45 @@ import removeAccents from '../../utils/removeAccents';
         const estimatedTimeSum = locationScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
         const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber').length;
         const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
-
+    
         return {
-          locationName,
+          locationName:  locationName.toLowerCase(),
           scenesQuantity,
           protectionQuantity,
           pagesSum,
           estimatedTimeSum,
           episodesQuantity,
-          participation,
+          participation
         };
-      };
+      });
+    
+      return sortByCriterias(processedLocationsData, locationsSelectedSortOptions);
+    }, [offlineScenes, locationsSelectedSortOptions]);
 
-      const uniqueLocationNames: any[] = getUniqueValuesByKey(offlineScenes, 'locationName');
-      return sortByCriterias(uniqueLocationNames.map(processLocation), setsSelectedSortOptions);
-    }, [offlineScenes]);
+    useEffect(() => {
+      const locationSelectedSortOptions = () => {
+        const setNameIndex = setsSelectedSortOptions.findIndex((option) => {
+          return option.some((option: any) => option === 'setName');
+        })
+
+        let newLocationSelectedSortOptions: any[] = []
+
+        setsSelectedSortOptions.forEach((criteria: any, index: number) => {
+        
+
+          if(index !== setNameIndex) {
+            newLocationSelectedSortOptions.push(criteria)
+          } else {
+            const newLocationOption = ['locationName', setsSelectedSortOptions[setNameIndex][1], setsSelectedSortOptions[setNameIndex][2]]
+            newLocationSelectedSortOptions.push(newLocationOption)
+          }
+        });
+
+        return newLocationSelectedSortOptions
+      }
+
+      setLocationsSelectedSortOptions(locationSelectedSortOptions())
+    }, [setsSelectedSortOptions]);
 
     useEffect(() => {
       const filteredLocations = processedLocations ? processedLocations.filter((location: any) => {
