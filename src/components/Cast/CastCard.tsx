@@ -115,7 +115,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
     characterName: character.characterName,
   }
 
-  const scenesToEdit = () =>  oneWrapDb.scenes.find({
+  const scenesToEdit = () => oneWrapDb.scenes.find({
     selector: {
       'characters.characterName': character.characterName,
     }

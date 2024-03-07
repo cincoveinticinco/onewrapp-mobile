@@ -272,7 +272,7 @@ const Elements: React.FC = () => {
             <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
               {displayedCategories.map((category, index) => (
                 <div key={category + index}>
-                  {
+                  { elements[category.categoryName] &&
                     elements[category.categoryName].length > 0 &&
                     <ElementCard 
                       data={category} 
@@ -289,8 +289,8 @@ const Elements: React.FC = () => {
                     {
                       isDropDownOpen[category.categoryName] &&
                       <ScrollInfiniteContext 
-                        setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName, newElements)} 
-                        filteredData={elements[category.categoryName]}
+                        setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName || [], newElements)} 
+                        filteredData={elements[category.categoryName] || []}
                         batchSize={9}
                         >
                           {
