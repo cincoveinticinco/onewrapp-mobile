@@ -42,6 +42,7 @@ interface ElementCardProps {
   isOpen?: boolean;
   onClick?: () => void;
   elementsQuantity?: number;
+  validationFunction: (name: string, currentName: string) => (boolean | string);
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -54,7 +55,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity }) => {
+const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb } = useContext<any>(DatabaseContext);
 
@@ -127,7 +128,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
       fieldName: 'elementName',
       placeholder: 'INSERT',
       required: true,
-      inputName: 'add-element-name-input',
+      inputName: `add-element-name-input-${data.elementName}`,
     },
   ]
 
@@ -138,7 +139,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
       fieldName: 'categoryName',
       placeholder: 'INSERT',
       required: true,
-      inputName: 'add-category-name-input',
+      inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,
     },
   ]
 
@@ -269,7 +270,16 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
     }
   }
 
+  const validateExistence = (name: string) => {
+    if(section === 'category') {
+      return validationFunction(name, data.categoryName);
+    }
+
+    return validationFunction(name, data.elementName);
+  }
+
   return (
+    <>
     <IonItemSliding onClick={onClick}>
       <IonItem mode="md" className="element-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
         <div className={"element-card-wrapper" + ' ' + section}>
@@ -314,18 +324,19 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
           <IonButton fill="clear" onClick={() => section === 'category' ? scenesToEditWithCategory().then((values: any) => console.log(values)) : scenesToEditWithElement().then((values: any)  => console.log(values))}>
             <IonIcon icon={banOutline} className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" id={section === 'category' ? `delete-category-${data.categoryName}` : `delete-element-${data.elementName}`}>
+          <IonButton fill="clear" id={section === 'category' ? `delete-category-${data.categoryName || Math.random() * 1000}` : `delete-element-${data.elementName || Math.random()}`}>
             <FiTrash className="button-icon trash" />
           </IonButton>
         </div>
       </IonItemOptions>
-
-      <EditionModal
+    </IonItemSliding>
+    <EditionModal
         formInputs={section === 'category' ? formCategoryInputs : formElementInputs}
         handleEdition={section === 'category' ? editCategory : editElement}
         modalTrigger={section === 'category' ? `edit-category-${data.categoryName}` : `edit-element-${data.elementName}`}
         title='Edit Element'
         defaultFormValues={section === 'category' ? defaultFormValuesForCategories : defaultFormValuesForElements}
+        validate={validateExistence}
       />
 
       <InputAlert
@@ -333,7 +344,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
         message={`Are you sure you want to delete ${data.categoryName ? data.categoryName.toUpperCase() : 'N/A'} category from all the scenes? This will also delete all the elements inside this category.`}
         handleOk={() => deleteCategory()}
         inputs={[]}
-        trigger={`delete-category-${data.categoryName}`}
+        trigger={`delete-category-${data.categoryName || Math.random() * 1000}`}
       />
 
       <InputAlert
@@ -341,10 +352,9 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
         message={`Are you sure you want to delete ${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} element from all the scenes?`}
         handleOk={() => deleteElement()}
         inputs={[]}
-        trigger={`delete-element-${data.elementName}`}
+        trigger={`delete-element-${data.elementName || Math.random()}`}
       />
-
-    </IonItemSliding>
+    </>
   );
 };
 
