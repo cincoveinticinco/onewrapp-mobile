@@ -228,7 +228,28 @@ import removeAccents from '../../utils/removeAccents';
 
     const toggleDropDown = (location: string) => setDropDownIsOpen((prev: any) => ({ ...prev, [location]: !prev[location] }));
 
+    const validateLocationExists = (locationName: string, currentLocationName: string) => {
+      if (locationName === currentLocationName) {
+        return true;
+      }
+      const normalize = (text: string) => removeAccents(text.toLowerCase());
+      
+      const locationExists = processedLocations.some((location: any) => normalize(location.locationName) === normalize(locationName));
 
+      return locationExists ? 'Location already exists' : true;
+    }
+
+    const validateSetExists = (setName: string, currentSetName: string) => {
+      if (setName === currentSetName) {
+        return true;
+      }
+
+      const normalize = (text: string) => removeAccents(text.toLowerCase());
+
+      const setExists = processedSets.some((set: any) => normalize(set.setName) === normalize(setName));
+
+      return setExists ? 'Set already exists' : true;
+    }
     // LOCATION CARD
     // ...ALL - LOCATION - CHARACTERS
 
@@ -257,6 +278,7 @@ import removeAccents from '../../utils/removeAccents';
                       }
                       onClick={() => toggleDropDown(location.locationName)}
                       isOpen={dropDownIsOpen[location.locationName]}
+                      validationFunction={validateLocationExists}
                     />
                   }
                   {
@@ -271,7 +293,12 @@ import removeAccents from '../../utils/removeAccents';
                           {
                             displayedSets[location.locationName] &&
                             displayedSets[location.locationName].map((set: any, index: number) => (
-                            <SetCard key={index} set={set} searchText={setsSearchText}/>
+                            <SetCard 
+                              key={index} 
+                              set={set} 
+                              searchText={setsSearchText}
+                              validationFunction={validateSetExists}
+                            />
                           ))}
                         </ScrollInfiniteContext>
                       }

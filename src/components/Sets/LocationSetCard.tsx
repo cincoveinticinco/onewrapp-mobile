@@ -49,6 +49,7 @@ interface LocationSetCardProps {
   setsQuantity?: number;
   onClick?: () => void;
   isOpen?: boolean;
+  validationFunction: (value: string, currentValue: string) => (boolean | string)
 }
 
 // EP, ....
@@ -69,7 +70,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen}) => {
+const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen, validationFunction}) => {
   const isMobile = useIsMobile();
   const { oneWrapDb } = useContext<any>(DatabaseContext)
   const errorMessageToast = useErrorToast()
@@ -187,6 +188,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       return onClick()
     }
   }
+
+  const validateExistence = (value: string) => {
+    if(location) {
+      return validationFunction(value, location.locationName)
+    }
+
+    return validationFunction(value, set?.setName || '')
+  }
   return (
     <IonItemSliding onClick={() => getOnclick()}>
       <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -255,6 +264,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
         title={location ? 'Edit Location' : 'Edit Set'}
         modalTrigger={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}
         defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
+        validate={validateExistence}
       />
     </IonItemSliding>
   );
