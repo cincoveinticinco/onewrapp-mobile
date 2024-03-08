@@ -135,6 +135,34 @@ const Cast: React.FC = () => {
     });
 
   }, [cast]);
+
+  const validateCastExistence = (value: string, currentValue: string) => {
+    if(value === currentValue) {
+      return true;
+    }
+
+    const castAlreadyExists = processedCast.some((character: any) => character.characterName === value);
+
+    if (castAlreadyExists) {
+      return 'This character already exists';
+    }
+
+    return true;
+  }
+
+  const validateExtraExistence = (value: string, currentValue: string) => {
+    if(value === currentValue) {
+      return true;
+    }
+
+    const extraAlreadyExists = processedExtras.some((extra: any) => extra.extraName === value);
+
+    if (extraAlreadyExists) {
+      return 'This extra already exists';
+    }
+
+    return true;
+  }
   
   // Render
 
@@ -167,7 +195,7 @@ const Cast: React.FC = () => {
                 {
                   displayedCast[category]
                   && displayedCast[category].map((character: any, index: number) => (
-                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} />
+                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
                   ))
                 }
               </ScrollInfiniteContext>
@@ -189,7 +217,7 @@ const Cast: React.FC = () => {
               {
                 dropDownIsOpen.EXTRAS
                 && displayedCast.EXTRAS.map((extra: any, index: number) => (
-                  <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} />
+                  <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
                 ))
               }
             </ScrollInfiniteContext>

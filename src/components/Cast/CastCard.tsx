@@ -36,6 +36,7 @@ interface Cast {
 interface CastCardProps {
   character: Cast;
   searchText: string;
+  validationFunction: (value: string, currentValue: string) => (boolean | string)
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -48,7 +49,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
+const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction }) => {
   const { oneWrapDb } = useContext<any>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
 
@@ -176,6 +177,10 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
     }
   }
 
+  const validateExistence = (value: string) => {
+    return validationFunction(value, character.characterName);
+  }
+
   return (
     <IonItemSliding>
       <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -226,6 +231,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText }) => {
         modalTrigger={`edit-cast-${character.characterName}`}
         title='Edit Character'
         defaultFormValues={defaultValues}
+        validate={validateExistence}
       />
 
       <InputAlert
