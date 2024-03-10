@@ -160,6 +160,48 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
     }
   }
 
+  const deleteLocation = async () => {
+    try {
+      const scenes = await scenesToEditWithLocation()
+      const updatedScenes: any = []
+
+      scenes.forEach((scene: any) => {
+        const updatedScene = {...scene._data}
+
+        updatedScene.locationName = null
+        updatedScenes.push(updatedScene)
+      })
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
+
+      console.log('result', result)
+      successMessageToast('Location deleted successfully')
+    } catch (error) {
+      errorMessageToast('Error deleting location')
+    }
+  }
+
+  const deleteSet = async () => {
+    try {
+      const scenes = await scenesToEditWithSet()
+      const updatedScenes: any = []
+
+      scenes.forEach((scene: any) => {
+        const updatedScene = {...scene._data}
+
+        updatedScene.setName = null
+        updatedScenes.push(updatedScene)
+      })
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
+
+      console.log('result', result)
+      successMessageToast('Set deleted successfully')
+    } catch (error) {
+      errorMessageToast('Error deleting set')
+    }
+  }
+
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -252,7 +294,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
           <IonButton fill="clear">
             <IonIcon icon={banOutline} className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear">
+          <IonButton fill="clear" onClick={() => location ? deleteLocation() : deleteSet()}>
             <FiTrash className="button-icon trash" />
           </IonButton>
         </div>
