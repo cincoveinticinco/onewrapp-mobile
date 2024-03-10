@@ -111,14 +111,35 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     },
   ]
 
+  const extraFormInputs = [
+    {
+      label: 'Extra Name',
+      type: 'text',
+      fieldName: 'extraName',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-extra-name-input',
+    }
+  ]
+
   const defaultValues = {
     characterNum: character.characterNum,
     characterName: character.characterName,
   }
 
+  const extraDefaultValues = {
+    extraName: character.extraName
+  }
+
   const scenesToEdit = () => oneWrapDb.scenes.find({
     selector: {
       'characters.characterName': character.characterName,
+    }
+  }).exec();
+
+  const scenesToEditWithExtra = () => oneWrapDb.scenes.find({
+    selector: {
+      'extras.extraName': character.extraName,
     }
   }).exec();
 
@@ -143,7 +164,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
   
       console.log('Character deleted');
 
-      successMessageSceneToast(`${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
       console.error(error);
     }
@@ -170,8 +191,66 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
   
       console.log('Character deleted');
 
-      successMessageSceneToast(`${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+      successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
 
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /// 1056 * 816 carta
+
+  const editExtra = async (newExtra: any) => {
+    try {
+      const scenes = await scenesToEditWithExtra();
+      const updatedScenes: any = [];
+  
+      scenes.forEach((scene: any) => {
+        const updatedScene = { ...scene._data };
+
+        const oldExtra = updatedScene.extras.find((extra: any) => extra.extraName === character.extraName);
+  
+        updatedScene.extras = updatedScene.extras.filter((extra: any) => extra.extraName !== character.extraName).concat({
+          ...oldExtra,
+          ...newExtra,
+        });
+        
+        updatedScenes.push(updatedScene);
+      });
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+  
+      console.log('Bulk update result:', result);
+  
+      console.log('Extra deleted');
+
+      successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const deleteExtra = async () => {
+    try {
+      const scenes = await scenesToEditWithExtra();
+      const updatedScenes: any = [];
+  
+      scenes.forEach((scene: any) => {
+        const updatedScene = { ...scene._data };
+  
+        updatedScene.extras = updatedScene.extras.filter((extra: any) => extra.extraName !== character.extraName);
+        
+        updatedScenes.push(updatedScene);
+      });
+
+      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+  
+      console.log('Bulk update result:', result);
+  
+      console.log('Extra deleted');
+
+      successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
       console.error(error);
     }
@@ -213,33 +292,33 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       </IonItem>
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" id={`edit-cast-${character.characterName}`}>
+          <IonButton fill="clear" id={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}>
             <IonIcon icon={pencilOutline} className="button-icon view" />
           </IonButton>
           <IonButton fill="clear" onClick={() => scenesToEdit().then((values: any) => console.log(values))}>
             <IonIcon icon={banOutline} className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" id={`delete-cast-${character.characterName}`}>
+          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}>
             <FiTrash className="button-icon trash" />
           </IonButton>
         </div>
       </IonItemOptions>
 
       <EditionModal
-        formInputs={formInputs}
-        handleEdition={editCharacter}
-        modalTrigger={`edit-cast-${character.characterName}`}
-        title='Edit Character'
-        defaultFormValues={defaultValues}
+        formInputs={!character.extraName ? formInputs : extraFormInputs}
+        handleEdition={!character.extraName ? editCharacter : editExtra}
+        modalTrigger={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}
+        title='Edit Cast'
+        defaultFormValues={!character.extraName ? defaultValues : extraDefaultValues}
         validate={validateExistence}
       />
 
       <InputAlert
         header="Delete Scene"
-        message={`Are you sure you want to delete ${character.characterName ? character.characterName.toUpperCase() : 'NO NAME'} character from all the scenes?`}
-        handleOk={() => deleteCharacter()}
+        message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
+        handleOk={() => !character.extraName ? deleteCharacter() : deleteExtra()}
         inputs={[]}
-        trigger={`delete-cast-${character.characterName}`}
+        trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
       />
 
     </IonItemSliding>
