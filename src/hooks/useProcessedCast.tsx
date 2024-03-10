@@ -75,7 +75,8 @@ const useProcessedCast = () => {
 
       return {
         characterNum: null,
-        extraName: extra.extraName,
+        extraName: extra.extraName ? extra.extraName : 'NO NAME',
+        characterName: extra.extraName,
         categoryName: extra.categoryName || 'NO CATEGORY',
         setsQuantity,
         locationsQuantity,
