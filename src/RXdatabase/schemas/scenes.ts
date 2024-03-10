@@ -54,7 +54,7 @@ const sceneSchema = {
       type: ['string', 'null'],
     },
     setName: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     scriptDay: {
       type: ['string', 'null'],
