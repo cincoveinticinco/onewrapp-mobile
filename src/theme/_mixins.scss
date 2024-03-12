@@ -67,3 +67,19 @@
   }
 }
 
+@mixin tab-bar-buttons {
+  --color: red !important;
+  --color-focused: var(--ion-color-primary) !important;
+  --color-selected: var(--ion-color-primary) !important;
+  --ripple-color: var(--ion-color-primary) !important;
+  --ion-color-contrast: var(--ion-color-primary);
+
+  &:activated {
+    --color: var(--ion-color-primary) !important;
+  }
+
+  .tab-bar-icons {
+    padding: 6px;
+    font-size: var(--525-icons-size);
+  }
+}
