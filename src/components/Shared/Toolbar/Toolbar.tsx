@@ -23,6 +23,7 @@ interface ToolbarProps {
   searchText?: string;
   handleBack?: () => void;
   sortTrigger?: string;
+  backString?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -39,6 +40,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   searchText,
   handleBack,
   sortTrigger,
+  backString = false
 }) => {
   const isMobile = useIsMobile();
 
@@ -92,6 +94,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       {addScene && (
         <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button">
           <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
+        </IonButton>
+      )}
+      {backString && (
+        <IonButton fill="clear" color='light' slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
+          Back
         </IonButton>
       )}
       {filter && (
