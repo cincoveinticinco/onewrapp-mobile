@@ -16,6 +16,7 @@ interface SelectItemProps {
   watchValue: any;
   canCreateNew?: boolean;
   editMode?: boolean;
+  detailsEditMode?: boolean;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -31,6 +32,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   watchValue,
   canCreateNew,
   editMode,
+  detailsEditMode,
 }) => {
   const [showError, setShowError] = React.useState(false);
 
@@ -48,8 +50,18 @@ const SelectItem: React.FC<SelectItemProps> = ({
     }
   };
 
+  const defineTrigger = () => {
+    if (editMode) {
+      return `edit-${inputName}`;
+    }
+    if(detailsEditMode) {
+      return `details-edit-${inputName}`;
+    }
+    return inputName;
+  }
+
   return (
-    <IonItem color="tertiary" id={editMode ? `edit-${inputName}` : inputName}>
+    <IonItem color="tertiary" id={defineTrigger()}>
       <Controller
         control={control}
         name={fieldName}
@@ -77,7 +89,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
       <InputModal
         optionName={label}
         listOfOptions={options}
-        modalTrigger={editMode ? `edit-${inputName}` : inputName}
+        modalTrigger={defineTrigger()}
         handleCheckboxToggle={handleSelectCheckbox}
         selectedOptions={[watchValue(fieldName)]}
         clearSelections={() => setValue(fieldName, null)}

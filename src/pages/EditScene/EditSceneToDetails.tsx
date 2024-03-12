@@ -123,7 +123,8 @@ const EditSceneToDetails: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef}>
         <AddScenesForm
           scrollToTop={() => scrollToTop()}
-          editMode
+          detailsEditMode
+          editMode={false}
           sceneFormId={sceneFormId}
           handleSubmit={handleSubmit}
           control={control}

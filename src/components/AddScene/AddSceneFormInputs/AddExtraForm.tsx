@@ -15,9 +15,10 @@ interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedExtras: Extra[];
   editMode?: boolean;
+  detailsEditMode?: boolean;
 }
 
-const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras, editMode }) => {
+const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras, editMode, detailsEditMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
@@ -84,6 +85,26 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
     setDropDownIsOpen(!dropDownIsOpen);
   };
 
+  const getAlertTrigger = () => {
+    if (editMode) {
+      return 'open-extras-category-alert-edit';
+    }
+    if(detailsEditMode) {
+      return 'open-extras-category-alert-details-edit';
+    }
+    return 'open-extras-category-alert';
+  }
+
+  const getModalTrigger = (category: string) => {
+    if (editMode) {
+      return `open-extras-alert-edit-${category}`;
+    }
+    if(detailsEditMode) {
+      return `open-extras-alert-details-edit-${category}`;
+    }
+    return `open-extras-alert-${category}`;
+  }
+
   return (
     <>
       <div
@@ -96,7 +117,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id={editMode ? 'open-extras-category-alert-edit' : 'open-extras-category-alert'}
+            id={getAlertTrigger()}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} />
@@ -105,7 +126,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger={editMode ? 'open-extras-category-alert-edit' : 'open-extras-category-alert'}
+        trigger={getAlertTrigger()}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -141,7 +162,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
                     </p>
                     <div className="category-buttons-wrapper">
                       <AddButton
-                        id={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
+                        id={getModalTrigger(category)}
                       />
                     </div>
                   </div>
@@ -150,7 +171,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
                   categoryName={category}
                   selectedExtras={selectedExtras}
                   setSelectedExtras={setSelectedExtras}
-                  modalTrigger={editMode ? `open-extras-alert-edit-${category}` : `open-extras-alert-${category}`}
+                  modalTrigger={getModalTrigger(category)}
                 />
               </IonCard>
             )

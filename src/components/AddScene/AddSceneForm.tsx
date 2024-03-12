@@ -34,6 +34,7 @@ interface AddScenesFormProps {
   watch: any;
   formData: any;
   onSubmit: any;
+  detailsEditMode?: boolean;
 }
 
 const AddScenesForm: React.FC<AddScenesFormProps> = ({
@@ -48,6 +49,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
   watch,
   formData,
   onSubmit,
+  detailsEditMode,
 }) => {
   const isMobile = useIsMobile();
   const history = useHistory();
@@ -96,6 +98,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="SCENE TYPE *"
         options={sceneTypeOptions}
         inputName="add-scene-type-input"
@@ -109,6 +112,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="PROTECTION TYPE"
         disabled={getDisabled()}
         options={protectionTypeValues}
@@ -164,6 +168,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="DAY/NIGHT"
         options={dayNightOptions}
         inputName="add-day-night-input"
@@ -175,6 +180,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="INT/EXT"
         options={intExtOptions}
         inputName="add-int-ext-input"
@@ -206,6 +212,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="LOCATION"
         control={control}
         fieldName="locationName"
@@ -218,6 +225,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
       <SelectItem
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
         label="SET *"
         control={control}
         fieldName="setName"
@@ -243,18 +251,21 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         handleSceneChange={handleChange}
         observedCharacters={watch('characters')}
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
       />
 
       <AddElementForm
         handleSceneChange={handleChange}
         observedElements={watch('elements')}
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
       />
 
       <AddExtraForm
         handleSceneChange={handleChange}
         observedExtras={watch('extras')}
         editMode={editMode}
+        detailsEditMode={detailsEditMode}
       />
 
       {/* <div color="tertiary">

@@ -86,7 +86,7 @@ const SceneDetails: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}`} />
+        <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
         <IonToolbar color="success"  mode='ios'>
           <IonIcon icon={chevronBack} slot='start' size='large' />
           <IonTitle style={{fontWeight: 'lighter'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
@@ -114,7 +114,7 @@ const SceneDetails: React.FC = () => {
         message={`Are you sure you want to delete scene ${sceneHeader}?`}
         handleOk={() => deleteScene()}
         inputs={[]}
-        trigger={`open-delete-scene-alert-${sceneId}`}
+        trigger={`open-delete-scene-alert-${sceneId}-details`}
       />
     </IonPage>
   )

@@ -9,14 +9,16 @@ import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../context/database';
+import { get } from 'lodash';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedElements: Element[];
   editMode?: boolean;
+  detailsEditMode?: boolean;
 }
 
-const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements, editMode }) => {
+const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements, editMode, detailsEditMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
@@ -80,6 +82,26 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
     setDropDownIsOpen(!dropDownIsOpen);
   };
 
+  const getAlertTrigger = () => {
+    if(editMode) {
+      return 'open-element-options-modal-edit'
+    }
+    if(detailsEditMode) {
+      return 'open-element-options-modal-details-edit'
+    }
+    return 'open-element-options-modal'
+  }
+
+  const getModalTrigger = (category: string) => {
+    if(editMode) {
+      return `open-elements-options-modal-edit-${category}`
+    }
+    if(detailsEditMode) {
+      return `open-elements-options-modal-details-edit-${category}`
+    }
+    return `open-elements-options-modal-${category}`
+  }
+
   return (
     <>
       <div
@@ -92,7 +114,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id={editMode ? 'open-element-options-modal-edit' : 'open-element-options-modal'}
+            id={getAlertTrigger()}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} />
@@ -102,7 +124,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger={editMode ? 'open-element-options-modal-edit' : 'open-element-options-modal'}
+        trigger={getAlertTrigger()}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -138,7 +160,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
 
                     <div className="category-buttons-wrapper">
                       <AddButton
-                        id={editMode ? `open-elements-alert-edit-${category}` : `open-elements-alert-${category}`}
+                        id={getModalTrigger(category)}
                       />
                     </div>
 
@@ -148,7 +170,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
                   categoryName={category}
                   selectedElements={selectedElements}
                   setSelectedElements={setSelectedElements}
-                  modalTrigger={editMode ? `open-elements-alert-edit-${category}` : `open-elements-alert-${category}`}
+                  modalTrigger={getModalTrigger(category)}
                 />
               </IonCard>
             )

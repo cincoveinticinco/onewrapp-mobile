@@ -14,14 +14,16 @@ import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../Shared/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../context/database';
+import { get } from 'lodash';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedCharacters: Character[];
   editMode?: boolean;
+  detailsEditMode?: boolean;
 }
 
-const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters, editMode }) => {
+const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters, editMode, detailsEditMode }) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
@@ -85,6 +87,31 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
     setDropDownIsOpen(!dropDownIsOpen);
   };
 
+  const getAlertTrigger = () => {
+
+    if (editMode) {
+      return 'characters-categories-alert-edit';
+    }
+
+    if(detailsEditMode) {
+      return 'characters-categories-alert-details-edit';
+    }
+
+    return 'characters-categories-alert';
+  }
+
+  const getModalTrigger = () => {
+    if (editMode) {
+      return 'open-characters-options-modal-edit';
+    }
+
+    if(detailsEditMode) {
+      return 'open-characters-options-modal-details-edit';
+    }
+
+    return 'open-characters-options-modal';
+  }
+
   return (
     <>
       <div
@@ -97,7 +124,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
         </p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
           <AddButton
-            id={editMode ? 'characters-categories-alert-edit' : 'characters-categories-alert'}
+            id={getAlertTrigger()}
             slot="end"
           />
           <DropDownButton open={dropDownIsOpen} />
@@ -107,7 +134,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
       <InputAlert
         handleOk={handleOk}
         inputs={alertInputs}
-        trigger={editMode ? 'characters-categories-alert-edit' : 'characters-categories-alert'}
+        trigger={getAlertTrigger()}
         header="Add Category"
         message="Please enter the name of the category you want to add"
       />
@@ -141,7 +168,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
                     </p>
                     <div className="category-buttons-wrapper">
                       <AddButton
-                        id={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
+                        id={getModalTrigger() + category}
                       />
                     </div>
                   </div>
@@ -150,7 +177,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
                   categoryName={category}
                   selectedCharacters={selectedCharacters}
                   setSelectedCharacters={setSelectedCharacters}
-                  modalTrigger={editMode ? `open-characters-options-modal-${category}-edit` : `open-characters-options-modal-${category}`}
+                  modalTrigger={getModalTrigger() + category}
                 />
               </IonCard>
             )
