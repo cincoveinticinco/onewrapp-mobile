@@ -11,6 +11,7 @@ import useHandleBack from '../../hooks/useHandleBack';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
+import { set } from 'lodash';
 
 const EditSceneToDetails: React.FC = () => {
   const history = useHistory();
@@ -20,9 +21,10 @@ const EditSceneToDetails: React.FC = () => {
   const projectId = parseInt(id);
   const handleBack = () => history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
+  const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
   const sceneDefaultValues = {
     projectId,
@@ -62,12 +64,13 @@ const EditSceneToDetails: React.FC = () => {
         Object.keys(existingScene).forEach((key) => {
           setValue(key, existingScene[key]);
           setFormData({ ...formData, [key]: existingScene[key] });
+          setSceneDataIsLoading(false);
         });
       }
     };
 
     fetchScene();
-  }, [sceneId]);
+  }, [offlineScenes]);
 
   const {
     control,
@@ -121,20 +124,26 @@ const EditSceneToDetails: React.FC = () => {
       handleBack={handleBack}
     >
       <IonContent color="tertiary" ref={contentRef}>
-        <AddScenesForm
-          scrollToTop={() => scrollToTop()}
-          detailsEditMode
-          editMode={false}
-          sceneFormId={sceneFormId}
-          handleSubmit={handleSubmit}
-          control={control}
-          errors={errors}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-          formData={formData}
-          onSubmit={onSubmit}
-        />
+        {
+          sceneDataIsLoading
+            ? <div>Loading...</div>
+            : (
+              <AddScenesForm
+                scrollToTop={() => scrollToTop()}
+                detailsEditMode
+                editMode={false}
+                sceneFormId={sceneFormId}
+                handleSubmit={handleSubmit}
+                control={control}
+                errors={errors}
+                reset={reset}
+                setValue={setValue}
+                watch={watch}
+                formData={formData}
+                onSubmit={onSubmit}
+              />
+            )
+        }
       </IonContent>
     </SecondaryPagesLayout>
   );

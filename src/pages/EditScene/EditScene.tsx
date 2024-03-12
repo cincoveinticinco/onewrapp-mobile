@@ -11,6 +11,7 @@ import useHandleBack from '../../hooks/useHandleBack';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
+import { set } from 'lodash';
 
 const EditScene: React.FC = () => {
   const history = useHistory();
@@ -19,7 +20,7 @@ const EditScene: React.FC = () => {
   const projectId = parseInt(id);
   const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
@@ -63,13 +64,13 @@ const EditScene: React.FC = () => {
         Object.keys(existingScene).forEach((key) => {
           setValue(key, existingScene[key]);
           setFormData({ ...formData, [key]: existingScene[key] });
-        });
-        setSceneDataIsLoading(false);
+          setSceneDataIsLoading(false);
+        })
       }
     };
 
     fetchScene();
-  }, [sceneId]);
+  }, [offlineScenes]);
 
   const {
     control,
