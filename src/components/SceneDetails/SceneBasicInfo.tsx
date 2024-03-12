@@ -9,6 +9,34 @@ interface SceneBasicInfoProps {
 }
 
 const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
+ 
+  const fraction = floatToFraction(scene.pages || 0);
+
+  const divideIntegerFromFraction = (value: string) => {
+    const [integer, fraction] = value.split(' ');
+    return {
+      integer,
+      fraction,
+    };
+  };
+
+  const fractionPart = divideIntegerFromFraction(fraction).fraction;
+  const integerPart = divideIntegerFromFraction(fraction).integer;
+
+  const divideMinutesFromSeconds = (value: string) => {
+    // 24:00
+    const [minutes, seconds] = value.split(':');
+    return {
+      minutes,
+      seconds,
+    };
+  };
+
+  const minutesSeconds = secondsToMinSec(scene.estimatedSeconds || 0);
+
+  const { minutes } = divideMinutesFromSeconds(minutesSeconds);
+  const { seconds } = divideMinutesFromSeconds(minutesSeconds);
+
   return (
     <IonGrid fixed={true} style={{ width: '100%'}}>
       <IonRow>
@@ -28,10 +56,10 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
           <SceneInfoLabels info={scene.page ? `${scene.page}` : '-'} title='Page' />
         </IonCol>
         <IonCol size-xs='3' size-sm='1.5'>
-          <SceneInfoLabels info={scene.pages ? `${floatToFraction(scene.pages)}`: '-'} title='Pages' />
+          <SceneInfoLabels info={integerPart} symbol={fractionPart} title='Pages' />
         </IonCol>
         <IonCol size-xs='3' size-sm='1.5'>
-          <SceneInfoLabels info={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : '-'} title='Time' />
+          <SceneInfoLabels info={minutes} symbol={':' + seconds} title='Time' />
         </IonCol>
         <IonCol size-xs='3' size-sm='1.5'>
           <SceneInfoLabels info='-:--' title='SHOT. TIME' />
