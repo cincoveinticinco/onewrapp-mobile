@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
-import { IonButton, IonContent, IonGrid } from '@ionic/react';
+import { IonButton, IonContent, IonGrid, useIonViewDidEnter } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
@@ -15,6 +15,7 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
+import useHideTabs from '../../hooks/useHideTabs';
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -27,6 +28,12 @@ const Strips: React.FC = () => {
   const [error, unused_] = useState(false);
   const history = useHistory();
   useScrollToTop(contentRef, useLocation());
+  const { showTabs } = useHideTabs();
+
+  useIonViewDidEnter(() => {
+    showTabs();
+  });
+
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
