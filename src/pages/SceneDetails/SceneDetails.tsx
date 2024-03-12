@@ -42,7 +42,9 @@ const SceneDetails: React.FC = () => {
       if (sceneId) {
         const scene = await getCurrentScene()
         setThisScene(scene)
-        setSceneIsLoading(false)
+        setTimeout(() => {
+          setSceneIsLoading(false)
+        }, 200)
       }
     }
 
