@@ -17,7 +17,6 @@
   import SetCard from '../../components/Sets/LocationSetCard';
   import LocationSetCard from '../../components/Sets/LocationSetCard';
   import './Sets.scss'
-import { set } from 'lodash';
 import removeAccents from '../../utils/removeAccents';
 
   const Sets: React.FC = () => {
@@ -31,8 +30,13 @@ import removeAccents from '../../utils/removeAccents';
     const [displayedSets, setDisplayedSets] = useState<any>({});
     const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
     const [displayedLocations, setDisplayedLocations] = useState<any[]>([]);
+    const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
     const thisPath = useLocation();
     const contentRef = useRef<HTMLIonContentElement>(null);
+
+    useEffect(() => {
+      setDataIsLoading(false);
+    },[offlineScenes]);
 
     useScrollToTop(contentRef, thisPath);
 
@@ -264,50 +268,59 @@ import removeAccents from '../../utils/removeAccents';
           sortTrigger="sort-sets-modal-trigger"
         >
           <IonContent color="tertiary" fullscreen ref={contentRef}>
-            <>
-              <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations} batchSize={9}>
-                {displayedLocations.map((location, index) => (
-                  <div key={'location' + index + location}>
-                  { 
-                    sets[location.locationName].length > 0 &&
-                    <LocationSetCard 
-                      location={location} 
-                      searchText={setsSearchText}
-                      setsQuantity={
-                      sets[location.locationName] ? sets[location.locationName].length : 0
+            {
+              dataIsLoading && (
+                <div>Loading...</div>
+              )
+            }
+            {
+              !dataIsLoading && (
+                <>
+                  <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations} batchSize={9}>
+                    {displayedLocations.map((location, index) => (
+                      <div key={'location' + index + location}>
+                      { 
+                        sets[location.locationName].length > 0 &&
+                        <LocationSetCard 
+                          location={location} 
+                          searchText={setsSearchText}
+                          setsQuantity={
+                          sets[location.locationName] ? sets[location.locationName].length : 0
+                          }
+                          onClick={() => toggleDropDown(location.locationName)}
+                          isOpen={dropDownIsOpen[location.locationName]}
+                          validationFunction={validateLocationExists}
+                        />
                       }
-                      onClick={() => toggleDropDown(location.locationName)}
-                      isOpen={dropDownIsOpen[location.locationName]}
-                      validationFunction={validateLocationExists}
-                    />
-                  }
-                  {
-                    <div className='ion-content-scroll-host sets-card-wrapper' >
                       {
-                        dropDownIsOpen[location.locationName] &&
-                        <ScrollInfiniteContext
-                          setDisplayedData={(newElements: any) => handleSetDisplayedSets(location.locationName, newElements)}
-                          filteredData={sets[location.locationName] || []}
-                          batchSize={9}
-                        >
+                        <div className='ion-content-scroll-host sets-card-wrapper' >
                           {
-                            displayedSets[location.locationName] &&
-                            displayedSets[location.locationName].map((set: any, index: number) => (
-                            <SetCard 
-                              key={index} 
-                              set={set} 
-                              searchText={setsSearchText}
-                              validationFunction={validateSetExists}
-                            />
-                          ))}
-                        </ScrollInfiniteContext>
+                            dropDownIsOpen[location.locationName] &&
+                            <ScrollInfiniteContext
+                              setDisplayedData={(newElements: any) => handleSetDisplayedSets(location.locationName, newElements)}
+                              filteredData={sets[location.locationName] || []}
+                              batchSize={9}
+                            >
+                              {
+                                displayedSets[location.locationName] &&
+                                displayedSets[location.locationName].map((set: any, index: number) => (
+                                <SetCard 
+                                  key={index} 
+                                  set={set} 
+                                  searchText={setsSearchText}
+                                  validationFunction={validateSetExists}
+                                />
+                              ))}
+                            </ScrollInfiniteContext>
+                          }
+                        </div>
                       }
-                    </div>
-                  }
-                  </div>
-                ))}
-              </ScrollInfiniteContext>
-            </>
+                      </div>
+                    ))}
+                  </ScrollInfiniteContext>
+                </>
+              )
+            }
           </IonContent>
         </MainPagesLayout>
         <InputSortModal
