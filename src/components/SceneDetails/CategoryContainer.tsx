@@ -52,6 +52,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
             getValuesByCategory(categoryName, scene).map((value: any, i) => {
               return <p 
                 style={{fontSize: '16px', margin: '6px 0px'}}
+                key={ i + Math.random()}
               >
                 {
                   characters &&
