@@ -91,7 +91,7 @@ const SceneDetails: React.FC = () => {
         <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
         <IonToolbar color="success"  mode='ios'>
           <IonIcon icon={chevronBack} slot='start' size='large' />
-          <IonTitle style={{fontWeight: 'lighter'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
+          <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
           <IonIcon icon={chevronForward} slot='end' size='large' />
         </IonToolbar>
       </IonHeader>
