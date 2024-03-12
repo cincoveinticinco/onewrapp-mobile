@@ -30,6 +30,11 @@ const Elements: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
+  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setDataIsLoading(false);
+  }, [offlineScenes]);
 
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions
@@ -281,50 +286,57 @@ const Elements: React.FC = () => {
         sortTrigger={'elements-sort-options'}
       >
         <IonContent color="tertiary" fullscreen>
-          <>
-            <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
-              {displayedCategories.map((category, index) => (
-                <div key={category + index}>
-                  { elements[category.categoryName] &&
-                    elements[category.categoryName].length > 0 &&
-                    <ElementCard 
-                      data={category} 
-                      searchText={searchText} 
-                      section="category"
-                      isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
-                        ...isDropDownOpen,
-                        [category.categoryName]: !isDropDownOpen[category.categoryName]
-                      })}
-                      elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
-                      validationFunction={validateCategoryExists}
-                    />
-                  }
-                  <div className='ion-content-scroll-host elements-card-wrapper'>
-                    {
-                      isDropDownOpen[category.categoryName] &&
-                      <ScrollInfiniteContext 
-                        setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName || [], newElements)} 
-                        filteredData={elements[category.categoryName] || []}
-                        batchSize={9}
-                        >
-                          {
-                            displayedElements[category.categoryName] &&
-                            displayedElements[category.categoryName].map((element: any, index: any) => (
-                            <ElementCard 
-                              key={index} 
-                              data={element} 
-                              searchText={searchText} 
-                              section="element"
-                              validationFunction={validateElementExists}
-                            />
-                          ))}
-                      </ScrollInfiniteContext>
+          {
+            dataIsLoading && 
+            <div>Loading...</div>
+          }
+          {
+            !dataIsLoading &&
+            <>
+              <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
+                {displayedCategories.map((category, index) => (
+                  <div key={category + index}>
+                    { elements[category.categoryName] &&
+                      elements[category.categoryName].length > 0 &&
+                      <ElementCard 
+                        data={category} 
+                        searchText={searchText} 
+                        section="category"
+                        isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
+                          ...isDropDownOpen,
+                          [category.categoryName]: !isDropDownOpen[category.categoryName]
+                        })}
+                        elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
+                        validationFunction={validateCategoryExists}
+                      />
                     }
-                  </div>
-                </div>    
-              ))}
-            </ScrollInfiniteContext>
-          </>
+                    <div className='ion-content-scroll-host elements-card-wrapper'>
+                      {
+                        isDropDownOpen[category.categoryName] &&
+                        <ScrollInfiniteContext 
+                          setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName || [], newElements)} 
+                          filteredData={elements[category.categoryName] || []}
+                          batchSize={9}
+                          >
+                            {
+                              displayedElements[category.categoryName] &&
+                              displayedElements[category.categoryName].map((element: any, index: any) => (
+                              <ElementCard 
+                                key={index} 
+                                data={element} 
+                                searchText={searchText} 
+                                section="element"
+                                validationFunction={validateElementExists}
+                              />
+                            ))}
+                        </ScrollInfiniteContext>
+                      }
+                    </div>
+                  </div>    
+                ))}
+              </ScrollInfiniteContext>
+            </>
+          }
         </IonContent>
       </MainPagesLayout>
       <InputSortModal
