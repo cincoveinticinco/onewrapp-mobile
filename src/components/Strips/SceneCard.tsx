@@ -14,6 +14,7 @@ import {
 } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 import InputAlert from '../Shared/InputAlert/InputAlert';
+import { useHistory, useRouteMatch } from 'react-router';
 
 interface SceneCardProps {
   scene: Scene;
@@ -22,6 +23,10 @@ interface SceneCardProps {
 
 const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
   const { oneWrapDb } = useContext(DatabaseContext);
+
+  const history = useHistory();
+  const routeMatch = useRouteMatch();
+  const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`
 
   const [presentToast] = useIonToast();
 
@@ -141,12 +146,14 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
     }
   };
 
+  const goToSceneDetails = () => history.push(detailsRoute);
+
   return (
     <IonRow className="scene-card-row">
       <IonItemSliding className="ion-no-margin ion-no-padding">
         <IonItem className="ion-no-margin ion-no-padding scene-card-item">
           <IonGrid className="ion-no-margin ion-no-padding">
-            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => console.log(scene)}>
+            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
               <IonCol className="scene-card-col-1">
                 <h3 className="scene-card-header">
                   <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
