@@ -97,7 +97,7 @@ const SceneDetails: React.FC = () => {
         {
             sceneIsLoading ? <ExploreContainer name='Loading...' /> : <SceneBasicInfo scene={thisScene} />
         }
-        {
+        { !sceneIsLoading &&
           thisScene && (
             <div className='ion-padding-top ion-padding-bottom'>
               <DropDownInfo categories={[...sceneCastCategories]} scene={thisScene} title='CAST' characters />
