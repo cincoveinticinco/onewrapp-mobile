@@ -7,9 +7,9 @@ import {
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import useIsMobile from '../../../hooks/useIsMobile';
-import { BiEdit } from "react-icons/bi";
 import { RiProhibitedLine } from "react-icons/ri";
-import { FiTrash } from "react-icons/fi";
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 
 interface ToolbarProps {
   name: string;
@@ -132,21 +132,21 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       {
         edit && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editRoute}>
-            <BiEdit className="toolbar-icon" />
+            <CiEdit className="toolbar-icon" />
           </IonButton>
         )
       }
       {
         prohibited && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button">
-            <RiProhibitedLine className="toolbar-icon" />
+            <PiProhibitLight className="toolbar-icon" />
           </IonButton>
         )
       }
       {
         deleteButton && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" id={deleteTrigger}>
-            <FiTrash className="toolbar-icon" />
+            <PiTrashSimpleLight className="toolbar-icon" />
           </IonButton>
         )
       }

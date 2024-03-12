@@ -12,13 +12,14 @@ import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { banOutline, pencilOutline } from 'ionicons/icons';
-import { FiTrash } from 'react-icons/fi';
 import useIsMobile from '../../hooks/useIsMobile';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext from '../../context/database';
 import useErrorToast from '../../hooks/useErrorToast';
 import useSuccessToast from '../../hooks/useSuccessToast';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 
 interface Set {
   setName: string;
@@ -289,13 +290,13 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       <IonItemOptions className="location-set-card-item-options">
         <div className="buttons-wrapper">
           <IonButton fill="clear" id={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}>
-            <IonIcon icon={pencilOutline} className="button-icon view" />
+            <CiEdit className="button-icon view" />
           </IonButton>
           <IonButton fill="clear">
-            <IonIcon icon={banOutline} className="button-icon ban" />
+            <PiProhibitLight className="button-icon ban" />
           </IonButton>
           <IonButton fill="clear" onClick={() => location ? deleteLocation() : deleteSet()}>
-            <FiTrash className="button-icon trash" />
+            <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
       </IonItemOptions>

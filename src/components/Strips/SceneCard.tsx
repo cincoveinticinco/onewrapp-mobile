@@ -6,15 +6,16 @@ import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
-import { FiTrash } from 'react-icons/fi';
+import { banOutline, checkmarkCircle } from 'ionicons/icons';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import {
-  DayOrNightOptionEnum, IntOrExtOptionEnum, ProtectionTypeEnum, SceneTypeEnum,
+  DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
 } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 import InputAlert from '../Shared/InputAlert/InputAlert';
 import { useHistory, useRouteMatch } from 'react-router';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from "react-icons/ci";
 
 interface SceneCardProps {
   scene: Scene;
@@ -192,13 +193,13 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
             <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
-              <IonIcon icon={pencilOutline} className="button-icon view" />
+              <CiEdit className="button-icon view" />
             </IonButton>
             <IonButton fill="clear">
-              <IonIcon icon={banOutline} className="button-icon ban" />
+              <PiProhibitLight className="button-icon ban" />
             </IonButton>
             <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
-              <FiTrash className="button-icon trash" />
+              <PiTrashSimpleLight className="button-icon trash" />
             </IonButton>
           </div>
         </IonItemOptions>

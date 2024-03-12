@@ -1,7 +1,7 @@
 import { IonButton } from '@ionic/react';
 import React from 'react';
 import './DeleteButton.scss';
-import { FiTrash } from 'react-icons/fi';
+import { PiTrashSimpleLight } from 'react-icons/pi';
 
 interface DeleteButtonProps {
   id?: string
@@ -27,7 +27,7 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({
     id={id}
     slot={slot}
   >
-    <FiTrash className="delete-button-icon" />
+    <PiTrashSimpleLight className="delete-button-icon" />
   </IonButton>
 );
 

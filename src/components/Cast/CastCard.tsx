@@ -12,11 +12,13 @@ import HighlightedText from '../../components/Shared/HighlightedText/Highlighted
 import './CastCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
-import { FiTrash } from 'react-icons/fi';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext from '../../context/database';
 import InputAlert from '../Shared/InputAlert/InputAlert';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
+import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 
 interface Cast {
   characterNum: string;
@@ -38,16 +40,6 @@ interface CastCardProps {
   searchText: string;
   validationFunction: (value: string, currentValue: string) => (boolean | string)
 }
-
-const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
-  <p className="info-label">
-    <span className="value-part">
-      {value}
-      <span className="symbol-part">{symbol}</span>
-    </span>
-    <span className="label-part">{label}</span>
-  </p>
-);
 
 const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction }) => {
   const { oneWrapDb } = useContext<any>(DatabaseContext);
@@ -293,13 +285,13 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
           <IonButton fill="clear" id={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}>
-            <IonIcon icon={pencilOutline} className="button-icon view" />
+            <CiEdit className="button-icon view" />
           </IonButton>
           <IonButton fill="clear" onClick={() => scenesToEdit().then((values: any) => console.log(values))}>
-            <IonIcon icon={banOutline} className="button-icon ban" />
+            <PiProhibitLight className="button-icon ban" />
           </IonButton>
           <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}>
-            <FiTrash className="button-icon trash" />
+            <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
       </IonItemOptions>

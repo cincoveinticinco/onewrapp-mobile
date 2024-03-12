@@ -12,7 +12,6 @@ import HighlightedText from '../../components/Shared/HighlightedText/Highlighted
 import './ElementCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
-import { FiTrash } from 'react-icons/fi';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -20,6 +19,8 @@ import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext from '../../context/database';
 import useErrorToast from '../../hooks/useErrorToast';
 import InputAlert from '../Shared/InputAlert/InputAlert';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 
 interface Element {
   elementName: string;
@@ -319,13 +320,13 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
       <IonItemOptions className="element-card-item-options">
         <div className="buttons-wrapper">
           <IonButton fill="clear" id={section === 'category' ? `edit-category-${data.categoryName}` : `edit-element-${data.elementName}`}>
-            <IonIcon icon={pencilOutline} className="button-icon view" />
+            <CiEdit className="button-icon view" />
           </IonButton>
           <IonButton fill="clear" onClick={() => section === 'category' ? scenesToEditWithCategory().then((values: any) => console.log(values)) : scenesToEditWithElement().then((values: any)  => console.log(values))}>
-            <IonIcon icon={banOutline} className="button-icon ban" />
+            <PiProhibitLight className="button-icon ban" />
           </IonButton>
           <IonButton fill="clear" id={section === 'category' ? `delete-category-${data.categoryName || Math.random() * 1000}` : `delete-element-${data.elementName || Math.random()}`}>
-            <FiTrash className="button-icon trash" />
+            <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
       </IonItemOptions>
