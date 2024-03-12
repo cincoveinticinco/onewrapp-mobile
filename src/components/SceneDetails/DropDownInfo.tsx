@@ -4,12 +4,12 @@ import DropDownButton from "../Shared/DropDownButton/DropDownButton"
 import CategoryContainer from "./CategoryContainer"
 import { IonCard, IonCardHeader, IonCardSubtitle } from "@ionic/react"
 
-const DropDownInfo = ({ categories, scene, title, characters = false, extras = false, elements = false }: any) => {
+const DropDownInfo = ({ categories, scene, title, characters = false, extras = false, elements = false, notes = false }: any) => {
   const [open, setOpen] = useState<boolean>(true)
   const valuesByCategory = characters ? scene.characters.length === 0 : extras ? scene.extras.length === 0 : elements ? scene.elements.length === 0 : []
 
   const getUniqueCategoriesFromScene = (scene: any, characters: boolean, extras: boolean, elements: boolean) => {
-    const categories = characters ? scene.characters.map((character: any) => character.categoryName) : extras ? scene.extras.map((extra: any) => extra.categoryName) : elements ? scene.elements.map((element: any) => element.categoryName) : []
+    const categories = characters ? scene.characters.map((character: any) => character.categoryName) : extras ? scene.extras.map((extra: any) => extra.categoryName) : elements ? scene.elements.map((element: any) => element.categoryName) :  []
     return sortArrayAlphabeticaly([...new Set(categories)])
   }
 
@@ -46,6 +46,10 @@ const DropDownInfo = ({ categories, scene, title, characters = false, extras = f
                     {
                       elements &&
                       'NO ELEMENTS ADDED TO THIS SCENE'
+                    }
+                    {
+                      notes &&
+                      'NO NOTES ADDED TO THIS SCENE'
                     }
                   </IonCardSubtitle>
                 </IonCardHeader>
