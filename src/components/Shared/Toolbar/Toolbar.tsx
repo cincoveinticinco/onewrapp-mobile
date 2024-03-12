@@ -7,6 +7,9 @@ import {
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import useIsMobile from '../../../hooks/useIsMobile';
+import { BiEdit } from "react-icons/bi";
+import { RiProhibitedLine } from "react-icons/ri";
+import { FiTrash } from "react-icons/fi";
 
 interface ToolbarProps {
   name: string;
@@ -24,6 +27,11 @@ interface ToolbarProps {
   handleBack?: () => void;
   sortTrigger?: string;
   backString?: boolean;
+  prohibited?: boolean;
+  edit?: boolean;
+  deleteButton?: boolean;
+  editRoute?: string;
+  deleteTrigger?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -40,7 +48,12 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   searchText,
   handleBack,
   sortTrigger,
-  backString = false
+  backString = false,
+  prohibited = false,
+  deleteButton = false,
+  edit = false,
+  editRoute = '',
+  deleteTrigger = '',
 }) => {
   const isMobile = useIsMobile();
 
@@ -116,6 +129,27 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         //   <IonIcon icon={ellipsisHorizontalOutline} className="toolbar-ellipsis-icon toolbar-icon" />
         // </IonButton>
       )} */}
+      {
+        edit && (
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editRoute}>
+            <BiEdit className="toolbar-icon" />
+          </IonButton>
+        )
+      }
+      {
+        prohibited && (
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button">
+            <RiProhibitedLine className="toolbar-icon" />
+          </IonButton>
+        )
+      }
+      {
+        deleteButton && (
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" id={deleteTrigger}>
+            <FiTrash className="toolbar-icon" />
+          </IonButton>
+        )
+      }
     </IonToolbar>
   );
 });
