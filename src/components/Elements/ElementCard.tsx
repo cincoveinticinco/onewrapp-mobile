@@ -21,6 +21,8 @@ import useErrorToast from '../../hooks/useErrorToast';
 import InputAlert from '../Shared/InputAlert/InputAlert';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
+import useWarningToast from '../../hooks/useWarningToast';
+import { set } from 'lodash';
 
 interface Element {
   elementName: string;
@@ -71,6 +73,8 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
       cssClass: 'success-toast',
     });
   };
+
+  const warningMessageToast = useWarningToast()
 
   const errorToast = useErrorToast();
   
@@ -154,6 +158,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
 
   const editElement = async (newElement: any) => {
     try {
+      warningMessageToast('Please wait, element is being updated...')
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
   
@@ -173,7 +178,9 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
   
       console.log('Character deleted');
 
-      successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+      setTimeout(() => {
+        successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+      }, 600)
 
     } catch (error) {
       console.error(error);
@@ -182,6 +189,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
 
   const deleteElement = async () => {
     try {
+      warningMessageToast('Please wait, element is being deleted...')
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
   
@@ -201,7 +209,9 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
   
       console.log('Element deleted');
 
-      successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      setTimeout(() => {
+        successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      })
     } catch (error) {
       console.error(error);
     }
@@ -209,6 +219,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
 
   const deleteCategory = async () => {
     try {
+      warningMessageToast('Please wait, category is being deleted...')
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
   
@@ -228,7 +239,9 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
   
       console.log('Category deleted');
 
-      successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'N/A'} was successfully deleted from all scenes!`);
+      setTimeout(() => {
+        successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      }, 600)
     } catch (error) {
       console.error(error);
     }
@@ -236,6 +249,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
 
   const editCategory = async (newCategory: any) => {
     try {
+      warningMessageToast('Please wait, category is being updated...')
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
   
@@ -263,7 +277,9 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
   
       console.log('Character deleted');
 
-      successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+      setTimeout(() => {
+        successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
+      }, 600)
 
     } catch (error: any) {
       console.error(error);

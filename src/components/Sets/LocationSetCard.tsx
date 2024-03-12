@@ -20,6 +20,7 @@ import useErrorToast from '../../hooks/useErrorToast';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
+import useWarningToast from '../../hooks/useWarningToast';
 
 interface Set {
   setName: string;
@@ -76,6 +77,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
   const { oneWrapDb } = useContext<any>(DatabaseContext)
   const errorMessageToast = useErrorToast()
   const successMessageToast = useSuccessToast()
+  const warningMessageToast = useWarningToast()
 
   const locationInputs = [
     {
@@ -121,6 +123,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const editLocation = async (newLocation: any) => {
     try {
+      warningMessageToast('Please wait, location is being updated')
       const scenes = await scenesToEditWithLocation()
       const updatedScenes: any = []
 
@@ -134,7 +137,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
       console.log('result', result)
-      successMessageToast('Location updated successfully')
+      setTimeout(() => {
+        successMessageToast('Location updated successfully')
+      }, 500)
     } catch (error) {
       errorMessageToast('Error updating location')
     }
@@ -142,6 +147,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const editSet = async (newSet: any) => {
     try {
+      warningMessageToast('Please wait, set is being updated')
       const scenes = await scenesToEditWithSet()
       const updatedScenes: any = []
 
@@ -155,7 +161,8 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
       console.log('result', result)
-      successMessageToast('Set updated successfully')
+      setTimeout(() => {
+        successMessageToast('Set updated successfully')}, 500)
     } catch (error) {
       errorMessageToast('Error updating set')
     }
@@ -163,6 +170,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const deleteLocation = async () => {
     try {
+      warningMessageToast('Please wait, location is being deleted')
       const scenes = await scenesToEditWithLocation()
       const updatedScenes: any = []
 
@@ -176,7 +184,8 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
       console.log('result', result)
-      successMessageToast('Location deleted successfully')
+      setTimeout(() => {
+        successMessageToast('Location deleted successfully')}, 500)
     } catch (error) {
       errorMessageToast('Error deleting location')
     }
@@ -184,6 +193,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const deleteSet = async () => {
     try {
+      warningMessageToast('Please wait, set is being deleted')
       const scenes = await scenesToEditWithSet()
       const updatedScenes: any = []
 
@@ -197,7 +207,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
       console.log('result', result)
-      successMessageToast('Set deleted successfully')
+      setTimeout(() => {
+        successMessageToast('Set deleted successfully')
+      }, 500)
     } catch (error) {
       errorMessageToast('Error deleting set')
     }

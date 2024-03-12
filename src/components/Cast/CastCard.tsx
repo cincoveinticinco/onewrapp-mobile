@@ -19,6 +19,7 @@ import InputAlert from '../Shared/InputAlert/InputAlert';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
+import useWarningToast from '../../hooks/useWarningToast';
 
 interface Cast {
   characterNum: string;
@@ -84,6 +85,8 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     });
   };
 
+  const warningMessageToast = useWarningToast();
+
   const formInputs = [
     {
       label: 'Character Number',
@@ -137,6 +140,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
   const deleteCharacter = async () => {
     try {
+      warningMessageToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
   
@@ -157,6 +161,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       console.log('Character deleted');
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+   
     } catch (error) {
       console.error(error);
     }
@@ -164,6 +169,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
   const editCharacter = async (newCharacter: any) => {
     try {
+      warningMessageToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
   

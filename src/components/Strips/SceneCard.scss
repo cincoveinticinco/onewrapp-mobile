@@ -8,6 +8,7 @@
   grid-template-columns: repeat(12, 1fr);
   margin: 0;
   min-height: 120px;
+  cursor: pointer;
 
   @media (min-width: 500px) {
     min-height: auto;
@@ -17,26 +18,56 @@
 .scene-theme-dark {
   background-color: var(--ion-color-dark);
   color: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-dark-shade);
+  }
 }
 
 .scene-theme-light {
   background-color: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-light-shade);
+  }
 }
 
 .scene-theme-yellow {
   background-color: var(--ion-color-yellow);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-yellow-shade);
+  }
 }
 
 .scene-theme-success {
   background-color: var(--ion-color-success);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-success-shade);
+  }
 }
 
 .scene-theme-rose {
   background-color: var(--ion-color-rose);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-rose-shade);
+  }
 }
 
 .scene-theme-primary {
   background-color: var(--ion-color-primary);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-primary-shade);
+  }
 }
 
 .scene-card-header {
