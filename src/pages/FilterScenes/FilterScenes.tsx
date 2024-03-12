@@ -33,6 +33,11 @@ const FilterScenes = () => {
   const handleBack = () => history.push(`/my/projects/${id}/strips`);
   const isMobile = useIsMobile();
   const { hideTabs, showTabs } = useHideTabs();
+  const [dataIsLoading, setDataIsLoading] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    setDataIsLoading(false);
+  }, [offlineScenes]);
 
   useIonViewDidEnter(() => {
     hideTabs();
@@ -100,192 +105,199 @@ const FilterScenes = () => {
       handleBack={handleBack}
     >
       <IonContent color="tertiary">
-        <IonGrid className="ion-no-padding">
-          <FilterScenesButtonsSelect
-            selectOptions={
-                [
-                  {
-                    filterName: 'SCENES',
-                    handleOption: () => handleSingleFilterOption('sceneType', 'scene'),
-                    class: getFilterButtonClass('scene', 'sceneType'),
-                  },
-                  {
-                    filterName: 'PROTECTION',
-                    handleOption: () => handleSingleFilterOption('sceneType', 'protection'),
-                    class: getFilterButtonClass('protection', 'sceneType'),
-                  },
-                ]
-              }
-            groupName="STRIP TYPE"
-          />
-
-          <FilterScenesModalSelect
-            filterName="PROTECTION TYPE"
-            listOfFilters={ProtectionTypeEnumArray}
-            handleSingleFilterOption={handleSingleFilterOption}
-            optionKey="protectionType"
-          />
-
-          {/* LIST */}
-
-          <FilterScenesModalSelect
-            filterName="EPISODES"
-            listOfFilters={getUniqueValuesByKey(offlineScenes, 'episodeNumber').map(String)}
-            handleSingleFilterOption={handleSingleFilterOption}
-            optionKey="episodeNumber"
-          />
-
-          {/* <FilterScenesModalSelect
-              filterName='SCENE STATUS'
-              listOfFilters={getUniqueValuesByKey(offlineScenes, 'characters')}
-            /> */}
-
-          <FilterScenesButtonsSelect
-            selectOptions={
-                [
-                  {
-                    filterName: 'DAY',
-                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Day'),
-                    class: getFilterButtonClass('Day', 'dayOrNightOption'),
-                  },
-                  {
-                    filterName: 'NIGHT',
-                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Night'),
-                    class: getFilterButtonClass('Night', 'dayOrNightOption'),
-                  },
-                  {
-                    filterName: 'SUNRISE',
-                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunrise'),
-                    class: getFilterButtonClass('Sunrise', 'dayOrNightOption'),
-                  },
-                  {
-                    filterName: 'SUNSET',
-                    handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunset'),
-                    class: getFilterButtonClass('Sunset', 'dayOrNightOption'),
-                  },
-                ]
-              }
-            groupName="DAY OR NIGHT"
-          />
-
-          <FilterScenesButtonsSelect
-            selectOptions={
-                [
-                  {
-                    filterName: 'INTERIOR',
-                    handleOption: () => handleSingleFilterOption('intOrExtOption', 'Interior'),
-                    class: getFilterButtonClass('Interior', 'intOrExtOption'),
-                  },
-                  {
-                    filterName: 'EXTERIOR',
-                    handleOption: () => handleSingleFilterOption('intOrExtOption', 'Exterior'),
-                    class: getFilterButtonClass('Exterior', 'intOrExtOption'),
-                  },
-                ]
-              }
-            groupName="INTERIOR OR EXTERIOR"
-          />
-
-          <FilterScenesModalSelect
-            filterName="CHARACTERS"
-            listOfFilters={getSortedCharacterNames}
-            handleNestedFilterOption={handleNestedFilterOption}
-            optionKey="characters"
-            nestedKey="characterName"
-          />
-
-          <FilterScenesModalSelect
-            filterName="EXTRAS"
-            listOfFilters={getSortedExtraNames}
-            handleNestedFilterOption={handleNestedFilterOption}
-            optionKey="extras"
-            nestedKey="extraName"
-          />
-
-          {/* ORDER BY NUMBER, ORDER ALPH, IF NUMBER 1. NAME, ELSE NAME */}
-
-          <FilterScenesModalSelect
-            filterName="LOCATIONS"
-            listOfFilters={getSortedLocationNames}
-            handleSingleFilterOption={handleSingleFilterOption}
-            optionKey="locationName"
-          />
-
-          {/* LOCATION NAME */}
-
-          <FilterScenesModalSelect
-            filterName="SETS"
-            listOfFilters={getSortedSetNames}
-            handleSingleFilterOption={handleSingleFilterOption}
-            optionKey="setName"
-          />
-
-          {/* SETS ARE PART FROM LOCATIONS, LOCATION NAME.  SET OR SET */}
-
-          <FilterScenesModalSelect
-            filterName="ELEMENT CATEGORY"
-            listOfFilters={getSortedElementCategoryNames}
-            handleNestedFilterOption={handleNestedFilterOption}
-            optionKey="elements"
-            nestedKey="categoryName"
-          />
-
-          {/* ELEMENT CATEGORY */}
-
-          <FilterScenesModalSelect
-            filterName="ELEMENTS"
-            listOfFilters={getSortedElementNames}
-            handleNestedFilterOption={handleNestedFilterOption}
-            optionKey="elements"
-            nestedKey="elementName"
-          />
-
-          {/* CategoryName, Element */}
-          {/* <FilterScenesButtonsSelect
+        {
+          dataIsLoading &&
+          <div>Loading...</div>
+        }
+        {
+          !dataIsLoading &&
+          <IonGrid className="ion-no-padding">
+            <FilterScenesButtonsSelect
               selectOptions={
-                [
-                  {
-                    filterName: 'UNIT 1',
-                    handleOption: () => handleSingleFilterOption('units', 'unit1'),
-                    class: getFilterButtonClass('unit1', 'units')
-                  },
-                  {
-                    filterName: 'UNIT 2',
-                    handleOption: () => handleSingleFilterOption('units', 'unit2'),
-                    class: getFilterButtonClass('unit2', 'units')
-                  }
-                ]
-              }
-              groupName='UNITS'
-            /> */}
+                  [
+                    {
+                      filterName: 'SCENES',
+                      handleOption: () => handleSingleFilterOption('sceneType', 'scene'),
+                      class: getFilterButtonClass('scene', 'sceneType'),
+                    },
+                    {
+                      filterName: 'PROTECTION',
+                      handleOption: () => handleSingleFilterOption('sceneType', 'protection'),
+                      class: getFilterButtonClass('protection', 'sceneType'),
+                    },
+                  ]
+                }
+              groupName="STRIP TYPE"
+            />
 
-          {/* <FilterScenesModalSelect
-              filterName='DATE'
-              listOfFilters={getUniqueValuesByKey(offlineScenes, 'date')}
-            /> */}
+            <FilterScenesModalSelect
+              filterName="PROTECTION TYPE"
+              listOfFilters={ProtectionTypeEnumArray}
+              handleSingleFilterOption={handleSingleFilterOption}
+              optionKey="protectionType"
+            />
 
-          <IonRow class="ion-flex ion-justify-content-center filter-button-row">
-            <IonCol size-xs="12" size-sm="4" size-md="4">
-              <OutlinePrimaryButton
-                buttonName="SAVE"
-                onClick={handleBack}
-              />
-            </IonCol>
-          </IonRow>
+            {/* LIST */}
 
-          { isMobile
-            && (
-            <IonRow>
-              <IonCol>
-                <OutlineLightButton
-                  buttonName={showReset ? 'RESET' : 'CANCEL'}
-                  onClick={showReset ? resetFilters : handleCancel}
-                  className="cancel-filter-scenes-button cancel-button"
+            <FilterScenesModalSelect
+              filterName="EPISODES"
+              listOfFilters={getUniqueValuesByKey(offlineScenes, 'episodeNumber').map(String)}
+              handleSingleFilterOption={handleSingleFilterOption}
+              optionKey="episodeNumber"
+            />
+
+            {/* <FilterScenesModalSelect
+                filterName='SCENE STATUS'
+                listOfFilters={getUniqueValuesByKey(offlineScenes, 'characters')}
+              /> */}
+
+            <FilterScenesButtonsSelect
+              selectOptions={
+                  [
+                    {
+                      filterName: 'DAY',
+                      handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Day'),
+                      class: getFilterButtonClass('Day', 'dayOrNightOption'),
+                    },
+                    {
+                      filterName: 'NIGHT',
+                      handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Night'),
+                      class: getFilterButtonClass('Night', 'dayOrNightOption'),
+                    },
+                    {
+                      filterName: 'SUNRISE',
+                      handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunrise'),
+                      class: getFilterButtonClass('Sunrise', 'dayOrNightOption'),
+                    },
+                    {
+                      filterName: 'SUNSET',
+                      handleOption: () => handleSingleFilterOption('dayOrNightOption', 'Sunset'),
+                      class: getFilterButtonClass('Sunset', 'dayOrNightOption'),
+                    },
+                  ]
+                }
+              groupName="DAY OR NIGHT"
+            />
+
+            <FilterScenesButtonsSelect
+              selectOptions={
+                  [
+                    {
+                      filterName: 'INTERIOR',
+                      handleOption: () => handleSingleFilterOption('intOrExtOption', 'Interior'),
+                      class: getFilterButtonClass('Interior', 'intOrExtOption'),
+                    },
+                    {
+                      filterName: 'EXTERIOR',
+                      handleOption: () => handleSingleFilterOption('intOrExtOption', 'Exterior'),
+                      class: getFilterButtonClass('Exterior', 'intOrExtOption'),
+                    },
+                  ]
+                }
+              groupName="INTERIOR OR EXTERIOR"
+            />
+
+            <FilterScenesModalSelect
+              filterName="CHARACTERS"
+              listOfFilters={getSortedCharacterNames}
+              handleNestedFilterOption={handleNestedFilterOption}
+              optionKey="characters"
+              nestedKey="characterName"
+            />
+
+            <FilterScenesModalSelect
+              filterName="EXTRAS"
+              listOfFilters={getSortedExtraNames}
+              handleNestedFilterOption={handleNestedFilterOption}
+              optionKey="extras"
+              nestedKey="extraName"
+            />
+
+            {/* ORDER BY NUMBER, ORDER ALPH, IF NUMBER 1. NAME, ELSE NAME */}
+
+            <FilterScenesModalSelect
+              filterName="LOCATIONS"
+              listOfFilters={getSortedLocationNames}
+              handleSingleFilterOption={handleSingleFilterOption}
+              optionKey="locationName"
+            />
+
+            {/* LOCATION NAME */}
+
+            <FilterScenesModalSelect
+              filterName="SETS"
+              listOfFilters={getSortedSetNames}
+              handleSingleFilterOption={handleSingleFilterOption}
+              optionKey="setName"
+            />
+
+            {/* SETS ARE PART FROM LOCATIONS, LOCATION NAME.  SET OR SET */}
+
+            <FilterScenesModalSelect
+              filterName="ELEMENT CATEGORY"
+              listOfFilters={getSortedElementCategoryNames}
+              handleNestedFilterOption={handleNestedFilterOption}
+              optionKey="elements"
+              nestedKey="categoryName"
+            />
+
+            {/* ELEMENT CATEGORY */}
+
+            <FilterScenesModalSelect
+              filterName="ELEMENTS"
+              listOfFilters={getSortedElementNames}
+              handleNestedFilterOption={handleNestedFilterOption}
+              optionKey="elements"
+              nestedKey="elementName"
+            />
+
+            {/* CategoryName, Element */}
+            {/* <FilterScenesButtonsSelect
+                selectOptions={
+                  [
+                    {
+                      filterName: 'UNIT 1',
+                      handleOption: () => handleSingleFilterOption('units', 'unit1'),
+                      class: getFilterButtonClass('unit1', 'units')
+                    },
+                    {
+                      filterName: 'UNIT 2',
+                      handleOption: () => handleSingleFilterOption('units', 'unit2'),
+                      class: getFilterButtonClass('unit2', 'units')
+                    }
+                  ]
+                }
+                groupName='UNITS'
+              /> */}
+
+            {/* <FilterScenesModalSelect
+                filterName='DATE'
+                listOfFilters={getUniqueValuesByKey(offlineScenes, 'date')}
+              /> */}
+
+            <IonRow class="ion-flex ion-justify-content-center filter-button-row">
+              <IonCol size-xs="12" size-sm="4" size-md="4">
+                <OutlinePrimaryButton
+                  buttonName="SAVE"
+                  onClick={handleBack}
                 />
               </IonCol>
             </IonRow>
-            )}
-        </IonGrid>
+
+            { isMobile
+              && (
+              <IonRow>
+                <IonCol>
+                  <OutlineLightButton
+                    buttonName={showReset ? 'RESET' : 'CANCEL'}
+                    onClick={showReset ? resetFilters : handleCancel}
+                    className="cancel-filter-scenes-button cancel-button"
+                  />
+                </IonCol>
+              </IonRow>
+              )}
+          </IonGrid>
+        }
       </IonContent>
     </SecondaryPagesLayout>
   );
