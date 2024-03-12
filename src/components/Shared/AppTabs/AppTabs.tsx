@@ -41,6 +41,7 @@ import useIsMobile from '../../../hooks/useIsMobile';
 import EditScene from '../../../pages/EditScene/EditScene';
 import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
+import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 
 setupIonicReact();
 
@@ -64,6 +65,9 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route exact path={`${urlString}/editscene/:sceneId`}>
           <EditScene />
+        </Route>
+        <Route exact path={`${urlString}/editscene/:sceneId/details`}>
+          <EditSceneToDetails />
         </Route>
         <Route path={`${urlString}/strips/details/scene/:sceneId`}>
           <SceneDetails />
