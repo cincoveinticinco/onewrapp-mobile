@@ -12,7 +12,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import {
-  calendar, list, people, business, reader, settings,
+  calendar, list, people, business, reader, settings, serverOutline, documentTextOutline,
 } from 'ionicons/icons';
 // import { useAuth } from '../../context/auth';
 import AddScene from '../../../pages/AddScene/AddScene';
@@ -39,6 +39,8 @@ import '@ionic/react/css/display.css';
 import './AppTabs.scss';
 import useIsMobile from '../../../hooks/useIsMobile';
 import EditScene from '../../../pages/EditScene/EditScene';
+import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
+import SceneScript from '../../../pages/SceneScript/SceneScript';
 
 setupIonicReact();
 
@@ -62,6 +64,12 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route exact path={`${urlString}/editscene/:sceneId`}>
           <EditScene />
+        </Route>
+        <Route path={`${urlString}/strips/details/scene/:sceneId`}>
+          <SceneDetails />
+        </Route>
+        <Route path={`${urlString}/strips/details/script/:sceneId`}>
+          <SceneScript />
         </Route>
         <Route exact path={`${urlString}/strips/filters`}>
           <FilterScenes />
