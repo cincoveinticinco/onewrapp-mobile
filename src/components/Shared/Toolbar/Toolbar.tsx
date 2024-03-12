@@ -132,21 +132,21 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       {
         edit && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editRoute}>
-            <CiEdit className="toolbar-icon" />
+            <CiEdit className="toolbar-icon edit-icon" />
           </IonButton>
         )
       }
       {
         prohibited && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button">
-            <PiProhibitLight className="toolbar-icon" />
+            <PiProhibitLight className="toolbar-icon prohibit-icon" />
           </IonButton>
         )
       }
       {
         deleteButton && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" id={deleteTrigger}>
-            <PiTrashSimpleLight className="toolbar-icon" />
+            <PiTrashSimpleLight className="toolbar-icon trash-icon" />
           </IonButton>
         )
       }

@@ -42,7 +42,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
     return (
       <IonCard
         color='tertiary'
-        className='scene-details-card'
+        className='scene-details-card ion-padding-bottom'
       >
         <IonCardHeader>
           <p  >{capitalize(categoryName)} </p >
