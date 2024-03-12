@@ -20,7 +20,7 @@ interface AddElementFormProps {
 
 const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements, editMode, detailsEditMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
   const [elementsFetched, setElementsFetched] = useState(false);
 

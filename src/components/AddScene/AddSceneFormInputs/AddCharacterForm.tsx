@@ -24,7 +24,7 @@ interface AddCategoryFormProps {
 }
 
 const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters, editMode, detailsEditMode }) => {
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
   const [charactersFetched, setCharactersFetched] = useState(false);

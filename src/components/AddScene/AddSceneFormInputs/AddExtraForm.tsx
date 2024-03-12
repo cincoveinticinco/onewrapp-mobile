@@ -20,7 +20,7 @@ interface AddExtraFormProps {
 
 const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras, editMode, detailsEditMode }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(false);
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
   const [extrasFetched, setExtrasFetched] = useState(false);
 
