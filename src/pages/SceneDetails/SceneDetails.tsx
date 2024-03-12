@@ -15,6 +15,8 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './SceneDetails.scss'
 import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
 import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
+import InputAlert from '../../components/Shared/InputAlert/InputAlert';
+import useSuccessToast from '../../hooks/useSuccessToast';
 
 const SceneDetails: React.FC = () => {
   const {hideTabs, showTabs} = useHideTabs()
@@ -23,6 +25,8 @@ const SceneDetails: React.FC = () => {
   const history = useHistory()
   const [thisScene, setThisScene] = useState<any>(null)
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true)
+
+  const successMessageSceneToast = useSuccessToast();
 
   const handleBack = () => {
     history.push('/my/projects/163/strips')
@@ -44,7 +48,7 @@ const SceneDetails: React.FC = () => {
 
     fetchScene()
   }, [
-    oneWrapDb
+    offlineScenes
   ])
 
   
@@ -68,10 +72,21 @@ const SceneDetails: React.FC = () => {
 
   const sceneElementsCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: any) => category.categoryName))
 
+  const deleteScene = async () => {
+    try {
+      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+      await sceneToDelete?.remove();
+      history.push('/my/projects/163/strips')
+      successMessageSceneToast('Scene deleted successfully');
+    } catch (error) {
+      console.error('Error deleting scene:', error);
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name='' backString handleBack={handleBack}/>
+        <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}`} />
         <IonToolbar color="success"  mode='ios'>
           <IonIcon icon={chevronBack} slot='start' size='large' />
           <IonTitle style={{fontWeight: 'lighter'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
@@ -88,11 +103,19 @@ const SceneDetails: React.FC = () => {
               <DropDownInfo categories={[...sceneCastCategories]} scene={thisScene} title='CAST' characters />
               <DropDownInfo categories={[...sceneExtrasCategories]} scene={thisScene} title='EXTRAS' extras />
               <DropDownInfo categories={[...sceneElementsCategories]} scene={thisScene} title='ELEMENTS' elements />
+              <DropDownInfo categories={[]} scene={thisScene} title='NOTES' notes />
             </div>
           )
         }
       </IonContent>
       <SceneDetailsTabs sceneId={sceneId} />
+      <InputAlert
+        header="Delete Scene"
+        message={`Are you sure you want to delete scene ${sceneHeader}?`}
+        handleOk={() => deleteScene()}
+        inputs={[]}
+        trigger={`open-delete-scene-alert-${sceneId}`}
+      />
     </IonPage>
   )
 }
