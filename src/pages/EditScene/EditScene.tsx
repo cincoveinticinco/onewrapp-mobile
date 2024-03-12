@@ -22,6 +22,7 @@ const EditScene: React.FC = () => {
   const { oneWrapDb } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
+  const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
   const sceneDefaultValues = {
     projectId,
@@ -63,6 +64,7 @@ const EditScene: React.FC = () => {
           setValue(key, existingScene[key]);
           setFormData({ ...formData, [key]: existingScene[key] });
         });
+        setSceneDataIsLoading(false);
       }
     };
 
@@ -125,19 +127,28 @@ const EditScene: React.FC = () => {
       handleBack={handleBack}
     >
       <IonContent color="tertiary" ref={contentRef}>
-        <AddScenesForm
-          scrollToTop={() => scrollToTop()}
-          editMode
-          sceneFormId={sceneFormId}
-          handleSubmit={handleSubmit}
-          control={control}
-          errors={errors}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-          formData={formData}
-          onSubmit={onSubmit}
-        />
+        {
+          sceneDataIsLoading && (
+            <div>Loading...</div>
+          )
+        }
+        {
+          !sceneDataIsLoading && (
+            <AddScenesForm
+              scrollToTop={() => scrollToTop()}
+              editMode
+              sceneFormId={sceneFormId}
+              handleSubmit={handleSubmit}
+              control={control}
+              errors={errors}
+              reset={reset}
+              setValue={setValue}
+              watch={watch}
+              formData={formData}
+              onSubmit={onSubmit}
+            />
+          )
+        }
       </IonContent>
     </SecondaryPagesLayout>
   );
