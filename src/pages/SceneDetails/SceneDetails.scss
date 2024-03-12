@@ -1,0 +1,45 @@
+.scene-details-card {
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0;
+  outline: 1px solid var(--ion-color-dark);
+  border-radius: 0;
+  box-shadow: none;
+
+  ion-card-header,
+  ion-card-content {
+    padding: 0 16px;
+  }
+}
+
+.no-items-card {
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0;
+  outline: 1px solid var(--ion-color-dark);
+  border-radius: 0;
+  box-shadow: none;
+
+  ion-card-header,
+  ion-card-content {
+    padding: 0 16px;
+  }
+}
+
+.categories-card-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--ion-color-dark);
+}
+
+@media (min-width: 500px) {
+  .categories-card-container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .no-items-card {
+    grid-column: 1 / 5;
+    text-align: center;
+    padding: 12px;
+  }
+}

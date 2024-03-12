@@ -36,9 +36,9 @@ export interface Scene {
   page?: number | null;
   pages?: number | null;
   estimatedSeconds?: number | null;
-  characters?: Character[] | null;
-  extras?: Extra[] | null;
-  elements?: Element[] | null;
-  notes?: Note[] | null;
+  characters?: Character[];
+  extras?: Extra[];
+  elements?: Element[];
+  notes?: Note[];
   updatedAt?: string | null;
 }
