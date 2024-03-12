@@ -34,10 +34,6 @@ import removeAccents from '../../utils/removeAccents';
     const thisPath = useLocation();
     const contentRef = useRef<HTMLIonContentElement>(null);
 
-    useEffect(() => {
-      setDataIsLoading(false);
-    },[offlineScenes]);
-
     useScrollToTop(contentRef, thisPath);
 
     const defaultSortPosibilitiesOrder = [
@@ -254,8 +250,10 @@ import removeAccents from '../../utils/removeAccents';
 
       return setExists ? 'Set already exists' : true;
     }
-    // LOCATION CARD
-    // ...ALL - LOCATION - CHARACTERS
+
+    useEffect(() => {
+      setDataIsLoading(false);
+    },[processedLocations, processedSets]);
 
     return (
       <>

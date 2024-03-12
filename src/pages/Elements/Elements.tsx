@@ -30,11 +30,7 @@ const Elements: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
-  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    setDataIsLoading(false);
-  }, [offlineScenes]);
+  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true)
 
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions
@@ -64,33 +60,6 @@ const Elements: React.FC = () => {
     },
   ];
 
-  const defaultElementsCategoriesSortPosibilities = [
-    {
-      id: 'CATEGORY_NAME', label: 'CATEGORY NAME', optionKey: 'categoryName', defaultIndex: 0,
-    },
-    {
-      id: 'ELEMENTS_QUANTITY', label: 'ELEMENTS QUANTITY', optionKey: 'elementsQuantity', defaultIndex: 1,
-    },
-    {
-      id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 2,
-    },
-    {
-      id: 'PROTECTION_QUANTITY', label: 'PROTECTION QUANTITY', optionKey: 'protectionQuantity', defaultIndex: 3,
-    },
-    {
-      id: 'PAGES_SUM', label: 'PAGES SUM', optionKey: 'pagesSum', defaultIndex: 4,
-    },
-    {
-      id: 'ESTIMATED_TIME_SUM', label: 'ESTIMATED TIME SUM', optionKey: 'estimatedTimeSum', defaultIndex: 5,
-    },
-    {
-      id: 'EPISODES_QUANTITY', label: 'EPISODES QUANTITY', optionKey: 'episodesQuantity', defaultIndex: 6,
-    },
-    {
-      id: 'PARTICIPATION', label: 'PARTICIPATION', optionKey: 'participation', defaultIndex: 7,
-    },
-  ];
-
   const [elementsSortPosibilities, setElementsSortPosibilities] = useState<any[]>(() => defaultElementsSortPosibilities);
 
   useEffect(() => {
@@ -103,13 +72,7 @@ const Elements: React.FC = () => {
     setElementsSelectedSortOptions(elementsDefaultSortOptions);
     setElementsSortPosibilities(defaultElementsSortPosibilities);
   };
-
-  const clearSelectedCategoriesSortOptions = () => {
-    localStorage.removeItem('elementsCategoriesSelectedSortOptions');
-    localStorage.removeItem('elementsCategoriesSortPosibilities');
-    setElementsCategoriesSelectedSortOptions(elementsCategoriesDefaultSortOptions);
-  };
-
+  
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
@@ -193,6 +156,11 @@ const Elements: React.FC = () => {
   }, [
     elementsData,
   ]);
+
+
+  useEffect(() => {
+    setDataIsLoading(false);
+  }, [categoriesData, elementsData]);
 
   useEffect(() => {
     if (searchText.length > 0) {

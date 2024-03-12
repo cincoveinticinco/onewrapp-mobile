@@ -38,11 +38,6 @@ const Cast: React.FC = () => {
   const [displayedCast, setDisplayedCast] = useState<any>({});
   const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
   const [dataIsLoading, setDataIsLoading] = useState(true);
-  const { offlineScenes } = useContext(DatabaseContext);
-
-  useEffect(() => {
-    setDataIsLoading(false);
-  }, [offlineScenes]);
 
   const [castSortPosibilities, setCastSortPosibilities] = React.useState<any[]>(() => {
     const savedOrder = localStorage.getItem('castSortPosibilitiesOrder');
@@ -186,14 +181,14 @@ const Cast: React.FC = () => {
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
-            dataIsLoading &&
+            isLoading &&
             <div className="loading-container">
               Loading...
             </div>
           }
           
           {
-            !dataIsLoading &&
+            !isLoading &&
             characterCategoriesArray.map((category: string, index: number) => (
             <DropDownCast
               key={`cast-dropdown-${category}-${index}`}
@@ -217,52 +212,29 @@ const Cast: React.FC = () => {
               </ScrollInfiniteContext>
             </DropDownCast>
           ))}
-          
           {
-            characterCategoriesArray.map((category: string, index: number) => (
+            !isLoading &&
+            extras.length > 0 && (
             <DropDownCast
-              key={`cast-dropdown-${category}-${index}`}
-              category={category}
-              isOpen={dropDownIsOpen[category]}
-              onToggle={() => handleDropDown(category)}
-              count={filterCastByCategory(category).length}
-              
+              key="cast-dropdown-EXTRAS"
+              category="EXTRAS"
+              isOpen={dropDownIsOpen.EXTRAS}
+              onToggle={() => handleDropDown('EXTRAS')}
+              count={extras.length}
             >
               <ScrollInfiniteContext
-                filteredData={filteredCast[category]}
-                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
+                filteredData={extras}
+                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
                 batchSize={7}
               >
                 {
-                  displayedCast[category]
-                  && displayedCast[category].map((character: any, index: number) => (
-                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
+                  dropDownIsOpen.EXTRAS
+                  && displayedCast.EXTRAS.map((extra: any, index: number) => (
+                    <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
                   ))
                 }
               </ScrollInfiniteContext>
             </DropDownCast>
-          ))}
-          {extras.length > 0 && (
-          <DropDownCast
-            key="cast-dropdown-EXTRAS"
-            category="EXTRAS"
-            isOpen={dropDownIsOpen.EXTRAS}
-            onToggle={() => handleDropDown('EXTRAS')}
-            count={extras.length}
-          >
-            <ScrollInfiniteContext
-              filteredData={extras}
-              setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
-              batchSize={7}
-            >
-              {
-                dropDownIsOpen.EXTRAS
-                && displayedCast.EXTRAS.map((extra: any, index: number) => (
-                  <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
-                ))
-              }
-            </ScrollInfiniteContext>
-          </DropDownCast>
           )}
         </IonContent>
       </MainPagesLayout>
