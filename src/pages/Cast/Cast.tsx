@@ -21,6 +21,7 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
+import DatabaseContext, { DatabaseContextProvider } from '../../context/database';
 
 const Cast: React.FC = () => {
 
@@ -36,6 +37,12 @@ const Cast: React.FC = () => {
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
   const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
+  const [dataIsLoading, setDataIsLoading] = useState(true);
+  const { offlineScenes } = useContext(DatabaseContext);
+
+  useEffect(() => {
+    setDataIsLoading(false);
+  }, [offlineScenes]);
 
   const [castSortPosibilities, setCastSortPosibilities] = React.useState<any[]>(() => {
     const savedOrder = localStorage.getItem('castSortPosibilitiesOrder');
@@ -178,7 +185,41 @@ const Cast: React.FC = () => {
         sortTrigger="sort-cast-modal-trigger"
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
-          {characterCategoriesArray.map((category: string, index: number) => (
+          {
+            dataIsLoading &&
+            <div className="loading-container">
+              Loading...
+            </div>
+          }
+          
+          {
+            !dataIsLoading &&
+            characterCategoriesArray.map((category: string, index: number) => (
+            <DropDownCast
+              key={`cast-dropdown-${category}-${index}`}
+              category={category}
+              isOpen={dropDownIsOpen[category]}
+              onToggle={() => handleDropDown(category)}
+              count={filterCastByCategory(category).length}
+              
+            >
+              <ScrollInfiniteContext
+                filteredData={filteredCast[category]}
+                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
+                batchSize={7}
+              >
+                {
+                  displayedCast[category]
+                  && displayedCast[category].map((character: any, index: number) => (
+                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
+                  ))
+                }
+              </ScrollInfiniteContext>
+            </DropDownCast>
+          ))}
+          
+          {
+            characterCategoriesArray.map((category: string, index: number) => (
             <DropDownCast
               key={`cast-dropdown-${category}-${index}`}
               category={category}
