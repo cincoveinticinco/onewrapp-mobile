@@ -22,7 +22,13 @@ const AddScene: React.FC = () => {
   const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setDataIsLoading(false)
+    const dataLoading = setTimeout(() => {
+      setDataIsLoading(false);
+    }, 500)
+
+    return () => {
+      clearTimeout(dataLoading);
+    }
   }, [offlineScenes])
 
   const successMessageToast = useSuccessToast();

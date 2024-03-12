@@ -36,7 +36,11 @@ const FilterScenes = () => {
   const [dataIsLoading, setDataIsLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
-    setDataIsLoading(false);
+    const loadingTime =  setTimeout(() => {
+      setDataIsLoading(false);
+    }, 500)
+
+    return () => clearTimeout(loadingTime);
   }, [offlineScenes]);
 
   useIonViewDidEnter(() => {
