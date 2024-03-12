@@ -17,7 +17,13 @@ const AddScene: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
+
+  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setDataIsLoading(!dataIsLoading)
+  }, [offlineScenes])
 
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -127,19 +133,27 @@ const AddScene: React.FC = () => {
       resetSelections={handleBack}
     >
       <IonContent color="tertiary" ref={contentRef} style={{zIndex: '20'}}>
-        <AddScenesForm
-          scrollToTop={() => scrollToTop()}
-          editMode={false}
-          sceneFormId={sceneFormId}
-          handleSubmit={handleSubmit}
-          control={control}
-          errors={errors}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-          formData={formData}
-          onSubmit={onSubmit}
-        />
+        {
+          dataIsLoading && (
+            <div>Loading...</div>
+          )
+        }
+        {
+          !dataIsLoading && (
+            <AddScenesForm
+            scrollToTop={() => scrollToTop()}
+            editMode={false}
+            sceneFormId={sceneFormId}
+            handleSubmit={handleSubmit}
+            control={control}
+            errors={errors}
+            reset={reset}
+            setValue={setValue}
+            watch={watch}
+            formData={formData}
+            onSubmit={onSubmit}
+          />)
+        }
       </IonContent>
     </SecondaryPagesLayout>
   );
