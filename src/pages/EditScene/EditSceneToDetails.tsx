@@ -64,13 +64,16 @@ const EditSceneToDetails: React.FC = () => {
         Object.keys(existingScene).forEach((key) => {
           setValue(key, existingScene[key]);
           setFormData({ ...formData, [key]: existingScene[key] });
-          setSceneDataIsLoading(false);
+          setTimeout(
+            () => setSceneDataIsLoading(false),
+            300,
+          );
         });
       }
     };
 
     fetchScene();
-  }, [offlineScenes]);
+  }, []);
 
   const {
     control,
