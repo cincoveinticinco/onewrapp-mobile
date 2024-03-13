@@ -7,7 +7,6 @@ import sortByCriterias from '../utils/SortScenesUtils/sortByCriterias';
 import ScenesContext, { castDefaultSortOptions } from '../context/ScenesContext';
 import getUniqueValuesByKey from '../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../Ennums/ennums';
-import { useIonViewDidEnter, useIonViewWillLeave } from '@ionic/react';
 
 const useProcessedCast = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -16,7 +15,7 @@ const useProcessedCast = () => {
   const [processedCast, setProcessedCast] = useState<any[]>([]);
   const [processedExtras, setProcessedExtras] = useState<any[]>([]);
 
-  const seedData = () => {
+  useEffect(() => {
     setIsLoading(true);
     const processCharacter = (character: any) => {
       const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
@@ -99,28 +98,7 @@ const useProcessedCast = () => {
     setProcessedCast(sortedCast);
     setProcessedExtras(sortedExtras);
     setIsLoading(false);
-  }
-
-  useIonViewDidEnter(() => {
-    seedData()
-  });
-
-  useEffect(() => {
-    seedData()
-  }, [offlineScenes]);
-
-  useEffect(() => {
-    seedData()
-  }, [castSelectedSortOptions]);
-
-  const clearData = () => {
-    setProcessedCast([]);
-    setProcessedExtras([]);
-    setIsLoading(true);
-  }
-
-  useIonViewWillLeave(clearData)
-
+  }, [offlineScenes, castSelectedSortOptions]);
 
   return { processedCast, processedExtras, isLoading };
 };
