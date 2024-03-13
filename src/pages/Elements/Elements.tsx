@@ -2,7 +2,7 @@ import React, {
   useContext, useState, useMemo, useRef, useEffect,
 } from 'react';
 import {
-  IonContent,
+  IonContent, useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import DatabaseContext from '../../context/database';
@@ -140,8 +140,6 @@ const Elements: React.FC = () => {
       return categorySortOptions;
     }
 
-    console.log(categoriesSelectedSortOptions())
-
     setElementsCategoriesSelectedSortOptions(categoriesSelectedSortOptions());
   },[elementsSelectedSortOptions]);
 
@@ -156,6 +154,21 @@ const Elements: React.FC = () => {
   }, [
     elementsData,
   ]);
+
+  const clearData = () => {
+    setFilteredCategories([]);
+    setFilteredElements([]);
+    setDataIsLoading(true);
+  }
+
+  useIonViewWillLeave(clearData)
+
+  useIonViewWillEnter(() => {
+    setDataIsLoading(true);
+    setFilteredCategories(categoriesData);
+    setFilteredElements(elementsData);
+    setDataIsLoading(false);
+  })
 
 
   useEffect(() => {
