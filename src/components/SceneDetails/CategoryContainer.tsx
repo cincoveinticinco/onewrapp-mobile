@@ -13,7 +13,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
 
   const getExtrasByCategory = (categoryName: string, scene: Scene) => {
     const extras = scene.extras ? scene.extras.filter((extra: any) => {
-      if(categoryName ==='NO CATEGORY') return extra.categoryName === null
+      if(categoryName === 'NO CATEGORY') return extra.categoryName === null
       return extra.categoryName === categoryName
     }) : []
     return extras
@@ -21,7 +21,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
 
   const getElementsByCategory = (categoryName: string, scene: Scene) => {
     const elements = scene.elements ? scene.elements.filter((element: any) => {
-      if(categoryName ==='NO CATEGORY') return element.categoryName === null
+      if(categoryName === 'NO CATEGORY') return element.categoryName === null
       return element.categoryName === categoryName
     }) : []
     return elements
@@ -38,7 +38,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
     return []
   }
 
-  if(getCharactersByCategory(categoryName, scene).length > 0 || getExtrasByCategory(categoryName, scene).length > 0 || getElementsByCategory(categoryName, scene).length > 0) {
+  if(getValuesByCategory(categoryName, scene).length > 0) {
     return (
       <IonCard
         color='tertiary'
