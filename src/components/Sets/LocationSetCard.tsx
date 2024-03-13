@@ -52,7 +52,7 @@ interface LocationSetCardProps {
   setsQuantity?: number;
   onClick?: () => void;
   isOpen?: boolean;
-  validationFunction: (value: string, currentValue: string) => (boolean | string)
+  validationFunction: (value: string, currentValue: string) => (any)
   setIsLoading?: (value: boolean) => void
 }
 
@@ -105,6 +105,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const setInputs = [
     {
+      label: 'Location Name',
+      type: 'text',
+      fieldName: 'locationName',
+      placeholder: 'Location Name',
+      required: true,
+      inputName: `edit-${set?.locationName || ''}-location-input`
+    },
+    {
       label: 'Set Name',
       type: 'text',
       fieldName: 'setName',
@@ -115,6 +123,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
   ]
 
   const defaultFormValuesForSets = {
+    locationName: set?.locationName,
     setName: set?.setName,
   }
 
@@ -177,6 +186,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       scenes.forEach((scene: any) => {
         const updatedScene = {...scene._data}
 
+        updatedScene.locationName = newSet.locationName
         updatedScene.setName = newSet.setName
         updatedScenes.push(updatedScene)
       })
@@ -285,13 +295,18 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
     }
   }
 
-  const validateExistence = (value: string) => {
-    if(location) {
+  const validateSetExistence = (value: string) => {
+    if(location && value !== location.locationName) {
       return validationFunction(value, location.locationName)
     }
-
-    return validationFunction(value, set?.setName || '')
   }
+
+  const validateLocationExistence = (value: string) => {
+    if(set && value !== set.locationName) {
+      return validationFunction(value, set.locationName)
+    }
+  }
+  
   return (
     <IonItemSliding onClick={() => getOnclick()}>
       <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -360,9 +375,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
         title={location ? 'Edit Location' : 'Edit Set'}
         modalTrigger={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}
         defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
-        validate={validateExistence}
+        validate={location ? validateLocationExistence : validateSetExistence}
       />
-
+      
       <InputAlert
         ref={location ? deleteLocationAlert : deleteSetAlert}
         handleOk={location ? deleteLocation : deleteSet}
