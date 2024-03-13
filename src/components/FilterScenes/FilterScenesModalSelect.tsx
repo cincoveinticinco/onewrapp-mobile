@@ -107,15 +107,17 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     setUncheckedOptions(uncheckedfilteredFiltersOptions)
     setTimeout(() => {
       setDataIsLoading(false);
-    }, 1500);
+    }, 1000);
   });
 
   useEffect(() => {
     setUncheckedOptions(uncheckedfilteredFiltersOptions);
-    setTimeout(() => {
-      setDataIsLoading(false);
-    }, 1500);
+    setDataIsLoading(false)
   }, []);
+
+  useEffect(() => {
+    setUncheckedOptions(uncheckedfilteredFiltersOptions);
+  }, [selectedFilterOptions]);
 
   const getListStyles = () => {
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
