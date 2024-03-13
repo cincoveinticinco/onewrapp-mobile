@@ -2,7 +2,7 @@
     useContext, useEffect, useState, useMemo, useRef,
   } from 'react';
   import {
-    IonContent, useIonViewWillEnter, useIonViewWillLeave,
+    IonContent, useIonViewDidEnter, useIonViewWillEnter, useIonViewWillLeave,
   } from '@ionic/react';
   import { useLocation } from 'react-router';
   import DatabaseContext from '../../context/database';
@@ -19,11 +19,12 @@
   import './Sets.scss'
 import removeAccents from '../../utils/removeAccents';
 import useLoader from '../../hooks/useLoader';
+import useProcessedSetsAndLocations from '../../hooks/usePorcessedSetsAndLocations';
+import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 
   const Sets: React.FC = () => {
-    const { offlineScenes } = useContext(DatabaseContext);
+    const { processedSets, processedLocations } = useProcessedSetsAndLocations();
     const { setsSelectedSortOptions, setSetsSelectedSortOptions } = useContext(ScenesContext);
-    const [locationsSelectedSortOptions, setLocationsSelectedSortOptions] = useState<any[]>([]);
     const [setsSearchText, setSetsSearchText] = useState('');
     const [sets, setSets] = useState<any>({});
     const [filteredSets, setFilteredSets] = useState<any[]>([]);
@@ -35,31 +36,7 @@ import useLoader from '../../hooks/useLoader';
     const thisPath = useLocation();
     const contentRef = useRef<HTMLIonContentElement>(null);
 
-    useScrollToTop(contentRef, thisPath);
-
-    const defaultSortPosibilitiesOrder = [
-      {
-        id: 'NAME', label: 'Name', optionKey: 'setName', defaultIndex: 0,
-      },
-      {
-        id: 'SCENES_QUANTITY', label: 'Scenes Quantity', optionKey: 'scenesQuantity', defaultIndex: 3,
-      },
-      {
-        id: 'PROTECTION_QUANTITY', label: 'Protection Quantity', optionKey: 'protectionQuantity', defaultIndex: 4,
-      },
-      {
-        id: 'PAGES_SUM', label: 'Pages Sum', optionKey: 'pagesSum', defaultIndex: 5,
-      },
-      {
-        id: 'ESTIMATED_TIME_SUM', label: 'Estimated Time Sum', optionKey: 'estimatedTimeSum', defaultIndex: 6,
-      },
-      {
-        id: 'EPISODES_QUANTITY', label: 'Episodes Quantity', optionKey: 'episodesQuantity', defaultIndex: 7,
-      },
-      {
-        id: 'PARTICIPATION', label: 'Participation', optionKey: 'participation', defaultIndex: 8,
-      },
-    ];
+    useScrollToTop(contentRef, thisPath)
 
     const [setsSortPosibilities, setSetsSortPosibilities] = useState<any[]>(() => {
       const savedSortPosibilities = localStorage.getItem('setsSortPosibilities');
@@ -72,86 +49,6 @@ import useLoader from '../../hooks/useLoader';
     useEffect(() => {
       localStorage.setItem('setsSortPosibilities', JSON.stringify(setsSortPosibilities));
     }, [setsSortPosibilities]);
-
-    const processedSets = useMemo(() => {
-      const processSet = (setName: string) => {
-        const setScenes = offlineScenes.filter((scene: any) => scene._data.setName === setName);
-        const charactersLength = setScenes.reduce((acc: number, scene: any) => acc + scene._data.characters.length, 0);
-        const scenesQuantity = setScenes.length;
-        const protectionQuantity = setScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
-        const pagesSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
-        const estimatedTimeSum = setScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
-        const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
-        const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
-        const { locationName } = setScenes[0]._data;
-
-        return {
-          setName,
-          charactersLength,
-          scenesQuantity,
-          protectionQuantity,
-          pagesSum,
-          estimatedTimeSum,
-          episodesQuantity,
-          participation,
-          locationName: locationName || 'NO LOCATION',
-        };
-      };
-
-      const uniqueSetNames: any[] = getUniqueValuesByKey(offlineScenes, 'setName');
-      return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions);
-    }, [offlineScenes, setsSelectedSortOptions]);
-
-    const processedLocations = useMemo(() => {
-      const uniqueLocationNames: any[] = getUniqueValuesByKey(offlineScenes, 'locationName');
-    
-      const processedLocationsData = uniqueLocationNames.map((locationName: string) => {
-        const locationScenes = offlineScenes.filter((scene: any) => scene._data.locationName === locationName);
-        const scenesQuantity = locationScenes.length;
-        const protectionQuantity = locationScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
-        const pagesSum = locationScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0);
-        const estimatedTimeSum = locationScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0);
-        const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber').length;
-        const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
-    
-        return {
-          locationName:  locationName.toLowerCase(),
-          scenesQuantity,
-          protectionQuantity,
-          pagesSum,
-          estimatedTimeSum,
-          episodesQuantity,
-          participation
-        };
-      });
-    
-      return sortByCriterias(processedLocationsData, locationsSelectedSortOptions);
-    }, [offlineScenes, locationsSelectedSortOptions]);
-
-    useEffect(() => {
-      const locationSelectedSortOptions = () => {
-        const setNameIndex = setsSelectedSortOptions.findIndex((option) => {
-          return option.some((option: any) => option === 'setName');
-        })
-
-        let newLocationSelectedSortOptions: any[] = []
-
-        setsSelectedSortOptions.forEach((criteria: any, index: number) => {
-        
-
-          if(index !== setNameIndex) {
-            newLocationSelectedSortOptions.push(criteria)
-          } else {
-            const newLocationOption = ['locationName', setsSelectedSortOptions[setNameIndex][1], setsSelectedSortOptions[setNameIndex][2]]
-            newLocationSelectedSortOptions.push(newLocationOption)
-          }
-        });
-
-        return newLocationSelectedSortOptions
-      }
-
-      setLocationsSelectedSortOptions(locationSelectedSortOptions())
-    }, [setsSelectedSortOptions]);
 
     useEffect(() => {
       const filteredLocations = processedLocations ? processedLocations.filter((location: any) => {
@@ -199,7 +96,7 @@ import useLoader from '../../hooks/useLoader';
       }, 300);
     }
 
-    useIonViewWillEnter(seedData);
+    useIonViewDidEnter(seedData);
 
     useEffect(() => {
       if(processedLocations.length > 0 && filteredSets.length > 0) {
