@@ -29,31 +29,34 @@ const sortBySceneNumber = (a: any, b: any, criteriaOrder: string) => {
 
 // "1.1A"
 
-const applySortCriteria = (data: any, criteria: any) => {
+const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: any[]): T[] => {
   const [criteriaKey, criteriaOrder] = criteria;
+
   if (criteriaKey === 'sceneNumber') {
-    return data.sort((a: any, b: any) => sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder));
+    return data.sort((a: T, b: T) => sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder));
   }
 
   if (criteriaKey === 'characterNum') {
-    return data.sort((a: any, b: any) => {
+    return data.sort((a: T, b: T) => {
       const aNumber = a.characterNum ? a.characterNum.split('.')[0] : '';
       const bNumber = b.characterNum ? b.characterNum.split('.')[0] : '';
-
       if (aNumber === '' && bNumber === '') {
         return 0;
-      } if (aNumber === '') {
+      }
+      if (aNumber === '') {
         return criteriaOrder === 'asc' ? 1 : -1;
-      } if (bNumber === '') {
+      }
+      if (bNumber === '') {
         return criteriaOrder === 'asc' ? -1 : 1;
       }
       return criteriaOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
     });
   }
 
-  return data.sort((a: any, b: any) => {
-    const aValue = !Number.isNaN(Number.parseFloat(a[criteriaKey])) ? Number.parseFloat(a[criteriaKey]) : a[criteriaKey];
-    const bValue = !Number.isNaN(Number.parseFloat(b[criteriaKey])) ? Number.parseFloat(b[criteriaKey]) : b[criteriaKey];
+  return data.sort((a: T, b: T) => {
+    // Convert values to lowercase if they are strings
+    const aValue = !Number.isNaN(Number.parseFloat(a[criteriaKey as keyof T])) ? Number.parseFloat(a[criteriaKey as keyof T]) : (a[criteriaKey as keyof T] as string).toLowerCase();
+    const bValue = !Number.isNaN(Number.parseFloat(b[criteriaKey as keyof T])) ? Number.parseFloat(b[criteriaKey as keyof T]) : (b[criteriaKey as keyof T] as string).toLowerCase();
 
     if (aValue < bValue) {
       return criteriaOrder === 'asc' ? -1 : 1;
