@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
   IonItemSliding,
   IonItemOptions,
   IonButton,
   IonItem,
   IonTitle,
+  IonAlert,
 } from '@ionic/react';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
@@ -20,6 +21,7 @@ import useSuccessToast from '../../hooks/useSuccessToast';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import useWarningToast from '../../hooks/useWarningToast';
+import InputAlert from '../Shared/InputAlert/InputAlert';
 
 interface Set {
   setName: string;
@@ -78,6 +80,17 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
   const errorMessageToast = useErrorToast()
   const successMessageToast = useSuccessToast()
   const warningMessageToast = useWarningToast()
+  const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
+  const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
+
+  const openAlert = () => {
+    if(set && deleteSetAlert.current) {
+      deleteSetAlert.current.present()
+    } else if(location && deleteLocationAlert.current) {
+      deleteLocationAlert.current.present()
+    }
+
+  }
 
   const locationInputs = [
     {
@@ -176,7 +189,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
       console.log('result', result)
       setTimeout(() => {
-        successMessageToast('Set updated successfully')}, 500)
+        successMessageToast('Set updated successfully')}, 300)
     } catch (error) {
       errorMessageToast('Error updating set')
     }
@@ -335,7 +348,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
           <IonButton fill="clear">
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => location ? deleteLocation() : deleteSet()}>
+          <IonButton fill="clear" onClick={() => openAlert()}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
@@ -348,6 +361,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
         modalTrigger={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}
         defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
         validate={validateExistence}
+      />
+
+      <InputAlert
+        ref={location ? deleteLocationAlert : deleteSetAlert}
+        handleOk={location ? deleteLocation : deleteSet}
+        header={location ? 'Delete Location' : 'Delete Set'}
+        message={location ? `Are you sure you want to delete the location ${location.locationName}?` : `Are you sure you want to delete the set ${set?.setName}?`}
+        inputs={[]}
       />
     </IonItemSliding>
   );
