@@ -38,7 +38,6 @@ const Cast: React.FC = () => {
   const [castSearchText, setCastSearchText] = useState('');
   const [displayedCast, setDisplayedCast] = useState<any>({});
   const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
-  const [dataIsLoading, setDataIsLoading] = useState(true);
 
   const [castSortPosibilities, setCastSortPosibilities] = React.useState<any[]>(() => {
     const savedOrder = localStorage.getItem('castSortPosibilitiesOrder');
