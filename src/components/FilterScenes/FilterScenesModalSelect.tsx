@@ -107,7 +107,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     setUncheckedOptions(uncheckedfilteredFiltersOptions)
     setTimeout(() => {
       setDataIsLoading(false);
-    }, 1000);
+    }, 1500);
   });
 
   useIonViewDidLeave(() => {
