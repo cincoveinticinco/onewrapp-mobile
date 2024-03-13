@@ -12,6 +12,7 @@ import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
 import { set } from 'lodash';
+import useLoader from '../../hooks/useLoader';
 
 const EditSceneToDetails: React.FC = () => {
   const history = useHistory();
@@ -25,6 +26,7 @@ const EditSceneToDetails: React.FC = () => {
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
+  const loader = useLoader()
 
   const sceneDefaultValues = {
     projectId,
@@ -129,7 +131,7 @@ const EditSceneToDetails: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef}>
         {
           sceneDataIsLoading
-            ? <div>Loading...</div>
+            ? useLoader()
             : (
               <AddScenesForm
                 scrollToTop={() => scrollToTop()}

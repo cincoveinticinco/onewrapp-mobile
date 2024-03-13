@@ -22,6 +22,7 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 import DatabaseContext, { DatabaseContextProvider } from '../../context/database';
+import useLoader from '../../hooks/useLoader';
 
 const Cast: React.FC = () => {
 
@@ -182,11 +183,8 @@ const Cast: React.FC = () => {
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
             isLoading &&
-            <div className="loading-container">
-              Loading...
-            </div>
+            useLoader()
           }
-          
           {
             !isLoading &&
             characterCategoriesArray.map((category: string, index: number) => (

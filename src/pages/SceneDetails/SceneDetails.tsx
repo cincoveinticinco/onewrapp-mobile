@@ -18,6 +18,7 @@ import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
 import InputAlert from '../../components/Shared/InputAlert/InputAlert';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import { set } from 'lodash';
+import useLoader from '../../hooks/useLoader';
 
 const SceneDetails: React.FC = () => {
   const {hideTabs, showTabs} = useHideTabs()
@@ -38,19 +39,24 @@ const SceneDetails: React.FC = () => {
     return scene._data ? scene._data : null
   }
 
-  useIonViewWillEnter(() => {
-    const fetchScene = async () => {
-      if (sceneId) {
-        const scene = await getCurrentScene()
-        setThisScene(scene)
-        setTimeout(() => {
-          setSceneIsLoading(false)
-        }, 200)
-      }
+  const fetchScene = async () => {
+    if (sceneId) {
+      const scene = await getCurrentScene()
+      setThisScene(scene)
+      setTimeout(() => {
+        setSceneIsLoading(false)
+      }, 200)
     }
+  }
 
+
+  useIonViewWillEnter(() => {
     fetchScene()
   })
+
+  useEffect(() => {
+    fetchScene()
+  }, [offlineScenes])
 
   useIonViewDidLeave(() => {
     setSceneIsLoading(true)
@@ -101,7 +107,7 @@ const SceneDetails: React.FC = () => {
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
         {
-            sceneIsLoading ? <ExploreContainer name='Loading...' /> : <SceneBasicInfo scene={thisScene} />
+            sceneIsLoading ? useLoader() : <SceneBasicInfo scene={thisScene} />
         }
         { !sceneIsLoading &&
           thisScene && (

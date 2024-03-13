@@ -16,6 +16,7 @@ import useScrollToTop from '../../hooks/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
+import useLoader from '../../hooks/useLoader';
 
 const Strips: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -138,9 +139,9 @@ const Strips: React.FC = () => {
       >
         <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
           <StripTagsToolbar />
-          <Suspense fallback={<div>Loading scene...</div>}>
+          <Suspense fallback={useLoader()}>
             {loading ? (
-              <div>Loading scenes...</div>
+              useLoader()
             ) : error ? (
               <div>Error loading scenes. Please try again later.</div>
             ) : (

@@ -19,6 +19,7 @@ import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
 import './Elements.scss'
 import removeAccents from '../../utils/removeAccents';
+import useLoader from '../../hooks/useLoader';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);
@@ -167,13 +168,10 @@ const Elements: React.FC = () => {
     setDataIsLoading(true);
     setFilteredCategories(categoriesData);
     setFilteredElements(elementsData);
-    setDataIsLoading(false);
+    setTimeout(() => {
+      setDataIsLoading(false)
+    }, 300);
   })
-
-
-  useEffect(() => {
-    setDataIsLoading(false);
-  }, [categoriesData, elementsData]);
 
   useEffect(() => {
     if (searchText.length > 0) {
@@ -269,7 +267,7 @@ const Elements: React.FC = () => {
         <IonContent color="tertiary" fullscreen>
           {
             dataIsLoading && 
-            <div>Loading...</div>
+            useLoader()
           }
           {
             !dataIsLoading &&

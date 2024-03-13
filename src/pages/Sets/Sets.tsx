@@ -18,6 +18,7 @@
   import LocationSetCard from '../../components/Sets/LocationSetCard';
   import './Sets.scss'
 import removeAccents from '../../utils/removeAccents';
+import useLoader from '../../hooks/useLoader';
 
   const Sets: React.FC = () => {
     const { offlineScenes } = useContext(DatabaseContext);
@@ -193,7 +194,9 @@ import removeAccents from '../../utils/removeAccents';
       setDataIsLoading(true);
       setFilteredLocations(processedLocations);
       setFilteredSets(processedSets);
-      setDataIsLoading(false)
+      setTimeout(() => {
+        setDataIsLoading(false)
+      }, 300);
     }
 
     useIonViewWillEnter(seedData);
@@ -265,10 +268,6 @@ import removeAccents from '../../utils/removeAccents';
       return setExists ? 'Set already exists' : true;
     }
 
-    useEffect(() => {
-      setDataIsLoading(false);
-    },[processedLocations, processedSets]);
-
     return (
       <>
         <MainPagesLayout
@@ -282,7 +281,7 @@ import removeAccents from '../../utils/removeAccents';
           <IonContent color="tertiary" fullscreen ref={contentRef}>
             {
               dataIsLoading && (
-                <div>Loading...</div>
+                useLoader()
               )
             }
             {

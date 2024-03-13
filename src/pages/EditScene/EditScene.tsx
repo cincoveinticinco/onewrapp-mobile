@@ -12,6 +12,7 @@ import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
 import { set } from 'lodash';
+import useLoader from '../../hooks/useLoader';
 
 const EditScene: React.FC = () => {
   const history = useHistory();
@@ -57,23 +58,28 @@ const EditScene: React.FC = () => {
     return scene._data;
   };
 
-  useIonViewDidEnter(() => {
-    const fetchScene = async () => {
-      if (sceneId) {
-        const existingScene = await getExistingScene();
-        Object.keys(existingScene).forEach((key) => {
-          setValue(key, existingScene[key]);
-          setFormData({ ...formData, [key]: existingScene[key] });
-          setTimeout(
-            () => setSceneDataIsLoading(false),
-            100,
-          )
-        })
-      }
-    };
+  const fetchScene = async () => {
+    if (sceneId) {
+      const existingScene = await getExistingScene();
+      Object.keys(existingScene).forEach((key) => {
+        setValue(key, existingScene[key]);
+        setFormData({ ...formData, [key]: existingScene[key] });
+        setTimeout(
+          () => setSceneDataIsLoading(false),
+          100,
+        )
+      })
+    }
+  };
 
+
+  useIonViewDidEnter(() => {
     fetchScene();
   });
+
+  useEffect(() => {
+    fetchScene();
+  }, [offlineScenes]);
 
   const {
     control,
@@ -143,7 +149,7 @@ const EditScene: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef}>
         {
           sceneDataIsLoading && (
-            <div>Loading...</div>
+            useLoader()
           )
         }
         {
