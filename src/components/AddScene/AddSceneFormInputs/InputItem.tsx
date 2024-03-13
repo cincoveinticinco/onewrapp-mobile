@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IonItem, IonInput } from '@ionic/react';
 import { Controller, FieldValues } from 'react-hook-form';
+import './InputItem.scss';
 
 interface InputItemProps {
   label: string;
@@ -28,6 +29,7 @@ const InputItem: React.FC<InputItemProps> = ({
   errorMessage = 'REQUIRED *',
 }) => {
   const [showError, setShowError] = useState(displayError);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     setShowError(displayError);
@@ -51,14 +53,16 @@ const InputItem: React.FC<InputItemProps> = ({
             labelPlacement="stacked"
             value={field.value}
             onIonInput={(e) => {
-              if (validate && validate(e.detail.value) !== true) {
+              if (validate && validate(e.detail.value?.trim()) !== true) {
                 setShowError(true);
               } else {
                 setShowError(false);
               }
-              setValue(fieldName, e.detail.value);
+              setValue(fieldName, e.detail.value?.trim());
             }}
-            className={`add-scene-input${showError ? ' error' : ''}`}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''}`}
           />
         )}
       />
