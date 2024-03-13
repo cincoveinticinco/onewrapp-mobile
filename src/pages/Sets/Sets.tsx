@@ -2,7 +2,7 @@
     useContext, useEffect, useState, useMemo, useRef,
   } from 'react';
   import {
-    IonContent,
+    IonContent, useIonViewWillEnter, useIonViewWillLeave,
   } from '@ionic/react';
   import { useLocation } from 'react-router';
   import DatabaseContext from '../../context/database';
@@ -72,9 +72,6 @@ import removeAccents from '../../utils/removeAccents';
       localStorage.setItem('setsSortPosibilities', JSON.stringify(setsSortPosibilities));
     }, [setsSortPosibilities]);
 
-    useEffect(() => {
-
-    }, [setsSelectedSortOptions])
     const processedSets = useMemo(() => {
       const processSet = (setName: string) => {
         const setScenes = offlineScenes.filter((scene: any) => scene._data.setName === setName);
@@ -183,6 +180,23 @@ import removeAccents from '../../utils/removeAccents';
           );
       setFilteredSets(filteredSets);
     }, [processedSets, setsSearchText]);
+
+    const clearData = () => {
+      setFilteredSets([]);
+      setFilteredLocations([]);
+      setDataIsLoading(true);
+    }
+
+    useIonViewWillLeave(clearData);
+
+    const seedData = () => {
+      setDataIsLoading(true);
+      setFilteredLocations(processedLocations);
+      setFilteredSets(processedSets);
+      setDataIsLoading(false)
+    }
+
+    useIonViewWillEnter(seedData);
 
     useEffect(() => {
       if(processedLocations.length > 0 && filteredSets.length > 0) {
