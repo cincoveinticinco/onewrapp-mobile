@@ -8,7 +8,7 @@ const useWarningToast = () => {
   const warnigMessageToast = (message: string) => {
     presentToast({
       message,
-      duration: 2000,
+      duration: 1000,
       icon: settingsOutline,
       position: 'top',
       cssClass: 'warning-toast',
@@ -19,3 +19,6 @@ const useWarningToast = () => {
 };
 
 export default useWarningToast;
+
+
+// CHANGE CATEGORY, LOCATION ...
