@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
   IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
@@ -101,6 +101,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
   useIonViewWillEnter(() => {
     setDataIsLoading(true);
+    setUncheckedOptions([])
   })
 
   useIonViewDidEnter(() => {
@@ -110,9 +111,9 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     }, 1500);
   });
 
-  useIonViewDidLeave(() => {
-    setUncheckedOptions([])
-  });
+  useEffect(() => {
+    setUncheckedOptions(uncheckedfilteredFiltersOptions);
+  }, [uncheckedfilteredFiltersOptions]);
 
   const getListStyles = () => {
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
