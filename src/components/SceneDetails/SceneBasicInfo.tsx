@@ -81,7 +81,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
       </IonRow>
       <IonRow>
         <IonCol>
-          <p style={{textAlign: 'center', fontSize: '18px'}}><b>{scene.synopsis}</b></p>
+          <p style={{textAlign: 'center', fontSize: '16px'}}><b>{scene.synopsis}</b></p>
         </IonCol>
       </IonRow>
     </IonGrid>
