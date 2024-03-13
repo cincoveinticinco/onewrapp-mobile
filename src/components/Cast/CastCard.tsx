@@ -93,7 +93,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       type: 'text',
       fieldName: 'categoryName',
       placeholder: 'INSERT',
-      required: true,
+      required: false,
       inputName: 'add-category-name-input',
     },
     {
@@ -126,7 +126,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
   ]
 
   const defaultValues = {
-    categoryName: character.categoryName,
+    categoryName: character.categoryName === 'NO CATEGORY' ? '' : character.categoryName,
     characterNum: character.characterNum,
     characterName: character.characterName,
   }

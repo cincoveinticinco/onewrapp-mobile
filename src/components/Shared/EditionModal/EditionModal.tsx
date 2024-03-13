@@ -64,9 +64,9 @@ const EditionModal: React.FC<EditionModalProps> = ({
     return setValue(fieldName, value);
   };
 
-  const handleValidation = (value: string, fieldName: string) => {
+  const handleValidation = (value: string, fieldName: string, required: boolean) => {
 
-    if ((value === '' || !value) && fieldName !== 'characterNum') {
+    if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
       setShowError(true);
       setErrorMessage('REQUIRED *');
       return 'This field is required';
@@ -121,7 +121,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                   inputName={input.inputName}
                   displayError={input.fieldName !== 'characterNum' ? showError : false}
                   setValue={setNewOptionValue}
-                  validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName)}
+                  validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
                   type={input.type}
                   errorMessage={errorMessage}
                 />
