@@ -89,6 +89,14 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
   const formInputs = [
     {
+      label: 'Category Name',
+      type: 'text',
+      fieldName: 'categoryName',
+      placeholder: 'INSERT',
+      required: true,
+      inputName: 'add-category-name-input',
+    },
+    {
       label: 'Character Number',
       type: 'text',
       fieldName: 'characterNum',
@@ -118,6 +126,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
   ]
 
   const defaultValues = {
+    categoryName: character.categoryName,
     characterNum: character.characterNum,
     characterName: character.characterName,
   }
@@ -175,8 +184,6 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
   
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
-
-        newCharacter.categoryName = character.categoryName;
   
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName).concat(newCharacter);
         
