@@ -2,7 +2,6 @@
 import {
   IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 import useHideTabs from '../../hooks/useHideTabs';
 import { useHistory, useParams } from 'react-router';
 import { useContext, useEffect, useState } from 'react';
