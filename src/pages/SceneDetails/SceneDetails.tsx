@@ -1,6 +1,6 @@
 
 import {
-  IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter
+  IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
 import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 import useHideTabs from '../../hooks/useHideTabs';
@@ -17,6 +17,7 @@ import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
 import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
 import InputAlert from '../../components/Shared/InputAlert/InputAlert';
 import useSuccessToast from '../../hooks/useSuccessToast';
+import { set } from 'lodash';
 
 const SceneDetails: React.FC = () => {
   const {hideTabs, showTabs} = useHideTabs()
@@ -37,7 +38,7 @@ const SceneDetails: React.FC = () => {
     return scene._data ? scene._data : null
   }
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     const fetchScene = async () => {
       if (sceneId) {
         const scene = await getCurrentScene()
@@ -49,9 +50,12 @@ const SceneDetails: React.FC = () => {
     }
 
     fetchScene()
-  }, [
-    offlineScenes
-  ])
+  })
+
+  useIonViewDidLeave(() => {
+    setSceneIsLoading(true)
+    setThisScene(null)
+  })
 
   
 
