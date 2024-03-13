@@ -23,6 +23,7 @@ import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPa
 import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 import useHandleBack from '../../hooks/useHandleBack';
+import useLoader from '../../hooks/useLoader';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
@@ -111,7 +112,7 @@ const FilterScenes = () => {
       <IonContent color="tertiary">
         {
           dataIsLoading &&
-          <div>Loading...</div>
+          useLoader()
         }
         {
           !dataIsLoading &&

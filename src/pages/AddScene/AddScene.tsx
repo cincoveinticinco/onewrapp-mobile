@@ -11,6 +11,7 @@ import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPa
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
+import useLoader from '../../hooks/useLoader';
 
 const AddScene: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -141,7 +142,7 @@ const AddScene: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef} style={{zIndex: '20'}}>
         {
           dataIsLoading && (
-            <div>Loading...</div>
+            useLoader()
           )
         }
         {
