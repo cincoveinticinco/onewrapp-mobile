@@ -5,6 +5,7 @@ import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
+import { set } from 'lodash';
 
 interface EditionModalProps {
   modalTrigger: string;
@@ -26,7 +27,18 @@ const EditionModal: React.FC<EditionModalProps> = ({
 
   const modalRef = useRef<HTMLIonModalElement>(null);
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
-  const [showError, setShowError] = useState(false);
+  const [showError, setShowError] = useState({});
+
+  useEffect(() => {
+    formInputs.forEach((input: any) => {
+      setShowError((prevState: any) => {
+        return {
+          ...prevState,
+          [input.fieldName]: false,
+        };
+      });
+    });
+  }, [])
 
 
   const resetFormValues = () => {
@@ -67,7 +79,14 @@ const EditionModal: React.FC<EditionModalProps> = ({
   const handleValidation = (value: string, fieldName: string, required: boolean) => {
 
     if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
-      setShowError(true);
+      setShowError(
+        (prevState: any) => {
+          return {
+            ...prevState,
+            [fieldName]: true,
+          };
+        }
+      )
       setErrorMessage('REQUIRED *');
       return 'This field is required';
     }
@@ -75,7 +94,14 @@ const EditionModal: React.FC<EditionModalProps> = ({
     if (validate && fieldName !== 'characterNum') {
       const validation = validate(value);
       if (typeof validation === 'string') {
-        setShowError(true);
+        setShowError(
+          (prevState: any) => {
+            return {
+              ...prevState,
+              [fieldName]: true,
+            };
+          }
+        )
         setErrorMessage(validation);
         return validation;
       }
@@ -87,7 +113,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   const submitEdition = (formData: any) => {
     handleEdition(formData);
     closeModal();
-    setShowError(false);
+    setShowError({});
   }
 
   return (
@@ -119,7 +145,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                   control={control}
                   fieldName={input.fieldName}
                   inputName={input.inputName}
-                  displayError={input.fieldName !== 'characterNum' ? showError : false}
+                  displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
                   setValue={setNewOptionValue}
                   validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
                   type={input.type}
