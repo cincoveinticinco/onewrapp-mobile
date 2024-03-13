@@ -1,4 +1,4 @@
-import { IonContent, useIonViewDidEnter, useIonViewDidLeave } from '@ionic/react';
+import { IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
@@ -115,7 +115,7 @@ const EditSceneToDetails: React.FC = () => {
 
   const { hideTabs, showTabs } = useHideTabs();
 
-  useIonViewDidEnter(() => {
+  useIonViewWillEnter(() => {
     hideTabs();
   });
 

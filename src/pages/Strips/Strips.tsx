@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
-import { IonButton, IonContent, IonGrid, useIonViewDidEnter } from '@ionic/react';
+import { IonButton, IonContent, IonGrid, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
@@ -30,7 +30,7 @@ const Strips: React.FC = () => {
   useScrollToTop(contentRef, useLocation());
   const { showTabs } = useHideTabs();
 
-  useIonViewDidEnter(() => {
+  useIonViewWillEnter(() => {
     showTabs();
   });
 

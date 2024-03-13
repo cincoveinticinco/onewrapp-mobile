@@ -1,5 +1,5 @@
 import {
-  IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave,
+  IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
 import React, { useContext, useEffect } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
@@ -43,11 +43,11 @@ const FilterScenes = () => {
     return () => clearTimeout(loadingTime);
   }, [offlineScenes]);
 
-  useIonViewDidEnter(() => {
+  useIonViewWillEnter(() => {
     hideTabs();
   })
   
-  useIonViewDidLeave(() => {
+  useIonViewWillLeave(() => {
     showTabs();
   });
 
