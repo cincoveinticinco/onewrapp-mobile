@@ -57,7 +57,7 @@ const EditScene: React.FC = () => {
     return scene._data;
   };
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     const fetchScene = async () => {
       if (sceneId) {
         const existingScene = await getExistingScene();
@@ -66,14 +66,14 @@ const EditScene: React.FC = () => {
           setFormData({ ...formData, [key]: existingScene[key] });
           setTimeout(
             () => setSceneDataIsLoading(false),
-            300,
+            100,
           )
         })
       }
     };
 
     fetchScene();
-  }, []);
+  });
 
   const {
     control,
@@ -122,6 +122,16 @@ const EditScene: React.FC = () => {
   useIonViewWillLeave(() => {
     showTabs()
   });
+
+  const clearData = () => {
+    reset();
+    setFormData(sceneDefaultValues);
+    setSceneDataIsLoading(true);
+  }
+
+  useIonViewDidLeave(clearData);
+
+  
 
   return (
     <SecondaryPagesLayout
