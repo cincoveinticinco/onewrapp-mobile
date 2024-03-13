@@ -4,6 +4,7 @@ import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes';
 import ProjectsSchema from '../RXdatabase/schemas/projects';
 import scenesSeeds from '../data/scn_data.json';
+import { Scene } from '../interfaces/scenesTypes';
 
 const sceneCollection = new ScenesSchema();
 const projectCollection = new ProjectsSchema();
@@ -19,7 +20,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const scenesQuery = oneWrapRXdatabase?.scenes.find();
-  const offlineScenes$: Observable<any[]> = scenesQuery ? scenesQuery.$ : null;
+  const offlineScenes$: Observable<Scene[]> = scenesQuery ? scenesQuery.$ : null;
 
   useEffect(() => {
     const initializeDatabase = async () => {
