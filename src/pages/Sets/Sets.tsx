@@ -301,6 +301,7 @@ import useLoader from '../../hooks/useLoader';
                           onClick={() => toggleDropDown(location.locationName)}
                           isOpen={dropDownIsOpen[location.locationName]}
                           validationFunction={validateLocationExists}
+                          setIsLoading={setDataIsLoading}
                         />
                       }
                       {

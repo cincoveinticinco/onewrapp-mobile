@@ -3,7 +3,6 @@ import {
   IonItemSliding,
   IonItemOptions,
   IonButton,
-  IonIcon,
   IonItem,
   IonTitle,
 } from '@ionic/react';
@@ -52,6 +51,7 @@ interface LocationSetCardProps {
   onClick?: () => void;
   isOpen?: boolean;
   validationFunction: (value: string, currentValue: string) => (boolean | string)
+  setIsLoading?: (value: boolean) => void
 }
 
 // EP, ....
@@ -72,7 +72,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
   </p>
 );
 
-const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen, validationFunction}) => {
+const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading}) => {
   const isMobile = useIsMobile();
   const { oneWrapDb } = useContext<any>(DatabaseContext)
   const errorMessageToast = useErrorToast()
@@ -123,6 +123,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const editLocation = async (newLocation: any) => {
     try {
+      if(setIsLoading) {
+        setIsLoading(true)
+      }
       warningMessageToast('Please wait, location is being updated')
       const scenes = await scenesToEditWithLocation()
       const updatedScenes: any = []
@@ -136,6 +139,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
+      if(setIsLoading) {
+        setIsLoading(false)
+      }
+
       console.log('result', result)
       setTimeout(() => {
         successMessageToast('Location updated successfully')
@@ -148,6 +155,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
   const editSet = async (newSet: any) => {
     try {
       warningMessageToast('Please wait, set is being updated')
+      if(setIsLoading) {
+        setIsLoading(true)
+      }
       const scenes = await scenesToEditWithSet()
       const updatedScenes: any = []
 
@@ -160,6 +170,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
+      if(setIsLoading) {
+        setIsLoading(false)
+      }
+
       console.log('result', result)
       setTimeout(() => {
         successMessageToast('Set updated successfully')}, 500)
@@ -170,6 +184,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const deleteLocation = async () => {
     try {
+      if(setIsLoading) {
+        setIsLoading(true)
+      }
       warningMessageToast('Please wait, location is being deleted')
       const scenes = await scenesToEditWithLocation()
       const updatedScenes: any = []
@@ -183,6 +200,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
 
+      if(setIsLoading) {
+        setIsLoading(false)
+      }
+
       console.log('result', result)
       setTimeout(() => {
         successMessageToast('Location deleted successfully')}, 500)
@@ -193,6 +214,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
 
   const deleteSet = async () => {
     try {
+      if(setIsLoading) {
+        setIsLoading(true)
+      }
       warningMessageToast('Please wait, set is being deleted')
       const scenes = await scenesToEditWithSet()
       const updatedScenes: any = []
@@ -205,6 +229,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       })
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes)
+
+      if(setIsLoading) {
+        setIsLoading(false)
+      }
 
       console.log('result', result)
       setTimeout(() => {
