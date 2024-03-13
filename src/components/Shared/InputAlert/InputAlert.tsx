@@ -1,25 +1,26 @@
+import React, { forwardRef } from 'react';
 import { AlertInput, IonAlert } from '@ionic/react';
-import React from 'react';
 import './InputAlert.scss';
 
 interface InputAlertProps {
   handleOk: (inputData: any) => void;
   inputs: AlertInput[];
-  trigger: string;
+  trigger?: string;
   header: string;
   subHeader?: string;
   message?: string;
 }
 
-const InputAlert:React.FC<InputAlertProps> = ({
+const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlertProps> = ({
   handleOk,
   inputs,
   trigger,
   header,
   subHeader,
   message,
-}) => (
+}, ref) => (
   <IonAlert
+    ref={ref}
     color="dark"
     trigger={trigger}
     header={header}
@@ -43,4 +44,4 @@ const InputAlert:React.FC<InputAlertProps> = ({
   />
 );
 
-export default InputAlert;
+export default forwardRef(InputAlert);
