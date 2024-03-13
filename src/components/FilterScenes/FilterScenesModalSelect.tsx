@@ -101,8 +101,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
   useIonViewWillEnter(() => {
     setDataIsLoading(true);
-    setUncheckedOptions([])
-  })
+  });
 
   useIonViewDidEnter(() => {
     setUncheckedOptions(uncheckedfilteredFiltersOptions)
@@ -116,7 +115,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
     setTimeout(() => {
       setDataIsLoading(false);
     }, 1500);
-  }, [uncheckedfilteredFiltersOptions]);
+  }, []);
 
   const getListStyles = () => {
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {

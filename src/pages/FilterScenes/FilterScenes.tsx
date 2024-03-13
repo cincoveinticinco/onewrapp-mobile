@@ -1,7 +1,7 @@
 import {
   IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
@@ -37,11 +37,9 @@ const FilterScenes = () => {
   const [dataIsLoading, setDataIsLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
-    const loadingTime =  setTimeout(() => {
+    setTimeout(() => {
       setDataIsLoading(false);
     }, 500)
-
-    return () => clearTimeout(loadingTime);
   }, [offlineScenes]);
 
   useIonViewWillEnter(() => {
@@ -53,19 +51,19 @@ const FilterScenes = () => {
   });
 
   // Main functions
-  const handleSingleFilterOption = (category: string, optionValue: string) => {
+  const handleSingleFilterOption = useCallback((category: string, optionValue: string) => {
     setSelectedFilterOptions((prevOptions: SelectedFilterOptionsInterface) => {
       const updatedOptions = toggleFilterOption(prevOptions, category, optionValue);
       return updatedOptions;
     });
-  };
-
-  const handleNestedFilterOption = (category: string, nestedKey: string, optionValue: string) => {
+  }, [setSelectedFilterOptions]);
+  
+  const handleNestedFilterOption = useCallback((category: string, nestedKey: string, optionValue: string) => {
     setSelectedFilterOptions((prevOptions: SelectedFilterOptionsInterface) => {
       const updatedOptions = toggleNestedFilterOption(prevOptions, category, nestedKey, optionValue);
       return updatedOptions;
     });
-  };
+  }, [setSelectedFilterOptions]);
 
   const getFilterButtonClass = (optionValue: string, category: string) => {
     if (selectedFilterOptions[category] && selectedFilterOptions[category].includes(optionValue)) {
@@ -86,12 +84,12 @@ const FilterScenes = () => {
   const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
   const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
   const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
-  const getSortedCharacterNames = customArraySort(getCharactersArray(uniqueCharacterValuesArray));
-  const getSortedExtraNames = customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray));
-  const getSortedElementNames = sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray));
-  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
-  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
-  const getSortedElementCategoryNames = sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray));
+  const getSortedCharacterNames = useMemo(() => customArraySort(getCharactersArray(uniqueCharacterValuesArray)), [uniqueCharacterValuesArray]);
+  const getSortedExtraNames = useMemo(() => customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray)), [uniqueExtrasValuesArray]);
+  const getSortedElementNames = useMemo(() => sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray)), [uniqueElementsValuesAarray]);
+  const getSortedLocationNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName')), [offlineScenes]);
+  const getSortedSetNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName')), [offlineScenes]);
+  const getSortedElementCategoryNames = useMemo(() => sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray)), [uniqueCategoryElementsValuesArray]);
 
   useEffect(() => {
     if (Object.entries(selectedFilterOptions).length > 0) {
