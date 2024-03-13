@@ -21,7 +21,6 @@ import useProcessedCast from '../../hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import DatabaseContext, { DatabaseContextProvider } from '../../context/database';
 import useLoader from '../../hooks/useLoader';
 
 const Cast: React.FC = () => {
