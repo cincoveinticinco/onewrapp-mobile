@@ -1,22 +1,19 @@
-  import React, {
-    useContext, useEffect, useState, useMemo, useRef,
-  } from 'react';
-  import {
-    IonContent, useIonViewDidEnter, useIonViewWillEnter, useIonViewWillLeave,
-  } from '@ionic/react';
-  import { useLocation } from 'react-router';
-  import DatabaseContext from '../../context/database';
-  import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-  import { SceneTypeEnum } from '../../Ennums/ennums';
-  import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-  import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-  import useScrollToTop from '../../hooks/useScrollToTop';
-  import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-  import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
-  import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-  import SetCard from '../../components/Sets/LocationSetCard';
-  import LocationSetCard from '../../components/Sets/LocationSetCard';
-  import './Sets.scss'
+import React, {
+  useContext, useEffect, useState, useRef,
+} from 'react';
+import {
+  IonContent, useIonViewDidEnter, useIonViewWillLeave,
+} from '@ionic/react';
+import { useLocation } from 'react-router';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import useScrollToTop from '../../hooks/useScrollToTop';
+import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
+
+import SetCard from '../../components/Sets/LocationSetCard';
+import LocationSetCard from '../../components/Sets/LocationSetCard';
+import './Sets.scss'
 import removeAccents from '../../utils/removeAccents';
 import useLoader from '../../hooks/useLoader';
 import useProcessedSetsAndLocations from '../../hooks/usePorcessedSetsAndLocations';
@@ -65,7 +62,7 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 
         return includesSet || normalizedLocation.includes(normalizedSearchText);
       }) : processedLocations;  
-      setFilteredLocations(filteredLocations); 
+      setFilteredLocations((filteredLocations));
     }, [processedLocations, setsSearchText]);
 
     useEffect(() => {
@@ -101,7 +98,12 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
     useEffect(() => {
       if(processedLocations.length > 0 && filteredSets.length > 0) {
         processedLocations.forEach((location: any) => {
-          const filteredSetsByLocation = filteredSets.filter((set: any) => set.locationName.toLowerCase() === location.locationName.toLowerCase());
+          const filteredSetsByLocation = filteredSets.filter((set: any) => {
+            if(location.locationName === 'NO LOCATION') {
+              return !set.locationName;
+            }
+            return set.locationName === location.locationName;
+          });
 
           setSets((prev: any) => ({
             ...prev,
@@ -143,26 +145,29 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
     const toggleDropDown = (location: string) => setDropDownIsOpen((prev: any) => ({ ...prev, [location]: !prev[location] }));
 
     const validateLocationExists = (locationName: string, currentLocationName: string) => {
-      if (locationName === currentLocationName) {
-        return true;
+      if(locationName) {
+        if (locationName === currentLocationName) {
+          return true;
+        }
+        const normalize = (text: string) => removeAccents(text.toLowerCase());
+        
+        const locationExists = processedLocations.some((location: any) => normalize(location.locationName) === normalize(locationName));
+  
+        return locationExists ? 'Location already exists' : true;
       }
-      const normalize = (text: string) => removeAccents(text.toLowerCase());
-      
-      const locationExists = processedLocations.some((location: any) => normalize(location.locationName) === normalize(locationName));
-
-      return locationExists ? 'Location already exists' : true;
     }
 
     const validateSetExists = (setName: string, currentSetName: string) => {
-      if (setName === currentSetName) {
-        return true;
+      if(setName) {
+        if (setName === currentSetName) {
+          return true;
+        }
+        const normalize = (text: string) => removeAccents(text.toLowerCase());
+        
+        const setExists = processedSets.some((set: any) => normalize(set.setName) === normalize(setName));
+  
+        return setExists ? 'Set already exists' : true;
       }
-
-      const normalize = (text: string) => removeAccents(text.toLowerCase());
-
-      const setExists = processedSets.some((set: any) => normalize(set.setName) === normalize(setName));
-
-      return setExists ? 'Set already exists' : true;
     }
 
     return (
