@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
   IonItemSliding,
   IonItemOptions,
   IonButton,
-  IonIcon,
   IonItem,
   IonTitle,
   useIonToast,
@@ -12,7 +11,7 @@ import HighlightedText from '../../components/Shared/HighlightedText/Highlighted
 import './ElementCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
-import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
+import { checkmarkCircle } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import useIsMobile from '../../hooks/useIsMobile';
 import EditionModal from '../Shared/EditionModal/EditionModal';
@@ -21,8 +20,7 @@ import useErrorToast from '../../hooks/useErrorToast';
 import InputAlert from '../Shared/InputAlert/InputAlert';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import useWarningToast from '../../hooks/useWarningToast';
-import { set } from 'lodash';
+import useWarningToast from '../../hooks/useWarningToast'
 
 interface Element {
   elementName: string;
@@ -61,6 +59,17 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const randomIndex = Math.random() * 1000;
+  const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
+  const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
+
+  const openDeleteElementAlert = () => {
+    deleteElementAlert.current?.present();
+  }
+
+  const openDeleteCategoryAlert = () => {
+    deleteCategoryAlert.current?.present();
+  }
 
   const [presentToast] = useIonToast();
 
@@ -341,7 +350,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
           <IonButton fill="clear" onClick={() => section === 'category' ? scenesToEditWithCategory().then((values: any) => console.log(values)) : scenesToEditWithElement().then((values: any)  => console.log(values))}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" id={section === 'category' ? `delete-category-${data.categoryName || Math.random() * 1000}` : `delete-element-${data.elementName || Math.random()}`}>
+          <IonButton fill="clear" onClick={() => section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert()}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
@@ -361,7 +370,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
         message={`Are you sure you want to delete ${data.categoryName ? data.categoryName.toUpperCase() : 'N/A'} category from all the scenes? This will also delete all the elements inside this category.`}
         handleOk={() => deleteCategory()}
         inputs={[]}
-        trigger={`delete-category-${data.categoryName || Math.random() * 1000}`}
+        ref={deleteCategoryAlert}
       />
 
       <InputAlert
@@ -369,7 +378,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
         message={`Are you sure you want to delete ${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} element from all the scenes?`}
         handleOk={() => deleteElement()}
         inputs={[]}
-        trigger={`delete-element-${data.elementName || Math.random()}`}
+        ref={deleteElementAlert}
       />
     </>
   );
