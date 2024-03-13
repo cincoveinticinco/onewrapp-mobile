@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
-  IonList, IonModal, IonRow,
+  IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import { chevronForward } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
@@ -15,6 +15,7 @@ import capitalizeString from '../../utils/capitalizeString';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import useLoader from '../../hooks/useLoader';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -37,6 +38,8 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   const isMobile = useIsMobile();
   const [searchText, setSearchText] = useState('');
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
+  const [uncheckedOptions, setUncheckedOptions] = useState<string[]>([]);
+  const [dataIsLoading, setDataIsLoading] = useState(true);
 
   const getCheckedOptions = () => {
     const result = selectedFilterOptions[optionKey];
@@ -95,6 +98,21 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
   const uncheckedfilteredFiltersOptions = filteredFiltersOptions.filter((option) => !isFilterOptionChecked(option));
   const checkedFiltersOptions = listOfFilters.filter((option) => isFilterOptionChecked(option));
+
+  useIonViewWillEnter(() => {
+    setDataIsLoading(true);
+  })
+
+  useIonViewDidEnter(() => {
+    setUncheckedOptions(uncheckedfilteredFiltersOptions)
+    setTimeout(() => {
+      setDataIsLoading(false);
+    }, 1000);
+  });
+
+  useIonViewDidLeave(() => {
+    setUncheckedOptions([])
+  });
 
   const getListStyles = () => {
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
@@ -162,33 +180,20 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
         </IonHeader>
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
-          <>
-            <IonList
-              color="tertiary"
-              className="ion-no-padding filters-options-list"
-              style={getListStyles()}
-            >
-              {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
-                <div
+          {
+            dataIsLoading && (
+              useLoader()
+            )
+          }
+          {
+            !dataIsLoading && (
+              <>
+                <IonList
                   color="tertiary"
-                  key={`filter-item-${i}`}
-                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                >
-                  <IonCheckbox
-                    slot="start"
-                    className="ion-no-margin ion-no-padding"
-                    labelPlacement="end"
-                    onClick={() => handleCheckboxToggle(option)}
-                    checked={isFilterOptionChecked(option)}
-                  >
-                    {isMobile ? truncateString(option.toUpperCase(), 30) : (
-                      <HighlightedText text={option} searchTerm={searchText} />
-                    )}
-                  </IonCheckbox>
-                </div>
-              ))}
-              {
-                  uncheckedfilteredFiltersOptions.map((option: string, i: number) => (
+                  className="ion-no-padding filters-options-list"
+                  style={getListStyles()}
+                > 
+                  {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
                     <div
                       color="tertiary"
                       key={`filter-item-${i}`}
@@ -206,27 +211,49 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                         )}
                       </IonCheckbox>
                     </div>
-                  ))
-}
-            </IonList>
-            {
-                uncheckedfilteredFiltersOptions.length === 0
-                && (
-                <p className="no-items-message">
-                  There are no coincidences. Do you want to
-                  <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}> reset search </span>
-                  ?
-                </p>
-                )
-              }
-            <OutlinePrimaryButton
-              buttonName="FILTER"
-              onClick={handleSave}
-              className="ion-margin"
-              style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
-            />
-            {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleSave} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
-          </>
+                  ))}
+                  {
+                    uncheckedOptions.map((option: string, i: number) => (
+                      <div
+                        color="tertiary"
+                        key={`filter-item-${i}`}
+                        className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+                      >
+                        <IonCheckbox
+                          slot="start"
+                          className="ion-no-margin ion-no-padding"
+                          labelPlacement="end"
+                          onClick={() => handleCheckboxToggle(option)}
+                          checked={isFilterOptionChecked(option)}
+                        >
+                          {isMobile ? truncateString(option.toUpperCase(), 30) : (
+                            <HighlightedText text={option} searchTerm={searchText} />
+                          )}
+                        </IonCheckbox>
+                      </div>
+                    ))
+    }
+                </IonList>
+                {
+                  uncheckedfilteredFiltersOptions.length === 0
+                  && (
+                  <p className="no-items-message">
+                    There are no coincidences. Do you want to
+                    <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}> reset search </span>
+                    ?
+                  </p>
+                  )
+                }
+                <OutlinePrimaryButton
+                  buttonName="FILTER"
+                  onClick={handleSave}
+                  className="ion-margin"
+                  style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
+                />
+                {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleSave} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
+            </>
+            )
+          }
         </IonContent>
       </IonModal>
     </IonRow>
