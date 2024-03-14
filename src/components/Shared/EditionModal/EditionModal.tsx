@@ -13,7 +13,7 @@ interface EditionModalProps {
   formInputs: any;
   handleEdition: any;
   defaultFormValues: any;
-  validate?: (value: string) => (boolean | string)
+  validate?: (value: string, keyValue?: string) => (boolean | string)
 }
 
 const EditionModal: React.FC<EditionModalProps> = ({
@@ -77,7 +77,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   };
 
   const handleValidation = (value: string, fieldName: string, required: boolean) => {
-
+    
     if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
       setShowError(
         (prevState: any) => {
@@ -91,7 +91,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
       return 'This field is required';
     }
 
-    if (validate && fieldName !== 'characterNum') {
+    if (validate && fieldName !== 'characterNum' && required) {
       const validation = validate(value);
       if (typeof validation === 'string') {
         setShowError(

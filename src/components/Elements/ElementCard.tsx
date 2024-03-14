@@ -59,7 +59,6 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb } = useContext<any>(DatabaseContext);
-  const randomIndex = Math.random() * 1000;
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
 
@@ -137,6 +136,14 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
 
   const formElementInputs = [
     {
+      label: 'Category Name',
+      type: 'text',
+      fieldName: 'categoryName',
+      placeholder: 'INSERT',
+      required: false,
+      inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,
+    },
+    {
       label: 'Element Name',
       type: 'text',
       fieldName: 'elementName',
@@ -158,6 +165,7 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
   ]
 
   const defaultFormValuesForElements = {
+    categoryName: data.elementCategory,
     elementName: data.elementName,
   }
 
@@ -174,8 +182,6 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
-        newElement.categoryName = data.elementCategory;
-  
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.elementName !== data.elementName).concat(newElement);
         
         updatedScenes.push(updatedScene);
@@ -300,6 +306,8 @@ const ElementCard: React.FC<ElementCardProps> = ({ data, searchText, section, is
     if(section === 'category') {
       return validationFunction(name, data.categoryName);
     }
+
+    console.log('Validation function:', validationFunction(name, data.elementName), name, data.elementName);
 
     return validationFunction(name, data.elementName);
   }

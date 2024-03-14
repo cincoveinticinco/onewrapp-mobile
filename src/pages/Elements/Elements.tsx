@@ -226,16 +226,23 @@ const Elements: React.FC = () => {
   const handleSetDisplayedElements= (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...newElements]) }));
 
   const validateCategoryExists = (categoryName: string, currentCategory: string) => {
-    const normalize = (text: string) => removeAccents(text).toLowerCase();
-    const normalizedCategoryName = normalize(categoryName);
-    const normalizedCurrentCategory = normalize(currentCategory);
-    return categoriesData.some((categoryData: any) => normalize(categoryData.categoryName) === normalizedCategoryName && normalize(categoryData.categoryName) !== normalizedCurrentCategory) ? 'This category already exists' : true;
+    if(currentCategory) {
+      const normalize = (text: string) => removeAccents(text).toLowerCase().trim();
+      const normalizedCategoryName = normalize(categoryName);
+      const normalizedCurrentCategory = normalize(currentCategory);
+      return categoriesData.some((categoryData: any) => normalize(categoryData.categoryName) === normalizedCategoryName && normalize(categoryData.categoryName) !== normalizedCurrentCategory) ? 'This category already exists' : true;
+    }
+
+    return true
   }
 
   const validateElementExists = (elementName: string, currentElement: string) => {
     const normalize = (text: string) => removeAccents(text).toLowerCase();
+
     const normalizedElementName = normalize(elementName);
+
     const normalizedCurrentElement = normalize(currentElement);
+
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
   }
 
