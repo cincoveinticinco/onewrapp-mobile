@@ -3,7 +3,7 @@ import {
   IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
   IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
-import { chevronForward } from 'ionicons/icons';
+import { chevronForward, search } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
 import './FilterScenesModalSelect.scss';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -118,6 +118,10 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   useEffect(() => {
     setUncheckedOptions(uncheckedfilteredFiltersOptions);
   }, [selectedFilterOptions]);
+
+  useEffect(() => {
+    setUncheckedOptions(uncheckedfilteredFiltersOptions);
+  }, [searchText]);
 
   const getListStyles = () => {
     if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
