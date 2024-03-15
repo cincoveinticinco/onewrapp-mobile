@@ -89,20 +89,20 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
   const formInputs = [
     {
-      label: 'Category Name',
-      type: 'text',
-      fieldName: 'categoryName',
-      placeholder: 'INSERT',
-      required: false,
-      inputName: 'add-category-name-input',
-    },
-    {
       label: 'Character Number',
       type: 'text',
       fieldName: 'characterNum',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-number-input',
+    },
+    {
+      label: 'Category Name',
+      type: 'text',
+      fieldName: 'categoryName',
+      placeholder: 'INSERT',
+      required: false,
+      inputName: 'add-category-name-input',
     },
     {
       label: 'Character Name',
