@@ -122,9 +122,15 @@ const SceneDetails: React.FC = () => {
         <IonToolbar color="success"  mode='ios' style={{
           border: '1px solid black',
         }}>
-          <IonIcon icon={chevronBack} slot='start' size='large' onClick={changeToPreviousScene} className='change-scene-button' />
+          {
+            previousScene &&
+            <IonIcon icon={chevronBack} slot='start' size='large' onClick={changeToPreviousScene} className='change-scene-button' />
+          }
           <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
-          <IonIcon icon={chevronForward} slot='end' size='large' onClick={changeToNextScene} className='change-scene-button' />
+          {
+            nextScene &&
+            <IonIcon icon={chevronForward} slot='end' size='large' onClick={changeToNextScene} className='change-scene-button' />
+          }
         </IonToolbar>
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
