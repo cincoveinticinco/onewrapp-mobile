@@ -26,6 +26,25 @@
   }
 }
 
+.change-scene-button {
+  --background-activated: transparent !important;
+  --color: var(--ion-color-primary);
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+
+  &:active,
+  &:hover,
+  &:focus {
+    --color: var(--ion-color-primary);
+    --border-radius: 0;
+    --border-color: var(--ion-color-primary);
+
+    background-color: transparent !important;
+    border-color: 1px solid var(--ion-color-primary);
+    color: var(--ion-color-primary);
+  }
+}
+
 .categories-card-container {
   display: grid;
   grid-template-columns: 1fr;

@@ -18,6 +18,8 @@ import InputAlert from '../../components/Shared/InputAlert/InputAlert';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import { set } from 'lodash';
 import useLoader from '../../hooks/useLoader';
+import ScenesContext from '../../context/ScenesContext';
+import applyFilters from '../../utils/applyFilters';
 
 const SceneDetails: React.FC = () => {
   const {hideTabs, showTabs} = useHideTabs()
@@ -26,6 +28,25 @@ const SceneDetails: React.FC = () => {
   const history = useHistory()
   const [thisScene, setThisScene] = useState<any>(null)
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true)
+  const { selectedFilterOptions } = useContext(ScenesContext)
+
+  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions)
+
+  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId)
+  const nextScene = filteredScenes[currentSceneIndex + 1]
+  const previousScene = filteredScenes[currentSceneIndex - 1]
+
+  const changeToNextScene = () => {
+    if(nextScene) {
+      history.push(`/my/projects/163/strips/details/scene/${nextScene.id}`)
+    }
+  }
+
+  const changeToPreviousScene = () => {
+    if(previousScene) {
+      history.push(`/my/projects/163/strips/details/scene/${previousScene.id}`)
+    }
+  }
 
   const successMessageSceneToast = useSuccessToast();
 
@@ -98,10 +119,12 @@ const SceneDetails: React.FC = () => {
     <IonPage>
       <IonHeader>
         <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
-        <IonToolbar color="success"  mode='ios'>
-          <IonIcon icon={chevronBack} slot='start' size='large' />
+        <IonToolbar color="success"  mode='ios' style={{
+          border: '1px solid black',
+        }}>
+          <IonIcon icon={chevronBack} slot='start' size='large' onClick={changeToPreviousScene} className='change-scene-button' />
           <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
-          <IonIcon icon={chevronForward} slot='end' size='large' />
+          <IonIcon icon={chevronForward} slot='end' size='large' onClick={changeToNextScene} className='change-scene-button' />
         </IonToolbar>
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
