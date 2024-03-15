@@ -5,7 +5,7 @@ import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
-import { set } from 'lodash';
+import './EditionModal.scss';
 
 interface EditionModalProps {
   modalTrigger: string;
@@ -137,23 +137,27 @@ const EditionModal: React.FC<EditionModalProps> = ({
           </IonHeader>
           {
               formInputs
-              && formInputs.map((input: any, i: any) => (
-                <InputItem
-                  key={i}
-                  label={input.label}
-                  placeholder={input.placeholder}
-                  control={control}
-                  fieldName={input.fieldName}
-                  inputName={input.inputName}
-                  displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
-                  setValue={setNewOptionValue}
-                  validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
-                  type={input.type}
-                  errorMessage={errorMessage}
-                />
-              ))
+              && 
+              <div className='edit-inputs-wrapper'>
+                {
+                  formInputs.map((input: any, i: any) => (
+                  <InputItem
+                    key={i}
+                    label={input.label}
+                    placeholder={input.placeholder}
+                    control={control}
+                    fieldName={input.fieldName}
+                    inputName={input.inputName}
+                    displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
+                    setValue={setNewOptionValue}
+                    validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
+                    type={input.type}
+                    errorMessage={errorMessage}
+                  />
+                ))}
+              </div>
             }
-          <div className="add-new-option-buttons-container">
+          <div className="edit-new-option-buttons-container">
             <OutlinePrimaryButton
               buttonName="SAVE"
               onClick={handleSubmit(submitEdition)}
