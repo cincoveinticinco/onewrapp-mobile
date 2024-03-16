@@ -135,6 +135,14 @@
   }
 }
 
+@media (max-width: 500px) {
+  .script-paragraph {
+    &.dialog-paragraph {
+      max-width: 50vw;
+    }
+  }
+}
+
 // THIS IS TO MANTAIN RELATION IN MOBILE PORTRAIT
 // @media (max-width: 500px) {
 //   .script-paragraph {
