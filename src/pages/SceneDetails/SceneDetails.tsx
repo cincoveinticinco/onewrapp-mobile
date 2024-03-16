@@ -22,6 +22,7 @@ import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import { Scene } from '../../interfaces/scenesTypes';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import SceneHeader from './SceneHeader';
 
 const SceneDetails: React.FC = () => {
   const {hideTabs, showTabs} = useHideTabs()
@@ -33,6 +34,8 @@ const SceneDetails: React.FC = () => {
   const { selectedFilterOptions } = useContext(ScenesContext)
 
   const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions)
+
+  // LOGIC TO CHANGE SCENE
 
   const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId)
   const nextScene = filteredScenes[currentSceneIndex + 1]
@@ -162,19 +165,14 @@ const SceneDetails: React.FC = () => {
     <IonPage>
       <IonHeader>
         <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
-        <IonToolbar className={`scene-theme-${sceneColor}`} mode='ios' style={{
-          border: '1px solid black',
-        }}>
-          {
-            previousScene &&
-            <IonIcon icon={chevronBack} slot='start' size='large' onClick={changeToPreviousScene} className='change-scene-button' />
-          }
-          <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
-          {
-            nextScene &&
-            <IonIcon icon={chevronForward} slot='end' size='large' onClick={changeToNextScene} className='change-scene-button' />
-          }
-        </IonToolbar>
+        <SceneHeader
+          sceneColor={sceneColor}
+          sceneHeader={sceneHeader}
+          previousScene={previousScene}
+          nextScene={nextScene}
+          changeToPreviousScene={changeToPreviousScene}
+          changeToNextScene={changeToNextScene}
+        />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
         {

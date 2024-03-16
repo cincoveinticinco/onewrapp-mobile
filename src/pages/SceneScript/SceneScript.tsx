@@ -10,6 +10,11 @@ import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDet
 import { chevronBack, chevronForward } from 'ionicons/icons';
 import DatabaseContext from '../../context/database';
 import './SceneScript.scss'
+import SceneHeader from '../SceneDetails/SceneHeader';
+import ScenesContext from '../../context/ScenesContext';
+import applyFilters from '../../utils/applyFilters';
+import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import { Scene } from '../../interfaces/scenesTypes';
 
 const paragraphs = [
     {
@@ -189,7 +194,6 @@ const ScriptPage = () => {
           ))}
       </div>
   );
-
 }
 
 const SceneScript: React.FC = () => {
@@ -198,6 +202,8 @@ const SceneScript: React.FC = () => {
   const [thisScene, setThisScene] = useState<any>(null)
   const { oneWrapDb, offlineScenes } = useContext(DatabaseContext)
   const history = useHistory()
+
+  const { selectedFilterOptions } = useContext(ScenesContext)
 
   const getCurrentScene = async () => {
     const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec()
@@ -241,16 +247,81 @@ const SceneScript: React.FC = () => {
     hideTabs()
    });
 
+  // LOGIC TO CHANGE SCENE
+     
+  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions)
+
+  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId)
+  const nextScene = filteredScenes[currentSceneIndex + 1]
+  const previousScene = filteredScenes[currentSceneIndex - 1]
+
+  const changeToNextScene = () => {
+    if(nextScene) {
+      history.push(`/my/projects/163/strips/details/script/${nextScene.id}`)
+    }
+  }
+
+  const changeToPreviousScene = () => {
+    if(previousScene) {
+      history.push(`/my/projects/163/strips/details/script/${previousScene.id}`)
+    }
+  }
+  
+  const [sceneColor, setSceneColor] = useState<string>('light')
+
+  useEffect(() => {
+    if(thisScene) {
+      setSceneColor(getSceneColor(thisScene))
+    }
+  }, [thisScene])
+
+  const interior = IntOrExtOptionEnum.INT;
+  const exterior = IntOrExtOptionEnum.EXT;
+  const intExt = IntOrExtOptionEnum.INT_EXT;
+  const extInt = IntOrExtOptionEnum.EXT_INT;
+  const protectionType = SceneTypeEnum.PROTECTION;
+  const sceneType = SceneTypeEnum.SCENE;
+  const day = DayOrNightOptionEnum.DAY;
+  const night = DayOrNightOptionEnum.NIGHT;
+
+  const getSceneColor = (scene: Scene) => {
+    const intOrExt: any = [exterior, intExt, extInt];
+
+    if(scene) {
+      if (scene.sceneType == protectionType) {
+        return 'rose';
+      } if (scene.sceneType == sceneType) {
+        if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
+          return 'dark';
+        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
+          return 'light';
+        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
+          return 'success';
+        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
+          return 'yellow';
+        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
+          return 'primary';
+        }
+      }
+    }
+
+    return 'light';
+  };
+
+
   return (
    <>
       <IonPage>
         <IonHeader>
           <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
-          <IonToolbar color="success"  mode='ios'>
-            <IonIcon icon={chevronBack} slot='start' size='large' />
-            <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
-            <IonIcon icon={chevronForward} slot='end' size='large' />
-          </IonToolbar>
+          <SceneHeader
+            sceneColor={sceneColor}
+            sceneHeader={sceneHeader}
+            previousScene={previousScene}
+            nextScene={nextScene}
+            changeToPreviousScene={changeToPreviousScene}
+            changeToNextScene={changeToNextScene}
+          />  
         </IonHeader>
         <IonContent color="tertiary" fullscreen  
         style={
