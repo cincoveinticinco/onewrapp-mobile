@@ -43,6 +43,7 @@
   padding: 3.99vh calc(((100vh - 12vh) * (8.5 / 11 ) - 4.23vh) * 0.1) 7vh calc(((100vh - 12vh) * (8.5 / 11 ) - 4.23vh) * 0.1);
   max-width: calc((100vh - 12vh) * (8.5 / 11 ));
   height: auto;
+  min-height: 108%;
   background-color: var(--ion-color-light);
   margin: auto;
   margin-bottom: calc(((100vh - 12vh) * (-8.5 / 11 ) - 4.23vh) * 0.09);
@@ -114,7 +115,8 @@
     height: auto;
     background-color: var(--ion-color-light);
     margin: 0px auto;
-    margin-bottom: calc(((100vh - 12vw) * (-8.5 / 11 )) * 0.12);
+    margin-bottom: -7vw;
+    min-height: calc(100% + 7vw);
   }
   
   .script-page-top-bar {
@@ -128,7 +130,7 @@
   }
 
   .script-page-bottom-bar {
-    height: calc(((100vh - 12vw) * (8.5 / 11 )) * 0.125);
+    height: 6.5vw;
     width: calc((100vh - 12vw) * (8.5 / 11 ) - 24px);
     margin: auto;
     border: none;
