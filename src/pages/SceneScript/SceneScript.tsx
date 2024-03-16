@@ -181,13 +181,13 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
 
 const ScriptPage = () => {
   return (
-    <div
-    className="script-page"
-  >
-      {paragraphs.map((paragraph, index) => (
-        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
-      ))}
-    </div>
+      <div
+        className="script-page"
+        >
+          {paragraphs.map((paragraph, index) => (
+            <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
+          ))}
+      </div>
   );
 
 }
@@ -242,31 +242,30 @@ const SceneScript: React.FC = () => {
    });
 
   return (
-    <IonPage>
-      <IonHeader>
-        <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
-        <IonToolbar color="success"  mode='ios'>
-          <IonIcon icon={chevronBack} slot='start' size='large' />
-          <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
-          <IonIcon icon={chevronForward} slot='end' size='large' />
-        </IonToolbar>
-      </IonHeader>
-      <IonContent color="tertiary" fullscreen>
-        <ScriptPage />
-      </IonContent>
-      <IonTabBar
-       style={{
-        border: 'none',
-        padding: '0px',
-        margin: '0 auto',
-        backgroundColor: 'var(--ion-color-light)',
-       }}
-       className='script-page-bottom-bar'
-      >
-
-      </IonTabBar>
-      <SceneDetailsTabs sceneId={sceneId} />
-    </IonPage>
+   <>
+      <IonPage>
+        <IonHeader>
+          <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
+          <IonToolbar color="success"  mode='ios'>
+            <IonIcon icon={chevronBack} slot='start' size='large' />
+            <IonTitle style={{fontWeight: 'light'}}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
+            <IonIcon icon={chevronForward} slot='end' size='large' />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent color="tertiary" fullscreen  
+        style={
+          {
+            position: 'relative',
+          }
+        }>
+          <ScriptPage />
+        </IonContent>
+        <IonTabBar className='script-page-bottom-bar'></IonTabBar>
+        <IonTabBar className='script-page-top-bar'></IonTabBar>
+        <SceneDetailsTabs sceneId={sceneId} />
+      </IonPage>
+      
+   </>
   )
 };
 
