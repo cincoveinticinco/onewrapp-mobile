@@ -20,7 +20,7 @@ import useProcessedSetsAndLocations from '../../hooks/usePorcessedSetsAndLocatio
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 
   const Sets: React.FC = () => {
-    const { processedSets, processedLocations } = useProcessedSetsAndLocations();
+    const { processedSets, processedLocations, isLoading, setIsLoading } = useProcessedSetsAndLocations();
     const { setsSelectedSortOptions, setSetsSelectedSortOptions } = useContext(ScenesContext);
     const [setsSearchText, setSetsSearchText] = useState('');
     const [sets, setSets] = useState<any>({});
@@ -29,7 +29,6 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
     const [displayedSets, setDisplayedSets] = useState<any>({});
     const [dropDownIsOpen, setDropDownIsOpen] = useState<any>({});
     const [displayedLocations, setDisplayedLocations] = useState<any[]>([]);
-    const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
     const thisPath = useLocation();
     const contentRef = useRef<HTMLIonContentElement>(null);
 
@@ -75,25 +74,6 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
           );
       setFilteredSets(filteredSets);
     }, [processedSets, setsSearchText]);
-
-    const clearData = () => {
-      setFilteredSets([]);
-      setFilteredLocations([]);
-      setDataIsLoading(true);
-    }
-
-    useIonViewWillLeave(clearData);
-
-    const seedData = () => {
-      setDataIsLoading(true);
-      setFilteredLocations(processedLocations);
-      setFilteredSets(processedSets);
-      setTimeout(() => {
-        setDataIsLoading(false)
-      }, 300);
-    }
-
-    useIonViewDidEnter(seedData);
 
     useEffect(() => {
       if(processedLocations.length > 0 && filteredSets.length > 0) {
@@ -182,12 +162,12 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
         >
           <IonContent color="tertiary" fullscreen ref={contentRef}>
             {
-              dataIsLoading && (
+              isLoading && (
                 useLoader()
               )
             }
             {
-              !dataIsLoading && (
+              !isLoading && (
                 <>
                   <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations} batchSize={9}>
                     {displayedLocations.map((location, index) => (
@@ -203,7 +183,7 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
                           onClick={() => toggleDropDown(location.locationName)}
                           isOpen={dropDownIsOpen[location.locationName]}
                           validationFunction={validateLocationExists}
-                          setIsLoading={setDataIsLoading}
+                          setIsLoading={setIsLoading}
                         />
                       }
                       {
