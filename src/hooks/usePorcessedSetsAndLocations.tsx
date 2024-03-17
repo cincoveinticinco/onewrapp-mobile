@@ -26,6 +26,7 @@ const useProcessedSetsAndLocations = () => {
   const { offlineScenes } = useContext(DatabaseContext);
   const { setsSelectedSortOptions } = useContext(ScenesContext)
   const [locationsSelectedSortOptions, setLocationsSelectedSortOptions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Update locationsSelectedSortOptions based on setsSelectedSortOptions
   useEffect(() => {
@@ -82,6 +83,7 @@ const useProcessedSetsAndLocations = () => {
   // Memoized processed sets data
   const processedSets = useMemo<SetInformation[]>(() => {
     const uniqueSetNames: string[] = getUniqueValuesByKey(offlineScenes, 'setName');
+    setIsLoading(false);
     return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions);
   }, [offlineScenes, setsSelectedSortOptions, processSet]);
 
@@ -112,7 +114,7 @@ const useProcessedSetsAndLocations = () => {
     return sortByCriterias(uniqueLocationNames.map(processedLocationsData), locationsSelectedSortOptions);
   }, [offlineScenes, locationsSelectedSortOptions]);
 
-  return { processedSets, processedLocations };
+  return { processedSets, processedLocations, isLoading, setIsLoading };
 };
 
 export default useProcessedSetsAndLocations;
