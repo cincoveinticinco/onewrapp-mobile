@@ -188,6 +188,7 @@ const ScriptPage = () => {
   return (
       <div
         className="script-page"
+        contentEditable
         >
           {paragraphs.map((paragraph, index) => (
             <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
