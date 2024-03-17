@@ -123,7 +123,7 @@
     height: calc(((100vh - 12vw) * (8.5 / 11 ) - 50px) * 0.09);
     width: calc((100vh - 12vw) * (8.5 / 11 ) - 24px);
     position: absolute;
-    top: 7vw;
+    top: 100px;
     z-index: 1;
     right: calc(50% - ((100vh - 12vw) * (8.5 / 11 ) - 24px) / 2);
     background-color: var(--ion-color-light);
