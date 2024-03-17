@@ -323,12 +323,17 @@ const SceneScript: React.FC = () => {
             changeToNextScene={changeToNextScene}
           />  
         </IonHeader>
-        <IonContent color="tertiary" fullscreen  
-        style={
-          {
+        <IonContent
+          color="tertiary"
+          fullscreen
+          scrollEvents={true}
+          style={{
             position: 'relative',
-          }
-        }>
+            '--overflow': 'auto',
+            '--overscroll-behavior': 'none',
+            touchAction: 'auto',
+          }}
+        >
           <ScriptPage />
         </IonContent>
         <IonTabBar className='script-page-bottom-bar'></IonTabBar>
