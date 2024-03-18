@@ -76,7 +76,7 @@ const Strips: React.FC = () => {
 
   useEffect(() => {
     const newFilteredScenes = sortByCriterias(filteredScenes, selectedSortOptions);
-    setDisplayedScenes(newFilteredScenes.slice(0, 10));
+    setDisplayedScenes(newFilteredScenes.slice(0, 20));
   }, [filteredScenes, selectedSortOptions]);
 
   const handleBack = () => history.push('/my/projects');
