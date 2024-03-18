@@ -16,6 +16,7 @@ import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import useLoader from '../../hooks/useLoader';
+import RegularList from '../../Layouts/RegularCheckboxList/RegularCheckboxList';
 
 interface FilterScenesModalSelectProps {
   filterName: string;
@@ -197,52 +198,16 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           {
             !dataIsLoading && (
               <>
-                <IonList
-                  color="tertiary"
-                  className="ion-no-padding filters-options-list"
-                  style={getListStyles()}
-                > 
-                  {checkedOptions && checkedFiltersOptions.map((option: string, i: number) => (
-                    <div
-                      color="tertiary"
-                      key={`filter-item-${i}`}
-                      className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                    >
-                      <IonCheckbox
-                        slot="start"
-                        className="ion-no-margin ion-no-padding"
-                        labelPlacement="end"
-                        onClick={() => handleCheckboxToggle(option)}
-                        checked={isFilterOptionChecked(option)}
-                      >
-                        {isMobile ? truncateString(option.toUpperCase(), 30) : (
-                          <HighlightedText text={option} searchTerm={searchText} />
-                        )}
-                      </IonCheckbox>
-                    </div>
-                  ))}
-                  {
-                    uncheckedOptions.map((option: string, i: number) => (
-                      <div
-                        color="tertiary"
-                        key={`filter-item-${i}`}
-                        className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                      >
-                        <IonCheckbox
-                          slot="start"
-                          className="ion-no-margin ion-no-padding"
-                          labelPlacement="end"
-                          onClick={() => handleCheckboxToggle(option)}
-                          checked={isFilterOptionChecked(option)}
-                        >
-                          {isMobile ? truncateString(option.toUpperCase(), 30) : (
-                            <HighlightedText text={option} searchTerm={searchText} />
-                          )}
-                        </IonCheckbox>
-                      </div>
-                    ))
-    }
-                </IonList>
+                <RegularList
+                  checkedSelectedOptions={checkedFiltersOptions}
+                  uncheckedFilteredOptions={uncheckedfilteredFiltersOptions}
+                  handleCheckboxToggle={handleCheckboxToggle}
+                  listOfOptions={listOfFilters}
+                  multipleSelections
+                  searchText={searchText}
+                  isOptionChecked={isFilterOptionChecked}
+                  selectedOptions={selectedFilterOptions}
+                />
                 {
                   uncheckedfilteredFiltersOptions.length === 0
                   && (
