@@ -15,6 +15,11 @@ import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
 import { Scene } from '../../interfaces/scenesTypes';
+import { RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
+
+// BLUE CHARACTER
+// YELLOW ELEMENT
+// GREEN EXTRA
 
 const paragraphs = [
     {
@@ -191,94 +196,94 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
     </p>;
 };
 
-const ScriptPage = () => {
+const ScriptPage = ({ zoomLevel }: { zoomLevel: number }) => {
   return (
-      <div
-        className="script-page"
-        >
-          {paragraphs.map((paragraph, index) => (
-            <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
-          ))}
-      </div>
+    <div
+      className="script-page"
+      style={{
+        zoom: zoomLevel,
+        transformOrigin: 'top left',
+      }}
+    >
+      {paragraphs.map((paragraph, index) => (
+        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
+      ))}
+    </div>
   );
 }
 
 const SceneScript: React.FC = () => {
-  const {hideTabs, showTabs} = useHideTabs()
-  const { sceneId } = useParams<{ sceneId: string }>()
-  const [thisScene, setThisScene] = useState<any>(null)
-  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext)
-  const history = useHistory()
-
-  const { selectedFilterOptions } = useContext(ScenesContext)
+  const {hideTabs, showTabs} = useHideTabs();
+  const { sceneId } = useParams<{ sceneId: string }>();
+  const [thisScene, setThisScene] = useState<any>(null);
+  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
+  const history = useHistory();
+  const { selectedFilterOptions } = useContext(ScenesContext);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const getCurrentScene = async () => {
-    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec()
-    return scene._data ? scene._data : null
+    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+    return scene._data ? scene._data : null;
   }
 
-
   const handleBack = () => {
-    history.push('/my/projects/163/strips')
+    history.push('/my/projects/163/strips');
   }
 
   const fetchScene = async () => {
     if (sceneId) {
-      const scene = await getCurrentScene()
-      setThisScene(scene)
+      const scene = await getCurrentScene();
+      setThisScene(scene);
     }
   }
 
   useIonViewWillEnter(() => {
-    fetchScene()
+    fetchScene();
   })
 
   useEffect(() => {
-    fetchScene()
+    fetchScene();
   }, [offlineScenes])
 
   useIonViewDidLeave(() => {
-    setThisScene(null)
+    setThisScene(null);
   })
 
-  const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (thisScene.episodeNumber + '.') : ''}${thisScene.sceneNumber}` : ''
+  const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (thisScene.episodeNumber + '.') : ''}${thisScene.sceneNumber}` : '';
 
   useEffect(() => {
-    hideTabs()
+    hideTabs();
     return () => {
-      showTabs()
+      showTabs();
     }
   }, [])
 
   useIonViewDidEnter(() => {
-    hideTabs()
-   });
+    hideTabs();
+  });
 
-  // LOGIC TO CHANGE SCENE
-     
-  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions)
-
-  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId)
-  const nextScene = filteredScenes[currentSceneIndex + 1]
-  const previousScene = filteredScenes[currentSceneIndex - 1]
+  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
+  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
+  const nextScene = filteredScenes[currentSceneIndex + 1];
+  const previousScene = filteredScenes[currentSceneIndex - 1];
 
   const changeToNextScene = () => {
     if(nextScene) {
-      history.push(`/my/projects/163/strips/details/script/${nextScene.id}`)
+      history.push(`/my/projects/163/strips/details/script/${nextScene.id}`);
     }
   }
 
   const changeToPreviousScene = () => {
     if(previousScene) {
-      history.push(`/my/projects/163/strips/details/script/${previousScene.id}`)
+      history.push(`/my/projects/163/strips/details/script/${previousScene.id}`);
     }
   }
-  
-  const [sceneColor, setSceneColor] = useState<string>('light')
+
+  const [sceneColor, setSceneColor] = useState<string>('light');
 
   useEffect(() => {
     if(thisScene) {
-      setSceneColor(getSceneColor(thisScene))
+      setSceneColor(getSceneColor(thisScene));
     }
   }, [thisScene])
 
@@ -315,10 +320,22 @@ const SceneScript: React.FC = () => {
     return 'light';
   };
 
+  const handleZoomIn = () => {
+    setZoomLevel((prevZoomLevel) => (prevZoomLevel < 1.5 ? prevZoomLevel + 0.1 : prevZoomLevel));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prevZoomLevel) => (prevZoomLevel > 1 ? prevZoomLevel - 0.1 : prevZoomLevel));
+  };
 
   return (
-   <>
+    <>
+      
       <IonPage>
+        <div className='script-buttons-container'>
+          <RiZoomInFill className='script-button-icon' onClick={handleZoomIn}/>
+          <RiZoomOutFill className='script-button-icon' onClick={handleZoomOut} />
+        </div>
         <IonHeader>
           <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
           <SceneHeader
@@ -334,21 +351,24 @@ const SceneScript: React.FC = () => {
           color="tertiary"
           fullscreen
           scrollEvents={true}
-          style={{
-            position: 'relative',
-            '--overflow': 'auto',
-            '--overscroll-behavior': 'none',
-            touchAction: 'auto',
-          }}
         >
-          <ScriptPage />
+          <ScriptPage zoomLevel={zoomLevel} />
         </IonContent>
-        <IonTabBar className='script-page-bottom-bar'></IonTabBar>
-        <IonTabBar className='script-page-top-bar'></IonTabBar>
+        <IonTabBar 
+          className='script-page-bottom-bar'
+          style={{
+            transform: `scaleX(${zoomLevel}))`
+          }}
+      ></IonTabBar>
+        <IonTabBar 
+          className='script-page-top-bar'
+          style={{
+            transform: `scaleX(${zoomLevel}))`
+          }}
+        ></IonTabBar>
         <SceneDetailsTabs sceneId={sceneId} />
       </IonPage>
-      
-   </>
+    </>
   )
 };
 
