@@ -4,7 +4,7 @@ import {
 } from '@ionic/react';
 import useHideTabs from '../../hooks/useHideTabs';
 import { useHistory, useParams } from 'react-router';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import { chevronBack, chevronForward } from 'ionicons/icons';
@@ -170,18 +170,22 @@ interface SceneParagraphProps {
 const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedText, setSelectedText] = useState('');
+  const selectionRef = useRef<string | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLParagraphElement>) => {
     e.preventDefault();
   };
 
-  const handleMouseUp = (e: any) => {
+  const handleTouchEnd = (e: React.TouchEvent<HTMLParagraphElement>) => {
     const selection = window.getSelection();
     const selectedText = selection?.toString().trim();
+    const thereIsaPopup = document.querySelector('.script-popup');
+    const isScrollEvent = e.touches.length > 1 || e.changedTouches.length > 1;
 
-    if (selectedText) {
+    if (selectedText && !isScrollEvent && !thereIsaPopup && selectedText !== selectionRef.current) {
       setSelectedText(selectedText);
       setShowPopup(true);
+      selectionRef.current = selectedText;
     } else {
       setShowPopup(false);
     }
@@ -191,6 +195,7 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
     setShowPopup(false);
     setSelectedText('');
     clearSelection();
+    selectionRef.current = null;
   };
 
   const clearSelection = () => {
@@ -232,20 +237,19 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
     <div>
       <p
         className={`${className} script-paragraph`}
-        onMouseUp={handleMouseUp}
         onTouchStartCapture={handleTouchStart}
-        onTouchEndCapture={handleMouseUp}
+        onTouchEndCapture={handleTouchEnd}
         contentEditable
         suppressContentEditableWarning
       >
         {content}
       </p>
       {showPopup && (
-        <div className="popup">
-          <p style={{
-            color: 'black',
-          }}>Texto seleccionado: {selectedText}</p>
-          <button onClick={handlePopupClose}>Cerrar</button>
+        <div className="script-popup-background" onClick={handlePopupClose}>
+          <div className="script-popup" onClick={e => e.stopPropagation()}>
+            <p style={{ color: 'black' }}>Texto seleccionado: {selectedText}</p>
+            <button onClick={handlePopupClose}>Cerrar</button>
+          </div>
         </div>
       )}
     </div>

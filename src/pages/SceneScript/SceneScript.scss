@@ -6,7 +6,6 @@
   z-index: 1000;
   cursor: pointer;
 
-
   .script-button-icon {
     font-size: 36px;
     color: var(--ion-color-medium);
@@ -20,6 +19,24 @@
   }
 }
 
+.script-popup-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  .script-popup {
+    border: 1px solid black;
+    position: absolute;
+    top: calc(50% - 150px);
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 300px;
+    background-color: var(--ion-color-light);
+    color: var(--ion-color-light);
+  }
+}
 
 .script-paragraph {
   color: black;
