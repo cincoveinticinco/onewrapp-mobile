@@ -1,4 +1,4 @@
-@import "../../../theme/mixins";
+@import "../../theme/mixins";
 
 #add-scenes-options-modal {
   @include modal-styling;
@@ -15,17 +15,6 @@
 
   ion-input.error {
     color: var(--ion-color-danger);
-  }
-
-  .options-list {
-    outline: 1px solid black;
-    border: 1px solid black;
-    box-shadow: none;
-
-    .checkbox-option {
-      font-size: var(--525-common-title-size);
-      text-align: left;
-    }
   }
 
   .modal-confirm-button {

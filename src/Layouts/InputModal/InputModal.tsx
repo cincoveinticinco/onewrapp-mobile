@@ -13,6 +13,7 @@ import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import InputItem from '../../components/AddScene/AddSceneFormInputs/InputItem';
+import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 
 interface FormInputsProps {
   label: string;
@@ -70,22 +71,6 @@ const InputModal: React.FC<InputModalProps> = ({
     setSearchText('');
   };
 
-  const getListStyles = () => {
-    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
-      return { border: 'none', outline: 'none', marginTop: '100px' };
-    }
-
-    if (listOfOptions.length > 10) {
-      return { marginTop: '100px' };
-    }
-
-    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length <= 10) {
-      return {};
-    }
-
-    return {};
-  };
-
   const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
 
   const filteredOptions = listOfOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
@@ -107,7 +92,6 @@ const InputModal: React.FC<InputModalProps> = ({
 
   const {
     control,
-    formState: { errors },
     handleSubmit,
     setValue,
     resetField,
@@ -238,43 +222,16 @@ const InputModal: React.FC<InputModalProps> = ({
             )
           }
           <>
-            <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
-              {checkedSelectedOptions.map((option: string, i: number) => (
-                <div
-                  color="tertiary"
-                  key={`filter-item-${i}`}
-                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                  onClick={() => handleCheckboxToggle(option)}
-                >
-                  <IonCheckbox
-                    slot="start"
-                    className="ion-no-margin ion-no-padding checkbox-option"
-                    labelPlacement="end"
-                    checked={isOptionChecked(option)}
-                  >
-                    <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
-                  </IonCheckbox>
-                </div>
-              ))}
-              {uncheckedFilteredOptions.map((option: string, i: number) => (
-                <div
-                  color="tertiary"
-                  key={`filter-item-${i}`}
-                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                  onClick={() => handleCheckboxToggle(option)}
-                >
-                  <IonCheckbox
-                    slot="start"
-                    className="ion-no-margin ion-no-padding checkbox-option"
-                    labelPlacement="end"
-                    checked={isOptionChecked(option)}
-                    disabled={!multipleSelections && checkedSelectedOptions.length > 0}
-                  >
-                    <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
-                  </IonCheckbox>
-                </div>
-              ))}
-            </IonList>
+            <RegularList
+              listOfOptions={listOfOptions}
+              selectedOptions={selectedOptions}
+              handleCheckboxToggle={handleCheckboxToggle}
+              isOptionChecked={isOptionChecked}
+              multipleSelections={multipleSelections}
+              searchText={searchText}
+              checkedSelectedOptions={checkedSelectedOptions}
+              uncheckedFilteredOptions={uncheckedFilteredOptions}
+            />
             {
               filteredOptions.length === 0 && canCreateNew
                 && (
@@ -307,7 +264,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 className="ion-margin cancel-input-modal-button cancel-button"
               />
               )
-}
+            }
           </>
         </IonContent>
       )}
