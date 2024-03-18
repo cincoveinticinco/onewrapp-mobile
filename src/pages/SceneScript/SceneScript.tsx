@@ -171,6 +171,10 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedText, setSelectedText] = useState('');
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLParagraphElement>) => {
+    e.preventDefault();
+  };
+
   const handleMouseUp = (e: any) => {
     const selection = window.getSelection();
     const selectedText = selection?.toString().trim();
@@ -229,6 +233,8 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       <p
         className={`${className} script-paragraph`}
         onMouseUp={handleMouseUp}
+        onTouchStartCapture={handleTouchStart}
+        onTouchEndCapture={handleMouseUp}
         contentEditable
         suppressContentEditableWarning
       >
