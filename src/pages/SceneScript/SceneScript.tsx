@@ -357,13 +357,13 @@ const SceneScript: React.FC = () => {
         <IonTabBar 
           className='script-page-bottom-bar'
           style={{
-            transform: `scaleX(${zoomLevel}))`
+            zoom: `${zoomLevel}`,
           }}
       ></IonTabBar>
         <IonTabBar 
           className='script-page-top-bar'
           style={{
-            transform: `scaleX(${zoomLevel}))`
+           transform: `scale(${zoomLevel})`,
           }}
         ></IonTabBar>
         <SceneDetailsTabs sceneId={sceneId} />
