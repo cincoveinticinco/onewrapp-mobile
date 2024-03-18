@@ -238,7 +238,7 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       <p
         className={`${className} script-paragraph`}
         onTouchStartCapture={handleTouchStart}
-        onTouchEndCapture={handleTouchEnd}
+        onTouchEnd={handleTouchEnd}
         contentEditable
         suppressContentEditableWarning
       >
