@@ -4,6 +4,10 @@
   font-size: calc(((100vh - 12vh) * (8.5 / 11 ) - 4.23vh) * 0.018);             
   margin: calc(((100vh - 12vh) * (8.5 / 11 ) - 4.23vh) * 0.007);
 
+  &:focus {
+    outline: none;
+  }
+
   &.scene-paragraph {
     font-weight: bold;
     width: 100%;

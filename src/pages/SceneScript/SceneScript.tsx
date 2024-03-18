@@ -181,14 +181,20 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       className = 'default-paragraph';
   }
 
-  return <p className={className + ' script-paragraph'}>{content}</p>;
+  return <p 
+    className={className + ' script-paragraph'} 
+    contentEditable
+    suppressContentEditableWarning
+    // onInput={(e) => console.log(e)}
+    >
+      {content}
+    </p>;
 };
 
 const ScriptPage = () => {
   return (
       <div
         className="script-page"
-        contentEditable
         >
           {paragraphs.map((paragraph, index) => (
             <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
