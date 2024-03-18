@@ -162,8 +162,46 @@ interface SceneParagraphProps {
   content: string;
 }
 
+interface SceneParagraphProps {
+  type: string;
+  content: string;
+}
 
 const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedText, setSelectedText] = useState('');
+
+  const handleMouseUp = (e: any) => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+
+    if (selectedText) {
+      setSelectedText(selectedText);
+      setShowPopup(true);
+    } else {
+      setShowPopup(false);
+    }
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setSelectedText('');
+    clearSelection();
+  };
+
+  const clearSelection = () => {
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearSelection();
+    };
+  }, []);
+
   let className = '';
 
   switch (type) {
@@ -174,7 +212,7 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       className = 'description-paragraph';
       break;
     case 'character':
-      className = 'character-paragraph'; // New class for character names
+      className = 'character-paragraph';
       break;
     case 'dialog':
       className = 'dialog-paragraph';
@@ -186,14 +224,26 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       className = 'default-paragraph';
   }
 
-  return <p 
-    className={className + ' script-paragraph'} 
-    contentEditable
-    suppressContentEditableWarning
-    // onInput={(e) => console.log(e)}
-    >
-      {content}
-    </p>;
+  return (
+    <div>
+      <p
+        className={`${className} script-paragraph`}
+        onMouseUp={handleMouseUp}
+        contentEditable
+        suppressContentEditableWarning
+      >
+        {content}
+      </p>
+      {showPopup && (
+        <div className="popup">
+          <p style={{
+            color: 'black',
+          }}>Texto seleccionado: {selectedText}</p>
+          <button onClick={handlePopupClose}>Cerrar</button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 const ScriptPage = ({ zoomLevel }: { zoomLevel: number }) => {
