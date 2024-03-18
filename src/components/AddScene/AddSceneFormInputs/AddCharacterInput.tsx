@@ -5,7 +5,7 @@ import {
   IonList,
 } from '@ionic/react';
 import { Character } from '../../../interfaces/scenesTypes';
-import InputModal from '../../Shared/InputModal/InputModal';
+import InputModal from '../../../Layouts/InputModal/InputModal';
 import getCharactersArray from '../../../utils/getCharactersArray';
 import customArraySort from '../../../utils/customArraySort';
 import removeNumberAndDot from '../../../utils/removeNumberAndDot';

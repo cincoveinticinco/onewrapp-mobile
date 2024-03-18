@@ -21,7 +21,7 @@ import useSuccessToast from '../../hooks/useSuccessToast';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import useWarningToast from '../../hooks/useWarningToast';
-import InputAlert from '../Shared/InputAlert/InputAlert';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 
 interface Set {
   setName: string;
@@ -306,7 +306,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({ set, searchText, loca
       return validationFunction(value, set.locationName)
     }
   }
-  
+
   return (
     <IonItemSliding onClick={() => getOnclick()}>
       <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">

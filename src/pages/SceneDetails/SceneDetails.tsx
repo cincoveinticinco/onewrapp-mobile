@@ -1,6 +1,6 @@
 
 import {
-  IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
+  IonContent, IonHeader, IonPage, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
 import useHideTabs from '../../hooks/useHideTabs';
 import { useHistory, useParams } from 'react-router';
@@ -8,15 +8,13 @@ import { useContext, useEffect, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import DatabaseContext from '../../context/database';
-import { chevronBack, chevronForward } from 'ionicons/icons';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './SceneDetails.scss'
 import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
 import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
-import InputAlert from '../../components/Shared/InputAlert/InputAlert';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import useSuccessToast from '../../hooks/useSuccessToast';
-import { set } from 'lodash';
 import useLoader from '../../hooks/useLoader';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';

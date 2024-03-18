@@ -5,7 +5,7 @@ import {
   IonList,
 } from '@ionic/react';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
-import InputModal from '../../Shared/InputModal/InputModal';
+import InputModal from '../../../Layouts/InputModal/InputModal';
 import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
 import getOptionsArray from '../../../utils/getOptionsArray';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';

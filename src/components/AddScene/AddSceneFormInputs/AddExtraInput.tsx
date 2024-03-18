@@ -6,7 +6,7 @@ import { trash } from 'ionicons/icons';
 import { Extra } from '../../../interfaces/scenesTypes';
 import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
 import getOptionsArray from '../../../utils/getOptionsArray';
-import InputModal from '../../Shared/InputModal/InputModal';
+import InputModal from '../../../Layouts/InputModal/InputModal';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import applyFilters from '../../../utils/applyFilters';
 import NoAdded from '../../Shared/NoAdded/NoAdded';

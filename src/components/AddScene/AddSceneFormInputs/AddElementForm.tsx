@@ -6,7 +6,7 @@ import AddElementInput from './AddElementInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
-import InputAlert from '../../Shared/InputAlert/InputAlert';
+import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../context/database';
 import { get } from 'lodash';

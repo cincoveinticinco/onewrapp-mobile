@@ -12,7 +12,7 @@ import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
 } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
-import InputAlert from '../Shared/InputAlert/InputAlert';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { useHistory, useRouteMatch } from 'react-router';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from "react-icons/ci";

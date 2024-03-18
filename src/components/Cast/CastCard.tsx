@@ -15,7 +15,7 @@ import floatToFraction from '../../utils/floatToFraction';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext from '../../context/database';
-import InputAlert from '../Shared/InputAlert/InputAlert';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';

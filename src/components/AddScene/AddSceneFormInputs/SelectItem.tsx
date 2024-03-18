@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
 import { Controller, FieldValues, ValidateResult } from 'react-hook-form';
-import InputModal from '../../Shared/InputModal/InputModal';
+import InputModal from '../../../Layouts/InputModal/InputModal';
 
 interface SelectItemProps {
   label: string;

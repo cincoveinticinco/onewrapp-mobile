@@ -1,20 +1,18 @@
 import {
   IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonList, IonModal,
 } from '@ionic/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { set } from 'lodash';
-import { search } from 'ionicons/icons';
-import useIsMobile from '../../../hooks/useIsMobile';
-import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
+import useIsMobile from '../../hooks/useIsMobile';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import './InputModal.scss';
-import ModalSearchBar from '../ModalSearchBar/ModalSearchBar';
-import removeNumberAndDot from '../../../utils/removeNumberAndDot';
-import ModalToolbar from '../ModalToolbar/ModalToolbar';
-import truncateString from '../../../utils/truncateString';
-import HighlightedText from '../HighlightedText/HighlightedText';
-import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
+import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
+import removeNumberAndDot from '../../utils/removeNumberAndDot';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import truncateString from '../../utils/truncateString';
+import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
+import InputItem from '../../components/AddScene/AddSceneFormInputs/InputItem';
 
 interface FormInputsProps {
   label: string;
