@@ -5,6 +5,8 @@
   top: 100px;
   z-index: 1000;
   cursor: pointer;
+  user-select: text;
+  -webkit-user-select: text;
 
   .script-button-icon {
     font-size: 36px;

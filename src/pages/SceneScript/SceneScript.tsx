@@ -7,15 +7,17 @@ import { useHistory, useParams } from 'react-router';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import { chevronBack, chevronForward } from 'ionicons/icons';
 import DatabaseContext from '../../context/database';
 import './SceneScript.scss'
 import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
-import { Scene } from '../../interfaces/scenesTypes';
-import { RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
+import { Character, Scene } from '../../interfaces/scenesTypes';
+import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
+import HighlightedFilterNames from '../../components/FilterScenes/HighlightedFilterNames';
+import HighlightedTextWithArray from '../../components/Shared/HighlightedTextWithArray/HighlightedTextWithArray';
+import removeAccents from '../../utils/removeAccents';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -165,9 +167,12 @@ interface SceneParagraphProps {
 interface SceneParagraphProps {
   type: string;
   content: string;
+  enableEdition: boolean;
+  highlightColor?: string;
+  searchTermsArray?: string[];
 }
 
-const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
+const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content, enableEdition, highlightColor, searchTermsArray}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedText, setSelectedText] = useState('');
   const selectionRef = useRef<string | null>(null);
@@ -180,7 +185,7 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
     const selection = window.getSelection();
     const selectedText = selection?.toString().trim();
     const thereIsaPopup = document.querySelector('.script-popup');
-    const isScrollEvent = e.touches.length > 1 || e.changedTouches.length > 1;
+    const isScrollEvent = e.touches?.length > 1 || e.changedTouches?.length > 1;
 
     if (selectedText && !isScrollEvent && !thereIsaPopup && selectedText !== selectionRef.current) {
       setSelectedText(selectedText);
@@ -190,6 +195,20 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
       setShowPopup(false);
     }
   };
+
+  const handleMouseUp = () => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+    const thereIsaPopup = document.querySelector('.script-popup');
+
+    if (selectedText && !thereIsaPopup && selectedText !== selectionRef.current) {
+      setSelectedText(selectedText);
+      setShowPopup(true);
+      selectionRef.current = selectedText;
+    } else {
+      setShowPopup(false);
+    }
+  }
 
   const handlePopupClose = () => {
     setShowPopup(false);
@@ -234,15 +253,17 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
   }
 
   return (
-    <div>
+    <>
       <p
         className={`${className} script-paragraph`}
         onTouchStartCapture={handleTouchStart}
+        onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
-        contentEditable
+        contentEditable={enableEdition}
         suppressContentEditableWarning
       >
-        {content}
+        <HighlightedTextWithArray text={content} searchTerms={searchTermsArray || []} highlightColor={highlightColor} />
+
       </p>
       {showPopup && (
         <div className="script-popup-background" onClick={handlePopupClose}>
@@ -252,11 +273,73 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
-const ScriptPage = ({ zoomLevel }: { zoomLevel: number }) => {
+interface ScriptPageProps {
+  zoomLevel: number;
+  edition: boolean;
+  charactersArray: string[];
+  elementsArray: string[];
+  extrasArray: string[];
+}
+
+
+const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray }) => {
+
+  useEffect(() => {
+    console.log('charactersArray', charactersArray);
+    console.log('elementsArray', elementsArray);
+    console.log('extrasArray', extrasArray);
+  }, [charactersArray, elementsArray, extrasArray]);
+
+  const normalizeWord = (word: string) => {
+    const normalizedWord = removeAccents(word).toLowerCase().trim();
+    const symbolsRegex = /[^\w\s]/g;
+    return normalizedWord.replace(symbolsRegex, '');
+  }
+
+  const getHighlightColor = (text: string) => {
+    const words = text.split(' ').map(normalizeWord)
+    let color = '';
+    const normalizeCharactersArray = charactersArray.map(normalizeWord);
+    const normalizeElementsArray = elementsArray.map(normalizeWord);
+    const normalizeExtrasArray = extrasArray.map(normalizeWord);
+  
+    words.forEach(word => {
+      if (normalizeCharactersArray.includes(word)) {
+        color = 'var(--ion-color-primary)';
+      } else if (normalizeElementsArray.includes(word)) {
+        color = 'yellow';
+      } else if (normalizeExtrasArray.includes(word)) {
+        color = 'green';
+      }
+    });
+  
+    return color;
+  }
+
+  const getSearchTermsArray = (text: string) => {
+    const words = text.split(' ').map(normalizeWord);
+    let searchTermsArray: string[] = [];
+    const normalizeCharactersArray = charactersArray.map(normalizeWord);
+    const normalizeElementsArray = elementsArray.map(normalizeWord);
+    const normalizeExtrasArray = extrasArray.map(normalizeWord);
+
+    words.forEach(word => {
+      if (normalizeCharactersArray.includes(word)) {
+        searchTermsArray.push(word);
+      } else if (normalizeElementsArray.includes(word)) {
+        searchTermsArray.push(word);
+      } else if (normalizeExtrasArray.includes(word)) {
+        searchTermsArray.push(word);
+      }
+    });
+  
+    return searchTermsArray;
+  }
+  
   return (
     <div
       className="script-page"
@@ -266,7 +349,7 @@ const ScriptPage = ({ zoomLevel }: { zoomLevel: number }) => {
       }}
     >
       {paragraphs.map((paragraph, index) => (
-        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} />
+        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} enableEdition={edition} highlightColor={getHighlightColor(paragraph.content)} searchTermsArray={getSearchTermsArray(paragraph.content)}/>
       ))}
     </div>
   );
@@ -280,10 +363,14 @@ const SceneScript: React.FC = () => {
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [edition, setEdition] = useState(false);
 
   const getCurrentScene = async () => {
     const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
-    return scene._data ? scene._data : null;
+    if(scene._data) {
+      return scene._data;
+    }
+    return
   }
 
   const handleBack = () => {
@@ -326,6 +413,9 @@ const SceneScript: React.FC = () => {
   const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
   const nextScene = filteredScenes[currentSceneIndex + 1];
   const previousScene = filteredScenes[currentSceneIndex - 1];
+  const charactersArray = thisScene?.characters.map((character: Character) => character.characterName);
+  const elementsArray = thisScene?.elements.map((element: any) => element.elementName);
+  const extrasArray = thisScene?.extras.map((extra: any) => extra.extraName);
 
   const changeToNextScene = () => {
     if(nextScene) {
@@ -388,6 +478,10 @@ const SceneScript: React.FC = () => {
     setZoomLevel((prevZoomLevel) => (prevZoomLevel > 1 ? prevZoomLevel - 0.1 : prevZoomLevel));
   };
 
+  const handleEdition = () => {
+    setEdition(!edition);
+  }
+
   return (
     <>
       
@@ -395,6 +489,11 @@ const SceneScript: React.FC = () => {
         <div className='script-buttons-container'>
           <RiZoomInFill className='script-button-icon' onClick={handleZoomIn}/>
           <RiZoomOutFill className='script-button-icon' onClick={handleZoomOut} />
+          <RiEditFill  className='script-button-icon' onClick={handleEdition} 
+            style={
+              edition ? {color: 'var(--ion-color-success)'} : {}
+            }
+          />
         </div>
         <IonHeader>
           <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
@@ -412,7 +511,13 @@ const SceneScript: React.FC = () => {
           fullscreen
           scrollEvents={true}
         >
-          <ScriptPage zoomLevel={zoomLevel} />
+          <ScriptPage 
+            zoomLevel={zoomLevel} 
+            edition={edition} 
+            charactersArray={charactersArray || []}
+            elementsArray={elementsArray || []}
+            extrasArray={extrasArray || []}
+          />
         </IonContent>
         <IonTabBar 
           className='script-page-bottom-bar'
@@ -420,12 +525,26 @@ const SceneScript: React.FC = () => {
             zoom: `${zoomLevel}`,
           }}
       ></IonTabBar>
-        <IonTabBar 
+        <div
           className='script-page-top-bar'
           style={{
            transform: `scale(${zoomLevel})`,
           }}
-        ></IonTabBar>
+        >
+          {edition && (
+            <p 
+              style={{
+                color: 'var(--ion-color-success)',
+                position: 'absolute',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              Edition Enabled
+            </p>
+          )}
+        </div>
         <SceneDetailsTabs sceneId={sceneId} />
       </IonPage>
     </>
