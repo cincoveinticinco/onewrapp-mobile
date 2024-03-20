@@ -10,7 +10,7 @@ export interface Extra {
 }
 
 export interface Element {
-  categoryName: string;
+  categoryName: (string | null);
   elementName: string;
 }
 
