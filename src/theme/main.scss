@@ -69,6 +69,21 @@ ion-button.filled-primary-button {
   width: calc(100% - 32px);
 }
 
+.filled-success-button {
+  --background: var(--ion-color-success);
+  --color: var(--ion-color-light);
+  --border-radius: 0;
+  --border-color: var(--ion-color-success);
+  --border-style: solid;
+  --border-width: 1px;
+
+  transition: all 0.3s ease-in-out;
+  min-width: 120px;
+  margin: 6px auto;
+  width: calc(100% - 32px);
+
+}
+
 .outline-primary-button {
   --background: var(--ion-color-tertiary);
   --background-hover: var(--ion-color-primary);
