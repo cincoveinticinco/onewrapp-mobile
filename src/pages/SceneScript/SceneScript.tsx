@@ -1,6 +1,6 @@
 
 import {
-  IonContent, IonHeader, IonIcon, IonPage, IonTabBar, IonTabs, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
+  IonContent, IonHeader, IonInput, IonItem, IonPage, IonTabBar,  useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
 import useHideTabs from '../../hooks/useHideTabs';
 import { useHistory, useParams } from 'react-router';
@@ -13,11 +13,13 @@ import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
-import { Character, Scene } from '../../interfaces/scenesTypes';
+import { Character, Element, Extra, Scene } from '../../interfaces/scenesTypes';
 import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
-import HighlightedFilterNames from '../../components/FilterScenes/HighlightedFilterNames';
-import HighlightedTextWithArray from '../../components/Shared/HighlightedTextWithArray/HighlightedTextWithArray';
+import HighlightedTextWithArray, { SearchTerm } from '../../components/Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import removeAccents from '../../utils/removeAccents';
+import FiilledSuccessButton from '../../components/Shared/FilledSuccessButton/FillSuccessButton';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import useSuccessToast from '../../hooks/useSuccessToast';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -169,66 +171,76 @@ interface SceneParagraphProps {
   content: string;
   enableEdition: boolean;
   highlightColor?: string;
-  searchTermsArray?: string[];
+  searchTermsArray?: SearchTerm[];
+  handleCreation: (type: ('element' | 'character' | 'extra'), data: any) => void;
 }
 
-const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content, enableEdition, highlightColor, searchTermsArray}) => {
+const SceneParagraph: React.FC<SceneParagraphProps> = ({
+  type,
+  content,
+  enableEdition,
+  searchTermsArray,
+  handleCreation,
+}) => {
+  const successToast = useSuccessToast();
+  const { offlineScenes } = useContext(DatabaseContext);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedText, setSelectedText] = useState('');
   const selectionRef = useRef<string | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLParagraphElement>) => {
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent<HTMLParagraphElement>) => {
-    const selection = window.getSelection();
-    const selectedText = selection?.toString().trim();
-    const thereIsaPopup = document.querySelector('.script-popup');
-    const isScrollEvent = e.touches?.length > 1 || e.changedTouches?.length > 1;
-
-    if (selectedText && !isScrollEvent && !thereIsaPopup && selectedText !== selectionRef.current) {
-      setSelectedText(selectedText);
-      setShowPopup(true);
-      selectionRef.current = selectedText;
-    } else {
-      setShowPopup(false);
-    }
-  };
-
-  const handleMouseUp = () => {
-    const selection = window.getSelection();
-    const selectedText = selection?.toString().trim();
-    const thereIsaPopup = document.querySelector('.script-popup');
-
-    if (selectedText && !thereIsaPopup && selectedText !== selectionRef.current) {
-      setSelectedText(selectedText);
-      setShowPopup(true);
-      selectionRef.current = selectedText;
-    } else {
-      setShowPopup(false);
-    }
-  }
-
-  const handlePopupClose = () => {
-    setShowPopup(false);
-    setSelectedText('');
-    clearSelection();
-    selectionRef.current = null;
-  };
-
-  const clearSelection = () => {
-    const selection = window.getSelection();
-    if (selection) {
-      selection.removeAllRanges();
-    }
-  };
+  const [formType, setFormType] = useState<'character' | 'element' | 'extra' | null>(null);
+  const [extra, setExtra] = useState<Extra>({
+    categoryName: null,
+    extraName: '',
+  });
+  const [element, setElement] = useState<Element>({
+    categoryName: null,
+    elementName: '',
+  });
+  const [character, setCharacter] = useState<Character>({
+    categoryName: '',
+    characterName: '',
+    characterNum: null,
+  });
 
   useEffect(() => {
-    return () => {
-      clearSelection();
-    };
-  }, []);
+    const normalizedSelectedText = removeAccents(selectedText).toLowerCase().trim();
+    const uniqueCharacters = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+    const uniqueExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+
+    const foundCharacter = uniqueCharacters.find((character: Character) =>
+      removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText
+    );
+    const foundElement = uniqueElements.find((element: Element) =>
+      removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText
+    );
+    const foundExtra = uniqueExtras.find((extra: Extra) =>
+      removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText
+    );
+
+    if (foundCharacter) {
+      setFormType('character');
+      setCharacter({
+        ...foundCharacter,
+        characterNum: foundCharacter.characterNum || '',
+      });
+    } else if (foundElement) {
+      setFormType('element');
+      setElement(foundElement);
+    } else if (foundExtra) {
+      setFormType('extra');
+      setExtra(foundExtra);
+    } else {
+      setFormType('character');
+    }
+  }, [offlineScenes, selectedText]);
+
+
+  useEffect(() => {
+    setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: selectedText }));
+    setElement((prevElement: any) => ({ ...prevElement, elementName: selectedText }));
+    setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
+  }, [selectedText])
 
   let className = '';
 
@@ -252,6 +264,171 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content, enableEd
       className = 'default-paragraph';
   }
 
+  useEffect(() => {
+    const normalizedSelectedText = removeAccents(selectedText).toLowerCase().trim();
+    const uniqueCharacters = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+    const uniqueExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+
+    if (uniqueCharacters.some((character: Character) => removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText)) {
+      setFormType('character');
+    } else if (uniqueElements.some((element: Element) => removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText)) {
+      setFormType('element');
+    } else if (uniqueExtras.some((extra: Extra) => removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText)) {
+      setFormType('extra');
+    } else {
+      setFormType('character');
+    }
+  }, [offlineScenes, selectedText]);
+
+  const handleFormTypeChange = (newFormType: 'character' | 'element' | 'extra') => {
+    setFormType(newFormType);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLParagraphElement>) => {
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLParagraphElement>) => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+    const thereIsaPopup = document.querySelector('.script-popup');
+    const isScrollEvent = e.touches?.length > 1 || e.changedTouches?.length > 1;
+
+    if (selectedText && !isScrollEvent && !thereIsaPopup && selectedText !== selectionRef.current) {
+      handlePopupOpen(selectedText);
+      selectionRef.current = selectedText;
+    } else {
+      setShowPopup(false);
+    }
+  };
+
+  const handleMouseUp = () => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+    const thereIsaPopup = document.querySelector('.script-popup');
+
+    if (selectedText && !thereIsaPopup && selectedText !== selectionRef.current) {
+      handlePopupOpen(selectedText);
+      selectionRef.current = selectedText;
+    } else {
+      setShowPopup(false);
+    }
+  };
+
+  const handlePopupOpen = (selectedText: string) => {
+    setSelectedText(selectedText);
+    setShowPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setSelectedText('');
+    clearSelection();
+    selectionRef.current = null;
+    setFormType(null);
+  };
+
+  const clearSelection = () => {
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+    }
+  };
+
+  const handleFormSubmit = () => {
+    if (formType === 'character') {
+      handleCreation('character', character);
+      successToast('Character created successfully');
+    } else if (formType === 'element') {
+      handleCreation('element', element);
+      successToast('Element created successfully');
+    } else if (formType === 'extra') {
+      handleCreation('extra', extra);
+      successToast('Extra created successfully');
+    }
+    handlePopupClose();
+  }
+
+
+  const CharacterForm = () => (
+    <>
+      <IonItem>
+        <IonInput
+          className="script-popup-input"
+          value={character && character.characterNum}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Character Number"
+          placeholder="INSERT CHARACTER NUMBER"
+          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterNum: e.detail.value || '' }))}
+        />
+        <IonInput
+          className="script-popup-input"
+          value={character && character.categoryName}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Character Category"
+          placeholder="INSERT CHARACTER CATEGORY"
+          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || '' }))}
+        />
+      </IonItem>
+      <IonItem>
+        <IonInput
+          className="script-popup-input"
+          value={character && character.characterName}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Character Name *"
+          placeholder="INSERT CHARACTER NAME"
+          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: e.detail.value || '' }))}
+        />
+      </IonItem>
+    </>
+  );
+
+  const ElementForm = () => (
+    <>
+      <IonItem>
+        <IonInput
+          className="script-popup-input"
+          value={element && element.categoryName}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Element Category"
+          placeholder="INSERT ELEMENT CATEGORY"
+          onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, categoryName: e.detail.value || '' }))}
+        />
+      </IonItem>
+      <IonItem>
+        <IonInput
+          className="script-popup-input"
+          value={selectedText}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Element Name *"
+          placeholder="INSERT ELEMENT NAME"
+          onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, elementName: e.detail.value || '' }))}
+        />
+      </IonItem>
+    </>
+  );
+
+  const ExtraForm = () => (
+    <>
+      <IonItem>
+        <IonInput
+          className="script-popup-input"
+          value={selectedText}
+          color="tertiary"
+          labelPlacement="stacked"
+          label="Extra Name *"
+          placeholder="INSERT EXTRA NAME"
+        />
+      </IonItem>
+    </>
+  );
+
   return (
     <>
       <p
@@ -262,14 +439,41 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content, enableEd
         contentEditable={enableEdition}
         suppressContentEditableWarning
       >
-        <HighlightedTextWithArray text={content} searchTerms={searchTermsArray || []} highlightColor={highlightColor} />
-
+        {searchTermsArray && <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />}
       </p>
       {showPopup && (
         <div className="script-popup-background" onClick={handlePopupClose}>
           <div className="script-popup" onClick={e => e.stopPropagation()}>
-            <p style={{ color: 'black' }}>Texto seleccionado: {selectedText}</p>
-            <button onClick={handlePopupClose}>Cerrar</button>
+            <div className="form-type-selector">
+              <button
+                className={`form-type-button ${formType === 'character' ? 'selected' : ''}`}
+                onClick={() => handleFormTypeChange('character')}
+              >
+                Character
+              </button>
+              <button
+                className={`form-type-button ${formType === 'element' ? 'selected' : ''}`}
+                onClick={() => handleFormTypeChange('element')}
+              >
+                Element
+              </button>
+              <button
+                className={`form-type-button ${formType === 'extra' ? 'selected' : ''}`}
+                onClick={() => handleFormTypeChange('extra')}
+              >
+                Extra
+              </button>
+            </div>
+            {formType === 'character' && <CharacterForm />}
+            {formType === 'element' && <ElementForm />}
+            {formType === 'extra' && <ExtraForm />}
+            <FiilledSuccessButton
+              buttonName="Save"
+              onClick={() => handleFormSubmit()}
+              style={{
+                marginTop: '10%',
+              }}
+            />
           </div>
         </div>
       )}
@@ -280,13 +484,13 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({ type, content, enableEd
 interface ScriptPageProps {
   zoomLevel: number;
   edition: boolean;
-  charactersArray: string[];
-  elementsArray: string[];
-  extrasArray: string[];
+  charactersArray: Character[];
+  elementsArray: Element[];
+  extrasArray: Extra[];
+  handleCreation: (type: ('element' | 'character' | 'extra'), data: any) => void;
 }
 
-
-const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray }) => {
+const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation }) => {
 
   useEffect(() => {
     console.log('charactersArray', charactersArray);
@@ -300,45 +504,58 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
     return normalizedWord.replace(symbolsRegex, '');
   }
 
-  const getHighlightColor = (text: string) => {
-    const words = text.split(' ').map(normalizeWord)
-    let color = '';
-    const normalizeCharactersArray = charactersArray.map(normalizeWord);
-    const normalizeElementsArray = elementsArray.map(normalizeWord);
-    const normalizeExtrasArray = extrasArray.map(normalizeWord);
-  
-    words.forEach(word => {
-      if (normalizeCharactersArray.includes(word)) {
-        color = 'var(--ion-color-primary)';
-      } else if (normalizeElementsArray.includes(word)) {
-        color = 'yellow';
-      } else if (normalizeExtrasArray.includes(word)) {
-        color = 'green';
-      }
-    });
-  
-    return color;
-  }
-
   const getSearchTermsArray = (text: string) => {
-    const words = text.split(' ').map(normalizeWord);
-    let searchTermsArray: string[] = [];
-    const normalizeCharactersArray = charactersArray.map(normalizeWord);
-    const normalizeElementsArray = elementsArray.map(normalizeWord);
-    const normalizeExtrasArray = extrasArray.map(normalizeWord);
+    const words = text.split(' ');
+
+    let searchTermsArray: SearchTerm[] = [];
+    const normalizeCharactersArray = charactersArray.map((character: Character) => normalizeWord(character.characterName));
+    const normalizeElementsArray = elementsArray.map((element: Element) => normalizeWord(element.elementName));
+    const normalizeExtrasArray = extrasArray.map((extra: Extra) => normalizeWord(extra.extraName));
 
     words.forEach(word => {
-      if (normalizeCharactersArray.includes(word)) {
-        searchTermsArray.push(word);
-      } else if (normalizeElementsArray.includes(word)) {
-        searchTermsArray.push(word);
-      } else if (normalizeExtrasArray.includes(word)) {
-        searchTermsArray.push(word);
+      const normalizedWord = normalizeWord(word);
+      if (normalizeCharactersArray.includes(normalizedWord)) {
+        const searchTerm = {
+          searchTerm: word,
+          categoryName: charactersArray.find((character: Character) => normalizeWord(character.characterName) === normalizeWord(word))?.categoryName || '',
+          type: 'character',
+          highlightColor: 'var(--ion-color-primary)',
+        }
+        searchTermsArray.push(searchTerm);
+      } else if (normalizeElementsArray.includes(normalizedWord)) {
+        const searchTerm = {
+          searchTerm: word,
+          categoryName: elementsArray.find((element: Element) => normalizeWord(element.elementName) === normalizeWord(word))?.categoryName || '',
+          type: 'element',
+          highlightColor: 'var(--ion-color-yellow)',
+        }
+        searchTermsArray.push(searchTerm);
+      } else if (normalizeExtrasArray.includes(normalizedWord)) {
+        const searchTerm = {
+          searchTerm: word,
+          categoryName: extrasArray.find((extra: Extra) => normalizeWord(extra.extraName) === normalizeWord(word))?.categoryName || '',
+          type: 'extra',
+          highlightColor: 'var(--ion-color-success)',
+        }
+        searchTermsArray.push(searchTerm);
       }
     });
   
     return searchTermsArray;
   }
+
+  const [searchTerms, setSearchTerms] = useState<SearchTerm[]>([]);
+
+  useEffect(() => {
+    const newSearchTermsArray: SearchTerm[] = [];
+    paragraphs.forEach(paragraph => {
+      if (paragraph.type === 'character' || paragraph.type === 'dialog') {
+        const newSearchTerms = getSearchTermsArray(paragraph.content);
+        newSearchTermsArray.push(...newSearchTerms);
+      }
+    });
+    setSearchTerms(newSearchTermsArray);
+  }, [charactersArray, elementsArray, extrasArray]);
   
   return (
     <div
@@ -349,7 +566,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       }}
     >
       {paragraphs.map((paragraph, index) => (
-        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} enableEdition={edition} highlightColor={getHighlightColor(paragraph.content)} searchTermsArray={getSearchTermsArray(paragraph.content)}/>
+        <SceneParagraph key={index} type={paragraph.type} content={paragraph.content} enableEdition={edition} searchTermsArray={searchTerms} handleCreation={handleCreation}/>
       ))}
     </div>
   );
@@ -364,6 +581,55 @@ const SceneScript: React.FC = () => {
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [edition, setEdition] = useState(false);
+
+  const createNewElement = async (element: Element) => {
+    try {
+      const sceneElements = await thisScene?.elements;
+      const sceneNewElements = [...sceneElements, element];
+      const newScene = { ...thisScene, elements: sceneNewElements };
+      await oneWrapDb?.scenes.upsert(newScene);
+      console.log('newScene', newScene)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const createNewCharacter = async (character: Character) => {
+    try {
+      const sceneCharacters = await thisScene?.characters;
+      const sceneNewCharacters = [...sceneCharacters, character];
+      const newScene = { ...thisScene, characters: sceneNewCharacters };
+      await oneWrapDb?.scenes.upsert(newScene);
+      console.log('newScene', newScene)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const createNewExtra = async (extra: Extra) => {
+    try {
+      const sceneExtras = await thisScene?.extras;
+      const sceneNewExtras = [...sceneExtras, extra];
+      const newScene = { ...thisScene, extras: sceneNewExtras };
+      await oneWrapDb?.scenes.upsert(newScene);
+      console.log('newScene', newScene)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleCreation = (type: ('element' | 'character' | 'extra'), data: any) => {
+    if(type === 'element') {
+      createNewElement(data);
+    } else if(type === 'character') {
+      createNewCharacter(data);
+    } else if(type === 'extra') {
+      createNewExtra(data);
+    }
+  }
 
   const getCurrentScene = async () => {
     const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
@@ -413,9 +679,9 @@ const SceneScript: React.FC = () => {
   const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
   const nextScene = filteredScenes[currentSceneIndex + 1];
   const previousScene = filteredScenes[currentSceneIndex - 1];
-  const charactersArray = thisScene?.characters.map((character: Character) => character.characterName);
-  const elementsArray = thisScene?.elements.map((element: any) => element.elementName);
-  const extrasArray = thisScene?.extras.map((extra: any) => extra.extraName);
+  const charactersArray = thisScene?.characters;
+  const elementsArray = thisScene?.elements;
+  const extrasArray = thisScene?.extras;
 
   const changeToNextScene = () => {
     if(nextScene) {
@@ -517,6 +783,7 @@ const SceneScript: React.FC = () => {
             charactersArray={charactersArray || []}
             elementsArray={elementsArray || []}
             extrasArray={extrasArray || []}
+            handleCreation={handleCreation}
           />
         </IonContent>
         <IonTabBar 
@@ -536,9 +803,10 @@ const SceneScript: React.FC = () => {
               style={{
                 color: 'var(--ion-color-success)',
                 position: 'absolute',
+                right: '40%',
                 height: '100%',
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
               }}
             >
               Edition Enabled
