@@ -75,7 +75,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const selectionPercentageX = popupPosition.x / window.innerWidth;
 
   let topPosition;
-  if (selectionPercentage > 0.5) {
+  if (selectionPercentage > 0.55) {
     topPosition = popupPosition.y - 400;
   } else {
     topPosition = popupPosition.y + 50;
@@ -153,7 +153,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const normalizeWord = (word: (string | null)) => {
     if (word) {
       const normalizedWord = removeAccents(word).toLowerCase().trim();
-      const symbolsRegex = /[^\w\s]/g;
+      const symbolsRegex = /[^\w\sñ]/g;
       return normalizedWord.replace(symbolsRegex, '');
     }
 
@@ -227,107 +227,111 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   }, [charactersArray, elementsArray, extrasArray]);
   
   return (
-    <div
-      className="script-page"
-      style={{
-        zoom: zoomLevel,
-        transformOrigin: 'top left',
-      }}
-    >
-      {paragraphs.map((paragraph, index) => (
-        <SceneParagraph 
-          key={index} 
-          type={paragraph.type} 
-          content={paragraph.content} 
-          searchTermsArray={searchTerms} 
-        />
-      ))}
+    <>
+      <div
+        className="script-page"
+        style={{
+          zoom: zoomLevel,
+          transformOrigin: 'top left',
+        }}
+      >
+        {paragraphs.map((paragraph, index) => (
+          <SceneParagraph 
+            key={index} 
+            type={paragraph.type} 
+            content={paragraph.content} 
+            searchTermsArray={searchTerms} 
+          />
+        ))}
+      </div>
       {   
-      showPopup &&
-      (
-        <div className="script-popup-background">
-          <div className="script-popup" style={isMobile ?
-          { 
-            position: 'fixed',
-            top: 'calc(50% - 150px)',
-            backgroundColor: 'var(--ion-color-tertiary)',
-            maxWidth: maxWidth,
-            left: 'calc(50% - 45vw)'
-          } :
-          {
-            top: topPosition,
-            backgroundColor: 'var(--ion-color-tertiary)',
-            maxWidth: maxWidth
-          }
-          }>
+        showPopup &&
+        (
+          <div className="script-popup-background">
+            <div className="script-popup" style={isMobile ?
+            { 
+              position: 'fixed',
+              top: 'calc(50% - 150px)',
+              backgroundColor: 'var(--ion-color-tertiary)',
+              maxWidth: maxWidth,
+              left: 'calc(50% - 45vw)'
+            } :
             {
-              popupMessage !== '' &&
-              <p 
-                style={{
-                  color: 'var(--ion-color-success)',
-                  marginLeft: '16px',
-                  textTransform: 'uppercase',
-                  fontSize: '10px'
-                }}
-              > 
-                {popupMessage}
-              </p>
+              position: 'fixed',
+              top: topPosition,
+              backgroundColor: 'var(--ion-color-tertiary)',
+              maxWidth: maxWidth
             }
-            <div 
-              className="form-type-selector"
-            >
-              <button
-                className={`form-type-button ${formType === 'note' ? 'selected' : ''}`}
-                onClick={() => handleFormTypeChange('note')}
+            }>
+              {
+                popupMessage !== '' &&
+                <p 
+                  style={{
+                    color: 'var(--ion-color-success)',
+                    marginLeft: '16px',
+                    textTransform: 'uppercase',
+                    fontSize: '10px'
+                  }}
+                > 
+                  {popupMessage}
+                </p>
+              }
+              <div 
+                className="form-type-selector"
               >
-                <PiNotePencil className={'form-type-icon' + (formType === 'note' ? ' active' : '')}/>
-              </button>
-              <button
-                className={`form-type-button ${formType === 'character' ? 'selected' : ''}`}
-                onClick={() => handleFormTypeChange('character')}
-              >
-                <MdOutlineFaceUnlock className={'form-type-icon' + (formType === 'character' ? ' active' : '')}/>
-              </button>
-              <button
-                className={`form-type-button ${formType === 'element' ? 'selected' : ''}`}
-                onClick={() => handleFormTypeChange('element')}
-              >
-                <FaClipboardList className={'form-type-icon' + (formType === 'element' ? ' active' : '')}/>
-              </button>
-              <button
-                className={`form-type-button ${formType === 'extra' ? 'selected' : ''}`}
-                onClick={() => handleFormTypeChange('extra')}
-              >
-                <HiMiniUsers className={'form-type-icon' + (formType === 'extra' ? ' active' : '')}/>
-              </button>
+                <button
+                  className={`form-type-button ${formType === 'note' ? 'selected' : ''}`}
+                  onClick={() => handleFormTypeChange('note')}
+                >
+                  <PiNotePencil className={'form-type-icon' + (formType === 'note' ? ' active' : '')}/>
+                </button>
+                <button
+                  className={`form-type-button ${formType === 'character' ? 'selected' : ''}`}
+                  onClick={() => handleFormTypeChange('character')}
+                >
+                  <MdOutlineFaceUnlock className={'form-type-icon' + (formType === 'character' ? ' active' : '')}/>
+                </button>
+                <button
+                  className={`form-type-button ${formType === 'element' ? 'selected' : ''}`}
+                  onClick={() => handleFormTypeChange('element')}
+                >
+                  <FaClipboardList className={'form-type-icon' + (formType === 'element' ? ' active' : '')}/>
+                </button>
+                <button
+                  className={`form-type-button ${formType === 'extra' ? 'selected' : ''}`}
+                  onClick={() => handleFormTypeChange('extra')}
+                >
+                  <HiMiniUsers className={'form-type-icon' + (formType === 'extra' ? ' active' : '')}/>
+                </button>
+              </div>
+              {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={charactersUniqueCategories} />}
+              {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementsUniqueCategories} />}
+              {formType === 'extra' && <MemoizedExtraForm extra={extra} setExtra={setExtra} />}
+              {formType === 'note' && <MemoizedNoteForm note={note} setNote={setNote} />}
+              <>
+                <FiilledSuccessButton
+                  buttonName="SAVE"
+                  onClick={() => handleFormSubmit()}
+                  style={{
+                    margion: '0px 12px',
+                    marginTop: '10%',
+                  }}
+                />
+                <IonButton
+                  onClick={handlePopupClose}
+                  className='cancel-button'
+                  fill='outline'
+                  color='danger'
+                  style={{
+                    margin: '6px 16px 16px 16px'
+                  }}
+                >CANCEL</IonButton>
+              </>
             </div>
-            {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={charactersUniqueCategories} />}
-            {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementsUniqueCategories} />}
-            {formType === 'extra' && <MemoizedExtraForm extra={extra} setExtra={setExtra} />}
-            {formType === 'note' && <MemoizedNoteForm note={note} setNote={setNote} />}
-            <>
-              <FiilledSuccessButton
-                buttonName="SAVE"
-                onClick={() => handleFormSubmit()}
-                style={{
-                  margion: '0px 12px',
-                  marginTop: '10%',
-                }}
-              />
-              <IonButton
-                onClick={handlePopupClose}
-                className='cancel-button'
-                fill='outline'
-                color='danger'
-                style={{
-                  margin: '6px 16px 16px 16px'
-                }}
-              >CANCEL</IonButton>
-            </>
           </div>
-        </div>
-      )}
-    </div>
+          )
+        }
+    </>
   );
 }
 
@@ -344,6 +348,8 @@ const SceneScript: React.FC = () => {
   const [elementsArray, setElementsArray ] = useState<Element[]>([]);
   const [extrasArray, setExtrasArray ] = useState<Extra[]>([]);
   const [notesArray, setNotesArray ] = useState<Note[]>([]);
+  const [showTotalsPopup, setShowTotalsPopup] = useState(false);
+  const [popupType, setPopupType] = useState<'notes' | 'characters' | 'elements' | 'extras' | null>(null);
 
   const createNewElement = async (element: Element) => {
     try {
@@ -466,9 +472,55 @@ const SceneScript: React.FC = () => {
     }
   }
 
+  const getPopupList = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
+    let list = [];
+    if(thisScene){
+      if(type === 'notes') {
+        list = thisScene?.notes?.map((note: Note) => note.note);
+        list = list.filter((note: string) => note !== null);
+     }
+     if(type === 'characters') {
+       list = thisScene?.characters?.map((character: Character) => `${character.characterNum ? character.characterNum + '. ' : ''}${character.characterName}`);
+     }
+     if(type === 'elements') {
+       list = thisScene?.elements?.map((element: Element) => element.elementName);
+     }
+     if(type === 'extras') {
+       list = thisScene?.extras?.map((extra: Extra) => extra.extraName);
+     }
+    }
+
+    return list;  
+  }
+
+  const handleOpenTotalsPopup = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
+    if(popupType === type) {
+      setShowTotalsPopup(false);
+      setPopupType(null);
+      return
+    }
+    setPopupType(type);
+    setShowTotalsPopup(true);
+  }
+
   const changeToPreviousScene = () => {
     if(previousScene) {
       history.push(`/my/projects/163/strips/details/script/${previousScene.id}`);
+    }
+  }
+
+  const getPopupPositionTop = () => {
+    if(popupType === 'notes') {
+      return '16px'
+    }
+    if(popupType === 'characters') {
+      return '50px'
+    }
+    if(popupType === 'elements') {
+      return '100px'
+    }
+    if(popupType === 'extras') {
+      return '150px'
     }
   }
 
@@ -526,8 +578,7 @@ const SceneScript: React.FC = () => {
   }
 
   return (
-    <>
-      
+    <>     
       <IonPage>
         <div className='script-buttons-container'>
           <RiZoomInFill className='script-button-icon' onClick={handleZoomIn}/>
@@ -537,6 +588,36 @@ const SceneScript: React.FC = () => {
               edition ? {color: 'var(--ion-color-success)'} : {}
             }
           />
+        </div>
+        <div className='script-total-buttons-container' >
+          <div className='total-buttons-wrapper' onClick={() => handleOpenTotalsPopup('notes')}>
+            <PiNotePencil className='script-button-icon' style={popupType === 'notes' ? {color: 'var(--ion-color-primary)'} : {}}/>
+            <span className='total-length notes'>{getPopupList('notes').length}</span>
+          </div>
+          <div className='total-buttons-wrapper' onClick={() => handleOpenTotalsPopup('characters')}>
+            <MdOutlineFaceUnlock className='script-button-icon' style={popupType === 'characters' ? {color: 'var(--ion-color-primary)'} : {}}/>
+            <span className='total-length characters'>{getPopupList('characters').length}</span>
+          </div>
+          <div className='total-buttons-wrapper' onClick={() => handleOpenTotalsPopup('elements')}>
+            <FaClipboardList className='script-button-icon' style={popupType === 'elements' ? {color: 'var(--ion-color-primary)'} : {}}/>
+            <span className='total-length elements'>{getPopupList('elements').length}</span>
+          </div>
+          <div className='total-buttons-wrapper' onClick={() => handleOpenTotalsPopup('extras')}>
+            <HiMiniUsers className='script-button-icon' style={popupType === 'extras' ? {color: 'var(--ion-color-primary)'} : {}}/>
+            <span className='total-length extras'>{getPopupList('extras').length}</span>
+          </div>
+          {
+            popupType && showTotalsPopup && (
+            <div className='script-total-popup-background' style={{top: getPopupPositionTop()}} onClick={() => getPopupList(popupType)}>
+              {getPopupList(popupType)?.length === 0 ? (
+                <div className='total-popup-item'>NO {popupType.toUpperCase()} ADDED</div>
+              ) : (
+                getPopupList(popupType)?.map((item: string, i: number) => (
+                  <div key={i} className='total-popup-item'>{item && item.toUpperCase()}</div>                                                 
+                ))
+              )}
+            </div>
+          )}
         </div>
         <IonHeader>
           <Toolbar name='' backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
@@ -553,6 +634,7 @@ const SceneScript: React.FC = () => {
           color="tertiary"
           fullscreen
           scrollEvents={true}
+          onClick={() => setShowTotalsPopup(false)}
         >
           <ScriptPage 
             zoomLevel={zoomLevel} 
