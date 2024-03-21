@@ -113,6 +113,7 @@ ion-button.filled-primary-button {
 
 .cancel-button {
   --background-activated: transparent !important;
+  --border-radius: 0;
 
   &:active,
   &:hover,
