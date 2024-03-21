@@ -24,8 +24,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
           onIonChange={(e) => setNote((prevNote: any) => ({ ...prevNote, note: e.detail.value || '' }))}
           autoGrow
           style={{
-            borderBottom: '1px solid var(--ion-color-light)',
-            textTransform: 'uppercase'
+            borderBottom: '1px solid var(--ion-color-light)'
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

@@ -22,8 +22,7 @@ const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
           label="Extra Name *"
           placeholder="INSERT EXTRA NAME"
           style={{
-            borderBottom: '1px solid var(--ion-color-light)',
-            textTransform: 'uppercase'
+            borderBottom: '1px solid var(--ion-color-light)'
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

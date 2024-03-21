@@ -24,7 +24,6 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
           interface="popover"
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            textTransform: 'uppercase'
           }}
           onFocus={() => setIsFocused([true, false])}
           onBlur={() => setIsFocused([false, false])}
@@ -54,8 +53,7 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
           placeholder="INSERT ELEMENT NAME"
           onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, elementName: e.detail.value || '' }))}
           style={{
-            borderBottom: '1px solid var(--ion-color-light)',
-            textTransform: 'uppercase'
+            borderBottom: '1px solid var(--ion-color-light)'
           }}
           onFocus={() => setIsFocused([false, true])}
           onBlur={() => setIsFocused([false, false])}

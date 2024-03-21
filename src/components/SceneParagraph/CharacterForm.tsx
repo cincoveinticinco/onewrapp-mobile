@@ -72,7 +72,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
           onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: e.detail.value || null }))}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            textTransform: 'uppercase'
           }}
           onFocus={() => setIsFocused([false, false, true])}
           onBlur={() => setIsFocused([false, false, false])}
