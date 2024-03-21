@@ -1,7 +1,7 @@
 export interface Character {
-  categoryName: string;
+  categoryName: (string | null);
   characterName: string;
-  characterNum: string | null;
+  characterNum: (string | null);
 }
 
 export interface Extra {
@@ -17,6 +17,7 @@ export interface Element {
 export interface Note {
   email: string | null;
   note: string | null;
+  createdAt: string | null;
 }
 
 export interface Scene {
