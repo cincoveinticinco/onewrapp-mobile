@@ -46,7 +46,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
     handleSceneChange(selectedCharacters, 'characters');
   }, [selectedCharacters]);
 
-  const characterCategoriesArray: string[] = [];
+  const characterCategoriesArray: (string | null)[] = [];
   const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
     setCharacterCategories(defineCharactersCategories());
   }, [offlineScenes]);
 
-  const [characterCategories, setCharacterCategories] = useState<string[]>([]);
+  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
 
   const handleOk = (inputData: { categoryName: string; }) => {
     const inputElement = document.getElementById('add-category-input');
