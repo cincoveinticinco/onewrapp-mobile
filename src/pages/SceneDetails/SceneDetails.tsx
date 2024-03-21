@@ -101,25 +101,13 @@ const SceneDetails: React.FC = () => {
       setThisScene(scene)
       setTimeout(() => {
         setSceneIsLoading(false)
-      }, 200)
+      }, 100)
     }
   }
-
-
-  useIonViewWillEnter(() => {
-    fetchScene()
-  })
 
   useEffect(() => {
     fetchScene()
   }, [offlineScenes])
-
-  useIonViewDidLeave(() => {
-    setSceneIsLoading(true)
-    setThisScene(null)
-  })
-
-  
 
   const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (thisScene.episodeNumber + '.') : ''}${thisScene.sceneNumber}` : ''
 
@@ -132,7 +120,7 @@ const SceneDetails: React.FC = () => {
 
   useIonViewDidEnter(() => {
     hideTabs()
-    });
+  });
 
   const sceneCastCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: any) => category.categoryName))
 
@@ -182,7 +170,7 @@ const SceneDetails: React.FC = () => {
               <DropDownInfo categories={[...sceneCastCategories]} scene={thisScene} title='CAST' characters />
               <DropDownInfo categories={[...sceneExtrasCategories]} scene={thisScene} title='EXTRAS' extras />
               <DropDownInfo categories={[...sceneElementsCategories]} scene={thisScene} title='ELEMENTS' elements />
-              <DropDownInfo categories={[]} scene={thisScene} title='NOTES' notes />
+              <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title='NOTES' notes />
             </div>
           )
         }
