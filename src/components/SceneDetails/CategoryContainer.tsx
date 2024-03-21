@@ -1,8 +1,8 @@
 import { IonCard, IonCardContent, IonCardHeader } from "@ionic/react"
-import { Scene } from "../../interfaces/scenesTypes"
+import { Note, Scene } from "../../interfaces/scenesTypes"
 import { capitalize } from "lodash"
 
-const CategoryContainer = ({ categoryName, scene, characters, extras, elements}: any) => {
+const CategoryContainer = ({ categoryName, scene, characters, extras, elements, notes}: any) => {
   const getCharactersByCategory = (categoryName: string, scene: Scene) => {
     const characters = scene.characters ? scene.characters.filter((character: any) => {
       if(categoryName ==='NO CATEGORY') return character.categoryName === null
@@ -27,6 +27,11 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
     return elements
   }
 
+  const getNotes = (scene: Scene) => {
+    const notes = scene.notes ? scene.notes.filter((note: Note) => note.note !== null) : []
+    return notes
+  }
+
   const getValuesByCategory = (categoryName: string, scene: Scene) => {
     if(characters) {
       return getCharactersByCategory(categoryName, scene)
@@ -34,6 +39,8 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
       return getExtrasByCategory(categoryName, scene)
     } else if(elements) {
       return getElementsByCategory(categoryName, scene)
+    } else if(notes) {
+      return getNotes(scene)
     }
     return []
   }
@@ -43,6 +50,7 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
       <IonCard
         color='tertiary'
         className='scene-details-card ion-padding-bottom'
+        style={notes ? {gridColumn: '1 / span 3'} : {}}
       >
         <IonCardHeader>
           <p  >{capitalize(categoryName)} </p >
@@ -67,6 +75,11 @@ const CategoryContainer = ({ categoryName, scene, characters, extras, elements}:
                   elements &&
                   value.elementName && 
                   value.elementName.toUpperCase()
+                }
+                {
+                  notes &&
+                  value.note && 
+                  value.note.toUpperCase()
                 }
               </p>
             })
