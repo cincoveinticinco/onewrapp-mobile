@@ -25,6 +25,7 @@
   .script-popup {
     border: 1px solid black;
     width: 400px;
+    left: calc(50% - 200px);
     height: auto;
     position: absolute;
     display: flex;

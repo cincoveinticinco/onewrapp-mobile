@@ -76,7 +76,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
 
   let topPosition;
   if (selectionPercentage > 0.5) {
-    topPosition = popupPosition.y - 350;
+    topPosition = popupPosition.y - 400;
   } else {
     topPosition = popupPosition.y + 50;
   }
@@ -246,12 +246,19 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       showPopup &&
       (
         <div className="script-popup-background">
-          <div className="script-popup" style={{
+          <div className="script-popup" style={isMobile ?
+          {
             top: topPosition,
-            left: leftPosition,
+            backgroundColor: 'var(--ion-color-tertiary)',
+            maxWidth: maxWidth,
+            left: 'calc(50% - 45vw)'
+          } :
+          {
+            top: topPosition,
             backgroundColor: 'var(--ion-color-tertiary)',
             maxWidth: maxWidth
-          }}>
+          }
+          }>
             {
               popupMessage !== '' &&
               <p 
