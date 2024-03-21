@@ -247,8 +247,9 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       (
         <div className="script-popup-background">
           <div className="script-popup" style={isMobile ?
-          {
-            top: topPosition,
+          { 
+            position: 'fixed',
+            top: 'calc(50% - 150px)',
             backgroundColor: 'var(--ion-color-tertiary)',
             maxWidth: maxWidth,
             left: 'calc(50% - 45vw)'
