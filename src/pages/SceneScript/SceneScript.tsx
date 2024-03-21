@@ -313,8 +313,11 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
                   buttonName="SAVE"
                   onClick={() => handleFormSubmit()}
                   style={{
-                    margion: '0px 12px',
+                    margin: '16px 12px 6px 12px',
                     marginTop: '10%',
+                    fontSize: '10px',
+                    width: 'calc(100% - 24px)',
+                    minHeight: '30px',
                   }}
                 />
                 <IonButton
@@ -323,7 +326,9 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
                   fill='outline'
                   color='danger'
                   style={{
-                    margin: '6px 16px 16px 16px'
+                    margin: '6px 12px 16px 12px',
+                    fontSize: '10px',
+                    minHeight: '30px'
                   }}
                 >CANCEL</IonButton>
               </>

@@ -17,12 +17,12 @@ const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
         <IonInput
           className={isFocused ? "input-item" : "script-popup-input"}
           value={extra.extraName}
-          color="tertiary"
           labelPlacement="stacked"
           label="Extra Name *"
           placeholder="INSERT EXTRA NAME"
           style={{
-            borderBottom: '1px solid var(--ion-color-light)'
+            borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

@@ -17,13 +17,13 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
         <IonSelect
           className={isFocused[0] ? "input-item" : "script-popup-input"}
           value={element && element.categoryName}
-          color="tertiary"
           labelPlacement="stacked"
           label="Element Category"
           onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, categoryName: e.detail.value || '' }))}
           interface="popover"
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
           }}
           onFocus={() => setIsFocused([true, false])}
           onBlur={() => setIsFocused([false, false])}
@@ -47,13 +47,13 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
         <IonInput
           className={isFocused[1] ? "input-item" : "script-popup-input"}
           value={element.elementName}
-          color="tertiary"
           labelPlacement="stacked"
           label="Element Name *"
           placeholder="INSERT ELEMENT NAME"
           onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, elementName: e.detail.value || '' }))}
           style={{
-            borderBottom: '1px solid var(--ion-color-light)'
+            borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
           }}
           onFocus={() => setIsFocused([false, true])}
           onBlur={() => setIsFocused([false, false])}

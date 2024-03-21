@@ -19,7 +19,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonInput
           className={isFocused[0] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterNum}
-          color="tertiary"
           labelPlacement="stacked"
           label="Character Number"
           placeholder="INSERT CHARACTER NUMBER"
@@ -28,6 +27,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
           onBlur={() => setIsFocused([false, false, false])}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px'
           }}
         />
       </IonItem>
@@ -35,13 +35,13 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonSelect
             className={isFocused[1] ? 'input-item' : 'script-popup-input'}
             value={character.categoryName}
-            color="tertiary"
             labelPlacement="stacked"
             label="Character Category"
             placeholder="INSERT CHARACTER CATEGORY"
             onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || null }))}
             style={{
               borderBottom: '1px solid var(--ion-color-light)',
+              fontSize: '12px'
             }}
             onFocus={() => setIsFocused([false, true, false])}
             onBlur={() => setIsFocused([false, false, false])}
@@ -65,13 +65,13 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonInput
           className={isFocused[2] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterName}
-          color="tertiary"
           labelPlacement="stacked"
           label="Character Name *"
           placeholder="INSERT CHARACTER NAME"
           onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: e.detail.value || null }))}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
           }}
           onFocus={() => setIsFocused([false, false, true])}
           onBlur={() => setIsFocused([false, false, false])}

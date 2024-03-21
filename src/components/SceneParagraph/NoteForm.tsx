@@ -17,14 +17,14 @@ const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
         <IonTextarea
           className={isFocused ? "input-item" : "script-popup-input"}
           value={note && note.note}
-          color="tertiary"
           labelPlacement="stacked"
           label="Note"
           placeholder="INSERT NOTE"
           onIonChange={(e) => setNote((prevNote: any) => ({ ...prevNote, note: e.detail.value || '' }))}
           autoGrow
           style={{
-            borderBottom: '1px solid var(--ion-color-light)'
+            borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
