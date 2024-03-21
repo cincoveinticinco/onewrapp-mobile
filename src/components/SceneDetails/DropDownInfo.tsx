@@ -6,7 +6,9 @@ import { IonCard, IonCardHeader, IonCardSubtitle } from "@ionic/react"
 
 const DropDownInfo = ({ categories, scene, title, characters = false, extras = false, elements = false, notes = false }: any) => {
   const [open, setOpen] = useState<boolean>(true)
-  const valuesByCategory = characters ? scene.characters.length === 0 : extras ? scene.extras.length === 0 : elements ? scene.elements.length === 0 : []
+  const valuesByCategory = characters ? scene.characters.length === 0 : extras ? scene.extras.length === 0 : elements ? scene.elements.length === 0 : notes ? scene.notes.every((note: any) => note.note === null) : true
+
+  console.log(scene.notes.every((note: any) => note.note === null))
 
   const getUniqueCategoriesFromScene = (scene: any, characters: boolean, extras: boolean, elements: boolean) => {
     const categories = characters ? scene.characters.map((character: any) => character.categoryName) : extras ? scene.extras.map((extra: any) => extra.categoryName) : elements ? scene.elements.map((element: any) => element.categoryName) :  []
@@ -24,7 +26,7 @@ const DropDownInfo = ({ categories, scene, title, characters = false, extras = f
           <div className='categories-card-container'>
             { scene &&
               categories.map((category: string) => {
-                return <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene}  key={category + 'details'} characters={characters} extras={extras} elements={elements}/>
+                return <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene}  key={category + 'details'} characters={characters} extras={extras} elements={elements} notes={notes} />
               })
             }
             {
