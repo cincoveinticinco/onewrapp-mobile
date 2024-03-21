@@ -20,16 +20,11 @@ const HighlightedTextWithArray: React.FC<HighlightedTextWithArrayProps> = ({
   searchTerms,
   textColor = 'var(--ion-color-dark)',
 }) => {
-  const normalizedText = removeAccents(text).toLowerCase();
+  const normalizedText = removeAccents(text)
   const normalizedSearchTerms = searchTerms.map((term) =>
     removeAccents(term.searchTerm).toLowerCase()
   );
-
-  const getOriginalPart = (part: string) => {
-    const partIndex = normalizedText.indexOf(part.toLowerCase());
-    return text.substring(partIndex, partIndex + part.length);
-  };
-
+  
   const wordRegex = new RegExp(
     `(\\b${normalizedSearchTerms.join('\\b|\\b')}\\b)`,
     'gi'
@@ -54,10 +49,10 @@ const HighlightedTextWithArray: React.FC<HighlightedTextWithArrayProps> = ({
             style={{ backgroundColor: getBackgroundColor(part), color: textColor }}
             key={index}
           >
-            {getOriginalPart(part)}
+            {part}
           </mark>
         ) : (
-          getOriginalPart(part)
+          part
         );
       })}
     </span>
