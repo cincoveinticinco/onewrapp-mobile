@@ -4,7 +4,7 @@ import removeAccents from '../../../utils/removeAccents';
 
 export interface SearchTerm {
   searchTerm: string;
-  categoryName: string;
+  categoryName: (string | null);
   type: string;
   highlightColor: string;
 }
@@ -18,22 +18,31 @@ interface HighlightedTextWithArrayProps {
 const HighlightedTextWithArray: React.FC<HighlightedTextWithArrayProps> = ({
   text,
   searchTerms,
-  textColor = 'var(--ion-color-dark)'
+  textColor = 'var(--ion-color-dark)',
 }) => {
   const normalizedText = removeAccents(text).toLowerCase();
-  const normalizedSearchTerms = searchTerms.map(term => removeAccents(term.searchTerm).toLowerCase());
+  const normalizedSearchTerms = searchTerms.map((term) =>
+    removeAccents(term.searchTerm).toLowerCase()
+  );
 
   const getOriginalPart = (part: string) => {
     const partIndex = normalizedText.indexOf(part.toLowerCase());
     return text.substring(partIndex, partIndex + part.length);
   };
 
-  const parts = normalizedText.split(new RegExp(`(${normalizedSearchTerms.join('|')})`, 'gi'));
+  const wordRegex = new RegExp(
+    `(\\b${normalizedSearchTerms.join('\\b|\\b')}\\b)`,
+    'gi'
+  );
+  const parts = normalizedText.split(wordRegex);
 
   const getBackgroundColor = (part: string) => {
-    const searchTerm = searchTerms.find(term => removeAccents(term.searchTerm).toLowerCase() === removeAccents(part).toLowerCase());
+    const searchTerm = searchTerms.find(
+      (term) =>
+        removeAccents(term.searchTerm).toLowerCase() === removeAccents(part).toLowerCase()
+    );
     return searchTerm ? searchTerm.highlightColor : '';
-  }
+  };
 
   return (
     <span className="highlighted-text">
@@ -41,7 +50,10 @@ const HighlightedTextWithArray: React.FC<HighlightedTextWithArrayProps> = ({
         const normalizedPart = removeAccents(part).toLowerCase();
         const isHighlighted = normalizedSearchTerms.includes(normalizedPart);
         return isHighlighted ? (
-          <mark style={{ backgroundColor: getBackgroundColor(part), color: textColor }} key={index}>
+          <mark
+            style={{ backgroundColor: getBackgroundColor(part), color: textColor }}
+            key={index}
+          >
             {getOriginalPart(part)}
           </mark>
         ) : (
