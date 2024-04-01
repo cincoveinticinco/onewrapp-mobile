@@ -56,7 +56,7 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   return data.sort((a: T, b: T) => {
     // Convert values to lowercase if they are strings
 
-    if(a[criteriaKey as keyof T] === null || b[criteriaKey as keyof T] === null) {
+    if(!a[criteriaKey as keyof T]  || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
       return 0;
     }
     
