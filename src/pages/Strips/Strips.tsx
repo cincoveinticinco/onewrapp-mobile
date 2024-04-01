@@ -83,6 +83,7 @@ const Strips: React.FC = () => {
 
   const clearSortSelections = () => {
     localStorage.removeItem('selectedSortOptions');
+    setSortPosibilities(defaultSortPosibilitiesOrder);
     setSelectedSortOptions(defaultSortOptions);
   };
 
