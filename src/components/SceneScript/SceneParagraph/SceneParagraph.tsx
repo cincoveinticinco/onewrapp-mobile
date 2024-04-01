@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import useSuccessToast from "../../hooks/useSuccessToast";
-import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButton";
-import HighlightedTextWithArray, { SearchTerm } from "../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
-import DatabaseContext from "../../context/database";
-import { Character, Element, Extra, Note } from "../../interfaces/scenesTypes";
-import removeAccents from "../../utils/removeAccents";
-import getUniqueValuesFromNestedArray from "../../utils/getUniqueValuesFromNestedArray";
+import useSuccessToast from "../../../hooks/useSuccessToast";
+import FiilledSuccessButton from "../../Shared/FilledSuccessButton/FillSuccessButton";
+import HighlightedTextWithArray, { SearchTerm } from "../../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
+import DatabaseContext from "../../../context/database";
+import { Character, Element, Extra, Note } from "../../../interfaces/scenesTypes";
+import removeAccents from "../../../utils/removeAccents";
+import getUniqueValuesFromNestedArray from "../../../utils/getUniqueValuesFromNestedArray";
 import ElementForm from "./ElementForm";
 import NoteForm from "./NoteForm";
 import CharacterForm from "./CharacterForm";
 import ExtraForm from "./ExtraForm";
-import useTextSelection from "../../hooks/useSelectedText";
-import useFormTypeLogic from "../../hooks/useFormTypeLogic";
-import OutlineLightButton from "../Shared/OutlineLightButton/OutlineLightButton";
+import useTextSelection from "../../../hooks/useSelectedText";
+import useFormTypeLogic from "../../../hooks/useFormTypeLogic";
+import OutlineLightButton from "../../Shared/OutlineLightButton/OutlineLightButton";
 import { IonButton } from "@ionic/react";
 
 interface SceneParagraphProps {

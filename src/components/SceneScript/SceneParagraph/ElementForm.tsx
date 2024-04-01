@@ -1,5 +1,5 @@
 import { IonInput, IonItem, IonSelect, IonSelectOption } from "@ionic/react";
-import { Element } from "../../interfaces/scenesTypes";
+import { Element } from "../../../interfaces/scenesTypes";
 import React, { useState } from "react";
 
 interface ElementFormProps {

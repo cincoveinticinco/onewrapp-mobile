@@ -1,5 +1,5 @@
 import { IonInput, IonItem } from "@ionic/react";
-import { Extra } from "../../interfaces/scenesTypes";
+import { Extra } from "../../../interfaces/scenesTypes";
 import { useState } from "react";
 
 interface ExtraFormProps {

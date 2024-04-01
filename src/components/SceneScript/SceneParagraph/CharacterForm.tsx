@@ -1,5 +1,5 @@
 import { IonInput, IonItem, IonSelect, IonSelectOption } from "@ionic/react";
-import { Character } from "../../interfaces/scenesTypes";
+import { Character } from "../../../interfaces/scenesTypes";
 import { useEffect, useState } from "react";
 
 interface CharacterFormProps {

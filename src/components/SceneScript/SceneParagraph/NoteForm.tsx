@@ -1,5 +1,5 @@
 import { IonInput, IonItem, IonTextarea } from "@ionic/react";
-import { Note } from "../../interfaces/scenesTypes";
+import { Note } from "../../../interfaces/scenesTypes";
 import { useState } from "react";
 
 interface NoteFormProps {
