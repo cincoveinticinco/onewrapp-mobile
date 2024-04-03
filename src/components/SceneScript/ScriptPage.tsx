@@ -20,6 +20,7 @@ import { HiMiniUsers } from "react-icons/hi2";
 import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButton";
 import { IonButton } from "@ionic/react";
 import { useParams } from "react-router";
+import useLoader from "../../hooks/useLoader";
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -51,6 +52,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const { sceneId } = useParams<{ sceneId: string }>();
   const [paragraphs, setParagraphs] = useState<any[]>([]);
+  const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
 
   useEffect(() => {
     const printParagraphs = async () => {
@@ -60,6 +62,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
         }
       }).exec();
       setParagraphs(paragraphs);
+      setParagraphsAreLoading(false);
     }
     printParagraphs();
   }, [oneWrapDb])
@@ -212,7 +215,13 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       }
     });
     setSearchTerms(newSearchTermsArray);
-  }, [charactersArray, elementsArray, extrasArray]);
+  }, [charactersArray, elementsArray, extrasArray, notesArray, paragraphs]);
+
+  if (paragraphsAreLoading) {
+    return <div className="script-page">
+      {useLoader()}
+    </div>;
+  }
   
   return (
     <>
@@ -229,6 +238,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
             type={paragraph.type} 
             content={paragraph.content} 
             searchTermsArray={searchTerms} 
+            paragraphsLoading={paragraphsAreLoading}
           />
         ))}
       </div>

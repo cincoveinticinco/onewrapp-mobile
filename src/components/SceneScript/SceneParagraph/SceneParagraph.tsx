@@ -24,12 +24,14 @@ interface SceneParagraphProps {
   type: string;
   content: string;
   searchTermsArray?: SearchTerm[];
+  paragraphsLoading: boolean;
 }
 
 const SceneParagraph: React.FC<SceneParagraphProps> = ({
   type,
   content,
   searchTermsArray,
+  paragraphsLoading
 }) => {
   let className = '';
   switch (type) {
@@ -85,9 +87,13 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({
   return (
     <>
       <p className={`${className} script-paragraph`}>
-        {searchTermsArray && (
-          <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />
-        )}
+        {
+          searchTermsArray && 
+          !paragraphsLoading &&
+          (
+            <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />
+          )
+        }
       </p>
     </>
   );
