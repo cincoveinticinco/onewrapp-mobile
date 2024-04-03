@@ -32,7 +32,10 @@ const SceneScript: React.FC = () => {
   const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomLevel, setZoomLevel] = useState(() => {
+    const storedZoomLevel = localStorage.getItem('zoomLevel');
+    return storedZoomLevel ? parseFloat(storedZoomLevel) : 1;
+  });
   const [edition, setEdition] = useState(false);
   const [charactersArray, setCharactersArray ] = useState<Character[]>([]);
   const [elementsArray, setElementsArray ] = useState<Element[]>([]);
@@ -252,11 +255,15 @@ const SceneScript: React.FC = () => {
   };
 
   const handleZoomIn = () => {
-    setZoomLevel((prevZoomLevel) => (prevZoomLevel < 1.5 ? prevZoomLevel + 0.1 : prevZoomLevel));
+    const newZoomLevel = zoomLevel < 1.5 ? zoomLevel + 0.1 : zoomLevel;
+    setZoomLevel(newZoomLevel);
+    localStorage.setItem('zoomLevel', newZoomLevel.toString());
   };
-
+  
   const handleZoomOut = () => {
-    setZoomLevel((prevZoomLevel) => (prevZoomLevel > 1 ? prevZoomLevel - 0.1 : prevZoomLevel));
+    const newZoomLevel = zoomLevel > 1 ? zoomLevel - 0.1 : zoomLevel;
+    setZoomLevel(newZoomLevel);
+    localStorage.setItem('zoomLevel', newZoomLevel.toString());
   };
 
   const handleEdition = () => {
@@ -264,10 +271,16 @@ const SceneScript: React.FC = () => {
   }
 
   return (
-    <>     
+    <>
       <IonPage>
         <div className='script-buttons-container'>
-          <RiZoomInFill className='script-button-icon' onClick={handleZoomIn}/>
+          <RiZoomInFill 
+            className='script-button-icon' 
+            onClick={handleZoomIn}
+            style={
+              zoomLevel > 1 ? {color: 'var(--ion-color-success)'} : {}
+            }
+          />
           <RiZoomOutFill className='script-button-icon' onClick={handleZoomOut} />
           <RiEditFill  className='script-button-icon' onClick={handleEdition} 
             style={
