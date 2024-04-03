@@ -57,3 +57,5 @@ export const DayOrNightOptionEnumArray: string[] = [
   DayOrNightOptionEnum.SUNSET,
   DayOrNightOptionEnum.SUNRISE,
 ];
+
+// PARAGRAPHS TYPES
