@@ -1,19 +1,24 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import useSuccessToast from "../../../hooks/useSuccessToast";
-import FiilledSuccessButton from "../../Shared/FilledSuccessButton/FillSuccessButton";
+import React from "react";
 import HighlightedTextWithArray, { SearchTerm } from "../../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
-import DatabaseContext from "../../../context/database";
-import { Character, Element, Extra, Note } from "../../../interfaces/scenesTypes";
-import removeAccents from "../../../utils/removeAccents";
-import getUniqueValuesFromNestedArray from "../../../utils/getUniqueValuesFromNestedArray";
-import ElementForm from "./ElementForm";
-import NoteForm from "./NoteForm";
-import CharacterForm from "./CharacterForm";
-import ExtraForm from "./ExtraForm";
-import useTextSelection from "../../../hooks/useSelectedText";
-import useFormTypeLogic from "../../../hooks/useFormTypeLogic";
-import OutlineLightButton from "../../Shared/OutlineLightButton/OutlineLightButton";
-import { IonButton } from "@ionic/react";
+
+enum ParagraphTypeEnum {
+  Action = 'Action',
+  Character = 'Character',
+  Parenthetical = 'Parenthetical',
+  Dialogue = 'Dialogue',
+  Transition = 'Transition',
+  EndOfAct = 'End of Act',
+  General = 'General',
+  Shot = 'Shot',
+  Lyrics = 'Lyrics',
+  NewAct = 'New Act',
+  OutlineBody = 'Outline Body',
+  OutlineT = 'Outline T',
+  NewEndOfAct = 'New/End of Act',
+  Outline3 = 'Outline3',
+  ScriptTitle = 'Script Title'
+}
+
 
 interface SceneParagraphProps {
   type: string;
@@ -26,39 +31,68 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({
   content,
   searchTermsArray,
 }) => {
-
   let className = '';
-
   switch (type) {
-    case 'scene':
-      className = 'scene-paragraph';
+    case ParagraphTypeEnum.Action:
+      className = 'action-paragraph';
       break;
-    case 'description':
-      className = 'description-paragraph';
-      break;
-    case 'character':
+    case ParagraphTypeEnum.Character:
       className = 'character-paragraph';
       break;
-    case 'dialog':
+    case ParagraphTypeEnum.Parenthetical:
+      className = 'parenthetical-paragraph';
+      break;
+    case ParagraphTypeEnum.Dialogue:
       className = 'dialog-paragraph';
       break;
-    case 'action':
-      className = 'action-paragraph';
+    case ParagraphTypeEnum.Transition:
+      className = 'transition-paragraph';
+      break;
+    case ParagraphTypeEnum.EndOfAct:
+      className = 'end-of-act-paragraph';
+      break;
+    case ParagraphTypeEnum.General:
+      className = 'general-paragraph';
+      break;
+    case ParagraphTypeEnum.Shot:
+      className = 'shot-paragraph';
+      break;
+    case ParagraphTypeEnum.Lyrics:
+      className = 'lyrics-paragraph';
+      break;
+    case ParagraphTypeEnum.NewAct:
+      className = 'new-act-paragraph';
+      break;
+    case ParagraphTypeEnum.OutlineBody:
+      className = 'outline-body-paragraph';
+      break;
+    case ParagraphTypeEnum.OutlineT:
+      className = 'outline-t-paragraph';
+      break;
+    case ParagraphTypeEnum.NewEndOfAct:
+      className = 'new-end-of-act-paragraph';
+      break;
+    case ParagraphTypeEnum.Outline3:
+      className = 'outline3-paragraph';
+      break;
+    case ParagraphTypeEnum.ScriptTitle:
+      className = 'script-title-paragraph';
       break;
     default:
       className = 'default-paragraph';
   }
-  
+
   return (
     <>
-      <p
-        className={`${className} script-paragraph`}
-      >
-        {searchTermsArray && <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />}
+      <p className={`${className} script-paragraph`}>
+        {searchTermsArray && (
+          <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />
+        )}
       </p>
     </>
   );
 };
 
 export default SceneParagraph;
- 
+
+// ADD SITE, EXISTENT SCENE
