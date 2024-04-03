@@ -57,7 +57,7 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
     // Convert values to lowercase if they are strings
 
     if(!a[criteriaKey as keyof T]  || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
-      return 0;
+      return -1;
     }
     
     const aValue = !Number.isNaN(Number.parseFloat(a[criteriaKey as keyof T])) ? Number.parseFloat(a[criteriaKey as keyof T]) : (a[criteriaKey as keyof T] as string).toLowerCase();
