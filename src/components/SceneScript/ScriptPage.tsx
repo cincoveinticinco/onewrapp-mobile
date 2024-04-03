@@ -12,7 +12,6 @@ import useFormTypeLogic from "../../hooks/useFormTypeLogic";
 import getUniqueValuesFromNestedArray from "../../utils/getUniqueValuesFromNestedArray";
 import removeAccents from "../../utils/removeAccents";
 import { SearchTerm } from "../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
-import { paragraphs } from "../../data";
 import SceneParagraph from "./SceneParagraph/SceneParagraph";
 import { PiNotePencil } from "react-icons/pi";
 import { MdOutlineFaceUnlock } from "react-icons/md";
@@ -20,6 +19,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { HiMiniUsers } from "react-icons/hi2";
 import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButton";
 import { IonButton } from "@ionic/react";
+import { useParams } from "react-router";
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -45,10 +45,24 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const isMobile = useIsMobile()
 
   const successToast = useSuccessToast();
-  const { offlineScenes } = useContext(DatabaseContext);
+  const { offlineScenes, oneWrapDb } = useContext(DatabaseContext);
   const selectionRef = useRef<string | null>(null);
   const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const { sceneId } = useParams<{ sceneId: string }>();
+  const [paragraphs, setParagraphs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const printParagraphs = async () => {
+      const paragraphs = await oneWrapDb.paragraphs.find({
+        selector: {
+          sceneId
+        }
+      }).exec();
+      setParagraphs(paragraphs);
+    }
+    printParagraphs();
+  }, [oneWrapDb])
 
   const viewportHeight = window.innerHeight;
   const selectionPercentage = (popupPosition.y + 50) / viewportHeight;
@@ -141,13 +155,9 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
 
   const getSearchTermsArray = (text: string) => {
     const words = text.split(' ');
-    console.log('TEXT VS WORDS', text, words)
-
     let searchTermsArray: SearchTerm[] = [];
     const normalizeCharactersArray = charactersArray.map((character: Character) => normalizeWord(character.characterName));
     const normalizeElementsArray = elementsArray.map((element: Element) => normalizeWord(element.elementName));
-
-    console.log(normalizeElementsArray)
     const normalizeExtrasArray = extrasArray.map((extra: Extra) => normalizeWord(extra.extraName))
     const normalizeNotesArray = notesArray.map((note: Note) => normalizeWord(note.note))
 
@@ -162,7 +172,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
         }
         searchTermsArray.push(searchTerm);
       } else if(normalizeElementsArray.includes(normalizeWord(word))) {
-        console.log('IM HEREEEE', normalizeWord(word))
         const searchTerm = {
           searchTerm: normalizeWord(word),
           categoryName: elementsArray.find((element: Element) => normalizeWord(element.elementName) === normalizeWord(word))?.categoryName || null,
