@@ -111,10 +111,6 @@ const SceneScript: React.FC = () => {
     history.push('/my/projects/163/strips');
   }
 
-  useEffect(() => {
-    console.log('ELEMENTS', elementsArray)
-  }, [elementsArray])
-
   const fetchScene = async () => {
     if (sceneId) {
       const scene = await getCurrentScene();
