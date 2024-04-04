@@ -19,11 +19,8 @@ import { FaClipboardList } from "react-icons/fa";
 import { HiMiniUsers } from "react-icons/hi2";
 import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButton";
 import { IonButton } from "@ionic/react";
-import { useParams } from "react-router";
 import useLoader from "../../hooks/useLoader";
-import OutlinePrimaryButton from "../Shared/OutlinePrimaryButton/OutlinePrimaryButton";
 import InputModal from "../../Layouts/InputModal/InputModal";
-import SceneHeader from "../../pages/SceneDetails/SceneHeader";
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -33,13 +30,17 @@ interface ScriptPageProps {
   extrasArray: Extra[];
   notesArray: Note[];
   handleCreation: (type: ('element' | 'character' | 'extra' | 'note'), data: any) => void;
+  paragraphsAreLoading: boolean;
+  paragraphs: any[];
+  selectedSceneId: string | null;
+  setSelectedSceneId: (sceneId: string | null) => void;
 }
 const MemoizedCharacterForm = React.memo(CharacterForm);
 const MemoizedElementForm = React.memo(ElementForm);
 const MemoizedExtraForm = React.memo(ExtraForm);
 const MemoizedNoteForm = React.memo(NoteForm);
 
-const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray }) => {
+const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId }) => {
   const [showPopup, setShowPopup] = useState(false);
   const handlePopupOpen = (selectedText: string, x: number, y: number) => {
     setSelectedText(selectedText);
@@ -53,11 +54,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const selectionRef = useRef<string | null>(null);
   const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const { sceneId } = useParams<{ sceneId: string }>();
-  const [paragraphs, setParagraphs] = useState<any[]>([]);
-  const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [scenesList, setScenesList] = useState<any[]>([]);
-  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
 
   const getScenesArray = () => {
    const scenesList =  offlineScenes.map((scene: any) => {
@@ -75,19 +72,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
     setScenesList(getScenesArray());
     console.log(scenesList)
   }, [offlineScenes, oneWrapDb])
-
-  useEffect(() => {
-    const printParagraphs = async () => {
-      const paragraphs = await oneWrapDb.paragraphs.find({
-        selector: {
-          sceneId: selectedSceneId || sceneId
-        }
-      }).exec();
-      setParagraphs(paragraphs);
-      setParagraphsAreLoading(false);
-    }
-    printParagraphs();
-  }, [oneWrapDb])
 
   const viewportHeight = window.innerHeight;
   const selectionPercentage = (popupPosition.y + 50) / viewportHeight;
