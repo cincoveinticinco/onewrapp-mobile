@@ -21,6 +21,9 @@ import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButto
 import { IonButton } from "@ionic/react";
 import { useParams } from "react-router";
 import useLoader from "../../hooks/useLoader";
+import OutlinePrimaryButton from "../Shared/OutlinePrimaryButton/OutlinePrimaryButton";
+import InputModal from "../../Layouts/InputModal/InputModal";
+import SceneHeader from "../../pages/SceneDetails/SceneHeader";
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -53,12 +56,31 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const { sceneId } = useParams<{ sceneId: string }>();
   const [paragraphs, setParagraphs] = useState<any[]>([]);
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
+  const [scenesList, setScenesList] = useState<any[]>([]);
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+
+  const getScenesArray = () => {
+   const scenesList =  offlineScenes.map((scene: any) => {
+      const sceneId = scene.id;
+      const sceneHeader = `${parseInt(scene.episodeNumber) > 0 ? (`${scene.episodeNumber}.`) : ''}${scene.sceneNumber} ${scene.intOrExtOption ? (`${scene.intOrExtOption}.`) : ''} ${scene.locationName ? (`${scene.locationName}.`) : ''} ${scene.setName}-${scene.dayOrNightOption}${scene.scriptDay} ${scene.year ? `(${scene.year})` : ''}`;
+      return {
+        sceneId,
+        sceneHeader
+      };
+    })
+    return scenesList;
+  }
+
+  useEffect(() => {
+    setScenesList(getScenesArray());
+    console.log(scenesList)
+  }, [offlineScenes, oneWrapDb])
 
   useEffect(() => {
     const printParagraphs = async () => {
       const paragraphs = await oneWrapDb.paragraphs.find({
         selector: {
-          sceneId
+          sceneId: selectedSceneId || sceneId
         }
       }).exec();
       setParagraphs(paragraphs);
@@ -218,9 +240,57 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   }, [charactersArray, elementsArray, extrasArray, notesArray, paragraphs]);
 
   if (paragraphsAreLoading) {
-    return <div className="script-page">
+    return <div 
+      className="script-page"
+      style={{
+        zoom: zoomLevel,
+      }}
+    >
       {useLoader()}
     </div>;
+  }
+
+  const handleCheckboxToggle = (sceneHeader: string) => {
+    const sceneId = scenesList.find(scene => scene.sceneHeader.toLowerCase() === sceneHeader.toLowerCase())?.sceneId;
+    setSelectedSceneId(sceneId);
+    console.log('SETTING NEW SCENE ID', sceneId)
+  }
+
+  if(paragraphs.length === 0) {
+    return (
+      <div 
+        className="script-page"
+        style={{
+          zoom: zoomLevel,
+        }}
+      >
+      <FiilledSuccessButton
+        buttonName="IMPORT SCENE"
+        onClick={() => {}}
+        className="import-scene-button"
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '100px',
+          '--color': 'var(--ion-color-light)',
+          fontWeight: 'bold',
+        }}
+        id="import-scene-button"
+      />
+      <InputModal
+        modalTrigger="import-scene-button"
+        multipleSelections={false}
+        listOfOptions={scenesList.map(scene => scene.sceneHeader)}
+        clearSelections={() => setSelectedSceneId(null)}
+        canCreateNew={false}
+        handleCheckboxToggle={handleCheckboxToggle}
+        selectedOptions={selectedSceneId ? [scenesList.find(scene => scene.sceneId === selectedSceneId)?.sceneHeader] : []}
+        optionName='IMPORT SCENE'
+      />
+    </div>
+    )
   }
   
   return (
