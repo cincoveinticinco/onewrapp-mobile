@@ -7,17 +7,23 @@
   flex-direction: column;
 
   .script-total-popup-background {
-    width: 200px;
+    width: 250px;
     height: auto;
     position: absolute;
     right: 50px;
     top: 0px;                     
-    background-color: var(--ion-color-tertiary-shade);
-    border: 1px solid var(--ion-color-tertiary-shade);
+    background-color: var(--ion-color-tertiary);
+    border: 1px solid var(--ion-color-primary);
+    max-height: 500px;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .total-popup-item {
-      padding: 6px;
-      outline: .3px solid var(--ion-color-light);
+      padding-top: 12px;
+      padding-bottom: 12px;
     }
   }
 

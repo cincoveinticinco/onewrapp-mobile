@@ -182,6 +182,53 @@ const SceneScript: React.FC = () => {
     return list;  
   }
 
+  const getPopupCategories = (type: 'characters' | 'elements' | 'extras') => {
+    const list = new Set<string>();
+    if (thisScene) {
+      if (type === 'characters') {
+        thisScene?.characters?.forEach((character: Character) => {
+          character.categoryName ? list.add(character.categoryName) : list.add('No Category');
+        });
+      }
+      if (type === 'elements') {
+        thisScene?.elements?.forEach((element: Element) => {
+          element.categoryName ? list.add(element.categoryName) : list.add('No Category');
+        });
+      }
+      if (type === 'extras') {
+        thisScene?.extras?.forEach((extra: Extra) => {
+          extra.categoryName ? list.add(extra.categoryName) : list.add('No Category');
+        });
+      }
+    }
+
+    return Array.from(list);
+  }
+
+  const getPopupListByCategory = (type: 'characters' | 'elements' | 'extras', category: string | null ) => {
+    let list = new Set<string>();
+    if(thisScene){
+      if(type === 'characters') {
+        thisScene?.characters?.filter((character: Character) => character.categoryName === category).forEach((character: Character) => {
+          const characterString = `${character.characterNum ? character.characterNum + '. ' : ''}${character.characterName}`;
+          list.add(characterString);
+        });
+      }
+      if(type === 'elements') {
+        thisScene?.elements?.filter((element: Element) => element.categoryName === category).forEach((element: Element) => {
+          list.add(element.elementName);
+        });
+      }
+      if(type === 'extras') {
+        thisScene?.extras?.forEach((extra: Extra) => {
+          list.add(extra.extraName);
+        });
+      }
+    }
+
+    return Array.from(list);
+  }
+
   const handleOpenTotalsPopup = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
     if(popupType === type) {
       setShowTotalsPopup(false);
@@ -306,15 +353,40 @@ const SceneScript: React.FC = () => {
             <span className='total-length extras'>{getPopupList('extras').length}</span>
           </div>
           {
-            popupType && showTotalsPopup && (
+            popupType && popupType === 'notes' && showTotalsPopup && (
             <div className='script-total-popup-background' style={{top: getPopupPositionTop()}} onClick={() => getPopupList(popupType)}>
               {getPopupList(popupType)?.length === 0 ? (
-                <div className='total-popup-item'>NO {popupType.toUpperCase()} ADDED</div>
+                <div className='total-popup-item ion-padding-start'>NO {popupType.toUpperCase()} ADDED</div>
               ) : (
                 getPopupList(popupType)?.map((item: string, i: number) => (
-                  <div key={i} className='total-popup-item'>{item && item.toUpperCase()}</div>                                                 
+                  <div key={i} className='total-popup-item ion-padding-start'>{item && item.toUpperCase()}</div>                                                 
                 ))
               )}
+            </div>
+          )}
+          {
+            popupType && popupType !== 'notes' && showTotalsPopup && (
+            <div className='script-total-popup-background' style={{top: getPopupPositionTop()}} onClick={() => getPopupList(popupType)}>
+              {
+                getPopupCategories(popupType).map((category: string) => (
+                  <div className='popup-category-container'>
+                    <p 
+                      className='popup-category ion-no-margin ion-padding' 
+                      style={{
+                        backgroundColor: 'var(--ion-color-tertiary-shade)',
+                        border: '1px solid var(--ion-color-primary)',
+                      }}
+                    >{category && category.toUpperCase()}</p>
+                    <div className='popup-list-container'>
+                      {
+                        getPopupListByCategory(popupType, (category === 'No category' ? null : category)).map((item: string) => (
+                          <p className='total-popup-item ion-no-margin ion-padding-start'>{item && item.toUpperCase()}</p>
+                        ))
+                      }
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           )}
         </div>
