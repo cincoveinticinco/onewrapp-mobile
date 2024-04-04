@@ -18,7 +18,7 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
   // EXACT PATHS
 
   return (
-    <IonTabBar slot="bottom" className="scene-details-tabs-container" color="dark">
+    <IonTabBar slot="bottom" className="scene-details-tabs-container" color="dark" mode="md"> 
       <IonTabButton 
         tab="scenedetails" 
         className={defineButtonClass} 

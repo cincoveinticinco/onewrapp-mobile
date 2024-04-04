@@ -275,8 +275,9 @@
 
   .script-page-bottom-bar {
     height: calc(((100vh - 12vw) * (8.5 / 11 ) - 50px) * 0.09);
-    width: calc((100vh - 12vw) * (8.5 / 11 ) - 24px);
-    margin: auto;
+    width: calc((100vh - 12vw) * (8.5 / 11 ));
+    margin-left: calc(((100vh - 12vw) * (8.5 / 11 ) / 2) + 12px);
+    
     border: none;
   }
 }

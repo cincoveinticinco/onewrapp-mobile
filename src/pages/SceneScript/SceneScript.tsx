@@ -442,16 +442,9 @@ const SceneScript: React.FC = () => {
         </IonContent>
         {
           !paragraphsAreLoading &&
+          paragraphs.length > 10 &&
           (
-            <>
-              <IonTabBar 
-              className='script-page-bottom-bar'
-              style={{
-                zoom: `${zoomLevel}`,
-              }}
-              >
-              </IonTabBar>
-              <div
+            <div
               className='script-page-top-bar'
               style={{
               transform: `scale(${zoomLevel})`,
@@ -472,9 +465,24 @@ const SceneScript: React.FC = () => {
                 </p>
               )}
             </div>
-          </>
           )
         }
+        {
+          !paragraphsAreLoading &&
+          paragraphs.length > 10 &&
+          (
+              <IonTabBar 
+              className='script-page-bottom-bar'
+              style={{
+                zoom: `${zoomLevel}`,
+                zIndex: '1'
+              }}
+              mode='md'
+              >
+              </IonTabBar>
+          )
+        }
+        
       
         <SceneDetailsTabs sceneId={sceneId} />
       </IonPage>
