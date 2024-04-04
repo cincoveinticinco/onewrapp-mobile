@@ -386,10 +386,13 @@ const SceneScript: React.FC = () => {
           {
             popupType && popupType !== 'notes' && showTotalsPopup && (
             <div className='script-total-popup-background' style={{top: getPopupPositionTop()}} onClick={() => getPopupList(popupType)}>
-              {
+              { getPopupCategories(popupType).length === 0 ? (
+                  <div className='total-popup-item ion-padding-start'>NO {popupType.toUpperCase()} ADDED</div>
+                ) :
                 getPopupCategories(popupType).map((category: string) => (
                   <div className='popup-category-container'>
                     <p 
+                      key={category + popupType}
                       className='popup-category ion-no-margin ion-padding' 
                       style={{
                         backgroundColor: 'var(--ion-color-tertiary-shade)',
@@ -399,7 +402,7 @@ const SceneScript: React.FC = () => {
                     <div className='popup-list-container'>
                       {
                         getPopupListByCategory(popupType, (category === 'No category' ? null : category)).map((item: string) => (
-                          <p className='total-popup-item ion-no-margin ion-padding-start'>{item && item.toUpperCase()}</p>
+                          <p className='total-popup-item ion-no-margin ion-padding-start' key={item + popupType + category}>{item && item.toUpperCase()}</p>
                         ))
                       }
                     </div>
@@ -475,9 +478,9 @@ const SceneScript: React.FC = () => {
               className='script-page-bottom-bar'
               style={{
                 zoom: `${zoomLevel}`,
-                zIndex: '1'
+                zIndex: '1',
+                
               }}
-              mode='md'
               >
               </IonTabBar>
           )
