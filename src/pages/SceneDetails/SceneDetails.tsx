@@ -3,7 +3,7 @@ import {
   IonContent, IonHeader, IonPage, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
 import useHideTabs from '../../hooks/useHideTabs';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { useContext, useEffect, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
@@ -42,12 +42,14 @@ const SceneDetails: React.FC = () => {
   const changeToNextScene = () => {
     if(nextScene) {
       history.push(`/my/projects/163/strips/details/scene/${nextScene.id}`)
+      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${nextScene.id}`)
     }
   }
 
   const changeToPreviousScene = () => {
     if(previousScene) {
       history.push(`/my/projects/163/strips/details/scene/${previousScene.id}`)
+      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${previousScene.id}`)
     }
   }
 

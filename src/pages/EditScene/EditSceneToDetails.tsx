@@ -20,7 +20,14 @@ const EditSceneToDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { sceneId }: any = useParams();
   const projectId = parseInt(id);
-  const handleBack = () => history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
+  const handleBack = () => {
+    const backRoute = localStorage.getItem('editionBackRoute');
+    console.log(backRoute);
+    backRoute ?
+    history.push(backRoute) :
+    history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
+  }
+  ;
   const updatedAt = new Date().toISOString();
   const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();

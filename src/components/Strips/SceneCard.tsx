@@ -147,7 +147,10 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
     }
   };
 
-  const goToSceneDetails = () => history.push(detailsRoute);
+  const goToSceneDetails = () => {
+    history.push(detailsRoute);
+    localStorage.setItem('editionBackRoute', detailsRoute);
+  };
 
   return (
     <IonRow className="scene-card-row">

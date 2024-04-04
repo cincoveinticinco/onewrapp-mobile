@@ -19,11 +19,21 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
 
   return (
     <IonTabBar slot="bottom" className="scene-details-tabs-container" color="dark">
-      <IonTabButton tab="scenedetails" className={defineButtonClass} href={`/my/projects/163/strips/details/scene/${sceneId}`}>
+      <IonTabButton 
+        tab="scenedetails" 
+        className={defineButtonClass} 
+        href={`/my/projects/163/strips/details/scene/${sceneId}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${sceneId}`)}
+        >
         <IonIcon icon={serverOutline} className="tab-bar-icons" />
         <IonLabel>SCENE DETAILS</IonLabel>
       </IonTabButton>
-      <IonTabButton tab="scenescript" className="tab-bar-buttons" href={`/my/projects/163/strips/details/script/${sceneId}`}>
+      <IonTabButton 
+        tab="scenescript" 
+        className="tab-bar-buttons" 
+        href={`/my/projects/163/strips/details/script/${sceneId}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/script/${sceneId}`)}
+      >
         <IonIcon icon={documentTextOutline} className="tab-bar-icons" />
         <IonLabel>SCENE SCRIPT</IonLabel>
       </IonTabButton>
