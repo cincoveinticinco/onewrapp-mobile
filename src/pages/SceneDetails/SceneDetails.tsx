@@ -98,7 +98,7 @@ const SceneDetails: React.FC = () => {
   };
 
   const fetchScene = async () => {
-    if (sceneId) {
+    if (sceneId && oneWrapDb) {
       const scene = await getCurrentScene()
       setThisScene(scene)
       setTimeout(() => {
