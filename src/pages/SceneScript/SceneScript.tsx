@@ -43,6 +43,23 @@ const SceneScript: React.FC = () => {
   const [notesArray, setNotesArray ] = useState<Note[]>([]);
   const [showTotalsPopup, setShowTotalsPopup] = useState(false);
   const [popupType, setPopupType] = useState<'notes' | 'characters' | 'elements' | 'extras' | null>(null);
+  const [paragraphs, setParagraphs] = useState<any[]>([]);
+  const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const printParagraphs = async () => {
+      const paragraphs = await oneWrapDb.paragraphs.find({
+        selector: {
+          sceneId: selectedSceneId || sceneId
+        }
+      }).exec();
+      setParagraphs(paragraphs);
+      setParagraphsAreLoading(false);
+    }
+    oneWrapDb && printParagraphs();
+  }, [oneWrapDb])
+
 
   const createNewElement = async (element: Element) => {
     try {
@@ -115,7 +132,7 @@ const SceneScript: React.FC = () => {
   }
 
   const fetchScene = async () => {
-    if (sceneId) {
+    if (sceneId && oneWrapDb) {
       const scene = await getCurrentScene();
       setThisScene(scene);
       setCharactersArray(scene?.characters);
@@ -417,35 +434,48 @@ const SceneScript: React.FC = () => {
             extrasArray={extrasArray || []}
             notesArray={notesArray || []}
             handleCreation={handleCreation}
+            selectedSceneId={sceneId}
+            setSelectedSceneId={setSelectedSceneId}
+            paragraphs={paragraphs}
+            paragraphsAreLoading={paragraphsAreLoading}
           />
         </IonContent>
-        <IonTabBar 
-          className='script-page-bottom-bar'
-          style={{
-            zoom: `${zoomLevel}`,
-          }}
-      ></IonTabBar>
-        <div
-          className='script-page-top-bar'
-          style={{
-           transform: `scale(${zoomLevel})`,
-          }}
-        >
-          {edition && (
-            <p 
+        {
+          !paragraphsAreLoading &&
+          (
+            <>
+              <IonTabBar 
+              className='script-page-bottom-bar'
               style={{
-                color: 'var(--ion-color-success)',
-                position: 'absolute',
-                right: '40%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'flex-start',
+                zoom: `${zoomLevel}`,
+              }}
+              >
+              </IonTabBar>
+              <div
+              className='script-page-top-bar'
+              style={{
+              transform: `scale(${zoomLevel})`,
               }}
             >
-              Edition Enabled
-            </p>
-          )}
-        </div>
+              {edition && (
+                <p 
+                  style={{
+                    color: 'var(--ion-color-success)',
+                    position: 'absolute',
+                    right: '40%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  Edition Enabled
+                </p>
+              )}
+            </div>
+          </>
+          )
+        }
+      
         <SceneDetailsTabs sceneId={sceneId} />
       </IonPage>
     </>
