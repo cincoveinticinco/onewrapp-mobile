@@ -5,6 +5,7 @@ import {
   DayOrNightOptionEnumArray,
   SceneTypeEnum,
 } from '../../Ennums/ennums';
+import environment from '../../../environment';
 
 const sceneSchema = {
   title: 'scene schema',
@@ -139,6 +140,15 @@ const sceneSchemaInput = {
 
 export default class ScenesSchema extends DatabaseSchema {
   static schemaName = 'scenes';
+  static endpointName = environment.SCENES_ENDPOINT;
+
+  getEndpointName() {
+    return ScenesSchema.endpointName;
+  }
+
+  getSchemaName() {
+    return ScenesSchema.schemaName;
+  }
 
   constructor() {
     const { schemaName } = ScenesSchema;

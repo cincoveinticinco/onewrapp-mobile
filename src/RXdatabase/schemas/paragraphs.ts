@@ -1,3 +1,4 @@
+import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
 
 const sceneParagraphSchema = {
@@ -74,6 +75,15 @@ const sceneParagraphSchemaInput = {
 
 export default class SceneParagraphSchema extends DatabaseSchema {
   static schemaName = 'paragraphs';
+  static endpointName = environment.SCENE_PARAGRAPHS_ENDPOINT;
+
+  getEndpointName() {
+    return SceneParagraphSchema.endpointName;
+  }
+
+  getSchemaName() {
+    return SceneParagraphSchema.schemaName;
+  }
 
   constructor() {
     const { schemaName } = SceneParagraphSchema;
