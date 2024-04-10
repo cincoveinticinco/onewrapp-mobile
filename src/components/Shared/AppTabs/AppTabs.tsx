@@ -59,7 +59,7 @@ const AppTabs: React.FC = () => {
 
   return (
     <IonTabs className='ion-tabs'>
-      <IonRouterOutlet>
+      <IonRouterOutlet mode='md'>
         <Route exact path={`${urlString}/addscene`}>
           <AddScene />
         </Route>

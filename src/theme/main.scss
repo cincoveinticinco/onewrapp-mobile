@@ -1,5 +1,19 @@
 /* CUSTOMIZED FLEX STYLES */
 
+ion-content {
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+main {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .input-wrapper {
   flex-wrap: nowrap !important;
 }
