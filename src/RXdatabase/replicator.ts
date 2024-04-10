@@ -1,25 +1,24 @@
-import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
+import environment from '../../environment';
 import AppDataBase from './database';
+import { replicateRxCollection } from 'rxdb/plugins/replication';
 
 export default class GraphQLReplicator {
   private database: AppDataBase;
-
-  private syncURL = {
-    http: `${process.env.URL_PATH}:${process.env.GRAPHQL_PORT}/${process.env.GRAPHQL_PATH}`,
-  }
+  private collections: any;
+  private projectId: number;
 
   private replicationStates: any[] = [];
 
-  constructor(database: AppDataBase) {
+  constructor(database: AppDataBase, collections: any, projectId: number) {
     this.database = database;
-
-    this.startReplication();
+    this.collections = collections;
+    this.projectId = projectId;
   }
 
   public startReplication() {
-    const collections = this.database.getCollections();
+    const collections = this.collections;
 
-    collections.forEach((collection) => this.setupGraphQLReplication(collection));
+    collections.forEach((collection: any) => this.setupGraphQLReplication(collection, this.projectId));
   }
 
   public stopReplication() {
@@ -31,27 +30,33 @@ export default class GraphQLReplicator {
     this.replicationStates = [];
   }
 
-  private setupGraphQLReplication(collection: any) {
-    const replicationState = replicateGraphQL({
-      collection,
-      url: this.syncURL,
+  private setupGraphQLReplication(collection: any, projectId: number) {
+    console.log(this.replicationStates, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+    console.log('Setting up replication for', collection.SchemaName());
+    const replicationState = replicateRxCollection({
+      collection: this.database[collection.SchemaName() as keyof AppDataBase],
+      replicationIdentifier: 'my-http-replication',
       pull: {
-        queryBuilder: collection.schema.getPullQueryBuilder(),
-        batchSize: collection.schema.batchSize,
+        async handler(checkpointOrNull: any, batchSize: number) {
+          const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : "1970-01-01T00:00:00.000Z";
+          const id = checkpointOrNull ? checkpointOrNull.id : 0;
+          const collectionName = collection.getSchemaName()
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}`);
+          const data = await response.json();
+          return {
+            documents: data[collectionName],
+            checkpoint: data.checkpoint,
+          };
+        },
       },
-      push: {
-        queryBuilder: collection.schema.getPushQueryBuilder(),
-        batchSize: collection.schema.batchSize,
-      },
-      deletedField: 'deleted',
-      live: true,
-      replicationIdentifier: `replication-${collection.name}`,
     });
 
     replicationState.error$.subscribe((err) => {
-      console.error(`Replication error in ${collection.name}:`);
+      console.error(`Replication error in ${collection.SchemaName()}:`);
       console.dir(err);
     });
+
+    this.replicationStates.push(replicationState);
 
     return replicationState;
   }
