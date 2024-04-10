@@ -426,7 +426,7 @@ const SceneScript: React.FC = () => {
         <IonContent
           color="tertiary"
           fullscreen
-          scrollEvents={true}
+          scrollEvents={false}
           onClick={() => setShowTotalsPopup(false)}
         >
           <ScriptPage
@@ -474,15 +474,24 @@ const SceneScript: React.FC = () => {
           !paragraphsAreLoading &&
           paragraphs.length > 10 &&
           (
-              <IonTabBar 
+              <div
               className='script-page-bottom-bar'
               style={{
-                zoom: `${zoomLevel}`,
-                zIndex: '1',
-                
+                zoom: zoomLevel,
+                width: '100%',
+                backgroundColor: 'var(--ion-color-tertiary)',
+                paddingRight: '16px', /// THIS SHOUD BE REMOVED ON DEPLOYMENT, IT'S JUST FOR TESTING
               }}
+            
               >
-              </IonTabBar>
+                  <div
+                className='script-page-bottom-bar'
+                style={{
+                  backgroundColor: 'var(--ion-color-light)',
+                }}
+                >
+                </div>
+              </div>
           )
         }
         
