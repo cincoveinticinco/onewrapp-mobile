@@ -2,7 +2,7 @@ import environment from '../../environment';
 import AppDataBase from './database';
 import { replicateRxCollection } from 'rxdb/plugins/replication';
 
-export default class GraphQLReplicator {
+export default class HttpReplicator {
   private database: AppDataBase;
   private collections: any;
   private projectId: number;
@@ -15,11 +15,18 @@ export default class GraphQLReplicator {
     this.projectId = projectId;
   }
 
-  public startReplication() {
+  public startReplicationPull() {
     const collections = this.collections;
 
-    collections.forEach((collection: any) => this.setupGraphQLReplication(collection, this.projectId));
+    collections.forEach((collection: any) => this.setupHttpReplicationPull(collection, this.projectId));
   }
+
+  public startReplicationPush() {
+    const collections = this.collections;
+
+    collections.forEach((collection: any) => this.setupHttpReplicationPush(collection));
+  }
+
 
   public stopReplication() {
     this.replicationStates.forEach((replicationState) => {
@@ -30,9 +37,9 @@ export default class GraphQLReplicator {
     this.replicationStates = [];
   }
 
-  private setupGraphQLReplication(collection: any, projectId: number) {
+  private setupHttpReplicationPull(collection: any, projectId: number) {
     console.log(this.replicationStates, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-    console.log('Setting up replication for', collection.SchemaName());
+    console.log('Setting up replication PULL for', collection.SchemaName());
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
       replicationIdentifier: 'my-http-replication',
@@ -41,7 +48,7 @@ export default class GraphQLReplicator {
           const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : "1970-01-01T00:00:00.000Z";
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
           const collectionName = collection.getSchemaName()
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}&project_id=${projectId}`);
           const data = await response.json();
           return {
             documents: data[collectionName],
@@ -60,4 +67,36 @@ export default class GraphQLReplicator {
 
     return replicationState;
   }
+
+  private setupHttpReplicationPush(collection: any) {
+    console.log('Setting up replication  PUSH for', collection.SchemaName());
+    const replicationState = replicateRxCollection({
+      collection: this.database[collection.SchemaName() as keyof AppDataBase],
+      replicationIdentifier: 'my-http-replication',
+      push: {
+        async handler(changeRows: any): Promise<any> {
+          const rawResponse = await fetch(`${environment.URL_PATH}/${collection.getEndpointPushName()}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(changeRows)
+        });
+          const conflictsArray = await rawResponse.json();
+          return conflictsArray;
+        },
+        
+      },
+    });
+
+    replicationState.error$.subscribe((err) => {
+      console.error(`Replication error in ${collection.SchemaName()}:`);
+      console.dir(err);
+    });
+
+    this.replicationStates.push(replicationState);
+
+    return replicationState;
+    }
 }
