@@ -75,10 +75,15 @@ const sceneParagraphSchemaInput = {
 
 export default class SceneParagraphSchema extends DatabaseSchema {
   static schemaName = 'paragraphs';
-  static endpointName = environment.SCENE_PARAGRAPHS_ENDPOINT;
+  static endpointPullName = environment.SCENE_PARAGRAPHS_ENDPOINT_PULL;
+  static endpointPushName = environment.SCENE_PARAGRAPHS_ENDPOINT_PUSH;
 
-  getEndpointName() {
-    return SceneParagraphSchema.endpointName;
+  getEndpointPullName() {
+    return SceneParagraphSchema.endpointPullName;
+  }
+
+  getEndpointPushName() {
+    return SceneParagraphSchema.endpointPushName;
   }
 
   getSchemaName() {
