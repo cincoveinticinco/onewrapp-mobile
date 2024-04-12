@@ -5,7 +5,7 @@ import ScenesSchema from '../RXdatabase/schemas/scenes';
 import ProjectsSchema from '../RXdatabase/schemas/projects';
 import { Scene } from '../interfaces/scenesTypes';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
-import GraphQLReplicator from '../RXdatabase/replicator';
+import HttpReplicator from '../RXdatabase/replicator';
 
 const sceneCollection = new ScenesSchema();
 const paragraphCollection = new SceneParagraphsSchema();
@@ -30,8 +30,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       try {
         const dbInstance = await RXdatabase.getDatabaseInstance();
         setOneWrapRXdatabase(dbInstance);
-        const replicator = new GraphQLReplicator(dbInstance, [sceneCollection, paragraphCollection], projectId);
-        replicator.startReplication();
+        const replicator = new HttpReplicator(dbInstance, [sceneCollection, paragraphCollection], projectId);
+        replicator.startReplicationPull();
       } catch (error) {
         console.error('Error al obtener la instancia de la base de datos:', error);
       }
@@ -51,6 +51,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       subscription?.unsubscribe();
     };
   }, [offlineScenes$]);
+
+  useEffect(() => {
+    const replicationInterval = setInterval(() => {
+      const replicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection, paragraphCollection], projectId);
+      const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
+      // replicator.startReplicationPull();
+      replicator2.startReplicationPush();
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(replicationInterval);
+  }, [oneWrapRXdatabase]);
 
   return (
     <DatabaseContext.Provider value={{ oneWrapDb: oneWrapRXdatabase, offlineScenes }}>
