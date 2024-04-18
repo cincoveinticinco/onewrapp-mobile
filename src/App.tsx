@@ -24,50 +24,57 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import { DatabaseContextProvider } from './context/database';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import environment from '../environment';
 
 setupIonicReact();
 
 const App: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   if(!loggedIn) {
     return (
+      <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
         <IonApp>
           <IonReactRouter>
             <IonRouterOutlet>
               <Redirect to="/login" />
               <Route exact path="/login">
-                <LoginPage onLogin={() => setLoggedIn(true)} />
+                <LoginPage onLogin={() => setLoggedIn(true)} setUser={setUser} />
               </Route>
             </IonRouterOutlet>
           </IonReactRouter>
-      </IonApp>
+        </IonApp>
+      </GoogleOAuthProvider>
     )
   }
 
   return (
-    <IonApp>
-      <DatabaseContextProvider>
-        <AuthContext.Provider value={{ loggedIn }}>
-          <ScenesContextProvider>
-            <IonReactRouter>
-              <IonRouterOutlet>
-                <Route exact path="/login">
-                  <LoginPage onLogin={() => setLoggedIn(true)} />
-                </Route>
-                <Route exact path="/my/projects">
-                  <Projects />
-                </Route>
-                <Redirect exact path="/" to="/my/projects" />
-                <Route path="/my/projects/:id">
-                  <AppTabs />
-                </Route>
-              </IonRouterOutlet>
-            </IonReactRouter>
-          </ScenesContextProvider>
-        </AuthContext.Provider>
-      </DatabaseContextProvider>
-    </IonApp>
+    <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
+      <IonApp>
+        <DatabaseContextProvider>
+          <AuthContext.Provider value={{ loggedIn, user }}>
+            <ScenesContextProvider>
+              <IonReactRouter>
+                <IonRouterOutlet>
+                  <Route exact path="/login">
+                    <LoginPage onLogin={() => setLoggedIn(true)} setUser={setUser} />
+                  </Route>
+                  <Route exact path="/my/projects">
+                    <Projects />
+                  </Route>
+                  <Redirect exact path="/" to="/my/projects" />
+                  <Route path="/my/projects/:id">
+                    <AppTabs />
+                  </Route>
+                </IonRouterOutlet>
+              </IonReactRouter>
+            </ScenesContextProvider>
+          </AuthContext.Provider>
+        </DatabaseContextProvider>
+      </IonApp>
+    </GoogleOAuthProvider>
   );
 };
 
