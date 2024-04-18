@@ -26,6 +26,7 @@
     "@ionic/react-router": "^7.0.0",
     "@pdfme/common": "^4.0.0",
     "@pdfme/generator": "^4.0.0",
+    "@react-oauth/google": "^0.12.1",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "ionicons": "^7.0.0",

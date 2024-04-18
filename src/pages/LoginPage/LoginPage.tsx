@@ -8,17 +8,34 @@ import './LoginPage.css';
 import { logoApple, logoGoogle, logoWindows, mail } from 'ionicons/icons';
 import logo from '../../assets/images/logo_onewrapp.png'
 import footerLogo from '../../assets/images/footerLogo.png'
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import { useEffect } from 'react';
 
 interface Props {
   onLogin: () => void;
+  setUser: (user: any) => void;
 }
 
-const LoginPage: React.FC<Props> = ({ onLogin }) => {
-  const { loggedIn } = useAuth();
+const LoginPage: React.FC<Props> = ({ onLogin, setUser }) => {
+  const { loggedIn, user } = useAuth();
 
   if (loggedIn) {
     return <Redirect to="/my/projects" />;
   }
+
+  const responseMessage = (response: any) => {
+    console.log(response);
+    setUser(response);
+    onLogin();
+  };
+const errorMessage = (error: any): any => {
+    console.log(error);
+};
+
+const login = useGoogleLogin({
+  onSuccess: responseMessage,
+  onError: errorMessage,
+})
 
   return (
     <IonPage>
@@ -33,14 +50,15 @@ const LoginPage: React.FC<Props> = ({ onLogin }) => {
             height='100%'
             controls={false}
             muted={true}
-            playing={true} // Add this line to autoplay the video
+            playing={true} 
           />
         </div>
         <div className='main-logo-wrapper'>
           <img src={logo} alt='logo' className='login-logo' />
         </div>
         <div className='login-buttons-container'>
-          <IonButton expand="block" onClick={onLogin} className='login-button ion-no-padding'>
+          {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage as any} /> */}
+          <IonButton expand="block" onClick={() => login()} className='login-button ion-no-padding'>
             <IonIcon slot="start" icon={logoGoogle} color='dark'/>
             <span className='button-text'>SIGN IN WITH GOOGLE</span>
           </IonButton>
