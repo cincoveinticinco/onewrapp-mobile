@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
 } from '@ionic/react';
@@ -7,9 +7,14 @@ import {
 } from 'ionicons/icons';
 import './Toolbar.scss';
 import useIsMobile from '../../../hooks/useIsMobile';
-import { RiProhibitedLine } from "react-icons/ri";
+import { RiDownload2Line, RiProhibitedLine } from "react-icons/ri";
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
+import type { Template } from '@pdfme/common';
+import { generate } from '@pdfme/generator';
+import template from '../../../templates/MinimalTemplate';
+import { FaDownload } from 'react-icons/fa';
+import DatabaseContext from '../../../context/database';
 
 interface ToolbarProps {
   name: string;
@@ -32,6 +37,7 @@ interface ToolbarProps {
   deleteButton?: boolean;
   editRoute?: string;
   deleteTrigger?: string;
+  download?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -54,8 +60,23 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   edit = false,
   editRoute = '',
   deleteTrigger = '',
+  download = true,
 }) => {
   const isMobile = useIsMobile();
+
+  const { offlineScenes } = useContext(DatabaseContext)
+
+  const [sceneToPrint, setSceneToPrint] = useState<any>({})
+  const [inputs, setInputs] = useState<any>([])
+
+  useEffect(() => {
+    if(offlineScenes.length > 0) setSceneToPrint(offlineScenes[0]._data)
+    if(sceneToPrint) {
+      let inputs = [{a: `LOCATION: ${sceneToPrint.locationName}`, b: `SET: ${sceneToPrint.setName}`, c: sceneToPrint.synopsis}]
+      setInputs(inputs)
+    }
+  }, [offlineScenes, sceneToPrint])
+
 
   const handleSearchInput = (e: any) => {
     setSearchText(e.detail.value);
@@ -72,6 +93,14 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       searchRef.current?.setFocus();
     }
   };
+
+  const generatePdf = (template: any, inputs: any) => {
+    offlineScenes.length > 0 && sceneToPrint &&
+    generate({ template, inputs }).then((pdf) => {
+      const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
+      window.open(URL.createObjectURL(blob))
+    });
+  }
 
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
@@ -147,6 +176,13 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         deleteButton && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" id={deleteTrigger}>
             <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+          </IonButton>
+        )
+      }
+      {
+        download && (
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => generatePdf(template, inputs)}>
+            <RiDownload2Line className="toolbar-icon download-icon" />
           </IonButton>
         )
       }
