@@ -42,11 +42,17 @@ import EditScene from '../../../pages/EditScene/EditScene';
 import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
+import { useAuth } from '../../../context/auth';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
-  // const { loggedIn } = useAuth();
+  const { loggedIn } = useAuth();
+
+
+  if(!loggedIn) {
+    return <Redirect to="/login" />
+  }
 
   const isMobile = useIsMobile();
 
