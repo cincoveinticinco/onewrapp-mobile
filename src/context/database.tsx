@@ -53,15 +53,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [offlineScenes$]);
 
   useEffect(() => {
-    const replicationInterval = setInterval(() => {
-      const replicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection, paragraphCollection], projectId);
-      const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
-      // replicator.startReplicationPull();
-      replicator2.startReplicationPush();
-    }, 10000); // 10 seconds
+   
+      const initializeReplication = () => {
+        if (oneWrapRXdatabase) {
+          const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
+          replicator2.startReplicationPush();
+        }
+      };
 
-    return () => clearInterval(replicationInterval);
-  }, [oneWrapRXdatabase]);
+      initializeReplication();
+
+  }, [oneWrapRXdatabase, offlineScenes]);
 
   return (
     <DatabaseContext.Provider value={{ oneWrapDb: oneWrapRXdatabase, offlineScenes }}>
