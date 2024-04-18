@@ -55,7 +55,6 @@ export default class HttpReplicator {
   }
 
   private setupHttpReplicationPull(collection: any, projectId: number) {
-    console.log(this.replicationStates, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
     console.log('Setting up replication PULL for', collection.SchemaName());
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -82,6 +81,8 @@ export default class HttpReplicator {
     });
 
     this.replicationStates.push(replicationState);
+
+    console.log('Replication state:', replicationState)
 
     return replicationState;
   }
