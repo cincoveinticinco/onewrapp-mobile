@@ -30,6 +30,21 @@ setupIonicReact();
 const App: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
+  if(!loggedIn) {
+    return (
+        <IonApp>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Redirect to="/login" />
+              <Route exact path="/login">
+                <LoginPage onLogin={() => setLoggedIn(true)} />
+              </Route>
+            </IonRouterOutlet>
+          </IonReactRouter>
+      </IonApp>
+    )
+  }
+
   return (
     <IonApp>
       <DatabaseContextProvider>

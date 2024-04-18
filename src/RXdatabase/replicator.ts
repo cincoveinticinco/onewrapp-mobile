@@ -3,21 +3,21 @@ import AppDataBase from './database';
 import { replicateRxCollection } from 'rxdb/plugins/replication';
 import { Subject } from 'rxjs';
 
-const myPullStream$: any = new Subject();
-const eventSource = new EventSource('http://localhost:3000/owapp/pull_stream_scenes', { withCredentials: true });
-eventSource.onmessage = event => {
-  const eventData = JSON.parse(event.data);
-  myPullStream$.next({
-    documents: eventData.documents,
-    checkpoint: eventData.checkpoint
-  });
-  console.log(eventData);
-};
+// const myPullStream$: any = new Subject();
+// const eventSource = new EventSource('http://localhost:3000/owapp/pull_stream_scenes', { withCredentials: true });
+// eventSource.onmessage = event => {
+//   const eventData = JSON.parse(event.data);
+//   myPullStream$.next({
+//     documents: eventData.documents,
+//     checkpoint: eventData.checkpoint
+//   });
+//   console.log(eventData);
+// };
 
-console.log(eventSource);
-eventSource.addEventListener('data', (event) => {
-  console.log('data', event);
-});
+// console.log(eventSource);
+// eventSource.addEventListener('data', (event) => {
+//   console.log('data', event);
+// });
 
 export default class HttpReplicator {
   private database: AppDataBase;
@@ -55,7 +55,8 @@ export default class HttpReplicator {
   }
 
   private setupHttpReplicationPull(collection: any, projectId: number) {
-    console.log('Setting up replication PULL for', collection.SchemaName());
+    const currentTimestamp = new Date().toISOString();
+    console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
       replicationIdentifier: 'my-http-replication',
@@ -71,7 +72,7 @@ export default class HttpReplicator {
             checkpoint: data.checkpoint,
           };
         },
-        stream$: myPullStream$.asObservable(),
+        // stream$: myPullStream$.asObservable(),
       },
     });
 
@@ -82,13 +83,12 @@ export default class HttpReplicator {
 
     this.replicationStates.push(replicationState);
 
-    console.log('Replication state:', replicationState)
-
     return replicationState;
   }
 
   private setupHttpReplicationPush(collection: any) {
-    console.log('Setting up replication  PUSH for', collection.SchemaName());
+    const currentTimestamp = new Date().toISOString();
+    console.log('Setting up replication  PUSH for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
       replicationIdentifier: 'my-http-replication',
