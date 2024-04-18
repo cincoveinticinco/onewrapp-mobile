@@ -1,6 +1,23 @@
 import environment from '../../environment';
 import AppDataBase from './database';
 import { replicateRxCollection } from 'rxdb/plugins/replication';
+import { Subject } from 'rxjs';
+
+const myPullStream$: any = new Subject();
+const eventSource = new EventSource('http://localhost:3000/owapp/pull_stream_scenes', { withCredentials: true });
+eventSource.onmessage = event => {
+  const eventData = JSON.parse(event.data);
+  myPullStream$.next({
+    documents: eventData.documents,
+    checkpoint: eventData.checkpoint
+  });
+  console.log(eventData);
+};
+
+console.log(eventSource);
+eventSource.addEventListener('data', (event) => {
+  console.log('data', event);
+});
 
 export default class HttpReplicator {
   private database: AppDataBase;
@@ -55,6 +72,7 @@ export default class HttpReplicator {
             checkpoint: data.checkpoint,
           };
         },
+        stream$: myPullStream$.asObservable(),
       },
     });
 
