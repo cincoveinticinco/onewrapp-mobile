@@ -41,7 +41,7 @@ const login = useGoogleLogin({
     <IonPage>
       <IonHeader>
       </IonHeader>
-      <IonContent className="ion-padding" fullscreen>
+      <IonContent className="ion-padding" fullscreen color='tertiary'>
         <div className="login-video-wrapper">
           <ReactPlayer
             className='react-player fixed-bottom'
