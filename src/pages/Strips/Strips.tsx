@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
-import { IonButton, IonContent, IonGrid, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
+import { IonButton, IonContent, IonGrid, IonIcon, IonRefresher, IonRefresherContent, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
@@ -17,9 +17,10 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
 import useLoader from '../../hooks/useLoader';
+import { refreshCircleOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
-  const { offlineScenes } = useContext(DatabaseContext);
+  const { offlineScenes, setStartReplication } = useContext(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
@@ -28,13 +29,17 @@ const Strips: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, unused_] = useState(false);
   const history = useHistory();
-  useScrollToTop(contentRef, useLocation());
+  const location = useLocation();
+  useScrollToTop(contentRef, location);
   const { showTabs } = useHideTabs();
 
   useIonViewWillEnter(() => {
     showTabs();
   });
 
+  useEffect(() => {
+    setStartReplication(true);
+  }, [location])
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
@@ -139,6 +144,9 @@ const Strips: React.FC = () => {
         sortTrigger="sort-scenes-modal-trigger"
       >
         <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
+          <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
+            <IonRefresherContent />
+          </IonRefresher>
           <StripTagsToolbar />
           <Suspense fallback={useLoader()}>
             {loading ? (
