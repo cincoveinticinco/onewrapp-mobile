@@ -70,7 +70,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
 
   useEffect(() => {
     setScenesList(getScenesArray());
-    console.log(scenesList)
   }, [offlineScenes, oneWrapDb])
 
   const viewportHeight = window.innerHeight;
