@@ -1,3 +1,40 @@
+export enum ProjectStatusEnum {
+  ON_DEVELOPMENT = 'On Development',
+  ON_PRE_PRODUCTION = 'On Pre-production',
+  ON_PRODUCTION = 'On Production',
+  ON_POST_PRODUCTION = 'On Post Production',
+  CLOSED = 'Closed',
+  ON_HOLD = 'On Hold',
+  DELETED = 'Deleted',
+  IN_WRAP = 'In Wrap',
+}
+
+export const ProjectStatusEnumArray: (string)[] = [
+  ProjectStatusEnum.ON_DEVELOPMENT,
+  ProjectStatusEnum.ON_PRE_PRODUCTION,
+  ProjectStatusEnum.ON_PRODUCTION,
+  ProjectStatusEnum.ON_POST_PRODUCTION,
+  ProjectStatusEnum.CLOSED,
+  ProjectStatusEnum.ON_HOLD,
+  ProjectStatusEnum.DELETED,
+  ProjectStatusEnum.IN_WRAP
+];
+
+export enum ProjectTypeEnum {
+  SCRIPTED_FILM = 'Scripted film',
+  SCRIPTED_SERIES = 'Scripted series',
+  NON_SCRIPTED_FILM = 'Non-scripted film',
+  NON_SCRIPTED_SERIES = 'Non-scripted series'
+}
+
+export const ProjectTypeEnumArray: (string)[] = [
+  ProjectTypeEnum.SCRIPTED_FILM,
+  ProjectTypeEnum.SCRIPTED_SERIES,
+  ProjectTypeEnum.NON_SCRIPTED_FILM,
+  ProjectTypeEnum.NON_SCRIPTED_SERIES
+];
+
+
 export enum SceneTypeEnum {
   SCENE = 'SCENE',
   PROTECTION = 'PROTECTION',
