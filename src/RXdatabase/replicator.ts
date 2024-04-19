@@ -22,11 +22,11 @@ import { Subject } from 'rxjs';
 export default class HttpReplicator {
   private database: AppDataBase;
   private collections: any;
-  private projectId: number;
+  private projectId: (number | null);
 
   private replicationStates: any[] = [];
 
-  constructor(database: AppDataBase, collections: any, projectId: number) {
+  constructor(database: AppDataBase, collections: any, projectId: (number | null)= null) {
     this.database = database;
     this.collections = collections;
     this.projectId = projectId;
@@ -54,7 +54,7 @@ export default class HttpReplicator {
     this.replicationStates = [];
   }
 
-  private setupHttpReplicationPull(collection: any, projectId: number) {
+  private setupHttpReplicationPull(collection: any, projectId: (number | null)) {
     const currentTimestamp = new Date().toISOString();
     console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
@@ -65,7 +65,7 @@ export default class HttpReplicator {
           const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : "1970-01-01T00:00:00.000Z";
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
           const collectionName = collection.getSchemaName()
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}&project_id=${projectId}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${projectId ? `&project_id=${projectId}` : ''}`);
           const data = await response.json();
           return {
             documents: data[collectionName],
