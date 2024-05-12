@@ -8,6 +8,7 @@ import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
 import { useLocation } from 'react-router';
+import { set } from 'lodash';
 
 const DatabaseContext = React.createContext<any>({
   oneWrapDb: null,
@@ -18,7 +19,8 @@ const DatabaseContext = React.createContext<any>({
   setProjectId: () => { },
   initializeReplication: () => { },
   startReplication: false,
-  isOnline: false
+  isOnline: false,
+  scenesAreLoading: true,
 });
 
 const sceneCollection = new ScenesSchema();
@@ -33,15 +35,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [offlineProjects, setOfflineProjects] = useState<any[]>([]);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
-  const [_, setProjectId] = useState(null);
-  const projectId = 163
-  const scenesQuery = oneWrapRXdatabase?.scenes.find({
-    selector: {
-      projectId: { $eq: projectId }
-    }
-  });
-  const projectsQuery = oneWrapRXdatabase?.projects.find();
-  const offlineScenes$: Observable<Scene[]> = scenesQuery ? scenesQuery.$ : null;
+  const [projectId, setProjectId] = useState(null);
+  const [scenesAreLoading, setScenesAreLoading] = useState(true);
+  const projectsQuery = oneWrapRXdatabase?.projects.find()
   const offlineProjects$: Observable<Project[]> = projectsQuery ? projectsQuery.$ : null;
   const isOnline = useNavigatorOnLine();
 
@@ -71,14 +67,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    const subscription = offlineScenes$?.subscribe((data: any) => {
+    oneWrapRXdatabase?.scenes.find().exec().then((data: Scene[]) => {
       setOfflineScenes(data);
+      setScenesAreLoading(false);
     });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [offlineScenes$]);
+  }, [oneWrapRXdatabase]);
 
   useEffect(() => {
     const subscription = offlineProjects$?.subscribe((data: any) => {
@@ -110,7 +103,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setProjectId,
         initializeReplication,
         startReplication, 
-        isOnline
+        isOnline,
+        scenesAreLoading
       }}
       >
       {children}

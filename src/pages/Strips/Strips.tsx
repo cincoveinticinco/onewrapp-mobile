@@ -20,13 +20,12 @@ import useLoader from '../../hooks/useLoader';
 import { refreshCircleOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
-  const { offlineScenes, setStartReplication, oneWrapRXdatabase, projectId, initializeReplication, startReplication, isOnline } = useContext(DatabaseContext);
+  const { offlineScenes, initializeReplication, scenesAreLoading} = useContext(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-  const [loading, setLoading] = useState(true);
   const [error, unused_] = useState(false);
   const history = useHistory();
   const location = useLocation();
@@ -34,20 +33,18 @@ const Strips: React.FC = () => {
   const { showTabs } = useHideTabs();
 
   useIonViewWillEnter(() => {
-    showTabs();
+    showTabs()
     initializeReplication()
   });
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
   const filteredScenes = useMemo(() => {
-    const filteredData = Object.keys(selectedFilterOptions).length === 0 ? offlineScenes : memoizedApplyFilters(offlineScenes, selectedFilterOptions);
-    return sortByCriterias(filteredData, selectedSortOptions);
+    const filteredData = Object.keys(selectedFilterOptions).length === 0 && offlineScenes ? offlineScenes : memoizedApplyFilters(offlineScenes, selectedFilterOptions);
+    if(filteredData && offlineScenes) {
+      return sortByCriterias(filteredData, selectedSortOptions);
+    }
   }, [offlineScenes, selectedFilterOptions, selectedSortOptions]);
-
-  useEffect(() => {
-    setLoading(offlineScenes.length === 0);
-  }, [offlineScenes]);
 
   useEffect(() => {
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
@@ -146,7 +143,7 @@ const Strips: React.FC = () => {
           </IonRefresher>
           <StripTagsToolbar />
           <Suspense fallback={useLoader()}>
-            {loading ? (
+            {scenesAreLoading ? (
               useLoader()
             ) : error ? (
               <div>Error loading scenes. Please try again later.</div>
