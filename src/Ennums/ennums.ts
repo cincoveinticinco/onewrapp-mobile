@@ -7,6 +7,7 @@ export enum ProjectStatusEnum {
   ON_HOLD = 'On Hold',
   DELETED = 'Deleted',
   IN_WRAP = 'In Wrap',
+  INTANGIBLES = "Intangibles"
 }
 
 export const ProjectStatusEnumArray: (string)[] = [
@@ -17,7 +18,8 @@ export const ProjectStatusEnumArray: (string)[] = [
   ProjectStatusEnum.CLOSED,
   ProjectStatusEnum.ON_HOLD,
   ProjectStatusEnum.DELETED,
-  ProjectStatusEnum.IN_WRAP
+  ProjectStatusEnum.IN_WRAP,
+  ProjectStatusEnum.INTANGIBLES
 ];
 
 export enum ProjectTypeEnum {

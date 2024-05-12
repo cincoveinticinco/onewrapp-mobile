@@ -20,7 +20,7 @@ import useLoader from '../../hooks/useLoader';
 import { refreshCircleOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
-  const { offlineScenes, setStartReplication } = useContext(DatabaseContext);
+  const { offlineScenes, setStartReplication, oneWrapRXdatabase, projectId, initializeReplication, startReplication, isOnline } = useContext(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
@@ -35,11 +35,8 @@ const Strips: React.FC = () => {
 
   useIonViewWillEnter(() => {
     showTabs();
+    initializeReplication()
   });
-
-  useEffect(() => {
-    setStartReplication(true);
-  }, [location])
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
