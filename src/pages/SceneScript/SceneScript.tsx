@@ -13,7 +13,7 @@ import { FaClipboardList } from 'react-icons/fa';
 import useHideTabs from '../../hooks/useHideTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import './SceneScript.scss';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/ScenesContext';
@@ -31,8 +31,8 @@ import ScriptPage from '../../components/SceneScript/ScriptPage';
 const SceneScript: React.FC = () => {
   const { hideTabs, showTabs } = useHideTabs();
   const { sceneId } = useParams<{ sceneId: string }>();
-  const [thisScene, setThisScene] = useState<any>(null);
-  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
+  const [thisScene, setThisScene] = useState<Scene | null>(null);
+  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {
@@ -52,12 +52,12 @@ const SceneScript: React.FC = () => {
 
   useEffect(() => {
     const printParagraphs = async () => {
-      const paragraphs = await oneWrapDb.paragraphs.find({
+      const paragraphs = await oneWrapDb?.paragraphs.find({
         selector: {
           sceneId: selectedSceneId || sceneId,
         },
       }).exec();
-      setParagraphs(paragraphs);
+      paragraphs && setParagraphs(paragraphs);
       setParagraphsAreLoading(false);
     };
     oneWrapDb && printParagraphs();
@@ -149,11 +149,7 @@ const SceneScript: React.FC = () => {
     fetchScene();
   }, [offlineScenes]);
 
-  useIonViewDidLeave(() => {
-    setThisScene(null);
-  });
-
-  const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
+  const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber ?? '') > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
 
   useEffect(() => {
     hideTabs();
@@ -179,7 +175,7 @@ const SceneScript: React.FC = () => {
   };
 
   const getPopupList = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
-    let list = [];
+    let list: any = [];
     if (thisScene) {
       if (type === 'notes') {
         list = thisScene?.notes?.map((note: Note) => note.note);

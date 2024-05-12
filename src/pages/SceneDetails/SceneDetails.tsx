@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react';
 import useHideTabs from '../../hooks/useHideTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './SceneDetails.scss';
@@ -24,7 +24,7 @@ import SceneHeader from './SceneHeader';
 const SceneDetails: React.FC = () => {
   const { hideTabs, showTabs } = useHideTabs();
   const { sceneId } = useParams<{ sceneId: string }>();
-  const { oneWrapDb, offlineScenes } = useContext(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const [thisScene, setThisScene] = useState<any>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);

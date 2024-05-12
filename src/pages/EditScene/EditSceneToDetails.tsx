@@ -6,12 +6,10 @@ import {
 } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
-import { set } from 'lodash';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import useHandleBack from '../../hooks/useHandleBack';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
 import useLoader from '../../hooks/useLoader';
@@ -30,11 +28,10 @@ const EditSceneToDetails: React.FC = () => {
       : history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
   };
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
-  const loader = useLoader();
 
   const sceneDefaultValues = {
     projectId,
@@ -63,7 +60,7 @@ const EditSceneToDetails: React.FC = () => {
   const [formData, setFormData] = useState<any>(sceneDefaultValues);
 
   const getExistingScene = async () => {
-    const scene = await oneWrapDb.scenes.findOne({ selector: { id: sceneId } }).exec();
+    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
     return scene._data;
   };
 

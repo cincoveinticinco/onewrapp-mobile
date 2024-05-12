@@ -33,7 +33,9 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   const [criteriaKey, criteriaOrder] = criteria;
 
   if (criteriaKey === 'sceneNumber') {
-    return data.sort((a: T, b: T) => sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder));
+    return data.sort((a: T, b: T) => {
+      return sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder)
+    });
   }
 
   if (criteriaKey === 'characterNum') {
@@ -82,8 +84,11 @@ const orderSortOptions = (selectedSortOptions: any[]) => {
 };
 
 const sortByCriterias = (data: any, criterias: any) => {
+ if(Array.isArray(data) && data) {
+  console.log(data)
   orderSortOptions(criterias);
   return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
+ }
 };
 
 export default sortByCriterias;

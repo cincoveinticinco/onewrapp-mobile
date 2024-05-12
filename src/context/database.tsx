@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
-import { useLocation } from 'react-router';
-import { set } from 'lodash';
 import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
@@ -9,15 +7,29 @@ import { Scene } from '../interfaces/scenesTypes';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
+import { RxDatabase } from 'rxdb';
 
-const DatabaseContext = React.createContext<any>({
+export interface DatabaseContextProps {
+  oneWrapDb: RxDatabase | null;
+  offlineScenes: Scene[];
+  offlineProjects: Project[];
+  setStartReplication: (startReplication: boolean) => void;
+  projectId: number | null;
+  setProjectId: (projectId: any) => void;
+  initializeReplication: () => void;
+  startReplication: boolean;
+  isOnline: boolean;
+  scenesAreLoading: boolean;
+}
+
+const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
   offlineScenes: [],
   offlineProjects: [],
-  setStartReplication: () => { },
+  setStartReplication: () => {},
   projectId: null,
-  setProjectId: () => { },
-  initializeReplication: () => { },
+  setProjectId: () => {},
+  initializeReplication: () => {},
   startReplication: false,
   isOnline: false,
   scenesAreLoading: true,
@@ -103,12 +115,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   return (
     <DatabaseContext.Provider
       value={{
-        oneWrapDb:
-        oneWrapRXdatabase,
+        oneWrapDb: oneWrapRXdatabase,
         offlineScenes,
         setStartReplication,
         offlineProjects,
-        projectId,
+        projectId: parseInt(projectId),
         setProjectId,
         initializeReplication,
         startReplication,

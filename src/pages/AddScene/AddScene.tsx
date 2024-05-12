@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
 import useLoader from '../../hooks/useLoader';
@@ -20,7 +20,7 @@ const AddScene: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
 

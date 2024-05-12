@@ -16,7 +16,7 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 import useWarningToast from '../../hooks/useWarningToast';
@@ -43,7 +43,7 @@ interface CastCardProps {
 }
 
 const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction }) => {
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
 
   const divideIntegerFromFraction = (value: string) => {
@@ -135,14 +135,16 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     extraName: character.extraName,
   };
 
-  const scenesToEdit = () => oneWrapDb.scenes.find({
+  const scenesToEdit = () => oneWrapDb?.scenes.find({
     selector: {
+      projectId: projectId,
       'characters.characterName': character.characterName,
     },
   }).exec();
 
-  const scenesToEditWithExtra = () => oneWrapDb.scenes.find({
+  const scenesToEditWithExtra = () => oneWrapDb?.scenes.find({
     selector: {
+      projectId: projectId,
       'extras.extraName': character.extraName,
     },
   }).exec();
@@ -153,7 +155,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName);
@@ -163,7 +165,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -181,7 +183,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName).concat(newCharacter);
@@ -189,7 +191,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -208,7 +210,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       const scenes = await scenesToEditWithExtra();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         const oldExtra = updatedScene.extras.find((extra: any) => extra.extraName === character.extraName);
@@ -221,7 +223,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -238,7 +240,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       const scenes = await scenesToEditWithExtra();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.extras = updatedScene.extras.filter((extra: any) => extra.extraName !== character.extraName);
@@ -246,7 +248,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -295,7 +297,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
           <IonButton fill="clear" id={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit().then((values: any) => console.log(values))}>
+          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
           <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}>

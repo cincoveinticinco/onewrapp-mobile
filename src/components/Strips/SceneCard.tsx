@@ -14,7 +14,7 @@ import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
 } from '../../Ennums/ennums';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 
 interface SceneCardProps {
@@ -23,7 +23,7 @@ interface SceneCardProps {
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
-  const { oneWrapDb } = useContext(DatabaseContext);
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const history = useHistory();
   const routeMatch = useRouteMatch();

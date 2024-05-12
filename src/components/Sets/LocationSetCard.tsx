@@ -17,7 +17,7 @@ import { banOutline, pencilOutline } from 'ionicons/icons';
 import useIsMobile from '../../hooks/useIsMobile';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import useErrorToast from '../../hooks/useErrorToast';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useWarningToast from '../../hooks/useWarningToast';
@@ -78,7 +78,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading,
 }) => {
   const isMobile = useIsMobile();
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const errorMessageToast = useErrorToast();
   const successMessageToast = useSuccessToast();
   const warningMessageToast = useWarningToast();
@@ -132,14 +132,16 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     locationName: location?.locationName || null,
   };
 
-  const scenesToEditWithLocation = () => oneWrapDb.scenes.find({
+  const scenesToEditWithLocation = () => oneWrapDb?.scenes.find({
     selector: {
+      projectId: projectId,
       locationName: location?.locationName,
     },
   }).exec();
 
-  const scenesToEditWithSet = () => oneWrapDb.scenes.find({
+  const scenesToEditWithSet = () => oneWrapDb?.scenes.find({
     selector: {
+      projectId: projectId,
       setName: set?.setName,
     },
   }).exec();
@@ -153,14 +155,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       const scenes = await scenesToEditWithLocation();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.locationName = newLocation.locationName;
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       if (setIsLoading) {
         setIsLoading(false);
@@ -184,7 +186,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       const scenes = await scenesToEditWithSet();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.locationName = newSet.locationName;
@@ -192,7 +194,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       if (setIsLoading) {
         setIsLoading(false);
@@ -216,14 +218,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       const scenes = await scenesToEditWithLocation();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.locationName = null;
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       if (setIsLoading) {
         setIsLoading(false);
@@ -247,14 +249,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       const scenes = await scenesToEditWithSet();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.setName = null;
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       if (setIsLoading) {
         setIsLoading(false);

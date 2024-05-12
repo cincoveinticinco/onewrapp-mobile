@@ -17,7 +17,7 @@ import { checkmarkCircle } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import useIsMobile from '../../hooks/useIsMobile';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import useErrorToast from '../../hooks/useErrorToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import useWarningToast from '../../hooks/useWarningToast';
@@ -60,7 +60,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
   data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction,
 }) => {
   const isMobile = useIsMobile();
-  const { oneWrapDb } = useContext<any>(DatabaseContext);
+  const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
 
@@ -124,13 +124,13 @@ const ElementCard: React.FC<ElementCardProps> = ({
     }
   };
 
-  const scenesToEditWithElement = () => oneWrapDb.scenes.find({
+  const scenesToEditWithElement = () => oneWrapDb?.scenes.find({
     selector: {
       'elements.elementName': data.elementName,
     },
   }).exec();
 
-  const scenesToEditWithCategory = () => oneWrapDb.scenes.find({
+  const scenesToEditWithCategory = () => oneWrapDb?.scenes.find({
     selector: {
       'elements.categoryName': data.categoryName,
     },
@@ -181,7 +181,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.elementName !== data.elementName).concat(newElement);
@@ -189,7 +189,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -209,7 +209,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.elementName !== data.elementName);
@@ -219,7 +219,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -239,7 +239,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.categoryName !== data.categoryName);
@@ -249,7 +249,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -269,7 +269,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
 
-      scenes.forEach((scene: any) => {
+      scenes?.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         const newElements: any[] = [];
@@ -287,7 +287,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
+      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       console.log('Bulk update result:', result);
 
@@ -355,7 +355,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
             <IonButton fill="clear" id={section === 'category' ? `edit-category-${data.categoryName}` : `edit-element-${data.elementName}`}>
               <CiEdit className="button-icon view" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory().then((values: any) => console.log(values)) : scenesToEditWithElement().then((values: any) => console.log(values)))}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))}>
               <PiProhibitLight className="button-icon ban" />
             </IonButton>
             <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())}>

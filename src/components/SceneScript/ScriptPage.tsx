@@ -15,7 +15,7 @@ import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
 import useIsMobile from '../../hooks/useIsMobile';
 import useSuccessToast from '../../hooks/useSuccessToast';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import useTextSelection from '../../hooks/useSelectedText';
 import useFormTypeLogic from '../../hooks/useFormTypeLogic';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
@@ -56,7 +56,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   const isMobile = useIsMobile();
 
   const successToast = useSuccessToast();
-  const { offlineScenes, oneWrapDb } = useContext(DatabaseContext);
+  const { offlineScenes, oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
   const selectionRef = useRef<string | null>(null);
   const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
