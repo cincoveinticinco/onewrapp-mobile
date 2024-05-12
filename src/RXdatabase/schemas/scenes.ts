@@ -132,6 +132,7 @@ const sceneSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
+      'lastProjectId',
     ],
     deletedField: 'deleted',
     headerFields: ['Authorization'],

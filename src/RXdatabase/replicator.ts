@@ -65,8 +65,9 @@ export default class HttpReplicator {
         async handler(checkpointOrNull: any, batchSize: number) {
           const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
+          const lastProjectId = checkpointOrNull ? checkpointOrNull.lastProjectId : 0;
           const collectionName = collection.getSchemaName();
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${projectId ? `&project_id=${projectId}` : ''}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() === 'scenes' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}`);
           const data = await response.json();
           return {
             documents: data[collectionName],
