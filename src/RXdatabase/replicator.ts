@@ -67,7 +67,7 @@ export default class HttpReplicator {
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
           const lastProjectId = checkpointOrNull ? checkpointOrNull.lastProjectId : 0;
           const collectionName = collection.getSchemaName();
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() === 'scenes' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}`);
           const data = await response.json();
           return {
             documents: data[collectionName],
