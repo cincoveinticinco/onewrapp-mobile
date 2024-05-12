@@ -10,7 +10,7 @@ import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import DatabaseContext from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
@@ -23,7 +23,7 @@ import useLoader from '../../hooks/useLoader';
 const Strips: React.FC = () => {
   const {
     offlineScenes, initializeReplication, projectId, scenesAreLoading, 
-  } = useContext(DatabaseContext);
+  } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
