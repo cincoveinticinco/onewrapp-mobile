@@ -1,4 +1,4 @@
-import removeAccents from "./removeAccents";
+import removeAccents from './removeAccents';
 
 const normalizeString = (string: string) => (string ? removeAccents(string.toLowerCase().replace(/ /g, '')) : '');
 

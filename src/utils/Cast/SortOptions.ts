@@ -1,4 +1,3 @@
-
 const defaultSortPosibilitiesOrder = [
   {
     id: 'CHARACTER_NUM', label: 'CHARACTER NUM', optionKey: 'characterNum', defaultIndex: 0,
@@ -32,4 +31,4 @@ const defaultSortPosibilitiesOrder = [
   },
 ];
 
-export default defaultSortPosibilitiesOrder
+export default defaultSortPosibilitiesOrder;

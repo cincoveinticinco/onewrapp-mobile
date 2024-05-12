@@ -56,10 +56,10 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   return data.sort((a: T, b: T) => {
     // Convert values to lowercase if they are strings
 
-    if(!a[criteriaKey as keyof T]  || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
+    if (!a[criteriaKey as keyof T] || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
       return -1;
     }
-    
+
     const aValue = !Number.isNaN(Number.parseFloat(a[criteriaKey as keyof T])) ? Number.parseFloat(a[criteriaKey as keyof T]) : (a[criteriaKey as keyof T] as string).toLowerCase();
     const bValue = !Number.isNaN(Number.parseFloat(b[criteriaKey as keyof T])) ? Number.parseFloat(b[criteriaKey as keyof T]) : (b[criteriaKey as keyof T] as string).toLowerCase();
 

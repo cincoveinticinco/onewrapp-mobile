@@ -1,6 +1,8 @@
-import { IonInput, IonItem, IonSelect, IonSelectOption } from "@ionic/react";
-import { Character } from "../../../interfaces/scenesTypes";
-import { useEffect, useState } from "react";
+import {
+  IonInput, IonItem, IonSelect, IonSelectOption,
+} from '@ionic/react';
+import { useEffect, useState } from 'react';
+import { Character } from '../../../interfaces/scenesTypes';
 
 interface CharacterFormProps {
   character: Character;
@@ -8,14 +10,14 @@ interface CharacterFormProps {
   characterCategories: (string | null)[]
 }
 
-const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, characterCategories}) => {
+const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, characterCategories }) => {
   const [isFocused, setIsFocused] = useState([false, false, false]);
 
-  console.log(characterCategories)
+  console.log(characterCategories);
 
   return (
     <>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonInput
           className={isFocused[0] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterNum}
@@ -27,41 +29,44 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
           onBlur={() => setIsFocused([false, false, false])}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px'
+            fontSize: '12px',
           }}
         />
       </IonItem>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonSelect
-            className={isFocused[1] ? 'input-item' : 'script-popup-input'}
-            value={character.categoryName}
-            labelPlacement="stacked"
-            label="Character Category"
-            placeholder="INSERT CHARACTER CATEGORY"
-            onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || null }))}
-            style={{
-              borderBottom: '1px solid var(--ion-color-light)',
-              fontSize: '12px'
-            }}
-            onFocus={() => setIsFocused([false, true, false])}
-            onBlur={() => setIsFocused([false, false, false])}
-            interface="popover"
-          >
-            {
+          className={isFocused[1] ? 'input-item' : 'script-popup-input'}
+          value={character.categoryName}
+          labelPlacement="stacked"
+          label="Character Category"
+          placeholder="INSERT CHARACTER CATEGORY"
+          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || null }))}
+          style={{
+            borderBottom: '1px solid var(--ion-color-light)',
+            fontSize: '12px',
+          }}
+          onFocus={() => setIsFocused([false, true, false])}
+          onBlur={() => setIsFocused([false, false, false])}
+          interface="popover"
+        >
+          {
               characterCategories.map((category: (string | null)) => (
-              category ?
-              (<IonSelectOption key={category} value={category}>
-                {category.toUpperCase()}
-              </IonSelectOption>)
-              :
-              (<IonSelectOption key={category} value={category}>
-                NO CATEGORY         
-              </IonSelectOption>
-            )
-          ))}
-          </IonSelect>
+                category
+                  ? (
+                    <IonSelectOption key={category} value={category}>
+                      {category.toUpperCase()}
+                    </IonSelectOption>
+                  )
+                  : (
+                    <IonSelectOption key={category} value={category}>
+                      NO CATEGORY
+                    </IonSelectOption>
+                  )
+              ))
+}
+        </IonSelect>
       </IonItem>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonInput
           className={isFocused[2] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterName}
@@ -79,8 +84,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
       </IonItem>
     </>
   );
-}
-
-
+};
 
 export default CharacterForm;

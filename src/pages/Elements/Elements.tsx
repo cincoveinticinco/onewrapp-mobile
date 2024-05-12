@@ -17,7 +17,7 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
-import './Elements.scss'
+import './Elements.scss';
 import removeAccents from '../../utils/removeAccents';
 import useLoader from '../../hooks/useLoader';
 
@@ -31,10 +31,10 @@ const Elements: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
-  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true)
+  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
 
   const {
-    elementsSelectedSortOptions, setElementsSelectedSortOptions
+    elementsSelectedSortOptions, setElementsSelectedSortOptions,
   } = useContext(ScenesContext);
 
   const defaultElementsSortPosibilities = [
@@ -73,7 +73,7 @@ const Elements: React.FC = () => {
     setElementsSelectedSortOptions(elementsDefaultSortOptions);
     setElementsSortPosibilities(defaultElementsSortPosibilities);
   };
-  
+
   const thisPath = useLocation();
   const contentRef = useRef<HTMLIonContentElement>(null);
   useScrollToTop(contentRef, thisPath);
@@ -126,25 +126,23 @@ const Elements: React.FC = () => {
 
   useEffect(() => {
     const categoriesSelectedSortOptions = () => {
-      const elementNameIndex = elementsSelectedSortOptions.findIndex((option: any) => {
-        return option.some((element: any) => element === 'elementName');
-      })
-      const categorySortOptions: any = []
+      const elementNameIndex = elementsSelectedSortOptions.findIndex((option: any) => option.some((element: any) => element === 'elementName'));
+      const categorySortOptions: any = [];
 
       elementsSelectedSortOptions.forEach((option: any) => {
-        let optionIndex = elementsSelectedSortOptions.indexOf(option);
-        if(elementNameIndex !== optionIndex) {
+        const optionIndex = elementsSelectedSortOptions.indexOf(option);
+        if (elementNameIndex !== optionIndex) {
           categorySortOptions.push(option);
         } else {
           const newCategoryOption = ['categoryName', elementsSelectedSortOptions[elementNameIndex][1], elementsSelectedSortOptions[elementNameIndex][2]];
           categorySortOptions.push(newCategoryOption);
         }
-      })
+      });
       return categorySortOptions;
-    }
+    };
 
     setElementsCategoriesSelectedSortOptions(categoriesSelectedSortOptions());
-  },[elementsSelectedSortOptions]);
+  }, [elementsSelectedSortOptions]);
 
   useEffect(() => {
     setFilteredCategories(categoriesData);
@@ -155,29 +153,29 @@ const Elements: React.FC = () => {
   useEffect(() => {
     setFilteredElements(elementsData);
   }, [
-    elementsData
+    elementsData,
   ]);
 
   useEffect(() => {
     if (searchText.length > 0) {
-    const newFilteredCategories = () => {
-      if (searchText.length > 0) {
-        return categoriesData.filter((category: any) => {
-          const normalizedCategoryName = removeAccents(category.categoryName).toLowerCase();
-          const normalizedSearchText = removeAccents(searchText).toLowerCase();
-          const elementsByCategory = elementsData.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
-          
+      const newFilteredCategories = () => {
+        if (searchText.length > 0) {
+          return categoriesData.filter((category: any) => {
+            const normalizedCategoryName = removeAccents(category.categoryName).toLowerCase();
+            const normalizedSearchText = removeAccents(searchText).toLowerCase();
+            const elementsByCategory = elementsData.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
 
-          return normalizedCategoryName.includes(normalizedSearchText) || elementsByCategory.some((element: any) => {
-            const normalizedElementName = removeAccents(element.elementName).toLowerCase();
-            return normalizedElementName.includes(normalizedSearchText);
-          })
-        });
-      }}
+            return normalizedCategoryName.includes(normalizedSearchText) || elementsByCategory.some((element: any) => {
+              const normalizedElementName = removeAccents(element.elementName).toLowerCase();
+              return normalizedElementName.includes(normalizedSearchText);
+            });
+          });
+        }
+      };
 
       setFilteredCategories(newFilteredCategories);
 
-      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()) || element.elementCategory.toLowerCase().includes(searchText.toLowerCase()))
+      const newFilteredElements = elementsData.filter((element: any) => element.elementName.toLowerCase().includes(searchText.toLowerCase()) || element.elementCategory.toLowerCase().includes(searchText.toLowerCase()));
       setFilteredElements(newFilteredElements);
     } else {
       setFilteredElements(elementsData);
@@ -189,52 +187,52 @@ const Elements: React.FC = () => {
       category.categoryName = category.categoryName || 'NO CATEGORY';
       setDisplayedElements({
         ...displayedElements,
-        [category.categoryName]: []
-      })
-    })
-  }, [categoriesData])
+        [category.categoryName]: [],
+      });
+    });
+  }, [categoriesData]);
 
   useEffect(() => {
     categoriesData.forEach((category: any) => {
       category.categoryName = category.categoryName || 'NO CATEGORY';
       setIsDropDownOpen((prev: any) => ({ ...prev, [category.categoryName]: true }));
-    })
-  }, [categoriesData])
+    });
+  }, [categoriesData]);
 
   useEffect(() => {
-    if(categoriesData.length > 0  && filteredElements.length > 0) {
+    if (categoriesData.length > 0 && filteredElements.length > 0) {
       const updatedElements: any = {};
-  
+
       categoriesData.forEach((category: any) => {
         category.categoryName = category.categoryName || 'NO CATEGORY';
         const newElements = filteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
-        updatedElements[category.categoryName] = newElements
+        updatedElements[category.categoryName] = newElements;
       });
-  
+
       setElements(updatedElements);
     }
   }, [categoriesData, filteredElements]);
 
   const removeDuplicatesFromArray = (array: any[]) => {
-    if(array) {
+    if (array) {
       const uniqueSet = new Set(array);
       const uniqueArray = [...uniqueSet];
       return uniqueArray;
     }
-  }
+  };
 
-  const handleSetDisplayedElements= (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...newElements]) }));
+  const handleSetDisplayedElements = (category: string, newElements: any[]) => setDisplayedElements((prev: any) => ({ ...prev, [category]: removeDuplicatesFromArray([...newElements]) }));
 
   const validateCategoryExists = (categoryName: string, currentCategory: string) => {
-    if(currentCategory) {
+    if (currentCategory) {
       const normalize = (text: string) => removeAccents(text).toLowerCase().trim();
       const normalizedCategoryName = normalize(categoryName);
       const normalizedCurrentCategory = normalize(currentCategory);
       return categoriesData.some((categoryData: any) => normalize(categoryData.categoryName) === normalizedCategoryName && normalize(categoryData.categoryName) !== normalizedCurrentCategory) ? 'This category already exists' : true;
     }
 
-    return true
-  }
+    return true;
+  };
 
   const validateElementExists = (elementName: string, currentElement: string) => {
     const normalize = (text: string) => removeAccents(text).toLowerCase();
@@ -244,7 +242,7 @@ const Elements: React.FC = () => {
     const normalizedCurrentElement = normalize(currentElement);
 
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
-  }
+  };
 
   return (
     <>
@@ -254,70 +252,77 @@ const Elements: React.FC = () => {
         searchText={searchText}
         setSearchText={setSearchText}
         title="ELEMENTS"
-        sortTrigger={'elements-sort-options'}
+        sortTrigger="elements-sort-options"
       >
         <IonContent color="tertiary" fullscreen>
           {
-            dataIsLoading && 
-            useLoader()
+            dataIsLoading
+            && useLoader()
           }
           {
-            !dataIsLoading &&
+            !dataIsLoading
+            && (
             <>
               <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
                 {displayedCategories.map((category, index) => (
                   <div key={category + index}>
-                    { elements[category.categoryName] &&
-                      elements[category.categoryName].length > 0 &&
-                      <ElementCard 
-                        data={category} 
-                        searchText={searchText} 
+                    { elements[category.categoryName]
+                      && elements[category.categoryName].length > 0
+                      && (
+                      <ElementCard
+                        data={category}
+                        searchText={searchText}
                         section="category"
-                        isOpen={isDropDownOpen[category.categoryName]} onClick={() => setIsDropDownOpen({
+                        isOpen={isDropDownOpen[category.categoryName]}
+                        onClick={() => setIsDropDownOpen({
                           ...isDropDownOpen,
-                          [category.categoryName]: !isDropDownOpen[category.categoryName]
+                          [category.categoryName]: !isDropDownOpen[category.categoryName],
                         })}
                         elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
                         validationFunction={validateCategoryExists}
                       />
-                    }
-                    <div className='ion-content-scroll-host elements-card-wrapper'>
+                      )}
+                    <div className="ion-content-scroll-host elements-card-wrapper">
                       {
-                        isDropDownOpen[category.categoryName] &&
-                        <ScrollInfiniteContext 
-                          setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName || [], newElements)} 
+                        isDropDownOpen[category.categoryName]
+                        && (
+                        <ScrollInfiniteContext
+                          setDisplayedData={(newElements: any) => handleSetDisplayedElements(category.categoryName || [], newElements)}
                           filteredData={elements[category.categoryName] || []}
                           batchSize={9}
-                          >
-                            {
-                              displayedElements[category.categoryName] &&
-                              displayedElements[category.categoryName].map((element: any, index: any) => (
-                              <ElementCard 
-                                key={index} 
-                                data={element} 
-                                searchText={searchText} 
-                                section="element"
-                                validationFunction={validateElementExists}
-                              />
-                            ))}
+                        >
+                          {
+                              displayedElements[category.categoryName]
+                              && displayedElements[category.categoryName].map((element: any, index: any) => (
+                                <ElementCard
+                                  key={index}
+                                  data={element}
+                                  searchText={searchText}
+                                  section="element"
+                                  validationFunction={validateElementExists}
+                                />
+                              ))
+}
                         </ScrollInfiniteContext>
+                        )
                       }
                     </div>
-                  </div>    
+                  </div>
                 ))}
               </ScrollInfiniteContext>
             </>
+            )
           }
         </IonContent>
       </MainPagesLayout>
       <InputSortModal
         clearSelections={clearSelectedElementsSortOptions}
         defaultSortOptions={elementsDefaultSortOptions}
-        modalTrigger={'elements-sort-options'}
-        pageName={'Sort Elements'}
-        sortPosibilities={ elementsSortPosibilities}
+        modalTrigger="elements-sort-options"
+        pageName="Sort Elements"
+        sortPosibilities={elementsSortPosibilities}
         setSortPosibilities={setElementsSortPosibilities}
-        selectedSortOptions={ elementsSelectedSortOptions}
+        selectedSortOptions={elementsSelectedSortOptions}
         setSelectedSortOptions={setElementsSelectedSortOptions}
       />
     </>

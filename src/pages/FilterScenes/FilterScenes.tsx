@@ -1,7 +1,9 @@
 import {
   IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useMemo,
+} from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
 import useIsMobile from '../../hooks/useIsMobile';
 import './FilterScenes.scss';
@@ -39,13 +41,13 @@ const FilterScenes = () => {
   useEffect(() => {
     setTimeout(() => {
       setDataIsLoading(false);
-    }, 500)
+    }, 500);
   }, [offlineScenes]);
 
   useIonViewWillEnter(() => {
     hideTabs();
-  })
-  
+  });
+
   useIonViewWillLeave(() => {
     showTabs();
   });
@@ -57,7 +59,7 @@ const FilterScenes = () => {
       return updatedOptions;
     });
   }, [setSelectedFilterOptions]);
-  
+
   const handleNestedFilterOption = useCallback((category: string, nestedKey: string, optionValue: string) => {
     setSelectedFilterOptions((prevOptions: SelectedFilterOptionsInterface) => {
       const updatedOptions = toggleNestedFilterOption(prevOptions, category, nestedKey, optionValue);
@@ -109,11 +111,12 @@ const FilterScenes = () => {
     >
       <IonContent color="tertiary">
         {
-          dataIsLoading &&
-          useLoader()
+          dataIsLoading
+          && useLoader()
         }
         {
-          !dataIsLoading &&
+          !dataIsLoading
+          && (
           <IonGrid className="ion-no-padding">
             <FilterScenesButtonsSelect
               selectOptions={
@@ -300,6 +303,7 @@ const FilterScenes = () => {
               </IonRow>
               )}
           </IonGrid>
+          )
         }
       </IonContent>
     </SecondaryPagesLayout>

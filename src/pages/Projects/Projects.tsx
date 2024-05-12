@@ -2,10 +2,10 @@ import React from 'react';
 import {
   IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol,
 } from '@ionic/react';
+import { Redirect } from 'react-router';
 import { useAuth } from '../../context/auth';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import { Redirect } from 'react-router';
 import DatabaseContext from '../../context/database';
 
 const Projects: React.FC = () => {
@@ -15,7 +15,7 @@ const Projects: React.FC = () => {
     return <Redirect to="/login" />;
   }
 
-  const { offlineProjects} = React.useContext<any>(DatabaseContext);
+  const { offlineProjects } = React.useContext<any>(DatabaseContext);
 
   return (
     <IonPage>
@@ -34,5 +34,6 @@ const Projects: React.FC = () => {
         </IonGrid>
       </IonContent>
     </IonPage>
-  )};
+  );
+};
 export default Projects;

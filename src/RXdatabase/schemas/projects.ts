@@ -64,6 +64,7 @@ const projectSchemaInput = {
 
 export default class ProjectsSchema extends DatabaseSchema {
   static schemaName = 'projects'
+
   static endpointPullName = environment.PROJECTS_ENDPOINT_PULL;
 
   getEndpointPullName() {

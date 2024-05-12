@@ -30,12 +30,12 @@
     margin-top: 5%;
 
     .modal-confirm-button {
-      margin: 0px;
+      margin: 0;
       width: 100%;
     }
-  
+
     .cancel-input-modal-button {
-      margin-bottom: 0px;
+      margin-bottom: 0;
       width: 100%;
     }
   }
@@ -46,20 +46,20 @@
     .modal-confirm-button {
       margin: 20% auto 10% auto;
     }
-    
+
     .add-new-option-buttons-container {
       display: flex;
       justify-content: space-between;
       width: 40%;
       margin: 10% auto;
-  
+
       .modal-confirm-button {
-        margin: 0px;
+        margin: 0;
         width: 20%;
       }
-    
+
       .cancel-input-modal-button {
-        margin: 0px;
+        margin: 0;
         width: 20%;
       }
     }

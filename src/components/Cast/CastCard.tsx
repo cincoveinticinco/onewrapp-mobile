@@ -8,6 +8,8 @@ import {
   IonTitle,
   useIonToast,
 } from '@ionic/react';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './CastCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
@@ -16,8 +18,6 @@ import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { CiEdit } from 'react-icons/ci';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 import useWarningToast from '../../hooks/useWarningToast';
 
@@ -112,7 +112,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       required: true,
       inputName: 'add-character-name-input',
     },
-  ]
+  ];
 
   const extraFormInputs = [
     {
@@ -122,29 +122,29 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-extra-name-input',
-    }
-  ]
+    },
+  ];
 
   const defaultValues = {
     categoryName: character.categoryName === 'NO CATEGORY' ? '' : character.categoryName,
     characterNum: character.characterNum,
     characterName: character.characterName,
-  }
+  };
 
   const extraDefaultValues = {
-    extraName: character.extraName
-  }
+    extraName: character.extraName,
+  };
 
   const scenesToEdit = () => oneWrapDb.scenes.find({
     selector: {
       'characters.characterName': character.characterName,
-    }
+    },
   }).exec();
 
   const scenesToEditWithExtra = () => oneWrapDb.scenes.find({
     selector: {
       'extras.extraName': character.extraName,
-    }
+    },
   }).exec();
 
   const deleteCharacter = async () => {
@@ -152,25 +152,24 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       warningMessageToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
-  
+
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
-  
+
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName);
-        
+
         console.log('Updated Scene:', updatedScene);
-        
+
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
-  
+
       console.log('Bulk update result:', result);
-  
+
       console.log('Character deleted');
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
-   
     } catch (error) {
       console.error(error);
     }
@@ -181,27 +180,26 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       warningMessageToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
-  
+
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
-  
+
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName).concat(newCharacter);
-        
+
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
-  
+
       console.log('Bulk update result:', result);
-  
+
       console.log('Character deleted');
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
-
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   /// 1056 * 816 carta
 
@@ -209,61 +207,58 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     try {
       const scenes = await scenesToEditWithExtra();
       const updatedScenes: any = [];
-  
+
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
 
         const oldExtra = updatedScene.extras.find((extra: any) => extra.extraName === character.extraName);
-  
+
         updatedScene.extras = updatedScene.extras.filter((extra: any) => extra.extraName !== character.extraName).concat({
           ...oldExtra,
           ...newExtra,
         });
-        
+
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
-  
+
       console.log('Bulk update result:', result);
-  
+
       console.log('Extra deleted');
 
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully updated!`);
-
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const deleteExtra = async () => {
     try {
       const scenes = await scenesToEditWithExtra();
       const updatedScenes: any = [];
-  
+
       scenes.forEach((scene: any) => {
         const updatedScene = { ...scene._data };
-  
+
         updatedScene.extras = updatedScene.extras.filter((extra: any) => extra.extraName !== character.extraName);
-        
+
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb.scenes.bulkUpsert(updatedScenes);
-  
+
       console.log('Bulk update result:', result);
-  
+
       console.log('Extra deleted');
 
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const validateExistence = (value: string) => {
-    return validationFunction(value, character.characterName);
-  }
+  const validateExistence = (value: string) => validationFunction(value, character.characterName);
 
   return (
     <IonItemSliding>
@@ -313,7 +308,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
         formInputs={!character.extraName ? formInputs : extraFormInputs}
         handleEdition={!character.extraName ? editCharacter : editExtra}
         modalTrigger={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}
-        title='Edit Cast'
+        title="Edit Cast"
         defaultFormValues={!character.extraName ? defaultValues : extraDefaultValues}
         validate={validateExistence}
       />
@@ -321,7 +316,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       <InputAlert
         header="Delete Scene"
         message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
-        handleOk={() => !character.extraName ? deleteCharacter() : deleteExtra()}
+        handleOk={() => (!character.extraName ? deleteCharacter() : deleteExtra())}
         inputs={[]}
         trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
       />

@@ -1,10 +1,12 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import DatabaseContext from "../context/database";
-import ScenesContext from "../context/ScenesContext";
-import { Scene } from "../interfaces/scenesTypes";
-import getUniqueValuesByKey from "../utils/getUniqueValuesByKey";
-import sortByCriterias from "../utils/SortScenesUtils/sortByCriterias";
-import { SceneTypeEnum } from "../Ennums/ennums";
+import {
+  useCallback, useContext, useEffect, useMemo, useState,
+} from 'react';
+import DatabaseContext from '../context/database';
+import ScenesContext from '../context/ScenesContext';
+import { Scene } from '../interfaces/scenesTypes';
+import getUniqueValuesByKey from '../utils/getUniqueValuesByKey';
+import sortByCriterias from '../utils/SortScenesUtils/sortByCriterias';
+import { SceneTypeEnum } from '../Ennums/ennums';
 
 interface SceneDataProps {
   _data: Scene;
@@ -24,41 +26,37 @@ interface SetInformation {
 
 const useProcessedSetsAndLocations = () => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const { setsSelectedSortOptions } = useContext(ScenesContext)
+  const { setsSelectedSortOptions } = useContext(ScenesContext);
   const [locationsSelectedSortOptions, setLocationsSelectedSortOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Update locationsSelectedSortOptions based on setsSelectedSortOptions
   useEffect(() => {
     const locationSelectedSortOptions = () => {
-      const setNameIndex = setsSelectedSortOptions.findIndex((option) => {
-        return option.some((option: any) => option === 'setName');
-      })
+      const setNameIndex = setsSelectedSortOptions.findIndex((option) => option.some((option: any) => option === 'setName'));
 
-      let newLocationSelectedSortOptions: any[] = []
+      const newLocationSelectedSortOptions: any[] = [];
 
       setsSelectedSortOptions.forEach((criteria: any, index: number) => {
-      
-
-        if(index !== setNameIndex) {
-          newLocationSelectedSortOptions.push(criteria)
+        if (index !== setNameIndex) {
+          newLocationSelectedSortOptions.push(criteria);
         } else {
-          const newLocationOption = ['locationName', setsSelectedSortOptions[setNameIndex][1], setsSelectedSortOptions[setNameIndex][2]]
-          newLocationSelectedSortOptions.push(newLocationOption)
+          const newLocationOption = ['locationName', setsSelectedSortOptions[setNameIndex][1], setsSelectedSortOptions[setNameIndex][2]];
+          newLocationSelectedSortOptions.push(newLocationOption);
         }
       });
 
-      return newLocationSelectedSortOptions
-    }
+      return newLocationSelectedSortOptions;
+    };
 
-    setLocationsSelectedSortOptions(locationSelectedSortOptions())
+    setLocationsSelectedSortOptions(locationSelectedSortOptions());
   }, [setsSelectedSortOptions]);
 
   // Memoized function to process set data
-  
+
   const processSet = useCallback((setName: string) => {
     const setScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.setName === setName);
-    const charactersLength = setScenes.reduce((acc: number, scene: SceneDataProps) => scene._data.characters ? acc + scene._data.characters.length : acc, 0);
+    const charactersLength = setScenes.reduce((acc: number, scene: SceneDataProps) => (scene._data.characters ? acc + scene._data.characters.length : acc), 0);
     const scenesQuantity = setScenes.length;
     const protectionQuantity = setScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
     const pagesSum = setScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.pages || 0), 0);
@@ -107,14 +105,16 @@ const useProcessedSetsAndLocations = () => {
         pagesSum,
         estimatedTimeSum,
         episodesQuantity,
-        participation
+        participation,
       };
     };
 
     return sortByCriterias(uniqueLocationNames.map(processedLocationsData), locationsSelectedSortOptions);
   }, [offlineScenes, locationsSelectedSortOptions]);
 
-  return { processedSets, processedLocations, isLoading, setIsLoading };
+  return {
+    processedSets, processedLocations, isLoading, setIsLoading,
+  };
 };
 
 export default useProcessedSetsAndLocations;

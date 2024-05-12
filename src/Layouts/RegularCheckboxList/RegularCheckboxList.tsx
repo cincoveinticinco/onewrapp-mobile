@@ -24,7 +24,7 @@ const RegularList: React.FC<RegularListProps> = ({
   multipleSelections,
   searchText,
   uncheckedFilteredOptions,
-  checkedSelectedOptions
+  checkedSelectedOptions,
 }) => {
   const isMobile = useIsMobile();
 
@@ -44,45 +44,44 @@ const RegularList: React.FC<RegularListProps> = ({
     return {};
   };
 
-
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
-    {checkedSelectedOptions.map((option: string, i: number) => (
-      <div
-        color="tertiary"
-        key={`filter-item-${i}`}
-        className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-        onClick={() => handleCheckboxToggle(option)}
-      >
-        <IonCheckbox
-          slot="start"
-          className="ion-no-margin ion-no-padding checkbox-option"
-          labelPlacement="end"
-          checked={isOptionChecked(option)}
+      {checkedSelectedOptions.map((option: string, i: number) => (
+        <div
+          color="tertiary"
+          key={`filter-item-${i}`}
+          className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+          onClick={() => handleCheckboxToggle(option)}
         >
-          <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
-        </IonCheckbox>
-      </div>
-    ))}
-    {uncheckedFilteredOptions.map((option: string, i: number) => (
-      <div
-        color="tertiary"
-        key={`filter-item-${i}`}
-        className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-        onClick={() => handleCheckboxToggle(option)}
-      >
-        <IonCheckbox
-          slot="start"
-          className="ion-no-margin ion-no-padding checkbox-option"
-          labelPlacement="end"
-          checked={isOptionChecked(option)}
-          disabled={!multipleSelections && checkedSelectedOptions.length > 0}
+          <IonCheckbox
+            slot="start"
+            className="ion-no-margin ion-no-padding checkbox-option"
+            labelPlacement="end"
+            checked={isOptionChecked(option)}
+          >
+            <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
+          </IonCheckbox>
+        </div>
+      ))}
+      {uncheckedFilteredOptions.map((option: string, i: number) => (
+        <div
+          color="tertiary"
+          key={`filter-item-${i}`}
+          className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
+          onClick={() => handleCheckboxToggle(option)}
         >
-          <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
-        </IonCheckbox>
-      </div>
-    ))}
-  </IonList>
+          <IonCheckbox
+            slot="start"
+            className="ion-no-margin ion-no-padding checkbox-option"
+            labelPlacement="end"
+            checked={isOptionChecked(option)}
+            disabled={!multipleSelections && checkedSelectedOptions.length > 0}
+          >
+            <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
+          </IonCheckbox>
+        </div>
+      ))}
+    </IonList>
   );
 };
 

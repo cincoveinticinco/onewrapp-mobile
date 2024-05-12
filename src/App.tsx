@@ -6,6 +6,7 @@ import {
 } from '@ionic/react';
 import { Redirect, Route } from 'react-router';
 import { IonReactRouter } from '@ionic/react-router';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthContext } from './context/auth';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
@@ -24,7 +25,6 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import { DatabaseContextProvider } from './context/database';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import environment from '../environment';
 
 setupIonicReact();
@@ -33,7 +33,7 @@ const App: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
-  if(!loggedIn) {
+  if (!loggedIn) {
     return (
       <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
         <IonApp>
@@ -47,7 +47,7 @@ const App: React.FC = () => {
           </IonReactRouter>
         </IonApp>
       </GoogleOAuthProvider>
-    )
+    );
   }
 
   return (

@@ -1,6 +1,8 @@
-import { IonInput, IonItem, IonSelect, IonSelectOption } from "@ionic/react";
-import { Element } from "../../../interfaces/scenesTypes";
-import React, { useState } from "react";
+import {
+  IonInput, IonItem, IonSelect, IonSelectOption,
+} from '@ionic/react';
+import React, { useState } from 'react';
+import { Element } from '../../../interfaces/scenesTypes';
 
 interface ElementFormProps {
   element: Element;
@@ -9,13 +11,13 @@ interface ElementFormProps {
 }
 
 const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementCategories }) => {
-  const [isFocused, setIsFocused] = useState([false, false])
+  const [isFocused, setIsFocused] = useState([false, false]);
 
   return (
     <>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonSelect
-          className={isFocused[0] ? "input-item" : "script-popup-input"}
+          className={isFocused[0] ? 'input-item' : 'script-popup-input'}
           value={element && element.categoryName}
           labelPlacement="stacked"
           label="Element Category"
@@ -29,23 +31,25 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
           onBlur={() => setIsFocused([false, false])}
           placeholder="INSERT"
         >
-  
+
           {elementCategories.map((category: (string | null)) => (
-            category ?
-            (<IonSelectOption key={category} value={category}>
-              {category.toUpperCase()}
-            </IonSelectOption>)
-            :
-            (<IonSelectOption key={category} value={category}>
-              NO CATEGORY          
-            </IonSelectOption>
-            )
+            category
+              ? (
+                <IonSelectOption key={category} value={category}>
+                  {category.toUpperCase()}
+                </IonSelectOption>
+              )
+              : (
+                <IonSelectOption key={category} value={category}>
+                  NO CATEGORY
+                </IonSelectOption>
+              )
           ))}
         </IonSelect>
       </IonItem>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonInput
-          className={isFocused[1] ? "input-item" : "script-popup-input"}
+          className={isFocused[1] ? 'input-item' : 'script-popup-input'}
           value={element.elementName}
           labelPlacement="stacked"
           label="Element Name *"
@@ -60,6 +64,6 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
         />
       </IonItem>
     </>
-  );  
-}
+  );
+};
 export default ElementForm;

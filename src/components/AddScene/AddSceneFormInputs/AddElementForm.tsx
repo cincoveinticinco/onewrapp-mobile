@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
+import { get } from 'lodash';
 import AddElementInput from './AddElementInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../Shared/AddButton/AddButton';
@@ -9,7 +10,6 @@ import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../context/database';
-import { get } from 'lodash';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -18,7 +18,9 @@ interface AddElementFormProps {
   detailsEditMode?: boolean;
 }
 
-const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, observedElements, editMode, detailsEditMode }) => {
+const AddElementForm: React.FC<AddElementFormProps> = ({
+  handleSceneChange, observedElements, editMode, detailsEditMode,
+}) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedElements, setSelectedElements] = useState<Element[]>([]);
@@ -83,24 +85,24 @@ const AddElementForm: React.FC<AddElementFormProps> = ({ handleSceneChange, obse
   };
 
   const getAlertTrigger = () => {
-    if(editMode) {
-      return 'open-element-options-modal-edit'
+    if (editMode) {
+      return 'open-element-options-modal-edit';
     }
-    if(detailsEditMode) {
-      return 'open-element-options-modal-details-edit'
+    if (detailsEditMode) {
+      return 'open-element-options-modal-details-edit';
     }
-    return 'open-element-options-modal'
-  }
+    return 'open-element-options-modal';
+  };
 
   const getModalTrigger = (category: string) => {
-    if(editMode) {
-      return `open-elements-options-modal-edit-${category}`
+    if (editMode) {
+      return `open-elements-options-modal-edit-${category}`;
     }
-    if(detailsEditMode) {
-      return `open-elements-options-modal-details-edit-${category}`
+    if (detailsEditMode) {
+      return `open-elements-options-modal-details-edit-${category}`;
     }
-    return `open-elements-options-modal-${category}`
-  }
+    return `open-elements-options-modal-${category}`;
+  };
 
   return (
     <>

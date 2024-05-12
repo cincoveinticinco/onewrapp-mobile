@@ -1,9 +1,12 @@
-import { IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave } from '@ionic/react';
+import {
+  IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
+} from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
@@ -11,7 +14,6 @@ import useHandleBack from '../../hooks/useHandleBack';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
-import { set } from 'lodash';
 import useLoader from '../../hooks/useLoader';
 
 const EditScene: React.FC = () => {
@@ -67,11 +69,10 @@ const EditScene: React.FC = () => {
         setTimeout(
           () => setSceneDataIsLoading(false),
           100,
-        )
-      })
+        );
+      });
     }
   };
-
 
   useIonViewDidEnter(() => {
     fetchScene();
@@ -88,7 +89,7 @@ const EditScene: React.FC = () => {
     reset,
     setValue,
     watch,
-  } = useForm({ defaultValues: formData })
+  } = useForm({ defaultValues: formData });
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
@@ -126,18 +127,16 @@ const EditScene: React.FC = () => {
   });
 
   useIonViewWillLeave(() => {
-    showTabs()
+    showTabs();
   });
 
   const clearData = () => {
     reset();
     setFormData(sceneDefaultValues);
     setSceneDataIsLoading(true);
-  }
+  };
 
   useIonViewDidLeave(clearData);
-
-  
 
   return (
     <SecondaryPagesLayout

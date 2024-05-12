@@ -140,13 +140,15 @@ const sceneSchemaInput = {
 
 export default class ScenesSchema extends DatabaseSchema {
   static schemaName = 'scenes';
+
   static endpointPullName = environment.SCENES_ENDPOINT_PULL;
+
   static endpointPushName = environment.SCENES_ENDPOINT_PUSH;
 
   getEndpointPullName() {
     return ScenesSchema.endpointPullName;
   }
-  
+
   getEndpointPushName() {
     return ScenesSchema.endpointPushName;
   }

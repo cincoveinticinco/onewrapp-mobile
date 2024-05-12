@@ -47,10 +47,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       return name.substring(0, 3).toUpperCase();
     }
     return name;
-  }
+  };
 
   return (
-    <IonCard routerLink={`/my/projects/${project.id}`} className="project-card project-card project-card" onClick={() => {setProjectId(project.id); console.log(project)}}>
+    <IonCard routerLink={`/my/projects/${project.id}`} className="project-card project-card project-card" onClick={() => { setProjectId(project.id); console.log(project); }}>
       <IonCardTitle
         class="ion-justify-content-center ion-align-items-center project-abreviation"
         style={{

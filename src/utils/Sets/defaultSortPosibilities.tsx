@@ -8,7 +8,6 @@ interface SortPosibility {
 // This object contains the structure to handle the sort options in the Sets and locations
 // Default index is used in order to stablish jerarquy in the sort options, that will change using drag and drop
 
-
 const defaultSortPosibilitiesOrder: SortPosibility[] = [
   {
     id: 'NAME', label: 'Name', optionKey: 'setName', defaultIndex: 0,

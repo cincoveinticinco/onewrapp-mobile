@@ -20,5 +20,4 @@ const useWarningToast = () => {
 
 export default useWarningToast;
 
-
 // CHANGE CATEGORY, LOCATION ...

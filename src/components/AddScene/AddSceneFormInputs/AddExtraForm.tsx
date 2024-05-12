@@ -18,7 +18,9 @@ interface AddExtraFormProps {
   detailsEditMode?: boolean;
 }
 
-const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observedExtras, editMode, detailsEditMode }) => {
+const AddExtraForm: React.FC<AddExtraFormProps> = ({
+  handleSceneChange, observedExtras, editMode, detailsEditMode,
+}) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedExtras, setSelectedExtras] = useState<Extra[]>([]);
@@ -89,21 +91,21 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({ handleSceneChange, observed
     if (editMode) {
       return 'open-extras-category-alert-edit';
     }
-    if(detailsEditMode) {
+    if (detailsEditMode) {
       return 'open-extras-category-alert-details-edit';
     }
     return 'open-extras-category-alert';
-  }
+  };
 
   const getModalTrigger = (category: string) => {
     if (editMode) {
       return `open-extras-alert-edit-${category}`;
     }
-    if(detailsEditMode) {
+    if (detailsEditMode) {
       return `open-extras-alert-details-edit-${category}`;
     }
     return `open-extras-alert-${category}`;
-  }
+  };
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 const useTextSelection = (handlePopupOpen: (selectedText: string, x: number, y: number) => void) => {
   const selectionRef = useRef<string | null>(null);
@@ -11,8 +11,8 @@ const useTextSelection = (handlePopupOpen: (selectedText: string, x: number, y: 
       setSelectedText(selectionRef.current);
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-      const x = rect.x;
-      const y = rect.y;
+      const { x } = rect;
+      const { y } = rect;
       handlePopupOpen(selectionRef.current, x, y);
     }
   };

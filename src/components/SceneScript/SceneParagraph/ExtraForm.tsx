@@ -1,6 +1,6 @@
-import { IonInput, IonItem } from "@ionic/react";
-import { Extra } from "../../../interfaces/scenesTypes";
-import { useState } from "react";
+import { IonInput, IonItem } from '@ionic/react';
+import { useState } from 'react';
+import { Extra } from '../../../interfaces/scenesTypes';
 
 interface ExtraFormProps {
   extra: Extra;
@@ -8,14 +8,13 @@ interface ExtraFormProps {
 }
 
 const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
-
-  const [isFocused, setIsFocused] = useState(false)
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonInput
-          className={isFocused ? "input-item" : "script-popup-input"}
+          className={isFocused ? 'input-item' : 'script-popup-input'}
           value={extra.extraName}
           labelPlacement="stacked"
           label="Extra Name *"
@@ -30,6 +29,6 @@ const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
       </IonItem>
     </>
   );
-}
+};
 
 export default ExtraForm;

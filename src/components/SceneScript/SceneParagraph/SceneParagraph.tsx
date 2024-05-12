@@ -1,5 +1,5 @@
-import React from "react";
-import HighlightedTextWithArray, { SearchTerm } from "../../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
+import React from 'react';
+import HighlightedTextWithArray, { SearchTerm } from '../../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 
 enum ParagraphTypeEnum {
   Action = 'Action',
@@ -19,7 +19,6 @@ enum ParagraphTypeEnum {
   ScriptTitle = 'Script Title'
 }
 
-
 interface SceneParagraphProps {
   type: string;
   content: string;
@@ -31,7 +30,7 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({
   type,
   content,
   searchTermsArray,
-  paragraphsLoading
+  paragraphsLoading,
 }) => {
   let className = '';
   switch (type) {
@@ -88,9 +87,9 @@ const SceneParagraph: React.FC<SceneParagraphProps> = ({
     <>
       <p className={`${className} script-paragraph`}>
         {
-          searchTermsArray && 
-          !paragraphsLoading &&
-          (
+          searchTermsArray
+          && !paragraphsLoading
+          && (
             <HighlightedTextWithArray text={content} searchTerms={searchTermsArray} />
           )
         }

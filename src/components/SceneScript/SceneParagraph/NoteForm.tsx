@@ -1,6 +1,6 @@
-import { IonInput, IonItem, IonTextarea } from "@ionic/react";
-import { Note } from "../../../interfaces/scenesTypes";
-import { useState } from "react";
+import { IonInput, IonItem, IonTextarea } from '@ionic/react';
+import { useState } from 'react';
+import { Note } from '../../../interfaces/scenesTypes';
 
 interface NoteFormProps {
   note: Note;
@@ -8,14 +8,13 @@ interface NoteFormProps {
 }
 
 const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
-
-  const [isFocused, setIsFocused] = useState(false)
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <>
-      <IonItem color='tertiary'>
+      <IonItem color="tertiary">
         <IonTextarea
-          className={isFocused ? "input-item" : "script-popup-input"}
+          className={isFocused ? 'input-item' : 'script-popup-input'}
           value={note && note.note}
           labelPlacement="stacked"
           label="Note"
@@ -31,7 +30,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
         />
       </IonItem>
     </>
-  )
-}
+  );
+};
 
 export default NoteForm;

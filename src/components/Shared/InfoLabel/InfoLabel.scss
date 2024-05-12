@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   color: var(--ion-color-light);
   max-width: 25px;
 
@@ -13,13 +13,14 @@
     font-weight: bolder;
     color: var(--ion-color-light);
     display: flex;
-    
+
     .symbol-part {
       font-size: var(--525-common-text-size);
       font-weight: bold;
       color: var(--ion-color-light);
     }
   }
+
   .label-part {
     font-size: var(--525-small-text-size);
   }

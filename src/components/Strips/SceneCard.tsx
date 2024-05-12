@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import {
   IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
 } from '@ionic/react';
+import { useHistory, useRouteMatch } from 'react-router';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
@@ -13,9 +16,6 @@ import {
 } from '../../Ennums/ennums';
 import DatabaseContext from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { useHistory, useRouteMatch } from 'react-router';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { CiEdit } from "react-icons/ci";
 
 interface SceneCardProps {
   scene: Scene;
@@ -27,7 +27,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
 
   const history = useHistory();
   const routeMatch = useRouteMatch();
-  const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`
+  const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`;
 
   const [presentToast] = useIonToast();
 

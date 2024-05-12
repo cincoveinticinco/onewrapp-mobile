@@ -1,4 +1,6 @@
-import { IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave } from '@ionic/react';
+import {
+  IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
+} from '@ionic/react';
 import './AddScene.css';
 import {
   useContext, useEffect, useRef, useState,
@@ -7,7 +9,7 @@ import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout'
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
@@ -25,12 +27,12 @@ const AddScene: React.FC = () => {
   useEffect(() => {
     const dataLoading = setTimeout(() => {
       setDataIsLoading(false);
-    }, 500)
+    }, 500);
 
     return () => {
       clearTimeout(dataLoading);
-    }
-  }, [offlineScenes])
+    };
+  }, [offlineScenes]);
 
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -129,8 +131,8 @@ const AddScene: React.FC = () => {
   });
 
   useIonViewWillLeave(() => {
-    showTabs()
-  })
+    showTabs();
+  });
 
   return (
     <SecondaryPagesLayout
@@ -139,7 +141,7 @@ const AddScene: React.FC = () => {
       handleSave={handleSave}
       resetSelections={handleBack}
     >
-      <IonContent color="tertiary" ref={contentRef} style={{zIndex: '20'}}>
+      <IonContent color="tertiary" ref={contentRef} style={{ zIndex: '20' }}>
         {
           dataIsLoading && (
             useLoader()
@@ -148,18 +150,19 @@ const AddScene: React.FC = () => {
         {
           !dataIsLoading && (
             <AddScenesForm
-            scrollToTop={() => scrollToTop()}
-            editMode={false}
-            sceneFormId={sceneFormId}
-            handleSubmit={handleSubmit}
-            control={control}
-            errors={errors}
-            reset={reset}
-            setValue={setValue}
-            watch={watch}
-            formData={formData}
-            onSubmit={onSubmit}
-          />)
+              scrollToTop={() => scrollToTop()}
+              editMode={false}
+              sceneFormId={sceneFormId}
+              handleSubmit={handleSubmit}
+              control={control}
+              errors={errors}
+              reset={reset}
+              setValue={setValue}
+              watch={watch}
+              formData={formData}
+              onSubmit={onSubmit}
+            />
+          )
         }
       </IonContent>
     </SecondaryPagesLayout>

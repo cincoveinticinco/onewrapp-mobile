@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Character, Element, Extra, Note } from '../interfaces/scenesTypes';
+import {
+  Character, Element, Extra, Note,
+} from '../interfaces/scenesTypes';
 import removeAccents from '../utils/removeAccents';
 import getUniqueValuesFromNestedArray from '../utils/getUniqueValuesFromNestedArray';
 
@@ -19,8 +21,8 @@ interface UseFormTypeLogicReturnValue {
 
 const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTypeLogicReturnValue => {
   const [formType, setFormType] = useState<'character' | 'element' | 'extra' | 'note' | null>(null);
-  const [popupMessage, setPopupMessage] = useState('')
-  
+  const [popupMessage, setPopupMessage] = useState('');
+
   const [extra, setExtra] = useState<Extra>({
     categoryName: null,
     extraName: '',
@@ -46,15 +48,9 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
     const uniqueExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
     const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
 
-    const foundCharacter = uniqueCharacters.find((character: Character) =>
-      removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText
-    );
-    const foundElement = uniqueElements.find((element: Element) =>
-      removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText
-    );
-    const foundExtra = uniqueExtras.find((extra: Extra) =>
-      removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText
-    );
+    const foundCharacter = uniqueCharacters.find((character: Character) => removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText);
+    const foundElement = uniqueElements.find((element: Element) => removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText);
+    const foundExtra = uniqueExtras.find((extra: Extra) => removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText);
 
     if (foundCharacter) {
       setFormType('character');
@@ -62,18 +58,18 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
         ...foundCharacter,
         characterNum: foundCharacter.characterNum || null,
       });
-      setPopupMessage(`${selectedText} exists in characters (${character.categoryName || 'NO CATEGORY'})`)
+      setPopupMessage(`${selectedText} exists in characters (${character.categoryName || 'NO CATEGORY'})`);
     } else if (foundElement) {
       setFormType('element');
       setElement(foundElement);
-      setPopupMessage(`${selectedText} exists in elements (${foundElement.categoryName})`)
+      setPopupMessage(`${selectedText} exists in elements (${foundElement.categoryName})`);
     } else if (foundExtra) {
       setFormType('extra');
       setExtra(foundExtra);
-      setPopupMessage(`${selectedText} exists in extras`)
+      setPopupMessage(`${selectedText} exists in extras`);
     } else {
       setFormType('character');
-      setPopupMessage('')
+      setPopupMessage('');
     }
 
     setNote((prevNote: any) => ({ ...prevNote, note: selectedText }));
@@ -82,7 +78,9 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
   }, [selectedText]);
 
-  return { formType, extra, setExtra, element, setElement, character, setCharacter, note, setNote, setFormType, popupMessage};
+  return {
+    formType, extra, setExtra, element, setElement, character, setCharacter, note, setNote, setFormType, popupMessage,
+  };
 };
 
 export default useFormTypeLogic;

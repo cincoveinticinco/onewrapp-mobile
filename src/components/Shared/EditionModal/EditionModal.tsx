@@ -1,8 +1,8 @@
-import { IonContent, IonHeader, IonModal } from '@ionic/react'
-import React, { useEffect, useRef, useState } from 'react'
-import ModalToolbar from '../ModalToolbar/ModalToolbar'
-import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
+import { IonContent, IonHeader, IonModal } from '@ionic/react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import ModalToolbar from '../ModalToolbar/ModalToolbar';
+import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
@@ -22,30 +22,26 @@ const EditionModal: React.FC<EditionModalProps> = ({
   formInputs,
   handleEdition,
   defaultFormValues,
-  validate
+  validate,
 }) => {
-
   const modalRef = useRef<HTMLIonModalElement>(null);
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
   const [showError, setShowError] = useState({});
 
   useEffect(() => {
     formInputs.forEach((input: any) => {
-      setShowError((prevState: any) => {
-        return {
-          ...prevState,
-          [input.fieldName]: false,
-        };
-      });
+      setShowError((prevState: any) => ({
+        ...prevState,
+        [input.fieldName]: false,
+      }));
     });
-  }, [])
-
+  }, []);
 
   const resetFormValues = () => {
     formInputs.forEach((input: any) => {
       setValue(input.fieldName, defaultFormValues[input.fieldName]);
-    })
-  }
+    });
+  };
 
   const closeModal = () => {
     if (modalRef.current) {
@@ -56,7 +52,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   };
 
   useEffect(() => {
-    resetFormValues()
+    resetFormValues();
   }, [modalTrigger]);
 
   const {
@@ -77,16 +73,13 @@ const EditionModal: React.FC<EditionModalProps> = ({
   };
 
   const handleValidation = (value: string, fieldName: string, required: boolean) => {
-    
     if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
       setShowError(
-        (prevState: any) => {
-          return {
-            ...prevState,
-            [fieldName]: true,
-          };
-        }
-      )
+        (prevState: any) => ({
+          ...prevState,
+          [fieldName]: true,
+        }),
+      );
       setErrorMessage('REQUIRED *');
       return 'This field is required';
     }
@@ -95,13 +88,11 @@ const EditionModal: React.FC<EditionModalProps> = ({
       const validation = validate(value);
       if (typeof validation === 'string') {
         setShowError(
-          (prevState: any) => {
-            return {
-              ...prevState,
-              [fieldName]: true,
-            };
-          }
-        )
+          (prevState: any) => ({
+            ...prevState,
+            [fieldName]: true,
+          }),
+        );
         setErrorMessage(validation);
         return validation;
       }
@@ -114,7 +105,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
     handleEdition(formData);
     closeModal();
     setShowError({});
-  }
+  };
 
   return (
     <IonModal
@@ -132,47 +123,49 @@ const EditionModal: React.FC<EditionModalProps> = ({
         />
       </IonHeader>
       <IonContent color="tertiary">
-          <IonHeader className="add-new-option-description" mode="ios">
-            Please Add The New information
-          </IonHeader>
-          {
+        <IonHeader className="add-new-option-description" mode="ios">
+          Please Add The New information
+        </IonHeader>
+        {
               formInputs
-              && 
-              <div className='edit-inputs-wrapper'>
+              && (
+              <div className="edit-inputs-wrapper">
                 {
                   formInputs.map((input: any, i: any) => (
-                  <InputItem
-                    key={i}
-                    label={input.label}
-                    placeholder={input.placeholder}
-                    control={control}
-                    fieldName={input.fieldName}
-                    inputName={input.inputName}
-                    displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
-                    setValue={setNewOptionValue}
-                    validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
-                    type={input.type}
-                    errorMessage={errorMessage}
-                  />
-                ))}
-              </div>
-            }
-          <div className="edit-new-option-buttons-container">
-            <OutlinePrimaryButton
-              buttonName="SAVE"
-              onClick={handleSubmit(submitEdition)}
-              className="ion-margin modal-confirm-button"
-            />
-
-            <OutlineLightButton
-              buttonName="CANCEL"
-              onClick={closeModal}
-              className="ion-margin cancel-input-modal-button cancel-button"
-            />
-          </div>
-        </IonContent>
-    </IonModal>
-  )
+                    <InputItem
+                      key={i}
+                      label={input.label}
+                      placeholder={input.placeholder}
+                      control={control}
+                      fieldName={input.fieldName}
+                      inputName={input.inputName}
+                      displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
+                      setValue={setNewOptionValue}
+                      validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
+                      type={input.type}
+                      errorMessage={errorMessage}
+                    />
+                  ))
 }
+              </div>
+              )
+            }
+        <div className="edit-new-option-buttons-container">
+          <OutlinePrimaryButton
+            buttonName="SAVE"
+            onClick={handleSubmit(submitEdition)}
+            className="ion-margin modal-confirm-button"
+          />
 
-export default EditionModal
+          <OutlineLightButton
+            buttonName="CANCEL"
+            onClick={closeModal}
+            className="ion-margin cancel-input-modal-button cancel-button"
+          />
+        </div>
+      </IonContent>
+    </IonModal>
+  );
+};
+
+export default EditionModal;

@@ -6,6 +6,7 @@ import {
   IonCardHeader,
   AlertInput,
 } from '@ionic/react';
+import { get } from 'lodash';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import { Character } from '../../../interfaces/scenesTypes';
@@ -14,7 +15,6 @@ import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../context/database';
-import { get } from 'lodash';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -23,7 +23,9 @@ interface AddCategoryFormProps {
   detailsEditMode?: boolean;
 }
 
-const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, observedCharacters, editMode, detailsEditMode }) => {
+const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
+  handleSceneChange, observedCharacters, editMode, detailsEditMode,
+}) => {
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
@@ -88,29 +90,28 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({ handleSceneChange, o
   };
 
   const getAlertTrigger = () => {
-
     if (editMode) {
       return 'characters-categories-alert-edit';
     }
 
-    if(detailsEditMode) {
+    if (detailsEditMode) {
       return 'characters-categories-alert-details-edit';
     }
 
     return 'characters-categories-alert';
-  }
+  };
 
   const getModalTrigger = () => {
     if (editMode) {
       return 'open-characters-options-modal-edit';
     }
 
-    if(detailsEditMode) {
+    if (detailsEditMode) {
       return 'open-characters-options-modal-details-edit';
     }
 
     return 'open-characters-options-modal';
-  }
+  };
 
   return (
     <>

@@ -95,7 +95,6 @@ ion-button.filled-primary-button {
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
-
 }
 
 .outline-primary-button {
@@ -218,7 +217,7 @@ ion-toast.warning-toast {
   --color: var(--ion-color-light);
   --border-style: solid;
   --border-width: 1px;
-  --border-color: var(--ion-color-warning)
+  --border-color: var(--ion-color-warning);
 }
 
 ion-toast.warning-toast::part(icon) {

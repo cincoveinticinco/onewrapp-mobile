@@ -105,7 +105,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   });
 
   useIonViewDidEnter(() => {
-    setUncheckedOptions(uncheckedfilteredFiltersOptions)
+    setUncheckedOptions(uncheckedfilteredFiltersOptions);
     setTimeout(() => {
       setDataIsLoading(false);
     }, 1000);
@@ -113,7 +113,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
 
   useEffect(() => {
     setUncheckedOptions(uncheckedfilteredFiltersOptions);
-    setDataIsLoading(false)
+    setDataIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -225,7 +225,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                   style={isMobile ? { margin: '5% 16px 16px 16px' } : { margin: '20% auto auto auto' }}
                 />
                 {isMobile && <OutlineLightButton buttonName="CANCEL" onClick={handleSave} className="ion-margin cancel-filter-scenes-modal cancel-button" />}
-            </>
+              </>
             )
           }
         </IonContent>

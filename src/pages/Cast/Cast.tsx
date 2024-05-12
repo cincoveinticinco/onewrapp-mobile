@@ -24,7 +24,6 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 import useLoader from '../../hooks/useLoader';
 
 const Cast: React.FC = () => {
-
   // Context
 
   const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
@@ -46,7 +45,7 @@ const Cast: React.FC = () => {
     return defaultSortPosibilitiesOrder;
   });
 
-  //Refs
+  // Refs
 
   const contentRef = useRef<HTMLIonContentElement>(null);
 
@@ -70,7 +69,7 @@ const Cast: React.FC = () => {
     const uniqueSet = new Set(array);
     const uniqueArray = [...uniqueSet];
     return uniqueArray;
-  }
+  };
 
   const characterCategoriesArray: any[] = getUniqueValuesByKey(cast, 'categoryName');
 
@@ -134,11 +133,10 @@ const Cast: React.FC = () => {
     characterCategoriesArray.forEach((category: string) => {
       setFilteredCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category) }));
     });
-
   }, [cast]);
 
   const validateCastExistence = (value: string, currentValue: string) => {
-    if(value === currentValue) {
+    if (value === currentValue) {
       return true;
     }
 
@@ -149,10 +147,10 @@ const Cast: React.FC = () => {
     }
 
     return true;
-  }
+  };
 
   const validateExtraExistence = (value: string, currentValue: string) => {
-    if(value === currentValue) {
+    if (value === currentValue) {
       return true;
     }
 
@@ -163,8 +161,8 @@ const Cast: React.FC = () => {
     }
 
     return true;
-  }
-  
+  };
+
   // Render
 
   return (
@@ -180,37 +178,37 @@ const Cast: React.FC = () => {
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
-            isLoading &&
-            useLoader()
+            isLoading
+            && useLoader()
           }
           {
-            !isLoading &&
-            characterCategoriesArray.map((category: string, index: number) => (
-            <DropDownCast
-              key={`cast-dropdown-${category}-${index}`}
-              category={category}
-              isOpen={dropDownIsOpen[category]}
-              onToggle={() => handleDropDown(category)}
-              count={filterCastByCategory(category).length}
-              
-            >
-              <ScrollInfiniteContext
-                filteredData={filteredCast[category]}
-                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
-                batchSize={7}
+            !isLoading
+            && characterCategoriesArray.map((category: string, index: number) => (
+              <DropDownCast
+                key={`cast-dropdown-${category}-${index}`}
+                category={category}
+                isOpen={dropDownIsOpen[category]}
+                onToggle={() => handleDropDown(category)}
+                count={filterCastByCategory(category).length}
               >
-                {
+                <ScrollInfiniteContext
+                  filteredData={filteredCast[category]}
+                  setDisplayedData={(newElements: any[]) => handleSetDisplayedCast(category, newElements)}
+                  batchSize={7}
+                >
+                  {
                   displayedCast[category]
                   && displayedCast[category].map((character: any, index: number) => (
                     <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
                   ))
                 }
-              </ScrollInfiniteContext>
-            </DropDownCast>
-          ))}
+                </ScrollInfiniteContext>
+              </DropDownCast>
+            ))
+}
           {
-            !isLoading &&
-            extras.length > 0 && (
+            !isLoading
+            && extras.length > 0 && (
             <DropDownCast
               key="cast-dropdown-EXTRAS"
               category="EXTRAS"
@@ -231,7 +229,8 @@ const Cast: React.FC = () => {
                 }
               </ScrollInfiniteContext>
             </DropDownCast>
-          )}
+            )
+}
         </IonContent>
       </MainPagesLayout>
       <InputSortModal

@@ -1,7 +1,5 @@
 
-
 @media (min-width: 500px) {
-
   .edit-inputs-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -9,7 +7,7 @@
     ion-item {
       grid-column: 1/3;
     }
-  
+
     #add-character-number-input {
       grid-column: 1/2;
     }
@@ -29,7 +27,7 @@
 
     ion-button {
       max-width: 150px;
-      margin: 0px !important;
+      margin: 0 !important;
       padding: 0;
     }
   }

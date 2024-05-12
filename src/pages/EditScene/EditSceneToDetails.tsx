@@ -1,9 +1,12 @@
-import { IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
+import {
+  IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+} from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
@@ -11,7 +14,6 @@ import useHandleBack from '../../hooks/useHandleBack';
 import DatabaseContext from '../../context/database';
 import useSuccessToast from '../../hooks/useSuccessToast';
 import useErrorToast from '../../hooks/useErrorToast';
-import { set } from 'lodash';
 import useLoader from '../../hooks/useLoader';
 
 const EditSceneToDetails: React.FC = () => {
@@ -23,17 +25,16 @@ const EditSceneToDetails: React.FC = () => {
   const handleBack = () => {
     const backRoute = localStorage.getItem('editionBackRoute');
     console.log(backRoute);
-    backRoute ?
-    history.push(backRoute) :
-    history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
-  }
-  ;
+    backRoute
+      ? history.push(backRoute)
+      : history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);
+  };
   const updatedAt = new Date().toISOString();
   const { oneWrapDb, offlineScenes } = useContext<any>(DatabaseContext);
   const successMessageToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
-  const loader = useLoader()
+  const loader = useLoader();
 
   const sceneDefaultValues = {
     projectId,
@@ -91,7 +92,7 @@ const EditSceneToDetails: React.FC = () => {
     reset,
     setValue,
     watch,
-  } = useForm({ defaultValues: formData })
+  } = useForm({ defaultValues: formData });
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();

@@ -1,26 +1,30 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Character, Element, Extra, Note } from "../../interfaces/scenesTypes";
-import CharacterForm from "./SceneParagraph/CharacterForm";
-import ElementForm from "./SceneParagraph/ElementForm";
-import ExtraForm from "./SceneParagraph/ExtraForm";
-import NoteForm from "./SceneParagraph/NoteForm";
-import useIsMobile from "../../hooks/useIsMobile";
-import useSuccessToast from "../../hooks/useSuccessToast";
-import DatabaseContext from "../../context/database";
-import useTextSelection from "../../hooks/useSelectedText";
-import useFormTypeLogic from "../../hooks/useFormTypeLogic";
-import getUniqueValuesFromNestedArray from "../../utils/getUniqueValuesFromNestedArray";
-import removeAccents from "../../utils/removeAccents";
-import { SearchTerm } from "../Shared/HighlightedTextWithArray/HighlightedTextWithArray";
-import SceneParagraph from "./SceneParagraph/SceneParagraph";
-import { PiNotePencil } from "react-icons/pi";
-import { MdOutlineFaceUnlock } from "react-icons/md";
-import { FaClipboardList } from "react-icons/fa";
-import { HiMiniUsers } from "react-icons/hi2";
-import FiilledSuccessButton from "../Shared/FilledSuccessButton/FillSuccessButton";
-import { IonButton } from "@ionic/react";
-import useLoader from "../../hooks/useLoader";
-import InputModal from "../../Layouts/InputModal/InputModal";
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
+import { PiNotePencil } from 'react-icons/pi';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
+import { FaClipboardList } from 'react-icons/fa';
+import { HiMiniUsers } from 'react-icons/hi2';
+import { IonButton } from '@ionic/react';
+import {
+  Character, Element, Extra, Note,
+} from '../../interfaces/scenesTypes';
+import CharacterForm from './SceneParagraph/CharacterForm';
+import ElementForm from './SceneParagraph/ElementForm';
+import ExtraForm from './SceneParagraph/ExtraForm';
+import NoteForm from './SceneParagraph/NoteForm';
+import useIsMobile from '../../hooks/useIsMobile';
+import useSuccessToast from '../../hooks/useSuccessToast';
+import DatabaseContext from '../../context/database';
+import useTextSelection from '../../hooks/useSelectedText';
+import useFormTypeLogic from '../../hooks/useFormTypeLogic';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import removeAccents from '../../utils/removeAccents';
+import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
+import SceneParagraph from './SceneParagraph/SceneParagraph';
+import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
+import useLoader from '../../hooks/useLoader';
+import InputModal from '../../Layouts/InputModal/InputModal';
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -40,37 +44,39 @@ const MemoizedElementForm = React.memo(ElementForm);
 const MemoizedExtraForm = React.memo(ExtraForm);
 const MemoizedNoteForm = React.memo(NoteForm);
 
-const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId }) => {
+const ScriptPage: React.FC<ScriptPageProps> = ({
+  zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId,
+}) => {
   const [showPopup, setShowPopup] = useState(false);
   const handlePopupOpen = (selectedText: string, x: number, y: number) => {
     setSelectedText(selectedText);
     setPopupPosition({ x, y });
     setShowPopup(true);
   };
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   const successToast = useSuccessToast();
   const { offlineScenes, oneWrapDb } = useContext(DatabaseContext);
   const selectionRef = useRef<string | null>(null);
-  const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen)
+  const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [scenesList, setScenesList] = useState<any[]>([]);
 
   const getScenesArray = () => {
-   const scenesList =  offlineScenes.map((scene: any) => {
+    const scenesList = offlineScenes.map((scene: any) => {
       const sceneId = scene.id;
       const sceneHeader = `${parseInt(scene.episodeNumber) > 0 ? (`${scene.episodeNumber}.`) : ''}${scene.sceneNumber} ${scene.intOrExtOption ? (`${scene.intOrExtOption}.`) : ''} ${scene.locationName ? (`${scene.locationName}.`) : ''} ${scene.setName}-${scene.dayOrNightOption}${scene.scriptDay} ${scene.year ? `(${scene.year})` : ''}`;
       return {
         sceneId,
-        sceneHeader
+        sceneHeader,
       };
-    })
+    });
     return scenesList;
-  }
+  };
 
   useEffect(() => {
     setScenesList(getScenesArray());
-  }, [offlineScenes, oneWrapDb])
+  }, [offlineScenes, oneWrapDb]);
 
   const viewportHeight = window.innerHeight;
   const selectionPercentage = (popupPosition.y + 50) / viewportHeight;
@@ -93,10 +99,10 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
 
   let maxWidth = 'none';
 
-  if(isMobile) {
-    maxWidth = '90%'
+  if (isMobile) {
+    maxWidth = '90%';
   }
-  
+
   const {
     formType,
     extra,
@@ -108,7 +114,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
     note,
     setNote,
     setFormType,
-    popupMessage
+    popupMessage,
   } = useFormTypeLogic(offlineScenes, selectedText);
 
   useEffect(() => {
@@ -116,7 +122,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
     setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: selectedText }));
     setElement((prevElement: any) => ({ ...prevElement, elementName: selectedText }));
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
-  }, [selectedText])
+  }, [selectedText]);
 
   const elementsUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName);
   const charactersUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: Character) => category.categoryName);
@@ -124,7 +130,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   const handleFormTypeChange = (newFormType: 'character' | 'element' | 'extra' | 'note') => {
     setFormType(newFormType);
   };
-
 
   const handlePopupClose = () => {
     setShowPopup(false);
@@ -149,8 +154,8 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       successToast('Note created successfully');
     }
     handlePopupClose();
-  }
-  
+  };
+
   const normalizeWord = (word: (string | null)) => {
     if (word) {
       const normalizedWord = removeAccents(word).toLowerCase().trim();
@@ -159,17 +164,17 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
     }
 
     return '';
-  }
+  };
 
   const getSearchTermsArray = (text: string) => {
     const words = text.split(' ');
-    let searchTermsArray: SearchTerm[] = [];
+    const searchTermsArray: SearchTerm[] = [];
     const normalizeCharactersArray = charactersArray.map((character: Character) => normalizeWord(character.characterName));
     const normalizeElementsArray = elementsArray.map((element: Element) => normalizeWord(element.elementName));
-    const normalizeExtrasArray = extrasArray.map((extra: Extra) => normalizeWord(extra.extraName))
-    const normalizeNotesArray = notesArray.map((note: Note) => normalizeWord(note.note))
+    const normalizeExtrasArray = extrasArray.map((extra: Extra) => normalizeWord(extra.extraName));
+    const normalizeNotesArray = notesArray.map((note: Note) => normalizeWord(note.note));
 
-    words.forEach(word => {
+    words.forEach((word) => {
       const normalizedWord = normalizeWord(word);
       if (normalizeCharactersArray.includes(normalizedWord)) {
         const searchTerm = {
@@ -177,15 +182,15 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
           categoryName: charactersArray.find((character: Character) => normalizeWord(character.characterName) === normalizeWord(word))?.categoryName || null,
           type: 'character',
           highlightColor: 'var(--ion-color-primary)',
-        }
+        };
         searchTermsArray.push(searchTerm);
-      } else if(normalizeElementsArray.includes(normalizeWord(word))) {
+      } else if (normalizeElementsArray.includes(normalizeWord(word))) {
         const searchTerm = {
           searchTerm: normalizeWord(word),
           categoryName: elementsArray.find((element: Element) => normalizeWord(element.elementName) === normalizeWord(word))?.categoryName || null,
           type: 'element',
           highlightColor: 'var(--ion-color-yellow)',
-        }
+        };
         searchTermsArray.push(searchTerm);
       } else if (normalizeExtrasArray.includes(normalizedWord)) {
         const searchTerm = {
@@ -193,7 +198,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
           categoryName: extrasArray.find((extra: Extra) => normalizeWord(extra.extraName) === normalizeWord(word))?.categoryName || null,
           type: 'extra',
           highlightColor: 'var(--ion-color-success)',
-        }
+        };
         searchTermsArray.push(searchTerm);
       } else if (normalizeNotesArray.includes(normalizedWord)) {
         const searchTerm = {
@@ -201,19 +206,19 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
           categoryName: null,
           type: 'note',
           highlightColor: 'transparent',
-        }
+        };
         searchTermsArray.push(searchTerm);
       }
     });
-  
+
     return searchTermsArray;
-  }
+  };
 
   const [searchTerms, setSearchTerms] = useState<SearchTerm[]>([]);
 
   useEffect(() => {
     const newSearchTermsArray: SearchTerm[] = [];
-    paragraphs.forEach(paragraph => {
+    paragraphs.forEach((paragraph) => {
       if (paragraph.type) {
         const newSearchTerms = getSearchTermsArray(paragraph.content);
         newSearchTermsArray.push(...newSearchTerms);
@@ -223,59 +228,61 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
   }, [charactersArray, elementsArray, extrasArray, notesArray, paragraphs]);
 
   if (paragraphsAreLoading) {
-    return <div 
-      className="script-page"
-      style={{
-        zoom: zoomLevel,
-      }}
-    >
-      {useLoader()}
-    </div>;
-  }
-
-  const handleCheckboxToggle = (sceneHeader: string) => {
-    const sceneId = scenesList.find(scene => scene.sceneHeader.toLowerCase() === sceneHeader.toLowerCase())?.sceneId;
-    setSelectedSceneId(sceneId);
-    console.log('SETTING NEW SCENE ID', sceneId)
-  }
-
-  if(paragraphs.length === 0) {
     return (
-      <div 
+      <div
         className="script-page"
         style={{
           zoom: zoomLevel,
         }}
       >
-      <FiilledSuccessButton
-        buttonName="IMPORT SCENE"
-        onClick={() => {}}
-        className="import-scene-button"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '100px',
-          '--color': 'var(--ion-color-light)',
-          fontWeight: 'bold',
-        }}
-        id="import-scene-button"
-      />
-      <InputModal
-        modalTrigger="import-scene-button"
-        multipleSelections={false}
-        listOfOptions={scenesList.map(scene => scene.sceneHeader)}
-        clearSelections={() => setSelectedSceneId(null)}
-        canCreateNew={false}
-        handleCheckboxToggle={handleCheckboxToggle}
-        selectedOptions={selectedSceneId ? [scenesList.find(scene => scene.sceneId === selectedSceneId)?.sceneHeader] : []}
-        optionName='IMPORT SCENE'
-      />
-    </div>
-    )
+        {useLoader()}
+      </div>
+    );
   }
-  
+
+  const handleCheckboxToggle = (sceneHeader: string) => {
+    const sceneId = scenesList.find((scene) => scene.sceneHeader.toLowerCase() === sceneHeader.toLowerCase())?.sceneId;
+    setSelectedSceneId(sceneId);
+    console.log('SETTING NEW SCENE ID', sceneId);
+  };
+
+  if (paragraphs.length === 0) {
+    return (
+      <div
+        className="script-page"
+        style={{
+          zoom: zoomLevel,
+        }}
+      >
+        <FiilledSuccessButton
+          buttonName="IMPORT SCENE"
+          onClick={() => {}}
+          className="import-scene-button"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100px',
+            '--color': 'var(--ion-color-light)',
+            fontWeight: 'bold',
+          }}
+          id="import-scene-button"
+        />
+        <InputModal
+          modalTrigger="import-scene-button"
+          multipleSelections={false}
+          listOfOptions={scenesList.map((scene) => scene.sceneHeader)}
+          clearSelections={() => setSelectedSceneId(null)}
+          canCreateNew={false}
+          handleCheckboxToggle={handleCheckboxToggle}
+          selectedOptions={selectedSceneId ? [scenesList.find((scene) => scene.sceneId === selectedSceneId)?.sceneHeader] : []}
+          optionName="IMPORT SCENE"
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <div
@@ -287,73 +294,77 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
       >
         {paragraphs.map((paragraph, index) => (
           <SceneParagraph
-            key={index} 
-            type={paragraph.type} 
-            content={paragraph.content} 
-            searchTermsArray={searchTerms} 
+            key={index}
+            type={paragraph.type}
+            content={paragraph.content}
+            searchTermsArray={searchTerms}
             paragraphsLoading={paragraphsAreLoading}
           />
         ))}
       </div>
-      {   
-        showPopup &&
-        (
+      {
+        showPopup
+        && (
           <div className="script-popup-background">
-            <div className="script-popup" style={isMobile ?
-            { 
-              position: 'fixed',
-              top: 'calc(50% - 150px)',
-              backgroundColor: 'var(--ion-color-tertiary)',
-              maxWidth: maxWidth,
-              left: 'calc(50% - 150px)'
-            } :
-            {
-              position: 'fixed',
-              top: topPosition,
-              left: leftPosition,
-              backgroundColor: 'var(--ion-color-tertiary)',
-              maxWidth: maxWidth
-            }
-            }>
+            <div
+              className="script-popup"
+              style={isMobile
+                ? {
+                  position: 'fixed',
+                  top: 'calc(50% - 150px)',
+                  backgroundColor: 'var(--ion-color-tertiary)',
+                  maxWidth,
+                  left: 'calc(50% - 150px)',
+                }
+                : {
+                  position: 'fixed',
+                  top: topPosition,
+                  left: leftPosition,
+                  backgroundColor: 'var(--ion-color-tertiary)',
+                  maxWidth,
+                }}
+            >
               {
-                popupMessage !== '' &&
-                <p 
+                popupMessage !== ''
+                && (
+                <p
                   style={{
                     color: 'var(--ion-color-success)',
                     marginLeft: '16px',
                     textTransform: 'uppercase',
-                    fontSize: '10px'
+                    fontSize: '10px',
                   }}
-                > 
+                >
                   {popupMessage}
                 </p>
+                )
               }
-              <div 
+              <div
                 className="form-type-selector"
               >
                 <button
                   className={`form-type-button ${formType === 'note' ? 'selected' : ''}`}
                   onClick={() => handleFormTypeChange('note')}
                 >
-                  <PiNotePencil className={'form-type-icon' + (formType === 'note' ? ' active' : '')}/>
+                  <PiNotePencil className={`form-type-icon${formType === 'note' ? ' active' : ''}`} />
                 </button>
                 <button
                   className={`form-type-button ${formType === 'character' ? 'selected' : ''}`}
                   onClick={() => handleFormTypeChange('character')}
                 >
-                  <MdOutlineFaceUnlock className={'form-type-icon' + (formType === 'character' ? ' active' : '')}/>
+                  <MdOutlineFaceUnlock className={`form-type-icon${formType === 'character' ? ' active' : ''}`} />
                 </button>
                 <button
                   className={`form-type-button ${formType === 'element' ? 'selected' : ''}`}
                   onClick={() => handleFormTypeChange('element')}
                 >
-                  <FaClipboardList className={'form-type-icon' + (formType === 'element' ? ' active' : '')}/>
+                  <FaClipboardList className={`form-type-icon${formType === 'element' ? ' active' : ''}`} />
                 </button>
                 <button
                   className={`form-type-button ${formType === 'extra' ? 'selected' : ''}`}
                   onClick={() => handleFormTypeChange('extra')}
                 >
-                  <HiMiniUsers className={'form-type-icon' + (formType === 'extra' ? ' active' : '')}/>
+                  <HiMiniUsers className={`form-type-icon${formType === 'extra' ? ' active' : ''}`} />
                 </button>
               </div>
               {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={charactersUniqueCategories} />}
@@ -374,22 +385,24 @@ const ScriptPage: React.FC<ScriptPageProps> = ({ zoomLevel, edition, charactersA
                 />
                 <IonButton
                   onClick={handlePopupClose}
-                  className='cancel-button'
-                  fill='outline'
-                  color='danger'
+                  className="cancel-button"
+                  fill="outline"
+                  color="danger"
                   style={{
                     margin: '6px 12px 16px 12px',
                     fontSize: '10px',
-                    minHeight: '30px'
+                    minHeight: '30px',
                   }}
-                >CANCEL</IonButton>
+                >
+                  CANCEL
+                </IonButton>
               </>
             </div>
           </div>
-          )
+        )
         }
     </>
   );
-}
+};
 
 export default ScriptPage;

@@ -1,7 +1,9 @@
 import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
-import { IonButton, IonContent, IonGrid, IonIcon, IonRefresher, IonRefresherContent, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
+import {
+  IonButton, IonContent, IonGrid, IonIcon, IonRefresher, IonRefresherContent, useIonViewDidEnter, useIonViewWillEnter,
+} from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
@@ -17,10 +19,11 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
 import useLoader from '../../hooks/useLoader';
-import { refreshCircleOutline } from 'ionicons/icons';
 
 const Strips: React.FC = () => {
-  const { offlineScenes, initializeReplication, scenesAreLoading} = useContext(DatabaseContext);
+  const {
+    offlineScenes, initializeReplication, projectId, scenesAreLoading, 
+  } = useContext(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
@@ -33,18 +36,19 @@ const Strips: React.FC = () => {
   const { showTabs } = useHideTabs();
 
   useIonViewWillEnter(() => {
-    showTabs()
-    initializeReplication()
+    showTabs();
+    initializeReplication();
   });
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
   const filteredScenes = useMemo(() => {
     const filteredData = Object.keys(selectedFilterOptions).length === 0 && offlineScenes ? offlineScenes : memoizedApplyFilters(offlineScenes, selectedFilterOptions);
-    if(filteredData && offlineScenes) {
+    if (filteredData && offlineScenes) {
       return sortByCriterias(filteredData, selectedSortOptions);
     }
-  }, [offlineScenes, selectedFilterOptions, selectedSortOptions]);
+    console.log('filteredData', filteredData);
+  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, projectId]);
 
   useEffect(() => {
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));

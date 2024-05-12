@@ -49,9 +49,8 @@ setupIonicReact();
 const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
 
-
-  if(!loggedIn) {
-    return <Redirect to="/login" />
+  if (!loggedIn) {
+    return <Redirect to="/login" />;
   }
 
   const isMobile = useIsMobile();
@@ -64,8 +63,8 @@ const AppTabs: React.FC = () => {
   // EXACT PATHS
 
   return (
-    <IonTabs className='ion-tabs'>
-      <IonRouterOutlet mode='md'>
+    <IonTabs className="ion-tabs">
+      <IonRouterOutlet mode="md">
         <Route exact path={`${urlString}/addscene`}>
           <AddScene />
         </Route>

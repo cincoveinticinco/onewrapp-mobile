@@ -7,7 +7,7 @@ export enum ProjectStatusEnum {
   ON_HOLD = 'On Hold',
   DELETED = 'Deleted',
   IN_WRAP = 'In Wrap',
-  INTANGIBLES = "Intangibles"
+  INTANGIBLES = 'Intangibles'
 }
 
 export const ProjectStatusEnumArray: (string)[] = [
@@ -19,7 +19,7 @@ export const ProjectStatusEnumArray: (string)[] = [
   ProjectStatusEnum.ON_HOLD,
   ProjectStatusEnum.DELETED,
   ProjectStatusEnum.IN_WRAP,
-  ProjectStatusEnum.INTANGIBLES
+  ProjectStatusEnum.INTANGIBLES,
 ];
 
 export enum ProjectTypeEnum {
@@ -33,9 +33,8 @@ export const ProjectTypeEnumArray: (string)[] = [
   ProjectTypeEnum.SCRIPTED_FILM,
   ProjectTypeEnum.SCRIPTED_SERIES,
   ProjectTypeEnum.NON_SCRIPTED_FILM,
-  ProjectTypeEnum.NON_SCRIPTED_SERIES
+  ProjectTypeEnum.NON_SCRIPTED_SERIES,
 ];
-
 
 export enum SceneTypeEnum {
   SCENE = 'SCENE',

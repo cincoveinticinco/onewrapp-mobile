@@ -1,5 +1,6 @@
 .input-item {
   border-bottom: 2px solid var(--ion-color-primary) !important;
+
   .input-wrapper {
     .label-text-wrapper {
       color: var(--ion-color-primary) !important;
@@ -9,10 +10,10 @@
 
 .input-item.error {
   border-bottom: 2px solid var(--ion-color-danger) !important;
+
   .input-wrapper {
     .label-text-wrapper {
       color: var(--ion-color-danger) !important;
     }
   }
-  
 }

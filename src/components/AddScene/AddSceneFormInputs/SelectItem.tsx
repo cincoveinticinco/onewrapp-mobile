@@ -54,11 +54,11 @@ const SelectItem: React.FC<SelectItemProps> = ({
     if (editMode) {
       return `edit-${inputName}`;
     }
-    if(detailsEditMode) {
+    if (detailsEditMode) {
       return `details-edit-${inputName}`;
     }
     return inputName;
-  }
+  };
 
   return (
     <IonItem color="tertiary" id={defineTrigger()}>

@@ -1,4 +1,4 @@
-import './InfoLabel.scss'
+import './InfoLabel.scss';
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
   <p className="info-label">
