@@ -1,5 +1,5 @@
 import environment from "../../../environment";
-import { ShootingStatusEnumArray } from "../../Ennums/ennums";
+import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from "../../Ennums/ennums";
 import DatabaseSchema from "../database_schema";
 
 const shootingSchema = {
@@ -19,7 +19,7 @@ const shootingSchema = {
       type: 'string',
     },
     shootScnStatusId: {
-      type: ShootingStatusEnumArray,
+      type: ShootingSceneStatusEnumArray,
     },
     position: {
       type: ['number', 'null'],
@@ -42,6 +42,36 @@ const shootingSchema = {
     setups: {
       type: ['number', 'null'],
     },
+    projUnitId: {
+      type: 'number',
+    },
+    shootDate: {
+      type: ['string', 'null'],
+    },
+    generalCall: {
+      type: ['string', 'null'],
+    },
+    onSet: {
+      type: ['string', 'null'],
+    },
+    estimatedWrap: {
+      type: ['string', 'null'],
+    },
+    firstShoot: {
+      type: ['string', 'null'],
+    },
+    wrap: {
+      type: ['string', 'null'],
+    },
+    lastOut: {
+      type: ['string', 'null'],
+    },
+    shootingStatusId: {
+      type: ShootingStatusEnumArray,
+    },
+    isTest: {
+      type: 'boolean',
+    },
     createdAt: {
       type: 'string',
     },
@@ -49,7 +79,7 @@ const shootingSchema = {
       type: 'string',
     },
   },
-  required: ['projectId', 'sceneId', 'shootScnStatusId'],
+  required: ['projectId', 'sceneId', 'shootScnStatusId', 'projUnitId', 'shootingStatusId'],
 };
 
 const shootingSchemaInput = {

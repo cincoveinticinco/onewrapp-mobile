@@ -109,3 +109,15 @@ export const ShootingStatusEnumArray: number[] = [
   ShootingStatusEnum.Called,
   ShootingStatusEnum.InProgress,
 ];
+
+export enum ShootingSceneStatusEnum {
+  Assigned = 1,
+  Shoot = 2,
+  NotShoot = 3
+}
+
+export const ShootingSceneStatusEnumArray: number[] = [
+  ShootingSceneStatusEnum.Assigned,
+  ShootingSceneStatusEnum.Shoot,
+  ShootingSceneStatusEnum.NotShoot,
+];
