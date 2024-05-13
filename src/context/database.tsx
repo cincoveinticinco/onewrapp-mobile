@@ -7,11 +7,11 @@ import { Scene } from '../interfaces/scenesTypes';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
-import { RxDatabase } from 'rxdb';
+import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
-  offlineScenes: Scene[];
+  offlineScenes: any[];
   offlineProjects: Project[];
   setStartReplication: (startReplication: boolean) => void;
   projectId: number | null;

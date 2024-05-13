@@ -71,7 +71,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
           === removeNumberAndDot(character.toUpperCase()),
     ));
 
-    const characterObject = sceneWithCharacter?.characters.find(
+    const characterObject = sceneWithCharacter?.characters?.find(
       (char: any) => char.characterName.toUpperCase()
         === removeNumberAndDot(character.toUpperCase()),
     );

@@ -47,7 +47,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
   const toggleExtra = (extra: string) => {
     const sceneWithExtra = offlineScenes.find((scene: any) => scene.extras.some((ex: any) => ex.extraName.toUpperCase() === extra.toUpperCase()));
 
-    const extraObject = sceneWithExtra?.extras.find((ex: any) => ex.extraName.toUpperCase() === extra.toUpperCase());
+    const extraObject = sceneWithExtra?.extras?.find((ex: any) => ex.extraName.toUpperCase() === extra.toUpperCase());
 
     if (extraObject) {
       const selectedExtraObjectIndex = selectedExtras.findIndex((ex: any) => ex.extraName === extraObject.extraName);

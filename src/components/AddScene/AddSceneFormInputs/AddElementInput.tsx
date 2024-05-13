@@ -64,7 +64,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
     ));
 
-    const elementObject = sceneWithElement?.elements.find(
+    const elementObject = sceneWithElement?.elements?.find(
       (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
     );
 
