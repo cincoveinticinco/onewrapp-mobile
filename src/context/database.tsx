@@ -49,8 +49,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const [lastParagraphFromProject, setLastParagraphFromProject] = useState<RxLocalDocumentData | null>(null);
-  const [lastSceneFromProject, setLastSceneFromProject] = useState<Scene | null>(null);
   const projectsQuery = oneWrapRXdatabase?.projects.find();
   const offlineProjects$: Observable<Project[]> = projectsQuery ? projectsQuery.$ : null;
   const isOnline = useNavigatorOnLine();
@@ -95,8 +93,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           if(data.length > 0) {
             setOfflineScenes(data);
             setScenesAreLoading(false);
-            const lastScene: Scene = data[data.length - 1]['_data' as keyof RxLocalDocumentData] as Scene;
-            setLastSceneFromProject(lastScene);
           }
         });
 
@@ -115,8 +111,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     };
   }, [offlineProjects$]);
 
-  const initializeReplication = () => {
-    const lastSceneInProject = lastSceneFromProject // To compare when you enter in other project
+  const initializeReplication = async () => {
+
+    let lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
+      selector: { projectId: parseInt(projectId) }
+    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
+      return data[0] ? data[0] : null;
+    }) // To compare when you enter in other project
+
     const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
     const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId);
     const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
