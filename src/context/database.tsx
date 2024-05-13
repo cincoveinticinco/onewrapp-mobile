@@ -3,12 +3,10 @@ import { Observable } from 'rxjs';
 import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
-import { Scene } from '../interfaces/scenesTypes';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
-import { last, set } from 'lodash';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;

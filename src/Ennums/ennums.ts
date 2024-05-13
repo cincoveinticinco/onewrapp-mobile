@@ -96,4 +96,16 @@ export const DayOrNightOptionEnumArray: string[] = [
   DayOrNightOptionEnum.SUNRISE,
 ];
 
-// PARAGRAPHS TYPES
+// SHOOTING ENNUMS
+
+export enum ShootingStatusEnum {
+  Closed = 1,
+  Called = 2,
+  InProgress = 3,
+}
+
+export const ShootingStatusEnumArray: number[] = [
+  ShootingStatusEnum.Closed,
+  ShootingStatusEnum.Called,
+  ShootingStatusEnum.InProgress,
+];
