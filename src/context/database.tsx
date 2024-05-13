@@ -119,8 +119,15 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return data[0] ? data[0] : null;
     }) // To compare when you enter in other project
 
+    let lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
+      selector: { projectId: parseInt(projectId) }
+    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
+      console.log(data[0] ? data[0] : null)
+      return data[0] ? data[0] : null;
+    }) // To compare when you enter in other project
+
     const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
-    const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId);
+    const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId, lastParagraphInProject);
     const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
     isOnline && scenesReplicator.startReplicationPull();
     isOnline && paragraphsReplicator.startReplicationPull();
