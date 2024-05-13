@@ -8,6 +8,7 @@ import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
+import { last, set } from 'lodash';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -48,6 +49,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
+  const [lastParagraphFromProject, setLastParagraphFromProject] = useState<RxLocalDocumentData | null>(null);
+  const [lastSceneFromProject, setLastSceneFromProject] = useState<Scene | null>(null);
   const projectsQuery = oneWrapRXdatabase?.projects.find();
   const offlineProjects$: Observable<Project[]> = projectsQuery ? projectsQuery.$ : null;
   const isOnline = useNavigatorOnLine();
@@ -83,13 +86,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const subscription = oneWrapRXdatabase.scenes.find({ 
         selector: { 
           projectId: projectIdInt 
-        } }).$.subscribe((data: Scene[]) => { 
+        },
+        sort: [
+          {updatedAt: 'asc'}
+        ],
+      }).$.subscribe((data: RxLocalDocumentData[]) => { 
           setScenesAreLoading(true); 
           if(data.length > 0) {
             setOfflineScenes(data);
             setScenesAreLoading(false);
+            const lastScene: Scene = data[data.length - 1]['_data' as keyof RxLocalDocumentData] as Scene;
+            setLastSceneFromProject(lastScene);
           }
-        }); 
+        });
+
 
       return () => { subscription.unsubscribe(); setScenesAreLoading(true) }; }
   }, [oneWrapRXdatabase, projectId]);
@@ -106,9 +116,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [offlineProjects$]);
 
   const initializeReplication = () => {
-    const replicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection, paragraphCollection], projectId);
+    const lastSceneInProject = lastSceneFromProject // To compare when you enter in other project
+    const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
+    const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId);
     const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
-    isOnline && replicator.startReplicationPull();
+    isOnline && scenesReplicator.startReplicationPull();
+    isOnline && paragraphsReplicator.startReplicationPull();
     isOnline && replicator2.startReplicationPush();
   };
 

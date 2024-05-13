@@ -85,7 +85,6 @@ const orderSortOptions = (selectedSortOptions: any[]) => {
 
 const sortByCriterias = (data: any, criterias: any) => {
  if(Array.isArray(data) && data) {
-  console.log(data)
   orderSortOptions(criterias);
   return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
  }

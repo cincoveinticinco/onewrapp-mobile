@@ -26,18 +26,21 @@ export default class HttpReplicator {
 
   private projectId: (number | null);
 
+  private lastItem: any;
+
   private replicationStates: any[] = [];
 
-  constructor(database: AppDataBase, collections: any, projectId: (number | null) = null) {
+  constructor(database: AppDataBase, collections: any, projectId: (number | null) = null, lastItem: any = null) {
     this.database = database;
     this.collections = collections;
     this.projectId = projectId;
+    this.lastItem = lastItem;
   }
 
   public startReplicationPull() {
     const { collections } = this;
 
-    collections.forEach((collection: any) => this.setupHttpReplicationPull(collection, this.projectId));
+    collections.forEach((collection: any) => this.setupHttpReplicationPull(collection, this.projectId, this.lastItem));
   }
 
   public startReplicationPush() {
@@ -55,7 +58,7 @@ export default class HttpReplicator {
     this.replicationStates = [];
   }
 
-  private setupHttpReplicationPull(collection: any, projectId: (number | null)) {
+  private setupHttpReplicationPull(collection: any, projectId: (number | null), lastItem: any = null) {
     const currentTimestamp = new Date().toISOString();
     console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
@@ -67,7 +70,7 @@ export default class HttpReplicator {
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
           const lastProjectId = checkpointOrNull ? checkpointOrNull.lastProjectId : 0;
           const collectionName = collection.getSchemaName();
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}${lastItem ? `&last_item_id=${lastItem.id}&last_item_updated_at=${lastItem.updatedAt}` : ''}`);
           const data = await response.json();
           return {
             documents: data[collectionName],
