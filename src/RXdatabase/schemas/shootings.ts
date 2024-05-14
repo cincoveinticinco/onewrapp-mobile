@@ -15,34 +15,7 @@ const shootingSchema = {
     projectId: {
       type: 'number',
     },
-    sceneId: {
-      type: 'string',
-    },
-    shootScnStatusId: {
-      type: ShootingSceneStatusEnumArray,
-    },
-    position: {
-      type: ['number', 'null'],
-    },
-    rehersalStart: {
-      type: ['string', 'null'],
-    },
-    rehersalEnd: {
-      type: ['string', 'null'],
-    },
-    startShooting: {
-      type: ['string', 'null'],
-    },
-    endShooting: {
-      type: ['string', 'null'],
-    },
-    producedSeconds: {
-      type: ['number', 'null'],
-    },
-    setups: {
-      type: ['number', 'null'],
-    },
-    projUnitId: {
+    unitId: {
       type: 'number',
     },
     shootDate: {
@@ -66,8 +39,11 @@ const shootingSchema = {
     lastOut: {
       type: ['string', 'null'],
     },
-    shootingStatusId: {
-      type: ShootingStatusEnumArray,
+    status: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
     },
     isTest: {
       type: 'boolean',
@@ -78,9 +54,64 @@ const shootingSchema = {
     updatedAt: {
       type: 'string',
     },
+    scenes: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 250,
+          },
+          projectId: {
+            type: 'number',
+          },
+          shootingId: {
+            type: 'number',
+          },
+          sceneId: {
+            type: 'string',
+          },
+          status: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          position: {
+            type: ['number', 'null'],
+          },
+          rehersalStart: {
+            type: ['string', 'null'],
+          },
+          rehersalEnd: {
+            type: ['string', 'null'],
+          },
+          startShooting: {
+            type: ['string', 'null'],
+          },
+          endShooting: {
+            type: ['string', 'null'],
+          },
+          producedSeconds: {
+            type: ['number', 'null'],
+          },
+          setups: {
+            type: ['number', 'null'],
+          },
+          createdAt: {
+            type: 'string',
+          },
+          updatedAt: {
+            type: 'string',
+          },
+        },
+      },
+    },
   },
-  required: ['projectId', 'sceneId', 'shootScnStatusId', 'projUnitId', 'shootingStatusId'],
+  required: ['projectId', 'unitId', 'scenes'],
 };
+
 
 const shootingSchemaInput = {
   shootings: {
