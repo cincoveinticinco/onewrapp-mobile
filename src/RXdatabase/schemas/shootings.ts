@@ -42,7 +42,7 @@ const shootingSchema = {
     status: {
       type: 'array',
       items: {
-        type: 'string',
+        type: ShootingStatusEnumArray,
       },
     },
     isTest: {
@@ -75,7 +75,7 @@ const shootingSchema = {
           status: {
             type: 'array',
             items: {
-              type: 'string',
+              type: ShootingSceneStatusEnumArray,
             },
           },
           position: {
