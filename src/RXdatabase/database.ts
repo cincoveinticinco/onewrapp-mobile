@@ -1,8 +1,9 @@
-import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
+import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
@@ -31,7 +32,9 @@ export default class AppDataBase {
 
     private async initializeDatabase() {
       const storage = wrappedValidateAjvStorage({
-        storage: getRxStorageDexie(),
+        storage: wrappedKeyCompressionStorage({
+          storage: getRxStorageDexie(),
+        }),
       });
 
       const dbInstance = await createRxDatabase({
