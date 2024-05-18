@@ -81,13 +81,3 @@ export default class ProjectsSchema extends DatabaseSchema {
     super(schemaName, schemaInput);
   }
 }
-
-// LOS PROYECTOS QUE ESTEN EN DESARROLLO
-// COLOR BLANCO
-// PREPRODUCCION
-// AMARILLO
-// PRODUCCION
-// AZUL
-// ON WRAPP
-// AZUL
-// SI SON SERIES, APARECE EPISODIO SI NO SON SERIES APARECE EL ANIO

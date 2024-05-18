@@ -6,18 +6,20 @@ const unitsSchema = {
   description: 'Schema for units collection',
   version: 0,
   type: 'object',
+  primaryKey: 'id',
   properties: {
       id: {
           type: 'string',
-          primary: true
+          primary: true,
+          maxLength: 250
       },
       projectId: {
-          type: 'string'
+          type: 'number'
       },
-      projUnitNumber: {
-          type: 'string'
+      unitNumber: {
+          type: 'number'
       },
-      projUnitName: {
+      unitName: {
           type: 'string'
       },
       createdAt: {
@@ -27,7 +29,7 @@ const unitsSchema = {
           type: 'string'
       }
   },
-  indexes: ['projectId']
+  required: ['projectId']
 };
 
 const unitSchemaInput = {
@@ -43,7 +45,7 @@ const unitSchemaInput = {
 }
 
 export default class UnitsSchema extends DatabaseSchema {
-  static schemaName = 'shootings';
+  static schemaName = 'units';
 
   static endpointPullName = environment.UNITS_ENDPOINT_PULL;
 

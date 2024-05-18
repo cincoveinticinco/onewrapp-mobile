@@ -7,6 +7,7 @@ import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
+import UnitsSchema from '../RXdatabase/schemas/units';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -37,8 +38,9 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 const sceneCollection = new ScenesSchema();
 const paragraphCollection = new SceneParagraphsSchema();
 const projectCollection = new ProjectsSchema();
+const unitsCollection = new UnitsSchema()
 
-const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection]);
+const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection, unitsCollection]);
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
@@ -124,11 +126,19 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return data[0] ? data[0] : null;
     }) // To compare when you enter in other project
 
+    let lastUnitInProject = await oneWrapRXdatabase?.units.find({
+      selector: { projectId: parseInt(projectId) }
+    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
+      return data[0] ? data[0] : null;
+    }) // To compare when you enter in other project
+
     const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
     const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId, lastParagraphInProject);
+    const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], projectId, lastUnitInProject);
     const replicator2 = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId);
     isOnline && scenesReplicator.startReplicationPull();
     isOnline && paragraphsReplicator.startReplicationPull();
+    isOnline && unitsReplicator.startReplicationPull();
     isOnline && replicator2.startReplicationPush();
   };
 
