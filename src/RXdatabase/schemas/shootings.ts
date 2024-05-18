@@ -40,10 +40,8 @@ const shootingSchema = {
       type: ['string', 'null'],
     },
     status: {
-      type: 'array',
-      items: {
-        type: ShootingStatusEnumArray,
-      },
+      type: 'number',
+      ennum: ShootingStatusEnumArray,
     },
     isTest: {
       type: 'boolean',
@@ -73,10 +71,8 @@ const shootingSchema = {
             type: 'string',
           },
           status: {
-            type: 'array',
-            items: {
-              type: ShootingSceneStatusEnumArray,
-            },
+            type: 'number',
+            ennum: ShootingSceneStatusEnumArray,
           },
           position: {
             type: ['number', 'null'],
