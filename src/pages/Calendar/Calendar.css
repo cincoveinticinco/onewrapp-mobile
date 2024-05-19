@@ -1,0 +1,70 @@
+/* Calendar.css */
+.calendar {
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: scroll;
+}
+
+.calendar-header {
+  background-color: #4285f4;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+.nav-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.current-month {
+  font-weight: bold;
+}
+
+.day-of-week {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+
+.calendar-grid {
+  height: 100%;
+  overflow: hidden;
+  outline: 1px solid #ccc;
+}
+
+.week-row {
+  border: 1px solid #ccc;
+  height: 17%;
+}
+
+.day {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.empty-day {
+  border: 1px solid transparent;
+}
+
+.calendar-day {
+  text-align: center;
+  color: var(--ion-color-white);
+  outline: 1.5px solid var(--ion-color-light);
+}
+
+.other-month {
+  color: #ccc;
+  outline: 1px solid #ccc;
+}
+
+.current-day {
+  outline: 1px solid var(--ion-color-primary);
+}
