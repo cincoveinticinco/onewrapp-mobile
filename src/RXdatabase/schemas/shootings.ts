@@ -18,6 +18,9 @@ const shootingSchema = {
     unitId: {
       type: 'number',
     },
+    unitNumber: {
+      type: 'number',
+    },
     shootDate: {
       type: ['string', 'null'],
     },

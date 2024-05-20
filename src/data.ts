@@ -1,5 +1,8 @@
 // import { Scene } from './interfaces/scenesTypes';
 
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from "./Ennums/ennums";
+import { Shooting } from "./interfaces/shootingTypes";
+
 const projects = [
   {
     id: 163,
@@ -231,6 +234,78 @@ export const paragraphs = [
   {
     type: 'action',
     content: 'Se dan cuenta que PABLO NING (6), un niño con gran parecido a Juan vestido con su uniforme de la escuela, los mira asustado.',
+  },
+];
+
+export const fakeShootings: Shooting[] = [
+  {
+    id: "shooting-1",
+    projectId: 123,
+    unitId: 456,
+    unitNumber: 1,
+    shootDate: "2024-05-01",
+    generalCall: "08:00",
+    onSet: "09:00",
+    estimatedWrap: "18:00",
+    firstShoot: "10:00",
+    wrap: null,
+    lastOut: null,
+    status: ShootingStatusEnum.InProgress,
+    isTest: false,
+    createdAt: "2024-04-15T10:30:00Z",
+    updatedAt: "2024-05-01T08:15:00Z",
+    scenes: [
+      {
+        id: "scene-1",
+        projectId: 123,
+        shootingId: 1,
+        sceneId: "1A",
+        status: ShootingSceneStatusEnum.Assigned,
+        position: 1,
+        rehersalStart: "10:00",
+        rehersalEnd: "10:30",
+        startShooting: "11:00",
+        endShooting: "14:00",
+        producedSeconds: 7200,
+        setups: 5,
+        createdAt: "2024-04-15T10:30:00Z",
+        updatedAt: "2024-05-01T14:15:00Z",
+      },
+      {
+        id: "scene-2",
+        projectId: 123,
+        shootingId: 1,
+        sceneId: "2B",
+        status: ShootingSceneStatusEnum.Assigned,
+        position: 2,
+        rehersalStart: "14:30",
+        rehersalEnd: "15:00",
+        startShooting: "15:30",
+        endShooting: null,
+        producedSeconds: null,
+        setups: null,
+        createdAt: "2024-04-15T10:30:00Z",
+        updatedAt: "2024-05-01T16:00:00Z",
+      },
+    ],
+  },
+  {
+    id: "shooting-2",
+    projectId: 789,
+    unitId: 101,
+    unitNumber: 1,
+    shootDate: "2024-05-15",
+    generalCall: "07:00",
+    onSet: "08:00",
+    estimatedWrap: "20:00",
+    firstShoot: "09:00",
+    wrap: null,
+    lastOut: null,
+    status: ShootingStatusEnum.Closed,
+    isTest: false,
+    createdAt: "2024-04-20T14:00:00Z",
+    updatedAt: "2024-05-10T09:30:00Z",
+    scenes: [],
   },
 ];
 

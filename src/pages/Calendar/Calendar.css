@@ -40,7 +40,22 @@
 
 .week-row {
   border: 1px solid #ccc;
-  height: 17%;
+  height: calc(100% / 6);
+
+  .other-month, .calendar-day, .current-day {
+    height: 100%;
+    max-width: calc(100% / 7);
+  }
+
+  .month-shooting {
+    background-color: var(--ion-color-yellow);
+    max-width: 100%;
+    max-height: 50px;
+  }
+}
+
+.week-shooting {
+  background-color: var(--ion-color-yellow);
 }
 
 .day {
