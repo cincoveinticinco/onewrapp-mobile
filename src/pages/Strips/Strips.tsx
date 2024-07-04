@@ -19,6 +19,8 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
 import useLoader from '../../hooks/useLoader';
+import { LuLoader } from 'react-icons/lu';
+import { get } from 'lodash';
 
 const Strips: React.FC = () => {
   const {
@@ -146,11 +148,9 @@ const Strips: React.FC = () => {
             <IonRefresherContent />
           </IonRefresher>
           <StripTagsToolbar />
-          <Suspense fallback={useLoader()}>
+          <Suspense>
             {scenesAreLoading ? (
               useLoader()
-            ) : error ? (
-              <div>Error loading scenes. Please try again later.</div>
             ) : (
               <>
                 {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
@@ -164,13 +164,16 @@ const Strips: React.FC = () => {
                     >
                       Reset Filters
                     </IonButton>
-                    <span>?</span>
+                  </div>
+                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
+                  <div className="no-items-message">
+                    <p className="ion-no-margin">There are not any scenes in this project. </p>
                   </div>
                 ) : (
                   <IonGrid className="scenes-grid ion-margin">
                     <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
-                      {displayedScenes.map((scene: any, i: any) => (
-                        <SceneCard key={`scene-item-${scene}-${i}`} scene={scene} searchText={searchText} />
+                      {displayedScenes.map((scene, i) => (
+                        <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene} searchText={searchText} />
                       ))}
                     </ScrollInfiniteContext>
                   </IonGrid>

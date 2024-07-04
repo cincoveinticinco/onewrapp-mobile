@@ -81,6 +81,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
+    setScenesAreLoading(true);
     if (oneWrapRXdatabase && projectId) { 
       const projectIdInt = parseInt(projectId); 
       const subscription = oneWrapRXdatabase.scenes.find({ 
@@ -91,14 +92,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           {updatedAt: 'asc'}
         ],
       }).$.subscribe((data: RxLocalDocumentData[]) => { 
-          setScenesAreLoading(true); 
-          if(data.length > 0) {
-            setOfflineScenes(data);
-            setScenesAreLoading(false);
-          }
-        });
-
-
+        setOfflineScenes(data); 
+        setScenesAreLoading(false); 
+      });
       return () => { subscription.unsubscribe(); setScenesAreLoading(true) }; }
   }, [oneWrapRXdatabase, projectId]);
 

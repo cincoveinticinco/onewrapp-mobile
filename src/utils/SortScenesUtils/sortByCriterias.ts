@@ -4,26 +4,34 @@
 // [CRITERIAKEY, ASCENDING/DESCENDING, SORTORDER]
 // SORT ORDER IS THE ORDER IN WHICH THE CRITERIA IS APPLIED
 
-const sortBySceneNumber = (a: any, b: any, criteriaOrder: string) => {
-  const [aNumber, aLetter] = a.match(/(\d+)([A-Z]*)/).slice(1);
-  const [bNumber, bLetter] = b.match(/(\d+)([A-Z]*)/).slice(1);
 
-  // Convert aNumber and bNumber into integer numbers
-  const aNumberInt = parseFloat(aNumber);
-  const bNumberInt = parseFloat(bNumber);
+const sortBySceneNumber = (a: string | null, b: string | null, criteriaOrder: 'asc' | 'desc') => {
+  // Helper function to extract number and letter
+  const extractParts = (str: string | null): [number, string] => {
+    if (!str) return [-Infinity, ''];
+    const match = str.match(/(\d+)([A-Z]*)/);
+    if (!match) return [-Infinity, ''];
+    return [parseFloat(match[1]), match[2]];
+  };
 
-  // Sort first by number and then by letter
+  const [aNumberInt, aLetter] = extractParts(a);
+  const [bNumberInt, bLetter] = extractParts(b);
+
+  // Sort first by number
   if (aNumberInt !== bNumberInt) {
     return criteriaOrder === 'asc' ? aNumberInt - bNumberInt : bNumberInt - aNumberInt;
   }
-  // If numbers are equal, sort by letter (if any)
-  if (aLetter && bLetter) {
-    return criteriaOrder === 'asc' ? aLetter.localeCompare(bLetter) : bLetter.localeCompare(aLetter);
-  } if (!aLetter && bLetter) {
-    return criteriaOrder === 'asc' ? -1 : 1;
-  } if (aLetter && !bLetter) {
-    return criteriaOrder === 'asc' ? 1 : -1;
+
+  // If numbers are equal, sort by letter
+  if (aLetter !== bLetter) {
+    if (criteriaOrder === 'asc') {
+      return aLetter.localeCompare(bLetter);
+    } else {
+      return bLetter.localeCompare(aLetter);
+    }
   }
+
+  // If both number and letter are equal
   return 0;
 };
 
@@ -56,7 +64,6 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   }
 
   return data.sort((a: T, b: T) => {
-    // Convert values to lowercase if they are strings
 
     if (!a[criteriaKey as keyof T] || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
       return -1;
