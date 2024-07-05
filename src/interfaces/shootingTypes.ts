@@ -1,4 +1,4 @@
-import { ShootingSceneStatusEnum, ShootingStatusEnum } from "../Ennums/ennums";
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../Ennums/ennums';
 
 interface ShootingScene {
   id: string;

@@ -480,29 +480,6 @@ const SceneScript: React.FC = () => {
             </div>
           )
         }
-        {
-          !paragraphsAreLoading
-          && paragraphs.length > 10
-          && (
-          <div
-            className="script-page-bottom-bar"
-            style={{
-              zoom: zoomLevel,
-              width: '100%',
-              backgroundColor: 'var(--ion-color-tertiary)',
-              paddingRight: '16px', /// THIS SHOUD BE REMOVED ON DEPLOYMENT, IT'S JUST FOR TESTING
-            }}
-          >
-            <div
-              className="script-page-bottom-bar"
-              style={{
-                backgroundColor: 'var(--ion-color-light)',
-              }}
-            />
-          </div>
-          )
-        }
-
         <SceneDetailsTabs sceneId={sceneId} />
       </IonPage>
     </>

@@ -134,14 +134,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
 
   const scenesToEditWithLocation = () => oneWrapDb?.scenes.find({
     selector: {
-      projectId: projectId,
+      projectId,
       locationName: location?.locationName,
     },
   }).exec();
 
   const scenesToEditWithSet = () => oneWrapDb?.scenes.find({
     selector: {
-      projectId: projectId,
+      projectId,
       setName: set?.setName,
     },
   }).exec();

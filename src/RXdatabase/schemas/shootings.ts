@@ -1,6 +1,6 @@
-import environment from "../../../environment";
-import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from "../../Ennums/ennums";
-import DatabaseSchema from "../database_schema";
+import environment from '../../../environment';
+import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Ennums/ennums';
+import DatabaseSchema from '../database_schema';
 
 const shootingSchema = {
   title: 'shooting schema',
@@ -111,14 +111,13 @@ const shootingSchema = {
   required: ['projectId', 'unitId', 'scenes'],
 };
 
-
 const shootingSchemaInput = {
   shootings: {
     schema: shootingSchema,
     checkpointFields: [
       'id',
       'updatedAt',
-      'lastProjectId'
+      'lastProjectId',
     ],
     deletedField: 'deleted',
   },

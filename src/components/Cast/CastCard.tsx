@@ -137,14 +137,14 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
   const scenesToEdit = () => oneWrapDb?.scenes.find({
     selector: {
-      projectId: projectId,
+      projectId,
       'characters.characterName': character.characterName,
     },
   }).exec();
 
   const scenesToEditWithExtra = () => oneWrapDb?.scenes.find({
     selector: {
-      projectId: projectId,
+      projectId,
       'extras.extraName': character.extraName,
     },
   }).exec();

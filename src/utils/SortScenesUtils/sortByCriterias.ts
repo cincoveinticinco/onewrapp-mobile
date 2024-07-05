@@ -4,7 +4,6 @@
 // [CRITERIAKEY, ASCENDING/DESCENDING, SORTORDER]
 // SORT ORDER IS THE ORDER IN WHICH THE CRITERIA IS APPLIED
 
-
 const sortBySceneNumber = (a: string | null, b: string | null, criteriaOrder: 'asc' | 'desc') => {
   // Helper function to extract number and letter
   const extractParts = (str: string | null): [number, string] => {
@@ -26,9 +25,8 @@ const sortBySceneNumber = (a: string | null, b: string | null, criteriaOrder: 'a
   if (aLetter !== bLetter) {
     if (criteriaOrder === 'asc') {
       return aLetter.localeCompare(bLetter);
-    } else {
-      return bLetter.localeCompare(aLetter);
     }
+    return bLetter.localeCompare(aLetter);
   }
 
   // If both number and letter are equal
@@ -41,9 +39,7 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   const [criteriaKey, criteriaOrder] = criteria;
 
   if (criteriaKey === 'sceneNumber') {
-    return data.sort((a: T, b: T) => {
-      return sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder)
-    });
+    return data.sort((a: T, b: T) => sortBySceneNumber(a.sceneNumber, b.sceneNumber, criteriaOrder));
   }
 
   if (criteriaKey === 'characterNum') {
@@ -64,7 +60,6 @@ const applySortCriteria = <T extends Record<string, any>>(data: T[], criteria: a
   }
 
   return data.sort((a: T, b: T) => {
-
     if (!a[criteriaKey as keyof T] || !b[criteriaKey as keyof T] || a[criteriaKey as keyof T] === '' || b[criteriaKey as keyof T] === '') {
       return -1;
     }
@@ -91,10 +86,10 @@ const orderSortOptions = (selectedSortOptions: any[]) => {
 };
 
 const sortByCriterias = (data: any, criterias: any) => {
- if(Array.isArray(data) && data) {
-  orderSortOptions(criterias);
-  return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
- }
+  if (Array.isArray(data) && data) {
+    orderSortOptions(criterias);
+    return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
+  }
 };
 
 export default sortByCriterias;

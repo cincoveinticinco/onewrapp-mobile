@@ -1,7 +1,5 @@
-/* Calendar.css */
 .calendar {
   font-family: Arial, sans-serif;
-  border: 1px solid #ccc;
   border-radius: 5px;
   overflow: scroll;
 }
@@ -33,9 +31,20 @@
 }
 
 .calendar-grid {
-  height: 100%;
+  min-height: 100%;
   overflow: hidden;
-  outline: 1px solid #ccc;
+  outline: .5px solid #ccc;
+}
+
+.day-names-row {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+
+  ion-col {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
 }
 
 .week-row {
@@ -43,25 +52,45 @@
   height: calc(100% / 6);
 
   .other-month, .calendar-day, .current-day {
-    height: 100%;
+    height: 15vh;
     max-width: calc(100% / 7);
+    
+    --landscape-height: 150px;
+    @supports (orientation: landscape) {
+      --landscape-height: 70px;
+    }
+    @media (orientation: landscape) {
+      height: var(--landscape-height);
+    }
   }
 
   .month-shooting {
     background-color: var(--ion-color-yellow);
     max-width: 100%;
-    max-height: 50px;
+    max-height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    font-weight: 600 !important;
+
+    .unit-name {
+      font-size: 12px;
+      font-weight: 700;
+    }
   }
 }
 
 .week-shooting {
   background-color: var(--ion-color-yellow);
+  padding: 0px;
+  font-weight: 600;
 }
 
 .day {
   border: 1px solid #ccc;
   padding: 10px;
-  text-align: center;
+  text-align: right;
   cursor: pointer;
 }
 
@@ -70,16 +99,30 @@
 }
 
 .calendar-day {
-  text-align: center;
+  text-align: right;
   color: var(--ion-color-white);
-  outline: 1.5px solid var(--ion-color-light);
+  outline: .5px solid var(--ion-color-light);
 }
 
 .other-month {
   color: #ccc;
-  outline: 1px solid #ccc;
+  outline: .5px solid #ccc;
+  text-align: right;
+  background-color: #212730;
 }
 
 .current-day {
   outline: 1px solid var(--ion-color-primary);
+}
+
+@media (max-width: 768px) {
+  .week-row {
+      
+    .month-shooting {
+      border-radius: 100%;
+    }
+    .other-month, .calendar-day, .current-day {
+      height: 100px;
+    }
+  }
 }

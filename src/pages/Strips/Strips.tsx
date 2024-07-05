@@ -6,6 +6,8 @@ import {
 } from '@ionic/react';
 import './Strips.scss';
 import { useHistory, useLocation } from 'react-router';
+import { LuLoader } from 'react-icons/lu';
+import { get } from 'lodash';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -19,12 +21,10 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
 import useLoader from '../../hooks/useLoader';
-import { LuLoader } from 'react-icons/lu';
-import { get } from 'lodash';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, initializeReplication, projectId, scenesAreLoading, 
+    offlineScenes, initializeReplication, projectId, scenesAreLoading,
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,

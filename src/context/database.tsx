@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
+import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/useNavigatorOnline';
-import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import UnitsSchema from '../RXdatabase/schemas/units';
 import ShootingsSchema from '../RXdatabase/schemas/shootings';
 
@@ -39,8 +39,8 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 const sceneCollection = new ScenesSchema();
 const paragraphCollection = new SceneParagraphsSchema();
 const projectCollection = new ProjectsSchema();
-const unitsCollection = new UnitsSchema()
-const shootingsCollection = new ShootingsSchema()
+const unitsCollection = new UnitsSchema();
+const shootingsCollection = new ShootingsSchema();
 
 const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection, unitsCollection, shootingsCollection]);
 
@@ -82,20 +82,21 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   useEffect(() => {
     setScenesAreLoading(true);
-    if (oneWrapRXdatabase && projectId) { 
-      const projectIdInt = parseInt(projectId); 
-      const subscription = oneWrapRXdatabase.scenes.find({ 
-        selector: { 
-          projectId: projectIdInt 
+    if (oneWrapRXdatabase && projectId) {
+      const projectIdInt = parseInt(projectId);
+      const subscription = oneWrapRXdatabase.scenes.find({
+        selector: {
+          projectId: projectIdInt,
         },
         sort: [
-          {updatedAt: 'asc'}
+          { updatedAt: 'asc' },
         ],
-      }).$.subscribe((data: RxLocalDocumentData[]) => { 
-        setOfflineScenes(data); 
-        setScenesAreLoading(false); 
+      }).$.subscribe((data: RxLocalDocumentData[]) => {
+        setOfflineScenes(data);
+        setScenesAreLoading(false);
       });
-      return () => { subscription.unsubscribe(); setScenesAreLoading(true) }; }
+      return () => { subscription.unsubscribe(); setScenesAreLoading(true); };
+    }
   }, [oneWrapRXdatabase, projectId]);
 
   useEffect(() => {
@@ -110,31 +111,28 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [offlineProjects$]);
 
   const initializeReplication = async () => {
+    const lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
+      selector: { projectId: parseInt(projectId) },
+    }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      .then((data: any) => (data[0] ? data[0] : null)); // To compare when you enter in other project
 
-    let lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
-      selector: { projectId: parseInt(projectId) }
-    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
-      return data[0] ? data[0] : null;
-    }) // To compare when you enter in other project
+    const lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
+      selector: { projectId: parseInt(projectId) },
+    }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      .then((data: any) => {
+        console.log(data[0] ? data[0] : null);
+        return data[0] ? data[0] : null;
+      }); // To compare when you enter in other project
 
-    let lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
-      selector: { projectId: parseInt(projectId) }
-    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
-      console.log(data[0] ? data[0] : null)
-      return data[0] ? data[0] : null;
-    }) // To compare when you enter in other project
+    const lastUnitInProject = await oneWrapRXdatabase?.units.find({
+      selector: { projectId: parseInt(projectId) },
+    }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      .then((data: any) => (data[0] ? data[0] : null)); // To compare when you enter in other project
 
-    let lastUnitInProject = await oneWrapRXdatabase?.units.find({
-      selector: { projectId: parseInt(projectId) }
-    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
-      return data[0] ? data[0] : null;
-    }) // To compare when you enter in other project
-
-    let lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
-      selector: { projectId: parseInt(projectId) }
-    }).sort({ updatedAt: 'desc' }).limit(1).exec().then((data: any) => {
-      return data[0] ? data[0] : null;
-    }) // To compare when you enter in other project
+    const lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
+      selector: { projectId: parseInt(projectId) },
+    }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      .then((data: any) => (data[0] ? data[0] : null)); // To compare when you enter in other project
 
     const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
     const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId, lastParagraphInProject);

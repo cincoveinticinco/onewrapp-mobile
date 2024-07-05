@@ -1,5 +1,5 @@
-import environment from "../../../environment";
-import DatabaseSchema from "../database_schema";
+import environment from '../../../environment';
+import DatabaseSchema from '../database_schema';
 
 const unitsSchema = {
   title: 'unitsSchema',
@@ -8,28 +8,28 @@ const unitsSchema = {
   type: 'object',
   primaryKey: 'id',
   properties: {
-      id: {
-          type: 'string',
-          primary: true,
-          maxLength: 250
-      },
-      projectId: {
-          type: 'number'
-      },
-      unitNumber: {
-          type: 'number'
-      },
-      unitName: {
-          type: 'string'
-      },
-      createdAt: {
-          type: 'string'
-      },
-      updatedAt: {
-          type: 'string'
-      }
+    id: {
+      type: 'string',
+      primary: true,
+      maxLength: 250,
+    },
+    projectId: {
+      type: 'number',
+    },
+    unitNumber: {
+      type: 'number',
+    },
+    unitName: {
+      type: 'string',
+    },
+    createdAt: {
+      type: 'string',
+    },
+    updatedAt: {
+      type: 'string',
+    },
   },
-  required: ['projectId']
+  required: ['projectId'],
 };
 
 const unitSchemaInput = {
@@ -38,11 +38,11 @@ const unitSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
-      'lastProjectId'
+      'lastProjectId',
     ],
     deletedField: 'deleted',
-  }
-}
+  },
+};
 
 export default class UnitsSchema extends DatabaseSchema {
   static schemaName = 'units';
