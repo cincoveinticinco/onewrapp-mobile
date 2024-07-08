@@ -1,21 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback, useContext } from 'react';
+import DatabaseContext from '../context/database';
 
 const useHideTabs = () => {
-  const hideTabs = () => {
-    const element = document.querySelector('.app-tabs-container');
-    if (element instanceof HTMLElement) {
-      element.classList.add('hide-tabs');
-    }
-  };
+  const {viewTabs, setViewTabs} = useContext(DatabaseContext);
 
-  const showTabs = () => {
-    const element = document.querySelector('.app-tabs-container');
-    if (element instanceof HTMLElement) {
-      element.classList.remove('hide-tabs');
-    }
-  };
+  const hideTabs = useCallback(() => {
+    setViewTabs(false);
+    console.log('Tabs hidden', viewTabs);
+  }, []);
 
-  return { hideTabs, showTabs };
+  const showTabs = useCallback(() => {
+    setViewTabs(true);
+    console.log('Tabs shown', viewTabs);
+  }, []);
+
+  return { hideTabs, showTabs, viewTabs, setViewTabs };
 };
 
 export default useHideTabs;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   useRouteMatch, Redirect, Route, useParams,
 } from 'react-router-dom';
@@ -44,12 +44,19 @@ import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 import { useAuth } from '../../../context/auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
+import useHideTabs from '../../../hooks/useHideTabs';
+import DatabaseContext from '../../../context/database';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
-
+  const { viewTabs } = useContext(DatabaseContext);
+  
+  useEffect(() => {
+    console.log('viewTabs', viewTabs);
+  }, [viewTabs]);
+  
   if (!loggedIn) {
     return <Redirect to="/login" />;
   }
@@ -113,7 +120,12 @@ const AppTabs: React.FC = () => {
         </Route>
         <Redirect exact from={`${urlString}`} to={`${urlString}/strips`} />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom" className="app-tabs-container" color="dark">
+      <IonTabBar 
+        slot="bottom" 
+        className="app-tabs-container" 
+        color="dark" 
+        style={{display: viewTabs ? '' : 'none'}}
+      >
         <IonTabButton tab="calendar" className={defineButtonClass} href={`${url}/calendar`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>

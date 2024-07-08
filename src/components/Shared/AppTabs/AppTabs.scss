@@ -4,10 +4,6 @@
   padding: 6px;
   transition: all 1s ease-in-out;
 
-  &.hide-tabs {
-    display: none;
-  }
-
   .tab-bar-buttons {
     @include tab-bar-buttons;
   }
@@ -15,4 +11,8 @@
   .tab-bar-buttons.tablet {
     display: none;
   }
+}
+
+.hide-tabs {
+  display: none;
 }
