@@ -1,6 +1,6 @@
-import { IonContent, IonHeader, IonPage, IonReorderGroup, ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react'
-import React, { useContext, useEffect, useState } from 'react'
-import Toolbar from '../../components/Shared/Toolbar/Toolbar'
+import { IonContent, IonHeader, IonPage, IonReorderGroup, ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
+import React, { useContext, useEffect, useState } from 'react';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/database';
@@ -8,47 +8,117 @@ import SceneCard from '../../components/Strips/SceneCard';
 import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useLoader from '../../hooks/useLoader';
 import ShootingBanner from '../../components/ShootingDetail/ShootingBannerCard/ShootingBanner';
-import useHideTabs from '../../hooks/useHideTabs';
+import { ShootingScene } from '../../interfaces/shootingTypes';
 
 const ShootingDetail = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
   const { oneWrapDb } = useContext(DatabaseContext);
   const history = useHistory();
-  
-  const handleReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
-
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
-    event.detail.complete();
-  }
-  
-  const { setViewTabs } = useContext(DatabaseContext);
-
-  useIonViewDidEnter(() => {
-    setViewTabs(false);
-  })
-  
-  useIonViewWillEnter(() => {
-    setViewTabs(false);
-  })
-
-  useIonViewDidLeave(() => {
-    setViewTabs(true);
-  })
-
-  useIonViewDidLeave(() => {
-    setViewTabs(true);
-  })
 
   const [shootingData, setShootingData] = React.useState<any>({
     scenes: [],
   });
   const [isLoading, setIsLoading] = React.useState(true);
+
+  useEffect(() => {
+    saveOrder();
+  }, [shootingData.scenes]);
+
+  const formatSceneAsShootingScene = (scene: any): ShootingScene => {
+    return {
+      id: scene.id,
+      projectId: scene.projectId,
+      shootingId: scene.shootingId,
+      sceneId: scene.sceneId,
+      status: scene.status,
+      position: scene.position,
+      rehersalStart: scene.rehersalStart,
+      rehersalEnd: scene.rehersalEnd,
+      startShooting: scene.startShooting,
+      endShooting: scene.endShooting,
+      producedSeconds: scene.producedSeconds,
+      setups: scene.setups,
+      createdAt: scene.createdAt,
+      updatedAt: scene.updatedAt
+    };
+  };
+
+  const saveOrder = async () => {
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({
+          selector: { id: shootingId }
+        }).exec();
+
+        if (shooting) {
+          const updatedScenes = shootingData.scenes.filter((item: any) => item.cardType === 'scene')
+            .map(({ cardType, ...scene }: {
+              cardType: string;
+              sceneId: string;
+              position: number;
+              status: string;
+            }) => formatSceneAsShootingScene(scene));
+          const updatedBanners = shootingData.scenes.filter((item: any) => item.cardType === 'banner')
+            .map(({ cardType, ...banner }: {
+              cardType: string;
+              id: string;
+              position: number;
+              description: string;
+            }) => banner);
+
+          let shootingCopy = { ...shooting._data };
+          shootingCopy.scenes = updatedScenes;
+          shootingCopy.banners = updatedBanners;
+
+          return await oneWrapDb.shootings.upsert(shootingCopy);
+
+        }
+      } catch (error) {
+        console.error('Error saving new order:', error);
+      }
+    }
+  };
+
+  const handleReorder = async (event: CustomEvent<ItemReorderEventDetail>) => {
+    console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
+    
+    const items = [...shootingData.scenes];
+    const [reorderedItem] = items.splice(event.detail.from, 1);
+    items.splice(event.detail.to, 0, reorderedItem);
+  
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      position: index
+    }));
+  
+    setShootingData((prev: any) => ({
+      ...prev,
+      scenes: updatedItems
+    }));
+
+    event.detail.complete();
+    
+    try {
+      console.log('Order saved successfully');
+    } catch (error) {
+      console.error('Error saving order:', error);
+    }
+  };
+
+  const { setViewTabs } = useContext(DatabaseContext);
+
+  useIonViewDidEnter(() => {
+    setViewTabs(false);
+  });
+
+  useIonViewWillEnter(() => {
+    setViewTabs(false);
+  });
+
+  useIonViewDidLeave(() => {
+    setViewTabs(true);
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,7 +131,7 @@ const ShootingDetail = () => {
       } catch (error) {
         console.error('Error fetching scenes:', error);
       } finally {
-        console.log(shootingData.scenes)
+        console.log(shootingData.scenes);
         setIsLoading(false);
       }
     };
@@ -90,23 +160,22 @@ const ShootingDetail = () => {
     
     const mergedScenesData = scenesData?.map((scene: any) => {
       const sceneShootingData = scenesInShoot.find((sceneInShoot: any) => parseInt(sceneInShoot.sceneId) === parseInt(scene.sceneId));
-      console.log(sceneShootingData)
+      console.log(sceneShootingData);
       return {
         cardType: 'scene',
         ...scene._data,
         ...sceneShootingData
-      }
+      };
     }) ?? [];
     
     const bannersWIthType = bannersInShoot.map((banner: any) => {
       return {
         cardType: 'banner',
         ...banner
-      }
-    })
+      };
+    });
     
     return [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position);
-
   };
 
   const handleBack = () => {
@@ -136,7 +205,7 @@ const ShootingDetail = () => {
       </IonContent>
       <ShootingDetailTabs shootingId={shootingId} />
     </IonPage>
-  )
-}
+  );
+};
 
-export default ShootingDetail
+export default ShootingDetail;
