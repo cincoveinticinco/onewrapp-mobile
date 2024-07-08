@@ -6,4 +6,8 @@
   --background: var(--ion-color-light);
   --color: var(--ion-color-dark);
   color: var(--ion-color-tertiary);
+
+  button {
+    text-transform: uppercase !important;
+  }
 }

@@ -17,6 +17,9 @@ const sceneSchema = {
       type: 'string',
       maxLength: 250,
     },
+    sceneId: {
+      type: 'number'
+    },
     projectId: {
       type: 'number',
     },

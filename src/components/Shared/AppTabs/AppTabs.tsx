@@ -43,6 +43,7 @@ import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 import { useAuth } from '../../../context/auth';
+import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 
 setupIonicReact();
 
@@ -79,6 +80,9 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route path={`${urlString}/strips/details/script/:sceneId`}>
           <SceneScript />
+        </Route>
+        <Route exact path={`${urlString}/shooting/:shootingId`}>
+          <ShootingDetail />
         </Route>
         <Route exact path={`${urlString}/strips/filters`}>
           <FilterScenes />

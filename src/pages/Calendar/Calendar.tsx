@@ -18,6 +18,7 @@ import monthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthVi
 import weekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
+import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
@@ -65,6 +66,13 @@ const Calendar: React.FC = () => {
     }));
   };
 
+  const handleDateChange = (newDate: Date) => {
+    setCalendarState(prevState => ({
+      ...prevState,
+      currentDate: newDate
+    }));
+  };
+
   const prevWeek = () => {
     setCalendarState(prevState => ({
       ...prevState,
@@ -102,7 +110,12 @@ const Calendar: React.FC = () => {
         </IonToolbar>
         {
           calendarState.viewMode === 'month'
-            ? monthViewToolbar(calendarState.currentDate, prevMonth, nextMonth)
+            ? <MonthViewToolbar
+                currentDate={calendarState.currentDate}
+                onPrev={prevMonth}
+                onNext={nextMonth}
+                onDateChange={handleDateChange}
+              />
             : weekViewToolbar(calendarState.currentDate, prevWeek, nextWeek)
         }
       </IonHeader>

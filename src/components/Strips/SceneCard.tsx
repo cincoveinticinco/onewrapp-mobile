@@ -20,9 +20,11 @@ import InputAlert from '../../Layouts/InputAlert/InputAlert';
 interface SceneCardProps {
   scene: Scene;
   searchText?: string;
+  isShooting?: boolean;
+  isProduced?: boolean;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
+const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShooting = false, isProduced = false}) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const history = useHistory();
@@ -83,6 +85,10 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
 
   const defineSceneColor = (scene: Scene) => {
     const intOrExt: any = [exterior, intExt, extInt];
+
+    if(isShooting) {
+      return 'shooting-card'
+    }
 
     if (scene.sceneType === protectionType) {
       return 'rose';
@@ -148,6 +154,9 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
   };
 
   const goToSceneDetails = () => {
+    if(isShooting) {
+      return
+    }
     history.push(detailsRoute);
     localStorage.setItem('editionBackRoute', detailsRoute);
   };
@@ -187,8 +196,14 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '' }) => {
                   <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                 </p>
               </IonCol>
-              <IonCol className="scene-card-col-3 center-flex-row">
-                <p className="assignament-date"> NOT ASSIGNED </p>
+              <IonCol className={"scene-card-col-3 center-flex-row " + (isProduced ? 'produced' : 'not-produced')}>
+                {
+                  !isShooting ? (
+                    <p className="assignament-date"> NOT ASSIGNED </p>
+                  ) : (
+                    <p className={isProduced ? 'produced assignament-date' : 'not-produced assignament-date'}> </p>
+                  )
+                }
               </IonCol>
             </IonRow>
           </IonGrid>

@@ -4,17 +4,24 @@ import { calendarClear, chevronBackOutline, chevronForwardOutline } from "ionico
 import './MonthViewToolbar.css';
 import { useState } from "react";
 
-const monthViewToolbar = (currentDate: Date, onPrev: () => void, onNext: () => void) => {
-  const [toolbarProps, setToolbarProps] = useState({
-    showDateTime: false,
-    currentDate: currentDate,
-  });
+interface MonthViewToolbarProps {
+  currentDate: Date;
+  onPrev: () => void;
+  onNext: () => void;
+  onDateChange: (date: Date) => void;
+}
+
+const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({ currentDate, onPrev, onNext, onDateChange }) => {
+  const [showDateTime, setShowDateTime] = useState(false);
 
   const toggleDateTime = () => {
-    setToolbarProps({
-      ...toolbarProps,
-      showDateTime: !toolbarProps.showDateTime,
-    });
+    setShowDateTime(!showDateTime);
+  }
+
+  const handleDateChange = (event: CustomEvent) => {
+    const selectedDate = new Date(event.detail.value);
+    onDateChange(selectedDate);
+    setShowDateTime(false);
   }
 
   return(
@@ -27,7 +34,7 @@ const monthViewToolbar = (currentDate: Date, onPrev: () => void, onNext: () => v
         </IonButtons>
         <IonTitle>{format(currentDate, 'MMMM yyyy')}</IonTitle>
         <IonButtons slot="end">
-          <IonButton onClick={toggleDateTime} color={toolbarProps.showDateTime ? 'primary' : ''}>
+          <IonButton onClick={toggleDateTime} color={showDateTime ? 'primary' : ''}>
             <IonIcon slot="icon-only" icon={calendarClear} />
           </IonButton>
           <IonButton onClick={onNext}>
@@ -36,11 +43,19 @@ const monthViewToolbar = (currentDate: Date, onPrev: () => void, onNext: () => v
         </IonButtons>
       </IonToolbar>
       {
-        toolbarProps.showDateTime && (
-          <IonDatetime presentation="month-year" className="date-picker" mode="md" value={currentDate.toISOString()}></IonDatetime>
+        showDateTime && (
+          <IonDatetime
+            presentation="month-year"
+            className="date-picker"
+            mode="md"
+            itemID="month-date-picker"
+            value={currentDate.toISOString()}
+            onIonChange={handleDateChange}
+          ></IonDatetime>
         )
       }
     </>
-)};
+  );
+};
 
-export default monthViewToolbar;
+export default MonthViewToolbar;

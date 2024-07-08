@@ -1,5 +1,20 @@
 @import '../../theme/mixins';
 
+.scene-theme-shooting-card {
+  background-color: #212730 !important;
+  color: var(--ion-color-light) !important;
+
+  .not-produced {
+    background-color: var(--ion-color-danger) !important;
+    color: var(--ion-color-light) !important;
+  }
+
+  .produced {
+    background-color: var(--ion-color-success) !important;
+    color: var(--ion-color-light) !important;
+  }
+}
+
 .scene-card {
   border-bottom: 0.3px solid black;
   color: black;
