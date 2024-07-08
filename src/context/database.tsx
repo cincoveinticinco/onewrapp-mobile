@@ -17,10 +17,15 @@ export interface DatabaseContextProps {
   setStartReplication: (startReplication: boolean) => void;
   projectId: number | null;
   setProjectId: (projectId: any) => void;
-  initializeReplication: () => void;
+  initializeReplication: () => Promise<boolean>;
   startReplication: boolean;
   isOnline: boolean;
   scenesAreLoading: boolean;
+  viewTabs: boolean;
+  setViewTabs: (viewTabs: boolean) => void;
+  setScenesAreLoading: (scenesAreLoading: boolean) => void;
+  projectsAreLoading: boolean;
+  setProjectsAreLoading: (projectsAreLoading: boolean) => void;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -30,10 +35,15 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   setStartReplication: () => {},
   projectId: null,
   setProjectId: () => {},
-  initializeReplication: () => {},
+  initializeReplication: () => new Promise(() => false),
   startReplication: false,
   isOnline: false,
   scenesAreLoading: true,
+  viewTabs: true,
+  setViewTabs: () => {},
+  setScenesAreLoading: () => {},
+  projectsAreLoading: true,
+  setProjectsAreLoading: () => {}
 });
 
 const sceneCollection = new ScenesSchema();
@@ -46,7 +56,9 @@ const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragrap
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
+  const [viewTabs, setViewTabs] = useState(true);
   const [offlineProjects, setOfflineProjects] = useState<any[]>([]);
+  const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(null);
@@ -72,6 +84,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         replicator.startReplicationPull();
       } catch (error) {
         console.error('Error al obtener la instancia de la base de datos:', error);
+      } finally {
+        console.log('Base de datos inicializada');
       }
     };
 
@@ -95,7 +109,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setOfflineScenes(data);
         setScenesAreLoading(false);
       });
-      return () => { subscription.unsubscribe(); setScenesAreLoading(true); };
+      return () => { subscription.unsubscribe(); };
     }
   }, [oneWrapRXdatabase, projectId]);
 
@@ -111,6 +125,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [offlineProjects$]);
 
   const initializeReplication = async () => {
+    let replicationFinished = false;
     const lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
       selector: { projectId: parseInt(projectId) },
     }).sort({ updatedAt: 'desc' }).limit(1).exec()
@@ -144,6 +159,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     isOnline && unitsReplicator.startReplicationPull();
     isOnline && shootingsReplicator.startReplicationPull();
     isOnline && replicator2.startReplicationPush();
+
+    replicationFinished = true
+
+    return replicationFinished
   };
 
   return (
@@ -159,6 +178,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         startReplication,
         isOnline,
         scenesAreLoading,
+        viewTabs,
+        setViewTabs,
+        setScenesAreLoading,
+        projectsAreLoading,
+        setProjectsAreLoading,
       }}
     >
       {children}
