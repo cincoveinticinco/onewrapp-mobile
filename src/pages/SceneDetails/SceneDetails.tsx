@@ -22,7 +22,7 @@ import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../E
 import SceneHeader from './SceneHeader';
 
 const SceneDetails: React.FC = () => {
-  const { hideTabs, showTabs } = useHideTabs();
+  const toggleTabs = useHideTabs();
   const { sceneId } = useParams<{ sceneId: string }>();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
@@ -56,6 +56,7 @@ const SceneDetails: React.FC = () => {
 
   const handleBack = () => {
     history.push('/my/projects/163/strips');
+    toggleTabs.showTabs();
   };
 
   const getCurrentScene = async () => {
@@ -113,14 +114,21 @@ const SceneDetails: React.FC = () => {
   const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
 
   useEffect(() => {
-    hideTabs();
-    return () => {
-      showTabs();
-    };
-  }, []);
+    setTimeout(() => {
+      toggleTabs.hideTabs();
+    }, 100);
 
-  useIonViewDidEnter(() => {
-    hideTabs();
+    return () => {
+      toggleTabs.showTabs();
+    };
+  }, [thisScene]);
+
+  useIonViewWillEnter(() => {
+    toggleTabs.hideTabs();
+  });
+
+  useIonViewDidLeave(() => {
+    toggleTabs.showTabs();
   });
 
   const sceneCastCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: any) => category.categoryName));

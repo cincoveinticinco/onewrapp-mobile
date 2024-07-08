@@ -14,7 +14,6 @@ import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
 import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import { Shooting } from '../../interfaces/shootingTypes';
-import monthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import weekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';

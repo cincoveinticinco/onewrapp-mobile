@@ -35,3 +35,14 @@ export interface Shooting {
   updatedAt: string;
   scenes: ShootingScene[];
 }
+
+export interface ShootingBanner {
+  id: string;
+  shootingId: number;
+  description: string;
+  backgroundColor: string | null;
+  fontSize: number | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}

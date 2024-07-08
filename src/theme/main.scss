@@ -255,3 +255,7 @@ ion-toast.error-toast {
 ion-toast.error-toast::part(icon) {
   color: var(--ion-color-danger);
 }
+
+.hide-tabs {
+  display: none;
+}

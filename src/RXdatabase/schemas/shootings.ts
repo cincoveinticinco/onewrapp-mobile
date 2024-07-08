@@ -44,7 +44,7 @@ const shootingSchema = {
     },
     status: {
       type: 'number',
-      ennum: ShootingStatusEnumArray,
+      enum: ShootingStatusEnumArray,
     },
     isTest: {
       type: 'boolean',
@@ -54,6 +54,33 @@ const shootingSchema = {
     },
     updatedAt: {
       type: 'string',
+    },
+    banners: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 250,
+          },
+          shootingId: {
+            type: 'number',
+          },
+          description: {
+            type: 'string',
+          },
+          position: {
+            type: 'number',
+          },
+          createdAt: {
+            type: 'string',
+          },
+          updatedAt: {
+            type: 'string',
+          },
+        },
+      },
     },
     scenes: {
       type: 'array',
@@ -75,15 +102,15 @@ const shootingSchema = {
           },
           status: {
             type: 'number',
-            ennum: ShootingSceneStatusEnumArray,
+            enum: ShootingSceneStatusEnumArray,
           },
           position: {
             type: ['number', 'null'],
           },
-          rehersalStart: {
+          rehearsalStart: {
             type: ['string', 'null'],
           },
-          rehersalEnd: {
+          rehearsalEnd: {
             type: ['string', 'null'],
           },
           startShooting: {

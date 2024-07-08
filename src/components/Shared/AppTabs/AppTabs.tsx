@@ -44,7 +44,6 @@ import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 import { useAuth } from '../../../context/auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
-import useHideTabs from '../../../hooks/useHideTabs';
 import DatabaseContext from '../../../context/database';
 
 setupIonicReact();
@@ -56,7 +55,7 @@ const AppTabs: React.FC = () => {
   useEffect(() => {
     console.log('viewTabs', viewTabs);
   }, [viewTabs]);
-  
+
   if (!loggedIn) {
     return <Redirect to="/login" />;
   }

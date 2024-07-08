@@ -24,7 +24,7 @@ import useLoader from '../../hooks/useLoader';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, initializeReplication, projectId, scenesAreLoading,
+    offlineScenes, initializeReplication, projectId, scenesAreLoading, setScenesAreLoading
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -35,11 +35,9 @@ const Strips: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   useScrollToTop(contentRef, location);
-  const { showTabs } = useHideTabs();
 
   useIonViewWillEnter(() => {
-    showTabs();
-    initializeReplication();
+    initializeReplication()
   });
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
@@ -165,7 +163,7 @@ const Strips: React.FC = () => {
                       Reset Filters
                     </IonButton>
                   </div>
-                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
+                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 && !scenesAreLoading ? (
                   <div className="no-items-message">
                     <p className="ion-no-margin">There are not any scenes in this project. </p>
                   </div>
