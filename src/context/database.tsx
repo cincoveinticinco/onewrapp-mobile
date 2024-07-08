@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Observable } from 'rxjs';
+import React, { useCallback, useEffect, useState } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes';
@@ -13,7 +12,7 @@ import ShootingsSchema from '../RXdatabase/schemas/shootings';
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
   offlineScenes: any[];
-  offlineProjects: Project[];
+  offlineProjects: Project[] | null;
   setStartReplication: (startReplication: boolean) => void;
   projectId: number | null;
   setProjectId: (projectId: any) => void;
@@ -26,12 +25,13 @@ export interface DatabaseContextProps {
   setScenesAreLoading: (scenesAreLoading: boolean) => void;
   projectsAreLoading: boolean;
   setProjectsAreLoading: (projectsAreLoading: boolean) => void;
+  getOfflineProjects: () => void;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
   offlineScenes: [],
-  offlineProjects: [],
+  offlineProjects: null,
   setStartReplication: () => {},
   projectId: null,
   setProjectId: () => {},
@@ -43,7 +43,8 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   setViewTabs: () => {},
   setScenesAreLoading: () => {},
   projectsAreLoading: true,
-  setProjectsAreLoading: () => {}
+  setProjectsAreLoading: () => {},
+  getOfflineProjects: () => {},
 });
 
 const sceneCollection = new ScenesSchema();
@@ -57,14 +58,12 @@ const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragrap
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
   const [viewTabs, setViewTabs] = useState(true);
-  const [offlineProjects, setOfflineProjects] = useState<any[]>([]);
+  const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const projectsQuery = oneWrapRXdatabase?.projects.find();
-  const offlineProjects$: Observable<Project[]> = projectsQuery ? projectsQuery.$ : null;
   const isOnline = useNavigatorOnLine();
 
   useEffect(() => {
@@ -80,19 +79,32 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       try {
         const dbInstance = await RXdatabase.getDatabaseInstance();
         setOneWrapRXdatabase(dbInstance);
-        const replicator = new HttpReplicator(dbInstance, [projectCollection]);
-        replicator.startReplicationPull();
+        if (isOnline) {
+          const replicator = new HttpReplicator(dbInstance, [projectCollection]);
+          replicator.startReplicationPull();
+        }
       } catch (error) {
         console.error('Error al obtener la instancia de la base de datos:', error);
       } finally {
         console.log('Base de datos inicializada');
       }
     };
-
-    if (!oneWrapRXdatabase && isOnline) {
+  
+    if (!oneWrapRXdatabase) {
       initializeDatabase();
     }
-  }, []);
+  }, [isOnline]);
+
+  useEffect(() => {
+    setProjectsAreLoading(true);
+    if (oneWrapRXdatabase) {
+      const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe((data: Project[]) => {
+        setOfflineProjects(data);
+        setProjectsAreLoading(false);
+      });
+      return () => { subscription.unsubscribe(); };
+    }
+  }, [oneWrapRXdatabase]);
 
   useEffect(() => {
     setScenesAreLoading(true);
@@ -113,17 +125,19 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   }, [oneWrapRXdatabase, projectId]);
 
-  useEffect(() => {
-    const subscription = offlineProjects$?.subscribe((data: any) => {
-      setOfflineProjects(data);
-      console.log(offlineProjects);
-    });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [offlineProjects$]);
-
+  const getOfflineProjects = useCallback(async () => {
+    if (oneWrapRXdatabase) {
+      try {
+        setProjectsAreLoading(true);
+        const projects = await oneWrapRXdatabase.projects.find().exec();
+        setOfflineProjects(projects);
+        setProjectsAreLoading(false);
+      } catch (error) {
+        console.error('Error al obtener los proyectos:', error);
+      }
+    }
+  }, [oneWrapRXdatabase]);
+  
   const initializeReplication = async () => {
     let replicationFinished = false;
     const lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
@@ -160,9 +174,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     isOnline && shootingsReplicator.startReplicationPull();
     isOnline && replicator2.startReplicationPush();
 
-    replicationFinished = true
+    replicationFinished = true;
 
-    return replicationFinished
+    return replicationFinished;
   };
 
   return (
@@ -183,6 +197,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setScenesAreLoading,
         projectsAreLoading,
         setProjectsAreLoading,
+        getOfflineProjects,
       }}
     >
       {children}

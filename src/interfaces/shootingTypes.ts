@@ -1,6 +1,6 @@
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../Ennums/ennums';
 
-interface ShootingScene {
+export interface ShootingScene {
   id: string;
   projectId: number;
   shootingId: number;
