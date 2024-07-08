@@ -2,10 +2,11 @@ import { IonCard, IonCardContent } from "@ionic/react"
 import { Shooting } from "../../../interfaces/shootingTypes"
 import { ShootingSceneStatusEnum } from "../../../Ennums/ennums";
 import useIsMobile from "../../../hooks/useIsMobile";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 
 const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ className, shooting}) => {
   const history = useHistory();
+  const { id } = useParams<{ id: string }>();
   
   const getTotalProducedScenes = () => {
     return shooting.scenes.reduce((acc, scene) => {
@@ -14,7 +15,7 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
   }
 
   const goToDetail = (shootingId: String) => { 
-    history.push(`/my/projects/:id/shooting/${shootingId}`);
+    history.push(`/my/projects/${id}/shooting/${shootingId}`);
   }
 
   const isMobile = useIsMobile();

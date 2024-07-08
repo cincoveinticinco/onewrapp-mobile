@@ -162,9 +162,8 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
     localStorage.setItem('editionBackRoute', detailsRoute);
   };
 
-  return (
-    <IonReorder>
-      <IonRow className="scene-card-row">
+  const cardContent = (
+    <IonRow className="scene-card-row">
         <IonItemSliding className="ion-no-margin ion-no-padding">
           <IonItem className="ion-no-margin ion-no-padding scene-card-item">
             <IonGrid className="ion-no-margin ion-no-padding">
@@ -232,8 +231,14 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
           trigger={`open-delete-scene-alert-${scene.id}`}
         />
       </IonRow>
-    </IonReorder>
   );
+
+  
+  return isShooting ? (
+    <IonReorder>
+      {cardContent}
+    </IonReorder>
+  ) : cardContent;
 };
 
 export default SceneCard;
