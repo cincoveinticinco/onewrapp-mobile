@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 import {
   IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
+  IonReorder,
 } from '@ionic/react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
@@ -162,74 +163,76 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
   };
 
   return (
-    <IonRow className="scene-card-row">
-      <IonItemSliding className="ion-no-margin ion-no-padding">
-        <IonItem className="ion-no-margin ion-no-padding scene-card-item">
-          <IonGrid className="ion-no-margin ion-no-padding">
-            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
-              <IonCol className="scene-card-col-1">
-                <h3 className="scene-card-header">
-                  <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                </h3>
-                <p className="scene-card-synopsis">
-                  <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                </p>
-                <p className="scene-card-characters">
-                  <strong>CHARACTERS:</strong>
-                  {' '}
-                  <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  <br />
-                  <strong>EXTRAS: </strong>
-                  {' '}
-                  <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                </p>
-              </IonCol>
-              <IonCol className="scene-card-col-2">
-                <p className="ion-no-margin">
-                  <strong>P: </strong>
-                  {' '}
-                  <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                </p>
-                <p className="ion-no-margin">
-                  <strong>M: </strong>
-                  {' '}
-                  <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                </p>
-              </IonCol>
-              <IonCol className={"scene-card-col-3 center-flex-row " + (isProduced ? 'produced' : 'not-produced')}>
-                {
-                  !isShooting ? (
-                    <p className="assignament-date"> NOT ASSIGNED </p>
-                  ) : (
-                    <p className={isProduced ? 'produced assignament-date' : 'not-produced assignament-date'}> </p>
-                  )
-                }
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonItem>
-        <IonItemOptions class="scene-card-options">
-          <div className="buttons-wrapper">
-            <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
-              <CiEdit className="button-icon view" />
-            </IonButton>
-            <IonButton fill="clear">
-              <PiProhibitLight className="button-icon ban" />
-            </IonButton>
-            <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
-              <PiTrashSimpleLight className="button-icon trash" />
-            </IonButton>
-          </div>
-        </IonItemOptions>
-      </IonItemSliding>
-      <InputAlert
-        header="Delete Scene"
-        message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
-        handleOk={() => deleteScene()}
-        inputs={[]}
-        trigger={`open-delete-scene-alert-${scene.id}`}
-      />
-    </IonRow>
+    <IonReorder>
+      <IonRow className="scene-card-row">
+        <IonItemSliding className="ion-no-margin ion-no-padding">
+          <IonItem className="ion-no-margin ion-no-padding scene-card-item">
+            <IonGrid className="ion-no-margin ion-no-padding">
+              <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
+                <IonCol className="scene-card-col-1">
+                  <h3 className="scene-card-header">
+                    <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  </h3>
+                  <p className="scene-card-synopsis">
+                    <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  </p>
+                  <p className="scene-card-characters">
+                    <strong>CHARACTERS:</strong>
+                    {' '}
+                    <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                    <br />
+                    <strong>EXTRAS: </strong>
+                    {' '}
+                    <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  </p>
+                </IonCol>
+                <IonCol className="scene-card-col-2">
+                  <p className="ion-no-margin">
+                    <strong>P: </strong>
+                    {' '}
+                    <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  </p>
+                  <p className="ion-no-margin">
+                    <strong>M: </strong>
+                    {' '}
+                    <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  </p>
+                </IonCol>
+                <IonCol className={"scene-card-col-3 center-flex-row " + (isProduced ? 'produced' : 'not-produced')}>
+                  {
+                    !isShooting ? (
+                      <p className="assignament-date"> NOT ASSIGNED </p>
+                    ) : (
+                      <p className={isProduced ? 'produced assignament-date' : 'not-produced assignament-date'}> </p>
+                    )
+                  }
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </IonItem>
+          <IonItemOptions class="scene-card-options">
+            <div className="buttons-wrapper">
+              <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
+                <CiEdit className="button-icon view" />
+              </IonButton>
+              <IonButton fill="clear">
+                <PiProhibitLight className="button-icon ban" />
+              </IonButton>
+              <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
+                <PiTrashSimpleLight className="button-icon trash" />
+              </IonButton>
+            </div>
+          </IonItemOptions>
+        </IonItemSliding>
+        <InputAlert
+          header="Delete Scene"
+          message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
+          handleOk={() => deleteScene()}
+          inputs={[]}
+          trigger={`open-delete-scene-alert-${scene.id}`}
+        />
+      </IonRow>
+    </IonReorder>
   );
 };
 
