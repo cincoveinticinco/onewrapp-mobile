@@ -1,5 +1,5 @@
 import {
-  IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonList, IonModal,
+  IonContent, IonHeader, IonModal,
 } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,8 +10,6 @@ import './InputModal.scss';
 import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import truncateString from '../../utils/truncateString';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import InputItem from '../../components/AddScene/AddSceneFormInputs/InputItem';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 

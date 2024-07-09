@@ -12,16 +12,42 @@ import { ShootingScene, ShootingBanner as ShootingBanerType } from '../../interf
 import { IoMdAdd } from "react-icons/io";
 import './ShootingDetail.css';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
+import InputModal from '../../Layouts/InputModal/InputModal';
+import { Scene } from '../../interfaces/scenesTypes';
 
 const ShootingDetail = () => {
   const [isDisabled, _] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
   const { oneWrapDb } = useContext(DatabaseContext);
   const history = useHistory();
+  const [selectedScenes, setSelectedScenes] = useState<any>([]);
+  const { id } = useParams<{ id: string }>();
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const scenesData = await getScenesData();
+      setShootingData({
+        scenes: scenesData.scenes,
+        notIncludedScenes: scenesData.scenesNotIncluded
+      });
+    } catch (error) {
+      console.error('Error fetching scenes:', error);
+    } finally {
+      console.log(shootingData.scenes);
+      setIsLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchData();
+  }, [oneWrapDb, shootingId]);
 
   const [shootingData, setShootingData] = React.useState<any>({
     scenes: [],
-    showAddMenu: false
+    showAddMenu: false,
+    notIncludedScenes: []
   });
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -99,6 +125,72 @@ const ShootingDetail = () => {
     />
   )
 
+  const getSceneHeader = (scene: Scene)  => {
+    const episodeNumber = scene.episodeNumber || '';
+    const sceneNumber = scene.sceneNumber || '';
+    const intOrExt = scene.intOrExtOption || '';
+    const locationName = scene.locationName || '';
+    const setName = scene.setName || '';
+    const dayOrNight = scene.dayOrNightOption || '';
+    const scriptDay = scene.scriptDay || '';
+    const year = scene.year || '';
+
+    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
+      year})` : ''}`;
+
+    return sceneHeader.toUpperCase();
+  }
+
+  const getIdFromHeader = (header: string) => {
+    return header.split(' ')[0];
+  }
+
+  const getScenesNames = () => {
+    return shootingData.notIncludedScenes.map((scene: any) => (getSceneHeader(scene)));
+  }
+
+  const checkboxScenesToggle = (scene: any) => {
+    const sceneId = `${id}.${getIdFromHeader(scene)}`;
+    const newScene = shootingData.notIncludedScenes.find((scene: any) => scene.id === sceneId);
+    const shootingScene: ShootingScene = {
+      ...newScene,
+      id: `${shootingId}.${sceneId}`,
+      projectId: parseInt(id),
+      shootingId: parseInt(shootingId),
+      sceneId: sceneId,
+      status: ShootingSceneStatusEnum.NotShoot,
+      position: shootingData.scenes.length,
+      rehersalStart: null,
+      rehersalEnd: null,
+      startShooting: null,
+      endShooting: null,
+      producedSeconds: 0,
+      setups: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+
+    setShootingData((prev: any) => ({
+      ...prev,
+      scenes: [...prev.scenes, { cardType: 'scene', ...shootingScene }]
+    }));
+    setSelectedScenes([...selectedScenes, scene]);
+  }
+
+  const clearSelectedScenes = () => {
+    setSelectedScenes([]);
+  }
+
+  const AddNewScenes = () => (
+    <InputModal
+      optionName='Add New Scene'
+      listOfOptions={getScenesNames()}
+      modalTrigger='open-add-new-scene-modal'
+      selectedOptions={selectedScenes}
+      handleCheckboxToggle={checkboxScenesToggle}
+      clearSelections={clearSelectedScenes}
+    />
+  )
   const formatSceneAsShootingScene = (scene: any): ShootingScene => {
     return {
       id: scene.id,
@@ -117,22 +209,19 @@ const ShootingDetail = () => {
       updatedAt: scene.updatedAt
     };
   };
-
   const saveShooting = async () => {
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({
           selector: { id: shootingId }
         }).exec();
+        
+        console.log(shooting, '*******')
 
         if (shooting) {
-          const updatedScenes = shootingData.scenes.filter((item: any) => item.cardType === 'scene')
-            .map(({ cardType, ...scene }: {
-              cardType: string;
-              sceneId: string;
-              position: number;
-              status: string;
-            }) => formatSceneAsShootingScene(scene));
+          const updatedScenes = shootingData.scenes
+            .filter((item: any) => item.cardType === 'scene')
+            .map((scene: any) => formatSceneAsShootingScene(scene));
           const updatedBanners = shootingData.scenes.filter((item: any) => item.cardType === 'banner')
             .map(({ cardType, ...banner }: {
               cardType: string;
@@ -144,7 +233,8 @@ const ShootingDetail = () => {
           let shootingCopy = { ...shooting._data };
           shootingCopy.scenes = updatedScenes;
           shootingCopy.banners = updatedBanners;
-
+          
+          console.log('Shooting to save:', shootingCopy);
           return await oneWrapDb.shootings.upsert(shootingCopy);
 
         }
@@ -194,25 +284,6 @@ const ShootingDetail = () => {
     setViewTabs(true);
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const scenesData = await getScenesData();
-        setShootingData({
-          scenes: scenesData
-        });
-      } catch (error) {
-        console.error('Error fetching scenes:', error);
-      } finally {
-        console.log(shootingData.scenes);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [oneWrapDb, shootingId]);
-
   const getScenesData = async () => {
     const shootings: any = await oneWrapDb?.shootings.find({
       selector: {
@@ -228,6 +299,15 @@ const ShootingDetail = () => {
       selector: {
         sceneId: {
           $in: scenesIds
+        }
+      }
+    }).exec();
+
+    const scenesNotIncluded = await oneWrapDb?.scenes.find({
+      selector: {
+        projectId: shootings[0]._data.projectId,
+        sceneId: {
+          $nin: scenesIds
         }
       }
     }).exec();
@@ -249,11 +329,14 @@ const ShootingDetail = () => {
       };
     });
     
-    return [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position);
+    return {
+      scenes: [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position),
+      scenesNotIncluded: scenesNotIncluded?.map((scene: any) => scene._data) ?? []
+    };
   };
 
   const handleBack = () => {
-    history.push('/my/projects/163/calendar');
+    history.push(`/my/projects/${id}/calendar`);
   };
 
   const addShoBanSc = () => (
@@ -277,7 +360,7 @@ const ShootingDetail = () => {
       {
         shootingData.showAddMenu && (
           <div className='add-menu'>
-            <IonItem>
+            <IonItem id='open-add-new-scene-modal'>
               Add Scene
             </IonItem>
             <IonItem id='open-add-new-banner-modal'>
@@ -304,6 +387,7 @@ const ShootingDetail = () => {
       </IonContent>
       <ShootingDetailTabs shootingId={shootingId} />
       <AddNewBanner />
+      <AddNewScenes />
     </IonPage>
   );
 };
