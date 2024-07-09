@@ -8,15 +8,22 @@ import {
   menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
 } from 'ionicons/icons';
 import './Toolbar.scss';
-import { RiDownload2Line, RiProhibitedLine } from 'react-icons/ri';
+import { RiDownload2Line } from 'react-icons/ri';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import type { Template } from '@pdfme/common';
 import { generate } from '@pdfme/generator';
-import { FaDownload } from 'react-icons/fa';
 import template from '../../../templates/MinimalTemplate';
 import useIsMobile from '../../../hooks/useIsMobile';
 import DatabaseContext from '../../../context/database';
+import { add } from 'lodash';
+
+interface ToolbarButton {
+  name: string;
+  icon: any;
+  click: () => void;
+  triggerId: string;
+  show: boolean;
+}
 
 interface ToolbarProps {
   name: string;
@@ -40,6 +47,7 @@ interface ToolbarProps {
   editRoute?: string;
   deleteTrigger?: string;
   download?: boolean;
+  addShoBanSc?: any;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -63,6 +71,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   editRoute = '',
   deleteTrigger = '',
   download = true,
+  addShoBanSc
 }) => {
   const isMobile = useIsMobile();
 
@@ -178,6 +187,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" id={deleteTrigger}>
             <PiTrashSimpleLight className="toolbar-icon trash-icon" />
           </IonButton>
+        )
+      }
+      {
+        addShoBanSc && (
+          addShoBanSc()
         )
       }
       {

@@ -10,13 +10,14 @@ import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, checkmarkCircle } from 'ionicons/icons';
+import { checkmarkCircle } from 'ionicons/icons';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
 } from '../../Ennums/ennums';
 import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import { LuGripHorizontal } from 'react-icons/lu';
 
 interface SceneCardProps {
   scene: Scene;
@@ -163,9 +164,16 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
   };
 
   const cardContent = (
-    <IonRow className="scene-card-row">
+    <IonRow className="scene-card-row" color='tertiary'>
         <IonItemSliding className="ion-no-margin ion-no-padding">
           <IonItem className="ion-no-margin ion-no-padding scene-card-item">
+            {
+              isShooting && (
+                <IonReorder className='reorder-container'>
+                  <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
+                </IonReorder>
+              )
+            }
             <IonGrid className="ion-no-margin ion-no-padding">
               <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
                 <IonCol className="scene-card-col-1">
@@ -234,11 +242,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
   );
 
   
-  return isShooting ? (
-    <IonReorder>
-      {cardContent}
-    </IonReorder>
-  ) : cardContent;
+  return cardContent
 };
 
 export default SceneCard;

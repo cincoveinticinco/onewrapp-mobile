@@ -151,3 +151,20 @@
 .scene-card-options {
   @include slide-card-item-options;
 }
+
+.reorder-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  background-color: #212730 !important;
+  color: var(--ion-color-light);
+  height: 100%;
+  padding: 6px;
+
+  .grip-sort-item-icon {
+    height: 100%;
+  }
+
+}

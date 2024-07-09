@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonModal } from '@ionic/react';
+import { IonContent, IonHeader, IonItem, IonModal, IonSelect, IonSelectOption } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
@@ -6,9 +6,11 @@ import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
+import SelectItem from '../../AddScene/AddSceneFormInputs/SelectItem';
 
 interface EditionModalProps {
   modalTrigger: string;
+  modalId?: string;
   title: string;
   formInputs: any;
   handleEdition: any;
@@ -23,6 +25,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   handleEdition,
   defaultFormValues,
   validate,
+  modalId
 }) => {
   const modalRef = useRef<HTMLIonModalElement>(null);
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
@@ -132,6 +135,24 @@ const EditionModal: React.FC<EditionModalProps> = ({
               <div className="edit-inputs-wrapper">
                 {
                   formInputs.map((input: any, i: any) => (
+                    input.type === 'select' ?
+                    <IonItem color='tertiary' key={i}>
+                      <IonSelect
+                        key={i}
+                        placeholder={input.placeholder}
+                        onIonChange={(e) => setNewOptionValue(input.fieldName, e.detail.value)}
+                        interface="popover"
+                        style={input.style ? input.style : {}}
+                        label="Stacked label" label-placement="stacked"
+                      >
+                        {
+                          input.selectOptions.map((option: any, index: any) => (
+                            <IonSelectOption key={index} value={option.value}>{option.label.toUpperCase()}</IonSelectOption>
+                          ))
+                        }
+                      </IonSelect>
+                    </IonItem>
+                    :      
                     <InputItem
                       key={i}
                       label={input.label}
@@ -146,7 +167,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       errorMessage={errorMessage}
                     />
                   ))
-}
+                }
               </div>
               )
             }
