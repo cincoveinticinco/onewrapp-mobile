@@ -22,6 +22,7 @@ export interface Note {
 
 export interface Scene {
   id?: string | null;
+  sceneId: number;
   projectId?: number | null;
   episodeNumber?: string | null;
   sceneNumber?: string | null;

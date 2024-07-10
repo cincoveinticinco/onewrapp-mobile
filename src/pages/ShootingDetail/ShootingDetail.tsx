@@ -1,5 +1,8 @@
-import { IonButton, IonContent, IonHeader, IonItem, IonPage, IonReorderGroup, ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import {
+  IonButton, IonContent, IonHeader, IonItem, IonPage, IonReorderGroup,
+  ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
+} from '@ionic/react';
+import React, { useContext, useEffect, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import { useHistory, useParams } from 'react-router';
@@ -12,8 +15,8 @@ import { ShootingScene, ShootingBanner as ShootingBanerType } from '../../interf
 import { IoMdAdd } from "react-icons/io";
 import './ShootingDetail.css';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
-import InputModal from '../../Layouts/InputModal/InputModal';
 import { Scene } from '../../interfaces/scenesTypes';
+import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
 
 const ShootingDetail = () => {
   const [isDisabled, _] = useState(false);
@@ -39,74 +42,39 @@ const ShootingDetail = () => {
     }
   };
 
-
   useEffect(() => {
     fetchData();
   }, [oneWrapDb, shootingId]);
 
-  const [shootingData, setShootingData] = React.useState<any>({
+  const [shootingData, setShootingData] = useState<any>({
     scenes: [],
     showAddMenu: false,
     notIncludedScenes: []
   });
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     saveShooting();
   }, [shootingData.scenes]);
 
   const availableColors = [
-    {
-      value: '#19cff9',
-      name: 'blue'
-    },
-    {
-      value: '#3dc2ff',
-      name: 'light blue'
-    },
-    {
-      value: '#282f3a',
-      name: 'dark gray'
-    },
-    {
-      value: '#04feaa',
-      name: 'green'
-    },
-    {
-      value: '#ffb203',
-      name: 'orange'
-    },
-    {
-      value: '#ff4a8f',
-      name: 'pink'
-    },
-    {
-      value: '#fff',
-      name: 'white'
-    },
-    {
-      value: '#707070',
-      name: 'gray'
-    },
-    {
-      value: '#000',
-      name: 'black'
-    },
-    {
-      value: '#f3fb8c',
-      name: 'yellow'
-    },
-    {
-      value: '#fdc6f7',
-      name: 'light pink'
-    }
-  ]
+    { value: '#19cff9', name: 'blue' },
+    { value: '#3dc2ff', name: 'light blue' },
+    { value: '#282f3a', name: 'dark gray' },
+    { value: '#04feaa', name: 'green' },
+    { value: '#ffb203', name: 'orange' },
+    { value: '#ff4a8f', name: 'pink' },
+    { value: '#fff', name: 'white' },
+    { value: '#707070', name: 'gray' },
+    { value: '#000', name: 'black' },
+    { value: '#f3fb8c', name: 'yellow' },
+    { value: '#fdc6f7', name: 'light pink' }
+  ];
 
   const selectOptions = availableColors.map((color) => ({
     value: color.value,
     label: color.name
   }));
-
 
   const addNewBanner = (banner: any) => {
     banner.position = shootingData.scenes.length;
@@ -120,34 +88,14 @@ const ShootingDetail = () => {
       ...prev,
       scenes: [...prev.scenes, { cardType: 'banner', ...banner }]
     }));
-  }
-
+  };
 
   const bannerInputs = [
+    { label: 'Description', type: 'text', fieldName: 'description', placeholder: 'INSERT', required: true, inputName: 'add-banner-description-input' },
+    { label: 'Font Size', type: 'number', fieldName: 'fontSize', placeholder: 'INSERT', required: false, inputName: 'add-character-name-input' },
     {
-      label: 'Description',
-      type: 'text',
-      fieldName: 'description',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-banner-description-input',
-    },
-    {
-      label: 'Font Size',
-      type: 'number',
-      fieldName: 'fontSize',
-      placeholder: 'INSERT',
-      required: false,
-      inputName: 'add-character-name-input',
-    },
-    {
-      label: 'Color',
-      type: 'select',
-      fieldName: 'backgroundColor',
-      placeholder: 'SELECT COLOR',
-      required: false,
-      inputName: 'add-background-color-input',
-      selectOptions: selectOptions
+      label: 'Color', type: 'select', fieldName: 'backgroundColor', placeholder: 'SELECT COLOR',
+      required: false, inputName: 'add-background-color-input', selectOptions: selectOptions
     },
   ];
 
@@ -160,41 +108,14 @@ const ShootingDetail = () => {
       defaultFormValues={{}}
       modalId='add-new-banner-modal'
     />
-  )
+  );
 
-  const getSceneHeader = (scene: Scene)  => {
-    const episodeNumber = scene.episodeNumber || '';
-    const sceneNumber = scene.sceneNumber || '';
-    const intOrExt = scene.intOrExtOption || '';
-    const locationName = scene.locationName || '';
-    const setName = scene.setName || '';
-    const dayOrNight = scene.dayOrNightOption || '';
-    const scriptDay = scene.scriptDay || '';
-    const year = scene.year || '';
-
-    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
-      year})` : ''}`;
-
-    return sceneHeader.toUpperCase();
-  }
-
-  const getIdFromHeader = (header: string) => {
-    return header.split(' ')[0];
-  }
-
-  const getScenesNames = () => {
-    return shootingData.notIncludedScenes.map((scene: any) => (getSceneHeader(scene)));
-  }
-
-  const checkboxScenesToggle = (scene: any) => {
-    const sceneId = `${id}.${getIdFromHeader(scene)}`;
-    const newScene = shootingData.notIncludedScenes.find((scene: any) => scene.id === sceneId);
+  const checkboxScenesToggle = (scene: Scene) => {
     const shootingScene: ShootingScene = {
-      ...newScene,
-      id: `${shootingId}.${sceneId}`,
+      id: `${shootingId}.${scene.sceneId}`,
       projectId: parseInt(id),
       shootingId: parseInt(shootingId),
-      sceneId: `${newScene.sceneId}`,
+      sceneId: scene.sceneId.toString(),
       status: ShootingSceneStatusEnum.NotShoot,
       position: shootingData.scenes.length,
       rehersalStart: null,
@@ -205,35 +126,38 @@ const ShootingDetail = () => {
       setups: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    }
+    };
 
     setShootingData((prev: any) => ({
       ...prev,
-      scenes: [...prev.scenes, { cardType: 'scene', ...shootingScene }]
+      scenes: [...prev.scenes, { cardType: 'scene', ...shootingScene, ...scene }]
     }));
     setSelectedScenes([...selectedScenes, scene]);
-  }
+  };
+
+  const AddNewScenes = () => (
+    <InputModalScene
+      sceneName="Add New Scene"
+      listOfScenes={shootingData.notIncludedScenes}
+      modalTrigger="open-add-new-scene-modal"
+      handleCheckboxToggle={checkboxScenesToggle}
+      selectedScenes={selectedScenes}
+      setSelectedScenes={setSelectedScenes}
+      clearSelections={clearSelectedScenes}
+      multipleSelections={true}
+    />
+  );
 
   const clearSelectedScenes = () => {
     setSelectedScenes([]);
-  }
+  };
 
-  const AddNewScenes = () => (
-    <InputModal
-      optionName='Add New Scene'
-      listOfOptions={getScenesNames()}
-      modalTrigger='open-add-new-scene-modal'
-      selectedOptions={selectedScenes}
-      handleCheckboxToggle={checkboxScenesToggle}
-      clearSelections={clearSelectedScenes}
-    />
-  )
   const formatSceneAsShootingScene = (scene: any): ShootingScene => {
     return {
       id: scene.id,
       projectId: scene.projectId,
       shootingId: scene.shootingId,
-      sceneId: scene.sceneId,
+      sceneId: scene.sceneId.toString(),
       status: scene.status,
       position: scene.position,
       rehersalStart: scene.rehersalStart,
@@ -250,9 +174,7 @@ const ShootingDetail = () => {
   const saveShooting = async () => {
     if (oneWrapDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({
-          selector: { id: shootingId }
-        }).exec();
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         
         console.log(shooting, '*******')
 
@@ -275,7 +197,6 @@ const ShootingDetail = () => {
           
           console.log('Shooting to save:', shootingCopy);
           return await oneWrapDb.shootings.upsert(shootingCopy);
-
         }
       } catch (error) {
         console.error('Error saving new Shooting:', error);
@@ -326,7 +247,7 @@ const ShootingDetail = () => {
   const shootingDeleteScene = (scene: ShootingScene & Scene) => {
     shootingData.scenes = shootingData.scenes.filter((s: ShootingScene & Scene) => s.sceneId !== scene.sceneId);
     setShootingData({ ...shootingData });
-  }
+  };
 
   const shootingDeleteBanner = (banner: ShootingBanerType) => {
     const updatedScenes = shootingData.scenes.filter((item: any) => {
@@ -341,34 +262,20 @@ const ShootingDetail = () => {
       scenes: updatedScenes
     }));
   };
-  
 
   const getScenesData = async () => {
-    const shootings: any = await oneWrapDb?.shootings.find({
-      selector: {
-        id: shootingId
-      }
-    }).exec();
+    const shootings: any = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
     
     const scenesInShoot = shootings[0]._data.scenes;
     const bannersInShoot = shootings[0]._data.banners;
     const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
 
     const scenesData = await oneWrapDb?.scenes.find({
-      selector: {
-        sceneId: {
-          $in: scenesIds
-        }
-      }
+      selector: { sceneId: { $in: scenesIds } }
     }).exec();
 
     const scenesNotIncluded = await oneWrapDb?.scenes.find({
-      selector: {
-        projectId: shootings[0]._data.projectId,
-        sceneId: {
-          $nin: scenesIds
-        }
-      }
+      selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } }
     }).exec();
     
     const mergedScenesData = scenesData?.map((scene: any) => {
@@ -381,12 +288,9 @@ const ShootingDetail = () => {
       };
     }) ?? [];
     
-    const bannersWIthType = bannersInShoot.map((banner: any) => {
-      return {
-        cardType: 'banner',
-        ...banner
-      };
-    });
+    const bannersWIthType = bannersInShoot.map((banner: any) => ({
+      cardType: 'banner', ...banner
+    }));
     
     return {
       scenes: [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position),
@@ -412,28 +316,22 @@ const ShootingDetail = () => {
           toggleAddMenu();
         }, 0);
       }}>
-          <IoMdAdd className="toolbar-icon" />
+        <IoMdAdd className="toolbar-icon" />
       </IonButton>
     </div>
-  )
+  );
 
   return (
     <IonPage>
       <IonHeader>
         <Toolbar name="" addShoBanSc={addShoBanSc} backString handleBack={handleBack} />
       </IonHeader>
-      {
-        shootingData.showAddMenu && (
-          <div className='add-menu'>
-            <IonItem id='open-add-new-scene-modal'>
-              Add Scene
-            </IonItem>
-            <IonItem id='open-add-new-banner-modal'>
-              Add Banner
-            </IonItem>
-          </div>
-        )
-      }
+      {shootingData.showAddMenu && (
+        <div className='add-menu'>
+          <IonItem id='open-add-new-scene-modal'>Add Scene</IonItem>
+          <IonItem id='open-add-new-banner-modal'>Add Banner</IonItem>
+        </div>
+      )}
       <IonContent color="tertiary" fullscreen>
         <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
           {isLoading ? (
@@ -441,13 +339,19 @@ const ShootingDetail = () => {
           ) : (
             shootingData.scenes.map((scene: any) => (
               scene.cardType === 'scene' ? (
-                <SceneCard key={scene.sceneId} scene={scene} isShooting={true} 
-                isProduced={
-                  scene.status !== ShootingSceneStatusEnum.NotShoot 
-                }
-                shootingDeleteScene={() => shootingDeleteScene(scene)}
-                />) : (
-                <ShootingBanner key={scene.id} banner={scene} shootingDeleteBanner={() => shootingDeleteBanner(scene)} />
+                <SceneCard 
+                  key={scene.sceneId} 
+                  scene={scene} 
+                  isShooting={true} 
+                  isProduced={scene.status !== ShootingSceneStatusEnum.NotShoot}
+                  shootingDeleteScene={() => shootingDeleteScene(scene)}
+                />
+              ) : (
+                <ShootingBanner 
+                  key={scene.id} 
+                  banner={scene} 
+                  shootingDeleteBanner={() => shootingDeleteBanner(scene)} 
+                />
               )
             ))
           )}

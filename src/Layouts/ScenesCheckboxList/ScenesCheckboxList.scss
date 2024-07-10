@@ -1,0 +1,13 @@
+.scene-card-row {
+  width: 100%;
+}
+
+.checkbox-item-scene {
+  position: relative;
+  
+  .checkbox-scene {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
