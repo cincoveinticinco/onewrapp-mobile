@@ -1,0 +1,22 @@
+@import '../../../theme/mixins.scss';
+
+.banner-card-options {
+  @include slide-card-item-options;
+  width: 50px;
+}
+
+.slide-container {
+  position:  relative;
+
+  p {
+    padding-left: 12px;
+  }
+  .reorder-banner-container {
+    position: absolute;
+    left: 3px;
+  }
+}
+
+.button-icon.trash {
+  font-size: 24px !important;
+}

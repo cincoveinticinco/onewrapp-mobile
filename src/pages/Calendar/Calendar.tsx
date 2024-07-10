@@ -18,6 +18,7 @@ import weekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewT
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
+import useLoader from '../../hooks/useLoader';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
@@ -26,30 +27,79 @@ const Calendar: React.FC = () => {
     shootings: [] as Shooting[]
   });
 
-  const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, projectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getShootings = async () => {
-      const shootings = await oneWrapDb?.shootings.find({
+    const initializeReplication = async () => {
+      try {
+        await initializeShootingReplication();
+        await getShootings();
+      } catch (error) {
+        console.error('Error initializing replication:', error);
+      }
+
+
+      setIsLoading(false);
+    };
+
+    initializeReplication();
+  }, [projectId]);
+
+  useEffect(() => {
+    if (oneWrapDb && projectId) {
+      const subscription = oneWrapDb.shootings
+        .find({
+          selector: {
+            projectId,
+          },
+          sort: [{ createdAt: 'asc' }],
+        })
+        .$.subscribe({
+          next: (shootings) => {
+            const shootingsData = shootings.map((shooting: any) => shooting._data);
+            setCalendarState(prevState => ({
+              ...prevState,
+              shootings: shootingsData as Shooting[],
+              currentDate: shootingsData.length > 0
+                ? startOfDay(new Date(shootingsData[0].shootDate as string))
+                : prevState.currentDate
+            }));
+          },
+          error: (error) => {
+            console.error('Error in shootings subscription:', error);
+          }
+        });
+
+      return () => subscription.unsubscribe();
+    }
+  }, [oneWrapDb, projectId]);
+
+  const getShootings = async () => {
+    if (!oneWrapDb) return;
+
+    try {
+      const shootings = await oneWrapDb.shootings.find({
         selector: {
           projectId,
         },
         sort: [{ createdAt: 'asc' }],
       }).exec();
 
-      const shootingsData = shootings?.map((shooting: any) => shooting._data);
+      const shootingsData = shootings.map((shooting: any) => shooting._data);
 
       setCalendarState(prevState => ({
         ...prevState,
         shootings: shootingsData as Shooting[],
-        currentDate: (shootingsData?.length ?? 0) > 0 && shootingsData
+        currentDate: shootingsData.length > 0
           ? startOfDay(new Date(shootingsData[0].shootDate as string))
-          : new Date()
+          : prevState.currentDate
       }));
-    };
+    } catch (error) {
+      console.error('Error fetching shootings:', error);
+    }
+  };
 
-    getShootings();
-  }, [projectId, oneWrapDb]);
 
   const prevMonth = () => {
     setCalendarState(prevState => ({
@@ -119,10 +169,13 @@ const Calendar: React.FC = () => {
         }
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {calendarState.viewMode === 'month' 
-          ? <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} /> 
-          : <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings}/>
-        }
+      {
+        isLoading ? 
+        useLoader() :
+        calendarState.viewMode === 'month' ? 
+          <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} /> : 
+          <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings}/>
+      }
       </IonContent>
     </IonPage>
   );

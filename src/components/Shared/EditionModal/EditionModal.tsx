@@ -142,7 +142,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
                         placeholder={input.placeholder}
                         onIonChange={(e) => setNewOptionValue(input.fieldName, e.detail.value)}
                         interface="popover"
-                        style={input.style ? input.style : {}}
                         label="Stacked label" label-placement="stacked"
                       >
                         {

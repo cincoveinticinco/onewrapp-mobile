@@ -18,15 +18,17 @@ import {
 import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { LuGripHorizontal } from 'react-icons/lu';
+import { IoIosRemoveCircleOutline } from 'react-icons/io';
 
 interface SceneCardProps {
   scene: Scene;
   searchText?: string;
   isShooting?: boolean;
   isProduced?: boolean;
+  shootingDeleteScene?: () => void;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShooting = false, isProduced = false}) => {
+const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene}) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const history = useHistory();
@@ -222,12 +224,23 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
               <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
                 <CiEdit className="button-icon view" />
               </IonButton>
-              <IonButton fill="clear">
-                <PiProhibitLight className="button-icon ban" />
-              </IonButton>
-              <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
-                <PiTrashSimpleLight className="button-icon trash" />
-              </IonButton>
+              {
+                !isShooting &&
+                <>
+                  <IonButton fill="clear">
+                    <PiProhibitLight className="button-icon ban" />
+                  </IonButton>
+                  <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
+                    <PiTrashSimpleLight className="button-icon trash" />
+                  </IonButton>
+                </>
+              }
+              {
+                isShooting && shootingDeleteScene &&
+                <IonButton fill="clear" onClick={() => shootingDeleteScene()}>
+                  <IoIosRemoveCircleOutline className="button-icon ban" />
+                </IonButton>
+              }
             </div>
           </IonItemOptions>
         </IonItemSliding>

@@ -57,12 +57,48 @@ const ShootingDetail = () => {
 
   const availableColors = [
     {
+      value: '#19cff9',
+      name: 'blue'
+    },
+    {
+      value: '#3dc2ff',
+      name: 'light blue'
+    },
+    {
+      value: '#282f3a',
+      name: 'dark gray'
+    },
+    {
       value: '#04feaa',
       name: 'green'
     },
     {
-      value: '#19cff9',
-      name: 'blue'
+      value: '#ffb203',
+      name: 'orange'
+    },
+    {
+      value: '#ff4a8f',
+      name: 'pink'
+    },
+    {
+      value: '#fff',
+      name: 'white'
+    },
+    {
+      value: '#707070',
+      name: 'gray'
+    },
+    {
+      value: '#000',
+      name: 'black'
+    },
+    {
+      value: '#f3fb8c',
+      name: 'yellow'
+    },
+    {
+      value: '#fdc6f7',
+      name: 'light pink'
     }
   ]
 
@@ -72,9 +108,10 @@ const ShootingDetail = () => {
   }));
 
 
-  const addNewBanner = (banner: ShootingBanerType) => {
+  const addNewBanner = (banner: any) => {
     banner.position = shootingData.scenes.length;
     banner.id = `banner-${shootingData.scenes.length}`;
+    banner.fontSize = parseInt(banner.fontSize);
     banner.shootingId = parseInt(shootingId);
     banner.createdAt = new Date().toISOString();
     banner.updatedAt = new Date().toISOString();
@@ -157,7 +194,7 @@ const ShootingDetail = () => {
       id: `${shootingId}.${sceneId}`,
       projectId: parseInt(id),
       shootingId: parseInt(shootingId),
-      sceneId: sceneId,
+      sceneId: `${newScene.sceneId}`,
       status: ShootingSceneStatusEnum.NotShoot,
       position: shootingData.scenes.length,
       rehersalStart: null,
@@ -209,6 +246,7 @@ const ShootingDetail = () => {
       updatedAt: scene.updatedAt
     };
   };
+
   const saveShooting = async () => {
     if (oneWrapDb && shootingId) {
       try {
@@ -233,6 +271,7 @@ const ShootingDetail = () => {
           let shootingCopy = { ...shooting._data };
           shootingCopy.scenes = updatedScenes;
           shootingCopy.banners = updatedBanners;
+          shootingCopy.updatedAt = new Date().toISOString();
           
           console.log('Shooting to save:', shootingCopy);
           return await oneWrapDb.shootings.upsert(shootingCopy);
@@ -283,6 +322,26 @@ const ShootingDetail = () => {
   useIonViewDidLeave(() => {
     setViewTabs(true);
   });
+
+  const shootingDeleteScene = (scene: ShootingScene & Scene) => {
+    shootingData.scenes = shootingData.scenes.filter((s: ShootingScene & Scene) => s.sceneId !== scene.sceneId);
+    setShootingData({ ...shootingData });
+  }
+
+  const shootingDeleteBanner = (banner: ShootingBanerType) => {
+    const updatedScenes = shootingData.scenes.filter((item: any) => {
+      if (item.cardType === 'banner' && item.id === banner.id) {
+        return false;
+      }
+      return true;
+    });
+  
+    setShootingData((prev: any) => ({
+      ...prev,
+      scenes: updatedScenes
+    }));
+  };
+  
 
   const getScenesData = async () => {
     const shootings: any = await oneWrapDb?.shootings.find({
@@ -339,13 +398,19 @@ const ShootingDetail = () => {
     history.push(`/my/projects/${id}/calendar`);
   };
 
+  const toggleAddMenu = () => {
+    setShootingData((prev: any) => ({
+      ...prev,
+      showAddMenu: !prev.showAddMenu
+    }));
+  };
+
   const addShoBanSc = () => (
     <div className='button-wrapper' slot="end">
       <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => {
-        setShootingData((prev: any) => ({
-          ...prev,
-          showAddMenu: !prev.showAddMenu
-        }))
+        setTimeout(() => {
+          toggleAddMenu();
+        }, 0);
       }}>
           <IoMdAdd className="toolbar-icon" />
       </IonButton>
@@ -376,10 +441,13 @@ const ShootingDetail = () => {
           ) : (
             shootingData.scenes.map((scene: any) => (
               scene.cardType === 'scene' ? (
-                <SceneCard key={scene.sceneId} scene={scene} isShooting={true} isProduced={
-                  scene.status !== ShootingSceneStatusEnum.NotShoot
-                }/>) : (
-                <ShootingBanner key={scene.id} banner={scene} />
+                <SceneCard key={scene.sceneId} scene={scene} isShooting={true} 
+                isProduced={
+                  scene.status !== ShootingSceneStatusEnum.NotShoot 
+                }
+                shootingDeleteScene={() => shootingDeleteScene(scene)}
+                />) : (
+                <ShootingBanner key={scene.id} banner={scene} shootingDeleteBanner={() => shootingDeleteBanner(scene)} />
               )
             ))
           )}
