@@ -2,7 +2,7 @@ import {
   IonButton, IonContent, IonHeader, IonItem, IonPage, IonReorderGroup,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import { useHistory, useParams } from 'react-router';
@@ -18,6 +18,9 @@ import EditionModal from '../../components/Shared/EditionModal/EditionModal';
 import { Scene } from '../../interfaces/scenesTypes';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
 
+
+export type ShootingViews = 'scenes' | 'info';
+
 const ShootingDetail = () => {
   const [isDisabled, _] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
@@ -25,6 +28,7 @@ const ShootingDetail = () => {
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
+  const [view, setView] = useState<ShootingViews>('scenes');
 
   const fetchData = async () => {
     try {
@@ -332,32 +336,36 @@ const ShootingDetail = () => {
           <IonItem id='open-add-new-banner-modal'>Add Banner</IonItem>
         </div>
       )}
-      <IonContent color="tertiary" fullscreen>
-        <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
-          {isLoading ? (
-            useLoader()
-          ) : (
-            shootingData.scenes.map((scene: any) => (
-              scene.cardType === 'scene' ? (
-                <SceneCard 
-                  key={scene.sceneId} 
-                  scene={scene} 
-                  isShooting={true} 
-                  isProduced={scene.status !== ShootingSceneStatusEnum.NotShoot}
-                  shootingDeleteScene={() => shootingDeleteScene(scene)}
-                />
-              ) : (
-                <ShootingBanner 
-                  key={scene.id} 
-                  banner={scene} 
-                  shootingDeleteBanner={() => shootingDeleteBanner(scene)} 
-                />
-              )
-            ))
-          )}
-        </IonReorderGroup>
-      </IonContent>
-      <ShootingDetailTabs shootingId={shootingId} />
+      {
+        view === 'scenes' && (
+          <IonContent color="tertiary" fullscreen>
+          <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
+            {isLoading ? (
+              useLoader()
+            ) : (
+              shootingData.scenes.map((scene: any) => (
+                scene.cardType === 'scene' ? (
+                  <SceneCard 
+                    key={scene.sceneId} 
+                    scene={scene} 
+                    isShooting={true} 
+                    isProduced={scene.status !== ShootingSceneStatusEnum.NotShoot}
+                    shootingDeleteScene={() => shootingDeleteScene(scene)}
+                  />
+                ) : (
+                  <ShootingBanner 
+                    key={scene.id} 
+                    banner={scene} 
+                    shootingDeleteBanner={() => shootingDeleteBanner(scene)} 
+                  />
+                )
+              ))
+            )}
+          </IonReorderGroup>
+        </IonContent>
+        )
+      }
+      <ShootingDetailTabs setView={setView} view ={view}/>
       <AddNewBanner />
       <AddNewScenes />
     </IonPage>

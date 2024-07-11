@@ -11,6 +11,15 @@ interface ShootingBannerProps {
 }
 
 const ShootingBanner: React.FC<ShootingBannerProps> = ({ banner, shootingDeleteBanner }) => {
+
+  const getFontColor = (backgroundColor: string) => {
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 180) ? 'black' : 'white';
+  }
   return (
     <IonItemSliding 
       style={{
@@ -23,9 +32,18 @@ const ShootingBanner: React.FC<ShootingBannerProps> = ({ banner, shootingDeleteB
     >
       <IonItem style={{'--background': banner.backgroundColor ?? '', color: 'var(--ion-color-light)', fontWeight: 'bold'}}>
         <IonReorder className='reorder-banner-container' slot='start'>
-          <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
+          <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" style={
+            {
+              color: getFontColor(banner.backgroundColor ?? ''),
+            }
+          }/>
         </IonReorder>
-        <p>{banner.description.toUpperCase()}</p>
+        <p
+          style={{
+            color: getFontColor(banner.backgroundColor ?? ''),
+            fontSize: `${banner.fontSize ?? 16}px`,
+          }}
+        >{banner.description.toUpperCase()}</p>
       </IonItem>
       <IonItemOptions side="end" className="banner-card-options">
         <IonButton fill="clear" color='danger' size='large' onClick={() => shootingDeleteBanner()}>

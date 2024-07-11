@@ -1,0 +1,10 @@
+.shooting-details-tabs-container {
+  ion-tab-button {
+    font-weight: bold;
+    border: 1px solid red !important;
+  }
+
+  .selected-tab {
+    border: 1px solid blue !important;
+  }
+}

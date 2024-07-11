@@ -1,31 +1,32 @@
 import { IonSearchbar, IonToolbar } from '@ionic/react';
-import { chevronBackOutline, trash } from 'ionicons/icons';
+import { chevronBackOutline, closeOutline, trash } from 'ionicons/icons';
 import './ModalSearchBar.scss';
 
 const ModalSearchBar = ({
   searchText,
   setSearchText,
   showSearchBar,
+  placeholder = "SEARCH",
 }: {
   searchText: string,
   setSearchText: (searchText: string) => void,
-  showSearchBar: boolean
+  showSearchBar: boolean,
+  placeholder?: string,
 }) => (
   <>
     {showSearchBar && (
-      <IonToolbar color="tertiary" className="search-bar-toolbar">
-        {/* NO LESS THAN 10 */}
+      <div className='search-bar-toolbar'>
         <IonSearchbar
           className="ion-margin-top search-bar"
           value={searchText.toUpperCase()}
           onIonChange={(e) => setSearchText(e.detail.value!)}
           onIonInput={(e) => setSearchText(e.detail.value!)}
-          placeholder="SEARCH"
+          placeholder={placeholder}
           showCancelButton="focus"
-          cancelButtonIcon={chevronBackOutline}
+          cancelButtonIcon={closeOutline}
           mode="md"
         />
-      </IonToolbar>
+      </div>
     )}
   </>
 );

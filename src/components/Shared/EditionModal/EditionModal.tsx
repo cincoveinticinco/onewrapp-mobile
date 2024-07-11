@@ -7,6 +7,7 @@ import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
 import SelectItem from '../../AddScene/AddSceneFormInputs/SelectItem';
+import { IoIosSquare } from 'react-icons/io';
 
 interface EditionModalProps {
   modalTrigger: string;
@@ -146,7 +147,10 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       >
                         {
                           input.selectOptions.map((option: any, index: any) => (
-                            <IonSelectOption key={index} value={option.value}>{option.label.toUpperCase()}</IonSelectOption>
+                            <IonSelectOption color={option.value} key={index} value={option.value}>
+                              <IoIosSquare />
+                              {option.label.toUpperCase()}
+                            </IonSelectOption>
                           ))
                         }
                       </IonSelect>

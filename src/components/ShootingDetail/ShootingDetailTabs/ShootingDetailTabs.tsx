@@ -1,27 +1,40 @@
 import { IonIcon, IonLabel, IonTabBar, IonTabButton } from '@ionic/react'
-import { documentTextOutline, serverOutline } from 'ionicons/icons';
+import { documentTextOutline, informationCircleOutline, serverOutline } from 'ionicons/icons';
 import React from 'react'
+import { ShootingViews } from '../../../pages/ShootingDetail/ShootingDetail';
+import './ShootingDetailTabs.css'
 
 interface ShootingDetailTabsProps {
-  shootingId: string;
+  setView: (view: ShootingViews) => void;
+  view: ShootingViews;
 }
 
-const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ shootingId }) => {
+const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view  }) => {
   return (
-    <IonTabBar slot="bottom" className="scene-details-tabs-container" color="dark" mode="md">
+    <IonTabBar slot="bottom" color="dark" mode="md">
       <IonTabButton
         tab="shootingScenes"
-        href={`/my/projects/163/shooting/${shootingId}`}
+        className="tab-bar-buttons"
+        onClick={() => setView('scenes')}
       >
-        <IonIcon icon={serverOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE DETAILS</IonLabel>
+        <IonIcon icon={serverOutline} color={view === 'scenes' ? 'primary' : 'light'}  />
+        <IonLabel style={
+          {
+            color: view === 'scenes' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
+          }
+        }>SCENES</IonLabel>
       </IonTabButton>
       <IonTabButton
         tab="shootingInfo"
         className="tab-bar-buttons"
+        onClick={() => setView('info')}
       >
-        <IonIcon icon={documentTextOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE SCRIPT</IonLabel>
+        <IonIcon icon={informationCircleOutline} className="tab-bar-icons" color={view === 'info' ? 'primary' : 'light'} />
+        <IonLabel style={
+          {
+            color: view === 'info' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
+          }
+        }>DAY INFO</IonLabel>
       </IonTabButton>
     </IonTabBar>
   )

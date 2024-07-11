@@ -2,6 +2,47 @@
 
 #add-scenes-scenes-modal {
   @include modal-styling;
+  display: flex;
+
+  .search-bar-wrapper {
+    height: 50px;
+    width: 250px;
+    max-width: 500px;
+    position: relative;
+    top: 50px;
+    margin: auto;
+    
+    .search-icon {
+      position: absolute;
+      right: 24px;
+      font-size: 24px;
+      color: var(--ion-color-primary)
+    }
+    .search-bar-toolbar {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      border-bottom: 0px;
+      top: 0;
+      padding: 0px;
+      max-height: 100%;
+      position: absolute;
+      top: -18px;
+
+      .toolbar-container {
+        max-height: 100% !important;
+      }
+  
+      .searchbar-input-container {
+        --border-radius: 0px;
+        height: 100% !important; 
+        --margin-top: 0px;
+        margin-top: 0px;
+        padding: 0px !important;
+      }
+    }
+  }
 
   .add-new-scene-description {
     text-align: center;
@@ -41,6 +82,11 @@
   }
 }
 
+.ion-margin-top {
+  margin-top: 0px !important;
+  --margin-top: 0px !important;
+}
+
 @media (min-width: 500px) {
   #add-scenes-scenes-modal {
     .modal-confirm-button {
@@ -65,3 +111,4 @@
     }
   }
 }
+

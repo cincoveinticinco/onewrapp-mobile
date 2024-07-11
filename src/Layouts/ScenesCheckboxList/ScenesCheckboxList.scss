@@ -1,13 +1,10 @@
-.scene-card-row {
-  width: 100%;
-}
+.scenes-list {
+  outline: 1px solid black;
+  border: 1px solid black;
+  box-shadow: none;
 
-.checkbox-item-scene {
-  position: relative;
-  
   .checkbox-scene {
-    position: absolute;
-    right: 0;
-    top: 0;
+    font-size: var(--525-common-title-size);
+    text-align: left;
   }
 }
