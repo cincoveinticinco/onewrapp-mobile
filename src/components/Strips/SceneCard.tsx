@@ -14,6 +14,7 @@ import { checkmarkCircle } from 'ionicons/icons';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
+  ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
 import DatabaseContext, { DatabaseContextProps } from '../../context/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
@@ -24,7 +25,7 @@ interface SceneCardProps {
   scene: Scene;
   searchText?: string;
   isShooting?: boolean;
-  isProduced?: boolean;
+  isProduced?: ShootingSceneStatusEnum;
   shootingDeleteScene?: () => void;
 }
 
@@ -89,10 +90,6 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
 
   const defineSceneColor = (scene: Scene) => {
     const intOrExt: any = [exterior, intExt, extInt];
-
-    if(isShooting) {
-      return 'shooting-card'
-    }
 
     if (scene.sceneType === protectionType) {
       return 'rose';
@@ -165,13 +162,15 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
     localStorage.setItem('editionBackRoute', detailsRoute);
   };
 
+  const shootingCardSceneClass = (isShooting && (isProduced === ShootingSceneStatusEnum.Assigned ? 'background-light' : isProduced === ShootingSceneStatusEnum.Shoot ? 'background-success' : 'background-danger'));
+
   const cardContent = (
     <IonRow className="scene-card-row" color='tertiary'>
         <IonItemSliding className="ion-no-margin ion-no-padding">
           <IonItem className="ion-no-margin ion-no-padding scene-card-item">
             {
               isShooting && (
-                <IonReorder className='reorder-container'>
+                <IonReorder className={`reorder-container scene-card scene-theme-${defineSceneColor(scene)}`}>
                   <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
                 </IonReorder>
               )
@@ -207,7 +206,7 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
                     <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
                   </p>
                 </IonCol>
-                <IonCol className={"scene-card-col-3 center-flex-row " + (isProduced ? 'produced' : 'not-produced')}>
+                <IonCol className={`scene-card-col-3 center-flex-row ${shootingCardSceneClass}` }>
                   {
                     !isShooting ? (
                       <p className="assignament-date"> NOT ASSIGNED </p>
