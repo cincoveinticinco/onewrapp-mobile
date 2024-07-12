@@ -259,3 +259,67 @@ ion-toast.error-toast::part(icon) {
 .hide-tabs {
   display: none;
 }
+
+.background-light {
+  background-color: var(--ion-color-light);
+}
+
+.background-dark {
+  background-color: var(--ion-color-dark);
+}
+
+.background-primary {
+  background-color: var(--ion-color-primary);
+}
+
+.background-secondary {
+  background-color: var(--ion-color-secondary);
+}
+
+.background-tertiary {
+  background-color: var(--ion-color-tertiary);
+}
+
+.background-success {
+  background-color: var(--ion-color-success);
+}
+
+.background-warning {
+  background-color: var(--ion-color-warning);
+}
+
+.background-danger {
+  background-color: var(--ion-color-danger);
+}
+
+.background-light-shade {
+  background-color: var(--ion-color-light-shade);
+}
+
+.background-dark-shade {
+  background-color: var(--ion-color-dark-shade);
+}
+
+.background-primary-shade {
+  background-color: var(--ion-color-primary-shade);
+}
+
+.background-secondary-shade {
+  background-color: var(--ion-color-secondary-shade);
+}
+
+.background-tertiary-shade {
+  background-color: var(--ion-color-tertiary-shade);
+}
+
+.background-success-shade {
+  background-color: var(--ion-color-success-shade);
+}
+
+.background-warning-shade {
+  background-color: var(--ion-color-warning-shade);
+}
+
+.background-danger-shade {
+  background-color: var(--ion-color-danger-shade);
+}
