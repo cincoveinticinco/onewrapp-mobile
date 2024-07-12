@@ -19,7 +19,7 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
         <IonSelect
           className={isFocused[0] ? 'input-item' : 'script-popup-input'}
           value={element && element.categoryName}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Element Category"
           onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, categoryName: e.detail.value || '' }))}
           interface="popover"
@@ -51,7 +51,7 @@ const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementC
         <IonInput
           className={isFocused[1] ? 'input-item' : 'script-popup-input'}
           value={element.elementName}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Element Name *"
           placeholder="INSERT ELEMENT NAME"
           onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, elementName: e.detail.value || '' }))}

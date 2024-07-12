@@ -21,7 +21,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonInput
           className={isFocused[0] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterNum}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Character Number"
           placeholder="INSERT CHARACTER NUMBER"
           onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterNum: e.detail.value || null }))}
@@ -37,7 +37,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonSelect
           className={isFocused[1] ? 'input-item' : 'script-popup-input'}
           value={character.categoryName}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Character Category"
           placeholder="INSERT CHARACTER CATEGORY"
           onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || null }))}
@@ -70,7 +70,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, 
         <IonInput
           className={isFocused[2] ? 'input-item' : 'script-popup-input'}
           value={character && character.characterName}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Character Name *"
           placeholder="INSERT CHARACTER NAME"
           onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: e.detail.value || null }))}

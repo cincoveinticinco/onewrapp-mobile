@@ -35,7 +35,7 @@ const SelectOrInsertItem: React.FC<SelectOrInsertItemProps> = ({
         <IonSelect
           placeholder="SELECT OR INSERT"
           label={label}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           interface="popover"
           value={isInsertMode ? 'INSERT' : selectValue}
           onIonChange={handleSelectChange}

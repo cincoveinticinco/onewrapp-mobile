@@ -16,7 +16,7 @@ const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
         <IonInput
           className={isFocused ? 'input-item' : 'script-popup-input'}
           value={extra.extraName}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Extra Name *"
           placeholder="INSERT EXTRA NAME"
           style={{

@@ -32,7 +32,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           label="PAGES"
           placeholder="0"
           onIonChange={(e) => setPageInteger(Number(e.detail.value))}
-          labelPlacement="stacked"
+          labelPlacement="floating"
         />
       </IonItem>
       <IonItem color="tertiary" id="add-pages-fraction-input">
@@ -43,7 +43,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           label="PAGES"
           placeholder="0"
           onIonChange={(e) => setPageFraction(Number(e.detail.value))}
-          labelPlacement="stacked"
+          labelPlacement="floating"
         />
       </IonItem>
       <div id="add-pages-denominator">

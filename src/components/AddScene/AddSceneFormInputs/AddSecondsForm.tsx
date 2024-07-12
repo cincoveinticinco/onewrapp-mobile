@@ -33,7 +33,7 @@ const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedF
           aria-label="MINUTES"
           placeholder="MM"
           onIonChange={(e) => setMinutes(Number(e.detail.value))}
-          labelPlacement="stacked"
+          labelPlacement="floating"
         />
       </IonItem>
       <p id="semicolon-estimated-seconds"> : </p>
@@ -45,7 +45,7 @@ const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedF
           aria-label="SECONDS"
           placeholder="SS"
           onIonChange={(e) => setSeconds(Number(e.detail.value))}
-          labelPlacement="stacked"
+          labelPlacement="floating"
         />
       </IonItem>
     </div>

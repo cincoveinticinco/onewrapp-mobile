@@ -50,7 +50,7 @@ const InputItem: React.FC<InputItemProps> = ({
             placeholder={showError ? label : placeholder}
             type={type}
             label={showError ? errorMessage : label}
-            labelPlacement="stacked"
+            labelPlacement="floating"
             value={field.value}
             onIonInput={(e) => {
               if (validate && validate(e.detail.value?.trim()) !== true) {

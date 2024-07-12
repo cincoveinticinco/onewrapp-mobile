@@ -72,7 +72,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
           <IonSelect
             placeholder="SELECT TYPE"
             label={showError && validate && (validate(field.value)) ? (validate(field.value)) : label}
-            labelPlacement="stacked"
+            labelPlacement="floating"
             interface="alert"
             value={watchValue(fieldName)}
             onIonChange={(e) => { setValue(fieldName, e.detail.value); }}

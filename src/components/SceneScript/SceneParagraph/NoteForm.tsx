@@ -16,7 +16,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
         <IonTextarea
           className={isFocused ? 'input-item' : 'script-popup-input'}
           value={note && note.note}
-          labelPlacement="stacked"
+          labelPlacement="floating"
           label="Note"
           placeholder="INSERT NOTE"
           onIonChange={(e) => setNote((prevNote: any) => ({ ...prevNote, note: e.detail.value || '' }))}
