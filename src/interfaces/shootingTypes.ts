@@ -1,7 +1,8 @@
+import { key } from 'ionicons/icons';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../Ennums/ennums';
 
 export interface ShootingScene {
-  id: string;
+  id?: string | null;
   projectId: number;
   shootingId: number;
   sceneId: string;
@@ -37,7 +38,7 @@ export interface Shooting {
 }
 
 export interface ShootingBanner {
-  id: string;
+  id?: string | null;
   shootingId: number;
   description: string;
   backgroundColor: string | null;
@@ -45,4 +46,54 @@ export interface ShootingBanner {
   position: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AdvanceCalls {
+  error: boolean;
+  advanceCalls: AdvanceCall[];
+  departments: string[];
+}
+
+interface AdvanceCall {
+  id: number;
+  shooting_id: number;
+  department_id: number;
+  adv_pick_up: string | null;
+  adv_call_time: string;
+  adv_wrap: string | null;
+  description: string;
+  created_at: string;
+  updated_at: string;
+  dep_name_eng: string;
+  dep_name_esp: string;
+}
+
+export interface LocationInfo {
+  id: number;
+  location_type_id: number;
+  location_id: number;
+  call_time: string | null;
+  location_full_address: string;
+  location_city_state: string | null;
+  company_id: number;
+  location_name: string;
+  location_address: string;
+  location_addres_2: string;
+  city_id: number | null;
+  location_postal_code: string;
+  lat: string;
+  lng: string;
+  city_name_eng: string | null;
+  city_name_esp: string | null;
+  state_id: number | null;
+  state_name_eng: string | null;
+  state_name_esp: string | null;
+  country_id: number | null;
+  country_name_eng: string | null;
+  country_name_esp: string | null;
+  shoot_date: string;
+}
+
+export interface meals {
+  [key: string]: any;
 }
