@@ -3,6 +3,7 @@
 #add-scenes-scenes-modal {
   @include modal-styling;
   display: flex;
+  z-index: 100 !important;
 
   .search-bar-wrapper {
     height: 50px;
@@ -110,5 +111,9 @@
       }
     }
   }
+}
+
+.inputs-grid {
+  margin-top: 10%;
 }
 

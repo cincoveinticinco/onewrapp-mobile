@@ -4,6 +4,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
 
+
     ion-item {
       grid-column: 1/3;
     }
@@ -33,3 +34,10 @@
   }
 }
 
+.edit-inputs-wrapper {
+  grid-template-columns: 1fr;
+}
+
+ion-select {
+  border-bottom: 1px solid var(--ion-color-light);
+}

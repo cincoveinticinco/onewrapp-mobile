@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonItem, IonModal, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonCol, IonContent, IonGrid, IonHeader, IonItem, IonModal, IonRow, IonSelect, IonSelectOption } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
@@ -6,8 +6,7 @@ import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
-import SelectItem from '../../AddScene/AddSceneFormInputs/SelectItem';
-import { IoIosSquare } from 'react-icons/io';
+import CustomSelect from '../CustomSelect/CustomSelect';
 
 interface EditionModalProps {
   modalTrigger: string;
@@ -16,7 +15,8 @@ interface EditionModalProps {
   formInputs: any;
   handleEdition: any;
   defaultFormValues: any;
-  validate?: (value: string, keyValue?: string) => (boolean | string)
+  validate?: (value: string, keyValue?: string) => (boolean | string),
+  openModal?: (modalReference: any) => void;
 }
 
 const EditionModal: React.FC<EditionModalProps> = ({
@@ -110,7 +110,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
     closeModal();
     setShowError({});
   };
-
   return (
     <IonModal
       ref={modalRef}
@@ -128,36 +127,17 @@ const EditionModal: React.FC<EditionModalProps> = ({
       </IonHeader>
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios">
-          Please Add The New information
+          
         </IonHeader>
-        {
-              formInputs
-              && (
-              <div className="edit-inputs-wrapper">
-                {
-                  formInputs.map((input: any, i: any) => (
-                    input.type === 'select' ?
-                    <IonItem color='tertiary' key={i}>
-                      <IonSelect
-                        key={i}
-                        placeholder={input.placeholder}
-                        onIonChange={(e) => setNewOptionValue(input.fieldName, e.detail.value)}
-                        interface="popover"
-                        label="Stacked label" label-placement="stacked"
-                      >
-                        {
-                          input.selectOptions.map((option: any, index: any) => (
-                            <IonSelectOption color={option.value} key={index} value={option.value}>
-                              <IoIosSquare />
-                              {option.label.toUpperCase()}
-                            </IonSelectOption>
-                          ))
-                        }
-                      </IonSelect>
-                    </IonItem>
-                    :      
+        {formInputs && (
+          <IonGrid className="edit-inputs-wrapper">
+            <IonRow>
+              {formInputs.map((input: any, i: number) => (
+                <IonCol key={i} size={input.col || "12"}>
+                  {input.type === 'select' ? (
+                    <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
+                  ) : (
                     <InputItem
-                      key={i}
                       label={input.label}
                       placeholder={input.placeholder}
                       control={control}
@@ -169,18 +149,18 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       type={input.type}
                       errorMessage={errorMessage}
                     />
-                  ))
-                }
-              </div>
-              )
-            }
+                  )}
+                </IonCol>
+              ))}
+            </IonRow>
+          </IonGrid>
+        )}
         <div className="edit-new-option-buttons-container">
           <OutlinePrimaryButton
             buttonName="SAVE"
             onClick={handleSubmit(submitEdition)}
             className="ion-margin modal-confirm-button"
           />
-
           <OutlineLightButton
             buttonName="CANCEL"
             onClick={closeModal}

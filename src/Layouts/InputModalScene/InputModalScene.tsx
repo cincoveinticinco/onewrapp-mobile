@@ -12,6 +12,7 @@ import OutlineLightButton from '../../components/Shared/OutlineLightButton/Outli
 import './InputModalScene.scss';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import { Scene } from '../../interfaces/scenesTypes';
+import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
 
 interface InputModalProps {
   sceneName: string;
@@ -73,8 +74,25 @@ const InputModalScene: React.FC<InputModalProps> = ({
 
   const getUniqueEpisodes = () => {
     const episodes = new Set(listOfScenes.map(scene => scene.episodeNumber).filter(episode => episode !== null && episode !== undefined));
-    return Array.from(episodes);
+    return Array.from(episodes).map(episode => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
   }
+
+  const episodeInput = {
+    fieldName: 'episode',
+    label: 'Select episode',
+    placeholder: 'Select episode',
+    selectOptions: getUniqueEpisodes(),
+  };
+
+  const sceneInput = {
+    fieldName: 'scene',
+    label: 'Select a scene',
+    placeholder: 'Select a scene',
+    selectOptions: filteredScenes.map((scene: Scene) => ({
+      value: scene,
+      label: getSceneHeader(scene),
+    })),
+  };
 
   const saveOption = () => {
     if (selectedOption) {
@@ -97,47 +115,26 @@ const InputModalScene: React.FC<InputModalProps> = ({
       </IonHeader>
       <IonContent color="tertiary">
         <>
-          <IonGrid>
+          <IonGrid className='inputs-grid'>
             <IonRow>
               <IonCol size="6">
                 <IonItem color='tertiary'>
-                  <IonSelect
-                    value={selectedEpisode}
-                    placeholder="Select episode"
-                    onIonChange={(e) => setSelectedEpisode(e.detail.value)}
-                    interface="popover"
-                    label='Select episode'
-                    labelPlacement='stacked'
-                  >
-                    {
-                      getUniqueEpisodes().map((episode: any) => (
-                        <IonSelectOption key={episode} value={episode}>
-                          {episode}
-                        </IonSelectOption>
-                      ))
-                    }
-                  </IonSelect>
+                  <CustomSelect
+                    input={episodeInput}
+                    setNewOptionValue={(fieldName, value) => setSelectedEpisode(value)}
+                    enableSearch={true}
+                  />
                 </IonItem>
               </IonCol>
               <IonCol size='6'>
                 <IonItem color='tertiary'>
-                  <IonSelect
-                    value={selectedOption}
-                    placeholder="Select a scene"
-                    label='Select a scene'
-                    labelPlacement='stacked'
-                    onIonChange={(e) => setSelectedOption(e.detail.value)}
-                    interface="popover"
-                    disabled={!selectedEpisode}
-                  >
-                    {
-                      filteredScenes.map((scene: Scene) => (
-                        <IonSelectOption key={scene.id} value={scene}>
-                          {getSceneHeader(scene)}
-                        </IonSelectOption>
-                      ))
-                    }
-                  </IonSelect>
+                  <CustomSelect
+                    input={sceneInput}
+                    setNewOptionValue={(fieldName, value: Scene) => {
+                      setSelectedOption(value|| null);
+                    }}
+                    enableSearch={true}
+                  />
                 </IonItem>
               </IonCol>
             </IonRow>
