@@ -117,18 +117,10 @@ const SceneDetails: React.FC = () => {
     setTimeout(() => {
       toggleTabs.hideTabs();
     }, 100);
-
-    return () => {
-      toggleTabs.showTabs();
-    };
   }, [thisScene]);
 
   useIonViewWillEnter(() => {
     toggleTabs.hideTabs();
-  });
-
-  useIonViewDidLeave(() => {
-    toggleTabs.showTabs();
   });
 
   const sceneCastCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: any) => category.categoryName));
