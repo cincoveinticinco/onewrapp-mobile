@@ -151,16 +151,13 @@ const SceneScript: React.FC = () => {
 
   const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber ?? '') > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
 
-  useEffect(() => {
-    hideTabs();
-    return () => {
-      showTabs();
-    };
-  }, []);
-
   useIonViewDidEnter(() => {
     hideTabs();
   });
+
+  useIonViewWillEnter(() => {
+    hideTabs();
+  })
 
   const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
   const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
