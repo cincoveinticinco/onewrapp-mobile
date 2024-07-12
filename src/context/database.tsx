@@ -160,6 +160,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }).sort({ updatedAt: 'desc' }).limit(1).exec()
       .then((data: any) => (data[0] ? data[0] : null)); // To compare when you enter in other project
 
+    const lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
+      selector: { projectId: parseInt(projectId) },
+    }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      .then((data: any) => (data[0] ? data[0] : null));
+
+    const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId, lastShootingInProject);
+    isOnline && shootingsReplicator.startReplicationPull();
+
     const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], projectId, lastSceneInProject);
     const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], projectId, lastParagraphInProject);
     const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], projectId, lastUnitInProject);
@@ -177,13 +185,13 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const initializeShootingReplication = async () => {
     let replicationFinished = false;
     try {
-      const lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
+      // const lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
+      //   selector: { projectId: parseInt(projectId) },
+      // }).sort({ updatedAt: 'desc' }).limit(1).exec()
+      //   .then((data: any) => (data[0] ? data[0] : null));
   
-      const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId, lastShootingInProject);
-      isOnline && shootingsReplicator.startReplicationPull();
+      // const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId, lastShootingInProject);
+      // isOnline && shootingsReplicator.startReplicationPull();
       isOnline && pushShootingsReplication()
     } catch (error) {
       console.error('Error al obtener los shootings:', error);
