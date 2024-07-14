@@ -77,7 +77,6 @@ export default class HttpReplicator {
             checkpoint: data.checkpoint,
           };
         },
-        // stream$: myPullStream$.asObservable(),
       },
     });
 
@@ -87,6 +86,7 @@ export default class HttpReplicator {
     });
 
     this.replicationStates.push(replicationState);
+    console.log('replicationState', replicationState);
 
     return replicationState;
   }
@@ -122,5 +122,11 @@ export default class HttpReplicator {
     this.replicationStates.push(replicationState);
 
     return replicationState;
+  }
+
+  public monitorReplicationStatus() {
+    return this.replicationStates[0].awaitInitialReplication().then(() => {
+      return true;
+    });
   }
 }
