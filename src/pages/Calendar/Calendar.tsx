@@ -33,16 +33,18 @@ const Calendar: React.FC = () => {
   useEffect(() => {
     const initializeReplication = async () => {
       try {
-        await initializeShootingReplication();
-        await getShootings();
+        setIsLoading(true);
+        const replicationFinished = await initializeShootingReplication();
+        if (replicationFinished) {
+          await getShootings();
+        }
       } catch (error) {
         console.error('Error initializing replication:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-
-      setIsLoading(false);
     };
-
+  
     initializeReplication();
   }, [projectId]);
 

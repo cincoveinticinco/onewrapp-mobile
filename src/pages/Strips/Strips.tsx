@@ -24,21 +24,32 @@ import useLoader from '../../hooks/useLoader';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, initializeReplication, projectId, scenesAreLoading, setScenesAreLoading
+    offlineScenes, initializeSceneReplication, projectId, scenesAreLoading, setScenesAreLoading
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-  const [error, unused_] = useState(false);
+  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
   const history = useHistory();
   const location = useLocation();
   useScrollToTop(contentRef, location);
 
-  useIonViewWillEnter(() => {
-    initializeReplication()
-  });
+  useEffect(() => {
+    const initializeReplication = async () => {
+      try {
+        setScenesAreLoading(true);
+        await initializeSceneReplication();
+      } catch (error) {
+        console.error('Error initializing scene replication:', error);
+      } finally {
+        setInitialReplicationFinished(true);
+      }
+    };
+  
+    initializeReplication();
+  }, [projectId]);
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
@@ -147,7 +158,7 @@ const Strips: React.FC = () => {
           </IonRefresher>
           <StripTagsToolbar />
           <Suspense>
-            {scenesAreLoading ? (
+            {!initialReplicationFinished || scenesAreLoading ? (
               useLoader()
             ) : (
               <>
@@ -163,7 +174,7 @@ const Strips: React.FC = () => {
                       Reset Filters
                     </IonButton>
                   </div>
-                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 && !scenesAreLoading ? (
+                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
                   <div className="no-items-message">
                     <p className="ion-no-margin">There are not any scenes in this project. </p>
                   </div>
