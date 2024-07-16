@@ -10,7 +10,7 @@ import DatabaseContext from '../../context/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useLoader from '../../hooks/useLoader';
-import { ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, meals } from '../../interfaces/shootingTypes';
+import { ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, meals, AdvanceCall } from '../../interfaces/shootingTypes';
 import { IoMdAdd } from "react-icons/io";
 import './ShootingDetail.css';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
@@ -21,6 +21,9 @@ import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import ShootingBasicInfo from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
 import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
+import AddButton from '../../components/Shared/AddButton/AddButton';
+import { VscEdit } from 'react-icons/vsc';
+import DeleteButton from '../../components/Shared/DeleteButton/DeleteButton';
 
 
 export type ShootingViews = 'scenes' | 'info';
@@ -30,7 +33,7 @@ type cardType = {
 type mergedSceneBanner = (Scene & ShootingScene & cardType) | (ShootingBannerType & cardType)
 interface ShootingInfo  {
   generalCall: string;
-  readyToShoot: string;
+  onSet: string;
   estimatedWrap: string;
   wrap: string;
   lastOut: string;
@@ -60,10 +63,12 @@ const ShootingDetail = () => {
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
   const [view, setView] = useState<ShootingViews>('scenes');
-  const [openLocations, setOpenLocations] = useState(false);
-  const [openHospitals, setOpenHospitals] = useState(false);
-  const [openadvanceCalls, setOpenadvanceCalls] = useState(false);
-  const [openMeals, setOpenMeals] = useState(false);
+  const [openLocations, setOpenLocations] = useState(true);
+  const [openHospitals, setOpenHospitals] = useState(true);
+  const [openadvanceCalls, setOpenadvanceCalls] = useState(true);
+  const [openMeals, setOpenMeals] = useState(true);
+  const [mealsEditMode, setMealsEditMode] = useState(false);
+  const [advanceCallsEditMode, setAdvanceCallsEditMode] = useState(false);
 
   const [shootingData, setShootingData] = useState<ShootingDataProps>({
     scenes: [],
@@ -71,7 +76,7 @@ const ShootingDetail = () => {
     notIncludedScenes: [],
     shotingInfo: {
       generalCall: '--:--',
-      readyToShoot: '--:--',
+      onSet: '--:--',
       estimatedWrap: '--:--',
       wrap: '--:--',
       lastOut: '--:--',
@@ -101,7 +106,6 @@ const ShootingDetail = () => {
     } catch (error) {
       console.error('Error fetching scenes:', error);
     } finally {
-      console.log(shootingData.scenes);
       setIsLoading(false);
     }
   };
@@ -113,8 +117,20 @@ const ShootingDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    saveShooting();
-  }, [shootingData.scenes]);
+    if(!isLoading) {
+      saveShooting();
+      setShootingData((prev: any) => {
+        const updatedInfo = calculateUpdatedInfo(prev.scenes);
+        return {
+          ...prev,
+          shotingInfo: {
+            ...prev.shotingInfo,
+            ...updatedInfo
+          }
+        };
+      });
+    }
+  }, [shootingData.scenes, isLoading]);
 
   const availableColors = [
     { value: '#3dc2ff', name: 'light blue' },
@@ -183,6 +199,99 @@ const ShootingDetail = () => {
     },
   ];
 
+  // advance calls need the fields Department *, call* and description. department, esta en el key dep_name_esp y dep_name_eng, description en el key description y call en adv_call_time. Por default, tendra el shooting_id de la pagina, el id temporal y el createdAt y updatedAt en la fecha actual.
+
+  const advanceCallInputs = [
+    {
+      label: 'Department', type: 'text', fieldName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '4'
+    },
+    {
+      label: 'Call', type: 'time', fieldName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '4'
+    },
+    {
+      label: 'Description', type: 'text', fieldName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '4'
+    }
+  ];
+
+  const addNewAdvanceCall = async (advanceCall: any) => {
+    const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+
+    advanceCall.id = null;
+    advanceCall.shootingId = parseInt(shootingId);
+    advanceCall.createdAt = new Date().toISOString();
+    advanceCall.updatedAt = new Date().toISOString();
+    const formatedTime = advanceCall.adv_call_time.split(':');
+    advanceCall.adv_call_time = { hours: formatedTime[0], minutes: formatedTime[1] };
+    advanceCall.dep_name_esp = advanceCall.dep_name_eng;
+    let shootingCopy = { ...shooting._data };
+    advanceCall.adv_call_time = timeToISOString(advanceCall.adv_call_time, shootingCopy.shootDate);
+    shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCall];
+
+    await oneWrapDb?.shootings.upsert(shootingCopy);
+
+    setShootingData((prev: any) => ({
+      ...prev,
+      shotingInfo: {
+        ...prev.shotingInfo,
+        advanceCalls: [...prev.shotingInfo.advanceCalls, advanceCall]
+      }
+    })); 
+  }
+
+  // Para anadir un nuevo meal, necesito los campos Meal*, From time*, End time* y quantity. Por default, tendra el shooting_id de la pagina, el id temporal y el createdAt y updatedAt en la fecha actual. Los keys correspondientes son meal, ready_at, end_time y quantity.
+
+  const mealInputs = [
+    {
+      label: 'Meal', type: 'text', fieldName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '4'
+    },
+    {
+      label: 'From Time', type: 'time', fieldName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '4'
+    },
+    {
+      label: 'End Time', type: 'time', fieldName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '4'
+    },
+    {
+      label: 'Quantity', type: 'number', fieldName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '4'
+    }
+  ];
+
+  const addNewMeal = async (meal: any) => {
+    const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+    meal.id = null;
+    meal.shootingId = parseInt(shootingId);
+    meal.createdAt = new Date().toISOString();
+    meal.updatedAt = new Date().toISOString();
+    const formatedTimeStart = meal.ready_at.split(':');
+    const formatedTimeEnd = meal.end_time.split(':');
+    meal.ready_at = { hours: formatedTimeStart[0], minutes: formatedTimeStart[1] };
+    meal.end_time = { hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] };
+    let shootingCopy = { ...shooting._data };
+    meal.ready_at = timeToISOString(meal.ready_at, shootingCopy.shootDate);
+    meal.end_time = timeToISOString(meal.end_time, shootingCopy.shootDate);
+
+    shootingCopy.meals = [...shootingCopy.meals, meal];
+    await oneWrapDb?.shootings.upsert(shootingCopy);
+
+    setShootingData((prev: any) => ({
+      ...prev,
+      shotingInfo: {
+        ...prev.shotingInfo,
+        meals: [...prev.shotingInfo.meals, meal]
+      }
+    }));
+  };
+
+  const AddNewMeal = () => (
+    <EditionModal
+      modalTrigger={'open-add-new-meal-modal' + '-' + shootingId}
+      title='Add New Meal'
+      formInputs={mealInputs}
+      handleEdition={addNewMeal}
+      defaultFormValues={{}}
+      modalId='add-new-meal-modal'
+    />
+  );
+
   const AddNewBanner = () => (
     <EditionModal
       modalTrigger={'open-add-new-banner-modal' + '-' + shootingId}
@@ -191,6 +300,17 @@ const ShootingDetail = () => {
       handleEdition={addNewBanner}
       defaultFormValues={{}}
       modalId='add-new-banner-modal'
+    />
+  );
+
+  const AddNewAdvanceCallModal = () => (
+    <EditionModal
+      modalTrigger={'open-add-new-advance-call-modal' + '-' + shootingId}
+      title='Add New Advance Call'
+      formInputs={advanceCallInputs}
+      handleEdition={addNewAdvanceCall}
+      defaultFormValues={{}}
+      modalId='add-new-advance-call-modal'
     />
   );
 
@@ -211,11 +331,33 @@ const ShootingDetail = () => {
       updatedAt: new Date().toISOString()
     };
 
-    setShootingData((prev: any) => ({
-      ...prev,
-      scenes: [...prev.scenes, { cardType: 'scene', ...shootingScene, ...scene }]
-    }));
+    setShootingData((prev: any) => {
+      const updatedScenes = [...prev.scenes, { cardType: 'scene', ...shootingScene, ...scene }];
+      const updatedInfo = calculateUpdatedInfo(updatedScenes);
+      return {
+        ...prev,
+        scenes: updatedScenes,
+        shotingInfo: {
+          ...prev.shotingInfo,
+          ...updatedInfo
+        }
+      };
+    });
     setSelectedScenes([...selectedScenes, scene]);
+  };
+
+  const calculateUpdatedInfo = (scenes: any[]) => {
+    const scenesOnly = scenes.filter((item: any) => item.cardType === 'scene');
+    const uniqueSets = new Set(scenesOnly.map((scene: any) => scene.setName && scene.setName.toUpperCase()));
+    const totalPages = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0);
+    const totalTime = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0);
+  
+    return {
+      sets: Array.from(uniqueSets).length,
+      scenes: scenesOnly.length,
+      pages: floatToFraction(totalPages),
+      min: secondsToMinSec(totalTime),
+    };
   };
 
   const AddNewScenes = () => (
@@ -259,8 +401,6 @@ const ShootingDetail = () => {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         
-        console.log(shooting, '*******')
-
         if (shooting) {
           const updatedScenes = shootingData.scenes
             .filter((item: any) => item.cardType === 'scene')
@@ -272,7 +412,6 @@ const ShootingDetail = () => {
           shootingCopy.scenes = updatedScenes;
           shootingCopy.banners = updatedBanners;
           
-          console.log('Shooting to save:', shootingCopy);
           return await oneWrapDb.shootings.upsert(shootingCopy);
         }
       } catch (error) {
@@ -282,7 +421,6 @@ const ShootingDetail = () => {
   };
 
   const handleReorder = async (event: CustomEvent<ItemReorderEventDetail>) => {
-    console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
     
     const items = [...shootingData.scenes];
     const [reorderedItem] = items.splice(event.detail.from, 1);
@@ -370,49 +508,45 @@ const ShootingDetail = () => {
     const scenesInShoot = shootings[0]._data.scenes;
     const bannersInShoot = shootings[0]._data.banners;
     const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
-
-    console.log(scenesInShoot, 'scenesInShoot')
-
-    // from 2000-01-01T06:00:00.000-05:00 to 06:00
-
+  
     const scenesData = await oneWrapDb?.scenes.find({
       selector: { sceneId: { $in: scenesIds } }
     }).exec();
-
+  
     const scenesNotIncluded = await oneWrapDb?.scenes.find({
       selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } }
     }).exec();
     
     const mergedScenesData: mergedSceneBanner[] = scenesData?.map((scene: any) => {
       const sceneShootingData = scenesInShoot.find((sceneInShoot: any) => parseInt(sceneInShoot.sceneId) === parseInt(scene.sceneId));
-      console.log(sceneShootingData);
       return {
         cardType: 'scene',
         ...scene._data,
         ...sceneShootingData
       };
     }) ?? [];
-
-    const uniqueSets = new Set(mergedScenesData.map((scene: any) => scene.setName && scene.setName.toUpperCase()))
-    const totalPages = mergedScenesData.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0);
-    const totalTime = mergedScenesData.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0);
-
+  
+    const bannersWIthType: mergedSceneBanner[] = bannersInShoot.map((banner: any) => ({
+      cardType: 'banner', ...banner
+    }));
+  
+    const mergedScenes = [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position);
+    
+    const updatedInfo = calculateUpdatedInfo(mergedScenes);
+  
     const shootingInfo: ShootingInfo = {
+      ...updatedInfo,
       generalCall: getHourMinutesFomISO(shootings[0]._data.generalCall),
-      readyToShoot: getHourMinutesFomISO(shootings[0]._data.onSet),
+      onSet: getHourMinutesFomISO(shootings[0]._data.onSet),
       estimatedWrap: getHourMinutesFomISO(shootings[0]._data.estimatedWrap),
       wrap: getHourMinutesFomISO(shootings[0]._data.wrap),
       lastOut: getHourMinutesFomISO(shootings[0]._data.lastOut),
-      sets: Array.from(uniqueSets).length,
-      scenes: scenesInShoot.length,
-      pages: floatToFraction(totalPages),
-      min: secondsToMinSec(totalTime),
       locations: shootings[0]._data.locations,
       hospitals: shootings[0]._data.hospitals,
-      advanceCalls: shootings[0]._data.advanceCalls.advanceCalls,
+      advanceCalls: shootings[0]._data.advanceCalls,
       meals: shootings[0]._data.meals
-    }
-
+    };
+  
     const formatShootingDate = (dateString: string, unitNumber: number) => {
       const date = new Date(dateString);
       const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -426,15 +560,11 @@ const ShootingDetail = () => {
     
       return formattedDate;
     };
-
+  
     const shootingFormattedDate = formatShootingDate(shootings[0]._data.shootDate, shootings[0]._data.unitNumber);
-
-    const bannersWIthType: mergedSceneBanner[] = bannersInShoot.map((banner: any) => ({
-      cardType: 'banner', ...banner
-    }));
     
     return {
-      scenes: [...mergedScenesData, ...bannersWIthType].sort((a: any, b: any) => a.position - b.position),
+      scenes: mergedScenes,
       scenesNotIncluded: scenesNotIncluded?.map((scene: any) => scene._data) ?? [],
       shootingInfo,
       formattedDate: shootingFormattedDate
@@ -463,6 +593,132 @@ const ShootingDetail = () => {
       </IonButton>
     </div>
   );
+
+  const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
+    const shootingDay = new Date(shootingDate);
+    
+    const newDate = new Date(
+      shootingDay.getFullYear(),
+      shootingDay.getMonth(),
+      shootingDay.getDate(),
+      parseInt(time.hours),
+      parseInt(time.minutes)
+    );
+    
+    return newDate.toISOString();
+  };
+
+  const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: { hours: string, minutes: string }) => {
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        
+        if (shooting) {
+          const shootingCopy = { ...shooting._data };
+          
+          const newTimeISO = timeToISOString(time, shootingCopy.shootDate);
+          
+          shootingCopy[field] = newTimeISO;
+          
+          await oneWrapDb.shootings.upsert(shootingCopy);
+          
+          setShootingData((prev: any) => ({
+            ...prev,
+            shotingInfo: {
+              ...prev.shotingInfo,
+              [field]: `${time.hours.padStart(2, '0')}:${time.minutes.padStart(2, '0')}`
+            }
+          }));
+          
+          console.log(`${field} updated successfully`);
+        }
+      } catch (error) {
+        console.error(`Error updating ${field}:`, error);
+      }
+    }
+  };
+
+  const deleteMeal = async (mealToDelete: meals) => {
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        
+        if (shooting) {
+          let shootingCopy = { ...shooting._data };
+          
+          // If the meal has an id, filter it out based on the id
+          // Otherwise, use the index to remove it
+          if (mealToDelete.id !== null) {
+            shootingCopy.meals = shootingCopy.meals.filter((meal: meals) => meal.id !== mealToDelete.id);
+          } else {
+            const indexToDelete = shootingCopy.meals.findIndex((meal: meals) => 
+              meal.meal === mealToDelete.meal &&
+              meal.ready_at === mealToDelete.ready_at &&
+              meal.end_time === mealToDelete.end_time
+            );
+            if (indexToDelete !== -1) {
+              shootingCopy.meals.splice(indexToDelete, 1);
+            }
+          }
+  
+          await oneWrapDb.shootings.upsert(shootingCopy);
+  
+          setShootingData((prev: any) => ({
+            ...prev,
+            shotingInfo: {
+              ...prev.shotingInfo,
+              meals: shootingCopy.meals
+            }
+          }));
+  
+          console.log('Meal deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting meal:', error);
+      }
+    }
+  };
+  
+  const deleteAdvanceCall = async (callToDelete: AdvanceCall) => {
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        
+        if (shooting) {
+          let shootingCopy = { ...shooting._data };
+          
+          // If the advance call has an id, filter it out based on the id
+          // Otherwise, use the index to remove it
+          if (callToDelete.id !== null) {
+            shootingCopy.advanceCalls = shootingCopy.advanceCalls.filter((call: AdvanceCall) => call.id !== callToDelete.id);
+          } else {
+            const indexToDelete = shootingCopy.advanceCalls.findIndex((call: AdvanceCall) => 
+              call.dep_name_eng === callToDelete.dep_name_eng &&
+              call.adv_call_time === callToDelete.adv_call_time &&
+              call.description === callToDelete.description
+            );
+            if (indexToDelete !== -1) {
+              shootingCopy.advanceCalls.splice(indexToDelete, 1);
+            }
+          }
+  
+          await oneWrapDb.shootings.upsert(shootingCopy);
+  
+          setShootingData((prev: any) => ({
+            ...prev,
+            shotingInfo: {
+              ...prev.shotingInfo,
+              advanceCalls: shootingCopy.advanceCalls
+            }
+          }));
+  
+          console.log('Advance call deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting advance call:', error);
+      }
+    }
+  };
 
   return (
     <IonPage>
@@ -507,7 +763,10 @@ const ShootingDetail = () => {
       {
         view === 'info' && (
           <IonContent color="tertiary" fullscreen>
-            <ShootingBasicInfo shootingInfo={shootingData.shotingInfo} />
+            <ShootingBasicInfo 
+              shootingInfo={shootingData.shotingInfo} 
+              updateShootingTime={updateShootingTime}
+            />
             
             <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenLocations(!openLocations)}>
               <p style={{ fontSize: '18px' }}><b>LOCATIONS</b></p>
@@ -547,36 +806,85 @@ const ShootingDetail = () => {
               )
             )}
 
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenadvanceCalls(!openadvanceCalls)}>
-              <p style={{ fontSize: '18px' }}><b>ADVANCED CALLS</b></p>
-              <DropDownButton open={openadvanceCalls} />
+            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} >
+              <p style={{ fontSize: '18px' }}><b>ADVANCE CALLS</b></p>
+              <div>
+                <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setAdvanceCallsEditMode(!advanceCallsEditMode)}>
+                  <VscEdit 
+                    className="toolbar-icon"
+                    style={advanceCallsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }} />
+                </IonButton> 
+                <AddButton id={'open-add-new-advance-call-modal' + '-' + shootingId} />
+                <DropDownButton open={openadvanceCalls} />
+              </div>
             </div>
             {
-            openadvanceCalls && (
+            openadvanceCalls && shootingData.shotingInfo.advanceCalls && (
               shootingData.shotingInfo.advanceCalls.length > 0 ? (
                 shootingData.shotingInfo.advanceCalls.map((call: any) => (
-                  <div key={call.id} className="ion-padding-start">
-                    <p><b>{call.dep_name_eng.toUpperCase()}: </b></p>
+                  <div 
+                    key={call.id} 
+                    className="ion-padding-start" 
+                    style={advanceCallsEditMode ? {width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr'} : {width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
+                    <p><b>{call.dep_name_eng && call.dep_name_eng.toUpperCase()  || call.dep_name_esp && call.dep_name_esp.toUpperCase() || 'NO DEPARTMENT'}: </b></p>
                     <p>{getHourMinutesFomISO(call.adv_call_time)}</p>
+                    {
+                      advanceCallsEditMode &&
+                      <div>
+                        <IonButton fill="clear" slot="end" color="light" className="toolbar-button">
+                          <VscEdit className="toolbar-icon" style={{color: 'var(--ion-color-primary)'}}/>
+                        </IonButton> 
+                        <DeleteButton onClick={() => deleteAdvanceCall(call)} />
+                      </div>
+                    }
                   </div>
                 ))
               ) : (
                 <div className="ion-padding-start">
-                  <p>NO ADVANCED CALLS ADDED</p>
+                  <p>NO ADVANCE CALLS ADDED</p>
                 </div>
               )
             )}
 
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenMeals(!openMeals)}>
+            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }}>
               <p style={{ fontSize: '18px' }}><b>MEALS</b></p>
-              <DropDownButton open={openMeals} />
+              <div>
+                <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setMealsEditMode(!mealsEditMode)}>
+                  <VscEdit 
+                    className="toolbar-icon"
+                    style={mealsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
+                  />
+                </IonButton> 
+                <AddButton id={'open-add-new-meal-modal' + '-' + shootingId} />
+                <DropDownButton open={openMeals} />
+              </div>
             </div>
             {openMeals && (
               Object.keys(shootingData.shotingInfo.meals).length > 0 ? (
                 Object.entries(shootingData.shotingInfo.meals).map(([key, meal]) => (
-                  <div key={key} className="ion-padding-start">
-                    <p><b>{meal.meal.toUpperCase()}: </b> {getHourMinutesFomISO(meal.ready_at)} / {getHourMinutesFomISO(meal.end_time)} </p>
-                    <p>{meal.meal_type}</p>
+                  <div key={meal.id} >
+                    <div
+                      className="ion-padding-start" 
+                      style={mealsEditMode ? {width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr'} : {width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr'}}
+                    >
+                      <b 
+                        className='ion-flex ion-align-items-center'
+                        style={{minHeight: '50px'}}
+                      >{meal.meal.toUpperCase()}: </b> 
+                      <span
+                        className='ion-flex ion-align-items-center'
+                      >{getHourMinutesFomISO(meal.ready_at)} / {getHourMinutesFomISO(meal.end_time)} </span>
+                      {
+                        mealsEditMode &&
+                        <div>
+                          <IonButton fill="clear" slot="end" color="light" className="toolbar-button">
+                            <VscEdit className="toolbar-icon" style={{color: 'var(--ion-color-primary)'}}/>
+                          </IonButton> 
+                          <DeleteButton onClick={() => deleteMeal(meal)} />
+                        </div>
+                      }
+                    </div>
+                    
                   </div>
                 ))
               ) : (
@@ -591,6 +899,8 @@ const ShootingDetail = () => {
       <ShootingDetailTabs setView={setView} view ={view}/>
       <AddNewBanner />
       <AddNewScenes />
+      <AddNewAdvanceCallModal />
+      <AddNewMeal />
     </IonPage>
   );
 };
