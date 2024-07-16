@@ -24,6 +24,9 @@ import DropDownButton from '../../components/Shared/DropDownButton/DropDownButto
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import { VscEdit } from 'react-icons/vsc';
 import DeleteButton from '../../components/Shared/DeleteButton/DeleteButton';
+import { set } from 'lodash';
+import MealInfo from '../../components/ShootingDetail/MealInfo/MealInfo';
+import AdvanceCallInfo from '../../components/ShootingDetail/AdvanceCallInfo/AdvanceCallInfo';
 
 
 export type ShootingViews = 'scenes' | 'info';
@@ -50,7 +53,6 @@ interface ShootingInfo  {
 interface ShootingDataProps {
   scenes: mergedSceneBanner[];
   notIncludedScenes: Scene[];
-  showAddMenu: boolean;
   shotingInfo: ShootingInfo;
   shootingFormattedDate: string;
 }
@@ -58,21 +60,43 @@ interface ShootingDataProps {
 const ShootingDetail = () => {
   const [isDisabled, _] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
-  const { oneWrapDb } = useContext(DatabaseContext);
+  const { oneWrapDb, initializeShootingReplication} = useContext(DatabaseContext);
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
   const [view, setView] = useState<ShootingViews>('scenes');
   const [openLocations, setOpenLocations] = useState(true);
   const [openHospitals, setOpenHospitals] = useState(true);
-  const [openadvanceCalls, setOpenadvanceCalls] = useState(true);
+  const [openadvanceCalls, setOpenAdvanceCalls] = useState(true);
   const [openMeals, setOpenMeals] = useState(true);
   const [mealsEditMode, setMealsEditMode] = useState(false);
   const [advanceCallsEditMode, setAdvanceCallsEditMode] = useState(false);
+  const [additionMenu, setAdditionMenu] = useState(false);
+  const bannerModalRef = useRef<HTMLIonModalElement>(null);
+  const sceneModalRef = useRef<HTMLIonModalElement>(null);
+  const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
+  const mealModalRef = useRef<HTMLIonModalElement>(null);
+
+  const openAdvanceCallModal = (e: any) => {
+    e.stopPropagation();
+    advanceCallModalRef.current?.present();
+  };
+  
+  const openMealModal = (e: any) => {
+    e.stopPropagation();
+    mealModalRef.current?.present();
+  };
+
+  const openBannerModal = async () => {
+    await bannerModalRef.current?.present();
+  }
+
+  const openSceneModal = async () => {
+    await sceneModalRef.current?.present();
+  }
 
   const [shootingData, setShootingData] = useState<ShootingDataProps>({
     scenes: [],
-    showAddMenu: false,
     notIncludedScenes: [],
     shotingInfo: {
       generalCall: '--:--',
@@ -99,7 +123,6 @@ const ShootingDetail = () => {
       setShootingData({
         scenes: scenesData.scenes,
         notIncludedScenes: scenesData.scenesNotIncluded,
-        showAddMenu: false,
         shotingInfo: scenesData.shootingInfo,
         shootingFormattedDate: scenesData.formattedDate
       });
@@ -216,7 +239,7 @@ const ShootingDetail = () => {
   const addNewAdvanceCall = async (advanceCall: any) => {
     const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
 
-    advanceCall.id = null;
+    advanceCall.id = `advance-call-${shootingData.shotingInfo.advanceCalls.length + 1}`;
     advanceCall.shootingId = parseInt(shootingId);
     advanceCall.createdAt = new Date().toISOString();
     advanceCall.updatedAt = new Date().toISOString();
@@ -257,7 +280,7 @@ const ShootingDetail = () => {
 
   const addNewMeal = async (meal: any) => {
     const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-    meal.id = null;
+    meal.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
     meal.shootingId = parseInt(shootingId);
     meal.createdAt = new Date().toISOString();
     meal.updatedAt = new Date().toISOString();
@@ -281,19 +304,91 @@ const ShootingDetail = () => {
     }));
   };
 
-  const AddNewMeal = () => (
-    <EditionModal
-      modalTrigger={'open-add-new-meal-modal' + '-' + shootingId}
-      title='Add New Meal'
-      formInputs={mealInputs}
-      handleEdition={addNewMeal}
-      defaultFormValues={{}}
-      modalId='add-new-meal-modal'
-    />
-  );
+  const handleEditMeal = async (meal: meals) => {
+    initializeShootingReplication();
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        
+        if (shooting) {
+          let shootingCopy = { ...shooting._data };
+          
+          const index = shootingCopy.meals.findIndex((m: meals) => m.id === meal.id);
+          if (index !== -1) {
+            const updatedMeals = [...shootingCopy.meals];
+            
+            // Convertir los tiempos a formato ISO
+            updatedMeals[index] = {
+              ...meal,
+              ready_at: timeToISOString({ hours: meal.ready_at.split(':')[0], minutes: meal.ready_at.split(':')[1] }, shootingCopy.shootDate),
+              end_time: timeToISOString({ hours: meal.end_time.split(':')[0], minutes: meal.end_time.split(':')[1] }, shootingCopy.shootDate)
+            };
+            
+            shootingCopy.meals = updatedMeals;
+            
+            await oneWrapDb.shootings.upsert(shootingCopy);
+            
+            setShootingData((prev: any) => ({
+              ...prev,
+              shotingInfo: {
+                ...prev.shotingInfo,
+                meals: updatedMeals
+              }
+            }));
+            
+            console.log('Meal updated successfully');
+          }
+        }
+      } catch (error) {
+        console.error('Error updating meal:', error);
+      }
+    }
+  }
+  
+  const handleEditAdvanceCall = async (advanceCall: AdvanceCall) => {
+    initializeShootingReplication();
+
+    if (oneWrapDb && shootingId) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        
+        if (shooting) {
+          let shootingCopy = { ...shooting._data };
+          
+          const index = shootingCopy.advanceCalls.findIndex((a: AdvanceCall) => a.id === advanceCall.id);
+          if (index !== -1) {
+            const updatedAdvanceCalls = [...shootingCopy.advanceCalls];
+            
+            // Convertir el tiempo a formato ISO
+            updatedAdvanceCalls[index] = {
+              ...advanceCall,
+              adv_call_time: timeToISOString({ hours: advanceCall.adv_call_time.split(':')[0], minutes: advanceCall.adv_call_time.split(':')[1] }, shootingCopy.shootDate)
+            };
+            
+            shootingCopy.advanceCalls = updatedAdvanceCalls;
+            
+            await oneWrapDb.shootings.upsert(shootingCopy);
+            
+            setShootingData((prev: any) => ({
+              ...prev,
+              shotingInfo: {
+                ...prev.shotingInfo,
+                advanceCalls: updatedAdvanceCalls
+              }
+            }));
+            
+            console.log('Advance Call updated successfully');
+          }
+        }
+      } catch (error) {
+        console.error('Error updating advance call:', error);
+      }
+    }
+  }
 
   const AddNewBanner = () => (
     <EditionModal
+      modalRef={bannerModalRef}
       modalTrigger={'open-add-new-banner-modal' + '-' + shootingId}
       title='Add New Banner'
       formInputs={bannerInputs}
@@ -302,18 +397,30 @@ const ShootingDetail = () => {
       modalId='add-new-banner-modal'
     />
   );
-
+  
   const AddNewAdvanceCallModal = () => (
     <EditionModal
+      modalRef={advanceCallModalRef}
       modalTrigger={'open-add-new-advance-call-modal' + '-' + shootingId}
       title='Add New Advance Call'
       formInputs={advanceCallInputs}
       handleEdition={addNewAdvanceCall}
       defaultFormValues={{}}
-      modalId='add-new-advance-call-modal'
+      modalId={'add-new-advance-call-modal' + '-' + shootingId}
     />
   );
-
+  
+  const AddNewMeal = () => (
+    <EditionModal
+      modalRef={mealModalRef}
+      modalTrigger={'open-add-new-meal-modal' + '-' + shootingId}
+      title='Add New Meal'
+      formInputs={mealInputs}
+      handleEdition={addNewMeal}
+      defaultFormValues={{}}
+      modalId={'open-add-new-meal-modal' + '-' + shootingId}
+    />
+  );
   const checkboxScenesToggle = (scene: Scene) => {
     const shootingScene: ShootingScene = {
       projectId: parseInt(id),
@@ -370,6 +477,7 @@ const ShootingDetail = () => {
       setSelectedScenes={setSelectedScenes}
       clearSelections={clearSelectedScenes}
       multipleSelections={true}
+      modalRef={sceneModalRef}
     />
   );
 
@@ -497,9 +605,12 @@ const ShootingDetail = () => {
 
   const getHourMinutesFomISO = (iso: string) => {
     const date = new Date(iso);
-    const hours = date.getHours();
+    let hours = date.getHours();
     const minutes = date.getMinutes();
-    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // la hora '0' debe ser '12'
+    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
   }
 
   const getShootingData = async () => {
@@ -576,10 +687,7 @@ const ShootingDetail = () => {
   };
 
   const toggleAddMenu = () => {
-    setShootingData((prev: any) => ({
-      ...prev,
-      showAddMenu: !prev.showAddMenu
-    }));
+    setAdditionMenu(!additionMenu);
   };
 
   const addShoBanSc = () => (
@@ -725,10 +833,10 @@ const ShootingDetail = () => {
       <IonHeader>
         <Toolbar name={shootingData.shootingFormattedDate} addShoBanSc={addShoBanSc} back handleBack={handleBack} />
       </IonHeader>
-      {shootingData.showAddMenu && (
+      {additionMenu && (
         <div className='add-menu'>
-          <IonItem id={'open-add-new-scene-modal' + '-' + shootingId}>Add Scene</IonItem>
-          <IonItem id={'open-add-new-banner-modal' + '-' + shootingId}>Add Banner</IonItem>
+          <IonItem onClick={() => openSceneModal()}>Add Scene</IonItem>
+          <IonItem onClick={() => openBannerModal()}>Add Banner</IonItem>
         </div>
       )}
       {
@@ -768,7 +876,12 @@ const ShootingDetail = () => {
               updateShootingTime={updateShootingTime}
             />
             
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenLocations(!openLocations)}>
+            <div 
+              className="ion-flex ion-justify-content-between ion-padding-start" 
+              style={{ border: '1px solid black', 
+              backgroundColor: 'var(--ion-color-tertiary-shade)' }} 
+              onClick={() => setOpenLocations(!openLocations)}
+            >
               <p style={{ fontSize: '18px' }}><b>LOCATIONS</b></p>
               <DropDownButton open={openLocations} />
             </div>
@@ -787,7 +900,12 @@ const ShootingDetail = () => {
               )
             )}
 
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenHospitals(!openHospitals)}>
+            <div 
+              className="ion-flex ion-justify-content-between ion-padding-start" 
+              style={{ border: '1px solid black', 
+              backgroundColor: 'var(--ion-color-tertiary-shade)' }} 
+              onClick={() => setOpenHospitals(!openHospitals)}
+            >
               <p style={{ fontSize: '18px' }}><b>NEAR HOSPITALS</b></p>
               <DropDownButton open={openHospitals} />
             </div>
@@ -806,15 +924,19 @@ const ShootingDetail = () => {
               )
             )}
 
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} >
+            <div 
+              className="ion-flex ion-justify-content-between ion-padding-start" 
+              style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} 
+              onClick={() => setOpenAdvanceCalls(!openadvanceCalls)}
+            >
               <p style={{ fontSize: '18px' }}><b>ADVANCE CALLS</b></p>
-              <div>
+              <div onClick={(e) => e.stopPropagation()}>
                 <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setAdvanceCallsEditMode(!advanceCallsEditMode)}>
                   <VscEdit 
                     className="toolbar-icon"
                     style={advanceCallsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }} />
                 </IonButton> 
-                <AddButton id={'open-add-new-advance-call-modal' + '-' + shootingId} />
+                <AddButton onClick={(e) => openAdvanceCallModal(e)} />
                 <DropDownButton open={openadvanceCalls} />
               </div>
             </div>
@@ -822,22 +944,15 @@ const ShootingDetail = () => {
             openadvanceCalls && shootingData.shotingInfo.advanceCalls && (
               shootingData.shotingInfo.advanceCalls.length > 0 ? (
                 shootingData.shotingInfo.advanceCalls.map((call: any) => (
-                  <div 
-                    key={call.id} 
-                    className="ion-padding-start" 
-                    style={advanceCallsEditMode ? {width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr'} : {width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
-                    <p><b>{call.dep_name_eng && call.dep_name_eng.toUpperCase()  || call.dep_name_esp && call.dep_name_esp.toUpperCase() || 'NO DEPARTMENT'}: </b></p>
-                    <p>{getHourMinutesFomISO(call.adv_call_time)}</p>
-                    {
-                      advanceCallsEditMode &&
-                      <div>
-                        <IonButton fill="clear" slot="end" color="light" className="toolbar-button">
-                          <VscEdit className="toolbar-icon" style={{color: 'var(--ion-color-primary)'}}/>
-                        </IonButton> 
-                        <DeleteButton onClick={() => deleteAdvanceCall(call)} />
-                      </div>
-                    }
-                  </div>
+                  <AdvanceCallInfo 
+                    key={call.id}
+                    call={call}
+                    editMode={advanceCallsEditMode}
+                    getHourMinutesFomISO={getHourMinutesFomISO}
+                    deleteAdvanceCall={deleteAdvanceCall}
+                    editionInputs={advanceCallInputs}
+                    handleEdition={handleEditAdvanceCall}
+                  />
                 ))
               ) : (
                 <div className="ion-padding-start">
@@ -846,53 +961,44 @@ const ShootingDetail = () => {
               )
             )}
 
-            <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }}>
+            <div 
+              className="ion-flex ion-justify-content-between ion-padding-start" 
+              style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }}
+              onClick={() => setOpenMeals(!openMeals)}
+            >
               <p style={{ fontSize: '18px' }}><b>MEALS</b></p>
-              <div>
+              <div onClick={(e) => e.stopPropagation()}>
                 <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setMealsEditMode(!mealsEditMode)}>
                   <VscEdit 
                     className="toolbar-icon"
                     style={mealsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
                   />
                 </IonButton> 
-                <AddButton id={'open-add-new-meal-modal' + '-' + shootingId} />
+                <AddButton onClick={(e) => openMealModal(e)} />
                 <DropDownButton open={openMeals} />
               </div>
             </div>
-            {openMeals && (
+            {
+              openMeals && (
               Object.keys(shootingData.shotingInfo.meals).length > 0 ? (
                 Object.entries(shootingData.shotingInfo.meals).map(([key, meal]) => (
-                  <div key={meal.id} >
-                    <div
-                      className="ion-padding-start" 
-                      style={mealsEditMode ? {width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr'} : {width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr'}}
-                    >
-                      <b 
-                        className='ion-flex ion-align-items-center'
-                        style={{minHeight: '50px'}}
-                      >{meal.meal.toUpperCase()}: </b> 
-                      <span
-                        className='ion-flex ion-align-items-center'
-                      >{getHourMinutesFomISO(meal.ready_at)} / {getHourMinutesFomISO(meal.end_time)} </span>
-                      {
-                        mealsEditMode &&
-                        <div>
-                          <IonButton fill="clear" slot="end" color="light" className="toolbar-button">
-                            <VscEdit className="toolbar-icon" style={{color: 'var(--ion-color-primary)'}}/>
-                          </IonButton> 
-                          <DeleteButton onClick={() => deleteMeal(meal)} />
-                        </div>
-                      }
-                    </div>
-                    
-                  </div>
+                  <MealInfo 
+                    key={meal.id}
+                    meal={meal}
+                    editMode={mealsEditMode}
+                    getHourMinutesFomISO={getHourMinutesFomISO}
+                    deleteMeal={deleteMeal}
+                    editionInputs={mealInputs}
+                    handleEdition={handleEditMeal}
+                  />
                 ))
               ) : (
                 <div className="ion-padding-start">
                   <p>NO MEALS ADDED</p>
                 </div>
               )
-            )}
+              )
+            }
           </IonContent>
         )
       }
