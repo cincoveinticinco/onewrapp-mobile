@@ -6,7 +6,7 @@ import './AddButton.scss';
 interface AddButtonProps {
   id?: string
   className?: string
-  onClick?: () => void
+  onClick?: (e: any) => void
   slot?: 'start' | 'end' | 'icon-only' | undefined
 }
 
