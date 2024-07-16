@@ -201,31 +201,21 @@ const shootingSchema = {
       additionalProperties: true,
     },
     advanceCalls: {
-      type: 'object',
-      properties: {
-        error: { type: 'boolean' },
-        advanceCalls: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'number' },
-              shooting_id: { type: 'number' },
-              department_id: { type: 'number' },
-              adv_pick_up: { type: ['string', 'null'] },
-              adv_call_time: { type: ['string', 'null'] },
-              adv_wrap: { type: ['string', 'null'] },
-              description: { type: ['string', 'null'] },
-              created_at: { type: ['string', 'null'] },
-              updated_at: { type: ['string', 'null'] },
-              dep_name_eng: { type: ['string', 'null'] },
-              dep_name_esp: { type: ['string', 'null'] },
-            },
-          },
-        },
-        departments: {
-          type: 'array',
-          items: { type: ['string', 'null'] },
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: ['number', 'null'] },
+          shooting_id: { type: 'number' },
+          department_id: { type: 'number' },
+          adv_pick_up: { type: ['string', 'null'] },
+          adv_call_time: { type: ['string', 'null'] },
+          adv_wrap: { type: ['string', 'null'] },
+          description: { type: ['string', 'null'] },
+          created_at: { type: ['string', 'null'] },
+          updated_at: { type: ['string', 'null'] },
+          dep_name_eng: { type: ['string', 'null'] },
+          dep_name_esp: { type: ['string', 'null'] },
         },
       },
     },
