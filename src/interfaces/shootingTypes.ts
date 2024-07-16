@@ -54,7 +54,7 @@ export interface AdvanceCalls {
   departments: string[];
 }
 
-interface AdvanceCall {
+export interface AdvanceCall {
   id: number;
   shooting_id: number;
   department_id: number;
