@@ -129,4 +129,10 @@ export default class HttpReplicator {
       return true;
     });
   }
+
+  public resyncReplication() {
+    this.replicationStates.forEach((replicationState) => {
+      replicationState.run();
+    });
+  }
 }
