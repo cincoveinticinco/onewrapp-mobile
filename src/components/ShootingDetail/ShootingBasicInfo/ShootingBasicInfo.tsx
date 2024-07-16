@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IonCol, IonGrid, IonRow, IonInput, IonButton, IonIcon } from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
 import { saveOutline } from 'ionicons/icons';
+import { transform } from 'lodash';
 
 interface ShootingInfoLabelsProps {
   info: string;
@@ -96,7 +97,12 @@ const handleSave = () => {
               style={{ display: 'inline-block', width: '80%' }}
               autoFocus
             />
-            <IonButton fill='clear' onClick={handleSave} size="small">
+            <IonButton 
+              fill='clear' 
+              onClick={handleSave} 
+              size="small"
+              style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-60%)' }}
+            >
               <IonIcon icon={saveOutline} />
             </IonButton>
           </div>
