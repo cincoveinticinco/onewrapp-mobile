@@ -219,7 +219,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       
       if (isOnline) {
         shootingsReplicator.startReplicationPull();
-        pushShootingsReplication();
+        shootingsReplicator.startReplicationPush();
       }
   
       // Wait for the initial replication to complete
