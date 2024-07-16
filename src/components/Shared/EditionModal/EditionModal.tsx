@@ -9,6 +9,7 @@ import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
 
 interface EditionModalProps {
+  modalRef?: React.RefObject<HTMLIonModalElement>;
   modalTrigger: string;
   modalId?: string;
   title: string;
@@ -17,18 +18,20 @@ interface EditionModalProps {
   defaultFormValues: any;
   validate?: (value: string, keyValue?: string) => (boolean | string),
   openModal?: (modalReference: any) => void;
+  onDidPresent?: () => void;
 }
 
 const EditionModal: React.FC<EditionModalProps> = ({
+  modalRef = useRef<HTMLIonModalElement>(null),
   modalTrigger,
   title,
   formInputs,
   handleEdition,
   defaultFormValues,
   validate,
-  modalId
-}) => {
-  const modalRef = useRef<HTMLIonModalElement>(null);
+  modalId,
+  onDidPresent = () => { },
+})  => {
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
   const [showError, setShowError] = useState({});
 
@@ -113,8 +116,9 @@ const EditionModal: React.FC<EditionModalProps> = ({
   return (
     <IonModal
       ref={modalRef}
-      trigger={modalTrigger}
-      id="add-scenes-options-modal"
+      className="add-scenes-options-modal"
+      id={modalId}
+      onDidPresent={() => onDidPresent()}
     >
       <IonHeader>
         <ModalToolbar
