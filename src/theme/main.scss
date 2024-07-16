@@ -6,6 +6,10 @@ ion-content {
   }
 }
 
+ion-input {
+  text-transform: uppercase;
+}
+
 main {
   &::-webkit-scrollbar {
     display: none;
