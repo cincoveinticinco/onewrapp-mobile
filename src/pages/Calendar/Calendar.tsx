@@ -46,7 +46,7 @@ const Calendar: React.FC = () => {
     };
   
     initializeReplication();
-  }, [oneWrapDb]);
+  }, [projectId]);
 
   useEffect(() => {
     if (oneWrapDb && projectId) {
