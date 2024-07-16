@@ -231,7 +231,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Location deleted successfully');
       }, 500);
