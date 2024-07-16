@@ -205,7 +205,7 @@ const shootingSchema = {
       items: {
         type: 'object',
         properties: {
-          id: { type: ['number', 'null'] },
+          id: { type: ['string', 'null', 'number'] },
           shooting_id: { type: 'number' },
           department_id: { type: 'number' },
           adv_pick_up: { type: ['string', 'null'] },
