@@ -27,6 +27,7 @@ interface InputModalProps {
   editMode?: boolean;
   sceneCategory?: string;
   existentScenes?: any[];
+  modalRef: React.RefObject<HTMLIonModalElement>;
 }
 
 const InputModalScene: React.FC<InputModalProps> = ({
@@ -35,11 +36,11 @@ const InputModalScene: React.FC<InputModalProps> = ({
   modalTrigger,
   handleCheckboxToggle,
   clearSelections,
+  modalRef
 }) => {
   const [selectedOption, setSelectedOption] = useState<Scene | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
 
-  const modalRef = useRef<HTMLIonModalElement>(null);
   const isMobile = useIsMobile();
 
   const closeModal = () => {
