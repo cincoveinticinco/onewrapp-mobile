@@ -5,13 +5,13 @@ import {
   IonContent,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
-import DatabaseContext from '../../context/database';
+import DatabaseContext from '../../hooks/Shared/database';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import useScrollToTop from '../../hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
@@ -19,7 +19,7 @@ import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
 import './Elements.scss';
 import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const Elements: React.FC = () => {
   const { offlineScenes } = useContext(DatabaseContext);

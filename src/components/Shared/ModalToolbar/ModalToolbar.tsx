@@ -3,9 +3,9 @@ import {
 } from '@ionic/react';
 import React from 'react';
 import { chevronBack } from 'ionicons/icons';
-import useIsMobile from '../../../hooks/useIsMobile';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './ModalToolbar.scss';
-import useHandleBack from '../../../hooks/useHandleBack';
+import useHandleBack from '../../../hooks/Shared/useHandleBack';
 
 interface ModalToolbarProps {
   handleReset?: () => void

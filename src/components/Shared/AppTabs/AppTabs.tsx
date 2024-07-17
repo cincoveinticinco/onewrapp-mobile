@@ -37,14 +37,14 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './AppTabs.scss';
-import useIsMobile from '../../../hooks/useIsMobile';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import EditScene from '../../../pages/EditScene/EditScene';
 import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 import { useAuth } from '../../../context/auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
-import DatabaseContext from '../../../context/database';
+import DatabaseContext from '../../../hooks/Shared/database';
 
 setupIonicReact();
 

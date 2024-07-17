@@ -12,13 +12,13 @@ import {
 import { calendarOutline, listOutline } from 'ionicons/icons';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
-import DatabaseContext, { DatabaseContextProps } from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import { Shooting } from '../../interfaces/shootingTypes';
 import weekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({

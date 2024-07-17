@@ -10,7 +10,7 @@ import InputModal from '../../../Layouts/InputModal/InputModal';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import applyFilters from '../../../utils/applyFilters';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../context/database';
+import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddExtraInputProps {
   categoryName: string;

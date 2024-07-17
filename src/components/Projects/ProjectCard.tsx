@@ -5,7 +5,7 @@ import {
 import './ProjectCard.css';
 import { Project } from '../../RXdatabase/schemas/projects';
 import { ProjectStatusEnum } from '../../Ennums/ennums';
-import DatabaseContext from '../../context/database';
+import DatabaseContext from '../../hooks/Shared/database';
 
 interface ProjectCardProps {
   project: Project;

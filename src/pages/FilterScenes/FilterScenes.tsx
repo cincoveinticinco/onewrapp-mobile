@@ -5,10 +5,10 @@ import React, {
   useCallback, useContext, useEffect, useMemo,
 } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
-import useHideTabs from '../../hooks/useHideTabs';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
@@ -23,9 +23,9 @@ import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
-import DatabaseContext from '../../context/database';
-import useHandleBack from '../../hooks/useHandleBack';
-import useLoader from '../../hooks/useLoader';
+import DatabaseContext from '../../hooks/Shared/database';
+import useHandleBack from '../../hooks/Shared/useHandleBack';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);

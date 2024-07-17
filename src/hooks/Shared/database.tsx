@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
-import AppDataBase from '../RXdatabase/database';
-import ScenesSchema from '../RXdatabase/schemas/scenes';
-import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
-import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
-import HttpReplicator from '../RXdatabase/replicator';
-import useNavigatorOnLine from '../hooks/useNavigatorOnline';
-import UnitsSchema from '../RXdatabase/schemas/units';
-import ShootingsSchema from '../RXdatabase/schemas/shootings';
+import AppDataBase from '../../RXdatabase/database';
+import ScenesSchema from '../../RXdatabase/schemas/scenes';
+import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects';
+import SceneParagraphsSchema from '../../RXdatabase/schemas/paragraphs';
+import HttpReplicator from '../../RXdatabase/replicator';
+import useNavigatorOnLine from './useNavigatorOnline';
+import UnitsSchema from '../../RXdatabase/schemas/units';
+import ShootingsSchema from '../../RXdatabase/schemas/shootings';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -219,7 +219,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       
       if (isOnline) {
         shootingsReplicator.startReplicationPull();
-        shootingsReplicator.startReplicationPush();
+        setTimeout(() => {
+          shootingsReplicator.startReplicationPush();
+        }, 500);
       }
   
       // Wait for the initial replication to complete

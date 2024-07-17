@@ -2,7 +2,7 @@ import {
   IonContent, IonHeader, IonModal,
 } from '@ionic/react';
 import React, { useEffect, useRef } from 'react';
-import useIsMobile from '../../../hooks/useIsMobile';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './InputSortModal.scss';

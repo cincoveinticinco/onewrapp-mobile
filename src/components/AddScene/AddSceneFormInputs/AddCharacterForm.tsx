@@ -14,7 +14,7 @@ import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
-import DatabaseContext from '../../../context/database';
+import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddCategoryFormProps {
   handleSceneChange: (value: any, field: string) => void;

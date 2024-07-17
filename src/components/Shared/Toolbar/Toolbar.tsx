@@ -13,8 +13,8 @@ import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import { generate } from '@pdfme/generator';
 import template from '../../../templates/MinimalTemplate';
-import useIsMobile from '../../../hooks/useIsMobile';
-import DatabaseContext from '../../../context/database';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
+import DatabaseContext from '../../../hooks/Shared/database';
 import { add } from 'lodash';
 
 interface ToolbarButton {

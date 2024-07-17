@@ -9,7 +9,7 @@ import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
 import './AddSceneForm.scss';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -17,7 +17,7 @@ import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton'
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
-import DatabaseContext from '../../context/database';
+import DatabaseContext from '../../hooks/Shared/database';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
 } from '../../Ennums/ennums';

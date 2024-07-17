@@ -13,17 +13,17 @@ import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
-import useIsMobile from '../../hooks/useIsMobile';
-import useSuccessToast from '../../hooks/useSuccessToast';
-import DatabaseContext, { DatabaseContextProps } from '../../context/database';
-import useTextSelection from '../../hooks/useSelectedText';
-import useFormTypeLogic from '../../hooks/useFormTypeLogic';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import useTextSelection from '../../hooks/Shared/useSelectedText';
+import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../utils/removeAccents';
 import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import SceneParagraph from './SceneParagraph/SceneParagraph';
 import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 import InputModal from '../../Layouts/InputModal/InputModal';
 
 interface ScriptPageProps {

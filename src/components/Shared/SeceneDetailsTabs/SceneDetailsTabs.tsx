@@ -3,7 +3,7 @@ import {
 } from '@ionic/react';
 
 import { documentTextOutline, serverOutline } from 'ionicons/icons';
-import useIsMobile from '../../../hooks/useIsMobile';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './SceneDetailsTabs.scss';
 
 interface SceneDetailsTabsProps {

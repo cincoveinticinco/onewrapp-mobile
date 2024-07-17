@@ -15,12 +15,12 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { checkmarkCircle } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../context/database';
-import useErrorToast from '../../hooks/useErrorToast';
+import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import useWarningToast from '../../hooks/useWarningToast';
+import useWarningToast from '../../hooks/Shared/useWarningToast';
 
 interface Element {
   elementName: string;

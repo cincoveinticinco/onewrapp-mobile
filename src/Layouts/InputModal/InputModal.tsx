@@ -3,7 +3,7 @@ import {
 } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import './InputModal.scss';

@@ -13,7 +13,7 @@ import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import applyFilters from '../../../utils/applyFilters';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../context/database';
+import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddCharacterInputProps {
   categoryName: string | null;

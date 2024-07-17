@@ -14,14 +14,13 @@ import DropDownCast from '../../components/Cast/DropDownCast';
 // Custom contexts and hooks imports
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
-import useHandleBack from '../../hooks/useHandleBack';
-import useScrollToTop from '../../hooks/useScrollToTop';
-import useProcessedCast from '../../hooks/useProcessedCast';
-
+import useHandleBack from '../../hooks/Shared/useHandleBack';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
+import useProcessedCast from '../../hooks/Cast/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const Cast: React.FC = () => {
   // Context

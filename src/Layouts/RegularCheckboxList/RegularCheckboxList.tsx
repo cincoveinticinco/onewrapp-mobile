@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonCheckbox, IonList } from '@ionic/react';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './RegularCheckboxList.scss';

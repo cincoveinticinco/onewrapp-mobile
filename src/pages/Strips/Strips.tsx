@@ -12,15 +12,15 @@ import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenesTypes';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import useScrollToTop from '../../hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/useHideTabs';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const Strips: React.FC = () => {
   const {

@@ -6,7 +6,7 @@ import {
 import { chevronForward, search } from 'ionicons/icons';
 import ScenesContext from '../../context/ScenesContext';
 import './FilterScenesModalSelect.scss';
-import useIsMobile from '../../hooks/useIsMobile';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
 import ModalSearchBar from '../Shared/ModalSearchBar/ModalSearchBar';
@@ -15,7 +15,7 @@ import capitalizeString from '../../utils/capitalizeString';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
-import useLoader from '../../hooks/useLoader';
+import useLoader from '../../hooks/Shared/useLoader';
 import RegularList from '../../Layouts/RegularCheckboxList/RegularCheckboxList';
 
 interface FilterScenesModalSelectProps {

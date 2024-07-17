@@ -16,7 +16,7 @@ import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
   ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
-import DatabaseContext, { DatabaseContextProps } from '../../context/database';
+import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { LuGripHorizontal } from 'react-icons/lu';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';

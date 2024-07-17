@@ -6,8 +6,8 @@ import { Redirect } from 'react-router';
 import { useAuth } from '../../context/auth';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import DatabaseContext from '../../context/database';
-import useLoader from '../../hooks/useLoader';
+import DatabaseContext from '../../hooks/Shared/database';
+import useLoader from '../../hooks/Shared/useLoader';
 import { set } from 'lodash';
 
 const Projects: React.FC = () => {

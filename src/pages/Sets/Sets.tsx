@@ -7,7 +7,7 @@ import {
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import useScrollToTop from '../../hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
 
@@ -15,8 +15,8 @@ import SetCard from '../../components/Sets/LocationSetCard';
 import LocationSetCard from '../../components/Sets/LocationSetCard';
 import './Sets.scss';
 import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/useLoader';
-import useProcessedSetsAndLocations from '../../hooks/usePorcessedSetsAndLocations';
+import useLoader from '../../hooks/Shared/useLoader';
+import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 
 const Sets: React.FC = () => {
