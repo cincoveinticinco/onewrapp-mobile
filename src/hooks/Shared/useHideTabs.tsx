@@ -2,7 +2,7 @@ import { useState, useCallback, useContext } from 'react';
 import DatabaseContext from './database';
 
 const useHideTabs = () => {
-  const {viewTabs, setViewTabs} = useContext(DatabaseContext);
+  const { viewTabs, setViewTabs } = useContext(DatabaseContext);
 
   const hideTabs = useCallback(() => {
     setViewTabs(false);
@@ -14,7 +14,9 @@ const useHideTabs = () => {
     console.log('Tabs shown', viewTabs);
   }, []);
 
-  return { hideTabs, showTabs, viewTabs, setViewTabs };
+  return {
+    hideTabs, showTabs, viewTabs, setViewTabs,
+  };
 };
 
 export default useHideTabs;

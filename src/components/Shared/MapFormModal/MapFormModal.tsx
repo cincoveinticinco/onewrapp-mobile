@@ -1,13 +1,16 @@
 import { GoogleMap } from '@capacitor/google-maps';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import {
+  useEffect, useRef, useState, useCallback,
+} from 'react';
 import {
   IonButton, IonButtons, IonContent, IonHeader, IonModal, IonTitle, IonToolbar,
-  IonSpinner, IonInput, IonList, IonItem, IonGrid, IonRow, IonCol
+  IonSpinner, IonInput, IonList, IonItem, IonGrid, IonRow, IonCol,
 } from '@ionic/react';
 import environment from '../../../../environment';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import './MapFormModal.scss'; // Import the CSS file for additional styles if needed
 import { LocationInfo } from '../../../interfaces/shootingTypes';
+import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface MapFormModalProps {
   isOpen: boolean;
@@ -16,7 +19,9 @@ interface MapFormModalProps {
   hospital?: boolean;
 }
 
-const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmit, hospital }) => {
+const MapFormModal: React.FC<MapFormModalProps> = ({
+  isOpen, closeModal, onSubmit, hospital,
+}) => {
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -74,8 +79,8 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
 
       const newMarker = await map.addMarker({
         coordinate: {
-          lat: lat,
-          lng: lng,
+          lat,
+          lng,
         },
         draggable: true,
       });
@@ -94,7 +99,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
 
   const updateAddress = async (lat: number, lng: number) => {
     const geocoder = new google.maps.Geocoder();
-    const latlng = { lat: lat, lng: lng };
+    const latlng = { lat, lng };
 
     geocoder.geocode({ location: latlng }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK && results) {
@@ -114,7 +119,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
           setLocationPostalCode('');
         }
       } else {
-        console.error('Geocoder failed due to: ' + status);
+        console.error(`Geocoder failed due to: ${status}`);
         setCurrentAddress('Error al obtener la dirección');
         setSearchTerm('');
         setLocationAddress('');
@@ -126,6 +131,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
   const handleCloseModal = () => {
     setMapInitialized(false);
     closeModal();
+    setCurrentAddress('');
+    setSuggestions([]);
+    setSearchTerm('');
+    setMarker(null);
+    setMap(null);
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -137,7 +147,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
   };
 
   const handleInputChange = (event: any) => {
-    const value = event.target.value;
+    const { value } = event.target;
     setSearchTerm(value);
     if (value) {
       debouncedGeocodeAddress(value);
@@ -148,7 +158,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
 
   const geocodeAddress = async (address: string) => {
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: address }, (results, status) => {
+    geocoder.geocode({ address }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
         setSuggestions(results || []);
       } else {
@@ -161,7 +171,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
 
   const handleSuggestionClick = async (suggestion: any) => {
     if (map) {
-      const location = suggestion.geometry.location;
+      const { location } = suggestion.geometry;
       await map.setCamera({
         coordinate: {
           lat: location.lat(),
@@ -177,7 +187,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
   };
 
   const handleSubmit = async () => {
-    if(lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
+    if (lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
       const formData: Partial<LocationInfo> = {
         location_type_id: hospital ? 3 : locationTypeId,
         location_name: locationName,
@@ -206,41 +216,65 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
   const selectOptions = [
     { value: 1, label: 'Location' },
     { value: 2, label: 'Basecamp' },
-    { value: 4, label: 'Pickup' }
+    { value: 4, label: 'Pickup' },
   ];
 
-
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color='tertiary'>
+    <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
       <IonHeader>
-        <IonToolbar color='tertiary'>
+        <IonToolbar color="tertiary">
           <IonTitle>Map</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleCloseModal}>Close</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent color='tertiary'>
+      <IonContent color="tertiary">
         {!map && <IonSpinner />}
-        <capacitor-google-map ref={mapRef} style={{
-          display: 'inline-block',
-          width: '100%',
-          height: '400px'
-        }}></capacitor-google-map>
+        <capacitor-google-map
+          ref={mapRef}
+          style={{
+            display: 'inline-block',
+            width: '100%',
+            height: '400px',
+          }}
+        />
         <IonGrid>
           <IonRow>
-            <IonCol size="12">
+            <IonCol size="6">
               <IonInput
-                label='Address'
-                value={searchTerm}
-                onIonInput={handleInputChange}
-                labelPlacement='floating'
+                value={locationName}
+                onIonInput={(e) => setLocationName((e.target as any).value)}
+                className="input-item"
+                labelPlacement="floating"
+                label="Location name"
+              />
+            </IonCol>
+            <IonCol size="6" style={hospital ? { display: 'none' } : {}}>
+              <CustomSelect
+                input={{
+                  label: 'LOCATION TYPE',
+                  fieldName: 'location_type_id',
+                  selectOptions,
+                  placeholder: 'Tipo de ubicación',
+                }}
+                setNewOptionValue={(fieldName: string, value: string) => setLocationTypeId(parseInt(value))}
               />
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol size="12">
-              <IonList color='tertiary' style={{ background: 'var(--ion-color-tertiary)' }}>
+              <IonInput
+                label="Address"
+                value={searchTerm}
+                onIonInput={handleInputChange}
+                labelPlacement="floating"
+              />
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol size="12">
+              <IonList color="tertiary" style={{ background: 'var(--ion-color-tertiary)' }}>
                 {suggestions.map((suggestion, index) => (
                   <IonItem key={index} onClick={() => handleSuggestionClick(suggestion)}>
                     {suggestion.formatted_address}
@@ -250,30 +284,8 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
             </IonCol>
           </IonRow>
           <IonRow>
-            <IonCol size="6">
-              <IonInput
-                value={locationName}
-                onIonInput={(e) => setLocationName((e.target as any).value)}
-                className='input-item'
-                labelPlacement='floating'
-                label='Location name'
-              />
-            </IonCol>
-            <IonCol size="6" style={hospital ? {display:'none'} : {} }>
-              <CustomSelect
-                input={{
-                  label: 'LOCATION TYPE',
-                  fieldName: 'location_type_id',
-                  selectOptions: selectOptions,
-                  placeholder: 'Tipo de ubicación',
-                }}
-                setNewOptionValue={(fieldName: string, value: string) => setLocationTypeId(parseInt(value))}
-              />
-            </IonCol>
-          </IonRow>
-          <IonRow>
             <IonCol size="12">
-              <IonButton expand="full" onClick={handleSubmit}>Submit</IonButton>
+              <OutlinePrimaryButton onClick={handleSubmit} buttonName="Save" style={{ marginTop: '150px' }} />
             </IonCol>
           </IonRow>
         </IonGrid>

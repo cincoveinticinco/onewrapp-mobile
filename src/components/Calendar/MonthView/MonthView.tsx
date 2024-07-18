@@ -1,7 +1,9 @@
-import { addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek } from "date-fns";
-import { Shooting } from "../../../interfaces/shootingTypes";
-import { IonCol, IonGrid, IonRow } from "@ionic/react";
-import ShootingCard from "../ShootingCard/ShootingCard";
+import {
+  addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek,
+} from 'date-fns';
+import { IonCol, IonGrid, IonRow } from '@ionic/react';
+import { Shooting } from '../../../interfaces/shootingTypes';
+import ShootingCard from '../ShootingCard/ShootingCard';
 
 const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ currentDate, shootings }) => {
   const monthStart = startOfMonth(currentDate);
@@ -9,29 +11,25 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
   const startDate = startOfWeek(monthStart);
   const endDate = addDays(endOfWeek(monthEnd), 35);
 
-  const dayHasShooting = (day: Date) => {
-    return shootings.some((shooting) => {
-      const shootDate = new Date(shooting.shootDate as string);
-      // Sumar 1 día a la fecha del shooting por un bug de renderizado
-      const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
-      return (
-        day.getFullYear() === adjustedShootDate.getFullYear() &&
-        day.getMonth() === adjustedShootDate.getMonth() &&
-        day.getDate() === adjustedShootDate.getDate()
-      );
-    });
-  };
-  const getSHootingsByDay = (day: Date) => {
-    return shootings.filter((shooting) => {
-      const shootDate = new Date(shooting.shootDate as string);
-      const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
-      return (
-        day.getFullYear() === adjustedShootDate.getFullYear() &&
-        day.getMonth() === adjustedShootDate.getMonth() &&
-        day.getDate() === adjustedShootDate.getDate()
-      );
-    });
-  };
+  const dayHasShooting = (day: Date) => shootings.some((shooting) => {
+    const shootDate = new Date(shooting.shootDate as string);
+    // Sumar 1 día a la fecha del shooting por un bug de renderizado
+    const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
+    return (
+      day.getFullYear() === adjustedShootDate.getFullYear()
+        && day.getMonth() === adjustedShootDate.getMonth()
+        && day.getDate() === adjustedShootDate.getDate()
+    );
+  });
+  const getSHootingsByDay = (day: Date) => shootings.filter((shooting) => {
+    const shootDate = new Date(shooting.shootDate as string);
+    const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
+    return (
+      day.getFullYear() === adjustedShootDate.getFullYear()
+        && day.getMonth() === adjustedShootDate.getMonth()
+        && day.getDate() === adjustedShootDate.getDate()
+    );
+  });
 
   const renderDays = () => {
     const days = [];
@@ -41,17 +39,17 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
       const isCurrentMonth = isSameMonth(currentDay, monthStart);
       const isCurrentDay = isCurrentMonth && currentDay.toDateString() === new Date().toDateString();
       let dayClass = isCurrentMonth ? 'calendar-day' : 'other-month';
-      dayClass = dayClass + (isCurrentDay ? ' current-day' : '');
+      dayClass += (isCurrentDay ? ' current-day' : '');
 
       days.push(
         <IonCol key={currentDay.toISOString()} className={dayClass}>
-          <span className='day-number'>{format(currentDay, 'd')}</span>
+          <span className="day-number">{format(currentDay, 'd')}</span>
           {
             dayHasShooting(currentDay) && getSHootingsByDay(currentDay).map((shooting) => (
-              <ShootingCard key={shooting.id} shooting={shooting} className='month-shooting' />
+              <ShootingCard key={shooting.id} shooting={shooting} className="month-shooting" />
             ))
           }
-        </IonCol>
+        </IonCol>,
       );
 
       currentDay = addDays(currentDay, 1);

@@ -14,59 +14,70 @@ interface MealInfoProps {
   handleEdition: any;
 }
 
-const MealInfo: React.FC<MealInfoProps> = ({ meal, editMode, getHourMinutesFomISO, deleteMeal, editionInputs, handleEdition }) => {
+const MealInfo: React.FC<MealInfoProps> = ({
+  meal, editMode, getHourMinutesFomISO, deleteMeal, editionInputs, handleEdition,
+}) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
 
-  const formatDefaultValues = (meal: meals) => {
-    return {
-      ...meal,
-      ready_at: getHourMinutesFomISO(meal.ready_at),
-      end_time: getHourMinutesFomISO(meal.end_time)
-    }
-  } 
+  const formatDefaultValues = (meal: meals) => ({
+    ...meal,
+    ready_at: getHourMinutesFomISO(meal.ready_at),
+    end_time: getHourMinutesFomISO(meal.end_time),
+  });
 
   const EditModal = () => (
     <EditionModal
       modalRef={editionModalRef}
-      modalTrigger={'open-edit-meal-modal' + '-' + meal.id}
-      title='Edit Meal'
+      modalTrigger={`${'open-edit-meal-modal' + '-'}${meal.id}`}
+      title="Edit Meal"
       formInputs={editionInputs}
       handleEdition={handleEdition}
-      defaultFormValues={{...formatDefaultValues(meal)}}
-      modalId={'edit-meal-modal' + '-' + meal.id}
+      defaultFormValues={{ ...formatDefaultValues(meal) }}
+      modalId={`${'edit-meal-modal' + '-'}${meal.id}`}
     />
-  )
+  );
 
   const openModal = () => {
     if (editionModalRef.current) {
       editionModalRef.current.present();
     }
-  }
+  };
 
   return (
     <>
       <div
-        className="ion-padding-start" 
-        style={editMode ? {width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr'} : {width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr'}}
+        className="ion-padding-start"
+        style={editMode ? { width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' } : { width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}
       >
-        <b 
-          className='ion-flex ion-align-items-center'
-          style={{minHeight: '50px'}}
-        >{meal.meal.toUpperCase()}: </b> 
+        <b
+          className="ion-flex ion-align-items-center"
+          style={{ minHeight: '50px' }}
+        >
+          {meal.meal.toUpperCase()}
+          :
+        </b>
         <span
-          className='ion-flex ion-align-items-center'
-        >FROM: {getHourMinutesFomISO(meal.ready_at)} TO: {getHourMinutesFomISO(meal.end_time)} </span>
+          className="ion-flex ion-align-items-center"
+        >
+          FROM:
+          {getHourMinutesFomISO(meal.ready_at)}
+          {' '}
+          TO:
+          {getHourMinutesFomISO(meal.end_time)}
+        </span>
         {
-          editMode &&
+          editMode
+          && (
           <div>
             <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => openModal()}>
-              <VscEdit 
-                className="toolbar-icon" 
-                style={{color: 'var(--ion-color-primary)'}}
+              <VscEdit
+                className="toolbar-icon"
+                style={{ color: 'var(--ion-color-primary)' }}
               />
-            </IonButton> 
+            </IonButton>
             <DeleteButton onClick={() => deleteMeal(meal)} />
           </div>
+          )
         }
       </div>
       <EditModal />

@@ -19,12 +19,11 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useLoader from '../../hooks/Shared/useLoader';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, initializeSceneReplication, projectId, scenesAreLoading, setScenesAreLoading
+    offlineScenes, initializeSceneReplication, projectId, scenesAreLoading, setScenesAreLoading, initializeParagraphReplication
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -41,13 +40,14 @@ const Strips: React.FC = () => {
       try {
         setScenesAreLoading(true);
         await initializeSceneReplication();
+        await initializeParagraphReplication();
       } catch (error) {
         console.error('Error initializing scene replication:', error);
       } finally {
         setInitialReplicationFinished(true);
       }
     };
-  
+
     initializeReplication();
   }, [projectId]);
 

@@ -13,7 +13,7 @@ interface ScenesCheckboxListProps {
   isSceneChecked: (scene: Scene) => boolean;
   multipleSelections: boolean;
   searchText: string;
-  uncheckedFilteredScenes:  Scene[];
+  uncheckedFilteredScenes: Scene[];
   checkedSelectedScenes: Scene[];
 }
 
@@ -27,7 +27,7 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
   checkedSelectedScenes,
 }) => {
   const isMobile = useIsMobile();
-  
+
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
@@ -43,7 +43,6 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
 
     return sceneHeader.toUpperCase();
   }
-
 
   const getListStyles = () => {
     if (uncheckedFilteredScenes.length === 0 && listOfScenes.length > 10) {

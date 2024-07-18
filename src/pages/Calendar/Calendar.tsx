@@ -24,7 +24,7 @@ const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
     currentDate: new Date(),
     viewMode: 'month' as 'month' | 'week',
-    shootings: [] as Shooting[]
+    shootings: [] as Shooting[],
   });
 
   const { oneWrapDb, projectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -44,7 +44,7 @@ const Calendar: React.FC = () => {
         setIsLoading(false);
       }
     };
-  
+
     initializeReplication();
   }, [projectId]);
 
@@ -60,17 +60,17 @@ const Calendar: React.FC = () => {
         .$.subscribe({
           next: (shootings) => {
             const shootingsData = shootings.map((shooting: any) => shooting._data);
-            setCalendarState(prevState => ({
+            setCalendarState((prevState) => ({
               ...prevState,
               shootings: shootingsData as Shooting[],
               currentDate: shootingsData.length > 0
                 ? startOfDay(new Date(shootingsData[0].shootDate as string))
-                : prevState.currentDate
+                : prevState.currentDate,
             }));
           },
           error: (error) => {
             console.error('Error in shootings subscription:', error);
-          }
+          },
         });
 
       return () => subscription.unsubscribe();
@@ -90,51 +90,50 @@ const Calendar: React.FC = () => {
 
       const shootingsData = shootings.map((shooting: any) => shooting._data);
 
-      setCalendarState(prevState => ({
+      setCalendarState((prevState) => ({
         ...prevState,
         shootings: shootingsData as Shooting[],
         currentDate: shootingsData.length > 0
           ? startOfDay(new Date(shootingsData[0].shootDate as string))
-          : prevState.currentDate
+          : prevState.currentDate,
       }));
     } catch (error) {
       console.error('Error fetching shootings:', error);
     }
   };
 
-
   const prevMonth = () => {
-    setCalendarState(prevState => ({
+    setCalendarState((prevState) => ({
       ...prevState,
-      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() - 1, 1)
+      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() - 1, 1),
     }));
   };
 
   const nextMonth = () => {
-    setCalendarState(prevState => ({
+    setCalendarState((prevState) => ({
       ...prevState,
-      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() + 1, 1)
+      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() + 1, 1),
     }));
   };
 
   const handleDateChange = (newDate: Date) => {
-    setCalendarState(prevState => ({
+    setCalendarState((prevState) => ({
       ...prevState,
-      currentDate: newDate
+      currentDate: newDate,
     }));
   };
 
   const prevWeek = () => {
-    setCalendarState(prevState => ({
+    setCalendarState((prevState) => ({
       ...prevState,
-      currentDate: startOfWeek(addDays(prevState.currentDate, -7), { weekStartsOn: 1 })
+      currentDate: startOfWeek(addDays(prevState.currentDate, -7), { weekStartsOn: 1 }),
     }));
   };
-  
+
   const nextWeek = () => {
-    setCalendarState(prevState => ({
+    setCalendarState((prevState) => ({
       ...prevState,
-      currentDate: startOfWeek(addDays(prevState.currentDate, 7), { weekStartsOn: 1 })
+      currentDate: startOfWeek(addDays(prevState.currentDate, 7), { weekStartsOn: 1 }),
     }));
   };
 
@@ -142,11 +141,11 @@ const Calendar: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="dark">
-          <IonSegment 
-            value={calendarState.viewMode} 
-            onIonChange={(e) => setCalendarState(prevState => ({
+          <IonSegment
+            value={calendarState.viewMode}
+            onIonChange={(e) => setCalendarState((prevState) => ({
               ...prevState,
-              viewMode: e.detail.value as 'month' | 'week'
+              viewMode: e.detail.value as 'month' | 'week',
             }))}
           >
             <IonSegmentButton value="month">
@@ -161,27 +160,28 @@ const Calendar: React.FC = () => {
         </IonToolbar>
         {
           calendarState.viewMode === 'month'
-            ? <MonthViewToolbar
+            ? (
+              <MonthViewToolbar
                 currentDate={calendarState.currentDate}
                 onPrev={prevMonth}
                 onNext={nextMonth}
                 onDateChange={handleDateChange}
               />
+            )
             : weekViewToolbar(calendarState.currentDate, prevWeek, nextWeek)
         }
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-      {
-        isLoading ? 
-        useLoader() :
-        calendarState.viewMode === 'month' ? 
-          <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} /> : 
-          <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings}/>
+        {
+        isLoading
+          ? useLoader()
+          : calendarState.viewMode === 'month'
+            ? <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
+            : <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
       }
       </IonContent>
     </IonPage>
   );
 };
-
 
 export default Calendar;

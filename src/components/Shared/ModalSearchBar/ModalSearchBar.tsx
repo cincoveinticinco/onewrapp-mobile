@@ -6,7 +6,7 @@ const ModalSearchBar = ({
   searchText,
   setSearchText,
   showSearchBar,
-  placeholder = "SEARCH",
+  placeholder = 'SEARCH',
 }: {
   searchText: string,
   setSearchText: (searchText: string) => void,
@@ -15,7 +15,7 @@ const ModalSearchBar = ({
 }) => (
   <>
     {showSearchBar && (
-      <div className='search-bar-toolbar'>
+      <div className="search-bar-toolbar">
         <IonSearchbar
           className="ion-margin-top search-bar"
           value={searchText.toUpperCase()}

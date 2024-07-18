@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, Autocomplete, TextField } from '@mui/material';
-import './CustomSelect.scss'
+import {
+  Select, MenuItem, FormControl, InputLabel, Autocomplete, TextField,
+} from '@mui/material';
+import './CustomSelect.scss';
 
 interface CustomSelectProps {
   input: {
@@ -22,7 +24,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
   const [value, setValue] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-
   if (!enableSearch) {
     // Usando Select de Material-UI
     return (
@@ -39,11 +40,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
           placeholder={input.placeholder}
         >
           {input.selectOptions.map((option: SelectOption, index: number) => (
-            <MenuItem key={index} value={option.value} style={
+            <MenuItem
+              key={index}
+              value={option.value}
+              style={
               {
                 color: option.value,
               }
-            }>
+            }
+            >
               {option.label.toUpperCase()}
             </MenuItem>
           ))}
@@ -58,11 +63,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
       options={input.selectOptions}
       getOptionLabel={(option: SelectOption) => option.label}
       renderOption={(props, option: SelectOption) => (
-        <li 
-          {...props}        
+        <li
+          {...props}
           style={{
-          color:  option.value,
-        }}>
+            color: option.value,
+          }}
+        >
           {option.label.toUpperCase()}
         </li>
       )}
@@ -87,7 +93,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
       }}
       fullWidth
     />
-);
+  );
 };
 
 export default CustomSelect;

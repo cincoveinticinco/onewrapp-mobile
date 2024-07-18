@@ -6,11 +6,13 @@ import {
 import { useHistory, useRouteMatch } from 'react-router';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
+import { LuGripHorizontal } from 'react-icons/lu';
+import { checkmarkCircle } from 'ionicons/icons';
+import { IoIosRemoveCircleOutline } from 'react-icons/io';
 import { Scene } from '../../interfaces/scenesTypes';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
-import { checkmarkCircle } from 'ionicons/icons';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
@@ -18,8 +20,6 @@ import {
 } from '../../Ennums/ennums';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { LuGripHorizontal } from 'react-icons/lu';
-import { IoIosRemoveCircleOutline } from 'react-icons/io';
 
 interface SceneCardProps {
   scene: Scene;
@@ -29,7 +29,9 @@ interface SceneCardProps {
   shootingDeleteScene?: () => void;
 }
 
-const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene}) => {
+const SceneCard: React.FC<SceneCardProps> = ({
+  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene,
+}) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const history = useHistory();
@@ -155,8 +157,8 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
   };
 
   const goToSceneDetails = () => {
-    if(isShooting) {
-      return
+    if (isShooting) {
+      return;
     }
     history.push(detailsRoute);
     localStorage.setItem('editionBackRoute', detailsRoute);
@@ -165,66 +167,67 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
   const shootingCardSceneClass = (isShooting && (isProduced === ShootingSceneStatusEnum.Assigned ? 'background-light' : isProduced === ShootingSceneStatusEnum.Shoot ? 'background-success' : 'background-danger'));
 
   const cardContent = (
-    <IonRow className="scene-card-row" color='tertiary'>
-        <IonItemSliding className="ion-no-margin ion-no-padding">
-          <IonItem className="ion-no-margin ion-no-padding scene-card-item">
-            {
+    <IonRow className="scene-card-row" color="tertiary">
+      <IonItemSliding className="ion-no-margin ion-no-padding">
+        <IonItem className="ion-no-margin ion-no-padding scene-card-item">
+          {
               isShooting && (
                 <IonReorder className={`reorder-container scene-card scene-theme-${defineSceneColor(scene)}`}>
                   <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
                 </IonReorder>
               )
             }
-            <IonGrid className="ion-no-margin ion-no-padding">
-              <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
-                <IonCol className="scene-card-col-1">
-                  <h3 className="scene-card-header">
-                    <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  </h3>
-                  <p className="scene-card-synopsis">
-                    <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  </p>
-                  <p className="scene-card-characters">
-                    <strong>CHARACTERS:</strong>
-                    {' '}
-                    <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                    <br />
-                    <strong>EXTRAS: </strong>
-                    {' '}
-                    <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  </p>
-                </IonCol>
-                <IonCol className="scene-card-col-2">
-                  <p className="ion-no-margin">
-                    <strong>P: </strong>
-                    {' '}
-                    <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  </p>
-                  <p className="ion-no-margin">
-                    <strong>M: </strong>
-                    {' '}
-                    <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
-                  </p>
-                </IonCol>
-                <IonCol className={`scene-card-col-3 center-flex-row ${shootingCardSceneClass}` }>
-                  {
+          <IonGrid className="ion-no-margin ion-no-padding">
+            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
+              <IonCol className="scene-card-col-1">
+                <h3 className="scene-card-header">
+                  <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                </h3>
+                <p className="scene-card-synopsis">
+                  <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                </p>
+                <p className="scene-card-characters">
+                  <strong>CHARACTERS:</strong>
+                  {' '}
+                  <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                  <br />
+                  <strong>EXTRAS: </strong>
+                  {' '}
+                  <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                </p>
+              </IonCol>
+              <IonCol className="scene-card-col-2">
+                <p className="ion-no-margin">
+                  <strong>P: </strong>
+                  {' '}
+                  <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                </p>
+                <p className="ion-no-margin">
+                  <strong>M: </strong>
+                  {' '}
+                  <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                </p>
+              </IonCol>
+              <IonCol className={`scene-card-col-3 center-flex-row ${shootingCardSceneClass}`}>
+                {
                     !isShooting ? (
                       <p className="assignament-date"> NOT ASSIGNED </p>
                     ) : (
                       <p className={isProduced ? 'produced assignament-date' : 'not-produced assignament-date'}> </p>
                     )
                   }
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          </IonItem>
-          <IonItemOptions class="scene-card-options">
-            <div className="buttons-wrapper">
-              <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
-                <CiEdit className="button-icon view" />
-              </IonButton>
-              {
-                !isShooting &&
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </IonItem>
+        <IonItemOptions class="scene-card-options">
+          <div className="buttons-wrapper">
+            <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
+              <CiEdit className="button-icon view" />
+            </IonButton>
+            {
+                !isShooting
+                && (
                 <>
                   <IonButton fill="clear">
                     <PiProhibitLight className="button-icon ban" />
@@ -233,28 +236,30 @@ const SceneCard: React.FC<SceneCardProps> = ({ scene, searchText = '', isShootin
                     <PiTrashSimpleLight className="button-icon trash" />
                   </IonButton>
                 </>
+                )
               }
-              {
-                isShooting && shootingDeleteScene &&
+            {
+                isShooting && shootingDeleteScene
+                && (
                 <IonButton fill="clear" onClick={() => shootingDeleteScene()}>
                   <IoIosRemoveCircleOutline className="button-icon ban" />
                 </IonButton>
+                )
               }
-            </div>
-          </IonItemOptions>
-        </IonItemSliding>
-        <InputAlert
-          header="Delete Scene"
-          message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
-          handleOk={() => deleteScene()}
-          inputs={[]}
-          trigger={`open-delete-scene-alert-${scene.id}`}
-        />
-      </IonRow>
+          </div>
+        </IonItemOptions>
+      </IonItemSliding>
+      <InputAlert
+        header="Delete Scene"
+        message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
+        handleOk={() => deleteScene()}
+        inputs={[]}
+        trigger={`open-delete-scene-alert-${scene.id}`}
+      />
+    </IonRow>
   );
 
-  
-  return cardContent
+  return cardContent;
 };
 
 export default SceneCard;

@@ -51,7 +51,7 @@ setupIonicReact();
 const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
   const { viewTabs } = useContext(DatabaseContext);
-  
+
   useEffect(() => {
     console.log('viewTabs', viewTabs);
   }, [viewTabs]);
@@ -119,11 +119,11 @@ const AppTabs: React.FC = () => {
         </Route>
         <Redirect exact from={`${urlString}`} to={`${urlString}/strips`} />
       </IonRouterOutlet>
-      <IonTabBar 
-        slot="bottom" 
-        className="app-tabs-container" 
-        color="dark" 
-        style={{display: viewTabs ? '' : 'none'}}
+      <IonTabBar
+        slot="bottom"
+        className="app-tabs-container"
+        color="dark"
+        style={{ display: viewTabs ? '' : 'none' }}
       >
         <IonTabButton tab="calendar" className={defineButtonClass} href={`${url}/calendar`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />

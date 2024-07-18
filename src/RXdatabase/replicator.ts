@@ -125,9 +125,7 @@ export default class HttpReplicator {
   }
 
   public monitorReplicationStatus() {
-    return this.replicationStates[0].awaitInitialReplication().then(() => {
-      return true;
-    });
+    return this.replicationStates[0].awaitInitialReplication().then(() => true);
   }
 
   public resyncReplication() {

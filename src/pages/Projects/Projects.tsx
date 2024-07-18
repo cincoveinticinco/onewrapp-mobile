@@ -3,12 +3,12 @@ import {
   IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol,
 } from '@ionic/react';
 import { Redirect } from 'react-router';
+import { set } from 'lodash';
 import { useAuth } from '../../context/auth';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import DatabaseContext from '../../hooks/Shared/database';
 import useLoader from '../../hooks/Shared/useLoader';
-import { set } from 'lodash';
 
 const Projects: React.FC = () => {
   const { loggedIn } = useAuth();
@@ -17,7 +17,7 @@ const Projects: React.FC = () => {
     return <Redirect to="/login" />;
   }
 
-  const { offlineProjects, projectsAreLoading, getOfflineProjects} = React.useContext(DatabaseContext);
+  const { offlineProjects, projectsAreLoading, getOfflineProjects } = React.useContext(DatabaseContext);
 
   return (
     <IonPage>

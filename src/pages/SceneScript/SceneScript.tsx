@@ -32,7 +32,9 @@ const SceneScript: React.FC = () => {
   const { hideTabs, showTabs } = useHideTabs();
   const { sceneId } = useParams<{ sceneId: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
-  const { oneWrapDb, offlineScenes,initializeParagraphReplication, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
+  const {
+    oneWrapDb, offlineScenes, initializeParagraphReplication, projectId,
+  } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {
@@ -49,21 +51,6 @@ const SceneScript: React.FC = () => {
   const [paragraphs, setParagraphs] = useState<any[]>([]);
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
-  
-  useEffect(() => {
-    const initializeReplication = async () => {
-      try {
-        setParagraphsAreLoading(true);
-        await initializeParagraphReplication();
-      } catch (error) {
-        console.error('Error initializing scene replication:', error);
-      } finally {
-        setParagraphsAreLoading(false);
-      }
-    };
-  
-    initializeReplication();
-  }, [projectId]);
 
   useEffect(() => {
     const printParagraphs = async () => {
@@ -172,7 +159,7 @@ const SceneScript: React.FC = () => {
 
   useIonViewWillEnter(() => {
     hideTabs();
-  })
+  });
 
   const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
   const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);

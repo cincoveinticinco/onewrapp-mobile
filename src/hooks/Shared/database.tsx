@@ -50,7 +50,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initializeShootingReplication: () => new Promise(() => false),
   initializeSceneReplication: () => new Promise(() => false),
   initializeParagraphReplication: () => new Promise(() => false),
-  initializeUnitReplication: () => new Promise(() => false)
+  initializeUnitReplication: () => new Promise(() => false),
 });
 
 const sceneCollection = new ScenesSchema();
@@ -97,7 +97,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         console.log('Base de datos inicializada');
       }
     };
-  
+
     if (!oneWrapRXdatabase) {
       initializeDatabase();
     }
@@ -144,21 +144,21 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       }
     }
   }, [oneWrapRXdatabase]);
-  
+
   const initializeSceneReplication = async () => {
     try {
       const lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
-  
+
       const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject);
-      
+
       if (isOnline) {
         scenesReplicator.startReplicationPull();
         scenesReplicator.startReplicationPush();
       }
-  
+
       await scenesReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
@@ -166,20 +166,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return false;
     }
   };
-  
+
   const initializeParagraphReplication = async () => {
     try {
       const lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
-  
+
       const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], parseInt(projectId), lastParagraphInProject);
-      
+
       if (isOnline) {
         paragraphsReplicator.startReplicationPull();
       }
-  
+
       await paragraphsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
@@ -187,20 +187,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return false;
     }
   };
-  
+
   const initializeUnitReplication = async () => {
     try {
       const lastUnitInProject = await oneWrapRXdatabase?.units.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
-  
+
       const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], parseInt(projectId), lastUnitInProject);
-      
+
       if (isOnline) {
         unitsReplicator.startReplicationPull();
       }
-  
+
       await unitsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
@@ -214,35 +214,36 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
-  
+
       const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId, lastShootingInProject);
-      
+
       if (isOnline) {
         shootingsReplicator.startReplicationPull();
         setTimeout(() => {
           shootingsReplicator.startReplicationPush();
         }, 500);
+        shootingsReplicator.startReplicationPull();
       }
-  
+
       // Wait for the initial replication to complete
       await shootingsReplicator.monitorReplicationStatus();
-      
+
       return true; // Replication finished successfully
     } catch (error) {
       console.error('Error during shooting replication:', error);
       return false; // Replication failed
     }
-  }
+  };
 
   const pushShootingsReplication = async () => {
-    let replicationFinished = false
-    const pushReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId)
+    let replicationFinished = false;
+    const pushReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId);
 
-    pushReplicator && pushReplicator.startReplicationPush()
-    replicationFinished = true
+    pushReplicator && pushReplicator.startReplicationPush();
+    replicationFinished = true;
 
-    return replicationFinished
-  }
+    return replicationFinished;
+  };
 
   return (
     <DatabaseContext.Provider
@@ -265,7 +266,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         initializeShootingReplication,
         initializeSceneReplication,
         initializeParagraphReplication,
-        initializeUnitReplication
+        initializeUnitReplication,
       }}
     >
       {children}

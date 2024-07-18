@@ -1,4 +1,6 @@
-import { IonCol, IonContent, IonGrid, IonHeader, IonItem, IonModal, IonRow, IonSelect, IonSelectOption } from '@ionic/react';
+import {
+  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonModal, IonRow, IonSelect, IonSelectOption,
+} from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ModalToolbar from '../ModalToolbar/ModalToolbar';
@@ -31,7 +33,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   validate,
   modalId,
   onDidPresent = () => { },
-})  => {
+}) => {
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
   const [showError, setShowError] = useState({});
 
@@ -130,14 +132,12 @@ const EditionModal: React.FC<EditionModalProps> = ({
         />
       </IonHeader>
       <IonContent color="tertiary">
-        <IonHeader className="add-new-option-description" mode="ios">
-          
-        </IonHeader>
+        <IonHeader className="add-new-option-description" mode="ios" />
         {formInputs && (
           <IonGrid className="edit-inputs-wrapper">
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} size={input.col || "12"}>
+                <IonCol key={i} size={input.col || '12'}>
                   {input.type === 'select' ? (
                     <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
                   ) : (

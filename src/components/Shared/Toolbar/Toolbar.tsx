@@ -12,10 +12,10 @@ import { RiDownload2Line } from 'react-icons/ri';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import { generate } from '@pdfme/generator';
+import { add } from 'lodash';
 import template from '../../../templates/MinimalTemplate';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import DatabaseContext from '../../../hooks/Shared/database';
-import { add } from 'lodash';
 
 interface ToolbarButton {
   name: string;
@@ -71,7 +71,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   editRoute = '',
   deleteTrigger = '',
   download = true,
-  addShoBanSc
+  addShoBanSc,
 }) => {
   const isMobile = useIsMobile();
 

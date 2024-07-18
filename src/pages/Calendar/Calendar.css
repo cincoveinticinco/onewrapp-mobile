@@ -124,6 +124,8 @@
   .week-row {
       
     .month-shooting {
+      height: 5vh;
+      width: 5vw;
       border-radius: 100%;
     }
     .other-month, .calendar-day, .current-day {

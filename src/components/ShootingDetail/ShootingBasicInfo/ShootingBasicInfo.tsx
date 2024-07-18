@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { IonCol, IonGrid, IonRow, IonInput, IonButton, IonIcon } from '@ionic/react';
+import {
+  IonCol, IonGrid, IonRow, IonInput, IonButton, IonIcon,
+} from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
 import { saveOutline } from 'ionicons/icons';
 import { transform } from 'lodash';
@@ -12,18 +14,32 @@ interface ShootingInfoLabelsProps {
   isEditable?: boolean;
 }
 
-const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({ info, title, symbol, onEdit, isEditable }) => (
-  <div className="ion-flex-column" style={{ textAlign: 'center', height: '100%', justifyContent: 'center', position: 'relative' }}>
-    <p className="ion-no-margin" style={{ fontSize: '16px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({
+  info, title, symbol, onEdit, isEditable,
+}) => (
+  <div
+    className="ion-flex-column"
+    style={{
+      textAlign: 'center', height: '100%', justifyContent: 'center', position: 'relative',
+    }}
+  >
+    <p
+      className="ion-no-margin"
+      style={{
+        fontSize: '16px', display: 'flex', justifyContent: 'center', width: '100%',
+      }}
+    >
       <b>{info.toUpperCase()}</b>
       {symbol && <span className="symbol-part" style={{ fontSize: '14px', fontWeight: 'bold' }}>{symbol}</span>}
     </p>
-    <p className="ion-no-margin" style={{ fontSize: '12px'}}>
+    <p className="ion-no-margin" style={{ fontSize: '12px' }}>
       {title.toUpperCase()}
       {isEditable && (
-        <VscEdit 
-          onClick={onEdit} 
-          style={{ cursor: 'pointer', color: 'var(--ion-color-primary)', position: 'absolute', right: '12px', top: '0' }} 
+        <VscEdit
+          onClick={onEdit}
+          style={{
+            cursor: 'pointer', color: 'var(--ion-color-primary)', position: 'absolute', right: '12px', top: '0',
+          }}
         />
       )}
     </p>
@@ -66,30 +82,29 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
     setTime(validatedTime);
   };
 
- const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string) => {
-  setEditingField(field);
-  setTime(value);
-};
-  
+  const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string) => {
+    setEditingField(field);
+    setTime(value);
+  };
 
-const handleSave = () => {
-  if (editingField) {
-    const [hours, minutes] = time.split(':');
-    updateShootingTime(editingField as any, {
-      hours: hours.padStart(2, '0'),
-      minutes: minutes.padStart(2, '0')
-    });
-    setEditingField(null);
-  }
-};
+  const handleSave = () => {
+    if (editingField) {
+      const [hours, minutes] = time.split(':');
+      updateShootingTime(editingField as any, {
+        hours: hours.padStart(2, '0'),
+        minutes: minutes.padStart(2, '0'),
+      });
+      setEditingField(null);
+    }
+  };
 
   const renderEditableField = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string, title: string) => {
     const { main, symbol } = separateTimeOrPages(value);
-    
+
     if (editingField === field) {
       return (
-        <div className='editable-form-wrapper'>
-          <div className='inputs-wrapper'>
+        <div className="editable-form-wrapper">
+          <div className="inputs-wrapper">
             <IonInput
               type="time"
               value={time}
@@ -97,11 +112,13 @@ const handleSave = () => {
               style={{ display: 'inline-block', width: '80%' }}
               autoFocus
             />
-            <IonButton 
-              fill='clear' 
-              onClick={handleSave} 
+            <IonButton
+              fill="clear"
+              onClick={handleSave}
               size="small"
-              style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-60%)' }}
+              style={{
+                position: 'absolute', right: '0', top: '50%', transform: 'translateY(-60%)',
+              }}
             >
               <IonIcon icon={saveOutline} />
             </IonButton>
@@ -111,12 +128,12 @@ const handleSave = () => {
     }
 
     return (
-      <ShootingInfoLabels 
-        info={main} 
+      <ShootingInfoLabels
+        info={main}
         symbol={symbol}
-        title={title} 
+        title={title}
         onEdit={() => handleEdit(field as any, value)}
-        isEditable={true}
+        isEditable
       />
     );
   };
@@ -148,19 +165,19 @@ const handleSave = () => {
           <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
         </IonCol>
         <IonCol size="6" size-sm="3">
-          <ShootingInfoLabels 
-            info={separateTimeOrPages(shootingInfo.pages).main} 
+          <ShootingInfoLabels
+            info={separateTimeOrPages(shootingInfo.pages).main}
             symbol={separateTimeOrPages(shootingInfo.pages).symbol}
-            title="Pages" 
+            title="Pages"
           />
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol size="12">
-          <ShootingInfoLabels 
-            info={separateTimeOrPages(shootingInfo.min).main} 
+          <ShootingInfoLabels
+            info={separateTimeOrPages(shootingInfo.min).main}
             symbol={separateTimeOrPages(shootingInfo.min).symbol}
-            title="Min" 
+            title="Min"
           />
         </IonCol>
       </IonRow>

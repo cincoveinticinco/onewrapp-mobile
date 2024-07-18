@@ -36,7 +36,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
   modalTrigger,
   handleCheckboxToggle,
   clearSelections,
-  modalRef
+  modalRef,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Scene | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
@@ -52,9 +52,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
 
   const filteredScenes = useMemo(() => {
     if (!selectedEpisode) return [];
-    return listOfScenes.filter((scene: Scene) => 
-      scene.episodeNumber === selectedEpisode
-    );
+    return listOfScenes.filter((scene: Scene) => scene.episodeNumber === selectedEpisode);
   }, [listOfScenes, selectedEpisode]);
 
   function getSceneHeader(scene: Scene) {
@@ -74,9 +72,9 @@ const InputModalScene: React.FC<InputModalProps> = ({
   }
 
   const getUniqueEpisodes = () => {
-    const episodes = new Set(listOfScenes.map(scene => scene.episodeNumber).filter(episode => episode !== null && episode !== undefined));
+    const episodes = new Set(listOfScenes.map((scene) => scene.episodeNumber).filter((episode) => episode !== null && episode !== undefined));
     return Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
-  }
+  };
 
   const episodeInput = {
     fieldName: 'episode',
@@ -101,7 +99,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
       console.log(selectedOption);
       closeModal();
     }
-  }
+  };
 
   return (
     <IonModal ref={modalRef} trigger={modalTrigger} id="add-scenes-scenes-modal">
@@ -116,25 +114,25 @@ const InputModalScene: React.FC<InputModalProps> = ({
       </IonHeader>
       <IonContent color="tertiary">
         <>
-          <IonGrid className='inputs-grid'>
+          <IonGrid className="inputs-grid">
             <IonRow>
               <IonCol size="6">
-                <IonItem color='tertiary'>
+                <IonItem color="tertiary">
                   <CustomSelect
                     input={episodeInput}
                     setNewOptionValue={(fieldName, value) => setSelectedEpisode(value)}
-                    enableSearch={true}
+                    enableSearch
                   />
                 </IonItem>
               </IonCol>
-              <IonCol size='6'>
-                <IonItem color='tertiary'>
+              <IonCol size="6">
+                <IonItem color="tertiary">
                   <CustomSelect
                     input={sceneInput}
                     setNewOptionValue={(fieldName, value: Scene) => {
-                      setSelectedOption(value|| null);
+                      setSelectedOption(value || null);
                     }}
-                    enableSearch={true}
+                    enableSearch
                   />
                 </IonItem>
               </IonCol>
