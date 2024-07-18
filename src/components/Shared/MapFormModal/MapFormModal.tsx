@@ -13,9 +13,10 @@ interface MapFormModalProps {
   isOpen: boolean;
   closeModal: () => void;
   onSubmit: (formData: Partial<LocationInfo>) => void;
+  hospital?: boolean;
 }
 
-const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmit }) => {
+const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmit, hospital }) => {
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -178,7 +179,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
   const handleSubmit = async () => {
     if(lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
       const formData: Partial<LocationInfo> = {
-        location_type_id: locationTypeId,
+        location_type_id: hospital ? 3 : locationTypeId,
         location_name: locationName,
         location_address: locationAddress,
         location_postal_code: locationPostalCode,
@@ -258,7 +259,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
                 label='Location name'
               />
             </IonCol>
-            <IonCol size="6">
+            <IonCol size="6" style={hospital ? {display:'none'} : {} }>
               <CustomSelect
                 input={{
                   label: 'LOCATION TYPE',

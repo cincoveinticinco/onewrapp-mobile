@@ -73,6 +73,7 @@ const ShootingDetail = () => {
   const [advanceCallsEditMode, setAdvanceCallsEditMode] = useState(false);
   const [additionMenu, setAdditionMenu] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  const [showHospitalsMapModal, setShowHospitalsMapModal] = useState(false);
   const bannerModalRef = useRef<HTMLIonModalElement>(null);
   const sceneModalRef = useRef<HTMLIonModalElement>(null);
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
@@ -80,6 +81,14 @@ const ShootingDetail = () => {
 
   const closeMapModal = () => {
     setShowMapModal(false);
+  }
+
+  const closeHospitalsMapModal = () => {
+    setShowHospitalsMapModal(false);
+  }
+
+  const openHospitalsMapModal = () => {
+    setShowHospitalsMapModal(true);
   }
 
   const openMapModal = () => {
@@ -269,6 +278,8 @@ const ShootingDetail = () => {
         advanceCalls: [...prev.shotingInfo.advanceCalls, advanceCall]
       }
     })); 
+
+    initializeShootingReplication();
   }
 
   // Para anadir un nuevo meal, necesito los campos Meal*, From time*, End time* y quantity. Por default, tendra el shooting_id de la pagina, el id temporal y el createdAt y updatedAt en la fecha actual. Los keys correspondientes son meal, ready_at, end_time y quantity.
@@ -312,10 +323,11 @@ const ShootingDetail = () => {
         meals: [...prev.shotingInfo.meals, meal]
       }
     }));
+
+    initializeShootingReplication();
   };
 
   const handleEditMeal = async (meal: meals) => {
-    initializeShootingReplication();
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
@@ -356,8 +368,6 @@ const ShootingDetail = () => {
   }
   
   const handleEditAdvanceCall = async (advanceCall: AdvanceCall) => {
-    initializeShootingReplication();
-
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
@@ -972,7 +982,11 @@ const ShootingDetail = () => {
               onClick={() => setOpenHospitals(!openHospitals)}
             >
               <p style={{ fontSize: '18px' }}><b>NEAR HOSPITALS</b></p>
-              <DropDownButton open={openHospitals} />
+              <div onClick={(e) => e.stopPropagation()}>
+                <AddButton onClick={() => openHospitalsMapModal()} />
+                <DropDownButton open={openHospitals} />
+              </div>
+              
             </div>
             {openHospitals && (
               shootingData.shotingInfo.hospitals.length > 0 ? (
@@ -1073,6 +1087,7 @@ const ShootingDetail = () => {
       <AddNewAdvanceCallModal />
       <AddNewMeal />
       <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={addNewLocation} />
+      <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={addNewLocation} />
     </IonPage>
   );
 };
