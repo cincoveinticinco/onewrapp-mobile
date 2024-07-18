@@ -5,6 +5,7 @@ import {
 import { documentTextOutline, serverOutline } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './SceneDetailsTabs.scss';
+import { useParams } from 'react-router';
 
 interface SceneDetailsTabsProps {
   sceneId?: string;
@@ -17,6 +18,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
 
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
+  const { id } = useParams<{ id: string }>();
+
   // EXACT PATHS
 
   return (
@@ -24,8 +27,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
       <IonTabButton
         tab="scenedetails"
         className={defineButtonClass}
-        href={`/my/projects/163/strips/details/scene/${sceneId}`}
-        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${sceneId}`)}
+        href={`/my/projects/${id}/strips/details/scene/${sceneId}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/scene/${sceneId}`)}
       >
         <IonIcon icon={serverOutline} className="tab-bar-icons" />
         <IonLabel>SCENE DETAILS</IonLabel>
@@ -33,8 +36,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
       <IonTabButton
         tab="scenescript"
         className="tab-bar-buttons"
-        href={`/my/projects/163/strips/details/script/${sceneId}`}
-        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/script/${sceneId}`)}
+        href={`/my/projects/${id}/strips/details/script/${sceneId}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${sceneId}`)}
       >
         <IonIcon icon={documentTextOutline} className="tab-bar-icons" />
         <IonLabel>SCENE SCRIPT</IonLabel>

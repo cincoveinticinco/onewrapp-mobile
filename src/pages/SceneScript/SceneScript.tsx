@@ -52,6 +52,8 @@ const SceneScript: React.FC = () => {
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
 
+  const { id } = useParams<{ id: string }>();
+
   useEffect(() => {
     const printParagraphs = async () => {
       const paragraphs = await oneWrapDb?.paragraphs.find({
@@ -129,7 +131,7 @@ const SceneScript: React.FC = () => {
   };
 
   const handleBack = () => {
-    history.push('/my/projects/163/strips');
+    history.push(`/my/projects/${id}/strips`);
   };
 
   const fetchScene = async () => {
@@ -168,8 +170,8 @@ const SceneScript: React.FC = () => {
 
   const changeToNextScene = () => {
     if (nextScene) {
-      history.push(`/my/projects/163/strips/details/script/${nextScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/script/${nextScene.id}`);
+      history.push(`/my/projects/${id}/strips/details/script/${nextScene.id}`);
+      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${nextScene.id}`);
     }
   };
 
@@ -253,8 +255,8 @@ const SceneScript: React.FC = () => {
 
   const changeToPreviousScene = () => {
     if (previousScene) {
-      history.push(`/my/projects/163/strips/details/script/${previousScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/script/${previousScene.id}`);
+      history.push(`/my/projects/${id}/strips/details/script/${previousScene.id}`);
+      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${previousScene.id}`);
     }
   };
 
@@ -329,6 +331,7 @@ const SceneScript: React.FC = () => {
   const handleEdition = () => {
     setEdition(!edition);
   };
+
 
   return (
     <>
@@ -422,7 +425,7 @@ const SceneScript: React.FC = () => {
 }
         </div>
         <IonHeader>
-          <Toolbar name="" backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
+          <Toolbar name="" backString prohibited deleteButton edit editRoute={`/my/projects/${id}/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
           <SceneHeader
             sceneColor={sceneColor}
             sceneHeader={sceneHeader}

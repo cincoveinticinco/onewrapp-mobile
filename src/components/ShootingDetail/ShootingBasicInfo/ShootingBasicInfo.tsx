@@ -139,7 +139,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   };
 
   return (
-    <IonGrid fixed style={{ width: '100%' }}>
+    <IonGrid fixed style={{ width: '100%', marginTop: '24px', marginBottom: '24px'}}>
       <IonRow>
         <IonCol size="6" size-sm="3">
           {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call')}

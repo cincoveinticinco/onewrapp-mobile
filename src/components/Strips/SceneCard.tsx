@@ -3,7 +3,7 @@ import {
   IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
   IonReorder,
 } from '@ionic/react';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import { LuGripHorizontal } from 'react-icons/lu';
@@ -39,6 +39,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`;
 
   const [presentToast] = useIonToast();
+  const { id } = useParams<{ id: string }>();
 
   const successMessageSceneToast = (message: string) => {
     presentToast({
@@ -222,7 +223,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItem>
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" routerLink={`/my/projects/163/editscene/${scene.id}`}>
+            <IonButton fill="clear" routerLink={`/my/projects/${id}/editscene/${scene.id}`}>
               <CiEdit className="button-icon view" />
             </IonButton>
             {

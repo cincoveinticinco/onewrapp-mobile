@@ -8,15 +8,23 @@ import {
 } from '@ionic/react';
 import environment from '../../../../environment';
 import CustomSelect from '../CustomSelect/CustomSelect';
-import './MapFormModal.scss'; // Import the CSS file for additional styles if needed
+import './MapFormModal.scss';
 import { LocationInfo } from '../../../interfaces/shootingTypes';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
+
 
 interface MapFormModalProps {
   isOpen: boolean;
   closeModal: () => void;
   onSubmit: (formData: Partial<LocationInfo>) => void;
   hospital?: boolean;
+}
+
+interface Color {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
 }
 
 const MapFormModal: React.FC<MapFormModalProps> = ({
@@ -35,12 +43,16 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const [locationPostalCode, setLocationPostalCode] = useState('');
   const [locationTypeId, setLocationTypeId] = useState<number | null>(null);
   const [locationAddress, setLocationAddress] = useState('');
+  // const [markerIcon, setMarkerIcon] = useState<any>('default');
+  // const [markerColor, setMarkerColor] = useState<Color>({ r: 255, g: 0, b: 0, a: 255 });
 
   useEffect(() => {
     if (isOpen && !mapInitialized) {
       setTimeout(() => {
         createMap();
       }, 300);
+    } else if (map && lat && lng) {
+      addMarker(lat, lng);
     }
   }, [isOpen, mapInitialized]);
 
@@ -77,13 +89,25 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         await map.removeMarker(marker);
       }
 
-      const newMarker = await map.addMarker({
+      const markerOptions: any = {
         coordinate: {
           lat,
           lng,
         },
         draggable: true,
-      });
+      };
+
+      // if (markerIcon !== 'default') {
+      //   console.log('markerIcon', markerIcon);
+      //   markerOptions.iconUrl = markerIcon.icon;
+      //   markerOptions.iconSize = {
+      //     width: 60,
+      //     height: 60
+      //   }
+
+      // }
+
+      const newMarker = await map.addMarker(markerOptions);
 
       setMarker(newMarker);
       setLat(lat);
@@ -94,6 +118,17 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       });
 
       updateAddress(lat, lng);
+    }
+  };
+
+  const getColorObject = (color: string) => {
+    switch (color) {
+      case 'blue':
+        return { r: 0, g: 0, b: 255, a: 255 };
+      case 'green':
+        return { r: 0, g: 255, b: 0, a: 255 };
+      default:
+        return { r: 255, g: 0, b: 0, a: 255 };
     }
   };
 
@@ -219,6 +254,14 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     { value: 4, label: 'Pickup' },
   ];
 
+  const colorOptions = [
+    { value: JSON.stringify({ r: 255, g: 0, b: 0, a: 255 }), label: 'Red' },
+    { value: JSON.stringify({ r: 0, g: 0, b: 255, a: 255 }), label: 'Blue' },
+    { value: JSON.stringify({ r: 0, g: 255, b: 0, a: 255 }), label: 'Green' },
+    { value: JSON.stringify({ r: 255, g: 255, b: 0, a: 255 }), label: 'Yellow' },
+    { value: JSON.stringify({ r: 128, g: 0, b: 128, a: 255 }), label: 'Purple' },
+  ];
+
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
       <IonHeader>
@@ -283,6 +326,34 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               </IonList>
             </IonCol>
           </IonRow>
+          {/* <IonRow>
+            <IonCol size="6">
+              <CustomSelect
+                input={{
+                  label: 'MARKER ICON',
+                  fieldName: 'marker_icon',
+                  selectOptions: [
+                    { value: 'default', label: 'Default' },
+                    { value: {icon}, label: 'Custom Icon' },
+                    // Add more icon options as needed
+                  ],
+                  placeholder: 'Select marker icon',
+                }}
+                setNewOptionValue={(fieldName: string, value: string) => setMarkerIcon(value)}
+              />
+            </IonCol>
+            <IonCol size="6">
+              <CustomSelect
+                input={{
+                  label: 'MARKER COLOR',
+                  fieldName: 'marker_color',
+                  selectOptions: colorOptions,
+                  placeholder: 'Select marker color',
+                }}
+                setNewOptionValue={(fieldName: string, value: string) => setMarkerColor(JSON.parse(value))}
+              />
+            </IonCol>
+          </IonRow> */}
           <IonRow>
             <IonCol size="12">
               <OutlinePrimaryButton onClick={handleSubmit} buttonName="Save" style={{ marginTop: '150px' }} />

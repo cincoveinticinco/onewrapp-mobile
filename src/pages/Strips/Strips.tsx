@@ -39,12 +39,12 @@ const Strips: React.FC = () => {
     const initializeReplication = async () => {
       try {
         setScenesAreLoading(true);
-        await initializeSceneReplication();
-        await initializeParagraphReplication();
+        await initializeSceneReplication();     
       } catch (error) {
         console.error('Error initializing scene replication:', error);
       } finally {
         setInitialReplicationFinished(true);
+        await initializeParagraphReplication();
       }
     };
 

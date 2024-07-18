@@ -29,6 +29,7 @@ const SceneDetails: React.FC = () => {
   const [thisScene, setThisScene] = useState<any>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const { selectedFilterOptions } = useContext(ScenesContext);
+  const { id } = useParams<{ id: string }>();
 
   const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
 
@@ -40,22 +41,22 @@ const SceneDetails: React.FC = () => {
 
   const changeToNextScene = () => {
     if (nextScene) {
-      history.push(`/my/projects/163/strips/details/scene/${nextScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${nextScene.id}`);
+      history.push(`/my/projects/${id}/strips/details/scene/${nextScene.id}`);
+      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/scene/${nextScene.id}`);
     }
   };
 
   const changeToPreviousScene = () => {
     if (previousScene) {
-      history.push(`/my/projects/163/strips/details/scene/${previousScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/163/strips/details/scene/${previousScene.id}`);
+      history.push(`/my/projects/${id}/strips/details/scene/${previousScene.id}`);
+      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/scene/${previousScene.id}`);
     }
   };
 
   const successMessageSceneToast = useSuccessToast();
 
   const handleBack = () => {
-    history.push('/my/projects/163/strips');
+    history.push('/my/projects/${id}/strips');
     toggleTabs.showTabs();
   };
 
@@ -133,7 +134,7 @@ const SceneDetails: React.FC = () => {
     try {
       const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
       await sceneToDelete?.remove();
-      history.push('/my/projects/163/strips');
+      history.push('/my/projects/${id}/strips');
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
       console.error('Error deleting scene:', error);
@@ -151,7 +152,7 @@ const SceneDetails: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name="" backString prohibited deleteButton edit editRoute={`/my/projects/163/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
+        <Toolbar name="" backString prohibited deleteButton edit editRoute={`/my/projects/${id}/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
         <SceneHeader
           sceneColor={sceneColor}
           sceneHeader={sceneHeader}

@@ -16,6 +16,7 @@ import { add } from 'lodash';
 import template from '../../../templates/MinimalTemplate';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import DatabaseContext from '../../../hooks/Shared/database';
+import { useParams } from 'react-router';
 
 interface ToolbarButton {
   name: string;
@@ -79,6 +80,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
 
   const [sceneToPrint, setSceneToPrint] = useState<any>({});
   const [inputs, setInputs] = useState<any>([]);
+
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     if (offlineScenes.length > 0) setSceneToPrint(offlineScenes[0]._data);
@@ -154,7 +157,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       {filter && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="/my/projects/163/strips/filters" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink={`/my/projects/${id}/strips/filters`} className="ion-no-padding toolbar-button">
           <IonIcon icon={funnelOutline} className="toolbar-filter-icon toolbar-icon" />
         </IonButton>
       )}
