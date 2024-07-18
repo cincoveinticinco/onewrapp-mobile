@@ -141,11 +141,11 @@ const shootingSchema = {
         properties: {
           id: { type: ['number', 'string', 'null'] },
           location_type_id: { type: 'number' },
-          location_id: { type: 'number' },
+          location_id: { type: ['number', 'string', 'null'] },
           call_time: { type: ['string', 'null'] },
           location_full_address: { type: 'string' },
           location_city_state: { type: ['string', 'null'] },
-          company_id: { type: 'number' },
+          company_id: { type: ['number', 'null'] },
           location_name: { type: 'string' },
           location_address: { type: 'string' },
           location_addres_2: { type: 'string' },

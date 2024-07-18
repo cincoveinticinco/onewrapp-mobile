@@ -175,7 +175,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if(lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
       const formData: Partial<LocationInfo> = {
         location_type_id: locationTypeId,
@@ -186,7 +186,18 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
         lng: lng.toString(),
         location_full_address: currentAddress,
       };
-      onSubmit(formData);
+      await onSubmit(formData);
+      setLocationTypeId(null);
+      setLocationName('');
+      setLocationAddress('');
+      setLocationPostalCode('');
+      setLat(null);
+      setLng(null);
+      setSearchTerm('');
+      setCurrentAddress('');
+      setSuggestions([]);
+      setMarker(null);
+      setMapInitialized(false);
       closeModal();
     }
   };
@@ -240,7 +251,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({ isOpen, closeModal, onSubmi
           <IonRow>
             <IonCol size="6">
               <IonInput
-            
                 value={locationName}
                 onIonInput={(e) => setLocationName((e.target as any).value)}
                 className='input-item'

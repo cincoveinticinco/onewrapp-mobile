@@ -839,40 +839,55 @@ const ShootingDetail = () => {
   };
 
 
-  const addNewLocation = (formData: Partial<LocationInfo>) => {
+  const addNewLocation = async (formData: Partial<LocationInfo>) => {
+    try {
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingDate = new Date(shooting._data.shootDate);
       const locationInfo = {
-          id: `location-${shootingData.shotingInfo.locations.length + 1}`,
-          location_type_id: formData.location_type_id ?? null,
-          location_id: null,
-          call_time: formData.call_time ?? null,
-          location_full_address: formData.location_full_address ?? null,
-          location_city_state: formData.location_city_state ?? null,
-          company_id: formData.company_id ?? null,
-          location_name: formData.location_name ?? null,
-          location_address: formData.location_address ?? null,
-          location_addres_2: formData.location_addres_2 ?? null,
-          city_id: formData.city_id ?? null,
-          location_postal_code: formData.location_postal_code ?? null,
-          lat: formData.lat ?? null,
-          lng: formData.lng ?? null,
-          city_name_eng: formData.city_name_eng ?? null,
-          city_name_esp: formData.city_name_esp ?? null,
-          state_id: formData.state_id ?? null,
-          state_name_eng: formData.state_name_eng ?? null,
-          state_name_esp: formData.state_name_esp ?? null,
-          country_id: formData.country_id ?? null,
-          country_name_eng: formData.country_name_eng ?? null,
-          country_name_esp: formData.country_name_esp ?? null,
-          shoot_date: formData.shoot_date ?? null,
+        id: `location-${shootingData.shotingInfo.locations.length + 1}`,
+        location_type_id: formData.location_type_id ?? null,
+        location_id: null,
+        call_time: formData.call_time ?? null,
+        location_full_address: formData.location_full_address ?? null,
+        location_city_state: formData.location_city_state ?? null,
+        company_id: formData.company_id ?? null,
+        location_name: formData.location_name ?? null,
+        location_address: formData.location_address ?? null,
+        location_addres_2: formData.location_address ?? null,
+        city_id: formData.city_id ?? null,
+        location_postal_code: formData.location_postal_code ?? null,
+        lat: formData.lat ?? null,
+        lng: formData.lng ?? null,
+        city_name_eng: formData.city_name_eng ?? null,
+        city_name_esp: formData.city_name_esp ?? null,
+        state_id: formData.state_id ?? null,
+        state_name_eng: formData.state_name_eng ?? null,
+        state_name_esp: formData.state_name_esp ?? null,
+        country_id: formData.country_id ?? null,
+        country_name_eng: formData.country_name_eng ?? null,
+        country_name_esp: formData.country_name_esp ?? null,
+        shoot_date: shootingDate.toISOString(),
       };
 
+      const shootingCopy = {
+        ...shooting._data,
+        locations: [...shooting._data.locations, locationInfo]
+      };
+
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+
       setShootingData((prev: any) => ({
-          ...prev,
-          shotingInfo: {
-              ...prev.shotingInfo,
-              locations: [...prev.shotingInfo.locations, locationInfo],
-          },
+        ...prev,
+        shotingInfo: {
+          ...prev.shotingInfo,
+          locations: [...prev.shotingInfo.locations, locationInfo],
+        },
       }));
+
+      initializeShootingReplication();
+    } catch (error) {
+      console.error("Error adding new location:", error);
+    }
   };
 
   return (
@@ -939,7 +954,7 @@ const ShootingDetail = () => {
               shootingData.shotingInfo.locations.length > 0 ? (
                 shootingData.shotingInfo.locations.map((location: LocationInfo) => (
                   <div key={location.id} className="ion-padding-start">
-                    <h5><b>{location.location_address.toUpperCase()}</b></h5>
+                    <h5><b>{location.location_name.toUpperCase()}</b></h5>
                     <p>{location.location_full_address}</p>
                   </div>
                 ))
@@ -963,7 +978,7 @@ const ShootingDetail = () => {
               shootingData.shotingInfo.hospitals.length > 0 ? (
                 shootingData.shotingInfo.hospitals.map((hospital: LocationInfo) => (
                   <div key={hospital.id} className="ion-padding-start">
-                    <h5><b>{hospital.location_address.toUpperCase()}</b></h5>
+                    <h5><b>{hospital.location_name.toUpperCase()}</b></h5>
                     <p>{hospital.location_full_address}</p>
                   </div>
                 ))
