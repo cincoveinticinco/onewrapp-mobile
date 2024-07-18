@@ -116,7 +116,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   return (
     <IonModal
       ref={modalRef}
-      className="add-scenes-options-modal"
+      className="general-modal-styles"
       id={modalId}
       onDidPresent={() => onDidPresent()}
     >

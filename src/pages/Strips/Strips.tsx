@@ -19,7 +19,7 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import useHideTabs from '../../hooks/useHideTabs';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useLoader from '../../hooks/Shared/useLoader';
 
 const Strips: React.FC = () => {

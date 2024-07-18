@@ -1,6 +1,6 @@
 @import "../../theme/mixins";
 
-.add-scenes-options-modal {
+.general-modal-styles {
   @include modal-styling;
 
   .add-new-option-description {
@@ -42,7 +42,7 @@
 }
 
 @media (min-width: 500px) {
-  .add-scenes-options-modal {
+  .general-modal-styles {
     .modal-confirm-button {
       margin: 20% auto 10% auto;
     }

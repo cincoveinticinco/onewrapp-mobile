@@ -139,7 +139,7 @@ const shootingSchema = {
       items: {
         type: 'object',
         properties: {
-          id: { type: 'number' },
+          id: { type: ['number', 'string', 'null'] },
           location_type_id: { type: 'number' },
           location_id: { type: 'number' },
           call_time: { type: ['string', 'null'] },

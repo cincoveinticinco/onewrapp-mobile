@@ -75,7 +75,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
 
   const getUniqueEpisodes = () => {
     const episodes = new Set(listOfScenes.map(scene => scene.episodeNumber).filter(episode => episode !== null && episode !== undefined));
-    return Array.from(episodes).map(episode => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
+    return Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
   }
 
   const episodeInput = {

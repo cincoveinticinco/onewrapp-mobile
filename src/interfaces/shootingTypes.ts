@@ -69,7 +69,7 @@ export interface AdvanceCall {
 }
 
 export interface LocationInfo {
-  id: number;
+  id: number | null | string;
   location_type_id: number;
   location_id: number;
   call_time: string | null;

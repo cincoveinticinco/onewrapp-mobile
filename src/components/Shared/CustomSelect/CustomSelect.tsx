@@ -15,7 +15,7 @@ interface CustomSelectProps {
 
 interface SelectOption {
   value: any;
-  label: string;
+  label: any;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, enableSearch = false }) => {

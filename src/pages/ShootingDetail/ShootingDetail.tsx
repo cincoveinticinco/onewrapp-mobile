@@ -23,16 +23,16 @@ import ShootingBasicInfo from '../../components/ShootingDetail/ShootingBasicInfo
 import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import { VscEdit } from 'react-icons/vsc';
-import DeleteButton from '../../components/Shared/DeleteButton/DeleteButton';
-import { set } from 'lodash';
 import MealInfo from '../../components/ShootingDetail/MealInfo/MealInfo';
 import AdvanceCallInfo from '../../components/ShootingDetail/AdvanceCallInfo/AdvanceCallInfo';
+import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 
 
 export type ShootingViews = 'scenes' | 'info';
 type cardType = {
   cardType: string;
 };
+
 type mergedSceneBanner = (Scene & ShootingScene & cardType) | (ShootingBannerType & cardType)
 interface ShootingInfo  {
   generalCall: string;
@@ -72,10 +72,19 @@ const ShootingDetail = () => {
   const [mealsEditMode, setMealsEditMode] = useState(false);
   const [advanceCallsEditMode, setAdvanceCallsEditMode] = useState(false);
   const [additionMenu, setAdditionMenu] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
   const bannerModalRef = useRef<HTMLIonModalElement>(null);
   const sceneModalRef = useRef<HTMLIonModalElement>(null);
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
   const mealModalRef = useRef<HTMLIonModalElement>(null);
+
+  const closeMapModal = () => {
+    setShowMapModal(false);
+  }
+
+  const openMapModal = () => {
+    setShowMapModal(true);
+  }
 
   const openAdvanceCallModal = (e: any) => {
     e.stopPropagation();
@@ -115,6 +124,7 @@ const ShootingDetail = () => {
     },
     shootingFormattedDate: ''
   });
+  
 
   const fetchData = async () => {
     try {
@@ -828,6 +838,43 @@ const ShootingDetail = () => {
     }
   };
 
+
+  const addNewLocation = (formData: Partial<LocationInfo>) => {
+      const locationInfo = {
+          id: `location-${shootingData.shotingInfo.locations.length + 1}`,
+          location_type_id: formData.location_type_id ?? null,
+          location_id: null,
+          call_time: formData.call_time ?? null,
+          location_full_address: formData.location_full_address ?? null,
+          location_city_state: formData.location_city_state ?? null,
+          company_id: formData.company_id ?? null,
+          location_name: formData.location_name ?? null,
+          location_address: formData.location_address ?? null,
+          location_addres_2: formData.location_addres_2 ?? null,
+          city_id: formData.city_id ?? null,
+          location_postal_code: formData.location_postal_code ?? null,
+          lat: formData.lat ?? null,
+          lng: formData.lng ?? null,
+          city_name_eng: formData.city_name_eng ?? null,
+          city_name_esp: formData.city_name_esp ?? null,
+          state_id: formData.state_id ?? null,
+          state_name_eng: formData.state_name_eng ?? null,
+          state_name_esp: formData.state_name_esp ?? null,
+          country_id: formData.country_id ?? null,
+          country_name_eng: formData.country_name_eng ?? null,
+          country_name_esp: formData.country_name_esp ?? null,
+          shoot_date: formData.shoot_date ?? null,
+      };
+
+      setShootingData((prev: any) => ({
+          ...prev,
+          shotingInfo: {
+              ...prev.shotingInfo,
+              locations: [...prev.shotingInfo.locations, locationInfo],
+          },
+      }));
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -883,7 +930,10 @@ const ShootingDetail = () => {
               onClick={() => setOpenLocations(!openLocations)}
             >
               <p style={{ fontSize: '18px' }}><b>LOCATIONS</b></p>
-              <DropDownButton open={openLocations} />
+              <div onClick={(e) => e.stopPropagation()}>
+                <AddButton onClick={() => openMapModal()} />
+                <DropDownButton open={openLocations} />
+              </div>
             </div>
             {openLocations && (
               shootingData.shotingInfo.locations.length > 0 ? (
@@ -1007,6 +1057,7 @@ const ShootingDetail = () => {
       <AddNewScenes />
       <AddNewAdvanceCallModal />
       <AddNewMeal />
+      <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={addNewLocation} />
     </IonPage>
   );
 };
