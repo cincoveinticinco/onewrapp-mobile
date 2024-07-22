@@ -13,9 +13,9 @@ import useLoader from '../../hooks/Shared/useLoader';
 const Projects: React.FC = () => {
   const { loggedIn } = useAuth();
 
-  if (!loggedIn) {
-    return <Redirect to="/login" />;
-  }
+  // if (!loggedIn) {
+  //   return <Redirect to="/login" />;
+  // }
 
   const { offlineProjects, projectsAreLoading, getOfflineProjects } = React.useContext(DatabaseContext);
 
