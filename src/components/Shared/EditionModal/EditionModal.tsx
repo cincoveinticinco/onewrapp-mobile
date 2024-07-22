@@ -10,16 +10,29 @@ import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
 
+export interface FormInput {
+  fieldName: string;
+  label: string;
+  placeholder: string;
+  type: string;
+  col?: string;
+  inputName?: string;
+  required?: boolean;
+  selectOptions?: any[];
+}
+
 interface EditionModalProps {
   modalRef?: React.RefObject<HTMLIonModalElement>;
   modalTrigger: string;
   modalId?: string;
   title: string;
-  formInputs: any;
+  formInputs: FormInput[];
   handleEdition: any;
   defaultFormValues: any;
   validate?: (value: string, keyValue?: string) => (boolean | string),
   openModal?: (modalReference: any) => void;
+  isOpen?: boolean;
+  setIsOpen?: (value: boolean) => void;
   onDidPresent?: () => void;
 }
 
@@ -32,6 +45,8 @@ const EditionModal: React.FC<EditionModalProps> = ({
   defaultFormValues,
   validate,
   modalId,
+  isOpen,
+  setIsOpen,
   onDidPresent = () => { },
 }) => {
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
@@ -57,6 +72,9 @@ const EditionModal: React.FC<EditionModalProps> = ({
       modalRef.current.dismiss();
       resetFormValues();
       setShowError(false);
+      if (setIsOpen) {
+        setIsOpen(false);
+      }
     }
   };
 
@@ -121,6 +139,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
       className="general-modal-styles"
       id={modalId}
       onDidPresent={() => onDidPresent()}
+      isOpen={isOpen}
     >
       <IonHeader>
         <ModalToolbar
@@ -137,7 +156,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
           <IonGrid className="edit-inputs-wrapper">
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} size={input.col || '12'}>
+                <IonCol key={i} size={input.col || '12'} className='ion-flex ion-justify-content-center'>
                   {input.type === 'select' ? (
                     <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
                   ) : (
@@ -152,6 +171,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
                       type={input.type}
                       errorMessage={errorMessage}
+                      style={{ width: '100%' }}
                     />
                   )}
                 </IonCol>
