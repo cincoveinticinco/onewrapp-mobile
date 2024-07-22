@@ -2,12 +2,10 @@ import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
 import {
-  IonButton, IonContent, IonGrid, IonIcon, IonRefresher, IonRefresherContent, useIonViewDidEnter, useIonViewWillEnter,
+  IonButton, IonContent, IonGrid, IonRefresher, IonRefresherContent
 } from '@ionic/react';
 import './Strips.scss';
-import { useHistory, useLocation } from 'react-router';
-import { LuLoader } from 'react-icons/lu';
-import { get } from 'lodash';
+import { useHistory, useLocation } from 'react-router'
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -23,7 +21,13 @@ import useLoader from '../../hooks/Shared/useLoader';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, initializeSceneReplication, projectId, scenesAreLoading, setScenesAreLoading, initializeParagraphReplication
+    offlineScenes, 
+    initializeSceneReplication, 
+    projectId, 
+    scenesAreLoading, 
+    setScenesAreLoading, 
+    initializeParagraphReplication,
+    initializeTalentsReplication
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -44,6 +48,7 @@ const Strips: React.FC = () => {
         console.error('Error initializing scene replication:', error);
       } finally {
         setInitialReplicationFinished(true);
+        await initializeTalentsReplication();
         await initializeParagraphReplication();
       }
     };
