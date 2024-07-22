@@ -1,4 +1,3 @@
-import { key } from 'ionicons/icons';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../Ennums/ennums';
 
 export interface ShootingScene {
@@ -96,4 +95,75 @@ export interface LocationInfo {
 
 export interface meals {
   [key: string]: any;
+}
+
+export interface CastCalls {
+  id: string;
+  projectCastId: number;
+  shootingId: number;
+  pickUp: string | null;
+  callTime: string | null;
+  onMakeUp: string | null;
+  onWardrobe: string | null;
+  readyToShoot: string | null;
+  arrived: string | null;
+  wrap: string | null;
+  startProcesses: string | null;
+  wrapSet: string | null;
+  dropOff: string | null;
+  mealIn: string | null;
+  mealOut: string | null;
+  mealExtraIn: string | null;
+  mealExtraOut: string | null;
+  castName: string | null;
+  castNumber: string | null;
+  castCategory: string | null;
+  castCategoryId: number | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExtraCall {
+  id: string;
+  shootingId: number;
+  projExtraId: number;
+  pickUp: Date | null;
+  callTime: Date | null;
+  onMakeUp: Date | null;
+  onWardrobe: Date | null;
+  readyToShoot: Date | null;
+  arrived: Date | null;
+  wrap: Date | null;
+  quantity: number | null;
+  extraName: string | null;
+  talentAgency: string | null;
+  notes: string | null;
+}
+
+export interface CrewCall {
+  id: string;
+  visible: boolean | null;
+  unit: string | null;
+  name: string | null;
+  department: string | null;
+  position: string | null;
+  call: string | null;
+  callPlace: string | null;
+  wrap: string | null;
+  onCall: boolean | null;
+}
+
+export interface PictureCar {
+  id: string;
+  pictureCarId: number;
+  pictureCarName: string;
+  callTime: string;
+}
+
+export interface OtherCall {
+  id: string;
+  callTime: string;
+  otherCallId: number;
+  otherCallName: string;
 }
