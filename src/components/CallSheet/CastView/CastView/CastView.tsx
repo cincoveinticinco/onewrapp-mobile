@@ -1,31 +1,108 @@
-import React from 'react'
-import GeneralTable from '../../../Shared/GeneralTable/GeneralTable'
+import { useRef } from 'react'
+import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal'
+import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
+import { useParams } from 'react-router'
 
-const CastView = () => {
+const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode }: { castData: any, addNewModalIsOpen: boolean, setIsOpen: any, editMode: any }) => {
+
   const columns = [
-    { key: 'cast', title: 'CAST' },
-    { key: 'talent', title: 'TALENT' },
-    { key: 'tScn', title: 'T. SCN.' },
-    { key: 'pickup', title: 'PICKUP' },
-    { key: 'call', title: 'CALL' },
-    { key: 'makeup', title: 'MAKEUP' },
-    { key: 'wardrobe', title: 'WARDROBE' },
-    { key: 'ready', title: 'READY' },
-    { key: 'notes', title: 'NOTES' },
-  ]
+    { key: 'cast', title: 'CAST', type: 'text', textAlign: 'left' },
+    { key: 'talent', title: 'TALENT', type: 'text' },
+    { key: 'tScn', title: 'T. SCN.', type: 'text'},
+    { key: 'pickup', title: 'PICKUP', type: 'hour' },
+    { key: 'call', title: 'CALL', type: 'hour' },
+    { key: 'makeup', title: 'MAKEUP', type: 'hour' },
+    { key: 'wardrobe', title: 'WARDROBE', type: 'hour'},
+    { key: 'ready', title: 'READY', type: 'hour'},
+    { key: 'notes', title: 'NOTES', type: 'text'},
+  ] as Column[]
 
-  const data = [
-    { cast: '1. ELOISA', talent: 'ANGELICA RIVERA', tScn: '14', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '2. OCTAVIO', talent: 'IVAN SANCHEZ', tScn: '8', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '6. ANTONIA', talent: 'SOFIA CASTRO', tScn: '2', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '7. MATILDE', talent: 'IVANNA CASTRO', tScn: '3', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '9. LETICIA', talent: 'ILIANA FOX', tScn: '2', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '13. BERNARDO', talent: 'JUAN RIOS CANTU', tScn: '2', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-    { cast: '15. NAYELI', talent: 'LUPITA ORTIZ', tScn: '1', pickup: '--', call: '--', makeup: '--', wardrobe: '--', ready: '--', notes: '' },
-  ]
+  const AddCastCallModal = () => {
+    const modalRef = useRef<HTMLIonModalElement>(null)
+    const castOptions = castData.map((cast: any) => ({ value: cast.cast, label: cast.cast }))
+    const { shootingId } = useParams<{ shootingId: string }>()
 
+    // Necessary fields: Cast* (select), pickup, call, makeup, wardrobe, ready, notes
+    const castCallInputs: FormInput[] = [
+      {
+        fieldName: 'cast',
+        label: 'Cast',
+        placeholder: 'Select cast',
+        type: 'select',
+        required: true,
+        selectOptions: castOptions,
+        col: '4'
+      },
+      {
+        fieldName: 'pickup',
+        label: 'Pickup',
+        placeholder: 'Enter pickup time',
+        type: 'time',
+        required: true,
+        col: '4'
+      },
+      {
+        fieldName: 'call',
+        label: 'Call',
+        placeholder: 'Enter call time',
+        type: 'time',
+        required: true,
+        col: '4'
+      },
+      {
+        fieldName: 'makeup',
+        label: 'Makeup',
+        placeholder: 'Enter makeup time',
+        type: 'time',
+        required: true,
+        col: '4'
+      },
+      {
+        fieldName: 'wardrobe',
+        label: 'Wardrobe',
+        placeholder: 'Enter wardrobe time',
+        type: 'time',
+        required: true,
+        col: '4'
+      },
+      {
+        fieldName: 'ready',
+        label: 'Ready',
+        placeholder: 'Enter ready time',
+        type: 'time',
+        required: true,
+        col: '4'
+      },
+      {
+        fieldName: 'notes',
+        label: 'Notes',
+        placeholder: 'Enter notes',
+        type: 'text',
+        required: false,
+        col: '12'
+      }
+    ];
+
+    return (
+      <EditionModal
+        title="Add Cast Call"
+        formInputs={castCallInputs}
+        handleEdition={(values: any) => console.log(values)}
+        modalRef={modalRef}
+        modalId={`add-cast-call-modal-${shootingId}`}
+        modalTrigger='Add Cast Call'
+        defaultFormValues={{ }}
+        isOpen={addNewModalIsOpen}
+        setIsOpen={setIsOpen}
+      />
+
+    )
+  }
   return (
-    <GeneralTable columns={columns} data={data} stickyColumnCount={2} />
+    <>
+      <GeneralTable columns={columns} data={castData} stickyColumnCount={1} editMode={editMode} />
+      <AddCastCallModal />
+    </>
   )
 }
 
