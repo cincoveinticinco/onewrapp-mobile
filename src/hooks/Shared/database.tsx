@@ -8,6 +8,7 @@ import HttpReplicator from '../../RXdatabase/replicator';
 import useNavigatorOnLine from './useNavigatorOnline';
 import UnitsSchema from '../../RXdatabase/schemas/units';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings';
+import TalentsSchema from '../../RXdatabase/schemas/talents';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -29,6 +30,7 @@ export interface DatabaseContextProps {
   initializeSceneReplication: () => Promise<boolean>;
   initializeParagraphReplication: () => Promise<boolean>;
   initializeUnitReplication: () => Promise<boolean>;
+  initializeTalentsReplication: () => Promise<boolean>;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -51,6 +53,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initializeSceneReplication: () => new Promise(() => false),
   initializeParagraphReplication: () => new Promise(() => false),
   initializeUnitReplication: () => new Promise(() => false),
+  initializeTalentsReplication: () => new Promise(() => false),
 });
 
 const sceneCollection = new ScenesSchema();
@@ -58,8 +61,9 @@ const paragraphCollection = new SceneParagraphsSchema();
 const projectCollection = new ProjectsSchema();
 const unitsCollection = new UnitsSchema();
 const shootingsCollection = new ShootingsSchema();
+const talentsCollection = new TalentsSchema();
 
-const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection, unitsCollection, shootingsCollection]);
+const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection, unitsCollection, shootingsCollection, talentsCollection]);
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
@@ -73,11 +77,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const isOnline = useNavigatorOnLine();
 
   useEffect(() => {
-    if (!isOnline) {
-      console.log('You are offline');
-    } else {
-      console.log('You are online');
-    }
+    
   }, [isOnline]);
 
   useEffect(() => {
@@ -188,6 +188,27 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   };
 
+  const initializeTalentsReplication = async () => {
+    try {
+      const lastTalentInProject = await oneWrapRXdatabase?.talents.find({
+        selector: { projectId: parseInt(projectId) },
+      }).sort({ updatedAt: 'desc' }).limit(1).exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+
+      const talentsReplicator = new HttpReplicator(oneWrapRXdatabase, [talentsCollection], parseInt(projectId), lastTalentInProject);
+
+      if (isOnline) {
+        talentsReplicator.startReplicationPull();
+      }
+
+      await talentsReplicator.monitorReplicationStatus();
+      return true;
+    } catch (error) {
+      console.error('Error during talent replication:', error);
+      return false;
+    }
+  }
+
   const initializeUnitReplication = async () => {
     try {
       const lastUnitInProject = await oneWrapRXdatabase?.units.find({
@@ -267,6 +288,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         initializeSceneReplication,
         initializeParagraphReplication,
         initializeUnitReplication,
+        initializeTalentsReplication
       }}
     >
       {children}
