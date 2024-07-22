@@ -219,6 +219,226 @@ const shootingSchema = {
         },
       },
     },
+    castCalls: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: ['string', 'null'],
+            maxLength: 250,
+          },
+          projectCastId: {
+            type: 'number',
+          },
+          shootingId: {
+            type: 'number',
+          },
+          pickUp: {
+            type: ['string', 'null'],
+          },
+          callTime: {
+            type: ['string', 'null'],
+          },
+          onMakeUp: {
+            type: ['string', 'null'],
+          },
+          onWardrobe: {
+            type: ['string', 'null'],
+          },
+          readyToShoot: {
+            type: ['string', 'null'],
+          },
+          arrived: {
+            type: ['string', 'null'],
+          },
+          wrap: {
+            type: ['string', 'null'],
+          },
+          startProcesses: {
+            type: ['string', 'null'],
+          },
+          wrapSet: {
+            type: ['string', 'null'],
+          },
+          dropOff: {
+            type: ['string', 'null'],
+          },
+          mealIn: {
+            type: ['string', 'null'],
+          },
+          mealOut: {
+            type: ['string', 'null'],
+          },
+          mealExtraIn: {
+            type: ['string', 'null'],
+          },
+          mealExtraOut: {
+            type: ['string', 'null'],
+          },
+          castName: {
+            type: ['string', 'null'],
+          },
+          castNumber: {
+            type: ['string', 'null'],
+          },
+          notes: {
+            type: ['string', 'null'],
+          },
+          castCategory: {
+            type: ['string', 'null'],
+          },
+          castCategoryId: {
+            type: ['number', 'null'],
+          },
+          createdAt: {
+            type: 'string',
+          },
+          updatedAt: {
+            type: 'string',
+          },
+        },
+      },
+    },
+    extraCalls: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          shootingId: {
+            type: 'number',
+          },
+          projExtraId: {
+            type: 'number',
+          },
+          pickUp: {
+            type: ['string', 'null'],
+          },
+          callTime: {
+            type: ['string', 'null'],
+          },
+          onMakeUp: {
+            type: ['string', 'null'],
+          },
+          onWardrobe: {
+            type: ['string', 'null'],
+          },
+          readyToShoot: {
+            type: ['string', 'null'],
+          },
+          arrived: {
+            type: ['string', 'null'],
+          },
+          wrap: {
+            type: ['string', 'null'],
+          },
+          quantity: {
+            type: ['number', 'null'],
+          },
+          extraName: {
+            type: ['string', 'null'],
+          },
+          talentAgency: {
+            type: ['string', 'null'],
+          },
+          notes: {
+            type: ['string', 'null'],
+          },
+          createdAt: {
+            type: 'string',
+          },
+          updatedAt: {
+            type: 'string',
+          },
+        },
+      },
+    },
+    crewCalls: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          visible: {
+            type: ['boolean', 'null'],
+          },
+          unit: {
+            type: ['number', 'null'],
+          },
+          name: {
+            type: ['string', 'null'],
+          },
+          departmentEsp: {
+            type: ['string', 'null'],
+          },
+          departmentEng: { 
+            type: ['string', 'null'],
+          },
+          position: {
+            type: ['string', 'null'],
+          },
+          call: {
+            type: ['string', 'null'],
+          },
+          callPlace: {
+            type: ['string', 'null'],
+          },
+          wrap: {
+            type: ['string', 'null'],
+          },
+          onCall: {
+            type: ['boolean', 'null'],
+          },
+        },
+      },
+    },
+    pictureCars: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 250,
+          },
+          pictureCarId: {
+            type: 'number',
+          },
+          pictureCarName: {
+            type: 'string',
+          },
+          callTime: {
+            type: 'string',
+          },
+        },
+      },
+    },
+    otherCalls: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 250,
+          },
+          callTime: {
+            type: 'string',
+          },
+          otherCallId: {
+            type: 'number',
+          },
+          otherCallName: {
+            type: 'string',
+          },
+        },
+      },
+    },
   },
   required: ['projectId', 'unitId', 'scenes'],
 };
