@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
-  useRouteMatch, Redirect, Route, useParams,
+  useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
 import {
   IonIcon,
@@ -12,7 +12,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import {
-  calendar, list, people, business, reader, settings, serverOutline, documentTextOutline,
+  calendar, list, people, business, reader, settings,
 } from 'ionicons/icons';
 // import { useAuth } from '../../context/auth';
 import AddScene from '../../../pages/AddScene/AddScene';
@@ -45,6 +45,7 @@ import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
 import { useAuth } from '../../../context/auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 import DatabaseContext from '../../../hooks/Shared/database';
+import CallSheet from '../../../pages/CallSheet/CallSheet';
 
 setupIonicReact();
 
@@ -52,13 +53,9 @@ const AppTabs: React.FC = () => {
   const { loggedIn } = useAuth();
   const { viewTabs } = useContext(DatabaseContext);
 
-  useEffect(() => {
-    console.log('viewTabs', viewTabs);
-  }, [viewTabs]);
-
-  if (!loggedIn) {
-    return <Redirect to="/login" />;
-  }
+  // if (!loggedIn) {
+  //   return <Redirect to="/login" />;
+  // }
 
   const isMobile = useIsMobile();
 
@@ -89,6 +86,9 @@ const AppTabs: React.FC = () => {
         </Route>
         <Route exact path={`${urlString}/shooting/:shootingId`}>
           <ShootingDetail />
+        </Route>
+        <Route exact path={`${urlString}/shooting/:shootingId/callsheet`}>
+          <CallSheet />
         </Route>
         <Route exact path={`${urlString}/strips/filters`}>
           <FilterScenes />
