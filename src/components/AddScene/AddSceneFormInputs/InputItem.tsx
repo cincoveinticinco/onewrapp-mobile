@@ -14,6 +14,7 @@ interface InputItemProps {
   validate?: any;
   type?: any;
   errorMessage?: string;
+  style?: any
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -27,6 +28,7 @@ const InputItem: React.FC<InputItemProps> = ({
   validate,
   type = 'text',
   errorMessage = 'REQUIRED *',
+  style
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
@@ -36,7 +38,7 @@ const InputItem: React.FC<InputItemProps> = ({
   }, [displayError]);
 
   return (
-    <IonItem color="tertiary" id={inputName}>
+    <IonItem color="tertiary" id={inputName} style={style}>
       <Controller
         control={control}
         name={fieldName}
