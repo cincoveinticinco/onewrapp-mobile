@@ -33,7 +33,17 @@ export interface Shooting {
   isTest: boolean;
   createdAt: string;
   updatedAt: string;
+  banners: ShootingBanner[];
   scenes: ShootingScene[];
+  locations: Location[];
+  hospitals: Hospital[];
+  meals: Meal[];
+  advanceCalls: AdvanceCall[];
+  castCalls: CastCalls[];
+  extraCalls: ExtraCall[];
+  crewCalls: CrewCall[];
+  pictureCars: PictureCar[];
+  otherCalls: OtherCall[];
 }
 
 export interface ShootingBanner {
@@ -93,7 +103,7 @@ export interface LocationInfo {
   shoot_date: string;
 }
 
-export interface meals {
+export interface Meal {
   [key: string]: any;
 }
 
@@ -168,5 +178,13 @@ export interface OtherCall {
   callTime: string;
   otherCallId: number;
   otherCallName: string;
+  quantity: number;
+}
+
+export interface Hospital {
+  id: string;
+  hospitalId: number;
+  hospitalName: string;
+  callTime: string;
   quantity: number;
 }
