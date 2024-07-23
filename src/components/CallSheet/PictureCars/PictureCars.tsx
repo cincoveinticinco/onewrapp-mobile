@@ -7,10 +7,11 @@ import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal'
 interface PictureCarsProps {
   pictureCars: PictureCar[]
   isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
+  setIsOpen: (isOpen: boolean) => void;
+  addNewPictureCar: (pictureCar: PictureCar) => void;
 }
 
-const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpen }) => {
+const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpen, addNewPictureCar }) => {
 
   const modalRef = React.useRef<HTMLIonModalElement>(null)
 
@@ -47,7 +48,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         title="Add New Picture Car"
         formInputs={pictureCarInputs}
         modalRef={modalRef}
-        handleEdition={() => {}}
+        handleEdition={addNewPictureCar}
         defaultFormValues={{}}
         modalTrigger='Add New Picture Car'
         isOpen={isOpen}
