@@ -1,5 +1,6 @@
 import React from 'react';
 import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable'; 
+import NoRegisters from '../NoRegisters/NoRegisters';
 
 interface CrewCall {
   id: string;
@@ -37,6 +38,8 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
     visible: crew.visible ? 'YES' : 'NO',
     onCall: crew.onCall ? 'YES' : 'NO',
   }));
+
+  if(!crewCalls.length) return <NoRegisters addNew={() => {}} />;
 
   return (
     <GeneralTable
