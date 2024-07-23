@@ -15,7 +15,7 @@ import SceneCard from '../../components/Strips/SceneCard';
 import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useLoader from '../../hooks/Shared/useLoader';
 import {
-  ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, meals, AdvanceCall,
+  ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, Meal, AdvanceCall,
 } from '../../interfaces/shootingTypes';
 import './ShootingDetail.css';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
@@ -51,7 +51,7 @@ interface ShootingInfo {
   locations: LocationInfo[];
   hospitals: LocationInfo[];
   advanceCalls: AdvanceCalls[]
-  meals: meals[];
+  meals: Meal[];
 }
 
 interface ShootingDataProps {
@@ -335,7 +335,7 @@ const ShootingDetail = () => {
     }));
   };
 
-  const handleEditMeal = async (meal: meals) => {
+  const handleEditMeal = async (meal: Meal) => {
     initializeShootingReplication();
     if (oneWrapDb && shootingId) {
       try {
@@ -344,7 +344,7 @@ const ShootingDetail = () => {
         if (shooting) {
           const shootingCopy = { ...shooting._data };
 
-          const index = shootingCopy.meals.findIndex((m: meals) => m.id === meal.id);
+          const index = shootingCopy.meals.findIndex((m: Meal) => m.id === meal.id);
           if (index !== -1) {
             const updatedMeals = [...shootingCopy.meals];
 
@@ -465,7 +465,7 @@ const ShootingDetail = () => {
 
   const validateMealExistence = (meal: string) => {
     const { meals: shootingMeals } = shootingData.shotingInfo;
-    const mealExists = shootingMeals.some((m: meals) => m.meal.toLowerCase() === meal.toLowerCase());
+    const mealExists = shootingMeals.some((m: Meal) => m.meal.toLowerCase() === meal.toLowerCase());
     if(mealExists) {
       return 'meal already exists';
     }
@@ -811,7 +811,7 @@ const ShootingDetail = () => {
     }
   };
 
-  const deleteMeal = async (mealToDelete: meals) => {
+  const deleteMeal = async (mealToDelete: Meal) => {
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
@@ -822,9 +822,9 @@ const ShootingDetail = () => {
           // If the meal has an id, filter it out based on the id
           // Otherwise, use the index to remove it
           if (mealToDelete.id !== null) {
-            shootingCopy.meals = shootingCopy.meals.filter((meal: meals) => meal.id !== mealToDelete.id);
+            shootingCopy.meals = shootingCopy.meals.filter((meal: Meal) => meal.id !== mealToDelete.id);
           } else {
-            const indexToDelete = shootingCopy.meals.findIndex((meal: meals) => meal.meal === mealToDelete.meal
+            const indexToDelete = shootingCopy.meals.findIndex((meal: Meal) => meal.meal === mealToDelete.meal
               && meal.ready_at === mealToDelete.ready_at
               && meal.end_time === mealToDelete.end_time);
             if (indexToDelete !== -1) {
