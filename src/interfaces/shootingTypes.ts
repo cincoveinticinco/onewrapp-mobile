@@ -142,6 +142,7 @@ export interface ExtraCall {
 }
 
 export interface CrewCall {
+  crewName: string;
   id: string;
   visible: boolean | null;
   unit: string | null;
@@ -159,6 +160,7 @@ export interface PictureCar {
   pictureCarId: number;
   pictureCarName: string;
   callTime: string;
+  quantity: number;
 }
 
 export interface OtherCall {
@@ -166,4 +168,5 @@ export interface OtherCall {
   callTime: string;
   otherCallId: number;
   otherCallName: string;
+  quantity: number;
 }
