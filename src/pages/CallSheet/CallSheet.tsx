@@ -21,13 +21,14 @@ import { Character, Scene } from '../../interfaces/scenesTypes'
 import { Talent } from '../../RXdatabase/schemas/talents'
 import { normalizeString } from 'rxdb'
 import AddButton from '../../components/Shared/AddButton/AddButton'
-import { CrewCall, ExtraCall, Shooting } from '../../interfaces/shootingTypes'
+import { CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting } from '../../interfaces/shootingTypes'
 import ExtraView from '../../components/CallSheet/ExtraView/ExtraView'
 import CrewView from '../../components/CallSheet/CrewView/CrewView'
 import { VscEdit } from 'react-icons/vsc'
 import PictureCars from '../../components/CallSheet/PictureCars/PictureCars'
 import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls'
 import { ShootingStatusEnum } from '../../Ennums/ennums'
+import timeToISOString from '../../utils/timeToIsoString'
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -36,11 +37,11 @@ const CallSheet: React.FC = () => {
   const [view, setView] = useState<CallSheetView>('cast')
   const { id, shootingId } = useParams<{ id: string, shootingId: string }>()
   const { oneWrapDb } = React.useContext(DatabaseContext)
-  const [castCalls, setCastCalls] = React.useState([])
+  const [castCalls, setCastCalls] = React.useState<any[]>([])
   const [extraCalls, setExtraCalls] = React.useState<ExtraCall[]>([])
   const [crewCalls, setCrewCalls] = React.useState<CrewCall[]>([])
-  const [otherCalls, setOtherCalls] = React.useState([])
-  const [pictureCars, setPictureCars] = React.useState([])
+  const [otherCalls, setOtherCalls] = React.useState<OtherCall[]>([])
+  const [pictureCars, setPictureCars] = React.useState<PictureCar[]>([])
   const [addNewCastCallModalIsOpen, setAddNewCastCallModalIsOpen] = React.useState(false)
   const [addNewExtraCAllModalIsOpen, setAddNewExtraCAllModalIsOpen] = React.useState(false)
   const [addNewCrewCallModalIsOpen, setAddNewCrewCallModalIsOpen] = React.useState(false)
@@ -48,9 +49,18 @@ const CallSheet: React.FC = () => {
   const [addNewPictureCarModalIsOpen, setAddNewPictureCarModalIsOpen] = React.useState(false)
   const [editMode, setEditMode] = React.useState(false)
   const [thisShooting, setThisShooting] = React.useState<Shooting>()
+  const [castOptions, setCastOptions] = React.useState<any>([])
+  const [scenesInShoot, setScenesInShoot] = React.useState<any>([])
+
+  const getTalentCastOptions = async () => {
+    const talents = await oneWrapDb?.talents.find({}).exec() || [];
+    const castOptions = talents.map((talent: any) => ({ value: talent._data, label: talent.castName })).sort((a, b) => a.label.localeCompare(b.label))
+    setCastOptions(castOptions)
+  }
 
   useEffect(() => {
     fetchCastCalls()
+    getTalentCastOptions()
   }, [oneWrapDb])
 
   const openAddNewModal = () => {
@@ -98,6 +108,8 @@ const CallSheet: React.FC = () => {
   
       const uniqueCastCalls = new Map();
 
+      setScenesInShoot(scenes);
+      
       scenes.forEach((scene: { _data: Scene }) => {
         if (scene._data.characters) {
           scene._data.characters.forEach((character: Character) => {
@@ -107,13 +119,13 @@ const CallSheet: React.FC = () => {
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
                 cast: `${character.characterNum}. ${character.characterName}`,
-                talent: talent?.name,
+                name: talent?.name,
                 tScn: getNumberScenesByCast(character.characterName),
-                pickup: talentCallInfo?.pickup || '--',
-                call: talentCallInfo?.callTime || '--',
-                makeup: talentCallInfo?.onMakeUp || '--',
-                wardrobe: talentCallInfo?.onWardrobe || '--',
-                ready: talentCallInfo?.readyToShoot || '--',
+                pickUp: talentCallInfo?.pickup || '--',
+                callTime: talentCallInfo?.callTime || '--',
+                onMakeUp: talentCallInfo?.onMakeUp || '--',
+                onWardrobe: talentCallInfo?.onWardrobe || '--',
+                readyToShoot: talentCallInfo?.readyToShoot || '--',
                 notes: talentCallInfo?.notes || '',
               });
             }
@@ -148,13 +160,36 @@ const CallSheet: React.FC = () => {
   const renderContent = () => {
     switch(view) {
       case 'cast':
-        return <CastView castData={castCalls} addNewModalIsOpen={addNewCastCallModalIsOpen} setIsOpen={setAddNewCastCallModalIsOpen} editMode={editMode && view === 'cast'} />
+        return <CastView 
+                  castData={castCalls} 
+                  addNewModalIsOpen={addNewCastCallModalIsOpen} 
+                  setIsOpen={setAddNewCastCallModalIsOpen} 
+                  editMode={editMode && view === 'cast'}
+                  addNewCastCall={createNewCastCall}
+                  castOptions={castOptions}
+                />
       case 'extras':
-        return <ExtraView extraViewData={extraCalls} editMode={editMode && view === 'extras'} addNewModalIsOpen={addNewExtraCAllModalIsOpen} setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}/>
+        return <ExtraView 
+                  extraViewData={extraCalls} 
+                  editMode={editMode && view === 'extras'} 
+                  addNewModalIsOpen={addNewExtraCAllModalIsOpen} 
+                  setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}
+                  addNewExtraCall={createNewExtraCall}
+                />
       case 'pictureCars':
-        return <PictureCars pictureCars={pictureCars} isOpen={addNewPictureCarModalIsOpen} setIsOpen={setAddNewPictureCarModalIsOpen} />
+        return <PictureCars 
+                  pictureCars={pictureCars} 
+                  isOpen={addNewPictureCarModalIsOpen} 
+                  setIsOpen={setAddNewPictureCarModalIsOpen} 
+                  addNewPictureCar={createNewPictureCar} 
+                />
       case 'others':
-        return <OtherCalls otherCalls={otherCalls} isOpen={addNewOtherCallModalIsOpen} setIsOpen={setAddNewOtherCallModalIsOpen} />
+        return <OtherCalls 
+                  otherCalls={otherCalls} 
+                  isOpen={addNewOtherCallModalIsOpen} 
+                  setIsOpen={setAddNewOtherCallModalIsOpen}
+                  addNewOtherCall={createNewOtherCall}
+                />
       case 'crew':
         return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} />
       default:
@@ -164,6 +199,257 @@ const CallSheet: React.FC = () => {
 
   const toggleEditMode = () => {
     setEditMode(!editMode)
+  }
+
+  const createNewExtraCall = async (formData: any): Promise<void> => {
+    try {
+      const quantity = formData.quantity ? parseInt(formData.quantity.toString()) : 0
+      const shootingIdInt = shootingId ? parseInt(shootingId) : 0
+  
+      const pickUp = formData.pickUp && timeToISOString({
+        hours: formData.pickUp.split(':')[0],
+        minutes: formData.pickUp.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const callTime = formData.callTime && timeToISOString({
+        hours: formData.callTime.split(':')[0],
+        minutes: formData.callTime.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const onMakeUp = formData.onMakeUp && timeToISOString({
+        hours: formData.onMakeUp.split(':')[0],
+        minutes: formData.onMakeUp.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const onWardrobe = formData.onWardrobe && timeToISOString({
+        hours: formData.onWardrobe.split(':')[0],
+        minutes: formData.onWardrobe.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const readyToShoot = formData.readyToShoot && timeToISOString({
+        hours: formData.readyToShoot.split(':')[0],
+        minutes: formData.readyToShoot.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const arrived = formData.arrived && timeToISOString({
+        hours: formData.arrived.split(':')[0],
+        minutes: formData.arrived.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const wrap = formData.wrap && timeToISOString({
+        hours: formData.wrap.split(':')[0],
+        minutes: formData.wrap.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const newExtraCall: any = {
+        id: '',
+        shootingId: shootingIdInt,
+        projExtraId: 0,
+        pickUp: pickUp || null,
+        callTime: callTime || null,
+        onMakeUp: onMakeUp || null,
+        onWardrobe: onWardrobe || null,
+        readyToShoot: readyToShoot || null,
+        arrived: arrived || null,
+        wrap: wrap || null,
+        quantity: quantity,
+        extraName: formData.extraName || '',
+        talentAgency: formData.talentAgency || '',
+        notes: formData.notes || ''
+      }
+  
+      const shootingCopy = { ...thisShooting }
+      shootingCopy.extraCalls = [...(shootingCopy.extraCalls || []), newExtraCall]
+  
+      setThisShooting(shootingCopy as Shooting)
+  
+      await oneWrapDb?.shootings.upsert(shootingCopy)
+      setExtraCalls([...extraCalls, newExtraCall])
+      console.log('Extra Call created:', newExtraCall)
+    } catch (error) {
+      console.error('Error al crear nuevo Extra Call:', error)
+      throw error
+    }
+  }
+  
+  const createNewPictureCar = async (formData: any): Promise<void> => {
+    try {
+      const quantity = formData.quantity ? parseInt(formData.quantity.toString()) : 0
+      const shootingIdInt = shootingId ? parseInt(shootingId) : 0
+  
+      const callTime = formData.callTime && timeToISOString({
+        hours: formData.callTime.split(':')[0],
+        minutes: formData.callTime.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const newPictureCar: PictureCar = {
+        id: '',
+        pictureCarId: 0,
+        pictureCarName: formData.pictureCarName || '',
+        quantity: quantity,
+        callTime: callTime || '',
+      }
+  
+      const shootingCopy = { ...thisShooting }
+      shootingCopy.pictureCars = [...(shootingCopy.pictureCars || []), newPictureCar]
+  
+      setThisShooting(shootingCopy as Shooting)
+  
+      await oneWrapDb?.shootings.upsert(shootingCopy)
+      setPictureCars([...pictureCars, newPictureCar])
+      console.log('Picture Car created:', newPictureCar)
+    } catch (error) {
+      console.error('Error al crear nuevo Picture Car:', error)
+      throw error
+    }
+  }
+  
+  const createNewOtherCall = async (formData: any): Promise<void> => {
+    try {
+      const quantity = formData.quantity ? parseInt(formData.quantity.toString()) : 0
+      const shootingIdInt = shootingId ? parseInt(shootingId) : 0
+  
+      const callTime = formData.callTime && timeToISOString({
+        hours: formData.callTime.split(':')[0],
+        minutes: formData.callTime.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const newOtherCall: OtherCall = {
+        id: '',
+        otherCallId: 0,
+        callTime: callTime || '',
+        otherCallName: formData.otherCallName || '',
+        quantity: quantity,
+      }
+  
+      const shootingCopy = { ...thisShooting }
+      shootingCopy.otherCalls = [...(shootingCopy.otherCalls || []), newOtherCall]
+  
+      setThisShooting(shootingCopy as Shooting)
+  
+      await oneWrapDb?.shootings.upsert(shootingCopy)
+      setOtherCalls([...otherCalls, newOtherCall])
+      console.log('Other Call created:', newOtherCall)
+    } catch (error) {
+      console.error('Error al crear nuevo Other Call:', error)
+      throw error
+    }
+  }
+  
+  const createNewCastCall = async (formData: any): Promise<void> => {
+    try {
+      const shootingIdInt = shootingId ? parseInt(shootingId) : 0
+  
+      const callTime = formData.callTime && timeToISOString({
+        hours: formData.callTime.split(':')[0],
+        minutes: formData.callTime.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const arrived = formData.arrived && timeToISOString({
+        hours: formData.arrived.split(':')[0],
+        minutes: formData.arrived.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const onMakeUp = formData.onMakeUp && timeToISOString({
+        hours: formData.onMakeUp.split(':')[0],
+        minutes: formData.onMakeUp.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const onWardrobe = formData.onWardrobe && timeToISOString({
+        hours: formData.onWardrobe.split(':')[0],
+        minutes: formData.onWardrobe.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const readyToShoot = formData.readyToShoot && timeToISOString({
+        hours: formData.readyToShoot.split(':')[0],
+        minutes: formData.readyToShoot.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const wrap = formData.wrap && timeToISOString({
+        hours: formData.wrap.split(':')[0],
+        minutes: formData.wrap.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const pickUp = formData.pickUp && timeToISOString({
+        hours: formData.pickUp.split(':')[0],
+        minutes: formData.pickUp.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const dropOff = formData.dropOff && timeToISOString({
+        hours: formData.dropOff.split(':')[0],
+        minutes: formData.dropOff.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const mealIn = formData.mealIn && timeToISOString({
+        hours: formData.mealIn.split(':')[0],
+        minutes: formData.mealIn.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const mealOut = formData.mealOut && timeToISOString({
+        hours: formData.mealOut.split(':')[0],
+        minutes: formData.mealOut.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const mealExtraIn = formData.mealExtraIn && timeToISOString({
+        hours: formData.mealExtraIn.split(':')[0],
+        minutes: formData.mealExtraIn.split(':')[1]
+      }, thisShooting?.shootDate || '')
+  
+      const mealExtraOut = formData.mealExtraOut && timeToISOString({
+        hours: formData.mealExtraOut.split(':')[0],
+        minutes: formData.mealExtraOut.split(':')[1]
+      }, thisShooting?.shootDate || '')
+
+      const cast: Talent = formData.cast
+
+      const character: Character = scenesInShoot.flatMap((scene: any) => scene._data.characters).find((character: any) => normalizeString(character.characterName) === normalizeString(cast.castName))
+
+      const characterNum = character?.characterNum
+  
+      const newCastCall: CastCalls = {
+        id: '',
+        castName: cast.castName || '',
+        callTime: callTime || '',
+        arrived: arrived || '',
+        onMakeUp: onMakeUp || '',
+        onWardrobe: onWardrobe || '',
+        readyToShoot: readyToShoot || '',
+        wrap: wrap || '',
+        notes: formData.notes || '',
+        pickUp: pickUp || '',
+        castCategory: cast.castCategory || '',
+        castCategoryId: cast.castCategoryId || 0,
+        castNumber: characterNum || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        dropOff: dropOff || '',
+        mealExtraIn: mealExtraIn || '',
+        mealExtraOut: mealExtraOut || '',
+        mealIn: mealIn || '',
+        mealOut: mealOut || '',
+        projectCastId: 0,
+        shootingId: shootingIdInt,
+        startProcesses: formData.startProcesses || '',
+        wrapSet: formData.wrapSet || ''
+      }
+  
+      const shootingCopy = { ...thisShooting }
+      shootingCopy.castCalls = [...(shootingCopy.castCalls || []), newCastCall]
+  
+      setThisShooting(shootingCopy as Shooting)
+  
+      await oneWrapDb?.shootings.upsert(shootingCopy)
+      const formattedCastCall = {
+        ...newCastCall,
+        cast: `${cast.castName}`
+      }
+
+      setCastCalls([...castCalls, formattedCastCall].sort((a, b) => a.cast.localeCompare(b.cast)))
+      console.log('Cast Call created:', newCastCall)
+    } catch (error) {
+      console.error('Error al crear nuevo Cast Call:', error)
+      throw error
+    }
   }
 
   return (
