@@ -99,15 +99,15 @@ export const DayOrNightOptionEnumArray: string[] = [
 // SHOOTING ENNUMS
 
 export enum ShootingStatusEnum {
-  Closed = 1,
+  Open = 1,
   Called = 2,
-  InProgress = 3,
+  Closed = 3,
 }
 
 export const ShootingStatusEnumArray: number[] = [
   ShootingStatusEnum.Closed,
   ShootingStatusEnum.Called,
-  ShootingStatusEnum.InProgress,
+  ShootingStatusEnum.Open,
 ];
 
 export enum ShootingSceneStatusEnum {
