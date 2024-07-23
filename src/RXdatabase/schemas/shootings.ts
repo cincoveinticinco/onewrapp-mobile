@@ -409,6 +409,9 @@ const shootingSchema = {
           pictureCarId: {
             type: 'number',
           },
+          quantity: {
+            type: 'number',
+          },
           pictureCarName: {
             type: 'string',
           },
@@ -431,6 +434,9 @@ const shootingSchema = {
             type: 'string',
           },
           otherCallId: {
+            type: 'number',
+          },
+          quantity: {
             type: 'number',
           },
           otherCallName: {
