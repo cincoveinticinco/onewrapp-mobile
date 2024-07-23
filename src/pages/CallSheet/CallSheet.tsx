@@ -21,10 +21,13 @@ import { Character, Scene } from '../../interfaces/scenesTypes'
 import { Talent } from '../../RXdatabase/schemas/talents'
 import { normalizeString } from 'rxdb'
 import AddButton from '../../components/Shared/AddButton/AddButton'
-import { CrewCall, ExtraCall } from '../../interfaces/shootingTypes'
+import { CrewCall, ExtraCall, Shooting } from '../../interfaces/shootingTypes'
 import ExtraView from '../../components/CallSheet/ExtraView/ExtraView'
 import CrewView from '../../components/CallSheet/CrewView/CrewView'
 import { VscEdit } from 'react-icons/vsc'
+import PictureCars from '../../components/CallSheet/PictureCars/PictureCars'
+import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls'
+import { ShootingStatusEnum } from '../../Ennums/ennums'
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -36,16 +39,38 @@ const CallSheet: React.FC = () => {
   const [castCalls, setCastCalls] = React.useState([])
   const [extraCalls, setExtraCalls] = React.useState<ExtraCall[]>([])
   const [crewCalls, setCrewCalls] = React.useState<CrewCall[]>([])
+  const [otherCalls, setOtherCalls] = React.useState([])
+  const [pictureCars, setPictureCars] = React.useState([])
   const [addNewCastCallModalIsOpen, setAddNewCastCallModalIsOpen] = React.useState(false)
+  const [addNewExtraCAllModalIsOpen, setAddNewExtraCAllModalIsOpen] = React.useState(false)
+  const [addNewCrewCallModalIsOpen, setAddNewCrewCallModalIsOpen] = React.useState(false)
+  const [addNewOtherCallModalIsOpen, setAddNewOtherCallModalIsOpen] = React.useState(false)
+  const [addNewPictureCarModalIsOpen, setAddNewPictureCarModalIsOpen] = React.useState(false)
   const [editMode, setEditMode] = React.useState(false)
+  const [thisShooting, setThisShooting] = React.useState<Shooting>()
 
   useEffect(() => {
     fetchCastCalls()
   }, [oneWrapDb])
 
+  const openAddNewModal = () => {
+    if(view === 'cast') {
+      setAddNewCastCallModalIsOpen(true)
+    } else if(view === 'extras') {
+      setAddNewExtraCAllModalIsOpen(true)
+    } else if(view === 'crew') {
+      setAddNewCrewCallModalIsOpen(true)
+    } else if(view === 'others') {
+      setAddNewOtherCallModalIsOpen(true)
+    } else if(view === 'pictureCars') {
+      setAddNewPictureCarModalIsOpen(true)
+    }
+  }
+
   const fetchCastCalls = async () => {
     try {
       const shootings: any = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
+      setThisShooting(shootings[0]._data);
       const scenesInShoot = shootings[0]._data.scenes;
       const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
       const scenes = await oneWrapDb?.scenes.find({ selector: { sceneId: { $in: scenesIds } } }).exec() || [];
@@ -103,8 +128,12 @@ const CallSheet: React.FC = () => {
       
       const crewCalls: CrewCall[] = shootings[0]._data.crewCalls;
       setCrewCalls(crewCalls);
-      console.log('crewCalls', crewCalls)
-  
+
+      const otherCalls = shootings[0]._data.otherCalls;
+      setOtherCalls(otherCalls);
+
+      const pictureCars = shootings[0]._data.pictureCars;
+      setPictureCars(pictureCars);
     } catch(err) {
       console.error(err)
     }
@@ -121,11 +150,11 @@ const CallSheet: React.FC = () => {
       case 'cast':
         return <CastView castData={castCalls} addNewModalIsOpen={addNewCastCallModalIsOpen} setIsOpen={setAddNewCastCallModalIsOpen} editMode={editMode && view === 'cast'} />
       case 'extras':
-        return <ExtraView extraViewData={extraCalls} editMode={editMode && view === 'extras'} />
+        return <ExtraView extraViewData={extraCalls} editMode={editMode && view === 'extras'} addNewModalIsOpen={addNewExtraCAllModalIsOpen} setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}/>
       case 'pictureCars':
-        return <ExploreContainer name="Picture Cars Content" />
+        return <PictureCars pictureCars={pictureCars} isOpen={addNewPictureCarModalIsOpen} setIsOpen={setAddNewPictureCarModalIsOpen} />
       case 'others':
-        return <ExploreContainer name="Others Content" />
+        return <OtherCalls otherCalls={otherCalls} isOpen={addNewOtherCallModalIsOpen} setIsOpen={setAddNewOtherCallModalIsOpen} />
       case 'crew':
         return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} />
       default:
@@ -150,12 +179,17 @@ const CallSheet: React.FC = () => {
           <IonIcon slot="icon-only" icon={chevronBackOutline} />
           </IonButton>
           <IonTitle>CALL TIME</IonTitle>
-          <div slot='end' >
-            <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
-              <VscEdit />
-            </IonButton>
-            <AddButton onClick={() => setAddNewCastCallModalIsOpen(true)}/>
-          </div> 
+          {
+            thisShooting &&
+            thisShooting.status !== ShootingStatusEnum.Closed && (
+              <div slot='end'>
+                <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
+                  <VscEdit />
+                </IonButton>
+                <AddButton onClick={() => openAddNewModal()}/>
+              </div> 
+            )
+          }
         </IonToolbar>
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
