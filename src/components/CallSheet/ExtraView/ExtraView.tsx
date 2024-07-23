@@ -9,6 +9,7 @@ interface ExtraViewProps {
   editMode: boolean;
   addNewModalIsOpen: boolean;
   setAddNewModalIsOpen: (isOpen: boolean) => void;
+  addNewExtraCall: (extraCall: ExtraCall) => void;
 }
 
 const columns: Column[] = [
@@ -24,7 +25,7 @@ const columns: Column[] = [
   { key: 'notes', title: 'Notes' }
 ];
 
-const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen }) => {
+const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen, addNewExtraCall }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
   // Para el modal de creacion, necesito las opciones Extra, Quantity, CAll, makeup, wardrobe, ready, arrived, wrap, notes y talent agency. Las llaves respectivas son extraName, quantity, callTime, onMakeUp, onWardrobe, readyToShoot, arrived, wrap, notes y talentAgency
@@ -101,7 +102,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewMo
       <EditionModal
         title="Add New Extra"
         formInputs={extraInputs}
-        handleEdition={() => {}}
+        handleEdition={addNewExtraCall}
         modalId='addExtraModal'
         modalTrigger='Add New Extra'
         modalRef={modalRef}
