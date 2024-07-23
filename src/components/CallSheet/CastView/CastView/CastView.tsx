@@ -2,6 +2,8 @@ import { useRef } from 'react'
 import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal'
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
 import { useParams } from 'react-router'
+import OutlineLightButton from '../../../Shared/OutlineLightButton/OutlineLightButton'
+import NoRegisters from '../../NoRegisters/NoRegisters'
 
 const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode }: { castData: any, addNewModalIsOpen: boolean, setIsOpen: any, editMode: any }) => {
 
@@ -98,10 +100,17 @@ const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode }: { castDa
 
     )
   }
+
+  if(addNewModalIsOpen) return <AddCastCallModal />
+  
+  if (!castData || castData.length === 0) {
+    return (
+      <NoRegisters addNew={() => setIsOpen(true)} />
+    )
+  }
   return (
     <>
       <GeneralTable columns={columns} data={castData} stickyColumnCount={1} editMode={editMode} />
-      <AddCastCallModal />
     </>
   )
 }
