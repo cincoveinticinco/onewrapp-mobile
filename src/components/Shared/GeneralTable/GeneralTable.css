@@ -3,12 +3,17 @@
   position: relative;
 }
 
+.table-container::-webkit-scrollbar {
+  display: none;
+}
+
 .custom-table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.custom-table th, .custom-table td {
+.custom-table th,
+.custom-table td {
   border: 1px solid #ddd;
   padding: 8px;
   width: auto;
