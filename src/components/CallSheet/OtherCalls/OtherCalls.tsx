@@ -3,6 +3,7 @@ import { OtherCall } from '../../../interfaces/shootingTypes'
 import NoRegisters from '../NoRegisters/NoRegisters'
 import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable'
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal'
+import { normalizeString } from 'rxdb'
 
 interface OtherCallsProps {
   otherCalls: OtherCall[]
@@ -22,10 +23,16 @@ const OtherCalls: React.FC<OtherCallsProps> = ( {
   editOtherCall }) => {
    // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [
-    { key: 'otherCallName', title: 'Other Call Name', textAlign: 'left' },
-    { key: 'quantity', title: 'Quantity', textAlign: 'center' },
-    { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right' }
+    { key: 'otherCallName', title: 'Other Call Name', textAlign: 'left'},
+    { key: 'quantity', title: 'Quantity', textAlign: 'center', editable: true, type: 'number' },
+    { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right', editable: true }
   ]
+
+  const valiateOtherCallExists = (value: string) => {
+    const otherCallExists = otherCalls.some((otherCall: OtherCall) => normalizeString(otherCall.otherCallName) === normalizeString(value))
+    if (otherCallExists) return 'This other call already exists'
+    return false
+  }
 
   const modalRef = React.useRef<HTMLIonModalElement>(null)
 
@@ -37,7 +44,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ( {
         placeholder: 'Enter other call name',
         type: 'text',
         required: true,
-        col: '4'
+        col: '4',
       },
       {
         fieldName: 'quantity',
@@ -67,6 +74,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ( {
         modalTrigger='Add New Call'
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        validate={valiateOtherCallExists}
       />
     )
   

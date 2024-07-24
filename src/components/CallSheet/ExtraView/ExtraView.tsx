@@ -3,6 +3,7 @@ import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
 import { ExtraCall } from '../../../interfaces/shootingTypes';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
+import { normalizeString } from 'rxdb';
 
 interface ExtraViewProps {
   extraViewData: ExtraCall[];
@@ -99,6 +100,13 @@ const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewMo
       }
     ];
 
+    const validateExtraExists = (extraName: string, fieldName: any) => {
+      const extraExists = extraViewData.some((extra: ExtraCall) => normalizeString(extra.extraName || '') === normalizeString(extraName))
+      console.log(fieldName, '************')
+      if (extraExists && fieldName === 'extraName') return 'This extra already exists'
+      return false
+    }
+
     return (
       <EditionModal
         title="Add New Extra"
@@ -110,6 +118,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewMo
         isOpen={addNewModalIsOpen}
         setIsOpen={setAddNewModalIsOpen}
         defaultFormValues={{}}
+        validate={validateExtraExists}
       />
     )
   }

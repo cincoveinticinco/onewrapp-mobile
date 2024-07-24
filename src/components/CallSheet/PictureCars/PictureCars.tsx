@@ -17,6 +17,12 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
 
   const modalRef = React.useRef<HTMLIonModalElement>(null)
 
+  const validatePictureCarExists = (value: string) => {
+    const pictureCarExists = pictureCars.some((pictureCar: PictureCar) => pictureCar.pictureCarName === value)
+    if (pictureCarExists) return 'This picture car already exists'
+    return false
+  }
+
   const AddNewModal = () => {
     const pictureCarInputs: FormInput[] = [
       {
@@ -55,12 +61,13 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         modalTrigger='Add New Picture Car'
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        validate={validatePictureCarExists}
       />
     )
   }
 
   const pictureCarsColumns: Column[] = [
-    { key: 'pictureCarName', title: 'Car Name', textAlign: 'left', editable: true },
+    { key: 'pictureCarName', title: 'Car Name', textAlign: 'left' },
     { key: 'quantity', title: 'Quantity', textAlign: 'center', editable: true, type: 'number' },
     { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right', editable: true }
   ]

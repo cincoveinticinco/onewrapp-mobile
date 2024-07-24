@@ -112,7 +112,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
     }
 
     if (validate && fieldName !== 'characterNum' && required) {
-      const validation = validate(value);
+      const validation = validate(value, fieldName);
       if (typeof validation === 'string') {
         setShowError(
           (prevState: any) => ({

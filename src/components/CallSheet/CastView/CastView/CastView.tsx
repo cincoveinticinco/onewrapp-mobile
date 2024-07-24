@@ -4,6 +4,7 @@ import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionMod
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
 import { useParams } from 'react-router';
 import NoRegisters from '../../NoRegisters/NoRegisters';
+import { normalizeString } from 'rxdb';
 
 interface CastViewProps {
   castData: any[];
@@ -12,7 +13,7 @@ interface CastViewProps {
   editMode: boolean;
   addNewCastCall: (formData: any) => Promise<void>;
   castOptions: { value: any; label: string }[];
-  editCastCall: (index: number, key: any, newValue: any, type: string) => void;
+  editCastCall: (index: number, key: any, newValue: any, type: string) => void
 }
 
 const CastView: React.FC<CastViewProps> = ({ 
@@ -36,6 +37,12 @@ const CastView: React.FC<CastViewProps> = ({
     { key: 'readyToShoot', title: 'READY', type: 'hour', editable: true },
     { key: 'notes', title: 'NOTES', type: 'text', editable: true },
   ];
+
+  const valiateCastExists = (talentName: string, fieldName: any) => {
+    const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
+    if (talentExists && fieldName === 'cast') return 'This talent already exists';
+    return false;
+  }
 
   const AddCastCallModal: React.FC = () => {
     const modalRef = useRef<HTMLIonModalElement>(null);
@@ -112,6 +119,7 @@ const CastView: React.FC<CastViewProps> = ({
         defaultFormValues={{}}
         isOpen={addNewModalIsOpen}
         setIsOpen={setIsOpen}
+        validate={valiateCastExists}
       />
     );
   };
