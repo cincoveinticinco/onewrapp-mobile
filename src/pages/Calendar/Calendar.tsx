@@ -8,6 +8,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import { calendarOutline, listOutline } from 'ionicons/icons';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
@@ -19,6 +20,7 @@ import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import useLoader from '../../hooks/Shared/useLoader';
+import { useParams } from 'react-router';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
@@ -27,8 +29,13 @@ const Calendar: React.FC = () => {
     shootings: [] as Shooting[],
   });
 
-  const { oneWrapDb, projectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, projectId, initializeShootingReplication, setProjectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams<any>();
+
+  useIonViewWillEnter(() => {
+    setProjectId(id);
+  });
 
   useEffect(() => {
     const initializeReplication = async () => {
