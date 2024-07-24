@@ -2,10 +2,12 @@ import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
 import {
-  IonButton, IonContent, IonGrid, IonRefresher, IonRefresherContent
+  IonButton, IonContent, IonGrid, IonRefresher, IonRefresherContent,
+  useIonViewDidEnter,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import './Strips.scss';
-import { useHistory, useLocation } from 'react-router'
+import { useHistory, useLocation, useParams } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -27,10 +29,12 @@ const Strips: React.FC = () => {
     scenesAreLoading, 
     setScenesAreLoading, 
     initializeParagraphReplication,
-    initializeTalentsReplication
+    initializeTalentsReplication,
+    isDatabaseReady,
+    setProjectId
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
-    selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
+    selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions
   } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
@@ -38,12 +42,14 @@ const Strips: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   useScrollToTop(contentRef, location);
+  const { id } = useParams<any>();
 
-  useEffect(() => {
-    const initializeReplication = async () => {
+  const initializeReplication = async () => {
+    if(isDatabaseReady) {
       try {
         setScenesAreLoading(true);
-        await initializeSceneReplication();     
+        console.log('Initializing scene replication');
+        await initializeSceneReplication().catch((error) => { throw error; });
       } catch (error) {
         console.error('Error initializing scene replication:', error);
       } finally {
@@ -51,11 +57,20 @@ const Strips: React.FC = () => {
         await initializeTalentsReplication();
         await initializeParagraphReplication();
       }
-    };
+    }
+  };
 
+  useEffect(() => {
+    console.log(initialReplicationFinished)
+    console.log(isDatabaseReady)
     initializeReplication();
-  }, [projectId]);
+    console.log('Replication initialized', initialReplicationFinished);
+  }, [ projectId ]);
 
+  useIonViewWillEnter(() => {
+    setProjectId(id);
+  });
+  
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
   const filteredScenes = useMemo(() => {
@@ -63,8 +78,8 @@ const Strips: React.FC = () => {
     if (filteredData && offlineScenes) {
       return sortByCriterias(filteredData, selectedSortOptions);
     }
-    console.log('filteredData', filteredData);
-  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, projectId]);
+    return [];
+  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, memoizedApplyFilters, projectId]);
 
   useEffect(() => {
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
