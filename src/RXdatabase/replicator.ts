@@ -2,6 +2,7 @@ import { replicateRxCollection } from 'rxdb/plugins/replication';
 import { Subject } from 'rxjs';
 import environment from '../../environment';
 import AppDataBase from './database';
+import { RxDatabase } from 'rxdb';
 
 // const myPullStream$: any = new Subject();
 // const eventSource = new EventSource('http://localhost:3000/owapp/pull_stream_scenes', { withCredentials: true });
@@ -30,11 +31,14 @@ export default class HttpReplicator {
 
   private replicationStates: any[] = [];
 
-  constructor(database: AppDataBase, collections: any, projectId: (number | null) = null, lastItem: any = null) {
+  public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})
+
+  constructor(database:any, collections: any, projectId: (number | null) = null, lastItem: any = null,  getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})) {
     this.database = database;
     this.collections = collections;
     this.projectId = projectId;
     this.lastItem = lastItem;
+    this.getToken = getToken;
   }
 
   public startReplicationPull() {
@@ -60,6 +64,7 @@ export default class HttpReplicator {
 
   private setupHttpReplicationPull(collection: any, projectId: (number | null), lastItem: any = null) {
     const currentTimestamp = new Date().toISOString();
+    const getToken = this.getToken
     console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -67,10 +72,15 @@ export default class HttpReplicator {
       pull: {
         async handler(checkpointOrNull: any, batchSize: number) {
           const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
+          const token = await getToken();
           const id = checkpointOrNull ? checkpointOrNull.id : 0;
           const lastProjectId = checkpointOrNull ? checkpointOrNull.lastProjectId : 0;
           const collectionName = collection.getSchemaName();
-          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}${lastItem ? `&last_item_id=${lastItem.id}&last_item_updated_at=${lastItem.updatedAt}` : ''}`);
+          const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}${lastItem ? `&last_item_id=${lastItem.id}&last_item_updated_at=${lastItem.updatedAt}` : ''}`, {
+            headers: {
+              'owsession': token
+            }
+          });
           const data = await response.json();
           return {
             documents: data[collectionName],
@@ -86,24 +96,24 @@ export default class HttpReplicator {
     });
 
     this.replicationStates.push(replicationState);
-    console.log('replicationState', replicationState);
-
-    return replicationState;
   }
 
   private setupHttpReplicationPush(collection: any) {
     const currentTimestamp = new Date().toISOString();
+    const getToken = this.getToken;
     console.log('Setting up replication  PUSH for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
       replicationIdentifier: 'my-http-replication',
       push: {
         async handler(changeRows: any): Promise<any> {
+          const token = await getToken();
           const rawResponse = await fetch(`${environment.URL_PATH}/${collection.getEndpointPushName()}`, {
             method: 'POST',
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json',
+              'owsession': token
             },
             body: JSON.stringify(changeRows),
           });
