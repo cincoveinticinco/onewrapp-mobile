@@ -2,14 +2,15 @@ import React from 'react';
 import './GeneralTable.css';
 import getHourMinutesFomISO from '../../../utils/getHoursMinutesFromISO';
 import { IonInput } from '@ionic/react';
-import zIndex from '@mui/material/styles/zIndex';
+import timeToISOString from '../../../utils/timeToIsoString';
 
 export interface Column {
   key: string;
   title: string;
   sticky?: boolean;
-  type?: 'text' | 'hour';
+  type?: 'text' | 'hour' | 'number';
   textAlign?: 'left' | 'center' | 'right';
+  editable?: boolean;
 }
 
 interface GeneralTableProps {
@@ -17,27 +18,53 @@ interface GeneralTableProps {
   data: any[];
   stickyColumnCount?: number;
   editMode?: boolean;
+  editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
 }
 
-const GeneralTable: React.FC<GeneralTableProps> = ({ columns, data, stickyColumnCount = 1, editMode = false }) => {
-  const getColumnValue = (row: any, column: Column) => {
-    if(!editMode) {
-      if (column.type === 'hour') {
-        return getHourMinutesFomISO(row[column.key]);
-      }
-    } else {
-      if (column.type === 'hour') {
-      return (
-        <IonInput
-          type="time" 
-          value={getHourMinutesFomISO(row[column.key])}
-          onIonChange={(e) => row[column.key] = e.detail.value}
-          style={{width: 'auto'}}
-        />)
-      }
+const GeneralTable: React.FC<GeneralTableProps> = ({ columns, data, stickyColumnCount = 1, editMode = false, editFunction }) => {
+  const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
+    const value = row[column.key];
+  
+    if (!editMode && column.type) {
+      return formatValue(value, column.type);
     }
-    return row[column.key] && row[column.key].toString().toUpperCase() || '--';
-  }
+  
+    if (!column.editable && column.type) {
+      return formatValue(value, column.type);
+    }
+  
+    if(editMode && column.editable) {
+      return renderEditableInput(value, column.type || 'text', editFunction, rowIndex, column.key);
+    }
+
+    return formatValue(value, column.type || 'text');
+  };
+  
+  const formatValue = (value: any, type: string) => {
+    switch (type) {
+      case 'hour':
+        return getHourMinutesFomISO(value);
+      case 'number':
+        return value != null ? value.toString() : '--';
+      default:
+        return value?.toString().toUpperCase() || '--';
+    }
+  };
+  
+  const renderEditableInput = (value: any, type: string, onChange: any, rowIndex: any, rowKey: any) => {
+    const commonProps = {
+      value: type === 'hour' ? getHourMinutesFomISO(value) : value,
+      onIonChange: (e: CustomEvent) => onChange(rowIndex, rowKey, e.detail.value, type),
+      style: { width: 'auto' }
+    };
+  
+    return (
+      <IonInput
+        {...commonProps}
+        type={type === 'hour' ? 'time' : type === 'number' ? 'number' : 'text'}
+      />
+    );
+  };
 
   return (
       <div className="table-container">
@@ -64,7 +91,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({ columns, data, stickyColumn
                     className={colIndex < stickyColumnCount ? 'sticky-column' : ''}
                     style={{left: `${colIndex * 150}px`, textAlign: column.textAlign || 'center' }}
                   >
-                    {getColumnValue(row, column)}
+                    {getColumnValue(row, column, editMode, rowIndex)}
                   </td>
                 ))}
               </tr>

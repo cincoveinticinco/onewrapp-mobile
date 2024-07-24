@@ -14,7 +14,7 @@ import useHideTabs from '../../hooks/Shared/useHideTabs'
 import './CallSheet.css'
 import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs'
 import CastView from '../../components/CallSheet/CastView/CastView/CastView'
-import { chevronBackOutline } from 'ionicons/icons'
+import { chevronBackOutline, save } from 'ionicons/icons'
 import { useParams } from 'react-router'
 import DatabaseContext from '../../hooks/Shared/database'
 import { Character, Scene } from '../../interfaces/scenesTypes'
@@ -74,6 +74,56 @@ const CallSheet: React.FC = () => {
       setAddNewOtherCallModalIsOpen(true)
     } else if(view === 'pictureCars') {
       setAddNewPictureCarModalIsOpen(true)
+    }
+  }
+
+  const editPictureCar = <K extends keyof PictureCar>(
+    pictureCarIndex: number,
+    pictureCarKey: K,
+    newValue: any,
+    type: string
+  ) => {
+    setPictureCars(prevPictureCars => {
+      // Crear una copia profunda del pictureCar que estamos editando
+      const editedPictureCar = JSON.parse(JSON.stringify(prevPictureCars[pictureCarIndex]));
+  
+      // Actualizar el campo específico
+      editedPictureCar[pictureCarKey] = type === 'hour' 
+        ? timeToISOString({
+            hours: newValue.split(':')[0],
+            minutes: newValue.split(':')[1]
+          }, thisShooting?.shootDate || '') 
+        : type === 'number'? parseInt(newValue) : newValue;
+  
+      // Crear un nuevo array con el pictureCar actualizado
+      const newPictureCars = [
+        ...prevPictureCars.slice(0, pictureCarIndex),
+        editedPictureCar,
+        ...prevPictureCars.slice(pictureCarIndex + 1)
+      ];
+  
+      return newPictureCars;
+    });
+  };
+
+  const saveEditedPictureCars = async () => {
+    try {
+      const shootingCopy = { ...thisShooting }
+      shootingCopy.pictureCars = pictureCars
+  
+      setThisShooting(shootingCopy as Shooting)
+  
+      await oneWrapDb?.shootings.upsert(shootingCopy)
+    } catch (error) {
+      console.error('Error al editar Picture Car:', error)
+      throw error
+    }
+  }
+
+  const saveEdition = () => {
+    if(view === 'pictureCars') {
+      saveEditedPictureCars()
+      setEditMode(false)
     }
   }
 
@@ -182,6 +232,8 @@ const CallSheet: React.FC = () => {
                   isOpen={addNewPictureCarModalIsOpen} 
                   setIsOpen={setAddNewPictureCarModalIsOpen} 
                   addNewPictureCar={createNewPictureCar} 
+                  editMode={editMode && view === 'pictureCars'}
+                  editPictureCar={editPictureCar}
                 />
       case 'others':
         return <OtherCalls 
@@ -189,6 +241,7 @@ const CallSheet: React.FC = () => {
                   isOpen={addNewOtherCallModalIsOpen} 
                   setIsOpen={setAddNewOtherCallModalIsOpen}
                   addNewOtherCall={createNewOtherCall}
+                  editMode={editMode && view === 'others'}
                 />
       case 'crew':
         return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} />
@@ -469,9 +522,17 @@ const CallSheet: React.FC = () => {
             thisShooting &&
             thisShooting.status !== ShootingStatusEnum.Closed && (
               <div slot='end'>
-                <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
-                  <VscEdit />
-                </IonButton>
+                {
+                  !editMode ? (
+                    <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
+                      <VscEdit />
+                    </IonButton>
+                  ) : (
+                    <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
+                      <IonIcon icon={save} />
+                    </IonButton>
+                  )
+                }
                 <AddButton onClick={() => openAddNewModal()}/>
               </div> 
             )

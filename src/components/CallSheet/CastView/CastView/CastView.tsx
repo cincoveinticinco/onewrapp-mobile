@@ -10,12 +10,12 @@ const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode, addNewCast
     { key: 'cast', title: 'CAST', type: 'text', textAlign: 'left' },
     { key: 'name', title: 'TALENT', type: 'text' },
     { key: 'tScn', title: 'T. SCN.', type: 'text'},
-    { key: 'pickUp', title: 'PICKUP', type: 'hour' },
-    { key: 'callTime', title: 'CALL', type: 'hour' },
-    { key: 'onMakeUp', title: 'MAKEUP', type: 'hour' },
-    { key: 'onWardrobe', title: 'WARDROBE', type: 'hour'},
-    { key: 'readyToShoot', title: 'READY', type: 'hour'},
-    { key: 'notes', title: 'NOTES', type: 'text'},
+    { key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true },
+    { key: 'callTime', title: 'CALL', type: 'hour', editable: true },
+    { key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true },
+    { key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true },
+    { key: 'readyToShoot', title: 'READY', type: 'hour', editable: true },
+    { key: 'notes', title: 'NOTES', type: 'text', editable: true },
   ] as Column[]
 
   const AddCastCallModal = () => {

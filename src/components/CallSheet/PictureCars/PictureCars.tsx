@@ -9,9 +9,11 @@ interface PictureCarsProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void;
   addNewPictureCar: (pictureCar: PictureCar) => void;
+  editMode: boolean;
+  editPictureCar: (pictureCarIndex: number, key: any, newValue: any, type: any) => void;
 }
 
-const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpen, addNewPictureCar }) => {
+const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar }) => {
 
   const modalRef = React.useRef<HTMLIonModalElement>(null)
 
@@ -31,7 +33,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         placeholder: 'Enter quantity',
         type: 'number',
         required: true,
-        col: '4'
+        col: '4',
       },
       {
         fieldName: 'callTime',
@@ -58,9 +60,9 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
   }
 
   const pictureCarsColumns: Column[] = [
-    { key: 'pictureCarName', title: 'Car Name', textAlign: 'left' },
-    { key: 'quantity', title: 'Quantity', textAlign: 'center' },
-    { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right' }
+    { key: 'pictureCarName', title: 'Car Name', textAlign: 'left', editable: true },
+    { key: 'quantity', title: 'Quantity', textAlign: 'center', editable: true, type: 'number' },
+    { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right', editable: true }
   ]
 
   if(isOpen) return <AddNewModal />
@@ -69,7 +71,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
 
   return (
     <>
-      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={false} />
+      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={editMode} editFunction={editPictureCar}/>
     </>
   )
 }

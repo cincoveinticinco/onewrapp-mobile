@@ -9,9 +9,10 @@ interface OtherCallsProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   addNewOtherCall: (otherCall: OtherCall) => void
+  editMode: boolean
 }
 
-const OtherCalls: React.FC<OtherCallsProps> = ( { otherCalls, isOpen, setIsOpen, addNewOtherCall }) => {
+const OtherCalls: React.FC<OtherCallsProps> = ( { otherCalls, isOpen, setIsOpen, addNewOtherCall, editMode }) => {
    // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [
     { key: 'otherCallName', title: 'Other Call Name', textAlign: 'left' },
@@ -70,7 +71,12 @@ const OtherCalls: React.FC<OtherCallsProps> = ( { otherCalls, isOpen, setIsOpen,
 
   return (
     <>
-      <GeneralTable columns={otherCallsColumns} data={otherCalls} stickyColumnCount={1} />
+      <GeneralTable 
+        columns={otherCallsColumns} 
+        data={otherCalls} 
+        stickyColumnCount={1} 
+        editMode={editMode} 
+      />
     </>
   )
 }
