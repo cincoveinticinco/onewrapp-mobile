@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../../RXdatabase/database';
 import ScenesSchema from '../../RXdatabase/schemas/scenes';
@@ -9,6 +9,7 @@ import useNavigatorOnLine from './useNavigatorOnline';
 import UnitsSchema from '../../RXdatabase/schemas/units';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings';
 import TalentsSchema from '../../RXdatabase/schemas/talents';
+import AuthContext from '../../context/Auth';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -31,6 +32,7 @@ export interface DatabaseContextProps {
   initializeParagraphReplication: () => Promise<boolean>;
   initializeUnitReplication: () => Promise<boolean>;
   initializeTalentsReplication: () => Promise<boolean>;
+  isDatabaseReady: boolean;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -54,19 +56,20 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initializeParagraphReplication: () => new Promise(() => false),
   initializeUnitReplication: () => new Promise(() => false),
   initializeTalentsReplication: () => new Promise(() => false),
+  isDatabaseReady: false,
 });
 
-const sceneCollection = new ScenesSchema();
-const paragraphCollection = new SceneParagraphsSchema();
-const projectCollection = new ProjectsSchema();
-const unitsCollection = new UnitsSchema();
-const shootingsCollection = new ShootingsSchema();
-const talentsCollection = new TalentsSchema();
-
-const RXdatabase = new AppDataBase([sceneCollection, projectCollection, paragraphCollection, unitsCollection, shootingsCollection, talentsCollection]);
-
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any | null>(null);
+  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<RxDatabase | null>(null);
+  const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
+  const [paragraphCollection, setParagraphCollection] = useState<SceneParagraphsSchema | null>(null);
+  const [projectCollection, setProjectCollection] = useState<ProjectsSchema | null>(null);
+  const [unitsCollection, setUnitsCollection] = useState<UnitsSchema | null>(null);
+  const [shootingsCollection, setShootingsCollection] = useState<ShootingsSchema | null>(null);
+  const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
+  const [isDatabaseReady, setIsDatabaseReady] = useState(false);
+  const { getToken } = useContext(AuthContext);
+
   const [viewTabs, setViewTabs] = useState(true);
   const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -77,16 +80,30 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const isOnline = useNavigatorOnLine();
 
   useEffect(() => {
-    
-  }, [isOnline]);
-
-  useEffect(() => {
     const initializeDatabase = async () => {
       try {
+        const sceneColl = new ScenesSchema();
+        const paragraphColl = new SceneParagraphsSchema();
+        const projectColl = new ProjectsSchema();
+        const unitsColl = new UnitsSchema();
+        const shootingsColl = new ShootingsSchema();
+        const talentsColl = new TalentsSchema();
+
+        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
+        
         setOneWrapRXdatabase(dbInstance);
+        setSceneCollection(sceneColl);
+        setParagraphCollection(paragraphColl);
+        setProjectCollection(projectColl);
+        setUnitsCollection(unitsColl);
+        setShootingsCollection(shootingsColl);
+        setTalentsCollection(talentsColl);
+
+        setIsDatabaseReady(true); 
+
         if (isOnline) {
-          const replicator = new HttpReplicator(dbInstance, [projectCollection]);
+          const replicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
           replicator.startReplicationPull();
           await replicator.monitorReplicationStatus();
           setProjectsAreLoading(false);
@@ -101,7 +118,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     if (!oneWrapRXdatabase) {
       initializeDatabase();
     }
-  }, [isOnline]);
+  }, [isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
     setProjectsAreLoading(true);
@@ -125,6 +142,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           { updatedAt: 'asc' },
         ],
       }).$.subscribe((data: RxLocalDocumentData[]) => {
+        console.log(data)
         setOfflineScenes(data);
         setScenesAreLoading(false);
       });
@@ -146,13 +164,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [oneWrapRXdatabase]);
 
   const initializeSceneReplication = async () => {
+    if (!sceneCollection || !oneWrapRXdatabase || !projectId ) {
+      console.log('No scene collection')
+      return false
+    };
     try {
-      const lastSceneInProject = await oneWrapRXdatabase?.scenes.find({
+      const lastSceneInProject = await oneWrapRXdatabase.scenes.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject);
+      const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject, getToken);
 
       if (isOnline) {
         scenesReplicator.startReplicationPull();
@@ -162,19 +184,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       await scenesReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
-      console.error('Error during scene replication:', error);
+      console.error('Error durante la replicación de escenas:', error);
       return false;
     }
   };
 
   const initializeParagraphReplication = async () => {
+    if (!paragraphCollection || !oneWrapRXdatabase || !projectId) return false;
     try {
-      const lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
+      const lastParagraphInProject = await oneWrapRXdatabase.paragraphs.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], parseInt(projectId), lastParagraphInProject);
+      const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], parseInt(projectId), lastParagraphInProject, getToken);
 
       if (isOnline) {
         paragraphsReplicator.startReplicationPull();
@@ -183,19 +206,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       await paragraphsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
-      console.error('Error during paragraph replication:', error);
+      console.error('Error durante la replicación de párrafos:', error);
       return false;
     }
   };
 
   const initializeTalentsReplication = async () => {
+    if (!talentsCollection || !oneWrapRXdatabase || !projectId) return false;
     try {
-      const lastTalentInProject = await oneWrapRXdatabase?.talents.find({
+      const lastTalentInProject = await oneWrapRXdatabase.talents.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const talentsReplicator = new HttpReplicator(oneWrapRXdatabase, [talentsCollection], parseInt(projectId), lastTalentInProject);
+      const talentsReplicator = new HttpReplicator(oneWrapRXdatabase, [talentsCollection], parseInt(projectId), lastTalentInProject, getToken);
 
       if (isOnline) {
         talentsReplicator.startReplicationPull();
@@ -204,19 +228,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       await talentsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
-      console.error('Error during talent replication:', error);
+      console.error('Error durante la replicación de talentos:', error);
       return false;
     }
-  }
+  };
 
   const initializeUnitReplication = async () => {
+    if (!unitsCollection || !oneWrapRXdatabase || !projectId) return false;
     try {
-      const lastUnitInProject = await oneWrapRXdatabase?.units.find({
+      const lastUnitInProject = await oneWrapRXdatabase.units.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], parseInt(projectId), lastUnitInProject);
+      const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], parseInt(projectId), lastUnitInProject, getToken);
 
       if (isOnline) {
         unitsReplicator.startReplicationPull();
@@ -225,18 +250,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       await unitsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
-      console.error('Error during unit replication:', error);
+      console.error('Error durante la replicación de unidades:', error);
       return false;
     }
   };
+
   const initializeShootingReplication = async () => {
+    if (!shootingsCollection || !oneWrapRXdatabase || !projectId) return false;
     try {
-      const lastShootingInProject = await oneWrapRXdatabase?.shootings.find({
+      const lastShootingInProject = await oneWrapRXdatabase.shootings.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId, lastShootingInProject);
+      const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
 
       if (isOnline) {
         shootingsReplicator.startReplicationPull();
@@ -246,24 +273,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         shootingsReplicator.startReplicationPull();
       }
 
-      // Wait for the initial replication to complete
       await shootingsReplicator.monitorReplicationStatus();
-
-      return true; // Replication finished successfully
+      return true;
     } catch (error) {
-      console.error('Error during shooting replication:', error);
-      return false; // Replication failed
+      console.error('Error durante la replicación de shootings:', error);
+      return false;
     }
-  };
-
-  const pushShootingsReplication = async () => {
-    let replicationFinished = false;
-    const pushReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], projectId);
-
-    pushReplicator && pushReplicator.startReplicationPush();
-    replicationFinished = true;
-
-    return replicationFinished;
   };
 
   return (
@@ -288,12 +303,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         initializeSceneReplication,
         initializeParagraphReplication,
         initializeUnitReplication,
-        initializeTalentsReplication
+        initializeTalentsReplication,
+        isDatabaseReady
       }}
     >
       {children}
     </DatabaseContext.Provider>
   );
 };
+
 
 export default DatabaseContext;
