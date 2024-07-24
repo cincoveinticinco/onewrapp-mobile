@@ -42,7 +42,7 @@ import EditScene from '../../../pages/EditScene/EditScene';
 import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
 import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
-import { useAuth } from '../../../context/auth';
+import { useAuth } from '../../../context/Auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 import DatabaseContext from '../../../hooks/Shared/database';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
