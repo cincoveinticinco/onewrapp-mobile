@@ -1,27 +1,46 @@
-import { useRef } from 'react'
-import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal'
-import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
-import { useParams } from 'react-router'
-import NoRegisters from '../../NoRegisters/NoRegisters'
+import { useRef } from 'react';
+import { IonModal } from '@ionic/react';
+import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal';
+import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
+import { useParams } from 'react-router';
+import NoRegisters from '../../NoRegisters/NoRegisters';
 
-const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode, addNewCastCall, castOptions }: { castData: any, addNewModalIsOpen: boolean, setIsOpen: any, editMode: any, addNewCastCall: any, castOptions: any }) => {
+interface CastViewProps {
+  castData: any[];
+  addNewModalIsOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  editMode: boolean;
+  addNewCastCall: (formData: any) => Promise<void>;
+  castOptions: { value: any; label: string }[];
+  editCastCall: (index: number, key: any, newValue: any, type: string) => void;
+}
 
-  const columns = [
+const CastView: React.FC<CastViewProps> = ({ 
+  castData, 
+  addNewModalIsOpen, 
+  setIsOpen, 
+  editMode, 
+  addNewCastCall, 
+  castOptions, 
+  editCastCall 
+}) => {
+
+  const columns: Column[] = [
     { key: 'cast', title: 'CAST', type: 'text', textAlign: 'left' },
     { key: 'name', title: 'TALENT', type: 'text' },
-    { key: 'tScn', title: 'T. SCN.', type: 'text'},
+    { key: 'tScn', title: 'T. SCN.', type: 'text' },
     { key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true },
     { key: 'callTime', title: 'CALL', type: 'hour', editable: true },
     { key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true },
     { key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true },
     { key: 'readyToShoot', title: 'READY', type: 'hour', editable: true },
     { key: 'notes', title: 'NOTES', type: 'text', editable: true },
-  ] as Column[]
+  ];
 
-  const AddCastCallModal = () => {
-    const modalRef = useRef<HTMLIonModalElement>(null)
-    const { shootingId } = useParams<{ shootingId: string }>()
-  
+  const AddCastCallModal: React.FC = () => {
+    const modalRef = useRef<HTMLIonModalElement>(null);
+    const { shootingId } = useParams<{ shootingId: string }>();
+
     const castCallInputs: FormInput[] = [
       {
         fieldName: 'cast',
@@ -81,7 +100,7 @@ const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode, addNewCast
         col: '6'
       }
     ];
-  
+
     return (
       <EditionModal
         title="Add Cast Call"
@@ -89,26 +108,31 @@ const CastView = ({ castData, addNewModalIsOpen, setIsOpen, editMode, addNewCast
         handleEdition={addNewCastCall}
         modalRef={modalRef}
         modalId={`add-cast-call-modal-${shootingId}`}
-        modalTrigger='Add Cast Call'
-        defaultFormValues={{ }}
+        modalTrigger="Add Cast Call"
+        defaultFormValues={{}}
         isOpen={addNewModalIsOpen}
         setIsOpen={setIsOpen}
       />
-    )
-  }
+    );
+  };
 
-  if(addNewModalIsOpen) return <AddCastCallModal />
+  if (addNewModalIsOpen) return <AddCastCallModal />;
 
   if (!castData || castData.length === 0) {
-    return (
-      <NoRegisters addNew={() => setIsOpen(true)} />
-    )
+    return <NoRegisters addNew={() => setIsOpen(true)} />;
   }
+
   return (
     <>
-      <GeneralTable columns={columns} data={castData} stickyColumnCount={1} editMode={editMode} />
+      <GeneralTable 
+        columns={columns} 
+        data={castData} 
+        stickyColumnCount={1} 
+        editMode={editMode} 
+        editFunction={editCastCall} 
+      />
     </>
-  )
-}
+  );
+};
 
-export default CastView
+export default CastView;
