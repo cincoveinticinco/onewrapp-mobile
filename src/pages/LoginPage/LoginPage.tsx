@@ -1,42 +1,58 @@
 import {
   IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
-import { Redirect } from 'react-router';
-import { useAuth } from '../../context/auth';
+import { Redirect, useHistory } from 'react-router';
+import { useAuth } from '../../context/Auth';
 import ReactPlayer from 'react-player';
 import './LoginPage.css';
 import {
   logoApple, logoGoogle, logoWindows, mail,
 } from 'ionicons/icons';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
-import { useEffect } from 'react';
+import { useGoogleLogin } from '@react-oauth/google'
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
+import environment from '../../../environment';
 
 interface Props {
-  onLogin: () => void;
-  setUser: (user: any) => void;
 }
 
-const LoginPage: React.FC<Props> = ({ onLogin, setUser }) => {
-  const { loggedIn, user } = useAuth();
+const LoginPage: React.FC<Props> = ({}) => {
 
-  if (loggedIn) {
-    return <Redirect to="/my/projects" />;
-  }
+  const { saveLogin } = useAuth();
 
-  const responseMessage = (response: any) => {
-    console.log(response);
-    setUser(response);
-    onLogin();
-  };
+  const history = useHistory();
+
   const errorMessage = (error: any): any => {
     console.log(error);
   };
 
   const login = useGoogleLogin({
-    onSuccess: responseMessage,
-    onError: errorMessage,
+    onSuccess: (response) => {
+      const accessToken = response.access_token;
+      
+      // Envía el token al backend
+      fetch(`${environment.URL_PATH}/google_sign_in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ access_token: accessToken }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.token) {
+          saveLogin(data.token, data.user);
+          history.push('/my/projects');
+        } else {
+          // Maneja el error
+          console.error(data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    },
+    onError: errorMessage
   });
 
   return (
@@ -63,7 +79,7 @@ const LoginPage: React.FC<Props> = ({ onLogin, setUser }) => {
             <IonIcon slot="start" icon={logoGoogle} color="dark" />
             <span className="button-text">SIGN IN WITH GOOGLE</span>
           </IonButton>
-          <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+          {/* <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
             <IonIcon slot="start" icon={logoWindows} color="dark" />
             <span className="button-text">SIGN IN WITH MICROSOFT</span>
           </IonButton>
@@ -74,7 +90,7 @@ const LoginPage: React.FC<Props> = ({ onLogin, setUser }) => {
           <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
             <IonIcon slot="start" icon={mail} color="dark" />
             <span className="button-text">SIGN IN WITH APPLE</span>
-          </IonButton>
+          </IonButton> */}
         </div>
         <div className="footer-login">
           <span className="footer-text">ALL RIGHTS RESERVED ©2023.</span>
