@@ -60,7 +60,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view }
       >
         <IonIcon icon={documentTextOutline} className="tab-bar-icons" color='light' />
         <IonLabel>
-          Call Time
+          CALL TIME
         </IonLabel>
       </IonTabButton>
     </IonTabBar>

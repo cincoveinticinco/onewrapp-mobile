@@ -3,7 +3,7 @@ import { IonButton } from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
-import { meals } from '../../../interfaces/shootingTypes';
+import { Meal } from '../../../interfaces/shootingTypes';
 
 interface MealInfoProps {
   meal: any;
@@ -19,7 +19,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
 
-  const formatDefaultValues = (meal: meals) => ({
+  const formatDefaultValues = (meal: Meal) => ({
     ...meal,
     ready_at: getHourMinutesFomISO(meal.ready_at),
     end_time: getHourMinutesFomISO(meal.end_time),

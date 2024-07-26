@@ -27,7 +27,6 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
   const EditModal = () => (
     <EditionModal
       modalRef={editionModalRef}
-      modalTrigger={`${'open-edit-advance-call-modal' + '-'}${call.id}`}
       title="Add New Advance Call"
       formInputs={editionInputs}
       handleEdition={handleEdition}
