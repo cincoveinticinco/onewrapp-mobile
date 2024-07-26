@@ -37,6 +37,13 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const history = useHistory();
   const routeMatch = useRouteMatch();
   const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`;
+  const alertRef = React.useRef<HTMLIonAlertElement>(null);
+
+  const openDeleteAlert = async () => {
+    if (alertRef.current) {
+      await alertRef.current.present();
+    }
+  }
 
   const [presentToast] = useIonToast();
   const { id } = useParams<{ id: string }>();
@@ -233,7 +240,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
                   <IonButton fill="clear">
                     <PiProhibitLight className="button-icon ban" />
                   </IonButton>
-                  <IonButton fill="clear" id={`open-delete-scene-alert-${scene.id}`}>
+                  <IonButton fill="clear" onClick={openDeleteAlert}>
                     <PiTrashSimpleLight className="button-icon trash" />
                   </IonButton>
                 </>
@@ -255,7 +262,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
         message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
         handleOk={() => deleteScene()}
         inputs={[]}
-        trigger={`open-delete-scene-alert-${scene.id}`}
+        ref={alertRef}
       />
     </IonRow>
   );
