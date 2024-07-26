@@ -48,6 +48,7 @@ export enum ProtectionTypeEnum {
   VIDEO = 'VIDEO',
   STOCK_VIDEO = 'STOCK VIDEO',
   MULTIMEDIA = 'MULTIMEDIA',
+  PHOTO = 'PHOTO',
   OTHER = 'OTHER',
 }
 
@@ -80,6 +81,7 @@ export const ProtectionTypeEnumArray: string[] = [
   ProtectionTypeEnum.STOCK_VIDEO,
   ProtectionTypeEnum.MULTIMEDIA,
   ProtectionTypeEnum.OTHER,
+  ProtectionTypeEnum.PHOTO,
 ];
 
 export const IntOrExtOptionEnumArray: string[] = [
