@@ -58,7 +58,6 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         modalRef={modalRef}
         handleEdition={addNewPictureCar}
         defaultFormValues={{}}
-        modalTrigger='Add New Picture Car'
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         validate={validatePictureCarExists}

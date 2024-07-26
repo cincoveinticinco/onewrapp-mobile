@@ -23,7 +23,7 @@ export interface FormInput {
 
 interface EditionModalProps {
   modalRef?: React.RefObject<HTMLIonModalElement>;
-  modalTrigger: string;
+  modalTrigger?: string;
   modalId?: string;
   title: string;
   formInputs: FormInput[];

@@ -84,6 +84,13 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   const warningMessageToast = useWarningToast();
   const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
   const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
+  const modalRef = useRef<HTMLIonModalElement>(null);
+
+  const openEditModal = () => {
+    if (modalRef.current) {
+      modalRef.current.present();
+    }
+  }
 
   const openAlert = () => {
     if (set && deleteSetAlert.current) {
@@ -361,7 +368,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       </IonItem>
       <IonItemOptions className="location-set-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" id={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}>
+          <IonButton fill="clear" onClick={() => openEditModal()}>
             <CiEdit className="button-icon view" />
           </IonButton>
           <IonButton fill="clear">
@@ -377,9 +384,9 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         formInputs={location ? locationInputs : setInputs}
         handleEdition={location ? editLocation : editSet}
         title={location ? 'Edit Location' : 'Edit Set'}
-        modalTrigger={set ? `edit-set-${set.setName}` : `edit-location-${location?.locationName || ''}`}
         defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
         validate={location ? validateLocationExistence : validateSetExistence}
+        modalRef={modalRef}
       />
 
       <InputAlert

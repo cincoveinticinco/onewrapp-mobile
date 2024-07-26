@@ -115,7 +115,6 @@ const CastView: React.FC<CastViewProps> = ({
         handleEdition={addNewCastCall}
         modalRef={modalRef}
         modalId={`add-cast-call-modal-${shootingId}`}
-        modalTrigger="Add Cast Call"
         defaultFormValues={{}}
         isOpen={addNewModalIsOpen}
         setIsOpen={setIsOpen}

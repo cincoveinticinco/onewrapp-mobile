@@ -63,6 +63,11 @@ const ElementCard: React.FC<ElementCardProps> = ({
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
+  const modalRef = useRef<HTMLIonModalElement>(null);
+
+  const openEditModal = () => {
+    modalRef.current?.present();
+  }
 
   const openDeleteElementAlert = () => {
     deleteElementAlert.current?.present();
@@ -352,7 +357,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         </IonItem>
         <IonItemOptions className="element-card-item-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" id={section === 'category' ? `edit-category-${data.categoryName}` : `edit-element-${data.elementName}`}>
+            <IonButton fill="clear" onClick={openEditModal} >
               <CiEdit className="button-icon view" />
             </IonButton>
             <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))}>
@@ -367,10 +372,10 @@ const ElementCard: React.FC<ElementCardProps> = ({
       <EditionModal
         formInputs={section === 'category' ? formCategoryInputs : formElementInputs}
         handleEdition={section === 'category' ? editCategory : editElement}
-        modalTrigger={section === 'category' ? `edit-category-${data.categoryName}` : `edit-element-${data.elementName}`}
         title="Edit Element"
         defaultFormValues={section === 'category' ? defaultFormValuesForCategories : defaultFormValuesForElements}
         validate={validateExistence}
+        modalRef={modalRef}
       />
 
       <InputAlert

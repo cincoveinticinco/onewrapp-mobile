@@ -113,7 +113,6 @@ const ExtraView: React.FC<ExtraViewProps> = ({ extraViewData, editMode, addNewMo
         formInputs={extraInputs}
         handleEdition={addNewExtraCall}
         modalId='addExtraModal'
-        modalTrigger='Add New Extra'
         modalRef={modalRef}
         isOpen={addNewModalIsOpen}
         setIsOpen={setAddNewModalIsOpen}

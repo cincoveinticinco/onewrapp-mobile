@@ -46,7 +46,7 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
           <span className="day-number">{format(currentDay, 'd')}</span>
           {
             dayHasShooting(currentDay) && getSHootingsByDay(currentDay).map((shooting) => (
-              <ShootingCard key={shooting.id} shooting={shooting} className="month-shooting" />
+              isCurrentMonth && <ShootingCard key={shooting.id} shooting={shooting} className="month-shooting" />
             ))
           }
         </IonCol>,

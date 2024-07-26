@@ -54,6 +54,9 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     };
   };
 
+  const modalRef = React.useRef<HTMLIonModalElement>(null);
+  const openModalEdition = () => modalRef.current?.present();
+
   const fraction = floatToFraction(character.pagesSum);
 
   const fractionPart = divideIntegerFromFraction(fraction).fraction;
@@ -294,7 +297,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       </IonItem>
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" id={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}>
+          <IonButton fill="clear" onClick={openModalEdition}>
             <CiEdit className="button-icon view" />
           </IonButton>
           <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))}>
@@ -309,10 +312,10 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       <EditionModal
         formInputs={!character.extraName ? formInputs : extraFormInputs}
         handleEdition={!character.extraName ? editCharacter : editExtra}
-        modalTrigger={!character.extraName ? `edit-cast-${character.characterName}` : `edit-cast-${character.extraName}`}
         title="Edit Cast"
         defaultFormValues={!character.extraName ? defaultValues : extraDefaultValues}
         validate={validateExistence}
+        modalRef={modalRef}
       />
 
       <InputAlert

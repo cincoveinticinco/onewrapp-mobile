@@ -71,7 +71,6 @@ const OtherCalls: React.FC<OtherCallsProps> = ( {
         modalRef={modalRef}
         handleEdition={addNewOtherCall}
         defaultFormValues={{}}
-        modalTrigger='Add New Call'
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         validate={valiateOtherCallExists}
