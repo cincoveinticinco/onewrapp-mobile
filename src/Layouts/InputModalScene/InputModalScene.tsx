@@ -17,7 +17,7 @@ import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
 interface InputModalProps {
   sceneName: string;
   listOfScenes: Scene[];
-  modalTrigger: string;
+  modalTrigger?: string;
   handleCheckboxToggle: (scene: Scene) => void;
   selectedScenes: Scene[];
   setSelectedScenes?: any;
