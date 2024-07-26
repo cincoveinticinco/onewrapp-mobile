@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IonApp,
   IonRouterOutlet,
   setupIonicReact,
 } from '@ionic/react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useParams } from 'react-router-dom';
 import { IonReactRouter } from '@ionic/react-router';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -32,7 +32,11 @@ setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { loggedIn, loading } = useAuth();
-  const { isDatabaseReady } = React.useContext(DatabaseContext);
+  const { isDatabaseReady, projectId } = React.useContext(DatabaseContext);
+
+  useEffect(() => {
+    console.log('projectId', projectId);
+  }, [projectId]);
 
   if (loading || !isDatabaseReady) {
     return useLoader();

@@ -29,8 +29,22 @@ import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
 import { ShootingStatusEnum } from '../../Ennums/ennums';
 import timeToISOString from '../../utils/timeToIsoString';
+import { concat } from 'lodash';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
+
+interface CastCallForTable {
+  cast: string;
+  name: string;
+  tScn: string;
+  pickUp: string;
+  callTime: string;
+  onMakeUp: string;
+  onWardrobe: string;
+  readyToShoot: string;
+  notes: string;
+  castName: string;
+}
 
 const CallSheet: React.FC = () => {
   const tabsController = useHideTabs();
@@ -51,6 +65,7 @@ const CallSheet: React.FC = () => {
   const [thisShooting, setThisShooting] = useState<Shooting>();
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
+  const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
 
   const getTalentCastOptions = async () => {
     const talents = await oneWrapDb?.talents.find({}).exec() || [];
@@ -102,6 +117,21 @@ const CallSheet: React.FC = () => {
         editedCastCall,
         ...prevCastCalls.slice(castIndex + 1)
       ];
+
+      const getUniqueArrayValuesByKey = (array: any[], key: string) => {
+        return [...new Map(array.map(item => [item[key], item])).values()];
+      }
+
+      const copyEditedCastCalls = [...editedCastCalls];
+      console.log('copyEditedCastCalls', copyEditedCastCalls);
+      const newEditedCastCalls = [...copyEditedCastCalls, editedCastCall];
+      console.log('newEditedCastCalls', newEditedCastCalls);
+      const uniqueEditedCastCalls = getUniqueArrayValuesByKey(newEditedCastCalls, 'castName');
+
+      setEditedCastCalls(uniqueEditedCastCalls);
+      
+      
+      
       return newCastCalls;
     });
   };
@@ -109,12 +139,58 @@ const CallSheet: React.FC = () => {
   const saveEditedCastCalls = async () => {
     try {
       const shootingCopy = { ...thisShooting };
-      shootingCopy.castCalls = castCalls;
-      setThisShooting(shootingCopy as Shooting);
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+  
+      const newCastCalls = editedCastCalls.map((call: any) => {
+        // Buscar si existe un call en la base de datos
+        const callInDb = shootingCopy.castCalls?.find((callInDb: any) => callInDb.castName === call.castName);
+        return {
+          id: callInDb?.id || '',
+          projectCastId: callInDb?.projectCastId || 0,
+          shootingId: parseInt(shootingId),
+          pickUp: call.pickUp,
+          callTime: call.callTime,
+          onMakeUp: call.onMakeUp,
+          onWardrobe: call.onWardrobe,
+          readyToShoot: call.readyToShoot,
+          arrived: callInDb?.arrived || '',
+          wrap: callInDb?.wrap || '',
+          startProcesses: callInDb?.startProcesses || '',
+          wrapSet: callInDb?.wrapSet || '',
+          dropOff: callInDb?.dropOff || '',
+          mealIn: callInDb?.mealIn || '',
+          mealOut: callInDb?.mealOut || '',
+          mealExtraIn: callInDb?.mealExtraIn || '',
+          mealExtraOut: callInDb?.mealExtraOut || '',
+          castName: call.castName,
+          castNumber: call.castNumber || '',
+          castCategory: call.castCategory || '',
+          castCategoryId: callInDb?.castCategoryId || 0,
+          notes: call.notes,
+          createdAt: callInDb?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+  
+      // Combinar los castCalls existentes con los nuevos/editados
+      const concatedCastCalls = [
+        ...(shootingCopy.castCalls || []).filter((call: any) => 
+          !newCastCalls.some((newCall: any) => newCall.castName === call.castName)
+        ),
+        ...newCastCalls
+      ];
+  
+      const newShooting: any = {
+        ...shootingCopy,
+        castCalls: concatedCastCalls,
+        updatedAt: new Date().toISOString(),
+      }
+      setThisShooting(newShooting);
+      await oneWrapDb?.shootings.upsert(newShooting);
     } catch (error) {
       console.error('Error al editar Cast Call:', error);
       throw error;
+    } finally {
+      setEditedCastCalls([]);
     }
   };
 
@@ -292,12 +368,13 @@ const CallSheet: React.FC = () => {
                 cast: `${character.characterNum}. ${character.characterName}`,
                 name: talent?.name,
                 tScn: getNumberScenesByCast(character.characterName),
-                pickUp: talentCallInfo?.pickup || '--',
+                pickUp: talentCallInfo?.pickUp || '--',
                 callTime: talentCallInfo?.callTime || '--',
                 onMakeUp: talentCallInfo?.onMakeUp || '--',
                 onWardrobe: talentCallInfo?.onWardrobe || '--',
                 readyToShoot: talentCallInfo?.readyToShoot || '--',
                 notes: talentCallInfo?.notes || '',
+                castName: character.characterName || '',
               });
             }
           });

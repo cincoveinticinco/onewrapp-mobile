@@ -75,7 +75,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
-  const [projectId, setProjectId] = useState<any>(null);
+  const [projectId, setProjectId] = useState<any>(localStorage.getItem('projectId') || null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
   const isOnline = useNavigatorOnLine();
 
@@ -121,6 +121,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
+    localStorage.setItem('projectId', projectId);
+  }, [projectId]);
+
+  useEffect(() => {
     setProjectsAreLoading(true);
     if (oneWrapRXdatabase) {
       const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe((data: Project[]) => {
@@ -142,7 +146,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           { updatedAt: 'asc' },
         ],
       }).$.subscribe((data: RxLocalDocumentData[]) => {
-        console.log(data)
         setOfflineScenes(data);
         setScenesAreLoading(false);
       });
@@ -264,16 +267,16 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         .then((data: any) => (data[0] ? data[0] : null));
 
       const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
+      const shootingReplicatorPush = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
 
       if (isOnline) {
         shootingsReplicator.startReplicationPull();
-        setTimeout(() => {
-          shootingsReplicator.startReplicationPush();
-        }, 500);
+        await shootingsReplicator.monitorReplicationStatus();
+        shootingReplicatorPush.startReplicationPush();
+        await shootingReplicatorPush.monitorReplicationStatus();
         shootingsReplicator.startReplicationPull();
       }
 
-      await shootingsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
       console.error('Error durante la replicación de shootings:', error);
