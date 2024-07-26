@@ -31,6 +31,7 @@ import MealInfo from '../../components/ShootingDetail/MealInfo/MealInfo';
 import AdvanceCallInfo from '../../components/ShootingDetail/AdvanceCallInfo/AdvanceCallInfo';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import DeleteButton from '../../components/Shared/DeleteButton/DeleteButton';
+import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 
 export type ShootingViews = 'scenes' | 'info';
 type cardType = {
@@ -112,11 +113,17 @@ const ShootingDetail = () => {
   };
 
   const openBannerModal = async () => {
-    await bannerModalRef.current?.present();
+    setAdditionMenu(false);
+    setTimeout(() => {
+      bannerModalRef.current?.present();
+    }, 100)
   };
 
   const openSceneModal = async () => {
-    await sceneModalRef.current?.present();
+    setAdditionMenu(false);
+    setTimeout(() => {
+      sceneModalRef.current?.present();
+    }, 100)
   };
 
   const [shootingData, setShootingData] = useState<ShootingDataProps>({
@@ -535,7 +542,6 @@ const ShootingDetail = () => {
     <InputModalScene
       sceneName="Add New Scene"
       listOfScenes={shootingData.notIncludedScenes}
-      modalTrigger={`${'open-add-new-scene-modal' + '-'}${shootingId}`}
       handleCheckboxToggle={checkboxScenesToggle}
       selectedScenes={selectedScenes}
       setSelectedScenes={setSelectedScenes}
@@ -934,7 +940,6 @@ const ShootingDetail = () => {
         },
       }));
 
-      initializeShootingReplication();
     } catch (error) {
       console.error('Error adding new location:', error);
     }
@@ -963,46 +968,53 @@ const ShootingDetail = () => {
       console.error('Error removing location:', error);
     }
   }
+
   return (
     <IonPage>
       <IonHeader>
         <Toolbar name={shootingData.shootingFormattedDate} addShoBanSc={addShoBanSc} back handleBack={handleBack} />
       </IonHeader>
       {additionMenu && (
-        <div className="add-menu">
-          <IonItem onClick={() => openSceneModal()}>Add Scene</IonItem>
-          <IonItem onClick={() => openBannerModal()}>Add Banner</IonItem>
+        <div className="add-menu" style={{backgroundColor: 'black', outline: '1px solid white'}}>
+          <IonButton onClick={openSceneModal} fill='clear' className='ion-no-margin ion-no-padding' style={{width: '100%'}}>
+            <IonItem color='dark' style={{width: '100%', borderRadius: '0px'}}>ADD SCENE</IonItem>
+          </IonButton>
+          <IonButton onClick={openBannerModal} fill='clear' className='ion-no-margin ion-no-padding' style={{width: '100%'}}>
+            <IonItem color='dark' style={{width: '100%', borderTop: '1px solid white'}}>ADD BANNER</IonItem>
+          </IonButton>       
         </div>
       )}
-      {
-        view === 'scenes' && (
-          <IonContent color="tertiary" fullscreen>
-            <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
-              {isLoading ? (
-                useLoader()
-              ) : (
-                shootingData.scenes.map((scene: any) => (
-                  scene.cardType === 'scene' ? (
-                    <SceneCard
-                      key={scene.sceneId}
-                      scene={scene}
-                      isShooting
-                      isProduced={scene.status}
-                      shootingDeleteScene={() => shootingDeleteScene(scene)}
-                    />
-                  ) : (
-                    <ShootingBanner
-                      key={scene.id}
-                      banner={scene}
-                      shootingDeleteBanner={() => shootingDeleteBanner(scene)}
-                    />
-                  )
-                ))
-              )}
-            </IonReorderGroup>
-          </IonContent>
-        )
-      }
+      {view === 'scenes' && (
+        <IonContent color="tertiary" fullscreen>
+          <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
+            {isLoading ? (
+              useLoader()
+            ) : shootingData.scenes.length === 0 ? (
+              <div className="ion-padding-start">
+                <ExploreContainer name="NO SCENES ADDED" />
+              </div>
+            ) : (
+              shootingData.scenes.map((scene: any) => (
+                scene.cardType === 'scene' ? (
+                  <SceneCard
+                    key={scene.sceneId}
+                    scene={scene}
+                    isShooting
+                    isProduced={scene.status}
+                    shootingDeleteScene={() => shootingDeleteScene(scene)}
+                  />
+                ) : (
+                  <ShootingBanner
+                    key={scene.id}
+                    banner={scene}
+                    shootingDeleteBanner={() => shootingDeleteBanner(scene)}
+                  />
+                )
+              ))
+            )}
+          </IonReorderGroup>
+        </IonContent>
+      )}
       {
         view === 'info' && (
           <IonContent color="tertiary" fullscreen>
