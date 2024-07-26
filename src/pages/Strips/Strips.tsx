@@ -2,8 +2,11 @@ import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
 import {
-  IonButton, IonContent, IonGrid, IonRefresher, IonRefresherContent,
-  useIonViewDidEnter,
+  IonButton, 
+  IonContent, 
+  IonGrid, 
+  IonRefresher, 
+  IonRefresherContent,
   useIonViewWillEnter,
 } from '@ionic/react';
 import './Strips.scss';
@@ -46,15 +49,16 @@ const Strips: React.FC = () => {
 
   const initializeReplication = async () => {
     if(isDatabaseReady) {
-      try {
+      try { 
         setScenesAreLoading(true);
         console.log('Initializing scene replication');
+        await initializeTalentsReplication();
         await initializeSceneReplication().catch((error) => { throw error; });
       } catch (error) {
         console.error('Error initializing scene replication:', error);
       } finally {
         setInitialReplicationFinished(true);
-        await initializeTalentsReplication();
+        setScenesAreLoading(false);
         await initializeParagraphReplication();
       }
     }
