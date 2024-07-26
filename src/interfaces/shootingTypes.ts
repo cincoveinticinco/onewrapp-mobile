@@ -35,7 +35,7 @@ export interface Shooting {
   updatedAt: string;
   banners: ShootingBanner[];
   scenes: ShootingScene[];
-  locations: Location[];
+  locations: LocationInfo[];
   hospitals: Hospital[];
   meals: Meal[];
   advanceCalls: AdvanceCall[];
