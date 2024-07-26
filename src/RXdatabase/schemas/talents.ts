@@ -38,10 +38,10 @@ const talentSchema = {
       type: 'string',
     },
     castCategoryId: {
-      type: 'integer',
+      type: ['integer', 'null'],
     },
     castCategory: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     updatedAt: {
       type: 'string',
