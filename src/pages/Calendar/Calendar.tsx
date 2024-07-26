@@ -3,24 +3,18 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonToolbar,
-  IonIcon,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   useIonViewWillEnter,
 } from '@ionic/react';
-import { calendarOutline, listOutline } from 'ionicons/icons';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import { Shooting } from '../../interfaces/shootingTypes';
-import weekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import useLoader from '../../hooks/Shared/useLoader';
 import { useParams } from 'react-router';
+import Legend from '../../components/Shared/Legend/Legend';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
@@ -31,7 +25,14 @@ const Calendar: React.FC = () => {
 
   const { oneWrapDb, projectId, initializeShootingReplication, setProjectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
-  const { id } = useParams<any>();
+  const { id } = useParams<{ id: string }>();
+
+  const legendItems = [
+    { color: 'var(--ion-color-primary)', label: 'OPEN' },
+    { color: '#f3fb8c', label: 'CALLED' },
+    { color: 'var(--ion-color-success)', label: 'CLOSED' }
+  ];
+
 
   useIonViewWillEnter(() => {
     setProjectId(id);
@@ -147,45 +148,47 @@ const Calendar: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="dark">
-          <IonSegment
-            value={calendarState.viewMode}
-            onIonChange={(e) => setCalendarState((prevState) => ({
-              ...prevState,
-              viewMode: e.detail.value as 'month' | 'week',
-            }))}
-          >
-            <IonSegmentButton value="month">
-              <IonIcon icon={calendarOutline} />
-              <IonLabel>Mes</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="week">
-              <IonIcon icon={listOutline} />
-              <IonLabel>Semana</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
-        </IonToolbar>
-        {
-          calendarState.viewMode === 'month'
-            ? (
-              <MonthViewToolbar
-                currentDate={calendarState.currentDate}
-                onPrev={prevMonth}
-                onNext={nextMonth}
-                onDateChange={handleDateChange}
-              />
-            )
-            : weekViewToolbar(calendarState.currentDate, prevWeek, nextWeek)
-        }
+        {/* <IonSegment
+          value={calendarState.viewMode}
+          onIonChange={(e) => setCalendarState((prevState) => ({
+            ...prevState,
+            viewMode: e.detail.value as 'month' | 'week',
+          }))}
+        >
+          <IonSegmentButton value="month">
+            <IonIcon icon={calendarOutline} />
+            <IonLabel>Mes</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="week">
+            <IonIcon icon={listOutline} />
+            <IonLabel>Semana</IonLabel>
+          </IonSegmentButton>
+        </IonSegment> */}
+        {calendarState.viewMode === 'month' ? (
+          <MonthViewToolbar
+            currentDate={calendarState.currentDate}
+            onPrev={prevMonth}
+            onNext={nextMonth}
+            onDateChange={handleDateChange}
+          />
+        ) : (
+          // <weekViewToolbar
+          //   currentDate={calendarState.currentDate}
+          //   onPrev={prevWeek}
+          //   onNext={nextWeek}
+          // />
+          <></>
+        )}
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {
-        isLoading
-          ? useLoader()
-          : calendarState.viewMode === 'month'
-            ? <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
-            : <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
-      }
+        <Legend items={legendItems} />
+        {isLoading ? (
+          useLoader()
+        ) : calendarState.viewMode === 'month' ? (
+          <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
+        ) : (
+          <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
+        )}
       </IonContent>
     </IonPage>
   );
