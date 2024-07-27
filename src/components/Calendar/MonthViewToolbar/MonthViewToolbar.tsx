@@ -1,5 +1,5 @@
 import {
-  IonButton, IonButtons, IonDatetime, IonIcon, IonTitle, IonToolbar,
+  IonButton, IonButtons, IonDatetime, IonIcon, IonProgressBar, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { format } from 'date-fns';
 import { calendarClear, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
@@ -11,10 +11,11 @@ interface MonthViewToolbarProps {
   onPrev: () => void;
   onNext: () => void;
   onDateChange: (date: Date) => void;
+  isLoading?: boolean;
 }
 
 const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
-  currentDate, onPrev, onNext, onDateChange,
+  currentDate, onPrev, onNext, onDateChange, isLoading = false,
 }) => {
   const [showDateTime, setShowDateTime] = useState(false);
 
@@ -45,6 +46,12 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
             <IonIcon slot="icon-only" icon={chevronForwardOutline} />
           </IonButton>
         </IonButtons>
+        {
+          isLoading && 
+          (
+            <IonProgressBar type="indeterminate" color="primary" className="month-toolbar-progress" />
+          )
+        }
       </IonToolbar>
       {
         showDateTime && (
