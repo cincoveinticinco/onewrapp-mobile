@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import {
   IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
+  IonProgressBar,
 } from '@ionic/react';
 import {
   menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
@@ -49,6 +50,7 @@ interface ToolbarProps {
   deleteTrigger?: string;
   download?: boolean;
   addShoBanSc?: any;
+  isLoading?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -73,6 +75,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   deleteTrigger = '',
   download = true,
   addShoBanSc,
+  isLoading = false,
 }) => {
   const isMobile = useIsMobile();
 
@@ -202,6 +205,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => generatePdf(template, inputs)}>
             <RiDownload2Line className="toolbar-icon download-icon" />
           </IonButton>
+        )
+      }
+      {
+        isLoading && (
+          <IonProgressBar type="indeterminate"></IonProgressBar>
         )
       }
     </IonToolbar>
