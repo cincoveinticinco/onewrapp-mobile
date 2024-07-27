@@ -3,6 +3,7 @@ import {
   IonContent,
   IonHeader,
   IonPage,
+  useIonViewDidEnter,
   useIonViewWillEnter,
 } from '@ionic/react';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
@@ -23,7 +24,7 @@ const Calendar: React.FC = () => {
     shootings: [] as Shooting[],
   });
 
-  const { oneWrapDb, projectId, initializeShootingReplication, setProjectId } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, projectId, setProjectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
 
@@ -38,23 +39,20 @@ const Calendar: React.FC = () => {
     setProjectId(id);
   });
 
-  useEffect(() => {
-    const initializeReplication = async () => {
-      try {
-        setIsLoading(true);
-        const replicationFinished = await initializeShootingReplication();
-        if (replicationFinished) {
-          await getShootings();
-        }
-      } catch (error) {
-        console.error('Error initializing replication:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const initializeReplication = async () => {
+    try {
+      setIsLoading(true);
+      await getShootings();
+    } catch (error) {
+      console.error('Error initializing replication:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useIonViewDidEnter(() => {
     initializeReplication();
-  }, [projectId]);
+  });
 
   useEffect(() => {
     if (oneWrapDb && projectId) {
@@ -86,7 +84,10 @@ const Calendar: React.FC = () => {
   }, [oneWrapDb, projectId]);
 
   const getShootings = async () => {
-    if (!oneWrapDb) return;
+    if (!oneWrapDb) {
+      console.error('Database not initialized');
+      return;
+    };
 
     try {
       const shootings = await oneWrapDb.shootings.find({
@@ -170,6 +171,7 @@ const Calendar: React.FC = () => {
             onPrev={prevMonth}
             onNext={nextMonth}
             onDateChange={handleDateChange}
+            isLoading={isLoading}
           />
         ) : (
           // <weekViewToolbar
