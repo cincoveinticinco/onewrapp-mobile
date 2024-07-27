@@ -10,6 +10,8 @@ import UnitsSchema from '../../RXdatabase/schemas/units';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings';
 import TalentsSchema from '../../RXdatabase/schemas/talents';
 import AuthContext from '../../context/Auth';
+import { set } from 'lodash';
+import { locationOutline } from 'ionicons/icons';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -33,6 +35,12 @@ export interface DatabaseContextProps {
   initializeUnitReplication: () => Promise<boolean>;
   initializeTalentsReplication: () => Promise<boolean>;
   isDatabaseReady: boolean;
+  initialProjectReplication: () => Promise<void>;
+  replicationPercentage: number;
+  replicationStatus: string;
+  initialReplicationFinished: boolean;
+  projectsInfoIsOffline: {[key: string]: boolean};
+  setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -57,6 +65,12 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initializeUnitReplication: () => new Promise(() => false),
   initializeTalentsReplication: () => new Promise(() => false),
   isDatabaseReady: false,
+  initialProjectReplication: () => new Promise(() => false),
+  replicationPercentage: 0,
+  replicationStatus: '',
+  initialReplicationFinished: false,
+  projectsInfoIsOffline: {},
+  setProjectsInfoIsOffline: () => {},
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -70,6 +84,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const { getToken } = useContext(AuthContext);
 
+
   const [viewTabs, setViewTabs] = useState(true);
   const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -77,7 +92,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(localStorage.getItem('projectId') || null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
+  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
+  const [replicationStatus, setReplicationStatus] = useState<string>('');
   const isOnline = useNavigatorOnLine();
+  const [replicationPercentage, setReplicationPercentage] = useState(0);
+  const [projectsAreOffline, setProjectsAreOffline] = useState<boolean>(
+    localStorage.getItem('projectsAreOffline') ? JSON.parse(localStorage.getItem('projectsAreOffline') as string) : false,
+  );
+  const [projectsInfoIsOffline, setProjectsInfoIsOffline] = useState<{[key: string]: boolean}>(
+    localStorage.getItem('projectsInfoIsOffline') ? JSON.parse(localStorage.getItem('projectsInfoIsOffline') as string) : {},
+  );
+
+  useEffect(() => {
+    console.log('initialReplicationFinished updated: *********', initialReplicationFinished);
+  }, [initialReplicationFinished]);
 
   useEffect(() => {
     const initializeDatabase = async () => {
@@ -100,12 +128,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setShootingsCollection(shootingsColl);
         setTalentsCollection(talentsColl);
 
-        setIsDatabaseReady(true); 
+        setIsDatabaseReady(true);
 
         if (isOnline) {
-          const replicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
-          replicator.startReplicationPull();
-          await replicator.monitorReplicationStatus();
+          const projectsReplicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
+          projectsReplicator.startReplicationPull();
+          await projectsReplicator.monitorReplicationStatus();
           setProjectsAreLoading(false);
         }
       } catch (error) {
@@ -127,12 +155,46 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   useEffect(() => {
     setProjectsAreLoading(true);
     if (oneWrapRXdatabase) {
-      const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe((data: Project[]) => {
-        setOfflineProjects(data);
+      const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe({
+        next: (data: Project[]) => {
+          setOfflineProjects(data);
+          setProjectsAreOffline(true);
+          console.log(data, 'projects');
+          const projects = data.map((project: any) => project._data);
+          console.log(projects, 'projectInfoIsOffline');
+          try {
+            const projectsInfoIsOffline = Object.fromEntries(
+              projects.map((project: any) => [
+                typeof project.id === 'string' || typeof project.id === 'number' 
+                  ? project.id 
+                  : String(project.id), 
+                false
+              ])
+            );
+            setProjectsInfoIsOffline(projectsInfoIsOffline);
+          } catch (error) {
+            console.error('Error processing projects:', error);
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching projects:', error);
+          setProjectsAreLoading(false);
+        },
+        complete: () => {
+          setProjectsAreLoading(false);
+        }
       });
       return () => { subscription.unsubscribe(); };
     }
   }, [oneWrapRXdatabase]);
+
+  useEffect(() => {
+    localStorage.setItem('projectsAreOffline', JSON.stringify(projectsAreOffline));
+  }, [projectsAreOffline]);
+
+  useEffect(() => {
+    localStorage.setItem('projectsInfoIsOffline', JSON.stringify(projectsInfoIsOffline));
+  }, [projectsInfoIsOffline]);
 
   useEffect(() => {
     setScenesAreLoading(true);
@@ -284,6 +346,78 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   };
 
+  // This initial replication, is the first replication that is done when the user enters in a project. The idea is to replicate all the data from the server to the local database and use a loader to notify the status of replication. After this first replication, it is not necessary to replicate all the data again, and we can avoid the loaders
+
+  let cancelCurrentIncrement: (() => void) | null = null;
+
+  const incrementPercentage = (start: number, end: number, duration: number) => {
+    // Cancelar la ejecución anterior si existe
+    if (cancelCurrentIncrement) {
+      cancelCurrentIncrement();
+    }
+  
+    let current = start;
+    const step = (end - start) / (duration / 10); // Incremento cada 10ms
+    let timer: NodeJS.Timeout;
+  
+    const increment = () => {
+      current += step;
+      if (current >= end) {
+        clearInterval(timer);
+        setReplicationPercentage(end);
+        cancelCurrentIncrement = null;
+      } else {
+        setReplicationPercentage(Math.round(current));
+      }
+    };
+  
+    timer = setInterval(increment, 10);
+  
+    // Crear una función de cancelación
+    cancelCurrentIncrement = () => {
+      clearInterval(timer);
+      cancelCurrentIncrement = null;
+    };
+  };
+  
+  const initialProjectReplication = async () => {
+    if (!oneWrapRXdatabase) return;
+    try {
+      setInitialReplicationFinished(false);
+      setReplicationPercentage(0);
+      setReplicationStatus('Starting replication...');
+  
+      const steps = [
+        { name: 'scenes', function: initializeSceneReplication, startPercentage: 0, endPercentage: 20 },
+        { name: 'shootings', function: initializeShootingReplication, startPercentage: 20, endPercentage: 40 },
+        { name: 'paragraphs', function: initializeParagraphReplication, startPercentage: 40, endPercentage: 60 },
+        { name: 'talents', function: initializeTalentsReplication, startPercentage: 60, endPercentage: 80 },
+        { name: 'units', function: initializeUnitReplication, startPercentage: 80, endPercentage: 100 }
+      ];
+  
+      for (const step of steps) {
+        setReplicationStatus(`Starting ${step.name} replication...`);
+        incrementPercentage(step.startPercentage, step.startPercentage + 10, 2000);
+        await step.function();
+        incrementPercentage(step.startPercentage + 10, step.endPercentage, 2000);
+      }
+  
+      setReplicationStatus('Replication finished');
+      setReplicationPercentage(100);
+  
+    } catch (error) {
+      console.error('Error during initial replication:', error);
+      setReplicationStatus('Error during initial replication');
+    } finally {
+      setInitialReplicationFinished(true);
+      setProjectsInfoIsOffline({
+        ...projectsInfoIsOffline,
+        [projectId]: true
+      })
+      console.log('Initial replication finished');
+    }
+  };
+
   return (
     <DatabaseContext.Provider
       value={{
@@ -307,7 +441,13 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         initializeParagraphReplication,
         initializeUnitReplication,
         initializeTalentsReplication,
-        isDatabaseReady
+        isDatabaseReady,
+        initialProjectReplication,
+        replicationPercentage,
+        replicationStatus,
+        initialReplicationFinished,
+        projectsInfoIsOffline,
+        setProjectsInfoIsOffline
       }}
     >
       {children}
