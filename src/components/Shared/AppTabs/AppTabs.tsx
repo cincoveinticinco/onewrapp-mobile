@@ -46,6 +46,7 @@ import { useAuth } from '../../../context/Auth';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 import DatabaseContext from '../../../hooks/Shared/database';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
+import ReplicationPage from '../../../pages/ReplicationPage/ReplicationPage';
 
 setupIonicReact();
 
@@ -69,6 +70,9 @@ const AppTabs: React.FC = () => {
   return (
     <IonTabs className="ion-tabs">
       <IonRouterOutlet mode="md">
+        <Route exact path={`${urlString}/replication`}>
+          <ReplicationPage />
+        </Route>  
         <Route exact path={`${urlString}/addscene`}>
           <AddScene />
         </Route>
