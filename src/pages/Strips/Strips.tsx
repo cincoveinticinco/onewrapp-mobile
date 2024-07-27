@@ -10,7 +10,7 @@ import {
   useIonViewWillEnter,
 } from '@ionic/react';
 import './Strips.scss';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -22,54 +22,29 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import useLoader from '../../hooks/Shared/useLoader';
 
 const Strips: React.FC = () => {
   const {
     offlineScenes, 
-    initializeSceneReplication, 
     projectId, 
-    scenesAreLoading, 
-    setScenesAreLoading, 
-    initializeParagraphReplication,
-    initializeTalentsReplication,
-    isDatabaseReady,
-    setProjectId
+    setProjectId,
+    initialReplicationFinished, scenesAreLoading, projectsInfoIsOffline
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions
   } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
-  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
   const history = useHistory();
   const location = useLocation();
   useScrollToTop(contentRef, location);
   const { id } = useParams<any>();
-
-  const initializeReplication = async () => {
-    if(isDatabaseReady) {
-      try { 
-        setScenesAreLoading(true);
-        console.log('Initializing scene replication');
-        await initializeTalentsReplication();
-        await initializeSceneReplication().catch((error) => { throw error; });
-      } catch (error) {
-        console.error('Error initializing scene replication:', error);
-      } finally {
-        setInitialReplicationFinished(true);
-        setScenesAreLoading(false);
-        await initializeParagraphReplication();
-      }
-    }
-  };
+  const [renderScenes, setRenderScenes] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(initialReplicationFinished)
-    console.log(isDatabaseReady)
-    initializeReplication();
-    console.log('Replication initialized', initialReplicationFinished);
-  }, [ projectId ]);
+    setRenderScenes(initialReplicationFinished)
+    console.log('initialReplicationFinished: ///////', initialReplicationFinished, renderScenes);
+  }, [initialReplicationFinished]);
 
   useIonViewWillEnter(() => {
     setProjectId(id);
@@ -83,7 +58,7 @@ const Strips: React.FC = () => {
       return sortByCriterias(filteredData, selectedSortOptions);
     }
     return [];
-  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, memoizedApplyFilters, projectId]);
+  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, memoizedApplyFilters, projectId, renderScenes]);
 
   useEffect(() => {
     localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
@@ -175,6 +150,7 @@ const Strips: React.FC = () => {
         sort
         title="LVE STRIPS"
         sortTrigger="sort-scenes-modal-trigger"
+        isLoading={scenesAreLoading}
       >
         <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
           <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
@@ -182,36 +158,30 @@ const Strips: React.FC = () => {
           </IonRefresher>
           <StripTagsToolbar />
           <Suspense>
-            {!initialReplicationFinished || scenesAreLoading ? (
-              useLoader()
+            {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
+              <div className="no-items-message">
+                <p className="ion-no-margin">There are not any scenes that match your search. </p>
+                <IonButton
+                  fill="clear"
+                  color="primary"
+                  className="ion-no-margin reset-filters-option"
+                  onClick={() => setSelectedFilterOptions({})}
+                >
+                  Reset Filters
+                </IonButton>
+              </div>
+            ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
+              <div className="no-items-message">
+                <p className="ion-no-margin">There are not any scenes in this project. </p>
+              </div>
             ) : (
-              <>
-                {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
-                  <div className="no-items-message">
-                    <p className="ion-no-margin">There are not any scenes that match your search. </p>
-                    <IonButton
-                      fill="clear"
-                      color="primary"
-                      className="ion-no-margin reset-filters-option"
-                      onClick={() => setSelectedFilterOptions({})}
-                    >
-                      Reset Filters
-                    </IonButton>
-                  </div>
-                ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
-                  <div className="no-items-message">
-                    <p className="ion-no-margin">There are not any scenes in this project. </p>
-                  </div>
-                ) : (
-                  <IonGrid className="scenes-grid ion-margin">
-                    <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
-                      {displayedScenes.map((scene, i) => (
-                        <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene} searchText={searchText} />
-                      ))}
-                    </ScrollInfiniteContext>
-                  </IonGrid>
-                )}
-              </>
+              <IonGrid className="scenes-grid ion-margin">
+                <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
+                  {displayedScenes.map((scene, i) => (
+                    <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene} searchText={searchText} />
+                  ))}
+                </ScrollInfiniteContext>
+              </IonGrid>
             )}
           </Suspense>
         </IonContent>
