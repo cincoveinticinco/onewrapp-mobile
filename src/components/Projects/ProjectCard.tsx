@@ -12,7 +12,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
-  const { setProjectId } = React.useContext<any>(DatabaseContext);
+  const { setProjectId, projectsInfoIsOffline } = React.useContext<any>(DatabaseContext);
 
   const defineBgColor = (status: string) => {
     switch (status) {
@@ -49,8 +49,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     return name;
   };
 
+  const getProjectLink = (id: string) => {
+    return projectsInfoIsOffline[`${id}`] ? `/my/projects/${id}/strips` : `/my/projects/${id}/replication`;
+  }
+
   return (
-    <IonCard routerLink={`/my/projects/${project.id}`} className="project-card project-card project-card" onClick={() => { setProjectId(project.id); }}>
+    <IonCard routerLink={getProjectLink(project.id)} className="project-card project-card project-card" onClick={() => { setProjectId(project.id); }}>
       <IonCardTitle
         class="ion-justify-content-center ion-align-items-center project-abreviation"
         style={{
