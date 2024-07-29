@@ -1,8 +1,10 @@
 import React from 'react';
 import {
   IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle,
+  IonIcon,
 } from '@ionic/react';
 import './ProjectCard.css';
+import { cloudOfflineSharp } from 'ionicons/icons';
 import { Project } from '../../RXdatabase/schemas/projects';
 import { ProjectStatusEnum } from '../../Ennums/ennums';
 import DatabaseContext from '../../hooks/Shared/database';
@@ -49,9 +51,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     return name;
   };
 
-  const getProjectLink = (id: string) => {
-    return projectsInfoIsOffline[`${id}`] ? `/my/projects/${id}/strips` : `/my/projects/${id}/replication`;
-  }
+  const getProjectLink = (id: string) => (projectsInfoIsOffline[`${id}`] ? `/my/projects/${id}/strips` : `/my/projects/${id}/replication`);
 
   return (
     <IonCard routerLink={getProjectLink(project.id)} className="project-card project-card project-card" onClick={() => { setProjectId(project.id); }}>
@@ -84,6 +84,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           {project.year}
         </p>
       </div>
+      {
+        projectsInfoIsOffline[`${project.id}`] && (
+          <IonIcon
+            icon={cloudOfflineSharp}
+            color="success"
+            style={{ position: 'absolute', bottom: '5px', right: '10px' }}
+          />
+        )
+     }
     </IonCard>
   );
 };

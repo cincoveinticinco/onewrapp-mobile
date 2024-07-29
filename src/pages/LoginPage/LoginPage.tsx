@@ -8,7 +8,7 @@ import './LoginPage.css';
 import {
   logoApple, logoGoogle, logoWindows, mail,
 } from 'ionicons/icons';
-import { useGoogleLogin } from '@react-oauth/google'
+import { useGoogleLogin } from '@react-oauth/google';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import environment from '../../../environment';
@@ -17,7 +17,6 @@ interface Props {
 }
 
 const LoginPage: React.FC<Props> = ({}) => {
-
   const { saveLogin } = useAuth();
 
   const history = useHistory();
@@ -29,7 +28,7 @@ const LoginPage: React.FC<Props> = ({}) => {
   const login = useGoogleLogin({
     onSuccess: (response) => {
       const accessToken = response.access_token;
-      
+
       // Envía el token al backend
       fetch(`${environment.URL_PATH}/google_sign_in`, {
         method: 'POST',
@@ -38,21 +37,21 @@ const LoginPage: React.FC<Props> = ({}) => {
         },
         body: JSON.stringify({ access_token: accessToken }),
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.token) {
-          saveLogin(data.token, data.user);
-          history.push('/my/projects');
-        } else {
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.token) {
+            saveLogin(data.token, data.user);
+            history.push('/my/projects');
+          } else {
           // Maneja el error
-          console.error(data.error);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+            console.error(data.error);
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     },
-    onError: errorMessage
+    onError: errorMessage,
   });
 
   return (

@@ -13,8 +13,8 @@ import {
   IonIcon,
 } from '@ionic/react';
 import { refresh } from 'ionicons/icons';
+import { useHistory, useParams } from 'react-router';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import { Redirect, useHistory, useParams } from 'react-router';
 
 const ReplicationPage: React.FC = () => {
   const {
@@ -22,12 +22,12 @@ const ReplicationPage: React.FC = () => {
     replicationStatus,
     initialProjectReplication,
     isOnline,
-    projectsInfoIsOffline
+    projectsInfoIsOffline,
   } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const { id } = useParams<{ id: string }>();
-  const history = useHistory();
   const { projectId } = useContext(DatabaseContext);
+  const history = useHistory();
 
   const handleRetry = () => {
     if (isOnline) {
@@ -37,38 +37,34 @@ const ReplicationPage: React.FC = () => {
 
   useEffect(() => {
     if (isOnline && !projectsInfoIsOffline[`project_${id}`]) {
-      initialProjectReplication();
-    }
-  }, [isOnline, projectId]);
-
-  useEffect(() => {
-    if (projectsInfoIsOffline[`project_${id}`]) {
-      console.log('projectsInfoIsOffline', projectsInfoIsOffline);
-      setTimeout(() => {
+      initialProjectReplication().finally(() => {
         history.push(`/my/projects/${id}/strips`);
-      }, 100)
+      });
     }
-  }, [projectsInfoIsOffline]);
+  }, [isOnline, id]);
 
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="tertiary">
           <IonTitle>Data Replication</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        <IonCard>
+      <IonContent className="ion-padding" color="tertiary">
+        <IonCard color="tertiary">
           <IonCardContent>
             <IonText color="primary">
               <h2>Replication Progress</h2>
             </IonText>
-            <IonProgressBar 
+            <IonProgressBar
               value={replicationPercentage / 100}
               style={{ height: '20px', margin: '20px 0' }}
             />
             <IonText>
-              <h3>{replicationPercentage}%</h3>
+              <h3>
+                {replicationPercentage}
+                %
+              </h3>
               <p>{replicationStatus}</p>
             </IonText>
           </IonCardContent>
@@ -80,7 +76,7 @@ const ReplicationPage: React.FC = () => {
           </IonText>
         )}
 
-        <IonButton 
+        <IonButton
           expand="block"
           onClick={handleRetry}
           disabled={!isOnline || replicationPercentage > 0 && replicationPercentage < 100}
@@ -93,4 +89,4 @@ const ReplicationPage: React.FC = () => {
   );
 };
 
-export default ReplicationPage
+export default ReplicationPage;

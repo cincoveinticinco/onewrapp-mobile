@@ -70,20 +70,18 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
-  return (
-    <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
-      <IonApp>
-        <AuthProvider>
-          <DatabaseContextProvider>
-            <ScenesContextProvider>
-              <AppContent />
-            </ScenesContextProvider>
-          </DatabaseContextProvider>
-        </AuthProvider>
-      </IonApp>
-    </GoogleOAuthProvider>
-  );
-};
+const App: React.FC = () => (
+  <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
+    <IonApp>
+      <AuthProvider>
+        <DatabaseContextProvider>
+          <ScenesContextProvider>
+            <AppContent />
+          </ScenesContextProvider>
+        </DatabaseContextProvider>
+      </AuthProvider>
+    </IonApp>
+  </GoogleOAuthProvider>
+);
 
 export default App;

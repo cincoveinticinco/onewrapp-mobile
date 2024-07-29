@@ -237,7 +237,7 @@ export const paragraphs = [
   },
 ];
 
-export const fakeShootings: Shooting[] = [
+export const fakeShootings: any[] = [
   {
     id: 'shooting-1',
     projectId: 123,
@@ -250,7 +250,7 @@ export const fakeShootings: Shooting[] = [
     firstShoot: '10:00',
     wrap: null,
     lastOut: null,
-    status: ShootingStatusEnum.InProgress,
+    status: ShootingStatusEnum.Called,
     isTest: false,
     createdAt: '2024-04-15T10:30:00Z',
     updatedAt: '2024-05-01T08:15:00Z',

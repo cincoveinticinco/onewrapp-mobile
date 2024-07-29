@@ -2,17 +2,19 @@
 
 .banner-card-options {
   @include slide-card-item-options;
+
   width: 50px;
 }
 
 .slide-container {
-  position:  relative;
+  position: relative;
 
   p {
     padding-left: 12px;
     width: 100%;
     text-align: center;
   }
+
   .reorder-banner-container {
     position: absolute;
     left: 3px;

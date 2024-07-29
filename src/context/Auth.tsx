@@ -1,6 +1,8 @@
-import React, { useContext, useState, useCallback, useEffect } from 'react';
-import environment from '../../environment';
+import React, {
+  useContext, useState, useCallback, useEffect,
+} from 'react';
 import { set } from 'lodash';
+import environment from '../../environment';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -37,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch(`${environment.URL_PATH}/verify_session`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (response.ok) {
@@ -45,12 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           setLoggedIn(true);
           return true;
-        } else {
-          localStorage.removeItem('token');
-          setUser(null);
-          setLoggedIn(false);
-          return false;
         }
+        localStorage.removeItem('token');
+        setUser(null);
+        setLoggedIn(false);
+        return false;
       } catch (error) {
         console.error('Error verifying session:', error);
         localStorage.removeItem('token');
@@ -80,19 +81,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoggedIn(false);
   }, []);
 
-  const getToken = useCallback(() => {
-    return new Promise<string>((resolve) => {
-      const checkToken = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          resolve(token);
-        } else {
-          setTimeout(checkToken, 100);
-        }
-      };
-      checkToken();
-    });
-  }, []);
+  const getToken = useCallback(() => new Promise<string>((resolve) => {
+    const checkToken = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        resolve(token);
+      } else {
+        setTimeout(checkToken, 100);
+      }
+    };
+    checkToken();
+  }), []);
 
   const value = {
     loggedIn,
@@ -101,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     saveLogin,
     logout,
     loading,
-    getToken
+    getToken,
   };
 
   return (

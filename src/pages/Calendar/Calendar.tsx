@@ -8,13 +8,13 @@ import {
 } from '@ionic/react';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
+import { useParams } from 'react-router';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import { Shooting } from '../../interfaces/shootingTypes';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import useLoader from '../../hooks/Shared/useLoader';
-import { useParams } from 'react-router';
 import Legend from '../../components/Shared/Legend/Legend';
 
 const Calendar: React.FC = () => {
@@ -31,9 +31,8 @@ const Calendar: React.FC = () => {
   const legendItems = [
     { color: 'var(--ion-color-primary)', label: 'OPEN' },
     { color: '#f3fb8c', label: 'CALLED' },
-    { color: 'var(--ion-color-success)', label: 'CLOSED' }
+    { color: 'var(--ion-color-success)', label: 'CLOSED' },
   ];
-
 
   useIonViewWillEnter(() => {
     setProjectId(id);
@@ -87,7 +86,7 @@ const Calendar: React.FC = () => {
     if (!oneWrapDb) {
       console.error('Database not initialized');
       return;
-    };
+    }
 
     try {
       const shootings = await oneWrapDb.shootings.find({

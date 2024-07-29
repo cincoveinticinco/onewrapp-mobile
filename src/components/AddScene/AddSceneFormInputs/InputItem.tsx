@@ -28,7 +28,7 @@ const InputItem: React.FC<InputItemProps> = ({
   validate,
   type = 'text',
   errorMessage = 'REQUIRED *',
-  style
+  style,
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);

@@ -8,10 +8,8 @@ import {
 } from '@ionic/react';
 import environment from '../../../../environment';
 import CustomSelect from '../CustomSelect/CustomSelect';
-import './MapFormModal.scss';
 import { LocationInfo } from '../../../interfaces/shootingTypes';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-
 
 interface MapFormModalProps {
   isOpen: boolean;
@@ -124,11 +122,17 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const getColorObject = (color: string) => {
     switch (color) {
       case 'blue':
-        return { r: 0, g: 0, b: 255, a: 255 };
+        return {
+          r: 0, g: 0, b: 255, a: 255,
+        };
       case 'green':
-        return { r: 0, g: 255, b: 0, a: 255 };
+        return {
+          r: 0, g: 255, b: 0, a: 255,
+        };
       default:
-        return { r: 255, g: 0, b: 0, a: 255 };
+        return {
+          r: 255, g: 0, b: 0, a: 255,
+        };
     }
   };
 
@@ -255,11 +259,36 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   ];
 
   const colorOptions = [
-    { value: JSON.stringify({ r: 255, g: 0, b: 0, a: 255 }), label: 'Red' },
-    { value: JSON.stringify({ r: 0, g: 0, b: 255, a: 255 }), label: 'Blue' },
-    { value: JSON.stringify({ r: 0, g: 255, b: 0, a: 255 }), label: 'Green' },
-    { value: JSON.stringify({ r: 255, g: 255, b: 0, a: 255 }), label: 'Yellow' },
-    { value: JSON.stringify({ r: 128, g: 0, b: 128, a: 255 }), label: 'Purple' },
+    {
+      value: JSON.stringify({
+        r: 255, g: 0, b: 0, a: 255,
+      }),
+      label: 'Red',
+    },
+    {
+      value: JSON.stringify({
+        r: 0, g: 0, b: 255, a: 255,
+      }),
+      label: 'Blue',
+    },
+    {
+      value: JSON.stringify({
+        r: 0, g: 255, b: 0, a: 255,
+      }),
+      label: 'Green',
+    },
+    {
+      value: JSON.stringify({
+        r: 255, g: 255, b: 0, a: 255,
+      }),
+      label: 'Yellow',
+    },
+    {
+      value: JSON.stringify({
+        r: 128, g: 0, b: 128, a: 255,
+      }),
+      label: 'Purple',
+    },
   ];
 
   return (

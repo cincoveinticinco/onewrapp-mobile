@@ -22,7 +22,7 @@ const talentSchema = {
       type: 'string',
       maxLength: 250,
     },
-    projectId: { 
+    projectId: {
       type: 'integer',
     },
     artisticName: {
@@ -47,7 +47,7 @@ const talentSchema = {
       type: 'string',
     },
   },
-  required: ['id', 'name', 'lastName', 'castCategoryId', 'castCategory', 'projectId']
+  required: ['id', 'name', 'lastName', 'castCategoryId', 'castCategory', 'projectId'],
 };
 
 const talentSchemaInput = {

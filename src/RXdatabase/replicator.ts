@@ -1,8 +1,8 @@
 import { replicateRxCollection } from 'rxdb/plugins/replication';
 import { Subject } from 'rxjs';
+import { RxDatabase } from 'rxdb';
 import environment from '../../environment';
 import AppDataBase from './database';
-import { RxDatabase } from 'rxdb';
 
 // const myPullStream$: any = new Subject();
 // const eventSource = new EventSource('http://localhost:3000/owapp/pull_stream_scenes', { withCredentials: true });
@@ -33,7 +33,7 @@ export default class HttpReplicator {
 
   public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})
 
-  constructor(database:any, collections: any, projectId: (number | null) = null, lastItem: any = null,  getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})) {
+  constructor(database:any, collections: any, projectId: (number | null) = null, lastItem: any = null, getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})) {
     this.database = database;
     this.collections = collections;
     this.projectId = projectId;
@@ -64,7 +64,7 @@ export default class HttpReplicator {
 
   private setupHttpReplicationPull(collection: any, projectId: (number | null), lastItem: any = null) {
     const currentTimestamp = new Date().toISOString();
-    const getToken = this.getToken
+    const { getToken } = this;
     console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -78,8 +78,8 @@ export default class HttpReplicator {
           const collectionName = collection.getSchemaName();
           const response = await fetch(`${environment.URL_PATH}/${collection.getEndpointPullName()}?updated_at=${updatedAt}&id=${id}&batch_size=${batchSize}${collection.SchemaName() !== 'projects' ? `&last_project_id=${lastProjectId}` : ''}${projectId ? `&project_id=${projectId}` : ''}${lastItem ? `&last_item_id=${lastItem.id}&last_item_updated_at=${lastItem.updatedAt}` : ''}`, {
             headers: {
-              'owsession': token
-            }
+              owsession: token,
+            },
           });
           const data = await response.json();
           return {
@@ -100,7 +100,7 @@ export default class HttpReplicator {
 
   private setupHttpReplicationPush(collection: any) {
     const currentTimestamp = new Date().toISOString();
-    const getToken = this.getToken;
+    const { getToken } = this;
     console.log('Setting up replication  PUSH for', collection.SchemaName(), currentTimestamp);
     const replicationState = replicateRxCollection({
       collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -113,7 +113,7 @@ export default class HttpReplicator {
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json',
-              'owsession': token
+              owsession: token,
             },
             body: JSON.stringify(changeRows),
           });

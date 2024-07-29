@@ -157,7 +157,7 @@ const InputModal: React.FC<InputModalProps> = ({
     <IonModal
       ref={modalRef}
       trigger={modalTrigger}
-      id="general-modal-styles"
+      className="general-modal-styles"
     >
       <IonHeader>
         <ModalToolbar

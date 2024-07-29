@@ -72,7 +72,7 @@ const AppTabs: React.FC = () => {
       <IonRouterOutlet mode="md">
         <Route exact path={`${urlString}/replication`}>
           <ReplicationPage />
-        </Route>  
+        </Route>
         <Route exact path={`${urlString}/addscene`}>
           <AddScene />
         </Route>

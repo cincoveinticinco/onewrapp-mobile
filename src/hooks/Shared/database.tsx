@@ -1,5 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
+import { set } from 'lodash';
+import { locationOutline } from 'ionicons/icons';
+import { useHistory } from 'react-router';
 import AppDataBase from '../../RXdatabase/database';
 import ScenesSchema from '../../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects';
@@ -10,8 +15,6 @@ import UnitsSchema from '../../RXdatabase/schemas/units';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings';
 import TalentsSchema from '../../RXdatabase/schemas/talents';
 import AuthContext from '../../context/Auth';
-import { set } from 'lodash';
-import { locationOutline } from 'ionicons/icons';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -84,7 +87,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const { getToken } = useContext(AuthContext);
 
-
   const [viewTabs, setViewTabs] = useState(true);
   const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -119,7 +121,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
         const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
-        
+
         setOneWrapRXdatabase(dbInstance);
         setSceneCollection(sceneColl);
         setParagraphCollection(paragraphColl);
@@ -165,11 +167,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           try {
             const projectsInfoIsOffline = Object.fromEntries(
               projects.map((project: any) => [
-                typeof project.id === 'string' || typeof project.id === 'number' 
-                  ? project.id 
-                  : String(project.id), 
-                false
-              ])
+                typeof project.id === 'string' || typeof project.id === 'number'
+                  ? project.id
+                  : String(project.id),
+                false,
+              ]),
             );
             setProjectsInfoIsOffline(projectsInfoIsOffline);
           } catch (error) {
@@ -182,7 +184,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         },
         complete: () => {
           setProjectsAreLoading(false);
-        }
+        },
       });
       return () => { subscription.unsubscribe(); };
     }
@@ -229,10 +231,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [oneWrapRXdatabase]);
 
   const initializeSceneReplication = async () => {
-    if (!sceneCollection || !oneWrapRXdatabase || !projectId ) {
-      console.log('No scene collection')
-      return false
-    };
+    if (!sceneCollection || !oneWrapRXdatabase || !projectId) {
+      console.log('No scene collection');
+      return false;
+    }
     try {
       const lastSceneInProject = await oneWrapRXdatabase.scenes.find({
         selector: { projectId: parseInt(projectId) },
@@ -355,11 +357,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     if (cancelCurrentIncrement) {
       cancelCurrentIncrement();
     }
-  
+
     let current = start;
     const step = (end - start) / (duration / 10); // Incremento cada 10ms
     let timer: NodeJS.Timeout;
-  
+
     const increment = () => {
       current += step;
       if (current >= end) {
@@ -370,51 +372,65 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setReplicationPercentage(Math.round(current));
       }
     };
-  
+
     timer = setInterval(increment, 10);
-  
+
     // Crear una función de cancelación
     cancelCurrentIncrement = () => {
       clearInterval(timer);
       cancelCurrentIncrement = null;
     };
   };
-  
+
+  const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+
   const initialProjectReplication = async () => {
     if (!oneWrapRXdatabase) return;
     try {
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
-  
+
       const steps = [
-        { name: 'scenes', function: initializeSceneReplication, startPercentage: 0, endPercentage: 20 },
-        { name: 'shootings', function: initializeShootingReplication, startPercentage: 20, endPercentage: 40 },
-        { name: 'paragraphs', function: initializeParagraphReplication, startPercentage: 40, endPercentage: 60 },
-        { name: 'talents', function: initializeTalentsReplication, startPercentage: 60, endPercentage: 80 },
-        { name: 'units', function: initializeUnitReplication, startPercentage: 80, endPercentage: 100 }
+        {
+          name: 'scenes', function: initializeSceneReplication, startPercentage: 0, endPercentage: 20,
+        },
+        {
+          name: 'shootings', function: initializeShootingReplication, startPercentage: 20, endPercentage: 40,
+        },
+        {
+          name: 'talents', function: initializeTalentsReplication, startPercentage: 40, endPercentage: 60,
+        },
+        {
+          name: 'units', function: initializeUnitReplication, startPercentage: 60, endPercentage: 80,
+        },
+        {
+          name: 'paragraphs', function: initializeParagraphReplication, startPercentage: 80, endPercentage: 100,
+        },
       ];
-  
+
       for (const step of steps) {
         setReplicationStatus(`Starting ${step.name} replication...`);
-        incrementPercentage(step.startPercentage, step.startPercentage + 10, 2000);
+        incrementPercentage(step.startPercentage, step.startPercentage + 5, 2000);
         await step.function();
-        incrementPercentage(step.startPercentage + 10, step.endPercentage, 2000);
+        incrementPercentage(step.startPercentage + 5, step.endPercentage, 3000);
+
+        // Agregamos un pequeño tiempo de espera entre cada replicación
+        await sleep(1000); // Espera de 1 segundo entre replicaciones
       }
-  
+
       setReplicationStatus('Replication finished');
       setReplicationPercentage(100);
-  
     } catch (error) {
       console.error('Error during initial replication:', error);
       setReplicationStatus('Error during initial replication');
+      setReplicationPercentage(0);
     } finally {
       setInitialReplicationFinished(true);
       setProjectsInfoIsOffline({
         ...projectsInfoIsOffline,
-        [projectId]: true
-      })
-      console.log('Initial replication finished');
+        [projectId]: true,
+      });
     }
   };
 
@@ -447,13 +463,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         replicationStatus,
         initialReplicationFinished,
         projectsInfoIsOffline,
-        setProjectsInfoIsOffline
+        setProjectsInfoIsOffline,
       }}
     >
       {children}
     </DatabaseContext.Provider>
   );
 };
-
 
 export default DatabaseContext;

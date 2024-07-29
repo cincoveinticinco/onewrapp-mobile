@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  IonButton, 
-  IonContent, 
-  IonHeader, 
-  IonIcon, 
-  IonPage, 
-  IonTitle, 
-  IonToolbar, 
-  useIonViewDidEnter 
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  useIonViewDidEnter,
 } from '@ionic/react';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import './CallSheet.css';
-import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
-import CastView from '../../components/CallSheet/CastView/CastView/CastView';
 import { chevronBackOutline, save } from 'ionicons/icons';
 import { useParams } from 'react-router';
+import { normalizeString } from 'rxdb';
+import { VscEdit } from 'react-icons/vsc';
+import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
+import CastView from '../../components/CallSheet/CastView/CastView/CastView';
 import DatabaseContext from '../../hooks/Shared/database';
 import { Character, Scene } from '../../interfaces/scenesTypes';
 import { Talent } from '../../RXdatabase/schemas/talents';
-import { normalizeString } from 'rxdb';
 import AddButton from '../../components/Shared/AddButton/AddButton';
-import { CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting } from '../../interfaces/shootingTypes';
+import {
+  CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
+} from '../../interfaces/shootingTypes';
 import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
 import CrewView from '../../components/CallSheet/CrewView/CrewView';
-import { VscEdit } from 'react-icons/vsc';
 import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
 import { ShootingStatusEnum } from '../../Ennums/ennums';
 import timeToISOString from '../../utils/timeToIsoString';
-import { concat } from 'lodash';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -79,7 +79,7 @@ const CallSheet: React.FC = () => {
   }, [oneWrapDb]);
 
   const openAddNewModal = () => {
-    switch(view) {
+    switch (view) {
       case 'cast':
         setAddNewCastCallModalIsOpen(true);
         break;
@@ -102,25 +102,23 @@ const CallSheet: React.FC = () => {
     castIndex: number,
     castKey: K,
     newValue: any,
-    type: string
+    type: string,
   ) => {
-    setCastCalls(prevCastCalls => {
+    setCastCalls((prevCastCalls) => {
       const editedCastCall = JSON.parse(JSON.stringify(prevCastCalls[castIndex]));
-      editedCastCall[castKey] = type === 'hour' 
+      editedCastCall[castKey] = type === 'hour'
         ? timeToISOString({
-            hours: newValue.split(':')[0],
-            minutes: newValue.split(':')[1]
-          }, thisShooting?.shootDate || '') 
+          hours: newValue.split(':')[0],
+          minutes: newValue.split(':')[1],
+        }, thisShooting?.shootDate || '')
         : type === 'number' ? parseInt(newValue) : newValue;
       const newCastCalls = [
         ...prevCastCalls.slice(0, castIndex),
         editedCastCall,
-        ...prevCastCalls.slice(castIndex + 1)
+        ...prevCastCalls.slice(castIndex + 1),
       ];
 
-      const getUniqueArrayValuesByKey = (array: any[], key: string) => {
-        return [...new Map(array.map(item => [item[key], item])).values()];
-      }
+      const getUniqueArrayValuesByKey = (array: any[], key: string) => [...new Map(array.map((item) => [item[key], item])).values()];
 
       const copyEditedCastCalls = [...editedCastCalls];
       console.log('copyEditedCastCalls', copyEditedCastCalls);
@@ -129,9 +127,7 @@ const CallSheet: React.FC = () => {
       const uniqueEditedCastCalls = getUniqueArrayValuesByKey(newEditedCastCalls, 'castName');
 
       setEditedCastCalls(uniqueEditedCastCalls);
-      
-      
-      
+
       return newCastCalls;
     });
   };
@@ -139,7 +135,7 @@ const CallSheet: React.FC = () => {
   const saveEditedCastCalls = async () => {
     try {
       const shootingCopy = { ...thisShooting };
-  
+
       const newCastCalls = editedCastCalls.map((call: any) => {
         // Buscar si existe un call en la base de datos
         const callInDb = shootingCopy.castCalls?.find((callInDb: any) => callInDb.castName === call.castName);
@@ -170,20 +166,18 @@ const CallSheet: React.FC = () => {
           updatedAt: new Date().toISOString(),
         };
       });
-  
+
       // Combinar los castCalls existentes con los nuevos/editados
       const concatedCastCalls = [
-        ...(shootingCopy.castCalls || []).filter((call: any) => 
-          !newCastCalls.some((newCall: any) => newCall.castName === call.castName)
-        ),
-        ...newCastCalls
+        ...(shootingCopy.castCalls || []).filter((call: any) => !newCastCalls.some((newCall: any) => newCall.castName === call.castName)),
+        ...newCastCalls,
       ];
-  
+
       const newShooting: any = {
         ...shootingCopy,
         castCalls: concatedCastCalls,
         updatedAt: new Date().toISOString(),
-      }
+      };
       setThisShooting(newShooting);
       await oneWrapDb?.shootings.upsert(newShooting);
     } catch (error) {
@@ -198,20 +192,20 @@ const CallSheet: React.FC = () => {
     extraIndex: number,
     extraKey: K,
     newValue: any,
-    type: string
+    type: string,
   ) => {
-    setExtraCalls(prevExtraCalls => {
+    setExtraCalls((prevExtraCalls) => {
       const editedExtraCall = JSON.parse(JSON.stringify(prevExtraCalls[extraIndex]));
-      editedExtraCall[extraKey] = type === 'hour' 
+      editedExtraCall[extraKey] = type === 'hour'
         ? timeToISOString({
-            hours: newValue.split(':')[0],
-            minutes: newValue.split(':')[1]
-          }, thisShooting?.shootDate || '') 
+          hours: newValue.split(':')[0],
+          minutes: newValue.split(':')[1],
+        }, thisShooting?.shootDate || '')
         : type === 'number' ? parseInt(newValue) : newValue;
       const newExtraCalls = [
         ...prevExtraCalls.slice(0, extraIndex),
         editedExtraCall,
-        ...prevExtraCalls.slice(extraIndex + 1)
+        ...prevExtraCalls.slice(extraIndex + 1),
       ];
       return newExtraCalls;
     });
@@ -233,20 +227,20 @@ const CallSheet: React.FC = () => {
     otherIndex: number,
     otherKey: K,
     newValue: any,
-    type: string
+    type: string,
   ) => {
-    setOtherCalls(prevOtherCalls => {
+    setOtherCalls((prevOtherCalls) => {
       const editedOtherCall = JSON.parse(JSON.stringify(prevOtherCalls[otherIndex]));
-      editedOtherCall[otherKey] = type === 'hour' 
+      editedOtherCall[otherKey] = type === 'hour'
         ? timeToISOString({
-            hours: newValue.split(':')[0],
-            minutes: newValue.split(':')[1]
-          }, thisShooting?.shootDate || '') 
+          hours: newValue.split(':')[0],
+          minutes: newValue.split(':')[1],
+        }, thisShooting?.shootDate || '')
         : type === 'number' ? parseInt(newValue) : newValue;
       const newOtherCalls = [
         ...prevOtherCalls.slice(0, otherIndex),
         editedOtherCall,
-        ...prevOtherCalls.slice(otherIndex + 1)
+        ...prevOtherCalls.slice(otherIndex + 1),
       ];
       return newOtherCalls;
     });
@@ -268,47 +262,47 @@ const CallSheet: React.FC = () => {
     pictureCarIndex: number,
     pictureCarKey: K,
     newValue: any,
-    type: string
+    type: string,
   ) => {
-    setPictureCars(prevPictureCars => {
+    setPictureCars((prevPictureCars) => {
       // Crear una copia profunda del pictureCar que estamos editando
       const editedPictureCar = JSON.parse(JSON.stringify(prevPictureCars[pictureCarIndex]));
-  
+
       // Actualizar el campo específico
-      editedPictureCar[pictureCarKey] = type === 'hour' 
+      editedPictureCar[pictureCarKey] = type === 'hour'
         ? timeToISOString({
-            hours: newValue.split(':')[0],
-            minutes: newValue.split(':')[1]
-          }, thisShooting?.shootDate || '') 
-        : type === 'number'? parseInt(newValue) : newValue;
-  
+          hours: newValue.split(':')[0],
+          minutes: newValue.split(':')[1],
+        }, thisShooting?.shootDate || '')
+        : type === 'number' ? parseInt(newValue) : newValue;
+
       // Crear un nuevo array con el pictureCar actualizado
       const newPictureCars = [
         ...prevPictureCars.slice(0, pictureCarIndex),
         editedPictureCar,
-        ...prevPictureCars.slice(pictureCarIndex + 1)
+        ...prevPictureCars.slice(pictureCarIndex + 1),
       ];
-  
+
       return newPictureCars;
     });
   };
 
   const saveEditedPictureCars = async () => {
     try {
-      const shootingCopy = { ...thisShooting }
-      shootingCopy.pictureCars = pictureCars
-  
-      setThisShooting(shootingCopy as Shooting)
-  
-      await oneWrapDb?.shootings.upsert(shootingCopy)
+      const shootingCopy = { ...thisShooting };
+      shootingCopy.pictureCars = pictureCars;
+
+      setThisShooting(shootingCopy as Shooting);
+
+      await oneWrapDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      console.error('Error al editar Picture Car:', error)
-      throw error
+      console.error('Error al editar Picture Car:', error);
+      throw error;
     }
-  }
+  };
 
   const saveEdition = () => {
-    switch(view) {
+    switch (view) {
       case 'pictureCars':
         saveEditedPictureCars();
         break;
@@ -333,16 +327,12 @@ const CallSheet: React.FC = () => {
       const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
       const scenes = await oneWrapDb?.scenes.find({ selector: { sceneId: { $in: scenesIds } } }).exec() || [];
 
-      const getNumberScenesByCast = (castName: string) => {
-        return scenes.filter((scene: any) => {
-          const characters = scene._data.characters || [];
-          return characters.some((character: any) => normalizeString(character.characterName) === normalizeString(castName));
-        }).length.toString() || '--';
-      }
+      const getNumberScenesByCast = (castName: string) => scenes.filter((scene: any) => {
+        const characters = scene._data.characters || [];
+        return characters.some((character: any) => normalizeString(character.characterName) === normalizeString(castName));
+      }).length.toString() || '--';
 
-      const characterNames = [...new Set(scenes.flatMap((scene: { _data: Scene; }) =>
-        (scene._data.characters || []).map((character: Character) => normalizeString(character.characterName.toLowerCase()))
-      ))];
+      const characterNames = [...new Set(scenes.flatMap((scene: { _data: Scene; }) => (scene._data.characters || []).map((character: Character) => normalizeString(character.characterName.toLowerCase()))))];
 
       const talents = await oneWrapDb?.talents.find({}).exec() || [];
       const castTalents = talents.filter((talent: Talent) => characterNames.includes(normalizeString(talent.castName)));
@@ -351,7 +341,7 @@ const CallSheet: React.FC = () => {
         const shootingCalls = shootings[0]._data.castCalls;
         const callInfo = shootingCalls.find((call: any) => normalizeString(call.castName) === normalizeString(castName));
         return callInfo;
-      }
+      };
 
       const uniqueCastCalls = new Map();
 
@@ -383,18 +373,18 @@ const CallSheet: React.FC = () => {
 
       setCastCalls(Array.from(uniqueCastCalls.values()) as any);
 
-      const extraCalls: ExtraCall[] = shootings[0]._data.extraCalls;
+      const { extraCalls } = shootings[0]._data;
       setExtraCalls(extraCalls);
 
-      const crewCalls: CrewCall[] = shootings[0]._data.crewCalls;
+      const { crewCalls } = shootings[0]._data;
       setCrewCalls(crewCalls);
 
-      const otherCalls = shootings[0]._data.otherCalls;
+      const { otherCalls } = shootings[0]._data;
       setOtherCalls(otherCalls);
 
-      const pictureCars = shootings[0]._data.pictureCars;
+      const { pictureCars } = shootings[0]._data;
       setPictureCars(pictureCars);
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
   };
@@ -406,44 +396,52 @@ const CallSheet: React.FC = () => {
   });
 
   const renderContent = () => {
-    switch(view) {
+    switch (view) {
       case 'cast':
-        return <CastView 
-                  castData={castCalls} 
-                  addNewModalIsOpen={addNewCastCallModalIsOpen} 
-                  setIsOpen={setAddNewCastCallModalIsOpen} 
-                  editMode={editMode && view === 'cast'}
-                  addNewCastCall={createNewCastCall}
-                  castOptions={castOptions}
-                  editCastCall={editCastCall}
-                />;
+        return (
+          <CastView
+            castData={castCalls}
+            addNewModalIsOpen={addNewCastCallModalIsOpen}
+            setIsOpen={setAddNewCastCallModalIsOpen}
+            editMode={editMode && view === 'cast'}
+            addNewCastCall={createNewCastCall}
+            castOptions={castOptions}
+            editCastCall={editCastCall}
+          />
+        );
       case 'extras':
-        return <ExtraView 
-                  extraViewData={extraCalls} 
-                  editMode={editMode && view === 'extras'} 
-                  addNewModalIsOpen={addNewExtraCAllModalIsOpen} 
-                  setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}
-                  addNewExtraCall={createNewExtraCall}
-                  editExtraCall={editExtraCall}
-                />;
+        return (
+          <ExtraView
+            extraViewData={extraCalls}
+            editMode={editMode && view === 'extras'}
+            addNewModalIsOpen={addNewExtraCAllModalIsOpen}
+            setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}
+            addNewExtraCall={createNewExtraCall}
+            editExtraCall={editExtraCall}
+          />
+        );
       case 'pictureCars':
-        return <PictureCars 
-                  pictureCars={pictureCars} 
-                  isOpen={addNewPictureCarModalIsOpen} 
-                  setIsOpen={setAddNewPictureCarModalIsOpen} 
-                  addNewPictureCar={createNewPictureCar} 
-                  editMode={editMode && view === 'pictureCars'}
-                  editPictureCar={editPictureCar}
-                />;
+        return (
+          <PictureCars
+            pictureCars={pictureCars}
+            isOpen={addNewPictureCarModalIsOpen}
+            setIsOpen={setAddNewPictureCarModalIsOpen}
+            addNewPictureCar={createNewPictureCar}
+            editMode={editMode && view === 'pictureCars'}
+            editPictureCar={editPictureCar}
+          />
+        );
       case 'others':
-        return <OtherCalls 
-                  otherCalls={otherCalls} 
-                  isOpen={addNewOtherCallModalIsOpen} 
-                  setIsOpen={setAddNewOtherCallModalIsOpen}
-                  addNewOtherCall={createNewOtherCall}
-                  editMode={editMode && view === 'others'}
-                  editOtherCall={editOtherCall}
-                />;
+        return (
+          <OtherCalls
+            otherCalls={otherCalls}
+            isOpen={addNewOtherCallModalIsOpen}
+            setIsOpen={setAddNewOtherCallModalIsOpen}
+            addNewOtherCall={createNewOtherCall}
+            editMode={editMode && view === 'others'}
+            editOtherCall={editOtherCall}
+          />
+        );
       case 'crew':
         return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} />;
       default:
@@ -462,37 +460,37 @@ const CallSheet: React.FC = () => {
 
       const pickUp = formData.pickUp && timeToISOString({
         hours: formData.pickUp.split(':')[0],
-        minutes: formData.pickUp.split(':')[1]
+        minutes: formData.pickUp.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const callTime = formData.callTime && timeToISOString({
         hours: formData.callTime.split(':')[0],
-        minutes: formData.callTime.split(':')[1]
+        minutes: formData.callTime.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const onMakeUp = formData.onMakeUp && timeToISOString({
         hours: formData.onMakeUp.split(':')[0],
-        minutes: formData.onMakeUp.split(':')[1]
+        minutes: formData.onMakeUp.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const onWardrobe = formData.onWardrobe && timeToISOString({
         hours: formData.onWardrobe.split(':')[0],
-        minutes: formData.onWardrobe.split(':')[1]
+        minutes: formData.onWardrobe.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const readyToShoot = formData.readyToShoot && timeToISOString({
         hours: formData.readyToShoot.split(':')[0],
-        minutes: formData.readyToShoot.split(':')[1]
+        minutes: formData.readyToShoot.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const arrived = formData.arrived && timeToISOString({
         hours: formData.arrived.split(':')[0],
-        minutes: formData.arrived.split(':')[1]
+        minutes: formData.arrived.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const wrap = formData.wrap && timeToISOString({
         hours: formData.wrap.split(':')[0],
-        minutes: formData.wrap.split(':')[1]
+        minutes: formData.wrap.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const newExtraCall: any = {
@@ -506,10 +504,10 @@ const CallSheet: React.FC = () => {
         readyToShoot: readyToShoot || null,
         arrived: arrived || null,
         wrap: wrap || null,
-        quantity: quantity,
+        quantity,
         extraName: formData.extraName || '',
         talentAgency: formData.talentAgency || '',
-        notes: formData.notes || ''
+        notes: formData.notes || '',
       };
 
       const shootingCopy = { ...thisShooting };
@@ -533,14 +531,14 @@ const CallSheet: React.FC = () => {
 
       const callTime = formData.callTime && timeToISOString({
         hours: formData.callTime.split(':')[0],
-        minutes: formData.callTime.split(':')[1]
+        minutes: formData.callTime.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const newPictureCar: PictureCar = {
         id: '',
         pictureCarId: 0,
         pictureCarName: formData.pictureCarName || '',
-        quantity: quantity,
+        quantity,
         callTime: callTime || '',
       };
 
@@ -565,7 +563,7 @@ const CallSheet: React.FC = () => {
 
       const callTime = formData.callTime && timeToISOString({
         hours: formData.callTime.split(':')[0],
-        minutes: formData.callTime.split(':')[1]
+        minutes: formData.callTime.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const newOtherCall: OtherCall = {
@@ -573,7 +571,7 @@ const CallSheet: React.FC = () => {
         otherCallId: 0,
         callTime: callTime || '',
         otherCallName: formData.otherCallName || '',
-        quantity: quantity,
+        quantity,
       };
 
       const shootingCopy = { ...thisShooting };
@@ -596,65 +594,65 @@ const CallSheet: React.FC = () => {
 
       const callTime = formData.callTime && timeToISOString({
         hours: formData.callTime.split(':')[0],
-        minutes: formData.callTime.split(':')[1]
+        minutes: formData.callTime.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const arrived = formData.arrived && timeToISOString({
         hours: formData.arrived.split(':')[0],
-        minutes: formData.arrived.split(':')[1]
+        minutes: formData.arrived.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const onMakeUp = formData.onMakeUp && timeToISOString({
         hours: formData.onMakeUp.split(':')[0],
-        minutes: formData.onMakeUp.split(':')[1]
+        minutes: formData.onMakeUp.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const onWardrobe = formData.onWardrobe && timeToISOString({
         hours: formData.onWardrobe.split(':')[0],
-        minutes: formData.onWardrobe.split(':')[1]
+        minutes: formData.onWardrobe.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const readyToShoot = formData.readyToShoot && timeToISOString({
         hours: formData.readyToShoot.split(':')[0],
-        minutes: formData.readyToShoot.split(':')[1]
+        minutes: formData.readyToShoot.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const wrap = formData.wrap && timeToISOString({
         hours: formData.wrap.split(':')[0],
-        minutes: formData.wrap.split(':')[1]
+        minutes: formData.wrap.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const pickUp = formData.pickUp && timeToISOString({
         hours: formData.pickUp.split(':')[0],
-        minutes: formData.pickUp.split(':')[1]
+        minutes: formData.pickUp.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const dropOff = formData.dropOff && timeToISOString({
         hours: formData.dropOff.split(':')[0],
-        minutes: formData.dropOff.split(':')[1]
+        minutes: formData.dropOff.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const mealIn = formData.mealIn && timeToISOString({
         hours: formData.mealIn.split(':')[0],
-        minutes: formData.mealIn.split(':')[1]
+        minutes: formData.mealIn.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const mealOut = formData.mealOut && timeToISOString({
         hours: formData.mealOut.split(':')[0],
-        minutes: formData.mealOut.split(':')[1]
+        minutes: formData.mealOut.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const mealExtraIn = formData.mealExtraIn && timeToISOString({
         hours: formData.mealExtraIn.split(':')[0],
-        minutes: formData.mealExtraIn.split(':')[1]
+        minutes: formData.mealExtraIn.split(':')[1],
       }, thisShooting?.shootDate || '');
 
       const mealExtraOut = formData.mealExtraOut && timeToISOString({
         hours: formData.mealExtraOut.split(':')[0],
-        minutes: formData.mealExtraOut.split(':')[1]
+        minutes: formData.mealExtraOut.split(':')[1],
       }, thisShooting?.shootDate || '');
 
-      const cast: Talent = formData.cast;
+      const { cast } = formData;
 
       const character: Character = scenesInShoot.flatMap((scene: any) => scene._data.characters).find((character: any) => normalizeString(character.characterName) === normalizeString(cast.castName));
 
@@ -684,7 +682,7 @@ const CallSheet: React.FC = () => {
         projectCastId: 0,
         shootingId: shootingIdInt,
         startProcesses: formData.startProcesses || '',
-        wrapSet: formData.wrapSet || ''
+        wrapSet: formData.wrapSet || '',
       };
 
       const shootingCopy = { ...thisShooting };
@@ -695,7 +693,7 @@ const CallSheet: React.FC = () => {
       await oneWrapDb?.shootings.upsert(shootingCopy);
       const formattedCastCall = {
         ...newCastCall,
-        cast: `${cast.castName}`
+        cast: `${cast.castName}`,
       };
 
       setCastCalls([...castCalls, formattedCastCall].sort((a, b) => a.cast.localeCompare(b.cast)));
@@ -710,26 +708,26 @@ const CallSheet: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="tertiary">
-          <IonButton 
-            routerLink={`/my/projects/${id}/shooting/${shootingId}`} 
-            color="light" 
-            slot="start" 
-            fill='clear'
+          <IonButton
+            routerLink={`/my/projects/${id}/shooting/${shootingId}`}
+            color="light"
+            slot="start"
+            fill="clear"
           >
             <IonIcon slot="icon-only" icon={chevronBackOutline} />
           </IonButton>
           <IonTitle>CALL TIME</IonTitle>
           {
-            thisShooting &&
-            thisShooting.status !== ShootingStatusEnum.Closed && (
-              <div slot='end'>
+            thisShooting
+            && thisShooting.status !== ShootingStatusEnum.Closed && (
+              <div slot="end">
                 {
                   !editMode ? (
-                    <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
+                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
                       <VscEdit />
                     </IonButton>
                   ) : (
-                    <IonButton fill='clear' color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
+                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
                       <IonIcon icon={save} />
                     </IonButton>
                   )

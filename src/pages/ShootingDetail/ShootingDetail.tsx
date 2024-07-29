@@ -116,14 +116,14 @@ const ShootingDetail = () => {
     setAdditionMenu(false);
     setTimeout(() => {
       bannerModalRef.current?.present();
-    }, 100)
+    }, 100);
   };
 
   const openSceneModal = async () => {
     setAdditionMenu(false);
     setTimeout(() => {
       sceneModalRef.current?.present();
-    }, 100)
+    }, 100);
   };
 
   const [shootingData, setShootingData] = useState<ShootingDataProps>({
@@ -427,12 +427,12 @@ const ShootingDetail = () => {
   const validateBannerExistence = (description: string) => {
     const banners = shootingData.scenes.filter((item: any) => item.cardType === 'banner');
     const bannerExists = banners.some((banner: any) => banner.description.toLowerCase() === description.toLowerCase());
-    if(bannerExists) {
+    if (bannerExists) {
       return 'banner already exists';
     }
 
-    return false
-  }
+    return false;
+  };
 
   const AddNewBanner = () => (
     <EditionModal
@@ -450,12 +450,12 @@ const ShootingDetail = () => {
   const validateAdvanceCallExistence = (callTime: string) => {
     const { advanceCalls: shootingCalls } = shootingData.shotingInfo;
     const callExists = shootingCalls.some((call: any) => call.dep_name_eng.toLowerCase() === callTime.toLowerCase() || call.dep_name_esp.toLowerCase() === callTime.toLowerCase());
-    if(callExists) {
+    if (callExists) {
       return 'department already exists in shooting';
     }
 
-    return false
-  }
+    return false;
+  };
 
   const AddNewAdvanceCallModal = () => (
     <EditionModal
@@ -473,12 +473,12 @@ const ShootingDetail = () => {
   const validateMealExistence = (meal: string) => {
     const { meals: shootingMeals } = shootingData.shotingInfo;
     const mealExists = shootingMeals.some((m: Meal) => m.meal.toLowerCase() === meal.toLowerCase());
-    if(mealExists) {
+    if (mealExists) {
       return 'meal already exists';
     }
 
-    return false
-  }
+    return false;
+  };
 
   const AddNewMeal = () => (
     <EditionModal
@@ -939,7 +939,6 @@ const ShootingDetail = () => {
           locations: [...prev.shotingInfo.locations, locationInfo],
         },
       }));
-
     } catch (error) {
       console.error('Error adding new location:', error);
     }
@@ -967,7 +966,7 @@ const ShootingDetail = () => {
     } catch (error) {
       console.error('Error removing location:', error);
     }
-  }
+  };
 
   return (
     <IonPage>
@@ -975,13 +974,13 @@ const ShootingDetail = () => {
         <Toolbar name={shootingData.shootingFormattedDate} addShoBanSc={addShoBanSc} back handleBack={handleBack} />
       </IonHeader>
       {additionMenu && (
-        <div className="add-menu" style={{backgroundColor: 'black', outline: '1px solid white'}}>
-          <IonButton onClick={openSceneModal} fill='clear' className='ion-no-margin ion-no-padding' style={{width: '100%'}}>
-            <IonItem color='dark' style={{width: '100%', borderRadius: '0px'}}>ADD SCENE</IonItem>
+        <div className="add-menu" style={{ backgroundColor: 'black', outline: '1px solid white' }}>
+          <IonButton onClick={openSceneModal} fill="clear" className="ion-no-margin ion-no-padding" style={{ width: '100%' }}>
+            <IonItem color="dark" style={{ width: '100%', borderRadius: '0px' }}>ADD SCENE</IonItem>
           </IonButton>
-          <IonButton onClick={openBannerModal} fill='clear' className='ion-no-margin ion-no-padding' style={{width: '100%'}}>
-            <IonItem color='dark' style={{width: '100%', borderTop: '1px solid white'}}>ADD BANNER</IonItem>
-          </IonButton>       
+          <IonButton onClick={openBannerModal} fill="clear" className="ion-no-margin ion-no-padding" style={{ width: '100%' }}>
+            <IonItem color="dark" style={{ width: '100%', borderTop: '1px solid white' }}>ADD BANNER</IonItem>
+          </IonButton>
         </div>
       )}
       {view === 'scenes' && (
@@ -1034,13 +1033,15 @@ const ShootingDetail = () => {
               <p style={{ fontSize: '18px' }}><b>LOCATIONS</b></p>
               <div onClick={(e) => e.stopPropagation()}>
                 {
-                  shootingData.shotingInfo.locations.length > 0 &&
+                  shootingData.shotingInfo.locations.length > 0
+                  && (
                   <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setLocationsEditMode(!locationsEditMode)}>
                     <VscEdit
                       className="toolbar-icon"
                       style={locationsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
                     />
                   </IonButton>
+                  )
                 }
                 <AddButton onClick={() => openMapModal()} />
                 <DropDownButton open={openLocations} />
@@ -1057,16 +1058,17 @@ const ShootingDetail = () => {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                       }
-                    }>
-                        <p>{location.location_full_address}</p>
-                        {
+                    }
+                    >
+                      <p>{location.location_full_address}</p>
+                      {
                           locationsEditMode && (
                             <DeleteButton onClick={() => removeLocation(location)} />
-                
+
                           )
                         }
                     </div>
-                    
+
                   </div>
                 ))
               ) : (
@@ -1114,12 +1116,14 @@ const ShootingDetail = () => {
               <p style={{ fontSize: '18px' }}><b>ADVANCE CALLS</b></p>
               <div onClick={(e) => e.stopPropagation()}>
                 <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setAdvanceCallsEditMode(!advanceCallsEditMode)}>
-                {
-                  shootingData.shotingInfo.advanceCalls.length > 0 &&
+                  {
+                  shootingData.shotingInfo.advanceCalls.length > 0
+                  && (
                   <VscEdit
                     className="toolbar-icon"
                     style={advanceCallsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
                   />
+                  )
                 }
                 </IonButton>
                 <AddButton onClick={(e) => openAdvanceCallModal(e)} />
@@ -1156,13 +1160,15 @@ const ShootingDetail = () => {
               <p style={{ fontSize: '18px' }}><b>MEALS</b></p>
               <div onClick={(e) => e.stopPropagation()}>
                 <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setMealsEditMode(!mealsEditMode)}>
-                
-                {
-                  shootingData.shotingInfo.meals.length > 0 &&
+
+                  {
+                  shootingData.shotingInfo.meals.length > 0
+                  && (
                   <VscEdit
                     className="toolbar-icon"
                     style={mealsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
                   />
+                  )
                 }
                 </IonButton>
                 <AddButton onClick={(e) => openMealModal(e)} />

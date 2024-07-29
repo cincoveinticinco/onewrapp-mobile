@@ -1,10 +1,12 @@
 .date-picker {
   position: fixed;
   right: 0;
+
   --ion-color-base: var(--ion-color-primary);
   --ion-color-contrast: var(--ion-color-primary-contrast);
   --background: var(--ion-color-light);
   --color: var(--ion-color-dark);
+
   color: var(--ion-color-tertiary);
 
   button {

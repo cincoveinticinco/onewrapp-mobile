@@ -5,9 +5,10 @@
   right: 50px;
   z-index: 100;
   font-weight: bold;
-  
+
   ion-item {
     --color: var(--ion-color-primary) !important;
+
     color: var(--ion-color-primary) !important;
     font-size: 12px;
   }

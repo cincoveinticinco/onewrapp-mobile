@@ -1,5 +1,6 @@
-
 @import '../../theme/mixins';
+
+/* stylelint-disable */
 
 .location-set-card {
   --inner-padding-end: 0;
@@ -12,12 +13,10 @@
     background-color: transparent;
     margin: 0;
     border: 1px solid var(--ion-color-tertiary);
-    padding: 0;
     flex-wrap: nowrap;
     width: 100%;
     max-width: 100%;
-    padding: 12px;
-    padding-right: 16px;
+    padding-right: 16px; // Removido el padding duplicado
     padding-left: 24px;
     border-bottom: 1.5px solid var(--ion-color-tertiary-shade);
 
@@ -94,7 +93,7 @@
         padding: 0;
         margin: 0;
         margin-top: 6px;
-        text-wrap: nowrap;
+        white-space: nowrap; // Cambiado text-wrap por white-space
         text-align: left;
       }
     }

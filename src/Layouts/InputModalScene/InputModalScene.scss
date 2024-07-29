@@ -2,6 +2,7 @@
 
 #add-scenes-scenes-modal {
   @include modal-styling;
+
   display: flex;
   z-index: 100 !important;
 
@@ -12,21 +13,20 @@
     position: relative;
     top: 50px;
     margin: auto;
-    
+
     .search-icon {
       position: absolute;
       right: 24px;
       font-size: 24px;
-      color: var(--ion-color-primary)
+      color: var(--ion-color-primary);
     }
+
     .search-bar-toolbar {
       width: 100%;
       max-width: 500px;
       margin: 0 auto;
-      position: relative;
-      border-bottom: 0px;
-      top: 0;
-      padding: 0px;
+      border-bottom: 0;
+      padding: 0;
       max-height: 100%;
       position: absolute;
       top: -18px;
@@ -34,13 +34,16 @@
       .toolbar-container {
         max-height: 100% !important;
       }
-  
+
       .searchbar-input-container {
-        --border-radius: 0px;
-        height: 100% !important; 
-        --margin-top: 0px;
-        margin-top: 0px;
-        padding: 0px !important;
+        --border-radius: 0;
+
+        height: 100% !important;
+
+        --margin-top: 0;
+
+        margin-top: 0;
+        padding: 0 !important;
       }
     }
   }
@@ -84,8 +87,9 @@
 }
 
 .ion-margin-top {
-  margin-top: 0px !important;
-  --margin-top: 0px !important;
+  margin-top: 0 !important;
+
+  --margin-top: 0 !important;
 }
 
 @media (min-width: 500px) {
@@ -116,4 +120,3 @@
 .inputs-grid {
   margin-top: 10%;
 }
-

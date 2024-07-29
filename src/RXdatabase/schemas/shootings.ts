@@ -148,7 +148,7 @@ const shootingSchema = {
           company_id: { type: ['number', 'null'] },
           location_name: { type: 'string' },
           location_address: { type: 'string' },
-          location_addres_2: { type: 'string' },
+          location_addres_2: { type: ['string', 'null'] },
           city_id: { type: ['number', 'null'] },
           location_postal_code: { type: ['string', 'null'] },
           lat: { type: ['string', 'null'] },
@@ -376,7 +376,7 @@ const shootingSchema = {
           departmentEsp: {
             type: ['string', 'null'],
           },
-          departmentEng: { 
+          departmentEng: {
             type: ['string', 'null'],
           },
           position: {

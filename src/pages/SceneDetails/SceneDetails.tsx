@@ -56,7 +56,7 @@ const SceneDetails: React.FC = () => {
   const successMessageSceneToast = useSuccessToast();
 
   const handleBack = () => {
-    history.push('/my/projects/${id}/strips');
+    history.push(`/my/projects/${id}/strips`);
     toggleTabs.showTabs();
   };
 

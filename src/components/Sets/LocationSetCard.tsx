@@ -90,7 +90,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     if (modalRef.current) {
       modalRef.current.present();
     }
-  }
+  };
 
   const openAlert = () => {
     if (set && deleteSetAlert.current) {

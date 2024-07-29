@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import { IonModal } from '@ionic/react';
+import { useParams } from 'react-router';
+import { normalizeString } from 'rxdb';
 import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
-import { useParams } from 'react-router';
 import NoRegisters from '../../NoRegisters/NoRegisters';
-import { normalizeString } from 'rxdb';
 
 interface CastViewProps {
   castData: any[];
@@ -16,33 +16,46 @@ interface CastViewProps {
   editCastCall: (index: number, key: any, newValue: any, type: string) => void
 }
 
-const CastView: React.FC<CastViewProps> = ({ 
-  castData, 
-  addNewModalIsOpen, 
-  setIsOpen, 
-  editMode, 
-  addNewCastCall, 
-  castOptions, 
-  editCastCall 
+const CastView: React.FC<CastViewProps> = ({
+  castData,
+  addNewModalIsOpen,
+  setIsOpen,
+  editMode,
+  addNewCastCall,
+  castOptions,
+  editCastCall,
 }) => {
-
   const columns: Column[] = [
-    { key: 'cast', title: 'CAST', type: 'text', textAlign: 'left' },
+    {
+      key: 'cast', title: 'CAST', type: 'text', textAlign: 'left',
+    },
     { key: 'name', title: 'TALENT', type: 'text' },
     { key: 'tScn', title: 'T. SCN.', type: 'text' },
-    { key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true },
-    { key: 'callTime', title: 'CALL', type: 'hour', editable: true },
-    { key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true },
-    { key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true },
-    { key: 'readyToShoot', title: 'READY', type: 'hour', editable: true },
-    { key: 'notes', title: 'NOTES', type: 'text', editable: true },
+    {
+      key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true,
+    },
+    {
+      key: 'callTime', title: 'CALL', type: 'hour', editable: true,
+    },
+    {
+      key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true,
+    },
+    {
+      key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true,
+    },
+    {
+      key: 'readyToShoot', title: 'READY', type: 'hour', editable: true,
+    },
+    {
+      key: 'notes', title: 'NOTES', type: 'text', editable: true,
+    },
   ];
 
   const valiateCastExists = (talentName: string, fieldName: any) => {
     const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
     if (talentExists && fieldName === 'cast') return 'This talent already exists';
     return false;
-  }
+  };
 
   const AddCastCallModal: React.FC = () => {
     const modalRef = useRef<HTMLIonModalElement>(null);
@@ -56,7 +69,7 @@ const CastView: React.FC<CastViewProps> = ({
         type: 'select',
         required: true,
         selectOptions: castOptions,
-        col: '6'
+        col: '6',
       },
       {
         fieldName: 'pickUp',
@@ -64,7 +77,7 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter pick up time',
         type: 'time',
         required: false,
-        col: '6'
+        col: '6',
       },
       {
         fieldName: 'callTime',
@@ -72,7 +85,7 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter call time',
         type: 'time',
         required: true,
-        col: '3'
+        col: '3',
       },
       {
         fieldName: 'onMakeUp',
@@ -80,7 +93,7 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter make up time',
         type: 'time',
         required: false,
-        col: '3'
+        col: '3',
       },
       {
         fieldName: 'onWardrobe',
@@ -88,7 +101,7 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter wardrobe time',
         type: 'time',
         required: false,
-        col: '3'
+        col: '3',
       },
       {
         fieldName: 'readyToShoot',
@@ -96,7 +109,7 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter ready time',
         type: 'time',
         required: false,
-        col: '3'
+        col: '3',
       },
       {
         fieldName: 'notes',
@@ -104,8 +117,8 @@ const CastView: React.FC<CastViewProps> = ({
         placeholder: 'Enter notes',
         type: 'text',
         required: false,
-        col: '6'
-      }
+        col: '6',
+      },
     ];
 
     return (
@@ -131,12 +144,12 @@ const CastView: React.FC<CastViewProps> = ({
 
   return (
     <>
-      <GeneralTable 
-        columns={columns} 
-        data={castData} 
-        stickyColumnCount={1} 
-        editMode={editMode} 
-        editFunction={editCastCall} 
+      <GeneralTable
+        columns={columns}
+        data={castData}
+        stickyColumnCount={1}
+        editMode={editMode}
+        editFunction={editCastCall}
       />
     </>
   );

@@ -1,8 +1,8 @@
-import React from 'react'
-import { PictureCar } from '../../../interfaces/shootingTypes'
-import NoRegisters from '../NoRegisters/NoRegisters'
-import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable'
-import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal'
+import React from 'react';
+import { PictureCar } from '../../../interfaces/shootingTypes';
+import NoRegisters from '../NoRegisters/NoRegisters';
+import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
+import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
 
 interface PictureCarsProps {
   pictureCars: PictureCar[]
@@ -13,15 +13,16 @@ interface PictureCarsProps {
   editPictureCar: (pictureCarIndex: number, key: any, newValue: any, type: any) => void;
 }
 
-const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar }) => {
-
-  const modalRef = React.useRef<HTMLIonModalElement>(null)
+const PictureCars: React.FC<PictureCarsProps> = ({
+  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar,
+}) => {
+  const modalRef = React.useRef<HTMLIonModalElement>(null);
 
   const validatePictureCarExists = (value: string) => {
-    const pictureCarExists = pictureCars.some((pictureCar: PictureCar) => pictureCar.pictureCarName === value)
-    if (pictureCarExists) return 'This picture car already exists'
-    return false
-  }
+    const pictureCarExists = pictureCars.some((pictureCar: PictureCar) => pictureCar.pictureCarName === value);
+    if (pictureCarExists) return 'This picture car already exists';
+    return false;
+  };
 
   const AddNewModal = () => {
     const pictureCarInputs: FormInput[] = [
@@ -31,7 +32,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         placeholder: 'Enter car name',
         type: 'text',
         required: true,
-        col: '4'
+        col: '4',
       },
       {
         fieldName: 'quantity',
@@ -47,9 +48,9 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         placeholder: 'Enter call time',
         type: 'time',
         required: true,
-        col: '4'
-      }
-    ]
+        col: '4',
+      },
+    ];
 
     return (
       <EditionModal
@@ -62,24 +63,28 @@ const PictureCars: React.FC<PictureCarsProps> = ({ pictureCars, isOpen, setIsOpe
         setIsOpen={setIsOpen}
         validate={validatePictureCarExists}
       />
-    )
-  }
+    );
+  };
 
   const pictureCarsColumns: Column[] = [
     { key: 'pictureCarName', title: 'Car Name', textAlign: 'left' },
-    { key: 'quantity', title: 'Quantity', textAlign: 'center', editable: true, type: 'number' },
-    { key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right', editable: true }
-  ]
+    {
+      key: 'quantity', title: 'Quantity', textAlign: 'center', editable: true, type: 'number',
+    },
+    {
+      key: 'callTime', title: 'Call Time', type: 'hour', textAlign: 'right', editable: true,
+    },
+  ];
 
-  if(isOpen) return <AddNewModal />
+  if (isOpen) return <AddNewModal />;
 
-  if(!pictureCars.length) return <NoRegisters addNew={() => setIsOpen(true)} />
+  if (!pictureCars.length) return <NoRegisters addNew={() => setIsOpen(true)} />;
 
   return (
     <>
-      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={editMode} editFunction={editPictureCar}/>
+      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={editMode} editFunction={editPictureCar} />
     </>
-  )
-}
+  );
+};
 
-export default PictureCars
+export default PictureCars;

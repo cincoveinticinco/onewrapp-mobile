@@ -236,15 +236,7 @@ ion-toast.success-toast::part(icon) {
   color: var(--ion-color-success);
 }
 
-ion-toast.error-toast {
-  --background: var(--ion-color-dark);
-  --color: var(--ion-color-light);
-  --border-style: solid;
-  --border-width: 1px;
-  --border-color: var(--ion-color-danger);
-}
-
-ion-toast.error-toast::part(icon) {
+.error-toast::part(icon) {
   color: var(--ion-color-danger);
 }
 
@@ -254,10 +246,6 @@ ion-toast.error-toast {
   --border-style: solid;
   --border-width: 1px;
   --border-color: var(--ion-color-danger);
-}
-
-ion-toast.error-toast::part(icon) {
-  color: var(--ion-color-danger);
 }
 
 .hide-tabs {

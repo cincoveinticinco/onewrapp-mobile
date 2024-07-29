@@ -47,8 +47,8 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
           </IonButton>
         </IonButtons>
         {
-          isLoading && 
-          (
+          isLoading
+          && (
             <IonProgressBar type="indeterminate" color="primary" className="month-toolbar-progress" />
           )
         }

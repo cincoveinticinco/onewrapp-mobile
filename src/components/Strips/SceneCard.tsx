@@ -43,7 +43,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     if (alertRef.current) {
       await alertRef.current.present();
     }
-  }
+  };
 
   const [presentToast] = useIonToast();
   const { id } = useParams<{ id: string }>();

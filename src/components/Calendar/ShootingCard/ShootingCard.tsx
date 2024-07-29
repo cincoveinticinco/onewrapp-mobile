@@ -1,4 +1,6 @@
-import { IonBadge, IonCard, IonCardContent, IonItem, IonLabel } from '@ionic/react';
+import {
+  IonBadge, IonCard, IonCardContent, IonItem, IonLabel,
+} from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
 import { LocationInfo, Shooting } from '../../../interfaces/shootingTypes';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';
@@ -15,33 +17,34 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
     history.push(`/my/projects/${id}/shooting/${shootingId}`);
   };
 
-  const getLocationsString = () => {
-    return shooting.locations.map((location: LocationInfo) => location.location_name).join(', ');
-  }
+  const getLocationsString = () => shooting.locations.map((location: LocationInfo) => location.location_name).join(', ');
 
   const getShootingColor = () => {
     if (shooting.status === ShootingStatusEnum.Called) {
-      return '#f3fb8c'
-    } else if (shooting.status === ShootingStatusEnum.Closed) {
-      return 'var(--ion-color-success)'
-    } else {
-      return 'var(--ion-color-primary)'
+      return '#f3fb8c';
+    } if (shooting.status === ShootingStatusEnum.Closed) {
+      return 'var(--ion-color-success)';
     }
-    
-  }
+    return 'var(--ion-color-primary)';
+  };
 
   const isMobile = useIsMobile();
   return (
-    <IonCard className={className} onClick={() => goToDetail(shooting.id)} style={{
-      backgroundColor: getShootingColor(),
-    }}>
+    <IonCard
+      className={className}
+      onClick={() => goToDetail(shooting.id)}
+      style={{
+        backgroundColor: getShootingColor(),
+      }}
+    >
       <IonCardContent style={{ width: '100%', padding: '6px' }}>
         <div style={{
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-        }}>
-          <p className="unit-name" >
+        }}
+        >
+          <p className="unit-name">
             <b>
               U.
               {shooting && shooting.unitNumber}
@@ -62,10 +65,13 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
         </div>
         {
           shooting.locations.length > 0 && !isMobile && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              className="location-info"
+            >
               <IonBadge color="light" style={{ margin: '3px', fontSize: '10px' }}>
                 {shooting.locations.length}
               </IonBadge>
@@ -74,7 +80,8 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
                 fontWeight: '300',
                 marginLeft: '6px',
                 textAlign: 'left',
-              }}>
+              }}
+              >
                 {truncateString(getLocationsString(), 15)}
               </span>
             </div>

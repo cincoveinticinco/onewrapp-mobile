@@ -67,7 +67,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const openEditModal = () => {
     modalRef.current?.present();
-  }
+  };
 
   const openDeleteElementAlert = () => {
     deleteElementAlert.current?.present();
@@ -357,7 +357,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
         </IonItem>
         <IonItemOptions className="element-card-item-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" onClick={openEditModal} >
+            <IonButton fill="clear" onClick={openEditModal}>
               <CiEdit className="button-icon view" />
             </IonButton>
             <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))}>

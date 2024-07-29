@@ -1,4 +1,3 @@
-
 const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
   console.log(time, shootingDate);
   const shootingDay = new Date(shootingDate);

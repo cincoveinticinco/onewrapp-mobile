@@ -332,7 +332,6 @@ const SceneScript: React.FC = () => {
     setEdition(!edition);
   };
 
-
   return (
     <>
       <IonPage>

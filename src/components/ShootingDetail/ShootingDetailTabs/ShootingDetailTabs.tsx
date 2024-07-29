@@ -19,7 +19,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view }
 
   const goToCallSheet = () => {
     history.push(`/my/projects/${id}/shooting/${shootingId}/callsheet`);
-  }
+  };
 
   return (
     <IonTabBar slot="bottom" color="dark" mode="md">
@@ -58,13 +58,13 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view }
         className="tab-bar-buttons"
         onClick={goToCallSheet}
       >
-        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color='light' />
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color="light" />
         <IonLabel>
           CALL TIME
         </IonLabel>
       </IonTabButton>
     </IonTabBar>
   );
-}
+};
 
 export default ShootingDetailTabs;

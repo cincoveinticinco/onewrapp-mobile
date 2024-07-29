@@ -156,7 +156,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
           <IonGrid className="edit-inputs-wrapper">
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} size={input.col || '12'} className='ion-flex ion-justify-content-center'>
+                <IonCol key={i} size={input.col || '12'} className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
                     <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
                   ) : (

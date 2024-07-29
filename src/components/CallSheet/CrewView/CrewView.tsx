@@ -1,5 +1,5 @@
 import React from 'react';
-import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable'; 
+import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
 
 interface CrewCall {
@@ -22,7 +22,9 @@ interface CrewViewProps {
 
 const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
   const columns: Column[] = [
-    { key: 'name', title: 'Name', type: 'text', textAlign: 'left' },
+    {
+      key: 'name', title: 'Name', type: 'text', textAlign: 'left',
+    },
     { key: 'visible', title: 'Visible', type: 'text' },
     { key: 'unit', title: 'Unit', type: 'text' },
     { key: 'departmentEng', title: 'Department', type: 'text' },
@@ -33,13 +35,13 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
     { key: 'onCall', title: 'On Call', type: 'text' },
   ];
 
-  const formattedData = crewCalls.map(crew => ({
+  const formattedData = crewCalls.map((crew) => ({
     ...crew,
     visible: crew.visible ? 'YES' : 'NO',
     onCall: crew.onCall ? 'YES' : 'NO',
   }));
 
-  if(!crewCalls.length) return <NoRegisters addNew={() => {}} />;
+  if (!crewCalls.length) return <NoRegisters addNew={() => {}} />;
 
   return (
     <GeneralTable

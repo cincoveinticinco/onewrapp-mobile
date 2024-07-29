@@ -2,15 +2,18 @@ import React, {
   useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
 } from 'react';
 import {
-  IonButton, 
-  IonContent, 
-  IonGrid, 
-  IonRefresher, 
+  IonButton,
+  IonContent,
+  IonGrid,
+  IonRefresher,
   IonRefresherContent,
+  useIonViewDidEnter,
   useIonViewWillEnter,
 } from '@ionic/react';
 import './Strips.scss';
-import { Redirect, useHistory, useLocation, useParams } from 'react-router';
+import {
+  Redirect, useHistory, useLocation, useParams,
+} from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
@@ -22,16 +25,17 @@ import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 
 const Strips: React.FC = () => {
   const {
-    offlineScenes, 
-    projectId, 
+    offlineScenes,
+    projectId,
     setProjectId,
-    initialReplicationFinished, scenesAreLoading, projectsInfoIsOffline
+    initialReplicationFinished, scenesAreLoading, projectsInfoIsOffline,
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
-    selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions
+    selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
   } = useContext<any>(ScenesContext);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [searchText, setSearchText] = useState('');
@@ -40,16 +44,17 @@ const Strips: React.FC = () => {
   useScrollToTop(contentRef, location);
   const { id } = useParams<any>();
   const [renderScenes, setRenderScenes] = useState<boolean>(false);
+  const toggleTabs = useHideTabs();
 
   useEffect(() => {
-    setRenderScenes(initialReplicationFinished)
-    console.log('initialReplicationFinished: ///////', initialReplicationFinished, renderScenes);
+    setRenderScenes(initialReplicationFinished);
+    setProjectId(id);
   }, [initialReplicationFinished]);
 
-  useIonViewWillEnter(() => {
-    setProjectId(id);
+  useIonViewDidEnter(() => {
+    toggleTabs.showTabs();
   });
-  
+
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);
 
   const filteredScenes = useMemo(() => {
