@@ -1,0 +1,41 @@
+
+@media (min-width: 500px) {
+  .edit-inputs-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    ion-item {
+      grid-column: 1/3;
+    }
+
+    #add-character-number-input {
+      grid-column: 1/2;
+    }
+
+    #add-category-name-input {
+      grid-column: 2/3;
+    }
+  }
+
+  .edit-new-option-buttons-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 350px;
+    margin: 10% auto;
+
+    ion-button {
+      max-width: 150px;
+      margin: 0 !important;
+      padding: 0;
+    }
+  }
+}
+
+.edit-inputs-wrapper {
+  grid-template-columns: 1fr;
+}
+
+ion-select {
+  border-bottom: 1px solid var(--ion-color-light);
+}

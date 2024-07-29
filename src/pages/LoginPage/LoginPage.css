@@ -1,0 +1,111 @@
+.login-video-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+
+  video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    filter: brightness(0.7);
+  }
+}
+
+.main-logo-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 150px;
+  margin-left: 12px;
+  width: 300px;
+}
+
+.footer-login {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .footer-text {
+    font-size: var(--525-medium-title-size);
+    color: var(--ion-color-light);
+    margin: 10px;
+    font-weight: bold;
+  }
+
+  .footer-logo {
+    height: 25px;
+  }
+}
+
+.login-buttons-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .login-button {
+    --border-radius: 0;
+    --background: #00000079;
+    --color: var(--ion-color-light);
+
+    font-weight: bold;
+    width: 300px;
+    height: 50px;
+    margin: 6px;
+
+    ion-icon {
+      --color: var(--ion-color-dark);
+
+      height: 20px;
+      width: 20px;
+      padding: 5px;
+      border-radius: 100%;
+      background-color: var(--ion-color-light);
+      margin: 16px;
+    }
+
+    .button-text {
+      width: 80%;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+}
+
+@media (orientation: landscape) {
+  .main-logo-wrapper {
+    top: 24px;
+    z-index: 1;
+    margin-left: 12px;
+
+    .login-logo {
+      height: 200px;
+    }
+  }
+
+  .login-buttons-container {
+    .login-button {
+      width: 400px;
+      height: 60px;
+      margin: 6px;
+    }
+  }
+
+  .footer-login {
+    bottom: 24px;
+  }
+}

@@ -1,0 +1,166 @@
+@import '../../theme/mixins';
+
+.scene-theme-shooting-card {
+  background-color: #212730 !important;
+  color: var(--ion-color-light) !important;
+
+  .not-produced {
+    background-color: var(--ion-color-danger) !important;
+    color: var(--ion-color-light) !important;
+  }
+
+  .produced {
+    background-color: var(--ion-color-success) !important;
+    color: var(--ion-color-light) !important;
+  }
+}
+
+.scene-card {
+  border-bottom: 0.3px solid black;
+  color: black;
+  display: grid;
+  background-color: var(--ion-color-light);
+  grid-template-columns: repeat(12, 1fr);
+  margin: 0;
+  min-height: 120px;
+  cursor: pointer;
+
+  @media (min-width: 500px) {
+    min-height: auto;
+  }
+}
+
+.scene-theme-dark {
+  background-color: var(--ion-color-dark);
+  color: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-dark-shade);
+  }
+}
+
+.scene-theme-light {
+  background-color: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-light-shade);
+  }
+}
+
+.scene-theme-yellow {
+  background-color: var(--ion-color-yellow);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-yellow-shade);
+  }
+}
+
+.scene-theme-success {
+  background-color: var(--ion-color-success);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-success-shade);
+  }
+}
+
+.scene-theme-rose {
+  background-color: var(--ion-color-rose);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-rose-shade);
+  }
+}
+
+.scene-theme-primary {
+  background-color: var(--ion-color-primary);
+
+  &:active,
+  &:hover {
+    background-color: var(--ion-color-primary-shade);
+  }
+}
+
+.scene-card-header {
+  font-size: var(--525-common-title-size);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: auto;
+  width: auto;
+}
+
+.scene-card-synopsis {
+  font-size: var(--525-common-text-size);
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  position: relative;
+}
+
+.scene-card-characters {
+  font-size: var(--525-common-text-size);
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  position: relative;
+}
+
+.scene-card-col-1 {
+  grid-column: 1 / 15;
+  padding: 6px;
+}
+
+.scene-card-col-2 {
+  grid-column: 3;
+  grid-column: 15 / 23;
+  padding: 6px;
+  margin-right: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-card-col-3 {
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  padding: 0;
+  grid-column: 23 / 24;
+}
+
+.assignament-date {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  color: white;
+  font-weight: bold;
+  font-size: 8px;
+}
+
+.scene-card-item {
+  &::part(native) {
+    --ion-safe-area-right: 0;
+    --inner-padding-end: 0;
+  }
+}
+
+.scene-card-options {
+  @include slide-card-item-options;
+}
+
+.reorder-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100%;
+  padding: 6px;
+
+  .grip-sort-item-icon {
+    height: 100%;
+  }
+}

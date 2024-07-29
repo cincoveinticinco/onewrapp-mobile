@@ -1,0 +1,23 @@
+.filter-item-container {
+  outline: 1px solid var(--ion-color-dark);
+  padding: 0 6px;
+}
+
+.filter-button-row {
+  margin-top: 5%;
+}
+
+.cancel-filter-scenes-button {
+  margin-bottom: 5% !important;
+}
+
+@media (min-width: 500px) {
+  .filter-item-container {
+    margin: 0;
+  }
+
+  .filter-button-row {
+    margin-top: 20%;
+    margin-bottom: 50px;
+  }
+}

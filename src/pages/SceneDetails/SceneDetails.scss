@@ -1,0 +1,120 @@
+.scene-details-card {
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0;
+  outline: 1px solid var(--ion-color-dark);
+  border-radius: 0;
+  box-shadow: none;
+
+  ion-card-header,
+  ion-card-content {
+    padding: 0 16px;
+  }
+}
+
+.scene-theme-dark {
+  --background: var(--ion-color-dark);
+
+  color: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-dark-shade);
+  }
+}
+
+.scene-theme-light {
+  --background: var(--ion-color-light);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-light-shade);
+  }
+}
+
+.scene-theme-yellow {
+  --background: var(--ion-color-yellow);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-yellow-shade);
+  }
+}
+
+.scene-theme-success {
+  --background: var(--ion-color-success);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-success-shade);
+  }
+}
+
+.scene-theme-rose {
+  --background: var(--ion-color-rose);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-rose-shade);
+  }
+}
+
+.scene-theme-primary {
+  --background: var(--ion-color-primary);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-primary-shade);
+  }
+}
+
+.no-items-card {
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0;
+  outline: 1px solid var(--ion-color-dark);
+  border-radius: 0;
+  box-shadow: none;
+
+  ion-card-header,
+  ion-card-content {
+    padding: 0 16px;
+  }
+}
+
+.change-scene-button {
+  --background-activated: transparent !important;
+  --color: var(--ion-color-primary);
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+
+  &:active,
+  &:hover,
+  &:focus {
+    --color: var(--ion-color-primary);
+    --border-radius: 0;
+    --border-color: var(--ion-color-primary);
+
+    background-color: transparent !important;
+    border-color: 1px solid var(--ion-color-primary);
+    color: var(--ion-color-primary);
+  }
+}
+
+.categories-card-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--ion-color-dark);
+}
+
+@media (min-width: 500px) {
+  .categories-card-container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .no-items-card {
+    grid-column: 1 / 5;
+    text-align: center;
+    padding: 12px;
+  }
+}

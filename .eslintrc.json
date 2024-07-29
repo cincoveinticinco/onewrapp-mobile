@@ -1,0 +1,53 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    "airbnb",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "react/jsx-filename-extension": ["warn", { "extensions": [".ts", ".tsx"] }],
+    "react/react-in-jsx-scope": "off",
+    "import/no-unresolved": "off",
+    "no-shadow": "off",
+    "import/extensions": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^unused_" }],
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "react/require-default-props": "off",
+    "react/no-array-index-key": "off",
+    "react/prop-types": "off",
+    "max-len": ["error", { "code": 140 }]
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*Slice.ts"],
+      "rules": { "no-param-reassign": ["error", { "props": false }] }
+    }
+  ],
+  "ignorePatterns": [
+    "dist/",
+    "build/",
+    "node_modules/",
+    "android/",
+    "cypress.config.ts",
+    "vite.config.ts",
+    "cypress/e2e/*.cy.ts",
+    "cypress/support/*.ts",
+    "capacitor.config.ts"
+  ]
+}

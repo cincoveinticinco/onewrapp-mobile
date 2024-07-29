@@ -1,0 +1,11 @@
+.add-strip-toolbar {
+  border-bottom: 1px solid #000;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-strip-toolbar-title {
+  text-align: center;
+}

@@ -1,0 +1,21 @@
+
+.add-button {
+  margin: 6px;
+
+  .add-button-icon {
+    font-size: var(--525-icons-size);
+    padding: 0;
+
+    --background-activated-opacity: 0;
+
+    transition: all 0.3s ease;
+  }
+
+  &:hover,
+  &:active {
+    .add-button-icon {
+      transform: scale(1.2);
+      color: var(--ion-color-primary);
+    }
+  }
+}
