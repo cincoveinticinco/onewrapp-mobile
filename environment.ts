@@ -1,5 +1,5 @@
 export default {
-  URL_PATH: 'https://stgapi.onewrapp.com/',
+  URL_PATH: 'https://stgapi.onewrapp.com',
   SCENES_ENDPOINT_PULL: 'app_scenes_list',
   SCENE_PARAGRAPHS_ENDPOINT_PULL: 'app_scenes_paragraphs',
   SCENES_ENDPOINT_PUSH: 'app_scenes_push',
