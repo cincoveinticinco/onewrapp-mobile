@@ -1,11 +1,14 @@
-import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/react'
-import React from 'react'
+import { IonContent, IonHeader, IonPage } from '@ionic/react'
 import ReactPlayer from 'react-player'
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import './NoUserFounded.scss';
 
-const NoUserFounded = () => {
+interface Props {
+  text?: string;
+}
+
+const NoUserFounded = ({text = "User not found, please contact your provider." }: Props) => {
   return (
     <IonPage>
     <IonHeader />
@@ -26,7 +29,7 @@ const NoUserFounded = () => {
       </div>
       <div className='text-wrapper'>
         <p>
-          User not found, please contact your provider.
+          {text}
         </p>
       </div>
       <div className="footer-login">
