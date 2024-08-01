@@ -4,11 +4,11 @@ export interface Crew {
   depNameEsp: string;
   positionEsp: string;
   positionEng: string;
-  projectId: string;
+  projectId: number;
   fullName: string;
   email: string;
   phone: string;
   updatedAt: string;
   unitNumber: number;
-  departmentId: string;
+  departmentId: number;
 }
