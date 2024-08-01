@@ -32,7 +32,7 @@ const Strips: React.FC = () => {
     offlineScenes,
     projectId,
     setProjectId,
-    initialReplicationFinished, scenesAreLoading, projectsInfoIsOffline,
+    initialReplicationFinished, scenesAreLoading, initializeSceneReplication
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -53,6 +53,7 @@ const Strips: React.FC = () => {
 
   useIonViewDidEnter(() => {
     toggleTabs.showTabs();
+    initializeSceneReplication();
   });
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);

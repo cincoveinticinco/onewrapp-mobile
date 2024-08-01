@@ -1,10 +1,7 @@
 import React, {
-  useCallback, useContext, useEffect, useState,
+  useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
-import { RxDatabase, RxLocalDocumentData } from 'rxdb';
-import { set } from 'lodash';
-import { locationOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router';
+import { RxDatabase, RxDatabaseBase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../../RXdatabase/database';
 import ScenesSchema from '../../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects';
@@ -44,6 +41,8 @@ export interface DatabaseContextProps {
   initialReplicationFinished: boolean;
   projectsInfoIsOffline: {[key: string]: boolean};
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
+  resyncShootings: any;
+  resyncScenes: any;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -74,10 +73,14 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initialReplicationFinished: false,
   projectsInfoIsOffline: {},
   setProjectsInfoIsOffline: () => {},
+  resyncScenes: null,
+  resyncShootings: null
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<RxDatabase | null>(null);
+  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<RxDatabase | null>(
+    localStorage.getItem('oneWrapRXdatabase') ? JSON.parse(localStorage.getItem('oneWrapRXdatabase') as string) : null,
+  );
   const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
   const [paragraphCollection, setParagraphCollection] = useState<SceneParagraphsSchema | null>(null);
   const [projectCollection, setProjectCollection] = useState<ProjectsSchema | null>(null);
@@ -86,6 +89,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const { getToken } = useContext(AuthContext);
+
+  // Resync
+
+  const resyncScenes: any = useRef(null)
+  const resyncShootings: any = useRef(null)
 
   const [viewTabs, setViewTabs] = useState(true);
   const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
@@ -106,10 +114,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   );
 
   useEffect(() => {
-    console.log('initialReplicationFinished updated: *********', initialReplicationFinished);
-  }, [initialReplicationFinished]);
-
-  useEffect(() => {
     const initializeDatabase = async () => {
       try {
         const sceneColl = new ScenesSchema();
@@ -123,6 +127,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         const dbInstance = await RXdatabase.getDatabaseInstance();
 
         setOneWrapRXdatabase(dbInstance);
+        localStorage.setItem('oneWrapRXdatabase', JSON.stringify(oneWrapRXdatabase));
         setSceneCollection(sceneColl);
         setParagraphCollection(paragraphColl);
         setProjectCollection(projectColl);
@@ -134,14 +139,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
         if (isOnline) {
           const projectsReplicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
-          projectsReplicator.startReplicationPull();
-          await projectsReplicator.monitorReplicationStatus();
+          await projectsReplicator.startReplicationPull();
           setProjectsAreLoading(false);
         }
       } catch (error) {
         console.error('Error al obtener la instancia de la base de datos:', error);
       } finally {
         console.log('Base de datos inicializada');
+        setProjectsAreLoading(false);
       }
     };
 
@@ -161,11 +166,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         next: (data: Project[]) => {
           setOfflineProjects(data);
           setProjectsAreOffline(true);
-          console.log(data, 'projects');
           const projects = data.map((project: any) => project._data);
-          console.log(projects, 'projectInfoIsOffline');
           try {
-            const projectsInfoIsOffline = Object.fromEntries(
+            const projectsInfoIsOffline = localStorage.getItem('projectsInfoIsOffline') ? JSON.parse(localStorage.getItem('projectsInfoIsOffline') as string) : Object.fromEntries(
               projects.map((project: any) => [
                 typeof project.id === 'string' || typeof project.id === 'number'
                   ? project.id
@@ -240,15 +243,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
-
-      const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject, getToken);
-
-      if (isOnline) {
-        scenesReplicator.startReplicationPull();
-        scenesReplicator.startReplicationPush();
+  
+      if(!resyncScenes.current) {
+        const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject, getToken);
+  
+        if (isOnline) {
+          await scenesReplicator.startReplicationPull();
+          await scenesReplicator.startReplicationPush();
+        }
+      } else {
+        resyncScenes.current.resyncReplication()
       }
-
-      await scenesReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
       console.error('Error durante la replicación de escenas:', error);
@@ -257,9 +262,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initializeParagraphReplication = async () => {
-    if (!paragraphCollection || !oneWrapRXdatabase || !projectId) return false;
     try {
-      const lastParagraphInProject = await oneWrapRXdatabase.paragraphs.find({
+      const lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
         selector: { projectId: parseInt(projectId) },
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
@@ -267,15 +271,16 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], parseInt(projectId), lastParagraphInProject, getToken);
 
       if (isOnline) {
-        paragraphsReplicator.startReplicationPull();
+        await paragraphsReplicator.startReplicationPull();
       }
 
-      await paragraphsReplicator.monitorReplicationStatus();
-      return true;
     } catch (error) {
       console.error('Error durante la replicación de párrafos:', error);
       return false;
+    } finally {
+      console.log('Paragraphs replication finished');
     }
+    return true;
   };
 
   const initializeTalentsReplication = async () => {
@@ -289,10 +294,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const talentsReplicator = new HttpReplicator(oneWrapRXdatabase, [talentsCollection], parseInt(projectId), lastTalentInProject, getToken);
 
       if (isOnline) {
-        talentsReplicator.startReplicationPull();
+        await talentsReplicator.startReplicationPull();
       }
 
-      await talentsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
       console.error('Error durante la replicación de talentos:', error);
@@ -311,10 +315,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], parseInt(projectId), lastUnitInProject, getToken);
 
       if (isOnline) {
-        unitsReplicator.startReplicationPull();
+        await unitsReplicator.startReplicationPull();
       }
 
-      await unitsReplicator.monitorReplicationStatus();
       return true;
     } catch (error) {
       console.error('Error durante la replicación de unidades:', error);
@@ -330,15 +333,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       }).sort({ updatedAt: 'desc' }).limit(1).exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
-      const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
-      const shootingReplicatorPush = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
+      if(!resyncShootings.current) {
+        const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
 
-      if (isOnline) {
-        shootingsReplicator.startReplicationPull();
-        await shootingsReplicator.monitorReplicationStatus();
-        shootingReplicatorPush.startReplicationPush();
-        await shootingReplicatorPush.monitorReplicationStatus();
-        shootingsReplicator.startReplicationPull();
+        if (isOnline) {
+          await shootingsReplicator.startReplicationPull();
+          await shootingsReplicator.startReplicationPush();
+  
+          resyncShootings.current = shootingsReplicator
+        }
+      } else {
+        resyncShootings.current.resyncReplication()
       }
 
       return true;
@@ -385,7 +390,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const initialProjectReplication = async () => {
-    if (!oneWrapRXdatabase) return;
     try {
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
@@ -411,12 +415,15 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       for (const step of steps) {
         setReplicationStatus(`Starting ${step.name} replication...`);
-        incrementPercentage(step.startPercentage, step.startPercentage + 5, 2000);
-        await step.function();
-        incrementPercentage(step.startPercentage + 5, step.endPercentage, 3000);
+        incrementPercentage(step.startPercentage, step.startPercentage + 5, 1000);
+        await step.function().then((result) => {
+          console.log('Replication finished:', result);
+        }).catch((error) => {
+          console.error('Error during replication:', error);
+        });
+        incrementPercentage(step.startPercentage + 5, step.endPercentage, 1000);
 
-        // Agregamos un pequeño tiempo de espera entre cada replicación
-        await sleep(1000); // Espera de 1 segundo entre replicaciones
+        await sleep(1000);
       }
 
       setReplicationStatus('Replication finished');
@@ -431,6 +438,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         ...projectsInfoIsOffline,
         [projectId]: true,
       });
+      setReplicationPercentage(0)
     }
   };
 
@@ -464,6 +472,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         initialReplicationFinished,
         projectsInfoIsOffline,
         setProjectsInfoIsOffline,
+        resyncScenes,
+        resyncShootings
       }}
     >
       {children}

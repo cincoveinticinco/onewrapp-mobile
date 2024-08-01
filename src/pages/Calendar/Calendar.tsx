@@ -24,7 +24,7 @@ const Calendar: React.FC = () => {
     shootings: [] as Shooting[],
   });
 
-  const { oneWrapDb, projectId, setProjectId } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, projectId, setProjectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
 
@@ -36,6 +36,7 @@ const Calendar: React.FC = () => {
 
   useIonViewWillEnter(() => {
     setProjectId(id);
+    initializeShootingReplication()
   });
 
   const initializeReplication = async () => {
