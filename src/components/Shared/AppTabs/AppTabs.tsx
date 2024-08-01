@@ -47,6 +47,7 @@ import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 import DatabaseContext from '../../../hooks/Shared/database';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
 import ReplicationPage from '../../../pages/ReplicationPage/ReplicationPage';
+import Crew from '../../../pages/Crew/Crew';
 
 setupIonicReact();
 
@@ -109,6 +110,9 @@ const AppTabs: React.FC = () => {
         <Route exact path={`${urlString}/cast`}>
           <Cast />
         </Route>
+        <Route exact path={`${urlString}/crew`}>
+          <Crew />
+        </Route>
         <Route exact path={`${urlString}/sets`}>
           <Sets />
         </Route>
@@ -144,6 +148,10 @@ const AppTabs: React.FC = () => {
         <IonTabButton tab="cast" className="tab-bar-buttons" href={`${url}/cast`}>
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="crew" className="tab-bar-buttons" href={`${url}/crew`}>
+          <IonIcon icon={people} className="tab-bar-icons" />
+          <IonLabel>CREW</IonLabel>
         </IonTabButton>
         <IonTabButton tab="sets" className="tab-bar-buttons" href={`${url}/sets`}>
           <IonIcon icon={business} className="tab-bar-icons" />
