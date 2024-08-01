@@ -1,7 +1,7 @@
 import React, {
   useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
-import { RxDatabase, RxDatabaseBase, RxLocalDocumentData } from 'rxdb';
+import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../../RXdatabase/database';
 import ScenesSchema from '../../RXdatabase/schemas/scenes';
 import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects';
@@ -12,6 +12,7 @@ import UnitsSchema from '../../RXdatabase/schemas/units';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings';
 import TalentsSchema from '../../RXdatabase/schemas/talents';
 import AuthContext from '../../context/Auth';
+import CrewSchema from '../../RXdatabase/schemas/crew';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -87,6 +88,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [unitsCollection, setUnitsCollection] = useState<UnitsSchema | null>(null);
   const [shootingsCollection, setShootingsCollection] = useState<ShootingsSchema | null>(null);
   const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
+  const [crewCollection, setCrewCollection] = useState<CrewSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const { getToken } = useContext(AuthContext);
 
@@ -122,8 +124,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         const unitsColl = new UnitsSchema();
         const shootingsColl = new ShootingsSchema();
         const talentsColl = new TalentsSchema();
+        const crewColl = new CrewSchema();
 
-        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl]);
+        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
 
         setOneWrapRXdatabase(dbInstance);
@@ -134,6 +137,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setUnitsCollection(unitsColl);
         setShootingsCollection(shootingsColl);
         setTalentsCollection(talentsColl);
+        setCrewCollection(crewColl);
 
         setIsDatabaseReady(true);
 
@@ -157,7 +161,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   useEffect(() => {
     localStorage.setItem('projectId', projectId);
-    console.log('reset resync')
     resyncScenes.current = null
     resyncShootings.current = null
   }, [projectId]);
@@ -356,6 +359,27 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   };
 
+  const initializeCrewReplication = async () => {
+    if (!crewCollection || !oneWrapRXdatabase || !projectId) return false;
+    try {
+      const lastCrewInProject = await oneWrapRXdatabase.crew.find({
+        selector: { projectId: parseInt(projectId) },
+      }).sort({ updatedAt: 'desc' }).limit(1).exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+
+      const crewReplicator = new HttpReplicator(oneWrapRXdatabase, [crewCollection], parseInt(projectId), lastCrewInProject, getToken);
+
+      if (isOnline) {
+        await crewReplicator.startReplicationPull();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error durante la replicación de crew:', error);
+      return false;
+    }
+  }
+
   // This initial replication, is the first replication that is done when the user enters in a project. The idea is to replicate all the data from the server to the local database and use a loader to notify the status of replication. After this first replication, it is not necessary to replicate all the data again, and we can avoid the loaders
 
   let cancelCurrentIncrement: (() => void) | null = null;
@@ -400,31 +424,52 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       const steps = [
         {
-          name: 'scenes', function: initializeSceneReplication, startPercentage: 0, endPercentage: 20,
+          name: 'Scene',
+          startPercentage: 0,
+          endPercentage: 20,
+          function: initializeSceneReplication,
         },
         {
-          name: 'shootings', function: initializeShootingReplication, startPercentage: 20, endPercentage: 40,
+          name: 'Paragraph',
+          startPercentage: 20,
+          endPercentage: 40,
+          function: initializeParagraphReplication,
         },
         {
-          name: 'talents', function: initializeTalentsReplication, startPercentage: 40, endPercentage: 60,
+          name: 'Unit',
+          startPercentage: 40,
+          endPercentage: 50,
+          function: initializeUnitReplication,
         },
         {
-          name: 'units', function: initializeUnitReplication, startPercentage: 60, endPercentage: 80,
+          name: 'Talent',
+          startPercentage: 50,
+          endPercentage: 60,
+          function: initializeTalentsReplication,
         },
         {
-          name: 'paragraphs', function: initializeParagraphReplication, startPercentage: 80, endPercentage: 100,
+          name: 'Shooting',
+          startPercentage: 60,
+          endPercentage: 70,
+          function: initializeShootingReplication,
         },
+        {
+          name: 'Crew',
+          startPercentage: 70,
+          endPercentage: 100,
+          function: initializeCrewReplication,
+        }
       ];
 
       for (const step of steps) {
         setReplicationStatus(`Starting ${step.name} replication...`);
-        incrementPercentage(step.startPercentage, step.startPercentage + 5, 1000);
+        incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
         await step.function().then((result) => {
           console.log('Replication finished:', result);
         }).catch((error) => {
           console.error('Error during replication:', error);
         });
-        incrementPercentage(step.startPercentage + 5, step.endPercentage, 1000);
+        incrementPercentage(step.startPercentage + 5, step.endPercentage, 10000);
 
         await sleep(1000);
       }
