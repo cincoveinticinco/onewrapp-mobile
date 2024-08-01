@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { set } from 'lodash';
 import environment from '../../environment';
+import NoUserFounded from '../pages/NoUserFounded/NoUserFounded';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -57,7 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('token');
         setUser(null);
         setLoggedIn(false);
-        return false;
       }
     }
     setLoggedIn(false);

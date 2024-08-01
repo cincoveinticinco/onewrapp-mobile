@@ -1,5 +1,5 @@
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar,
+  IonButton, IonContent, IonHeader, IonIcon, IonPage
 } from '@ionic/react';
 import { Redirect, useHistory } from 'react-router';
 import { useAuth } from '../../context/Auth';
@@ -45,10 +45,12 @@ const LoginPage: React.FC<Props> = ({}) => {
           } else {
           // Maneja el error
             console.error(data.error);
+            history.push('/user-not-found');
           }
         })
         .catch((error) => {
           console.error('Error:', error);
+         
         });
     },
     onError: errorMessage,

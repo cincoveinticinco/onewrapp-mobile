@@ -27,6 +27,8 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import useLoader from './hooks/Shared/useLoader';
+import PageNotExists from './pages/PageNotExists/PageNotExists';
+import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 
 setupIonicReact();
 
@@ -48,6 +50,9 @@ const AppContent: React.FC = () => {
         <Route exact path="/login">
           <LoginPage />
         </Route>
+        <Route exact path='/user-not-found'>
+          <NoUserFounded />
+        </Route>
         {loggedIn ? (
           <>
             <Route exact path="/my/projects">
@@ -61,9 +66,11 @@ const AppContent: React.FC = () => {
             </Route>
           </>
         ) : (
-          <Route>
-            <Redirect to="/login" />
-          </Route>
+          <>
+            <Route>
+              <Redirect to="/login" />
+            </Route>
+          </>
         )}
       </IonRouterOutlet>
     </IonReactRouter>
