@@ -14,6 +14,8 @@ import TalentsSchema from '../../RXdatabase/schemas/talents';
 import AuthContext from '../../context/Auth';
 import CrewSchema from '../../RXdatabase/schemas/crew';
 
+import { Provider } from 'rxdb-hooks';
+
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
   offlineScenes: any[];
@@ -79,7 +81,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<RxDatabase | null>(
+  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(
     localStorage.getItem('oneWrapRXdatabase') ? JSON.parse(localStorage.getItem('oneWrapRXdatabase') as string) : null,
   );
   const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
@@ -187,7 +189,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             console.error('Error processing projects:', error);
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error fetching projects:', error);
           setProjectsAreLoading(false);
         },
@@ -491,41 +493,43 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   return (
-    <DatabaseContext.Provider
-      value={{
-        oneWrapDb: oneWrapRXdatabase,
-        offlineScenes,
-        setStartReplication,
-        offlineProjects,
-        projectId: parseInt(projectId),
-        setProjectId,
-        startReplication,
-        isOnline,
-        scenesAreLoading,
-        viewTabs,
-        setViewTabs,
-        setScenesAreLoading,
-        projectsAreLoading,
-        setProjectsAreLoading,
-        getOfflineProjects,
-        initializeShootingReplication,
-        initializeSceneReplication,
-        initializeParagraphReplication,
-        initializeUnitReplication,
-        initializeTalentsReplication,
-        isDatabaseReady,
-        initialProjectReplication,
-        replicationPercentage,
-        replicationStatus,
-        initialReplicationFinished,
-        projectsInfoIsOffline,
-        setProjectsInfoIsOffline,
-        resyncScenes,
-        resyncShootings
-      }}
-    >
-      {children}
-    </DatabaseContext.Provider>
+    <Provider db={oneWrapRXdatabase}>
+        <DatabaseContext.Provider
+          value={{
+            oneWrapDb: oneWrapRXdatabase,
+            offlineScenes,
+            setStartReplication,
+            offlineProjects,
+            projectId: parseInt(projectId),
+            setProjectId,
+            startReplication,
+            isOnline,
+            scenesAreLoading,
+            viewTabs,
+            setViewTabs,
+            setScenesAreLoading,
+            projectsAreLoading,
+            setProjectsAreLoading,
+            getOfflineProjects,
+            initializeShootingReplication,
+            initializeSceneReplication,
+            initializeParagraphReplication,
+            initializeUnitReplication,
+            initializeTalentsReplication,
+            isDatabaseReady,
+            initialProjectReplication,
+            replicationPercentage,
+            replicationStatus,
+            initialReplicationFinished,
+            projectsInfoIsOffline,
+            setProjectsInfoIsOffline,
+            resyncScenes,
+            resyncShootings
+          }}
+        >
+        {children}
+      </DatabaseContext.Provider>
+    </Provider>
   );
 };
 

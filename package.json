@@ -50,6 +50,7 @@
     "react-router-dom": "^5.3.4",
     "react-sortablejs": "^6.1.4",
     "rxdb": "^15.2.0",
+    "rxdb-hooks": "^5.0.2",
     "rxjs": "^7.8.1",
     "sass": "^1.69.7",
     "sortablejs": "^1.15.2"
