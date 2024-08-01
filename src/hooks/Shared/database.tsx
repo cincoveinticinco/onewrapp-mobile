@@ -157,6 +157,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   useEffect(() => {
     localStorage.setItem('projectId', projectId);
+    console.log('reset resync')
+    resyncScenes.current = null
+    resyncShootings.current = null
   }, [projectId]);
 
   useEffect(() => {
