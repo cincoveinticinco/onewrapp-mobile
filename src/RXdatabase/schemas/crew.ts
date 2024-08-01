@@ -24,7 +24,7 @@ const crewSchema = {
       type: 'string',
     },
     projectId: {
-      type: 'string',
+      type: 'number',
     },
     fullName: {
       type: 'string',
@@ -44,7 +44,7 @@ const crewSchema = {
       type: 'integer',
     },
     departmentId: {
-      type: 'string',
+      type: 'number',
     },
   },
   required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber', 'departmentId'],
