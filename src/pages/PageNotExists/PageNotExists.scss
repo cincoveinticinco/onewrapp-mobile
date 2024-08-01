@@ -1,0 +1,11 @@
+.text-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 1000;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-align: center;
+}
