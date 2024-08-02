@@ -5,6 +5,7 @@ import truncateString from '../../utils/truncateString';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './RegularCheckboxList.scss';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
+import { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 
 interface RegularListProps {
   listOfOptions: string[];
@@ -15,6 +16,7 @@ interface RegularListProps {
   searchText: string;
   uncheckedFilteredOptions: string[];
   checkedSelectedOptions: string[];
+  optionsWithStyles?: SelectOptionsInterface[];
 }
 
 const RegularList: React.FC<RegularListProps> = ({
@@ -25,6 +27,7 @@ const RegularList: React.FC<RegularListProps> = ({
   searchText,
   uncheckedFilteredOptions,
   checkedSelectedOptions,
+  optionsWithStyles,
 }) => {
   const isMobile = useIsMobile();
 
@@ -44,6 +47,18 @@ const RegularList: React.FC<RegularListProps> = ({
     return {};
   };
 
+  const handleItemStyles = (label: string) => {
+    if (optionsWithStyles) {
+      console.log(optionsWithStyles)
+      const optionStyle = optionsWithStyles.find((optionStyle: SelectOptionsInterface) => optionStyle.label === label);
+      console.log(optionStyle)
+      if (optionStyle) {
+        console.log(optionStyle.style);
+        return optionStyle.style;
+      }
+    }
+  }
+
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
       {checkedSelectedOptions.map((option: string, i: number) => (
@@ -52,6 +67,7 @@ const RegularList: React.FC<RegularListProps> = ({
           key={`filter-item-${i}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
+          style={handleItemStyles(option)}
         >
           <IonCheckbox
             slot="start"
@@ -69,6 +85,7 @@ const RegularList: React.FC<RegularListProps> = ({
           key={`filter-item-${i}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
+          style={handleItemStyles(option)}
         >
           <IonCheckbox
             slot="start"
