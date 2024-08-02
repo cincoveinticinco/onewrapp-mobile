@@ -18,7 +18,7 @@ import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
   ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 
 interface SceneCardProps {

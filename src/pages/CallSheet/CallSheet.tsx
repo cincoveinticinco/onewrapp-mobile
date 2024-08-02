@@ -17,7 +17,7 @@ import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreCo
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
 import CastView from '../../components/CallSheet/CastView/CastView/CastView';
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import { Character, Scene } from '../../interfaces/scenes.types';
 import { Talent } from '../../RXdatabase/schemas/talents';
 import AddButton from '../../components/Shared/AddButton/AddButton';

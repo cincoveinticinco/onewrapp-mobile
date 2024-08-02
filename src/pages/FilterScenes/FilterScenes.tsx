@@ -9,7 +9,7 @@ import useIsMobile from '../../hooks/Shared/useIsMobile';
 import './FilterScenes.scss';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
+import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
@@ -23,7 +23,7 @@ import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useLoader from '../../hooks/Shared/useLoader';
 

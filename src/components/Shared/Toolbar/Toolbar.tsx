@@ -17,7 +17,7 @@ import { add } from 'lodash';
 import { useParams } from 'react-router';
 import template from '../../../templates/MinimalTemplate';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import DatabaseContext from '../../../hooks/Shared/database';
+import DatabaseContext from '../../../context/Database.context';
 
 interface ToolbarButton {
   name: string;

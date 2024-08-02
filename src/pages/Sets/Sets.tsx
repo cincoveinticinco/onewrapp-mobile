@@ -6,10 +6,10 @@ import {
 } from '@ionic/react';
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
+import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes.context';
 
 import SetCard from '../../components/Sets/LocationSetCard';
 import LocationSetCard from '../../components/Sets/LocationSetCard';

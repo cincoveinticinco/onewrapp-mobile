@@ -4,7 +4,7 @@ import {
   IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import { chevronForward, search } from 'ionicons/icons';
-import ScenesContext from '../../context/ScenesContext';
+import ScenesContext from '../../context/Scenes.context';
 import './FilterScenesModalSelect.scss';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';

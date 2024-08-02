@@ -11,7 +11,7 @@ import getOptionsArray from '../../../utils/getOptionsArray';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import applyFilters from '../../../utils/applyFilters';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../hooks/Shared/database';
+import DatabaseContext from '../../../context/Database.context';
 
 interface AddElementInputProps {
   categoryName: string;

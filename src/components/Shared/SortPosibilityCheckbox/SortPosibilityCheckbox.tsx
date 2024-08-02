@@ -7,7 +7,7 @@ import {
 import { LuGripHorizontal } from 'react-icons/lu';
 import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
 
-import ScenesContext from '../../../context/ScenesContext';
+import ScenesContext from '../../../context/Scenes.context';
 
 interface SortPosibilityCheckboxProps {
   sortPosibility: any;

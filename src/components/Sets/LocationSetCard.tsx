@@ -17,7 +17,7 @@ import { banOutline, pencilOutline } from 'ionicons/icons';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useWarningToast from '../../hooks/Shared/useWarningToast';

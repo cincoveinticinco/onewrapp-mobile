@@ -9,7 +9,7 @@ import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
-import DatabaseContext from '../../../hooks/Shared/database';
+import DatabaseContext from '../../../context/Database.context';
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;

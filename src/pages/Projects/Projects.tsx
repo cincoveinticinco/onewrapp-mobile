@@ -4,7 +4,7 @@ import {
 } from '@ionic/react';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import useLoader from '../../hooks/Shared/useLoader';
 
 const Projects: React.FC = () => {

@@ -13,10 +13,10 @@ import { FaClipboardList } from 'react-icons/fa';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import './SceneScript.scss';
 import SceneHeader from '../SceneDetails/SceneHeader';
-import ScenesContext from '../../context/ScenesContext';
+import ScenesContext from '../../context/Scenes.context';
 import applyFilters from '../../utils/applyFilters';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
 import {

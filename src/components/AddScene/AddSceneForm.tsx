@@ -17,7 +17,7 @@ import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton'
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
 } from '../../Ennums/ennums';

@@ -10,7 +10,7 @@ import { IoMdAdd } from 'react-icons/io';
 import { VscEdit } from 'react-icons/vsc';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import SceneCard from '../../components/Strips/SceneCard';
 import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useLoader from '../../hooks/Shared/useLoader';

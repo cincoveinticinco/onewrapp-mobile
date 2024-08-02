@@ -2,7 +2,7 @@ import {
   IonButton, IonContent, IonHeader, IonIcon, IonPage
 } from '@ionic/react';
 import { Redirect, useHistory } from 'react-router';
-import { useAuth } from '../../context/Auth';
+import { useAuth } from '../../context/Auth.context';
 import ReactPlayer from 'react-player';
 import './LoginPage.css';
 import {

@@ -1,8 +1,8 @@
 import {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
-import DatabaseContext from '../Shared/database';
-import ScenesContext from '../../context/ScenesContext';
+import DatabaseContext from '../../context/Database.context';
+import ScenesContext from '../../context/Scenes.context';
 import { Scene } from '../../interfaces/scenes.types';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';

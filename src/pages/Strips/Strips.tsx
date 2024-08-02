@@ -14,14 +14,14 @@ import './Strips.scss';
 import {
   Redirect, useHistory, useLocation, useParams,
 } from 'react-router';
-import ScenesContext, { defaultSortOptions } from '../../context/ScenesContext';
+import ScenesContext, { defaultSortOptions } from '../../context/Scenes.context';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import SceneCard from '../../components/Strips/SceneCard';
 import { Scene } from '../../interfaces/scenes.types';
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';

@@ -1,10 +1,10 @@
 import {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import DatabaseContext from '../Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import ScenesContext from '../../context/ScenesContext';
+import ScenesContext from '../../context/Scenes.context';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 

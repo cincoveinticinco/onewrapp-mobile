@@ -16,7 +16,7 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 import useWarningToast from '../../hooks/Shared/useWarningToast';

@@ -15,7 +15,7 @@ import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useTextSelection from '../../hooks/Shared/useSelectedText';
 import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';

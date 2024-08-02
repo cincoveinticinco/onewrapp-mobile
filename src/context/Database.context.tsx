@@ -2,17 +2,17 @@ import React, {
   useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
-import AppDataBase from '../../RXdatabase/database';
-import ScenesSchema from '../../RXdatabase/schemas/scenes';
-import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects';
-import SceneParagraphsSchema from '../../RXdatabase/schemas/paragraphs';
-import HttpReplicator from '../../RXdatabase/replicator';
-import useNavigatorOnLine from './useNavigatorOnline';
-import UnitsSchema from '../../RXdatabase/schemas/units';
-import ShootingsSchema from '../../RXdatabase/schemas/shootings';
-import TalentsSchema from '../../RXdatabase/schemas/talents';
-import AuthContext from '../../context/Auth';
-import CrewSchema from '../../RXdatabase/schemas/crew';
+import AppDataBase from '../RXdatabase/database';
+import ScenesSchema from '../RXdatabase/schemas/scenes';
+import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
+import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
+import HttpReplicator from '../RXdatabase/replicator';
+import useNavigatorOnLine from '../hooks/Shared/useNavigatorOnline';
+import UnitsSchema from '../RXdatabase/schemas/units';
+import ShootingsSchema from '../RXdatabase/schemas/shootings';
+import TalentsSchema from '../RXdatabase/schemas/talents';
+import AuthContext from './Auth.context';
+import CrewSchema from '../RXdatabase/schemas/crew';
 
 import { Provider } from 'rxdb-hooks';
 

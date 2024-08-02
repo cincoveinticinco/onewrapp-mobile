@@ -10,9 +10,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs/AppTabs';
-import { ScenesContextProvider } from './context/ScenesContext';
-import DatabaseContext, { DatabaseContextProvider } from './hooks/Shared/database';
-import { AuthProvider, useAuth } from './context/Auth';
+import { ScenesContextProvider } from './context/Scenes.context';
+import DatabaseContext, { DatabaseContextProvider } from './context/Database.context';
+import { AuthProvider, useAuth } from './context/Auth.context';
 import environment from '../environment';
 
 import '@ionic/react/css/core.css';

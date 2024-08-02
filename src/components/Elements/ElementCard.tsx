@@ -17,7 +17,7 @@ import { checkmarkCircle } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import useWarningToast from '../../hooks/Shared/useWarningToast';

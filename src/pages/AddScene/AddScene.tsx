@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useLoader from '../../hooks/Shared/useLoader';

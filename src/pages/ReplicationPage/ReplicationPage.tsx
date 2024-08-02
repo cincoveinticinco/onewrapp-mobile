@@ -16,7 +16,7 @@ import {
 } from '@ionic/react';
 import { refresh } from 'ionicons/icons';
 import { useHistory, useParams } from 'react-router';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import './ReplicationPage.scss';
 

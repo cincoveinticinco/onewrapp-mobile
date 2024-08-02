@@ -5,16 +5,16 @@ import {
   IonContent,
 } from '@ionic/react';
 import { useLocation } from 'react-router';
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
+import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/Scenes.context';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
 import './Elements.scss';
