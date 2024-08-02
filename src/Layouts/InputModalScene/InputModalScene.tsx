@@ -11,7 +11,7 @@ import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/O
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import './InputModalScene.scss';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import { Scene } from '../../interfaces/scenesTypes';
+import { Scene } from '../../interfaces/scenes.types';
 import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
 
 interface InputModalProps {
@@ -77,14 +77,14 @@ const InputModalScene: React.FC<InputModalProps> = ({
   };
 
   const episodeInput = {
-    fieldName: 'episode',
+    fieldKeyName: 'episode',
     label: 'Select episode',
     placeholder: 'Select episode',
     selectOptions: getUniqueEpisodes(),
   };
 
   const sceneInput = {
-    fieldName: 'scene',
+    fieldKeyName: 'scene',
     label: 'Select a scene',
     placeholder: 'Select a scene',
     selectOptions: filteredScenes.map((scene: Scene) => ({
@@ -120,7 +120,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
                 <IonItem color="tertiary">
                   <CustomSelect
                     input={episodeInput}
-                    setNewOptionValue={(fieldName, value) => setSelectedEpisode(value)}
+                    setNewOptionValue={(fieldKeyName, value) => setSelectedEpisode(value)}
                     enableSearch
                   />
                 </IonItem>
@@ -129,7 +129,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
                 <IonItem color="tertiary">
                   <CustomSelect
                     input={sceneInput}
-                    setNewOptionValue={(fieldName, value: Scene) => {
+                    setNewOptionValue={(fieldKeyName, value: Scene) => {
                       setSelectedOption(value || null);
                     }}
                     enableSearch
