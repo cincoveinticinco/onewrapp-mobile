@@ -1,5 +1,6 @@
 import {
-  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonModal, IonRow, IonSelect, IonSelectOption,
+  IonCheckbox,
+  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow, IonSelect, IonSelectOption,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,7 +11,6 @@ import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import SelectItem from '../SelectInput/SelectInput';
-import { width } from '@mui/system';
 
 export interface FormInput {
   fieldKeyName: string;
@@ -149,13 +149,9 @@ const EditionModal: React.FC<EditionModalProps> = ({
     setShowError({});
   };
 
-  // the structure for options is an array of strings
-
-  const optionsForSelect = (options: SelectOptionsInterface[]) => options.map((option: SelectOptionsInterface) => (
-    option.label))
-  
-  // In order to select the option, it's necesary to change the function. The function for modal receives
-
+  const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
+    setValue(fieldKeyName, checked);
+  };
 
   return (
     <IonModal
@@ -200,6 +196,22 @@ const EditionModal: React.FC<EditionModalProps> = ({
                         style={{ width: '100%' }}
                       />
                     )
+                  ) : input.type === 'checkbox' ? (
+                    <IonItem
+                      color='tertiary'
+                      lines="none"
+                      className='checkbox'
+                      style={{
+                        width: '100%'
+                      }}
+                    >
+                      <IonCheckbox
+                        checked={watch(input.fieldKeyName)}
+                        onIonChange={(e) => handleCheckboxChange(input.fieldKeyName, e.detail.checked)}
+                        
+                      />
+                      <IonLabel className="ion-padding-start">{input.label}</IonLabel>
+                    </IonItem>
                   ) : (
                     <InputItem
                       label={input.label}
