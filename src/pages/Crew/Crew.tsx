@@ -116,7 +116,7 @@ const Crew: React.FC = () => {
       required: true,
       selectOptions: countryOptions,
       placeholder: 'Select country',
-      col: '4'
+      col: '2'
     },
     {
       fieldKeyName: 'phone',
@@ -124,7 +124,7 @@ const Crew: React.FC = () => {
       type: 'tel',
       required: true,
       placeholder: 'Enter phone',
-      col: '8',
+      col: '10',
     },
     {
       fieldKeyName: 'unitNumber',
@@ -135,6 +135,14 @@ const Crew: React.FC = () => {
       placeholder: 'Select unit',
       col: '6'
     },
+    {
+      fieldKeyName: 'order',
+      label: 'Order',
+      type: 'number',
+      required: true,
+      placeholder: 'Enter order',
+      col: '6',
+    }
   ];
 
   const getDefaultValuesById = (id: string | null) => {
