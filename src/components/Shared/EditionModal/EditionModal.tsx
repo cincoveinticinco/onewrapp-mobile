@@ -9,6 +9,8 @@ import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
+import SelectItem from '../SelectInput/SelectInput';
+import { width } from '@mui/system';
 
 export interface FormInput {
   fieldKeyName: string;
@@ -24,6 +26,9 @@ export interface FormInput {
 export interface SelectOptionsInterface {
   value: any;
   label: string;
+  style?: {
+    [key: string]: string;
+  };
 }
 
 export interface defaultFormValues {
@@ -97,6 +102,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
     handleSubmit,
     setValue,
     resetField,
+    watch
   } = useForm({
     defaultValues: defaultFormValues,
   });
@@ -142,6 +148,15 @@ const EditionModal: React.FC<EditionModalProps> = ({
     closeModal();
     setShowError({});
   };
+
+  // the structure for options is an array of strings
+
+  const optionsForSelect = (options: SelectOptionsInterface[]) => options.map((option: SelectOptionsInterface) => (
+    option.label))
+  
+  // In order to select the option, it's necesary to change the function. The function for modal receives
+
+
   return (
     <IonModal
       ref={modalRef}
@@ -165,9 +180,26 @@ const EditionModal: React.FC<EditionModalProps> = ({
           <IonGrid className="edit-inputs-wrapper" fixed={true}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} sizeSm={input.col || '12'} sizeXs='12' className="ion-flex ion-justify-content-center">
+                <IonCol key={i} sizeSm={input.col || '6'} sizeXs='12' className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
-                    <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
+                    input.search ? (
+                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch={true} />
+                    ) : (
+                      <SelectItem
+                        control={control}
+                        fieldKeyName={input.fieldKeyName}
+                        label={input.label}
+                        inputName={input.fieldKeyName}
+                        options={input.selectOptions}
+                        canCreateNew={false}
+                        setValue={setNewOptionValue}
+                        validate={() => true}
+                        watchValue={watch}
+                        editMode={false}
+                        detailsEditMode={false}
+                        style={{ width: '100%' }}
+                      />
+                    )
                   ) : (
                     <InputItem
                       label={input.label}
