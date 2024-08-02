@@ -449,8 +449,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       const steps = [
         {
-          name: 'Scene',
+          name: 'Countries',
           startPercentage: 0,
+          endPercentage: 10,
+          function: initializeCountriesReplication,
+        },
+        {
+          name: 'Scene',
+          startPercentage: 10,
           endPercentage: 20,
           function: initializeSceneReplication,
         },
@@ -479,14 +485,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           function: initializeShootingReplication,
         },
         {
-          name: 'Countries',
-          startPercentage: 70,
-          endPercentage: 80,
-          function: initializeCountriesReplication,
-        },
-        {
           name: 'Crew',
-          startPercentage: 80,
+          startPercentage: 70,
           endPercentage: 100,
           function: initializeCrewReplication,
         }
