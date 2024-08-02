@@ -99,3 +99,9 @@
 label[data-shrink=false] + .MuiInputBase-formControl .css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input {
   height: 25px;
 }
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  max-height: 250px;
+  background-color: var(--ion-color-light) !important;
+  color: var(--ion-color-dark) !important;
+}
