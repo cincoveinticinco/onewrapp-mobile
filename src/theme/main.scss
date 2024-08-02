@@ -166,15 +166,15 @@ ion-toolbar {
   }
 
   ion-checkbox {
-    --size: 16px;
-    --checkbox-background-checked: var(--ion-color-yellow);
+    --size: 12px;
+    --checkbox-background-checked: radial-gradient(circle, yellow 46%, rgba(255,255,255,1) 46%);
   }
 
   ion-checkbox::part(container) {
-    border: none;
+    outline: .5px solid var(--ion-color-dark);
     border-radius: 100%;
     margin: 12px;
-    padding: 6px;
+    padding: 10px;
   }
 
   &:active,
@@ -314,4 +314,8 @@ ion-toast.error-toast {
 
 .background-danger-shade {
   background-color: var(--ion-color-danger-shade);
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
