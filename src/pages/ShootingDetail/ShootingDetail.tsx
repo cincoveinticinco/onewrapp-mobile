@@ -32,6 +32,7 @@ import AdvanceCallInfo from '../../components/ShootingDetail/AdvanceCallInfo/Adv
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import DeleteButton from '../../components/Shared/DeleteButton/DeleteButton';
 import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import { style } from '@mui/system';
 
 export type ShootingViews = 'scenes' | 'info';
 type cardType = {
@@ -188,7 +189,7 @@ const ShootingDetail = () => {
   }, [shootingData.scenes, isLoading]);
 
   const availableColors = [
-    { value: '#3dc2ff', name: 'light blue' },
+    { value: '#3dc2ff', name: 'light blue'},
     { value: '#282f3a', name: 'dark gray' },
     { value: '#04feaa', name: 'green' },
     { value: '#ffb203', name: 'orange' },
@@ -199,9 +200,24 @@ const ShootingDetail = () => {
     { value: '#fdc6f7', name: 'light pink' },
   ];
 
+  const colorIsDark = (color: string) => {
+    const rgb = parseInt(color.slice(1), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+
+    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return luma < 128;
+  }
+
   const selectOptions = availableColors.map((color) => ({
     value: color.value,
     label: color.name,
+    style: {
+      backgroundColor: color.value,
+      color: colorIsDark(color.value) ? 'white' : 'black',
+      border: '1px solid var(--ion-color-tertiary-dark)',
+    },
   }));
 
   const fontSizeOptions: SelectOptionsInterface[] = [
