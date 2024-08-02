@@ -1,6 +1,6 @@
 import React from 'react';
 import { normalizeString } from 'rxdb';
-import { OtherCall } from '../../../interfaces/shootingTypes';
+import { OtherCall } from '../../../interfaces/shooting.types';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
@@ -44,7 +44,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   const AddNewCallModal = () => {
     const callInputs: FormInput[] = [
       {
-        fieldName: 'otherCallName',
+        fieldKeyName: 'otherCallName',
         label: 'Other Call Name',
         placeholder: 'Enter other call name',
         type: 'text',
@@ -52,7 +52,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'quantity',
+        fieldKeyName: 'quantity',
         label: 'Quantity',
         placeholder: 'Enter quantity',
         type: 'number',
@@ -60,7 +60,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',

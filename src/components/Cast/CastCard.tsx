@@ -94,7 +94,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Character Number',
       type: 'text',
-      fieldName: 'characterNum',
+      fieldKeyName: 'characterNum',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-number-input',
@@ -102,7 +102,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: false,
       inputName: 'add-category-name-input',
@@ -110,7 +110,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Character Name',
       type: 'text',
-      fieldName: 'characterName',
+      fieldKeyName: 'characterName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-name-input',
@@ -121,7 +121,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Extra Name',
       type: 'text',
-      fieldName: 'extraName',
+      fieldKeyName: 'extraName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-extra-name-input',

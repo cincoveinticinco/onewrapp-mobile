@@ -9,7 +9,7 @@ import {
 import { get } from 'lodash';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import { Character } from '../../../interfaces/scenesTypes';
+import { Character } from '../../../interfaces/scenes.types';
 import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';

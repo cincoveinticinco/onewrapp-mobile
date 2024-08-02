@@ -7,7 +7,7 @@ interface InputItemProps {
   label: string;
   placeholder?: string;
   control: any;
-  fieldName: string;
+  fieldKeyName: string;
   inputName: string;
   displayError?: boolean;
   setValue: any;
@@ -21,7 +21,7 @@ const InputItem: React.FC<InputItemProps> = ({
   label,
   placeholder = '',
   control,
-  fieldName,
+  fieldKeyName,
   inputName,
   displayError = false,
   setValue,
@@ -41,7 +41,7 @@ const InputItem: React.FC<InputItemProps> = ({
     <IonItem color="tertiary" id={inputName} style={style}>
       <Controller
         control={control}
-        name={fieldName}
+        name={fieldKeyName}
         rules={
           {
             validate: (validate || null),
@@ -60,7 +60,7 @@ const InputItem: React.FC<InputItemProps> = ({
               } else {
                 setShowError(false);
               }
-              setValue(fieldName, e.detail.value?.trim());
+              setValue(fieldKeyName, e.detail.value?.trim());
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}

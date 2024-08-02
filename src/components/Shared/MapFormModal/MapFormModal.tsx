@@ -8,7 +8,7 @@ import {
 } from '@ionic/react';
 import environment from '../../../../environment';
 import CustomSelect from '../CustomSelect/CustomSelect';
-import { LocationInfo } from '../../../interfaces/shootingTypes';
+import { LocationInfo } from '../../../interfaces/shooting.types';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface MapFormModalProps {
@@ -326,11 +326,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               <CustomSelect
                 input={{
                   label: 'LOCATION TYPE',
-                  fieldName: 'location_type_id',
+                  fieldKeyName: 'location_type_id',
                   selectOptions,
                   placeholder: 'Tipo de ubicación',
                 }}
-                setNewOptionValue={(fieldName: string, value: string) => setLocationTypeId(parseInt(value))}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setLocationTypeId(parseInt(value))}
               />
             </IonCol>
           </IonRow>
@@ -360,7 +360,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               <CustomSelect
                 input={{
                   label: 'MARKER ICON',
-                  fieldName: 'marker_icon',
+                  fieldKeyName: 'marker_icon',
                   selectOptions: [
                     { value: 'default', label: 'Default' },
                     { value: {icon}, label: 'Custom Icon' },
@@ -368,18 +368,18 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                   ],
                   placeholder: 'Select marker icon',
                 }}
-                setNewOptionValue={(fieldName: string, value: string) => setMarkerIcon(value)}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerIcon(value)}
               />
             </IonCol>
             <IonCol size="6">
               <CustomSelect
                 input={{
                   label: 'MARKER COLOR',
-                  fieldName: 'marker_color',
+                  fieldKeyName: 'marker_color',
                   selectOptions: colorOptions,
                   placeholder: 'Select marker color',
                 }}
-                setNewOptionValue={(fieldName: string, value: string) => setMarkerColor(JSON.parse(value))}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerColor(JSON.parse(value))}
               />
             </IonCol>
           </IonRow> */}

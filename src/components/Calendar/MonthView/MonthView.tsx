@@ -2,7 +2,7 @@ import {
   addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek,
 } from 'date-fns';
 import { IonCol, IonGrid, IonRow } from '@ionic/react';
-import { Shooting } from '../../../interfaces/shootingTypes';
+import { Shooting } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 
 const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ currentDate, shootings }) => {

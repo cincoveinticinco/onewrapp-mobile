@@ -21,7 +21,7 @@ import applyFilters from '../../utils/applyFilters';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
 import {
   Character, Element, Extra, Note, Scene,
-} from '../../interfaces/scenesTypes';
+} from '../../interfaces/scenes.types';
 import ScriptPage from '../../components/SceneScript/ScriptPage';
 
 // BLUE CHARACTER

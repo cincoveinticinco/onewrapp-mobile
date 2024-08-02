@@ -145,7 +145,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: false,
       inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,
@@ -153,7 +153,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Element Name',
       type: 'text',
-      fieldName: 'elementName',
+      fieldKeyName: 'elementName',
       placeholder: 'INSERT',
       required: true,
       inputName: `add-element-name-input-${data.elementName}`,
@@ -164,7 +164,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: true,
       inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,

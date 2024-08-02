@@ -2,7 +2,7 @@ import {
   IonInput, IonItem, IonSelect, IonSelectOption,
 } from '@ionic/react';
 import { useEffect, useState } from 'react';
-import { Character } from '../../../interfaces/scenesTypes';
+import { Character } from '../../../interfaces/scenes.types';
 
 interface CharacterFormProps {
   character: Character;

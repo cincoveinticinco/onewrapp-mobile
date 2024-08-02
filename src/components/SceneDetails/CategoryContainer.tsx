@@ -1,6 +1,6 @@
 import { IonCard, IonCardContent, IonCardHeader } from '@ionic/react';
 import { capitalize } from 'lodash';
-import { Note, Scene } from '../../interfaces/scenesTypes';
+import { Note, Scene } from '../../interfaces/scenes.types';
 
 const CategoryContainer = ({
   categoryName, scene, characters, extras, elements, notes,

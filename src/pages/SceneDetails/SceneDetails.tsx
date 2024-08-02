@@ -17,7 +17,7 @@ import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useLoader from '../../hooks/Shared/useLoader';
 import ScenesContext from '../../context/ScenesContext';
 import applyFilters from '../../utils/applyFilters';
-import { Scene } from '../../interfaces/scenesTypes';
+import { Scene } from '../../interfaces/scenes.types';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
 import SceneHeader from './SceneHeader';
 

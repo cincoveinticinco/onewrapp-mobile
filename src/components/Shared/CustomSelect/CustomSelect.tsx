@@ -6,12 +6,12 @@ import './CustomSelect.scss';
 
 interface CustomSelectProps {
   input: {
-    fieldName: string;
+    fieldKeyName: string;
     label: string;
     placeholder: string;
     selectOptions: SelectOption[];
   };
-  setNewOptionValue: (fieldName: string, value: any) => void;
+  setNewOptionValue: (fieldKeyName: string, value: any) => void;
   enableSearch?: boolean;
 }
 
@@ -28,14 +28,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
     // Usando Select de Material-UI
     return (
       <FormControl fullWidth variant="standard">
-        <InputLabel id={`${input.fieldName}-label`}>{input.label}</InputLabel>
+        <InputLabel id={`${input.fieldKeyName}-label`}>{input.label}</InputLabel>
         <Select
-          labelId={`${input.fieldName}-label`}
+          labelId={`${input.fieldKeyName}-label`}
           value={value}
           label={input.label}
           onChange={(e) => {
             setValue(e.target.value as string);
-            setNewOptionValue(input.fieldName, e.target.value as string);
+            setNewOptionValue(input.fieldKeyName, e.target.value as string);
           }}
           placeholder={input.placeholder}
         >
@@ -84,7 +84,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
       onChange={(event: any, newValue: SelectOption | null) => {
         if (newValue) {
           setValue(newValue.value);
-          setNewOptionValue(input.fieldName, newValue.value);
+          setNewOptionValue(input.fieldKeyName, newValue.value);
         }
       }}
       inputValue={inputValue}

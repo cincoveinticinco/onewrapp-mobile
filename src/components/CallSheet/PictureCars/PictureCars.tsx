@@ -1,5 +1,5 @@
 import React from 'react';
-import { PictureCar } from '../../../interfaces/shootingTypes';
+import { PictureCar } from '../../../interfaces/shooting.types';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
@@ -27,7 +27,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
   const AddNewModal = () => {
     const pictureCarInputs: FormInput[] = [
       {
-        fieldName: 'pictureCarName',
+        fieldKeyName: 'pictureCarName',
         label: 'Car Name',
         placeholder: 'Enter car name',
         type: 'text',
@@ -35,7 +35,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'quantity',
+        fieldKeyName: 'quantity',
         label: 'Quantity',
         placeholder: 'Enter quantity',
         type: 'number',
@@ -43,7 +43,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',

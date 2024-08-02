@@ -3,7 +3,7 @@ import {
   IonItem, IonButton, IonIcon, IonCardContent,
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
-import { Extra } from '../../../interfaces/scenesTypes';
+import { Extra } from '../../../interfaces/scenes.types';
 import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
 import getOptionsArray from '../../../utils/getOptionsArray';
 import InputModal from '../../../Layouts/InputModal/InputModal';
@@ -71,7 +71,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     {
       label: 'Extra Name',
       type: 'text',
-      fieldName: 'extraName',
+      fieldKeyName: 'extraName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-extra-name-input',

@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import {
   IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow,
 } from '@ionic/react';
-import { Shooting } from '../../../interfaces/shootingTypes';
+import { Shooting } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 
 interface WeekViewProps {

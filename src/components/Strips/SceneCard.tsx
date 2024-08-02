@@ -9,7 +9,7 @@ import { CiEdit } from 'react-icons/ci';
 import { LuGripHorizontal } from 'react-icons/lu';
 import { checkmarkCircle } from 'ionicons/icons';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
-import { Scene } from '../../interfaces/scenesTypes';
+import { Scene } from '../../interfaces/scenes.types';
 import './SceneCard.scss';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';

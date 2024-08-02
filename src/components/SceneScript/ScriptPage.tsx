@@ -8,7 +8,7 @@ import { HiMiniUsers } from 'react-icons/hi2';
 import { IonButton } from '@ionic/react';
 import {
   Character, Element, Extra, Note,
-} from '../../interfaces/scenesTypes';
+} from '../../interfaces/scenes.types';
 import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';

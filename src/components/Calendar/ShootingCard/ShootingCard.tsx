@@ -2,7 +2,7 @@ import {
   IonBadge, IonCard, IonCardContent, IonItem, IonLabel,
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
-import { LocationInfo, Shooting } from '../../../interfaces/shootingTypes';
+import { LocationInfo, Shooting } from '../../../interfaces/shooting.types';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import truncateString from '../../../utils/truncateString';

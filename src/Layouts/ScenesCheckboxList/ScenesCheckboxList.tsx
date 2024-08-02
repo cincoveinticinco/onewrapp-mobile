@@ -2,7 +2,7 @@ import React from 'react';
 import { IonCheckbox, IonList } from '@ionic/react';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import './ScenesCheckboxList.scss';
-import { Scene } from '../../interfaces/scenesTypes';
+import { Scene } from '../../interfaces/scenes.types';
 import SceneCard from '../../components/Strips/SceneCard';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 

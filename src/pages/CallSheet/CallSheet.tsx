@@ -18,12 +18,12 @@ import useHideTabs from '../../hooks/Shared/useHideTabs';
 import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
 import CastView from '../../components/CallSheet/CastView/CastView/CastView';
 import DatabaseContext from '../../hooks/Shared/database';
-import { Character, Scene } from '../../interfaces/scenesTypes';
+import { Character, Scene } from '../../interfaces/scenes.types';
 import { Talent } from '../../RXdatabase/schemas/talents';
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
-} from '../../interfaces/shootingTypes';
+} from '../../interfaces/shooting.types';
 import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
 import CrewView from '../../components/CallSheet/CrewView/CrewView';
 import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';

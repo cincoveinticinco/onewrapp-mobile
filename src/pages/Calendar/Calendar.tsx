@@ -10,7 +10,7 @@ import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
 import { useParams } from 'react-router';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import { Shooting } from '../../interfaces/shootingTypes';
+import { Shooting } from '../../interfaces/shooting.types';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';

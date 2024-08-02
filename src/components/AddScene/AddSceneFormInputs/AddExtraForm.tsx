@@ -8,7 +8,7 @@ import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
-import { Extra } from '../../../interfaces/scenesTypes';
+import { Extra } from '../../../interfaces/scenes.types';
 import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddExtraFormProps {

@@ -8,14 +8,14 @@ import {
   IonLabel,
   IonTitle,
 } from '@ionic/react';
-import { Crew } from '../../../interfaces/crewTypes';
+import { Crew } from '../../../interfaces/crew.types';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import './CrewCard.scss';
 
 interface CrewCardProps {
   crew: Crew;
-  onEdit: () => void;
+  onEdit: (id: string) => void;
   onDelete: () => void;
 }
 
@@ -42,7 +42,7 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete }) => {
       </IonItem>
       <IonItemOptions className="crew-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={onEdit}>
+          <IonButton fill="clear" onClick={() => onEdit(crew.id)}>
             <CiEdit className="button-icon edit" />
           </IonButton>
           <IonButton fill="clear" onClick={onDelete}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Character, Element, Extra, Note,
-} from '../../interfaces/scenesTypes';
+} from '../../interfaces/scenes.types';
 import removeAccents from '../../utils/removeAccents';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 

@@ -51,9 +51,9 @@ const CastView: React.FC<CastViewProps> = ({
     },
   ];
 
-  const valiateCastExists = (talentName: string, fieldName: any) => {
+  const valiateCastExists = (talentName: string, fieldKeyName: any) => {
     const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
-    if (talentExists && fieldName === 'cast') return 'This talent already exists';
+    if (talentExists && fieldKeyName === 'cast') return 'This talent already exists';
     return false;
   };
 
@@ -63,7 +63,7 @@ const CastView: React.FC<CastViewProps> = ({
 
     const castCallInputs: FormInput[] = [
       {
-        fieldName: 'cast',
+        fieldKeyName: 'cast',
         label: 'Cast',
         placeholder: 'Select cast',
         type: 'select',
@@ -72,7 +72,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'pickUp',
+        fieldKeyName: 'pickUp',
         label: 'Pick Up',
         placeholder: 'Enter pick up time',
         type: 'time',
@@ -80,7 +80,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',
@@ -88,7 +88,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'onMakeUp',
+        fieldKeyName: 'onMakeUp',
         label: 'Make Up',
         placeholder: 'Enter make up time',
         type: 'time',
@@ -96,7 +96,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'onWardrobe',
+        fieldKeyName: 'onWardrobe',
         label: 'Wardrobe',
         placeholder: 'Enter wardrobe time',
         type: 'time',
@@ -104,7 +104,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'readyToShoot',
+        fieldKeyName: 'readyToShoot',
         label: 'Ready to Shoot',
         placeholder: 'Enter ready time',
         type: 'time',
@@ -112,7 +112,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'notes',
+        fieldKeyName: 'notes',
         label: 'Notes',
         placeholder: 'Enter notes',
         type: 'text',

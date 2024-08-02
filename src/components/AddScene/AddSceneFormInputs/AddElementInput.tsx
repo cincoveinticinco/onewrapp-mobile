@@ -97,7 +97,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     {
       label: 'Element Name',
       type: 'text',
-      fieldName: 'elementName',
+      fieldKeyName: 'elementName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-element-name-input',

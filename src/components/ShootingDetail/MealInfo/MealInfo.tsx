@@ -3,7 +3,7 @@ import { IonButton } from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
 import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
-import { Meal } from '../../../interfaces/shootingTypes';
+import { Meal } from '../../../interfaces/shooting.types';
 
 interface MealInfoProps {
   meal: any;

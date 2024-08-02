@@ -1,5 +1,5 @@
 export default {
-  URL_PATH: 'https://stgapi.onewrapp.com/owapp',
+  URL_PATH: 'http://localhost:3000/owapp',
   SCENES_ENDPOINT_PULL: 'app_scenes_list',
   SCENE_PARAGRAPHS_ENDPOINT_PULL: 'app_scenes_paragraphs',
   SCENES_ENDPOINT_PUSH: 'app_scenes_push',
@@ -13,4 +13,7 @@ export default {
   TALENTS_ENDPOINT_PULL: 'app_talents_list',
   TALENTS_ENDPOINT_PUSH: 'app_talents_push',
   MAPS_KEY: 'AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI',
+  CREW_ENDPOINT_PULL: 'app_crew_list',
+  CREW_ENDPOINT_PUSH: 'app_crew_push',
+  COUNTRIES_ENDPOINT_PULL: 'app_countries_list',
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { normalizeString } from 'rxdb';
 import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
-import { ExtraCall } from '../../../interfaces/shootingTypes';
+import { ExtraCall } from '../../../interfaces/shooting.types';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
 
@@ -51,7 +51,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
   const AddNewExtraModal = () => {
     const extraInputs: FormInput[] = [
       {
-        fieldName: 'extraName',
+        fieldKeyName: 'extraName',
         label: 'Extra',
         placeholder: 'Enter extra name',
         type: 'text',
@@ -59,7 +59,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'talentAgency',
+        fieldKeyName: 'talentAgency',
         label: 'Talent/Agency',
         placeholder: 'Enter talent or agency',
         type: 'text',
@@ -67,7 +67,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'quantity',
+        fieldKeyName: 'quantity',
         label: 'Quantity',
         placeholder: 'Enter quantity',
         type: 'number',
@@ -75,7 +75,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '4',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call',
         placeholder: 'Enter call time',
         type: 'time',
@@ -83,7 +83,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '4',
       },
       {
-        fieldName: 'onMakeUp',
+        fieldKeyName: 'onMakeUp',
         label: 'Makeup',
         placeholder: 'Enter makeup time',
         type: 'time',
@@ -91,7 +91,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '4',
       },
       {
-        fieldName: 'onWardrobe',
+        fieldKeyName: 'onWardrobe',
         label: 'Wardrobe',
         placeholder: 'Enter wardrobe time',
         type: 'time',
@@ -99,7 +99,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '4',
       },
       {
-        fieldName: 'readyToShoot',
+        fieldKeyName: 'readyToShoot',
         label: 'On Set',
         placeholder: 'Enter ready time',
         type: 'time',
@@ -107,7 +107,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
         col: '4',
       },
       {
-        fieldName: 'notes',
+        fieldKeyName: 'notes',
         label: 'Notes',
         placeholder: 'Enter notes',
         type: 'text',
@@ -116,10 +116,10 @@ const ExtraView: React.FC<ExtraViewProps> = ({
       },
     ];
 
-    const validateExtraExists = (extraName: string, fieldName: any) => {
+    const validateExtraExists = (extraName: string, fieldKeyName: any) => {
       const extraExists = extraViewData.some((extra: ExtraCall) => normalizeString(extra.extraName || '') === normalizeString(extraName));
-      console.log(fieldName, '************');
-      if (extraExists && fieldName === 'extraName') return 'This extra already exists';
+      console.log(fieldKeyName, '************');
+      if (extraExists && fieldKeyName === 'extraName') return 'This extra already exists';
       return false;
     };
 

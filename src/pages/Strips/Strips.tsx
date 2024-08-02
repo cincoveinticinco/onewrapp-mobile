@@ -20,7 +20,7 @@ import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import SceneCard from '../../components/Strips/SceneCard';
-import { Scene } from '../../interfaces/scenesTypes';
+import { Scene } from '../../interfaces/scenes.types';
 import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';

@@ -104,7 +104,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Location Name',
       type: 'text',
-      fieldName: 'locationName',
+      fieldKeyName: 'locationName',
       placeholder: 'Location Name',
       required: true,
       inputName: `edit-${location?.locationName || ''}-location-input`,
@@ -115,7 +115,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Location Name',
       type: 'text',
-      fieldName: 'locationName',
+      fieldKeyName: 'locationName',
       placeholder: 'Location Name',
       required: true,
       inputName: `edit-${set?.locationName || ''}-location-input`,
@@ -123,7 +123,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Set Name',
       type: 'text',
-      fieldName: 'setName',
+      fieldKeyName: 'setName',
       placeholder: 'Set Name',
       required: true,
       inputName: `edit-${set?.setName || ''}-set-input`,
