@@ -12,17 +12,17 @@ const countrySchema = {
       maxLength: 250,
     },
     nameEng: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     nameEsp: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     code: {
-      type: 'string',
+      type: ['string', 'null'],
       maxLength: 10,
     },
     prefix: {
-      type: 'string',
+      type: ['string', 'null'],
       maxLength: 10,
     },
     updatedAt: {
