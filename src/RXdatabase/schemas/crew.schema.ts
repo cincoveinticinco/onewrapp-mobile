@@ -12,32 +12,32 @@ const crewSchema = {
       maxLength: 250,
     },
     depNameEng: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     depNameEsp: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     positionEsp: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     positionEng: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     projectId: {
       type: 'number',
     },
     fullName: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     email: {
-      type: 'string',
+      type: ['string', 'null'],
       format: 'email',
     },
     phone: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     updatedAt: {
-      type: 'string',
+      type: ['string', 'null'],
       format: 'date-time',
     },
     unitNumber: {
