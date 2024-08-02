@@ -22,7 +22,7 @@ export interface FormInput {
 }
 
 export interface SelectOptionsInterface {
-  value: string | number;
+  value: any;
   label: string;
 }
 

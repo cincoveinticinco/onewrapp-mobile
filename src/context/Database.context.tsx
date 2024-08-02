@@ -3,18 +3,19 @@ import React, {
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import AppDataBase from '../RXdatabase/database';
-import ScenesSchema from '../RXdatabase/schemas/scenes';
-import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects';
-import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs';
+import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
+import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
+import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs.schema';
 import HttpReplicator from '../RXdatabase/replicator';
 import useNavigatorOnLine from '../hooks/Shared/useNavigatorOnline';
-import UnitsSchema from '../RXdatabase/schemas/units';
-import ShootingsSchema from '../RXdatabase/schemas/shootings';
-import TalentsSchema from '../RXdatabase/schemas/talents';
+import UnitsSchema from '../RXdatabase/schemas/units.schema';
+import ShootingsSchema from '../RXdatabase/schemas/shootings.schema';
+import TalentsSchema from '../RXdatabase/schemas/talents.schema';
 import AuthContext from './Auth.context';
-import CrewSchema from '../RXdatabase/schemas/crew';
+import CrewSchema from '../RXdatabase/schemas/crew.schema';
 
 import { Provider } from 'rxdb-hooks';
+import CountriesSchema from '../RXdatabase/schemas/country.schema';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -92,6 +93,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
   const [crewCollection, setCrewCollection] = useState<CrewSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
+  const [countriesCollection, setCountriesCollection] = useState<any>(null);
   const { getToken } = useContext(AuthContext);
 
   // Resync
@@ -127,8 +129,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         const shootingsColl = new ShootingsSchema();
         const talentsColl = new TalentsSchema();
         const crewColl = new CrewSchema();
+        const countriesCollection = new CountriesSchema();
 
-        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl]);
+        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
 
         setOneWrapRXdatabase(dbInstance);
@@ -140,6 +143,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setShootingsCollection(shootingsColl);
         setTalentsCollection(talentsColl);
         setCrewCollection(crewColl);
+        setCountriesCollection(countriesCollection);
 
         setIsDatabaseReady(true);
 
@@ -382,6 +386,25 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   }
 
+  const initializeCountriesReplication = async () => {
+    if (!countriesCollection || !oneWrapRXdatabase) return false;
+    try {
+      const lastCountry = await oneWrapRXdatabase.countries.find().sort({ updatedAt: 'desc' }).limit(1).exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+
+      const countriesReplicator = new HttpReplicator(oneWrapRXdatabase, [countriesCollection], null, lastCountry, getToken);
+
+      if (isOnline) {
+        await countriesReplicator.startReplicationPull();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error during countries replication:', error);
+      return false;
+    }
+  }
+
   // This initial replication, is the first replication that is done when the user enters in a project. The idea is to replicate all the data from the server to the local database and use a loader to notify the status of replication. After this first replication, it is not necessary to replicate all the data again, and we can avoid the loaders
 
   let cancelCurrentIncrement: (() => void) | null = null;
@@ -456,8 +479,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           function: initializeShootingReplication,
         },
         {
-          name: 'Crew',
+          name: 'Countries',
           startPercentage: 70,
+          endPercentage: 80,
+          function: initializeCountriesReplication,
+        },
+        {
+          name: 'Crew',
+          startPercentage: 80,
           endPercentage: 100,
           function: initializeCrewReplication,
         }

@@ -13,6 +13,7 @@ import { Unit } from '../../interfaces/unitTypes.types';
 import { get } from 'lodash';
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import { IoMdAdd } from 'react-icons/io';
+import { Country } from '../../interfaces/country.types';
 
 const Crew: React.FC = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
@@ -28,6 +29,11 @@ const Crew: React.FC = () => {
 
   const { result: units = [] }: {result: Unit[]} = useRxData(
     'units',
+    (collection) => collection.find()
+  );
+
+  const { result: countries = [] }: {result: Country[]} = useRxData(
+    'countries',
     (collection) => collection.find()
   );
 
@@ -73,6 +79,11 @@ const Crew: React.FC = () => {
     label: unit.unitName,
   }));
 
+  const countryOptions: SelectOptionsInterface[] = countries.map((country) => ({
+    value: country.id,
+    label: `${country.prefix} (${country.code})`,
+  }));
+
   const crewFormInputs: FormInput[] = [
     {
       fieldKeyName: 'fullName',
@@ -99,12 +110,21 @@ const Crew: React.FC = () => {
       col: '6',
     },
     {
+      fieldKeyName: 'country',
+      label: 'Country',
+      type: 'select',
+      required: true,
+      selectOptions: countryOptions,
+      placeholder: 'Select country',
+      col: '4'
+    },
+    {
       fieldKeyName: 'phone',
       label: 'Phone',
       type: 'tel',
       required: true,
       placeholder: 'Enter phone',
-      col: '6',
+      col: '8',
     },
     {
       fieldKeyName: 'unitNumber',

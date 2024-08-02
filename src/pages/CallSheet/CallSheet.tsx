@@ -19,7 +19,7 @@ import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTab
 import CastView from '../../components/CallSheet/CastView/CastView/CastView';
 import DatabaseContext from '../../context/Database.context';
 import { Character, Scene } from '../../interfaces/scenes.types';
-import { Talent } from '../../RXdatabase/schemas/talents';
+import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
