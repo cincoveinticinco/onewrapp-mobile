@@ -11,4 +11,13 @@ export interface Crew {
   updatedAt: string;
   unitNumber: number;
   departmentId: number;
+  order: number;
+  visibleOnCall: boolean;
+  visibleOnHeader: boolean;
+  onCall: boolean;
+  dailyReportSignature: boolean;
+  emercencyContact: boolean;
+  unitName: string;
+  unitId: string;
+  countryId: string;
 }

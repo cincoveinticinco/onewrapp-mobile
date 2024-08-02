@@ -10,8 +10,6 @@ import { caretDown, caretUp } from 'ionicons/icons';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import { Unit } from '../../interfaces/unitTypes.types';
-import { get } from 'lodash';
-import AddButton from '../../components/Shared/AddButton/AddButton';
 import { IoMdAdd } from 'react-icons/io';
 import { Country } from '../../interfaces/country.types';
 
@@ -110,13 +108,13 @@ const Crew: React.FC = () => {
       col: '6',
     },
     {
-      fieldKeyName: 'country',
+      fieldKeyName: 'countryId',
       label: 'Country',
       type: 'select',
       required: true,
       selectOptions: countryOptions,
       placeholder: 'Select country',
-      col: '2'
+      col: '3'
     },
     {
       fieldKeyName: 'phone',
@@ -124,10 +122,10 @@ const Crew: React.FC = () => {
       type: 'tel',
       required: true,
       placeholder: 'Enter phone',
-      col: '10',
+      col: '9',
     },
     {
-      fieldKeyName: 'unitNumber',
+      fieldKeyName: 'unitId',
       label: 'Unit',
       type: 'select',
       required: true,
@@ -142,6 +140,41 @@ const Crew: React.FC = () => {
       required: true,
       placeholder: 'Enter order',
       col: '6',
+    },
+    {
+      fieldKeyName: 'visibleOnCall',
+      label: 'VISIBLE ON CALL',
+      type: 'checkbox',
+      required: false,
+      placeholder: 'VISIBLE ON CALL',
+    },
+    {
+      fieldKeyName: 'visibleOnHeader',
+      label: 'CALL SHEET HEADER',
+      type: 'checkbox',
+      required: false,
+      placeholder: 'CALL SHEET HEADER',
+    },
+    {
+      fieldKeyName: 'onCall',
+      label: 'ALWAYS ON CALL',
+      type: 'checkbox',
+      required: false,
+      placeholder: 'ALWAYS ON CALL',
+    },
+    {
+      fieldKeyName: 'dailyReportSignature',
+      label: 'REPORT SIGNATURE',
+      type: 'checkbox',
+      required: false,
+      placeholder: 'REPORT SIGNATURE',
+    },
+    {
+      fieldKeyName: 'emergencyContact',
+      label: 'EMERGENCY CONTACT',
+      type: 'checkbox',
+      required: false,
+      placeholder: 'EMERGENCY CONTACT',
     }
   ];
 
@@ -151,9 +184,17 @@ const Crew: React.FC = () => {
     if (!crewMember) return {};
     return {
       fullName: crewMember.fullName,
+      department: crewMember.depNameEng || crewMember.depNameEsp,
       email: crewMember.email,
       phone: crewMember.phone,
-      unitNumber: crewMember.unitNumber
+      unitId: parseInt(crewMember.unitId),
+      order: crewMember.order,
+      visibleOnCall: crewMember.visibleOnCall,
+      visibleOnHeader: crewMember.visibleOnHeader,
+      onCall: crewMember.onCall,
+      dailyReportSignature: crewMember.dailyReportSignature,
+      emergencyContact: crewMember.emergencyContact,
+      countryId: crewMember.countryId,
     };
   }
 

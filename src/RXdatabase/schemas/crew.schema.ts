@@ -41,11 +41,38 @@ const crewSchema = {
       format: 'date-time',
     },
     unitNumber: {
-      type: 'integer',
+      type: ['integer', 'null'],
     },
     departmentId: {
       type: 'number',
     },
+    order: {
+      type: ['integer', 'null'],
+    },
+    visibleOnCall: {
+      type: 'boolean',
+    },
+    visibleOnHeader: {
+      type: 'boolean',
+    },
+    onCall: {
+      type: 'boolean',
+    },
+    dailyReportSignature: {
+      type: 'boolean',
+    },
+    emercencyContact: {
+      type: 'boolean',
+    },
+    unitName: {
+      type: ['string', 'null'],
+    },
+    unitId: {
+      type: ['string', 'null'],
+    },
+    countryId: {
+      type: ['string', 'null'],
+    }
   },
   required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber', 'departmentId'],
 };
