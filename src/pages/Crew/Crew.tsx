@@ -1,22 +1,33 @@
 // Crew.tsx
 import React, { useState, useMemo } from 'react';
-import { IonContent, IonIcon } from '@ionic/react';
+import { IonButton, IonContent, IonIcon } from '@ionic/react';
 import { useRxData } from 'rxdb-hooks';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import { Crew as CrewInterface } from '../../interfaces/crewTypes';
+import { Crew as CrewInterface } from '../../interfaces/crew.types';
 import './Crew.scss';
 import { caretDown, caretUp } from 'ionicons/icons';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import useLoader from '../../hooks/Shared/useLoader';
+import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
+import { Unit } from '../../interfaces/unitTypes.types';
+import { get } from 'lodash';
+import AddButton from '../../components/Shared/AddButton/AddButton';
+import { IoMdAdd } from 'react-icons/io';
 
 const Crew: React.FC = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
   const [searchText, setSearchText] = useState('');
+  const [addNewModalIsOpen, setAddNewModalIsOpen] = useState(false);
+  const [selectedCrewId, setSelectedCrewId] = useState<string | null>(null);
 
   // Fetch crew data using useRxData
   const { result: crew = [], isFetching } = useRxData(
     'crew',
+    (collection) => collection.find()
+  );
+
+  const { result: units = [] }: {result: Unit[]} = useRxData(
+    'units',
     (collection) => collection.find()
   );
 
@@ -57,6 +68,99 @@ const Crew: React.FC = () => {
     );
   });
 
+  const unitsOptions: SelectOptionsInterface[] = units.map((unit) => ({
+    value: unit.id,
+    label: unit.unitName,
+  }));
+
+  const crewFormInputs: FormInput[] = [
+    {
+      fieldKeyName: 'fullName',
+      label: 'Full Name',
+      type: 'text',
+      required: true,
+      placeholder: 'Enter full name',
+      col: '12',
+    },
+    {
+      fieldKeyName: 'position',
+      label: 'Job Title',
+      type: 'text',
+      required: true,
+      placeholder: 'Enter position',
+      col: '6',
+    },
+    {
+      fieldKeyName: 'email',
+      label: 'Email',
+      type: 'email',
+      required: true,
+      placeholder: 'Enter email',
+      col: '6',
+    },
+    {
+      fieldKeyName: 'phone',
+      label: 'Phone',
+      type: 'tel',
+      required: true,
+      placeholder: 'Enter phone',
+      col: '6',
+    },
+    {
+      fieldKeyName: 'unitNumber',
+      label: 'Unit',
+      type: 'select',
+      required: true,
+      selectOptions: unitsOptions,
+      placeholder: 'Select unit',
+      col: '6'
+    },
+  ];
+
+  const getDefaultValuesById = (id: string | null) => {
+    if (!id) return {};
+    const crewMember: any = crew.find((member: any) => member.id === id);
+    if (!crewMember) return {};
+    return {
+      fullName: crewMember.fullName,
+      email: crewMember.email,
+      phone: crewMember.phone,
+      unitNumber: crewMember.unitNumber
+    };
+  }
+
+  const AddEditCrewModal = () => {
+    return (
+      <EditionModal
+        isOpen={addNewModalIsOpen}
+        title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
+        formInputs={crewFormInputs}
+        handleEdition={() => console.log('Add/Edit Crew')}
+        defaultFormValues={getDefaultValuesById(selectedCrewId)}
+        setIsOpen={setAddNewModalIsOpen}
+      />
+    )
+  }
+
+  const openModal = (id: string | null) => {
+    setSelectedCrewId(id);
+    setAddNewModalIsOpen(true);
+  }
+
+  const openModalButton = (): JSX.Element => {
+    return (
+      <IonButton
+        fill="clear"
+        slot="end"
+        color="light"
+        className="ion-no-padding toolbar-button"
+        onClick={() => openModal(null)}
+      >
+        <IoMdAdd className="toolbar-icon" />
+      </IonButton>
+    )
+  }
+
   return (
     <MainPagesLayout
       search
@@ -64,10 +168,20 @@ const Crew: React.FC = () => {
       setSearchText={setSearchText}
       title="CREW"
       isLoading={isFetching}
+      customButtons={[openModalButton]}
     >
       <IonContent color='tertiary'>
-        {isFetching ? (
-          useLoader()
+        {filteredDepartments.length === 0 ? (
+          <p style={
+            {
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              color: 'white',
+              fontSize: '1.2rem'
+            }
+          }>NO CREW MEMBERS FOUND</p>
         ) : (
           filteredDepartments.map((department) => {
             const departmentMembers = crewByDepartment[department].filter((member) =>
@@ -96,7 +210,7 @@ const Crew: React.FC = () => {
                   <CrewCard
                     key={member.id}
                     crew={member}
-                    onEdit={() => console.log('Edit')}
+                    onEdit={openModal}
                     onDelete={() => console.log('Delete')}
                   />
                 ))}
@@ -105,6 +219,7 @@ const Crew: React.FC = () => {
           })
         )}
       </IonContent>
+      <AddEditCrewModal />
     </MainPagesLayout>
   );
 };
