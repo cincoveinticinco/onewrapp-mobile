@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { IoMdAdd } from 'react-icons/io';
-import { VscEdit, VscTrash } from 'react-icons/vsc';
+import { VscEdit } from 'react-icons/vsc';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import DatabaseContext from '../../hooks/Shared/database';
@@ -16,10 +16,10 @@ import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useLoader from '../../hooks/Shared/useLoader';
 import {
   ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, Meal, AdvanceCall,
-} from '../../interfaces/shootingTypes';
+} from '../../interfaces/shooting.types';
 import './ShootingDetail.css';
-import EditionModal from '../../components/Shared/EditionModal/EditionModal';
-import { Scene } from '../../interfaces/scenesTypes';
+import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
+import { Scene } from '../../interfaces/scenes.types';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
 import ShootingBanner from '../../components/ShootingDetail/ShootingBannerCard/ShootingBanner';
 import floatToFraction from '../../utils/floatToFraction';
@@ -204,7 +204,7 @@ const ShootingDetail = () => {
     label: color.name,
   }));
 
-  const fontSizeOptions = [
+  const fontSizeOptions: SelectOptionsInterface[] = [
     {
       value: 12,
       label: '12 px',
@@ -241,17 +241,17 @@ const ShootingDetail = () => {
     }));
   };
 
-  const bannerInputs = [
+  const bannerInputs: FormInput[] = [
     {
-      label: 'Description', type: 'text', fieldName: 'description', placeholder: 'INSERT', required: true, inputName: 'add-banner-description-input', col: '4',
+      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: true, inputName: 'add-banner-description-input', col: '4',
     },
     {
-      label: 'Font Size', type: 'select', fieldName: 'fontSize', placeholder: 'INSERT', required: false, inputName: 'add-character-name-input', col: '4', selectOptions: fontSizeOptions,
+      label: 'Font Size', type: 'select', fieldKeyName: 'fontSize', placeholder: 'INSERT', required: false, inputName: 'add-character-name-input', col: '4', selectOptions: fontSizeOptions,
     },
     {
       label: 'Color',
       type: 'select',
-      fieldName: 'backgroundColor',
+      fieldKeyName: 'backgroundColor',
       placeholder: 'SELECT COLOR',
       required: false,
       inputName: 'add-background-color-input',
@@ -264,13 +264,13 @@ const ShootingDetail = () => {
 
   const advanceCallInputs = [
     {
-      label: 'Department', type: 'text', fieldName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '4',
+      label: 'Department', type: 'text', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '4',
     },
     {
-      label: 'Call', type: 'time', fieldName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '4',
+      label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '4',
     },
     {
-      label: 'Description', type: 'text', fieldName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '4',
+      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '4',
     },
   ];
 
@@ -303,16 +303,16 @@ const ShootingDetail = () => {
 
   const mealInputs = [
     {
-      label: 'Meal', type: 'text', fieldName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '4',
+      label: 'Meal', type: 'text', fieldKeyName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '4',
     },
     {
-      label: 'From Time', type: 'time', fieldName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '4',
+      label: 'From Time', type: 'time', fieldKeyName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '4',
     },
     {
-      label: 'End Time', type: 'time', fieldName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '4',
+      label: 'End Time', type: 'time', fieldKeyName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '4',
     },
     {
-      label: 'Quantity', type: 'number', fieldName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '4',
+      label: 'Quantity', type: 'number', fieldKeyName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '4',
     },
   ];
 
@@ -971,7 +971,7 @@ const ShootingDetail = () => {
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name={shootingData.shootingFormattedDate} addShoBanSc={addShoBanSc} back handleBack={handleBack} />
+        <Toolbar name={shootingData.shootingFormattedDate} customButtons={[addShoBanSc]} back handleBack={handleBack} />
       </IonHeader>
       {additionMenu && (
         <div className="add-menu" style={{ backgroundColor: 'black', outline: '1px solid white' }}>
