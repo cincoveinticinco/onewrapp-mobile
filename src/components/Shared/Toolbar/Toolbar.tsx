@@ -27,6 +27,8 @@ interface ToolbarButton {
   show: boolean;
 }
 
+type CustomButton= () => JSX.Element;
+
 interface ToolbarProps {
   name: string;
   menu?: boolean;
@@ -51,6 +53,7 @@ interface ToolbarProps {
   download?: boolean;
   addShoBanSc?: any;
   isLoading?: boolean;
+  customButtons?: CustomButton[];
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -76,6 +79,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   download = true,
   addShoBanSc,
   isLoading = false,
+  customButtons = [],
 }) => {
   const isMobile = useIsMobile();
 
@@ -194,6 +198,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
             <PiTrashSimpleLight className="toolbar-icon trash-icon" />
           </IonButton>
         )
+      }
+      {
+        customButtons.map((renderFunction: any) => (
+          renderFunction()
+        ))
       }
       {
         addShoBanSc && (
