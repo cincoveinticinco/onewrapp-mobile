@@ -11,14 +11,23 @@ import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
 
 export interface FormInput {
-  fieldName: string;
+  fieldKeyName: string;
   label: string;
   placeholder: string;
   type: string;
   col?: string;
   inputName?: string;
   required?: boolean;
-  selectOptions?: any[];
+  selectOptions?: SelectOptionsInterface[];
+}
+
+export interface SelectOptionsInterface {
+  value: string | number;
+  label: string;
+}
+
+export interface defaultFormValues {
+  [key: string]: string | number | null;
 }
 
 interface EditionModalProps {
@@ -56,14 +65,14 @@ const EditionModal: React.FC<EditionModalProps> = ({
     formInputs.forEach((input: any) => {
       setShowError((prevState: any) => ({
         ...prevState,
-        [input.fieldName]: false,
+        [input.fieldKeyName]: false,
       }));
     });
   }, []);
 
   const resetFormValues = () => {
     formInputs.forEach((input: any) => {
-      setValue(input.fieldName, defaultFormValues[input.fieldName]);
+      setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
     });
   };
 
@@ -92,32 +101,32 @@ const EditionModal: React.FC<EditionModalProps> = ({
     defaultValues: defaultFormValues,
   });
 
-  const setNewOptionValue = (fieldName: string, value: string) => {
-    if ((value === '' || !value) && fieldName !== 'characterNum') {
-      return setValue(fieldName, null);
+  const setNewOptionValue = (fieldKeyName: string, value: string) => {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
+      return setValue(fieldKeyName, null);
     }
-    return setValue(fieldName, value);
+    return setValue(fieldKeyName, value);
   };
 
-  const handleValidation = (value: string, fieldName: string, required: boolean) => {
-    if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
+  const handleValidation = (value: string, fieldKeyName: string, required: boolean) => {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum' && required) {
       setShowError(
         (prevState: any) => ({
           ...prevState,
-          [fieldName]: true,
+          [fieldKeyName]: true,
         }),
       );
       setErrorMessage('REQUIRED *');
       return 'This field is required';
     }
 
-    if (validate && fieldName !== 'characterNum' && required) {
-      const validation = validate(value, fieldName);
+    if (validate && fieldKeyName !== 'characterNum' && required) {
+      const validation = validate(value, fieldKeyName);
       if (typeof validation === 'string') {
         setShowError(
           (prevState: any) => ({
             ...prevState,
-            [fieldName]: true,
+            [fieldKeyName]: true,
           }),
         );
         setErrorMessage(validation);
@@ -153,10 +162,10 @@ const EditionModal: React.FC<EditionModalProps> = ({
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios" />
         {formInputs && (
-          <IonGrid className="edit-inputs-wrapper">
+          <IonGrid className="edit-inputs-wrapper" fixed={true}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} size={input.col || '12'} className="ion-flex ion-justify-content-center">
+                <IonCol key={i} sizeSm={input.col || '12'} sizeXs='12' className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
                     <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
                   ) : (
@@ -164,11 +173,11 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       label={input.label}
                       placeholder={input.placeholder}
                       control={control}
-                      fieldName={input.fieldName}
+                      fieldKeyName={input.fieldKeyName}
                       inputName={input.inputName}
-                      displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
+                      displayError={input.fieldKeyName !== 'characterNum' ? showError[input.fieldKeyName as keyof typeof showError] : false}
                       setValue={setNewOptionValue}
-                      validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
+                      validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName, input.required)}
                       type={input.type}
                       errorMessage={errorMessage}
                       style={{ width: '100%' }}
