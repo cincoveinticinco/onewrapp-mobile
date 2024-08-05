@@ -1,7 +1,7 @@
 // Crew.tsx
 import React, { useState, useMemo } from 'react';
 import { IonButton, IonContent, IonIcon } from '@ionic/react';
-import { useRxData } from 'rxdb-hooks';
+import { useRxData, useRxDB } from 'rxdb-hooks';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import { Crew as CrewInterface } from '../../interfaces/crew.types';
@@ -12,15 +12,34 @@ import EditionModal, { FormInput, SelectOptionsInterface } from '../../component
 import { Unit } from '../../interfaces/unitTypes.types';
 import { IoMdAdd } from 'react-icons/io';
 import { Country } from '../../interfaces/country.types';
+import { useParams } from 'react-router';
+
+interface FormStructureInterface {
+  fullName: string;
+  position: string;
+  email: string;
+  countryId: string;
+  phone: string;
+  unitId: string;
+  order: string;
+  visibleOnCall: boolean;
+  visibleOnHeader: boolean;
+  onCall: boolean;
+  dailyReportSignature: boolean;
+  emergencyContact: boolean;
+  department: string;
+}
 
 const Crew: React.FC = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
   const [searchText, setSearchText] = useState('');
   const [addNewModalIsOpen, setAddNewModalIsOpen] = useState(false);
   const [selectedCrewId, setSelectedCrewId] = useState<string | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const oneWrappDb: any = useRxDB();
 
   // Fetch crew data using useRxData
-  const { result: crew = [], isFetching } = useRxData(
+  const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
     'crew',
     (collection) => collection.find()
   );
@@ -34,6 +53,42 @@ const Crew: React.FC = () => {
     'countries',
     (collection) => collection.find()
   );
+
+  // Create or update crew member
+  const handleUpsert = async (data: FormStructureInterface) => {
+    const unit = units.find((unit) => unit.id === data.unitId);
+    const department = departmentsOptions.find((department: any) => department.label === data.department);
+    const formmatedData: CrewInterface = {
+      id: selectedCrewId || `${Date.now()}`,
+      fullName: data.fullName,
+      positionEsp: data.position,
+      positionEng: data.position,
+      email: data.email,
+      countryId: data.countryId,
+      phone: data.phone,
+      unitId: data.unitId,
+      unitName: unit?.unitName || '',
+      unitNumber: unit?.unitNumber || 0,
+      departmentId: department?.value || 0,
+      order: parseInt(data.order),
+      visibleOnCall: data.visibleOnCall,
+      visibleOnHeader: data.visibleOnHeader,
+      onCall: data.onCall,
+      dailyReportSignature: data.dailyReportSignature,
+      emergencyContact: data.emergencyContact,
+      depNameEng: department?.label || '',
+      depNameEsp: department?.label || '',
+      projectId: parseInt(id),
+      updatedAt: new Date().toISOString(),
+
+    };
+
+    try {
+      await oneWrappDb?.crew.upsert(formmatedData);
+    } catch (error) {
+      console.error('Error upserting crew member', error);
+    }
+  }
 
   // Group crew members by department
   const crewByDepartment = useMemo(() => {
@@ -82,7 +137,27 @@ const Crew: React.FC = () => {
     label: `${country.prefix} (${country.code})`,
   }));
 
+  // departments value = id, label = name
+
+  const departmentsOptions: SelectOptionsInterface[] = Object.keys(crewByDepartment).map((department: any) => {
+    const departmentId: any = crew.find((member: any) => member?.depNameEng === department || member.depNameEsp == department)?.departmentId;
+
+    return {
+      value: departmentId,
+      label: department
+    }
+  });
+
   const crewFormInputs: FormInput[] = [
+    {
+      fieldKeyName: 'department',
+      label: 'Department',
+      type: 'select',
+      required: true,
+      placeholder: 'Enter department',
+      col: '12',
+      selectOptions: departmentsOptions
+    },
     {
       fieldKeyName: 'fullName',
       label: 'Full Name',
@@ -240,7 +315,7 @@ const Crew: React.FC = () => {
       customButtons={[openModalButton]}
     >
       <IonContent color='tertiary'>
-        {filteredDepartments.length === 0 ? (
+        {filteredDepartments.length === 0 && !isFetching ? (
           <p style={
             {
               position: 'absolute',
