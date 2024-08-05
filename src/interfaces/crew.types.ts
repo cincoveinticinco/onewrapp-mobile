@@ -16,7 +16,7 @@ export interface Crew {
   visibleOnHeader: boolean;
   onCall: boolean;
   dailyReportSignature: boolean;
-  emercencyContact: boolean;
+  emergencyContact: boolean;
   unitName: string;
   unitId: string;
   countryId: string;
