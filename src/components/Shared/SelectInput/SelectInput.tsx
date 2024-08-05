@@ -87,9 +87,15 @@ const SelectItem: React.FC<SelectItemProps> = ({
             className={(showError ? 'error' : '')}
             mode="ios"
             disabled={disabled}
+            class='uppercase'
+            style={
+              {
+                width: '100%',
+              }
+            }
           >
             {options.map((option, index) => (
-              <IonSelectOption key={index} value={option.value} className='uppercase'>{option.label}</IonSelectOption>
+              <IonSelectOption key={index} value={option.value} className='uppercase'>{option.label.toUpperCase()}</IonSelectOption>
             ))}
           </IonSelect>
         )}
