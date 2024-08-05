@@ -43,9 +43,10 @@ ion-select {
   ion-checkbox {
     --size: 12px;
     --checkbox-background-checked: radial-gradient(circle, yellow 46%, rgba(255,255,255,1) 46%);
+    --border-color-checked: yellow !important;
   }
   ion-checkbox::part(container) {
-    outline: .5px solid var(--ion-color-dark);
+    border: .5px solid yellow;
     border-radius: 100%;
     padding: 8px;
   }

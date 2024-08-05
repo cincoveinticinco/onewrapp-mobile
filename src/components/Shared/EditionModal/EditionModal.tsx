@@ -208,7 +208,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       <IonCheckbox
                         checked={watch(input.fieldKeyName)}
                         onIonChange={(e) => handleCheckboxChange(input.fieldKeyName, e.detail.checked)}
-                        
+                        class='checkbox'
                       />
                       <IonLabel className="ion-padding-start">{input.label}</IonLabel>
                     </IonItem>
