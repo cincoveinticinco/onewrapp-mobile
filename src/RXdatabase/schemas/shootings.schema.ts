@@ -125,6 +125,16 @@ const shootingSchema = {
           setups: {
             type: ['number', 'null'],
           },
+          partiality: {
+            type: ['boolean', 'null'],
+          },
+          soundType: {
+            type: ['string', 'null'],
+          },
+          soundNote: {
+            type: ['string', 'null'],
+          },
+          // FALTAN COMMENT Y PROTECTION
           createdAt: {
             type: 'string',
           },

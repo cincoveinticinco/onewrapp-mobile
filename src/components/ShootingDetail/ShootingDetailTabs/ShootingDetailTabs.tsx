@@ -35,21 +35,6 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
         </IonLabel>
       </IonTabButton>
       <IonTabButton
-        tab="shootingScenes"
-        className="tab-bar-buttons"
-        onClick={() => setView('scenes')}
-      >
-        <IonIcon icon={serverOutline} color={view === 'scenes' ? 'primary' : 'light'} />
-        <IonLabel style={
-            {
-              color: view === 'scenes' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-            }
-          }
-        >
-          SCENES
-        </IonLabel>
-      </IonTabButton>
-      <IonTabButton
         tab="shootingInfo"
         className="tab-bar-buttons"
         onClick={() => setView('info')}
@@ -65,6 +50,21 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
         </IonLabel>
       </IonTabButton>
       <IonTabButton
+        tab="shootingScenes"
+        className="tab-bar-buttons"
+        onClick={() => setView('scenes')}
+      >
+        <IonIcon icon={serverOutline} color={view === 'scenes' ? 'primary' : 'light'} />
+        <IonLabel style={
+            {
+              color: view === 'scenes' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
+            }
+          }
+        >
+          SCENES
+        </IonLabel>
+      </IonTabButton>
+      <IonTabButton
         tab="shootingCallTime"
         className="tab-bar-buttons"
         onClick={goToCallSheet}
@@ -73,6 +73,20 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
         <IonLabel>
           CALL TIME
         </IonLabel>
+      </IonTabButton>
+      <IonTabButton
+        tab="shootingOthers"
+        className="tab-bar-buttons"
+        onClick={() => setView('script-report')}>
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color={view === 'script-report' ? 'primary' : 'light'} />
+        <IonLabel style={
+            {
+              color: view === 'script-report' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
+            }
+          }
+          >
+          SCRIPT REPORT
+          </IonLabel>
       </IonTabButton>
     </IonTabBar>
   );
