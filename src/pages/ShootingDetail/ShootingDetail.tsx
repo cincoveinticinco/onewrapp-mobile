@@ -1215,7 +1215,7 @@ const ShootingDetail = () => {
           </IonContent>
         )
       }
-      <ShootingDetailTabs setView={setView} view={view} />
+      <ShootingDetailTabs setView={setView} view={view} handleBack={handleBack} />
       <AddNewBanner />
       <AddNewScenes />
       <AddNewAdvanceCallModal />

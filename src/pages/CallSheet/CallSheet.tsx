@@ -30,6 +30,7 @@ import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
 import { ShootingStatusEnum } from '../../Ennums/ennums';
 import timeToISOString from '../../utils/timeToIsoString';
+import useHandleBack from '../../hooks/Shared/useHandleBack';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -741,7 +742,7 @@ const CallSheet: React.FC = () => {
       <IonContent color="tertiary" fullscreen>
         {renderContent()}
       </IonContent>
-      <CallSheetTabs view={view} setView={setView} />
+      <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()}/>
     </IonPage>
   );
 };

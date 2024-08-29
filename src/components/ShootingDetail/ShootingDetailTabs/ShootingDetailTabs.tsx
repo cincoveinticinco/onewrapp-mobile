@@ -1,7 +1,7 @@
 import {
   IonIcon, IonLabel, IonTabBar, IonTabButton,
 } from '@ionic/react';
-import { documentTextOutline, informationCircleOutline, serverOutline } from 'ionicons/icons';
+import { documentTextOutline, home, informationCircleOutline, serverOutline } from 'ionicons/icons';
 import React from 'react';
 import { ShootingViews } from '../../../pages/ShootingDetail/ShootingDetail';
 import './ShootingDetailTabs.css';
@@ -10,9 +10,10 @@ import { useHistory, useParams } from 'react-router';
 interface ShootingDetailTabsProps {
   setView: (view: ShootingViews) => void;
   view: ShootingViews;
+  handleBack: () => void;
 }
 
-const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view }) => {
+const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, handleBack }) => {
   const { shootingId } = useParams<{ shootingId: string }>();
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -23,6 +24,16 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view }
 
   return (
     <IonTabBar slot="bottom" color="dark" mode="md">
+        <IonTabButton
+          tab="shootingScenes"
+          className="tab-bar-buttons"
+          onClick={() => handleBack()}
+        >
+        <IonIcon icon={home} />
+        <IonLabel>
+          HOME
+        </IonLabel>
+      </IonTabButton>
       <IonTabButton
         tab="shootingScenes"
         className="tab-bar-buttons"
