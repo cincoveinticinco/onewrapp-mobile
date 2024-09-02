@@ -128,13 +128,12 @@ const shootingSchema = {
           partiality: {
             type: ['boolean', 'null'],
           },
-          soundType: {
+          comment: {
             type: ['string', 'null'],
           },
-          soundNote: {
-            type: ['string', 'null'],
+          protectionTypeId: {
+            type: ['number', 'null'],
           },
-          // FALTAN COMMENT Y PROTECTION
           createdAt: {
             type: 'string',
           },

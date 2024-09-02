@@ -45,6 +45,7 @@ const Strips: React.FC = () => {
   const { id } = useParams<any>();
   const [renderScenes, setRenderScenes] = useState<boolean>(false);
   const toggleTabs = useHideTabs();
+  const [replicatorCreated, setReplicatorCreated] = useState<boolean>(false);
 
   useEffect(() => {
     setRenderScenes(initialReplicationFinished);
@@ -53,7 +54,10 @@ const Strips: React.FC = () => {
 
   useIonViewDidEnter(() => {
     toggleTabs.showTabs();
-    initializeSceneReplication();
+    if(!replicatorCreated) {
+      initializeSceneReplication();
+      setReplicatorCreated(true);
+    }
   });
 
   const memoizedApplyFilters = useCallback((data: any, options: any) => applyFilters(data, options), []);

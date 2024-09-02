@@ -1,5 +1,5 @@
 import {
-  IonButton, IonContent, IonHeader, IonItem, IonPage, IonReorderGroup,
+  IonButton, IonContent, IonHeader, IonIcon, IonItem, IonPage, IonReorderGroup,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
@@ -27,6 +27,8 @@ import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 import InfoView from '../../components/ShootingDetail/ShootingDetailViews/InfoView/InfoView';
 import ScriptReportView from '../../components/ShootingDetail/ShootingDetailViews/ScriptReportView/ScriptReportView';
+import { save } from 'ionicons/icons';
+import { VscEdit } from 'react-icons/vsc';
 
 export type ShootingViews = 'scenes' | 'info'  | 'script-report'
 type cardType = {
@@ -77,6 +79,7 @@ const ShootingDetail = () => {
   const [showMapModal, setShowMapModal] = useState(false);
   const [showHospitalsMapModal, setShowHospitalsMapModal] = useState(false);
   const [locationsEditMode, setLocationsEditMode] = useState(false);
+  const [scriptReportEditMode, setScriptReportEditMode] = useState(false);
   const bannerModalRef = useRef<HTMLIonModalElement>(null);
   const sceneModalRef = useRef<HTMLIonModalElement>(null);
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
@@ -632,6 +635,8 @@ const ShootingDetail = () => {
     } catch (error) {
       console.error('Error saving order:', error);
     }
+
+    saveShooting();
   };
 
   const { setViewTabs } = useContext(DatabaseContext);
@@ -706,10 +711,21 @@ const ShootingDetail = () => {
       selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } },
     }).exec();
 
+    const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
+      if (scene.status === ShootingSceneStatusEnum.NotShoot) {
+        return 'var(--ion-color-danger)';
+      } else if (scene.status === ShootingSceneStatusEnum.Assigned) {
+        return 'var(--ion-color-success)';
+      } else {
+        return 'var(--ion-color-tertiary-dark)'
+      }
+    }  
+
     const mergedScenesShootData: mergedSceneShoot[] = scenesData?.map((scene: any) => {
       const sceneShootingData = scenesInShoot.find((sceneInShoot: any) => parseInt(sceneInShoot.sceneId) === parseInt(scene.sceneId));
       return {
         cardType: 'scene',
+        backgroundColor: getSceneBackgroundColor(sceneShootingData),
         ...scene._data,
         ...sceneShootingData,
       };
@@ -719,7 +735,7 @@ const ShootingDetail = () => {
       cardType: 'banner', ...banner,
     }));
 
-    const mergedScenes = [...mergedScenesShootData, ...bannersWithType].sort((a: any, b: any) => a.position - b.position);
+    const mergedScenes = [...mergedScenesShootData, ...bannersWithType].sort((a: any, b: any) => a.position - b.position)
 
     const updatedInfo = calculateUpdatedInfo(mergedScenes);
 
@@ -770,7 +786,7 @@ const ShootingDetail = () => {
   };
 
   const addShoBanSc = () => (
-    <div className="button-wrapper" slot="end">
+    <div className="button-wrapper" slot="end" key='custom-add-button'>
       <IonButton
         fill="clear"
         slot="end"
@@ -980,10 +996,65 @@ const ShootingDetail = () => {
     }
   };
 
+  const editScriptReportButton: any = () => {
+    if(view === 'script-report') {
+      return (
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          className="ion-no-padding toolbar-button"
+          onClick={() => {
+            if(scriptReportEditMode) {
+              saveScriptReport();
+              setScriptReportEditMode(!scriptReportEditMode);
+            } else {
+              setScriptReportEditMode(!scriptReportEditMode);
+            }
+          }}
+          key='custom-edit'
+        >
+          {scriptReportEditMode ? 
+            <IonIcon icon={save} color='success' />
+              :
+            <VscEdit size="20px" color="white" />
+          }
+        </IonButton>
+      );
+    }
+  }
+
+  const saveScriptReport = async () => {
+    // Here we should save the script report
+    try {
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingCopy = { ...shooting._data };
+      shootingCopy.scenes = shootingData.mergedScenesShootData;
+
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+
+      setShootingData((prev: any) => ({
+        ...prev,
+        mergedScenesShootData: shootingCopy.scenes,
+      }));
+
+      console.log('Script report saved successfully');
+    } catch (error) {
+      console.error('Error saving script report:', error);
+    }
+  }
+
+  const setMergedScenesShootData = (scenes: any) => {
+    setShootingData((prev: any) => ({
+      ...prev,
+      mergedScenesShootData: scenes,
+    }));
+  }
+
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name={shootingData.shootingFormattedDate} customButtons={[addShoBanSc]} back handleBack={handleBack} />
+        <Toolbar name={shootingData.shootingFormattedDate} customButtons={[editScriptReportButton, addShoBanSc]} back handleBack={handleBack} />
       </IonHeader>
       {additionMenu && (
         <div className="add-menu" style={{ backgroundColor: 'black', outline: '1px solid white' }}>
@@ -1063,6 +1134,8 @@ const ShootingDetail = () => {
         view === 'script-report' &&
         <ScriptReportView
           mergedScenesShoot={shootingData.mergedScenesShootData}
+          editMode={scriptReportEditMode}
+          setMergedScenesShoot={setMergedScenesShootData}
         ></ScriptReportView>
       }
       <ShootingDetailTabs setView={setView} view={view} handleBack={handleBack} />

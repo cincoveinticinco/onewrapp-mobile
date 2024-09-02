@@ -45,7 +45,7 @@ const MemoizedExtraForm = React.memo(ExtraForm);
 const MemoizedNoteForm = React.memo(NoteForm);
 
 const ScriptPage: React.FC<ScriptPageProps> = ({
-  zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId,
+  zoomLevel, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const handlePopupOpen = (selectedText: string, x: number, y: number) => {

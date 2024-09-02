@@ -62,7 +62,7 @@ const SceneDetails: React.FC = () => {
 
   const getCurrentScene = async () => {
     const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
-    return scene._data ? scene._data : null;
+    return scene?._data ? scene?._data : null;
   };
 
   const interior = IntOrExtOptionEnum.INT;

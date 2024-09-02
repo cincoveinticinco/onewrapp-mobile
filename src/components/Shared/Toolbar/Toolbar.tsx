@@ -13,13 +13,12 @@ import { RiDownload2Line } from 'react-icons/ri';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import { generate } from '@pdfme/generator';
-import { add } from 'lodash';
 import { useParams } from 'react-router';
 import template from '../../../templates/MinimalTemplate';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import DatabaseContext from '../../../context/Database.context';
 
-interface ToolbarButton {
+export interface ToolbarButton {
   name: string;
   icon: any;
   click: () => void;
@@ -200,8 +199,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         )
       }
       {
-        customButtons.map((renderFunction: any) => (
-          renderFunction()
+        customButtons.map((renderFunction: any, index) => (
+            renderFunction()
         ))
       }
       {

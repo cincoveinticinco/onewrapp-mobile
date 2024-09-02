@@ -12,11 +12,9 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
   const [pageFraction, setPageFraction] = React.useState(0);
 
   useEffect(() => {
-    if (!observedField) {
-      setPageInteger(0);
-      setPageFraction(0);
-    }
-  }, [observedField]);
+    setPageInteger(Math.floor(observedField || 0));
+    setPageFraction(Math.round((observedField || 0) % 1 * 8));
+  }, []);
 
   useEffect(() => {
     handleChange(fractionToFloat(pageInteger, pageFraction), 'pages');

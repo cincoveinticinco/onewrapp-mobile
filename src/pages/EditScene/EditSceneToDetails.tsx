@@ -61,7 +61,7 @@ const EditSceneToDetails: React.FC = () => {
 
   const getExistingScene = async () => {
     const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
-    return scene._data;
+    return scene?._data;
   };
 
   useEffect(() => {

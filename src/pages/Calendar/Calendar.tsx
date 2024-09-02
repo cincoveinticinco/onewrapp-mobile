@@ -34,7 +34,7 @@ const Calendar: React.FC = () => {
     { color: 'var(--ion-color-success)', label: 'CLOSED' },
   ];
 
-  useIonViewWillEnter(() => {
+  useIonViewDidEnter(() => {
     setProjectId(id);
     initializeShootingReplication()
   });
