@@ -91,6 +91,8 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
       } else if (type === 'seconds') {
         const [minutes, seconds] = newValue.split(':');
         formattedValue = minSecToSeconds(parseInt(minutes), parseInt(seconds));
+      } else {
+        formattedValue = newValue;
       }
 
       onChange(rowIndex, rowKey, formattedValue, type);

@@ -107,8 +107,8 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       editable: true,
       switchValues: {
         left: ShootingSceneStatusEnum.NotShoot,
-        neutral: ShootingSceneStatusEnum.Shoot,
-        right: ShootingSceneStatusEnum.Assigned,
+        neutral: ShootingSceneStatusEnum.Assigned,
+        right: ShootingSceneStatusEnum.Shoot,
       },
       showOnlyWhenEdit: true,
     }

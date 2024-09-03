@@ -12,6 +12,8 @@ export interface ShootingScene {
   startShooting: string | null;
   endShooting: string | null;
   producedSeconds: number | null;
+  comment: string | null;
+  partiality: boolean | null;
   setups: number | null;
   createdAt: string;
   updatedAt: string;

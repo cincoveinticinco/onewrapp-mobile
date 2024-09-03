@@ -59,6 +59,15 @@
   }
 }
 
+.scene-theme-danger {
+  --background: var(--ion-color-danger);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-danger-shade);
+  }
+}
+
 .scene-theme-primary {
   --background: var(--ion-color-primary);
 
@@ -107,6 +116,14 @@
   border: 1px solid var(--ion-color-dark);
 }
 
+.shoot-info {
+  .info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    border: 1px solid var(--ion-color-dark);
+  }
+}
+
 @media (min-width: 500px) {
   .categories-card-container {
     grid-template-columns: 1fr 1fr 1fr;
@@ -117,4 +134,20 @@
     text-align: center;
     padding: 12px;
   }
+
+  .shoot-info {
+    width: 100%;
+    .info {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 6px;
+      border: 1px solid var(--ion-color-dark);
+      padding: 12px;
+
+      div {
+        padding: 3px;
+      }
+    }
+  }
+  
 }

@@ -188,7 +188,7 @@ const Strips: React.FC = () => {
               <IonGrid className="scenes-grid ion-margin">
                 <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
                   {displayedScenes.map((scene, i) => (
-                    <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene} searchText={searchText} />
+                    <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene as any} searchText={searchText} />
                   ))}
                 </ScrollInfiniteContext>
               </IonGrid>

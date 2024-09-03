@@ -86,6 +86,9 @@ const AppTabs: React.FC = () => {
         <Route path={`${urlString}/strips/details/scene/:sceneId`}>
           <SceneDetails />
         </Route>
+        <Route path={`${urlString}/shooting/:shootingId/details/scene/:sceneId`}>
+          <SceneDetails />
+        </Route>
         <Route path={`${urlString}/strips/details/script/:sceneId`}>
           <SceneScript />
         </Route>

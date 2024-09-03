@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext } from 'react';
 import {
-  IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
+  IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonButton, useIonToast,
   IonReorder,
 } from '@ionic/react';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
@@ -22,7 +22,7 @@ import DatabaseContext, { DatabaseContextProps } from '../../context/Database.co
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 
 interface SceneCardProps {
-  scene: Scene;
+  scene: Scene & { frontId: string };
   searchText?: string;
   isShooting?: boolean;
   isProduced?: ShootingSceneStatusEnum;
@@ -36,7 +36,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const history = useHistory();
   const routeMatch = useRouteMatch();
-  const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`;
+  const detailsRoute = `${routeMatch.url}/details/scene/${isShooting ? scene.frontId : scene.id}`;
   const alertRef = React.useRef<HTMLIonAlertElement>(null);
 
   const openDeleteAlert = async () => {
@@ -165,11 +165,9 @@ const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   const goToSceneDetails = () => {
-    if (isShooting) {
-      return;
-    }
-    history.push(detailsRoute);
-    localStorage.setItem('editionBackRoute', detailsRoute);
+    const route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+    history.push(route);
+    localStorage.setItem('editionBackRoute', route);
   };
 
   const shootingCardSceneClass = (isShooting && (isProduced === ShootingSceneStatusEnum.Assigned ? 'background-light' : isProduced === ShootingSceneStatusEnum.Shoot ? 'background-success' : 'background-danger'));

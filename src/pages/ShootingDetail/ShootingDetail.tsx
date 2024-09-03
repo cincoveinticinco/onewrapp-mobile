@@ -518,6 +518,8 @@ const ShootingDetail = () => {
       position: shootingData.mergedSceneBanners.length,
       rehersalStart: null,
       rehersalEnd: null,
+      comment: '',
+      partiality: false,
       startShooting: null,
       endShooting: null,
       producedSeconds: 0,
@@ -584,6 +586,8 @@ const ShootingDetail = () => {
     startShooting: scene.startShooting,
     endShooting: scene.endShooting,
     producedSeconds: scene.producedSeconds,
+    comment: scene.comment,
+    partiality: scene.partiality,
     setups: scene.setups,
     createdAt: scene.createdAt,
     updatedAt: scene.updatedAt,
@@ -726,6 +730,7 @@ const ShootingDetail = () => {
       return {
         cardType: 'scene',
         backgroundColor: getSceneBackgroundColor(sceneShootingData),
+        frontId: scene._data.id,
         ...scene._data,
         ...sceneShootingData,
       };
