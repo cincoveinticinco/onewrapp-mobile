@@ -18,11 +18,12 @@ import './SceneScript.scss';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/Scenes.context';
 import applyFilters from '../../utils/applyFilters';
-import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import {
   Character, Element, Extra, Note, Scene,
 } from '../../interfaces/scenes.types';
 import ScriptPage from '../../components/SceneScript/ScriptPage';
+import { ShootingScene } from '../../interfaces/shooting.types';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -30,11 +31,11 @@ import ScriptPage from '../../components/SceneScript/ScriptPage';
 
 const SceneScript: React.FC = () => {
   const { hideTabs, showTabs } = useHideTabs();
-  const { sceneId } = useParams<{ sceneId: string }>();
+  const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
+  const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
   const {
-    oneWrapDb, offlineScenes, initializeParagraphReplication, projectId,
-  } = useContext<DatabaseContextProps>(DatabaseContext);
+    oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {
@@ -51,8 +52,56 @@ const SceneScript: React.FC = () => {
   const [paragraphs, setParagraphs] = useState<any[]>([]);
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+  const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
+  const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
+  const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
+  const [previousScene, setPreviousScene] = useState<Scene | null>(null);
+  const [nextScene, setNextScene] = useState<Scene | null>(null);
+  const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
+  const searchParams = new URLSearchParams(location.search);
+  const isShooting = searchParams.get('isShooting') === 'true';
 
-  const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+    if (urlShootingId) {
+      setShootingId(urlShootingId);
+    }
+  }, [urlShootingId]);
+
+
+  const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
+  const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
+
+  const getScenesInShooting = async () => {
+    const shootingDoc = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+    if (!shootingDoc || !shootingDoc._data || !shootingDoc._data.scenes) {
+      return [];
+    }
+    const orderedScenes = [...shootingDoc._data.scenes].sort((a, b) => a.position - b.position);
+    return orderedScenes.map((scene: any) => parseInt(scene.sceneId));
+  };
+
+  useEffect(() => {
+    const filterScenes = async () => {
+      setSceneIsLoading(true);
+      let filtered: Scene[];
+      if (!isShooting) {
+        filtered = selectedFilterOptions ? applyFilters(offlineScenes, selectedFilterOptions) : offlineScenes;
+      } else {
+        const scenesInShooting = await getScenesInShooting();
+        filtered = [];
+        for (const id of scenesInShooting) {
+          const scene = offlineScenes.find((scene: any) => parseInt(scene.sceneId) === id);
+          if (scene) {
+            filtered.push(scene);
+          }
+        }
+      }
+      setFilteredScenes(filtered);
+      setSceneIsLoading(false);
+    };
+
+    filterScenes();
+  }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
 
   useEffect(() => {
     const printParagraphs = async () => {
@@ -124,14 +173,10 @@ const SceneScript: React.FC = () => {
   };
 
   const getCurrentScene = async () => {
-    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+    const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
     if (scene._data) {
       return scene._data;
     }
-  };
-
-  const handleBack = () => {
-    history.push(`/my/projects/${id}/strips`);
   };
 
   const fetchScene = async () => {
@@ -163,17 +208,35 @@ const SceneScript: React.FC = () => {
     hideTabs();
   });
 
-  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
-  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
-  const nextScene = filteredScenes[currentSceneIndex + 1];
-  const previousScene = filteredScenes[currentSceneIndex - 1];
-
-  const changeToNextScene = () => {
-    if (nextScene) {
-      history.push(`/my/projects/${id}/strips/details/script/${nextScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${nextScene.id}`);
+  useEffect(() => {
+    if (filteredScenes.length > 0 && thisScene) {
+      const index = filteredScenes.findIndex((scene: any) =>
+        isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id
+      );
+      setCurrentSceneIndex(index);
     }
-  };
+  }, [filteredScenes, thisScene, isShooting]);
+
+  useEffect(() => {
+    if (currentSceneIndex >= 0) {
+      setPreviousScene(filteredScenes[currentSceneIndex - 1] || null);
+      setNextScene(filteredScenes[currentSceneIndex + 1] || null);
+    }
+  }, [currentSceneIndex, filteredScenes]);
+
+  useEffect(() => {
+    const fetchSceneShooting = async () => {
+      if (shootingId && oneWrapDb && thisScene) {
+        const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const sceneShooting = shooting?._data?.scenes.find(
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene.sceneId
+        );
+        setThisSceneShooting(sceneShooting || null);
+      }
+    };
+
+    fetchSceneShooting();
+  }, [shootingId, oneWrapDb, thisScene]);
 
   const getPopupList = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
     let list: any = [];
@@ -253,11 +316,25 @@ const SceneScript: React.FC = () => {
     setShowTotalsPopup(true);
   };
 
+  const changeToNextScene = () => {
+    if (nextScene) {
+      const route = `${rootRouteScript}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
+      history.push(route);
+      localStorage.setItem('editionBackRoute', route);
+    }
+  };
+
   const changeToPreviousScene = () => {
     if (previousScene) {
-      history.push(`/my/projects/${id}/strips/details/script/${previousScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${previousScene.id}`);
+      const route = `${rootRouteScript}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
+      history.push(route);
+      localStorage.setItem('editionBackRoute', route);
     }
+  };
+
+  const handleBack = () => {
+    const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
+    history.push(backRoute);
   };
 
   const getPopupPositionTop = () => {
@@ -279,41 +356,49 @@ const SceneScript: React.FC = () => {
 
   useEffect(() => {
     if (thisScene) {
-      setSceneColor(getSceneColor(thisScene));
+      getSceneColor(thisScene).then(setSceneColor);
     }
-  }, [thisScene]);
+  }, [thisScene, isShooting]);
 
-  const interior = IntOrExtOptionEnum.INT;
-  const exterior = IntOrExtOptionEnum.EXT;
-  const intExt = IntOrExtOptionEnum.INT_EXT;
-  const extInt = IntOrExtOptionEnum.EXT_INT;
-  const protectionType = SceneTypeEnum.PROTECTION;
-  const sceneType = SceneTypeEnum.SCENE;
-  const day = DayOrNightOptionEnum.DAY;
-  const night = DayOrNightOptionEnum.NIGHT;
+const getSceneColor = async (scene: Scene) => {
+    if (isShooting) {
+      const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
+      const sceneInShooting = shooting?.[0]?.scenes.find(
+        (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene?.sceneId
+      );
 
-  const getSceneColor = (scene: Scene) => {
-    const intOrExt: any = [exterior, intExt, extInt];
+      const sceneStatus = sceneInShooting?.status;
+      switch (sceneStatus) {
+        case ShootingSceneStatusEnum.Assigned: return 'light';
+        case ShootingSceneStatusEnum.NotShoot: return 'danger';
+        case ShootingSceneStatusEnum.Shoot: return 'success';
+        default: return 'light';
+      }
+    } else {
+      const intOrExt = [IntOrExtOptionEnum.EXT, IntOrExtOptionEnum.INT_EXT, IntOrExtOptionEnum.EXT_INT];
 
-    if (scene) {
-      if (scene.sceneType == protectionType) {
+      if (scene.sceneType === SceneTypeEnum.PROTECTION) {
         return 'rose';
-      } if (scene.sceneType == sceneType) {
-        if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
+      }
+      if (scene.sceneType === SceneTypeEnum.SCENE) {
+        if (!scene.intOrExtOption || !scene.dayOrNightOption) {
           return 'dark';
-        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
+        }
+        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
           return 'light';
-        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
+        }
+        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
           return 'success';
-        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
+        }
+        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
           return 'yellow';
-        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
+        }
+        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
           return 'primary';
         }
       }
+      return 'light';
     }
-
-    return 'light';
   };
 
   const handleZoomIn = () => {
@@ -481,7 +566,10 @@ const SceneScript: React.FC = () => {
             </div>
           )
         }
-        <SceneDetailsTabs sceneId={sceneId} />
+        <SceneDetailsTabs
+          routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}` } 
+          routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+        />
       </IonPage>
     </>
   );

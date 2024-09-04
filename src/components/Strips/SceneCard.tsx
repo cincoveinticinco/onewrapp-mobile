@@ -36,7 +36,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const history = useHistory();
   const routeMatch = useRouteMatch();
-  const detailsRoute = `${routeMatch.url}/details/scene/${isShooting ? scene.frontId : scene.id}`;
+  const detailsRoute = `${routeMatch.url}/details/scene/${scene.sceneId}`;
   const alertRef = React.useRef<HTMLIonAlertElement>(null);
 
   const openDeleteAlert = async () => {
@@ -156,7 +156,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const deleteScene = async () => {
     try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.id } }).exec();
+      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.sceneId } }).exec();
       await sceneToDelete?.remove();
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
@@ -228,7 +228,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItem>
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" routerLink={`/my/projects/${id}/editscene/${scene.id}`}>
+            <IonButton fill="clear" routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}>
               <CiEdit className="button-icon view" />
             </IonButton>
             {

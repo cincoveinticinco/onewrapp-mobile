@@ -62,6 +62,10 @@ const SceneDetails: React.FC = () => {
     return orderedScenes.map((scene: any) => parseInt(scene.sceneId));
   };
 
+  const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
+
+  const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
+
   useEffect(() => {
     const filterScenes = async () => {
       setSceneIsLoading(true);
@@ -90,7 +94,7 @@ const SceneDetails: React.FC = () => {
   useEffect(() => {
     const fetchScene = async () => {
       if (sceneId && oneWrapDb) {
-        const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+        const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
         setThisScene(scene?._data || null);
         setSceneIsLoading(false);
       }
@@ -121,11 +125,8 @@ const SceneDetails: React.FC = () => {
     const fetchSceneShooting = async () => {
       if (shootingId && oneWrapDb && thisScene) {
         const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-        console.log(thisScene)
         const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId));
-        console.log(sceneShooting)
         setThisSceneShooting(sceneShooting || null);
-        console.log(thisSceneShooting)
       }
     };
 
@@ -134,9 +135,7 @@ const SceneDetails: React.FC = () => {
 
   const changeToNextScene = () => {
     if (nextScene) {
-      const route = isShooting 
-        ? `/my/projects/${id}/shooting/${shootingId}/details/scene/${nextScene.id}?isShooting=true` 
-        : `/my/projects/${id}/strips/details/scene/${nextScene.id}`;
+      const route = `${rootRoute}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}` 
       history.push(route);
       localStorage.setItem('editionBackRoute', route);
     }
@@ -144,9 +143,7 @@ const SceneDetails: React.FC = () => {
 
   const changeToPreviousScene = () => {
     if (previousScene) {
-      const route = isShooting 
-        ? `/my/projects/${id}/shooting/${shootingId}/details/scene/${previousScene.id}?isShooting=true`
-        : `/my/projects/${id}/strips/details/scene/${previousScene.id}`;
+      const route = `${rootRoute}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`
       history.push(route);
       localStorage.setItem('editionBackRoute', route);
     }
@@ -222,7 +219,7 @@ const SceneDetails: React.FC = () => {
 
   const deleteScene = async () => {
     try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       await sceneToDelete?.remove();
       history.push(`/my/projects/${id}/strips`);
       successMessageSceneToast('Scene deleted successfully');
@@ -305,7 +302,10 @@ const SceneDetails: React.FC = () => {
           </div>
         )}
       </IonContent>
-      <SceneDetailsTabs sceneId={sceneId} />
+      <SceneDetailsTabs 
+        routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}` } 
+        routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+      />
       <InputAlert
         header="Delete Scene"
         message={`Are you sure you want to delete scene ${sceneHeader}?`}

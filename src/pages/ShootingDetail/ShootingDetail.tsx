@@ -251,9 +251,9 @@ const ShootingDetail = () => {
     banner.createdAt = new Date().toISOString();
     banner.updatedAt = new Date().toISOString();
 
-    setShootingData((prev: any) => ({
+    setShootingData((prev: ShootingDataProps) => ({
       ...prev,
-      scenes: [...prev.scenes, { cardType: 'banner', ...banner }],
+      mergedSceneBanners: [...prev.mergedSceneBanners, { cardType: 'banner', ...banner }],
     }));
   };
 
@@ -597,20 +597,17 @@ const ShootingDetail = () => {
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const updatedScenes = shootingData.mergedSceneBanners
+        .filter((item: any) => item.cardType === 'scene')
+        .map((scene: any) => formatSceneAsShootingScene(scene));
+        const updatedBanners = shootingData.mergedSceneBanners.filter((item: mergedSceneBanner) => item.cardType === 'banner')
+        .map(({ cardType, ...banner } : mergedSceneBanner) => banner);
 
-        if (shooting) {
-          const updatedScenes = shootingData.mergedSceneBanners
-            .filter((item: any) => item.cardType === 'scene')
-            .map((scene: any) => formatSceneAsShootingScene(scene));
-          const updatedBanners = shootingData.mergedSceneBanners.filter((item: mergedSceneBanner) => item.cardType === 'banner')
-            .map(({ cardType, ...banner } : mergedSceneBanner) => banner);
+        const shootingCopy = { ...shooting._data };
+        shootingCopy.scenes = updatedScenes;
+        shootingCopy.banners = updatedBanners;
 
-          const shootingCopy = { ...shooting._data };
-          shootingCopy.scenes = updatedScenes;
-          shootingCopy.banners = updatedBanners;
-
-          return await oneWrapDb.shootings.upsert(shootingCopy);
-        }
+        return await oneWrapDb.shootings.upsert(shootingCopy);
       } catch (error) {
         console.error('Error saving new Shooting:', error);
       }
@@ -629,18 +626,21 @@ const ShootingDetail = () => {
 
     setShootingData((prev: any) => ({
       ...prev,
-      scenes: updatedItems,
+      mergedSceneBanners: updatedItems,
     }));
 
-    event.detail.complete();
-
     try {
-      console.log('Order saved successfully');
-    } catch (error) {
-      console.error('Error saving order:', error);
-    }
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingCopy = { ...shooting._data };
+      shootingCopy.scenes = updatedItems.filter((item: any) => item.cardType === 'scene').map((scene: any) => formatSceneAsShootingScene(scene));
+      shootingCopy.banners = updatedItems.filter((item: any) => item.cardType === 'banner').map(({ cardType, ...banner } : mergedSceneBanner) => banner);
 
-    saveShooting();
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+    } catch (error) {
+      console.error('Error reordering scenes:', error);
+    } finally {
+      event.detail.complete();
+    }
   };
 
   const { setViewTabs } = useContext(DatabaseContext);
@@ -717,11 +717,11 @@ const ShootingDetail = () => {
 
     const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
       if (scene.status === ShootingSceneStatusEnum.NotShoot) {
-        return 'var(--ion-color-danger)';
-      } else if (scene.status === ShootingSceneStatusEnum.Assigned) {
-        return 'var(--ion-color-success)';
+        return 'var(--ion-color-danger-shade)';
+      } else if (scene.status === ShootingSceneStatusEnum.Shoot) {
+        return 'var(--ion-color-success-shade)';
       } else {
-        return 'var(--ion-color-tertiary-dark)'
+        return
       }
     }  
 
