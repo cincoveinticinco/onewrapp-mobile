@@ -1,0 +1,11 @@
+.section-button {
+  background-color: transparent;
+  margin: auto 6px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.active {
+  color: var(--ion-color-primary)
+}

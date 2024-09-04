@@ -115,14 +115,12 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   ]
 
   return (
-    <IonContent color='tertiary'>
-      <GeneralTable
-        columns={tableColumns}
-        data={mergedScenesShoot}
-        editMode={editMode}
-        editFunction={editFunction}
-      />
-    </IonContent>
+    <GeneralTable
+      columns={tableColumns}
+      data={mergedScenesShoot}
+      editMode={editMode}
+      editFunction={editFunction}
+    />
   )
 }
 

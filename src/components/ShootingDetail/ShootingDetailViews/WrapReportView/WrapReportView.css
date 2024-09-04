@@ -1,0 +1,21 @@
+.wrap-report-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  .section-wrapper {
+    box-sizing: border-box;
+    outline: .5px solid var(--ion-color-tertiary-dark);
+    padding: 3px;
+    position: relative;
+
+    .empty-table {
+      position: relative !important;
+      grid-template-columns: 1 / 3;
+      height: 150px;
+    }
+
+    &.scenes-table {
+      grid-column: 1 / 3;
+    }
+  }
+}

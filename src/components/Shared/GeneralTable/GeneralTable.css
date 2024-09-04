@@ -46,6 +46,7 @@
   position: sticky;
   z-index: 5;
   outline: 1px solid #ddd;
+  background-color: var(--ion-color-tertiary-dark);
 }
 
 .custom-table th.sticky-column {

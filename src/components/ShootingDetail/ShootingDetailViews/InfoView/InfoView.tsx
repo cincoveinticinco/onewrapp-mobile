@@ -6,7 +6,7 @@ import ShootingBasicInfo from "../../ShootingBasicInfo/ShootingBasicInfo";
 import AddButton from "../../../Shared/AddButton/AddButton";
 import DropDownButton from "../../../Shared/DropDownButton/DropDownButton";
 import DeleteButton from "../../../Shared/DeleteButton/DeleteButton";
-import { VscEdit } from "react-icons/vsc";
+import { VscEdit, VscSave } from "react-icons/vsc";
 import AdvanceCallInfo from "../../AdvanceCallInfo/AdvanceCallInfo";
 import MealInfo from "../../MealInfo/MealInfo";
 
@@ -78,182 +78,345 @@ const InfoView: React.FC<InfoViewProps> = ({
         shootingInfo={shootingData.shotingInfo}
         updateShootingTime={updateShootingTime}
       />
-      <div
-        className="ion-flex ion-justify-content-between ion-padding-start"
-        style={{
-          border: '1px solid black',
-          backgroundColor: 'var(--ion-color-tertiary-shade)',
-        }}
-        onClick={() => setOpenLocations(!openLocations)}
-      >
-        <p style={{ fontSize: '18px' }}><b>LOCATIONS</b></p>
-        <div onClick={(e) => e.stopPropagation()}>
-          {
-            shootingData.shotingInfo.locations.length > 0
-            && (
-            <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setLocationsEditMode(!locationsEditMode)}>
-              <VscEdit
-                className="toolbar-icon"
-                style={locationsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
-              />
-            </IonButton>
-            )
-          }
-          <AddButton onClick={() => openMapModal()} />
-          <DropDownButton open={openLocations} />
-        </div>
-      </div>
-      {openLocations && (
-        shootingData.shotingInfo.locations.length > 0 ? (
-          shootingData.shotingInfo.locations.map((location: LocationInfo) => (
-            <div key={location.id} className="ion-padding-start">
-              <h5><b>{location.location_name.toUpperCase()}</b></h5>
-              <div style={
-                {
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }
-              }
-              >
-                <p>{location.location_full_address}</p>
-                {
-                    locationsEditMode && (
-                      <DeleteButton onClick={() => removeLocation(location)} />
-  
-                    )
-                  }
-              </div>
-  
-            </div>
-          ))
-        ) : (
-          <div className="ion-padding-start">
-            <p>NO LOCATIONS ADDED</p>
-          </div>
-        )
-      )}
-  
-      <div
-        className="ion-flex ion-justify-content-between ion-padding-start"
-        style={{
-          border: '1px solid black',
-          backgroundColor: 'var(--ion-color-tertiary-shade)',
-        }}
-        onClick={() => setOpenHospitals(!openHospitals)}
-      >
-        <p style={{ fontSize: '18px' }}><b>NEAR HOSPITALS</b></p>
-        <div onClick={(e) => e.preventDefault()}>
-          <AddButton onClick={() => openHospitalsMapModal()} />
-          <DropDownButton open={openHospitals} />
-        </div>
-  
-      </div>
-      {openHospitals && (
-        shootingData.shotingInfo.hospitals.length > 0 ? (
-          shootingData.shotingInfo.hospitals.map((hospital: LocationInfo) => (
-            <div key={hospital.id} className="ion-padding-start">
-              <h5><b>{hospital.location_name.toUpperCase()}</b></h5>
-              <p>{hospital.location_full_address}</p>
-            </div>
-          ))
-        ) : (
-          <div className="ion-padding-start">
-            <p>NO HOSPITALS ADDED</p>
-          </div>
-        )
-      )}
-  
-      <div
-        className="ion-flex ion-justify-content-between ion-padding-start"
-        style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }}
-        onClick={() => setOpenAdvanceCalls(!openadvanceCalls)}
-      >
-        <p style={{ fontSize: '18px' }}><b>ADVANCE CALLS</b></p>
-        <div onClick={(e) => e.stopPropagation()}>
-          <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setAdvanceCallsEditMode(!advanceCallsEditMode)}>
-            {
-            shootingData.shotingInfo.advanceCalls.length > 0
-            && (
-            <VscEdit
-              className="toolbar-icon"
-              style={advanceCallsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
-            />
-            )
-          }
-          </IonButton>
-          <AddButton onClick={(e) => openAdvanceCallModal(e)} />
-          <DropDownButton open={openadvanceCalls} />
-        </div>
-      </div>
-      {
-        openadvanceCalls && shootingData.shotingInfo.advanceCalls && (
-          shootingData.shotingInfo.advanceCalls.length > 0 ? (
-            shootingData.shotingInfo.advanceCalls.map((call: any) => (
-              <AdvanceCallInfo
-                key={call.id}
-                call={call}
-                editMode={advanceCallsEditMode}
-                getHourMinutesFomISO={getHourMinutesFomISO}
-                deleteAdvanceCall={deleteAdvanceCall}
-                editionInputs={advanceCallInputs}
-                handleEdition={handleEditAdvanceCall}
-              />
-            ))
-          ) : (
-            <div className="ion-padding-start">
-              <p>NO ADVANCE CALLS ADDED</p>
-            </div>
-          )
-        )
-      }
-  
-      <div
-        className="ion-flex ion-justify-content-between ion-padding-start"
-        style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }}
-        onClick={() => setOpenMeals(!openMeals)}
-      >
-        <p style={{ fontSize: '18px' }}><b>MEALS</b></p>
-        <div onClick={(e) => e.stopPropagation()}>
-          <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => setMealsEditMode(!mealsEditMode)}>
-  
-            {
-            shootingData.shotingInfo.meals.length > 0
-            && (
-            <VscEdit
-              className="toolbar-icon"
-              style={mealsEditMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
-            />
-            )
-          }
-          </IonButton>
-          <AddButton onClick={(e) => openMealModal(e)} />
-          <DropDownButton open={openMeals} />
-        </div>
-      </div>
-      {
-        openMeals && (
-          Object.keys(shootingData.shotingInfo.meals).length > 0 ? (
-            Object.entries(shootingData.shotingInfo.meals).map(([key, meal]: any) => (
-              <MealInfo
-                key={meal.id}
-                meal={meal}
-                editMode={mealsEditMode}
-                getHourMinutesFomISO={getHourMinutesFomISO}
-                deleteMeal={deleteMeal}
-                editionInputs={mealInputs}
-                handleEdition={handleEditMeal}
-              />
-            ))
-          ) : (
-            <div className="ion-padding-start">
-              <p>NO MEALS ADDED</p>
-            </div>
-          )
-        )
-      }
+
+      <LocationsSection
+        locations={shootingData.shotingInfo.locations}
+        open={openLocations}
+        setOpen={setOpenLocations}
+        editMode={locationsEditMode}
+        setEditMode={setLocationsEditMode}
+        onAddClick={openMapModal}
+        removeLocation={removeLocation}
+      />
+
+      <HospitalsSection
+        hospitals={shootingData.shotingInfo.hospitals}
+        open={openHospitals}
+        setOpen={setOpenHospitals}
+        onAddClick={openHospitalsMapModal}
+      />
+
+      <AdvanceCallsSection
+        advanceCalls={shootingData.shotingInfo.advanceCalls}
+        open={openadvanceCalls}
+        setOpen={setOpenAdvanceCalls}
+        editMode={advanceCallsEditMode}
+        setEditMode={setAdvanceCallsEditMode}
+        onAddClick={openAdvanceCallModal}
+        getHourMinutesFomISO={getHourMinutesFomISO}
+        deleteAdvanceCall={deleteAdvanceCall}
+        advanceCallInputs={advanceCallInputs}
+        handleEditAdvanceCall={handleEditAdvanceCall}
+      />
+
+      <MealsSection
+        meals={shootingData.shotingInfo.meals}
+        open={openMeals}
+        setOpen={setOpenMeals}
+        editMode={mealsEditMode}
+        setEditMode={setMealsEditMode}
+        onAddClick={openMealModal}
+        getHourMinutesFomISO={getHourMinutesFomISO}
+        deleteMeal={deleteMeal}
+        mealInputs={mealInputs}
+        handleEditMeal={handleEditMeal}
+      />
+
     </IonContent>
   )
 }
 
 export default InfoView;
+
+interface LocationsSectionProps {
+  locations: LocationInfo[];
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  onAddClick: () => void;
+  removeLocation: (location: LocationInfo) => void;
+}
+
+interface SectionProps {
+  title: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  editMode?: boolean;
+  setEditMode?: React.Dispatch<React.SetStateAction<boolean>>;
+  onAddClick: () => void;
+  children: React.ReactNode;
+  saveAfterEdit?: boolean
+  saveFunction?: () => void
+}
+
+export const Section: React.FC<SectionProps> = ({
+  title,
+  open,
+  setOpen,
+  editMode,
+  setEditMode,
+  onAddClick,
+  children,
+  saveAfterEdit = false,
+  saveFunction
+}) => {
+
+  const renderEditSaveButton = () => {
+    if (saveFunction && setEditMode) {
+      return (
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          className="toolbar-button"
+          onClick={() => {
+            if (saveAfterEdit) {
+              saveFunction();
+            }
+            setEditMode(!editMode);
+          }}
+        >
+          {editMode ? (
+            <VscSave
+              className="toolbar-icon"
+              style={{ color: 'var(--ion-color-primary)' }}
+            />
+          ) : (
+            <VscEdit
+              className="toolbar-icon"
+              style={{ color: 'var(--ion-color-light)' }}
+            />
+          )}
+        </IonButton>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <>
+      <div
+        className="ion-flex ion-justify-content-between ion-padding-start"
+        style={{
+          border: '1px solid black',
+          backgroundColor: 'var(--ion-color-tertiary-shade)',
+        }}
+        onClick={() => setOpen(!open)}
+      >
+        <p style={{ fontSize: '18px' }}><b>{title.toUpperCase()}</b></p>
+        <div onClick={(e) => e.stopPropagation()}>
+          {editMode !== undefined && setEditMode && (
+            <IonButton
+              fill="clear"
+              slot="end"
+              color="light"
+              className="toolbar-button"
+              onClick={() => setEditMode && setEditMode(!editMode)}
+            >
+             {
+              !saveAfterEdit ? (
+                <VscEdit
+                  className="toolbar-icon"
+                  style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
+                />
+              ) : (
+                <>
+                  {renderEditSaveButton()}
+                </>
+              )
+             }
+            </IonButton>
+          )}
+          <AddButton onClick={onAddClick} />
+          <DropDownButton open={open} />
+        </div>
+      </div>
+      {open && children}
+    </>
+  );
+}
+
+export const LocationsSection: React.FC<LocationsSectionProps> = ({
+  locations,
+  open,
+  setOpen,
+  editMode,
+  setEditMode,
+  onAddClick,
+  removeLocation,
+}) => {
+  return (
+    <Section
+      title="Locations"
+      open={open}
+      setOpen={setOpen}
+      editMode={editMode}
+      setEditMode={setEditMode}
+      onAddClick={onAddClick}
+    >
+      {locations.length > 0 ? (
+        locations.map((location) => (
+          <div key={location.id} className="ion-padding-start">
+            <h5><b>{location.location_name.toUpperCase()}</b></h5>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p>{location.location_full_address}</p>
+              {editMode && <DeleteButton onClick={() => removeLocation(location)} />}
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="ion-padding-start">
+          <p>NO LOCATIONS ADDED</p>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+interface HospitalsSectionProps {
+  hospitals: LocationInfo[];
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onAddClick: () => void;
+}
+
+export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
+  hospitals,
+  open,
+  setOpen,
+  onAddClick
+}) => {
+  return (
+    <Section
+      title="Near Hospitals"
+      open={open}
+      setOpen={setOpen}
+      onAddClick={onAddClick}
+    >
+      {hospitals.length > 0 ? (
+        hospitals.map((hospital) => (
+          <div key={hospital.id} className="ion-padding-start">
+            <h5><b>{hospital.location_name.toUpperCase()}</b></h5>
+            <p>{hospital.location_full_address}</p>
+          </div>
+        ))
+      ) : (
+        <div className="ion-padding-start">
+          <p>NO HOSPITALS ADDED</p>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+interface AdvanceCallsSectionProps {
+  advanceCalls: any[]; // Cambiar a un tipo más específico si está disponible
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  onAddClick: any;
+  getHourMinutesFomISO: (isoString: string) => string;
+  deleteAdvanceCall: (call: any) => void;
+  advanceCallInputs: any; // Tipo más específico si está disponible
+  handleEditAdvanceCall: (call: any) => void;
+}
+
+export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
+  advanceCalls,
+  open,
+  setOpen,
+  editMode,
+  setEditMode,
+  onAddClick,
+  getHourMinutesFomISO,
+  deleteAdvanceCall,
+  advanceCallInputs,
+  handleEditAdvanceCall
+}) => {
+  return (
+    <Section
+      title="Advance Calls"
+      open={open}
+      setOpen={setOpen}
+      editMode={editMode}
+      setEditMode={setEditMode}
+      onAddClick={onAddClick}
+    >
+      {advanceCalls.length > 0 ? (
+        advanceCalls.map((call) => (
+          <AdvanceCallInfo
+            key={call.id}
+            call={call}
+            editMode={editMode}
+            getHourMinutesFomISO={getHourMinutesFomISO}
+            deleteAdvanceCall={deleteAdvanceCall}
+            editionInputs={advanceCallInputs}
+            handleEdition={handleEditAdvanceCall}
+          />
+        ))
+      ) : (
+        <div className="ion-padding-start">
+          <p>NO ADVANCE CALLS ADDED</p>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+interface MealsSectionProps {
+  meals: Meal[];
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  onAddClick: any;
+  getHourMinutesFomISO: (isoString: string) => string;
+  deleteMeal: (meal: Meal) => void;
+  mealInputs: FormInput[];
+  handleEditMeal: (meal: Meal) => void;
+}
+
+export const MealsSection: React.FC<MealsSectionProps> = ({
+  meals,
+  open,
+  setOpen,
+  editMode,
+  setEditMode,
+  onAddClick,
+  getHourMinutesFomISO,
+  deleteMeal,
+  mealInputs,
+  handleEditMeal
+}) => {
+  return (
+    <Section
+      title="Meals"
+      open={open}
+      setOpen={setOpen}
+      editMode={editMode}
+      setEditMode={setEditMode}
+      onAddClick={onAddClick}
+    >
+      {meals.length > 0 ? (
+        meals.map((meal) => (
+          <MealInfo
+            key={meal.id}
+            meal={meal}
+            editMode={editMode}
+            getHourMinutesFomISO={getHourMinutesFomISO}
+            deleteMeal={deleteMeal}
+            editionInputs={mealInputs}
+            handleEdition={handleEditMeal}
+          />
+        ))
+      ) : (
+        <div className="ion-padding-start">
+          <p>NO MEALS ADDED</p>
+        </div>
+      )}
+    </Section>
+  );
+}
+

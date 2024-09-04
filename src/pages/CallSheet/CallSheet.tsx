@@ -31,6 +31,9 @@ import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
 import { ShootingStatusEnum } from '../../Ennums/ennums';
 import timeToISOString from '../../utils/timeToIsoString';
 import useHandleBack from '../../hooks/Shared/useHandleBack';
+import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
+
+import './CallSheet.css';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -47,7 +50,13 @@ interface CastCallForTable {
   castName: string;
 }
 
-const CallSheet: React.FC = () => {
+interface CallSheetProps {
+  isSection?: boolean;
+}
+
+const CallSheet: React.FC<CallSheetProps> = ({
+  isSection = false
+}) => {
   const tabsController = useHideTabs();
   const [view, setView] = useState<CallSheetView>('cast');
   const { id, shootingId } = useParams<{ id: string, shootingId: string }>();
@@ -705,46 +714,109 @@ const CallSheet: React.FC = () => {
     }
   };
 
-  return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar color="tertiary">
-          <IonButton
-            routerLink={`/my/projects/${id}/shooting/${shootingId}`}
-            color="light"
-            slot="start"
-            fill="clear"
-          >
-            <IonIcon slot="icon-only" icon={chevronBackOutline} />
-          </IonButton>
-          <IonTitle>CALL TIME</IonTitle>
-          {
-            thisShooting
-            && thisShooting.status !== ShootingStatusEnum.Closed && (
-              <div slot="end">
-                {
-                  !editMode ? (
-                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
-                      <VscEdit />
-                    </IonButton>
-                  ) : (
-                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
-                      <IonIcon icon={save} />
-                    </IonButton>
-                  )
-                }
-                <AddButton onClick={() => openAddNewModal()} />
-              </div>
-            )
-          }
-        </IonToolbar>
-      </IonHeader>
-      <IonContent color="tertiary" fullscreen>
-        {renderContent()}
-      </IonContent>
-      <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()}/>
-    </IonPage>
-  );
+  if(!isSection) {
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar color="tertiary">
+            <IonButton
+              routerLink={`/my/projects/${id}/shooting/${shootingId}`}
+              color="light"
+              slot="start"
+              fill="clear"
+            >
+              <IonIcon slot="icon-only" icon={chevronBackOutline} />
+            </IonButton>
+            <IonTitle>CALL TIME</IonTitle>
+            {
+              thisShooting
+              && thisShooting.status !== ShootingStatusEnum.Closed && (
+                <div slot="end">
+                  {
+                    !editMode ? (
+                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
+                        <VscEdit />
+                      </IonButton>
+                    ) : (
+                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
+                        <IonIcon icon={save} />
+                      </IonButton>
+                    )
+                  }
+                  <AddButton onClick={() => openAddNewModal()} />
+                </div>
+              )
+            }
+          </IonToolbar>
+        </IonHeader>
+        <IonContent color="tertiary" fullscreen>
+          {renderContent()}
+        </IonContent>
+        <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()}/>
+      </IonPage>
+    );
+  } else {
+    const [open, setOpen] = useState(true);
+    return (
+      <>
+        <div
+          className="ion-flex ion-justify-content-between ion-padding-start"
+          style={{
+            border: '1px solid black',
+            backgroundColor: 'var(--ion-color-tertiary-shade)',
+            alignItems: 'flex-end',
+          }}
+          onClick={() => setOpen(!open)}
+        >
+          <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
+          <div onClick={(e) => e.stopPropagation()}>
+            {/* BUTTON FOR EVERY VIEW */}
+            <button
+              onClick={() => setView('cast')}
+              className={`section-button ${view === 'cast' ? 'active' : ''}`}
+            >
+              Cast
+            </button>
+            <button
+              onClick={() => setView('extras')}
+              className={`section-button ${view === 'extras' ? 'active' : ''}`}
+            >
+              Extras
+            </button>
+            <button
+              onClick={() => setView('pictureCars')}
+              className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
+            >
+              Cars
+            </button>
+            <button
+              onClick={() => setView('others')}
+              className={`section-button ${view === 'others' ? 'active' : ''}`}
+            >
+              Others
+            </button>
+            {
+              !editMode ? (
+                <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} style={{
+                  marginBottom: '12px'
+                }}>
+                  <VscEdit />
+                </IonButton>
+              ) : (
+                <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()} style={{
+                  marginBottom: '12px'
+                }}>
+                  <IonIcon icon={save} />
+                </IonButton>
+              )
+            }
+            <DropDownButton open={open} />
+          </div>
+        </div>
+        {open && renderContent()}
+      </>    
+    );
+  }
 };
 
 export default CallSheet;

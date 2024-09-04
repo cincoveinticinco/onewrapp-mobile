@@ -29,8 +29,9 @@ import InfoView from '../../components/ShootingDetail/ShootingDetailViews/InfoVi
 import ScriptReportView from '../../components/ShootingDetail/ShootingDetailViews/ScriptReportView/ScriptReportView';
 import { save } from 'ionicons/icons';
 import { VscEdit } from 'react-icons/vsc';
+import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
 
-export type ShootingViews = 'scenes' | 'info'  | 'script-report'
+export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report'
 type cardType = {
   cardType: string;
 };
@@ -721,7 +722,7 @@ const ShootingDetail = () => {
       } else if (scene.status === ShootingSceneStatusEnum.Shoot) {
         return 'var(--ion-color-success-shade)';
       } else {
-        return
+        return 'var(--ion-color-tertiary-dark)'
       }
     }  
 
@@ -1137,11 +1138,52 @@ const ShootingDetail = () => {
       }
       {
         view === 'script-report' &&
-        <ScriptReportView
-          mergedScenesShoot={shootingData.mergedScenesShootData}
-          editMode={scriptReportEditMode}
-          setMergedScenesShoot={setMergedScenesShootData}
-        ></ScriptReportView>
+        <IonContent color="tertiary" fullscreen>
+          <ScriptReportView
+            mergedScenesShoot={shootingData.mergedScenesShootData}
+            editMode={scriptReportEditMode}
+            setMergedScenesShoot={setMergedScenesShootData}
+          ></ScriptReportView>
+        </IonContent> 
+      }
+      {
+        view === 'wrap-report' &&
+        <IonContent color="tertiary" fullscreen>
+          <WrapReportView
+            shootingData={shootingData}
+            updateShootingTime={updateShootingTime}
+            setOpenLocations={setOpenLocations}
+            openLocations={openLocations}
+            setLocationsEditMode={setLocationsEditMode}
+            locationsEditMode={locationsEditMode}
+            openMapModal={openMapModal}
+            removeLocation={removeLocation}
+            setOpenHospitals={setOpenHospitals}
+            openHospitals={openHospitals}
+            openHospitalsMapModal={openHospitalsMapModal}
+            setOpenAdvanceCalls={setOpenAdvanceCalls}
+            openadvanceCalls={openadvanceCalls}
+            setAdvanceCallsEditMode={setAdvanceCallsEditMode}
+            advanceCallsEditMode={advanceCallsEditMode}
+            openAdvanceCallModal={openAdvanceCallModal}
+            getHourMinutesFomISO={getHourMinutesFomISO}
+            deleteAdvanceCall={deleteAdvanceCall}
+            advanceCallInputs={advanceCallInputs}
+            handleEditAdvanceCall={handleEditAdvanceCall}
+            setOpenMeals={setOpenMeals}
+            openMeals={openMeals}
+            setMealsEditMode={setMealsEditMode}
+            mealsEditMode={mealsEditMode}
+            openMealModal={openMealModal}
+            deleteMeal={deleteMeal}
+            mealInputs={mealInputs}
+            handleEditMeal={handleEditMeal}
+            mergedScenesShoot={shootingData.mergedScenesShootData}
+            editMode={scriptReportEditMode}
+            setMergedScenesShoot={setMergedScenesShootData}
+            saveScriptReport={saveScriptReport}
+          ></WrapReportView>
+        </IonContent>
       }
       <ShootingDetailTabs setView={setView} view={view} handleBack={handleBack} />
       <AddNewBanner />
