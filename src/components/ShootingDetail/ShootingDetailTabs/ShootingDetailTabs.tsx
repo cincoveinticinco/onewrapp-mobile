@@ -31,7 +31,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
         >
         <IonIcon icon={home} />
         <IonLabel>
-          HOME
+          BACK
         </IonLabel>
       </IonTabButton>
       <IonTabButton

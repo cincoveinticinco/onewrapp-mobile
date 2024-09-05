@@ -206,12 +206,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   ) => {
     setExtraCalls((prevExtraCalls) => {
       const editedExtraCall = JSON.parse(JSON.stringify(prevExtraCalls[extraIndex]));
-      editedExtraCall[extraKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedExtraCall[extraKey] = newValue;
       const newExtraCalls = [
         ...prevExtraCalls.slice(0, extraIndex),
         editedExtraCall,
