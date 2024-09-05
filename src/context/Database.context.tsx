@@ -16,6 +16,7 @@ import CrewSchema from '../RXdatabase/schemas/crew.schema';
 
 import { Provider } from 'rxdb-hooks';
 import CountriesSchema from '../RXdatabase/schemas/country.schema';
+import ServiceMatricesSchema from '../RXdatabase/schemas/serviceMatrices.schema';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -92,6 +93,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [shootingsCollection, setShootingsCollection] = useState<ShootingsSchema | null>(null);
   const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
   const [crewCollection, setCrewCollection] = useState<CrewSchema | null>(null);
+  const [serviceMatricesCollection, setServiceMatricesCollection] = useState<ServiceMatricesSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
   const { getToken } = useContext(AuthContext);
@@ -130,8 +132,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         const talentsColl = new TalentsSchema();
         const crewColl = new CrewSchema();
         const countriesCollection = new CountriesSchema();
+        const serviceMatricesCollection = new ServiceMatricesSchema();
 
-        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection]);
+        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
 
         setOneWrapRXdatabase(dbInstance);
@@ -144,6 +147,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setTalentsCollection(talentsColl);
         setCrewCollection(crewColl);
         setCountriesCollection(countriesCollection);
+        setServiceMatricesCollection(serviceMatricesCollection);
 
         setIsDatabaseReady(true);
 
@@ -272,6 +276,30 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return false;
     }
   };
+
+  const initializeServiceMatricesReplication = async () => {
+    if (!serviceMatricesCollection || !oneWrapRXdatabase || !projectId) {
+      console.log('No service matrices collection');
+      return false;
+    }
+    try {
+      const lastServiceMatrix = await oneWrapRXdatabase.service_matrices.find({
+        selector: { project_id: parseInt(projectId) },
+      }).sort({ updated_at: 'desc' }).limit(1).exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+
+      const serviceMatricesReplicator = new HttpReplicator(oneWrapRXdatabase, [serviceMatricesCollection], parseInt(projectId), lastServiceMatrix, getToken);
+
+      if (isOnline) {
+        await serviceMatricesReplicator.startReplicationPull();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error during service matrices replication:', error);
+      return
+    }
+  }
 
   const initializeParagraphReplication = async () => {
     try {
@@ -407,39 +435,42 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   // This initial replication, is the first replication that is done when the user enters in a project. The idea is to replicate all the data from the server to the local database and use a loader to notify the status of replication. After this first replication, it is not necessary to replicate all the data again, and we can avoid the loaders
 
+  
   let cancelCurrentIncrement: (() => void) | null = null;
 
-  const incrementPercentage = (start: number, end: number, duration: number) => {
-    // Cancelar la ejecución anterior si existe
-    if (cancelCurrentIncrement) {
-      cancelCurrentIncrement();
-    }
-
-    let current = start;
-    const step = (end - start) / (duration / 10); // Incremento cada 10ms
-    let timer: NodeJS.Timeout;
-
-    const increment = () => {
-      current += step;
-      if (current >= end) {
-        clearInterval(timer);
-        setReplicationPercentage(end);
-        cancelCurrentIncrement = null;
-      } else {
-        setReplicationPercentage(Math.round(current));
+  const incrementPercentage = (start: number, end: number, duration: number): Promise<void> => {
+    return new Promise((resolve) => {
+      if (cancelCurrentIncrement) {
+        cancelCurrentIncrement();
       }
-    };
 
-    timer = setInterval(increment, 10);
+      let current = start;
+      const step = (end - start) / (duration / 10); // Incremento cada 10ms
+      let timer: NodeJS.Timeout;
 
-    // Crear una función de cancelación
-    cancelCurrentIncrement = () => {
-      clearInterval(timer);
-      cancelCurrentIncrement = null;
-    };
+      const increment = () => {
+        current += step;
+        if (current >= end) {
+          clearInterval(timer);
+          setReplicationPercentage(end);
+          cancelCurrentIncrement = null;
+          resolve();
+        } else {
+          setReplicationPercentage(Math.round(current));
+        }
+      };
+
+      timer = setInterval(increment, 10);
+
+      cancelCurrentIncrement = () => {
+        clearInterval(timer);
+        cancelCurrentIncrement = null;
+        resolve();
+      };
+    });
   };
 
-  const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const initialProjectReplication = async () => {
     try {
@@ -448,78 +479,57 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setReplicationStatus('Starting replication...');
 
       const steps = [
-        {
-          name: 'Countries',
-          startPercentage: 0,
-          endPercentage: 10,
-          function: initializeCountriesReplication,
-        },
-        {
-          name: 'Scene',
-          startPercentage: 10,
-          endPercentage: 20,
-          function: initializeSceneReplication,
-        },
-        {
-          name: 'Paragraph',
-          startPercentage: 20,
-          endPercentage: 40,
-          function: initializeParagraphReplication,
-        },
-        {
-          name: 'Unit',
-          startPercentage: 40,
-          endPercentage: 50,
-          function: initializeUnitReplication,
-        },
-        {
-          name: 'Talent',
-          startPercentage: 50,
-          endPercentage: 60,
-          function: initializeTalentsReplication,
-        },
-        {
-          name: 'Shooting',
-          startPercentage: 60,
-          endPercentage: 70,
-          function: initializeShootingReplication,
-        },
-        {
-          name: 'Crew',
-          startPercentage: 70,
-          endPercentage: 100,
-          function: initializeCrewReplication,
-        }
+        { name: 'Countries', function: initializeCountriesReplication },
+        { name: 'Scene', function: initializeSceneReplication },
+        { name: 'Paragraph', function: initializeParagraphReplication },
+        { name: 'Unit', function: initializeUnitReplication },
+        { name: 'Talent', function: initializeTalentsReplication },
+        { name: 'Shooting', function: initializeShootingReplication },
+        { name: 'Crew', function: initializeCrewReplication },
+        { name: 'Service Matrices', function: initializeServiceMatricesReplication }
       ];
 
-      for (const step of steps) {
-        setReplicationStatus(`Starting ${step.name} replication...`);
-        incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
-        await step.function().then((result) => {
-          console.log('Replication finished:', result);
-        }).catch((error) => {
-          console.error('Error during replication:', error);
-        });
-        incrementPercentage(step.startPercentage + 5, step.endPercentage, 10000);
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        
+        setReplicationStatus(`Starting ${step.name} replication... please wait step ${i + 1} of ${steps.length}`);
+        setReplicationPercentage(0);  // Reset to 0% for each step
+        
+        // Start the percentage at 5% quickly
+        await incrementPercentage(0, 5, 1000);
+        
+        const startTime = Date.now();
+        try {
+          await step.function();
+        } catch (error) {
+          console.error(`Error during ${step.name} replication:`, error);
+          // Optionally add logic here to handle the error
+          // For example, ask the user if they want to continue or stop the process
+        }
+        const endTime = Date.now();
+        const actualDuration = endTime - startTime;
 
-        await sleep(1000);
+        // Complete the remaining 95% based on the actual duration
+        await incrementPercentage(5, 100, actualDuration);
+        
+        await sleep(1000);  // Pause to show 100% before moving to next step
       }
 
       setReplicationStatus('Replication finished');
-      setReplicationPercentage(100);
     } catch (error) {
       console.error('Error during initial replication:', error);
       setReplicationStatus('Error during initial replication');
-      setReplicationPercentage(0);
     } finally {
       setInitialReplicationFinished(true);
-      setProjectsInfoIsOffline({
-        ...projectsInfoIsOffline,
+      setProjectsInfoIsOffline((prev) => ({
+        ...prev,
         [projectId]: true,
-      });
-      setReplicationPercentage(0)
+      }));
+      await sleep(1000); // Wait before resetting the percentage
+      setReplicationPercentage(0);
     }
   };
+
 
   return (
     <Provider db={oneWrapRXdatabase}>

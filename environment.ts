@@ -16,4 +16,6 @@ export default {
   CREW_ENDPOINT_PULL: 'app_crew_list',
   CREW_ENDPOINT_PUSH: 'app_crew_push',
   COUNTRIES_ENDPOINT_PULL: 'app_countries_list',
+  SERVICE_MATRICES_ENDPOINT_PULL: 'app_service_matrices_list',
+  SERVICE_MATRICES_ENDPOINT_PUSH: 'app_service_matrices_push',
 };
