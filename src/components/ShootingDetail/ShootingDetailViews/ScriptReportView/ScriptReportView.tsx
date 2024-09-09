@@ -3,24 +3,26 @@ import React, { useEffect } from 'react'
 import { mergedSceneShoot } from '../../../../pages/ShootingDetail/ShootingDetail'
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
 import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums'
+import { set } from 'lodash'
 
 interface ScriptReportViewProps {
   mergedScenesShoot: mergedSceneShoot[]
   editMode: boolean
   setMergedScenesShoot: (mergedScenesShoot: mergedSceneShoot[]) => void
+  getSceneBackgroundColor: (scene: any) => string
 }
 
 const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   mergedScenesShoot,
   editMode,
-  setMergedScenesShoot
+  setMergedScenesShoot,
+  getSceneBackgroundColor
 }) => {
   useEffect(() => {
     console.log(mergedScenesShoot)
   }, [mergedScenesShoot])
 
   const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any, type: any) => {
-    console.log('rowIndex', rowValue);
     const copy: mergedSceneShoot[] = mergedScenesShoot.map((item, index) => {
       if (index === rowIndex) {
         return { ...item, [rowKey]: rowValue };
@@ -32,7 +34,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 
   const tableColumns: Column[] = [
     {
-      key: 'sceneNumber',
+      key: 'backgroundColor',
       title: 'Scene',
       sticky: true,
       textAlign: 'center',

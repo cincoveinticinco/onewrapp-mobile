@@ -31,6 +31,7 @@ import { save } from 'ionicons/icons';
 import { VscEdit } from 'react-icons/vsc';
 import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
 import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
+import { get } from 'lodash';
 
 export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -703,7 +704,19 @@ const ShootingDetail = () => {
     return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${ampm}`;
   };
 
+
+  const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
+    if (scene.status === ShootingSceneStatusEnum.NotShoot) {
+      return 'var(--ion-color-danger-shade)';
+    } else if (scene.status === ShootingSceneStatusEnum.Shoot) {
+      return 'var(--ion-color-success-shade)';
+    } else {
+      return 'var(--ion-color-tertiary-dark)'
+    }
+  }  
+
   const getShootingData = async () => {
+    setIsLoading(true);
     const shootings: any = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
     const scenesInShoot = shootings[0]._data.scenes;
     const bannersInShoot = shootings[0]._data.banners;
@@ -716,16 +729,6 @@ const ShootingDetail = () => {
     const scenesNotIncluded = await oneWrapDb?.scenes.find({
       selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } },
     }).exec();
-
-    const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
-      if (scene.status === ShootingSceneStatusEnum.NotShoot) {
-        return 'var(--ion-color-danger-shade)';
-      } else if (scene.status === ShootingSceneStatusEnum.Shoot) {
-        return 'var(--ion-color-success-shade)';
-      } else {
-        return 'var(--ion-color-tertiary-dark)'
-      }
-    }  
 
     const mergedScenesShootData: mergedSceneShoot[] = scenesData?.map((scene: any) => {
       const sceneShootingData = scenesInShoot.find((sceneInShoot: any) => parseInt(sceneInShoot.sceneId) === parseInt(scene.sceneId));
@@ -774,6 +777,8 @@ const ShootingDetail = () => {
     };
 
     const shootingFormattedDate = formatShootingDate(shootings[0]._data.shootDate, shootings[0]._data.unitNumber);
+
+    setIsLoading(false);
 
     return {
       mergedSceneBanners: mergedScenes,
@@ -1032,20 +1037,26 @@ const ShootingDetail = () => {
   }
 
   const saveScriptReport = async () => {
-    // Here we should save the script report
     try {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       shootingCopy.scenes = shootingData.mergedScenesShootData;
-
+  
       await oneWrapDb?.shootings.upsert(shootingCopy);
-
-      setShootingData((prev: any) => ({
-        ...prev,
-        mergedScenesShootData: shootingCopy.scenes,
-      }));
-
-      console.log('Script report saved successfully');
+      const updatedData = await getShootingData();
+      
+      setShootingData((prev: any) => {
+        const newState = {
+          ...prev,
+          ...updatedData,
+          mergedScenesShootData: updatedData.mergedScenesShootData.map((scene: any) => ({
+            ...scene,
+            backgroundColor: getSceneBackgroundColor(scene),
+          })),
+        };
+        return newState;
+      });
+  
     } catch (error) {
       console.error('Error saving script report:', error);
     }
@@ -1057,7 +1068,6 @@ const ShootingDetail = () => {
       mergedScenesShootData: scenes,
     }));
   }
-
   return (
     <IonPage>
       <IonHeader>
@@ -1073,6 +1083,13 @@ const ShootingDetail = () => {
           </IonButton>
         </div>
       )}
+      {
+        isLoading && (
+          <IonContent color="tertiary" fullscreen>
+            { useLoader()}
+          </IonContent>
+        )
+      }
       {view === 'scenes' && (
         <IonContent color="tertiary" fullscreen>
           <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
@@ -1144,6 +1161,7 @@ const ShootingDetail = () => {
             mergedScenesShoot={shootingData.mergedScenesShootData}
             editMode={scriptReportEditMode}
             setMergedScenesShoot={setMergedScenesShootData}
+            getSceneBackgroundColor={getSceneBackgroundColor}
           ></ScriptReportView>
         </IonContent> 
       }

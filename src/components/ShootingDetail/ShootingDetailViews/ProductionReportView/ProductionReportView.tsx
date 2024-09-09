@@ -1,18 +1,15 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react'
 import { useRxData } from 'rxdb-hooks'
 import useLoader from '../../../../hooks/Shared/useLoader'
-import { Section } from '../InfoView/InfoView'
 import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types'
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
 import { useParams } from 'react-router'
-import { FormattedService, Shooting } from '../../../../interfaces/shooting.types'
+import { Shooting } from '../../../../interfaces/shooting.types'
 import { RxDocument } from 'rxdb'
 import DatabaseContext from '../../../../context/Database.context'
-import { initial, update } from 'lodash'
 import { IonButton } from '@ionic/react'
 import { VscEdit, VscSave } from 'react-icons/vsc'
 import DropDownButton from '../../../Shared/DropDownButton/DropDownButton'
-import SceneInfoLabels from '../../../SceneDetails/SceneInfoLabels'
 
 interface ServiceDraft {
   id: string;
