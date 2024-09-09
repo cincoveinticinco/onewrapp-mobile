@@ -4,7 +4,6 @@ import {
   IonHeader,
   IonPage,
   useIonViewDidEnter,
-  useIonViewWillEnter,
 } from '@ionic/react';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
