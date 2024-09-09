@@ -34,7 +34,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 
   const tableColumns: Column[] = [
     {
-      key: 'backgroundColor',
+      key: 'sceneNumber',
       title: 'Scene',
       sticky: true,
       textAlign: 'center',
