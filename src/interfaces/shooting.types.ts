@@ -46,6 +46,7 @@ export interface Shooting {
   crewCalls: CrewCall[];
   pictureCars: PictureCar[];
   otherCalls: OtherCall[];
+  services: FormattedService[];
 }
 
 export interface ShootingBanner {
@@ -189,4 +190,20 @@ export interface Hospital {
   hospitalName: string;
   callTime: string;
   quantity: number;
+}
+
+export interface FormattedService {
+  description: string;
+  providerName: string;
+  providerId: number;
+  quantity: string;
+  unitCost: string;
+  tax: string | null;
+  retention: string | null;
+  aiuUtility: number | null;
+  aiuPercent: number | null;
+  aiuValue: number | null;
+  totalCost: string  | null;
+  files: number;
+  observations: string | null;
 }

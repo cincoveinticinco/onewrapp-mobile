@@ -209,6 +209,57 @@ const shootingSchema = {
       type: 'array',
       additionalProperties: true,
     },
+    services: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          description: {
+            type: ['string', 'null'],
+          },
+          providerName: {
+            type: ['string', 'null'],
+          },
+          providerId: {
+            type: ['number', 'null'],
+          },
+          quantity: {
+            type: ['string', 'null'],
+          },
+          unitCost: {
+            type: ['string', 'null'],
+          },
+          tax: {
+            type: ['string', 'null'],
+          },
+          retention: {
+            type: ['string', 'null'],
+          },
+          aiuUtility: {
+            type: ['number', 'null'],
+          },
+          aiuPercent: {
+            type: ['number', 'null'],
+          },
+          aiuValue: {
+            type: ['number', 'null'],
+          },
+          totalCost: {
+            type: ['number', 'null'],
+          },
+          files: {
+            type: ['number', 'null'],
+          },
+          observations: {
+            type: ['string', 'null'],
+          },
+          prServiceTypeId: {
+            type: ['number']
+          }
+        },
+        required: ['description', 'providerName', 'providerId', 'quantity', 'unitCost', 'totalCost', 'files'], // Puedes ajustar los campos requeridos según tus necesidades
+      },
+    },
     advanceCalls: {
       type: 'array',
       items: {

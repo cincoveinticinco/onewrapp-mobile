@@ -30,8 +30,9 @@ import ScriptReportView from '../../components/ShootingDetail/ShootingDetailView
 import { save } from 'ionicons/icons';
 import { VscEdit } from 'react-icons/vsc';
 import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
+import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
 
-export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report'
+export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
   cardType: string;
 };
@@ -1183,6 +1184,14 @@ const ShootingDetail = () => {
             setMergedScenesShoot={setMergedScenesShootData}
             saveScriptReport={saveScriptReport}
           ></WrapReportView>
+        </IonContent>
+      }
+      {
+        view === 'production-report' &&
+        <IonContent color="tertiary" fullscreen>
+          <ProductionReportView
+
+          ></ProductionReportView>
         </IonContent>
       }
       <ShootingDetailTabs setView={setView} view={view} handleBack={handleBack} />

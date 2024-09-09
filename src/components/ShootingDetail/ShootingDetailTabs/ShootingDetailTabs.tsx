@@ -103,6 +103,23 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
           WRAP REPORT
         </IonLabel>
       </IonTabButton>
+      {/* PRODUCTION REPORT */}
+      <IonTabButton
+        tab="shootingOthers"
+        className="tab-bar-buttons"
+        onClick={() => setView('production-report')}
+      >
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color="light" />
+        <IonLabel
+          style={
+            {
+              color: view === 'production-report' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
+            }
+          }
+        >
+          PRODUCTION REPORT
+        </IonLabel>
+      </IonTabButton>
     </IonTabBar>
   );
 };

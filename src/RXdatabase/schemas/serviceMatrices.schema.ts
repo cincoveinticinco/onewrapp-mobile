@@ -11,68 +11,79 @@ const serviceMatricesSchema = {
       type: 'string',
       maxLength: 250,
     },
-    project_id: {
+    projectId: {
       type: 'number',
     },
-    currency_id: {
-      type: 'number',
+    currencyId: {
+      type: ['number', 'null'],
     },
-    service_description: {
+    serviceDescription: {
       type: 'string',
     },
-    service_unit_cost: {
-      type: 'number',
+    serviceUnitCost: {
+      type:[ 'string', 'null'],
     },
-    quantity_projected: {
+    quantityProjected: {
       type: 'number',
     },
     activated: {
       type: 'boolean',
     },
-    close_matrix: {
+    closeMatrix: {
       type: 'boolean',
     },
-    service_matrices_sub_total: {
+    serviceMatricesSubTotal: {
+      type: ['string', 'null'],
+    },
+    serviceMatricesAvailable: {
+      type: ['string', 'null'],
+    },
+    prServiceTypeName: {
+      type: ['string', 'null'],
+    },
+    providerId: {
       type: 'number',
     },
-    service_matrices_available: {
-      type: 'number',
-    },
-    pr_service_type_id: {
-      type: 'number',
-    },
-    pr_service_type_name: {
+    providerName: {
       type: 'string',
     },
-    provider_id: {
-      type: 'number',
-    },
-    provider_name: {
+    providerDocument: {
       type: 'string',
     },
-    provider_document: {
-      type: 'string',
-    },
-    b_item_id: {
-      type: 'number',
+    bItemId: {
+      type: ['number', 'null'],
     },
     descripcion: {
+      type: ['string', 'null'],
+    },
+    accountItem: {
+      type: ['string', 'null'],
+    },
+    fFormServicesId: {
+      type: ['number', 'null'],
+    },
+    updatedAt: {
       type: 'string',
     },
-    account_item: {
-      type: 'string',
+    prServiceTypeId: {
+      type: ['number', 'null'],
     },
-    f_form_services_id: {
-      type: 'number',
+    prServiceMatricesId: {
+      type: ['number', 'null'],
     },
-    created_at: {
-      type: 'string',
+    _deleted: {
+      type: 'boolean',
     },
-    updated_at: {
-      type: 'string',
+    meta: {
+      type: 'object',
+      properties: {
+        lwt: {
+          type: 'number',
+        },
+      },
     },
   },
-  required: ['id', 'project_id', 'currency_id'],
+  required: ['id', 'projectId'],
 };
 
 const serviceMatricesSchemaInput = {
@@ -80,9 +91,9 @@ const serviceMatricesSchemaInput = {
     schema: serviceMatricesSchema,
     checkpointFields: [
       'id',
-      'updated_at',
+      'updatedAt',
     ],
-    deletedField: 'deleted',
+    deletedField: '_deleted', // Cambiado de 'deleted' a '_deleted'
   },
 };
 

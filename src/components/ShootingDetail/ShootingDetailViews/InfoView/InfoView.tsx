@@ -170,22 +170,18 @@ export const Section: React.FC<SectionProps> = ({
           slot="end"
           color="light"
           className="toolbar-button"
-          onClick={() => {
-            if (saveAfterEdit) {
-              saveFunction();
-            }
-            setEditMode(!editMode);
-          }}
         >
           {editMode ? (
             <VscSave
               className="toolbar-icon"
               style={{ color: 'var(--ion-color-primary)' }}
+              onClick={saveFunction}
             />
           ) : (
             <VscEdit
               className="toolbar-icon"
               style={{ color: 'var(--ion-color-light)' }}
+              onClick={() => setEditMode(!editMode)}
             />
           )}
         </IonButton>

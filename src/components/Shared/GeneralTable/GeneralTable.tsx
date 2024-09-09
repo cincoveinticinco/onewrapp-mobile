@@ -10,7 +10,7 @@ export interface Column {
   key: string;
   title: string;
   sticky?: boolean;
-  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds';
+  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency';
   textAlign?: 'left' | 'center' | 'right';
   editable?: boolean;
   showOnlyWhenEdit?: boolean;
@@ -30,6 +30,15 @@ interface GeneralTableProps {
 const GeneralTable: React.FC<GeneralTableProps> = ({
   columns, data, stickyColumnCount = 1, editMode = false, editFunction
 }) => {
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
   const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
     const value = row[column.key];
 
@@ -62,6 +71,8 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
         if (value === switchValues?.left) return -1;
         if (value === switchValues?.right) return 1;
         return 0;
+      case 'currency':
+        return value != null ? formatCurrency(value) : '--';
       default:
         return value?.toString().toUpperCase() || '--';
     }
@@ -82,7 +93,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
         const [hours, minutes] = newValue.split(':');
         const currentDate = new Date().toISOString();
         formattedValue = timeToISOString({ hours, minutes }, currentDate);
-      } else if (type === 'number') {
+      } else if (type === 'number' || type === 'currency') {
         formattedValue = Number(newValue);
       } else if (type === 'boolean') {
         formattedValue = Boolean(newValue);
@@ -129,6 +140,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
           />
         );
       case 'number':
+      case 'currency':
         return (
           <IonInput
             type="number"

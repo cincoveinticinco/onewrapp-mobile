@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
@@ -9,7 +9,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact,
+  setupIonicReact
 } from '@ionic/react';
 import {
   calendar, list, people, business, reader, settings,

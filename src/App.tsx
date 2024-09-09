@@ -27,7 +27,6 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import useLoader from './hooks/Shared/useLoader';
-import PageNotExists from './pages/PageNotExists/PageNotExists';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 
 setupIonicReact();
