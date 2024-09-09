@@ -152,11 +152,12 @@
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   .week-row {
     .month-shooting {
-      height: 50px;
+      height: 20px;
       min-width: 25px;
+      min-height: 20px;
       border-radius: 100%;
     }
 

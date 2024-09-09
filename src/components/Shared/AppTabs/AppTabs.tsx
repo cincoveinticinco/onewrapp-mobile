@@ -139,7 +139,7 @@ const AppTabs: React.FC = () => {
         color="dark"
         style={{ display: viewTabs ? '' : 'none' }}
       >
-        <IonTabButton tab="calendar" className={defineButtonClass} href={`${url}/calendar`}>
+        <IonTabButton tab="calendar" className="tab-bar-buttons" href={`${url}/calendar`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
@@ -147,7 +147,7 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={list} className="tab-bar-icons" />
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
+        <IonTabButton tab="stripboard" className={defineButtonClass} href={`${url}/stripboard`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
