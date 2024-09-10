@@ -39,6 +39,7 @@ interface InfoViewProps {
   deleteMeal: (meal: Meal) => void;
   mealInputs: FormInput[];
   handleEditMeal: (meal: Meal) => void;
+  permissionType?: number | null;
 }
 
 const InfoView: React.FC<InfoViewProps> = ({
@@ -69,7 +70,8 @@ const InfoView: React.FC<InfoViewProps> = ({
   openMealModal,
   deleteMeal,
   mealInputs,
-  handleEditMeal
+  handleEditMeal,
+  permissionType
 })  => {
 
   return (
@@ -77,6 +79,7 @@ const InfoView: React.FC<InfoViewProps> = ({
       <ShootingBasicInfo
         shootingInfo={shootingData.shotingInfo}
         updateShootingTime={updateShootingTime}
+        permissionType={permissionType}
       />
 
       <LocationsSection
@@ -87,6 +90,7 @@ const InfoView: React.FC<InfoViewProps> = ({
         setEditMode={setLocationsEditMode}
         onAddClick={openMapModal}
         removeLocation={removeLocation}
+        permissionType={permissionType}
       />
 
       <HospitalsSection
@@ -94,6 +98,7 @@ const InfoView: React.FC<InfoViewProps> = ({
         open={openHospitals}
         setOpen={setOpenHospitals}
         onAddClick={openHospitalsMapModal}
+        permissionType={permissionType}
       />
 
       <AdvanceCallsSection
@@ -107,6 +112,7 @@ const InfoView: React.FC<InfoViewProps> = ({
         deleteAdvanceCall={deleteAdvanceCall}
         advanceCallInputs={advanceCallInputs}
         handleEditAdvanceCall={handleEditAdvanceCall}
+        permissionType={permissionType}
       />
 
       <MealsSection
@@ -120,6 +126,7 @@ const InfoView: React.FC<InfoViewProps> = ({
         deleteMeal={deleteMeal}
         mealInputs={mealInputs}
         handleEditMeal={handleEditMeal}
+        permissionType={permissionType}
       />
 
     </IonContent>
@@ -136,6 +143,7 @@ interface LocationsSectionProps {
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   onAddClick: () => void;
   removeLocation: (location: LocationInfo) => void;
+  permissionType?: number | null;
 }
 
 interface SectionProps {
@@ -148,6 +156,7 @@ interface SectionProps {
   children: React.ReactNode;
   saveAfterEdit?: boolean
   saveFunction?: () => void
+  permissionType?: number | null
 }
 
 export const Section: React.FC<SectionProps> = ({
@@ -159,10 +168,13 @@ export const Section: React.FC<SectionProps> = ({
   onAddClick,
   children,
   saveAfterEdit = false,
-  saveFunction
+  saveFunction,
+  permissionType
 }) => {
 
   const renderEditSaveButton = () => {
+    const disableEditions = permissionType !== 1;
+
     if (saveFunction && setEditMode) {
       return (
         <IonButton
@@ -170,6 +182,7 @@ export const Section: React.FC<SectionProps> = ({
           slot="end"
           color="light"
           className="toolbar-button"
+          disabled={disableEditions}
         >
           {editMode ? (
             <VscSave
@@ -208,6 +221,7 @@ export const Section: React.FC<SectionProps> = ({
               slot="end"
               color="light"
               className="toolbar-button"
+              disabled={permissionType !== 1}
               onClick={() => setEditMode && setEditMode(!editMode)}
             >
              {
@@ -224,7 +238,7 @@ export const Section: React.FC<SectionProps> = ({
              }
             </IonButton>
           )}
-          <AddButton onClick={onAddClick} />
+          <AddButton onClick={onAddClick} disabled={permissionType !== 1} />
           <DropDownButton open={open} />
         </div>
       </div>
@@ -241,6 +255,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
   setEditMode,
   onAddClick,
   removeLocation,
+  permissionType
 }) => {
   return (
     <Section
@@ -250,6 +265,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
       editMode={editMode}
       setEditMode={setEditMode}
       onAddClick={onAddClick}
+      permissionType={permissionType}
     >
       {locations.length > 0 ? (
         locations.map((location) => (
@@ -275,13 +291,15 @@ interface HospitalsSectionProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onAddClick: () => void;
+  permissionType?: number | null;
 }
 
 export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
   hospitals,
   open,
   setOpen,
-  onAddClick
+  onAddClick,
+  permissionType
 }) => {
   return (
     <Section
@@ -289,6 +307,7 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
       open={open}
       setOpen={setOpen}
       onAddClick={onAddClick}
+      permissionType={permissionType}
     >
       {hospitals.length > 0 ? (
         hospitals.map((hospital) => (
@@ -317,6 +336,7 @@ interface AdvanceCallsSectionProps {
   deleteAdvanceCall: (call: any) => void;
   advanceCallInputs: any; // Tipo más específico si está disponible
   handleEditAdvanceCall: (call: any) => void;
+  permissionType?: number | null;
 }
 
 export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
@@ -329,7 +349,8 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
   getHourMinutesFomISO,
   deleteAdvanceCall,
   advanceCallInputs,
-  handleEditAdvanceCall
+  handleEditAdvanceCall,
+  permissionType
 }) => {
   return (
     <Section
@@ -339,6 +360,7 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
       editMode={editMode}
       setEditMode={setEditMode}
       onAddClick={onAddClick}
+      permissionType={permissionType}
     >
       {advanceCalls.length > 0 ? (
         advanceCalls.map((call) => (
@@ -372,6 +394,7 @@ interface MealsSectionProps {
   deleteMeal: (meal: Meal) => void;
   mealInputs: FormInput[];
   handleEditMeal: (meal: Meal) => void;
+  permissionType?: number | null;
 }
 
 export const MealsSection: React.FC<MealsSectionProps> = ({
@@ -384,7 +407,8 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
   getHourMinutesFomISO,
   deleteMeal,
   mealInputs,
-  handleEditMeal
+  handleEditMeal,
+  permissionType
 }) => {
   return (
     <Section
@@ -394,6 +418,7 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
       editMode={editMode}
       setEditMode={setEditMode}
       onAddClick={onAddClick}
+      permissionType={permissionType}
     >
       {meals.length > 0 ? (
         meals.map((meal) => (

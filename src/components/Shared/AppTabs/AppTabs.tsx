@@ -76,7 +76,7 @@ const AppTabs: React.FC = () => {
   const unauthorizedRoute = `/my/projects/${projectId}/unauthorized`;
 
   const defineButtonClassAccess = (pageId: number, notInMobile: boolean = false) => {
-    if (!getSecurePageAccess(pageId)) {
+    if (getSecurePageAccess(pageId) === null || getSecurePageAccess(pageId) === undefined) {
       return 'tab-bar-buttons disabled';
     } else if(notInMobile) {
       return notInMobile ? 'tab-bar-buttons disabled' : 'tab-bar-buttons';

@@ -1159,6 +1159,7 @@ const ShootingDetail: React.FC<{
           deleteMeal={deleteMeal}
           mealInputs={mealInputs}
           handleEditMeal={handleEditMeal}
+          permissionType={permissionType}
         />
       }
       {
@@ -1168,7 +1169,7 @@ const ShootingDetail: React.FC<{
             mergedScenesShoot={shootingData.mergedScenesShootData}
             editMode={scriptReportEditMode}
             setMergedScenesShoot={setMergedScenesShootData}
-            getSceneBackgroundColor={getSceneBackgroundColor}
+            permissionType={permissionType}
           ></ScriptReportView>
         </IonContent> 
       }
@@ -1208,6 +1209,7 @@ const ShootingDetail: React.FC<{
             editMode={scriptReportEditMode}
             setMergedScenesShoot={setMergedScenesShootData}
             saveScriptReport={saveScriptReport}
+            permissionType={permissionType}
           ></WrapReportView>
         </IonContent>
       }

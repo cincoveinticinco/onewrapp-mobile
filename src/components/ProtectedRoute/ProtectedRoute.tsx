@@ -27,6 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, p
     const user = await oneWrapDb?.user.findOne().exec();
     setUser(user);
     console.log(user);
+    console.log(permissionType)
     return false;
   }
 
@@ -38,7 +39,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, p
     <Route
       {...rest}
       render={(props) =>
-        permissionType ? (
+        permissionType === 0 || permissionType === 1 ? (
           <Component {...props} permissionType={permissionType} />
         ) : (
           <Redirect to={unauthorizedRoute} />

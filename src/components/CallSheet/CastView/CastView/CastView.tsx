@@ -14,6 +14,7 @@ interface CastViewProps {
   addNewCastCall: (formData: any) => Promise<void>;
   castOptions: { value: any; label: string }[];
   editCastCall: (index: number, key: any, newValue: any, type: string) => void
+  permissionType?: number | null
 }
 
 const CastView: React.FC<CastViewProps> = ({
@@ -24,6 +25,7 @@ const CastView: React.FC<CastViewProps> = ({
   addNewCastCall,
   castOptions,
   editCastCall,
+  permissionType
 }) => {
   const columns: Column[] = [
     {
@@ -140,7 +142,7 @@ const CastView: React.FC<CastViewProps> = ({
   if (addNewModalIsOpen) return <AddCastCallModal />;
 
   if (!castData || castData.length === 0) {
-    return <NoRegisters addNew={() => setIsOpen(true)} />;
+    return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
   }
 
   return (

@@ -8,10 +8,11 @@ interface OutlinePrimaryButtonProps {
   style?: { [key: string]: string }
   type?: 'button' | 'submit' | 'reset'
   id?: string
+  disabled?: boolean
 }
 
 const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({
-  buttonName, onClick, className = '', style = {}, type, id,
+  buttonName, onClick, className = '', style = {}, type, id, disabled
 }) => (
   <IonButton
     expand="block"
@@ -20,6 +21,7 @@ const OutlinePrimaryButton: React.FC<OutlinePrimaryButtonProps> = ({
     style={style}
     type={type}
     id={id}
+    disabled={disabled}
   >
     {buttonName}
   </IonButton>

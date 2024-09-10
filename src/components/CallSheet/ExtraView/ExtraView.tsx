@@ -12,6 +12,7 @@ interface ExtraViewProps {
   setAddNewModalIsOpen: (isOpen: boolean) => void;
   addNewExtraCall: (extraCall: ExtraCall) => void;
   editExtraCall: (index: number, key: any, newValue: any, type: string) => void;
+  permissionType?: number | null;
 }
 
 const columns: Column[] = [
@@ -42,7 +43,7 @@ const columns: Column[] = [
 ];
 
 const ExtraView: React.FC<ExtraViewProps> = ({
-  extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen, addNewExtraCall, editExtraCall,
+  extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen, addNewExtraCall, editExtraCall, permissionType
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
@@ -140,7 +141,9 @@ const ExtraView: React.FC<ExtraViewProps> = ({
 
   if (addNewModalIsOpen) return <AddNewExtraModal />;
 
-  if (!extraViewData.length) return <NoRegisters addNew={() => setAddNewModalIsOpen(true)} />;
+  if (!extraViewData.length) return <NoRegisters addNew={() => setAddNewModalIsOpen(true)} disabled={
+    permissionType !== 1
+  }/>;
 
   return (
     <GeneralTable columns={columns} data={extraViewData} editMode={editMode} editFunction={editExtraCall} />

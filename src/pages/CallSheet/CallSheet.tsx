@@ -52,10 +52,12 @@ interface CastCallForTable {
 
 interface CallSheetProps {
   isSection?: boolean;
+  permissionType?: number | null;
 }
 
 const CallSheet: React.FC<CallSheetProps> = ({
-  isSection = false
+  isSection = false,
+  permissionType
 }) => {
   const tabsController = useHideTabs();
   const [view, setView] = useState<CallSheetView>('cast');
@@ -412,6 +414,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             addNewCastCall={createNewCastCall}
             castOptions={castOptions}
             editCastCall={editCastCall}
+            permissionType={permissionType}
           />
         );
       case 'extras':
@@ -423,6 +426,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}
             addNewExtraCall={createNewExtraCall}
             editExtraCall={editExtraCall}
+            permissionType={permissionType}
           />
         );
       case 'pictureCars':
@@ -434,6 +438,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             addNewPictureCar={createNewPictureCar}
             editMode={editMode && view === 'pictureCars'}
             editPictureCar={editPictureCar}
+            permissionType={permissionType}
           />
         );
       case 'others':
@@ -445,6 +450,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             addNewOtherCall={createNewOtherCall}
             editMode={editMode && view === 'others'}
             editOtherCall={editOtherCall}
+            permissionType={permissionType}
           />
         );
       case 'crew':
@@ -729,16 +735,16 @@ const CallSheet: React.FC<CallSheetProps> = ({
                 <div slot="end">
                   {
                     !editMode ? (
-                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
+                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
                         <VscEdit />
                       </IonButton>
                     ) : (
-                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
+                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()} disabled={permissionType !== 1}>
                         <IonIcon icon={save} />
                       </IonButton>
                     )
                   }
-                  <AddButton onClick={() => openAddNewModal()} />
+                  <AddButton onClick={() => openAddNewModal()} disabled={permissionType !== 1} />
                 </div>
               )
             }

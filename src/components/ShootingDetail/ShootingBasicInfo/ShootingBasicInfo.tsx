@@ -58,10 +58,11 @@ interface ShootingBasicInfoProps {
     pages: string;
     min: string;
   };
+  permissionType?: number | null;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: { hours: string; minutes: string }) => void;
 }
 
-const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime }) => {
+const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType }) => {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [time, setTime] = useState('');
 
@@ -116,6 +117,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               fill="clear"
               onClick={handleSave}
               size="small"
+              disabled={permissionType !== 1}
               style={{
                 position: 'absolute', right: '0', top: '50%', transform: 'translateY(-60%)',
               }}
@@ -133,7 +135,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         symbol={symbol}
         title={title}
         onEdit={() => handleEdit(field as any, value)}
-        isEditable
+        isEditable={permissionType === 1}
       />
     );
   };

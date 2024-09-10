@@ -9,14 +9,14 @@ interface ScriptReportViewProps {
   mergedScenesShoot: mergedSceneShoot[]
   editMode: boolean
   setMergedScenesShoot: (mergedScenesShoot: mergedSceneShoot[]) => void
-  getSceneBackgroundColor: (scene: any) => string
+  permissionType?: number | null
 }
 
 const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   mergedScenesShoot,
   editMode,
   setMergedScenesShoot,
-  getSceneBackgroundColor
+  permissionType
 }) => {
   useEffect(() => {
     console.log(mergedScenesShoot)
@@ -31,6 +31,8 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
     });
     setMergedScenesShoot(copy); 
   };
+
+  const disableEditions = permissionType !== 1;
 
   const tableColumns: Column[] = [
     {

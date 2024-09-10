@@ -12,6 +12,7 @@ interface OtherCallsProps {
   addNewOtherCall: (otherCall: OtherCall) => void
   editMode: boolean
   editOtherCall: (index: number, key: any, newValue: any, type: string) => void
+  permissionType?: number | null
 }
 
 const OtherCalls: React.FC<OtherCallsProps> = ({
@@ -21,6 +22,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   addNewOtherCall,
   editMode,
   editOtherCall,
+  permissionType
 }) => {
   // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [
@@ -85,7 +87,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
 
   if (isOpen) return <AddNewCallModal />;
 
-  if (!otherCalls.length) return <NoRegisters addNew={() => setIsOpen(true)} />;
+  if (!otherCalls.length) return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
 
   return (
     <>
