@@ -54,6 +54,7 @@ interface LocationSetCardProps {
   isOpen?: boolean;
   validationFunction: (value: string, currentValue: string) => (any)
   setIsLoading?: (value: boolean) => void
+  permissionType?: number | null;
 }
 
 // EP, ....
@@ -75,7 +76,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const LocationSetCard: React.FC<LocationSetCardProps> = ({
-  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading,
+  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading,permissionType
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -85,6 +86,8 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
   const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
+
+  const disableEditions = permissionType !== 1;
 
   const openEditModal = () => {
     if (modalRef.current) {
@@ -368,13 +371,13 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       </IonItem>
       <IonItemOptions className="location-set-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={() => openEditModal()}>
+          <IonButton fill="clear" onClick={() => openEditModal()} disabled={disableEditions}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear">
+          <IonButton fill="clear" disabled={disableEditions}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => openAlert()}>
+          <IonButton fill="clear" onClick={() => openAlert()} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

@@ -21,7 +21,11 @@ import './Elements.scss';
 import removeAccents from '../../utils/removeAccents';
 import useLoader from '../../hooks/Shared/useLoader';
 
-const Elements: React.FC = () => {
+const Elements: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType
+}) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [displayedElements, setDisplayedElements] = useState<any>({});
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
@@ -300,6 +304,7 @@ const Elements: React.FC = () => {
                                   searchText={searchText}
                                   section="element"
                                   validationFunction={validateElementExists}
+                                  permissionType={permissionType}
                                 />
                               ))
 }

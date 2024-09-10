@@ -44,6 +44,7 @@ interface ElementCardProps {
   onClick?: () => void;
   elementsQuantity?: number;
   validationFunction: (name: string, currentName: string) => (boolean | string);
+  permissionType?: number | null;
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -57,13 +58,14 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const ElementCard: React.FC<ElementCardProps> = ({
-  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction,
+  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction, permissionType
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
+  const disableEditions = permissionType !== 1;
 
   const openEditModal = () => {
     modalRef.current?.present();
@@ -357,13 +359,13 @@ const ElementCard: React.FC<ElementCardProps> = ({
         </IonItem>
         <IonItemOptions className="element-card-item-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" onClick={openEditModal}>
+            <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
               <CiEdit className="button-icon view" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))} disabled={disableEditions}>
               <PiProhibitLight className="button-icon ban" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>
               <PiTrashSimpleLight className="button-icon trash" />
             </IonButton>
           </div>

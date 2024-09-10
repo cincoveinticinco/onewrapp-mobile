@@ -40,11 +40,13 @@ interface CastCardProps {
   character: Cast;
   searchText: string;
   validationFunction: (value: string, currentValue: string) => (boolean | string)
+  permissionType?: number | null;
 }
 
-const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction }) => {
+const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction, permissionType }) => {
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
+  const disableEditions = permissionType !== 1;
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -297,13 +299,13 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       </IonItem>
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={openModalEdition}>
+          <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))}>
+          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))} disabled={disableEditions}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}>
+          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

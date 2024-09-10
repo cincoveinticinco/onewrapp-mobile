@@ -19,7 +19,11 @@ import useLoader from '../../hooks/Shared/useLoader';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 
-const Sets: React.FC = () => {
+const Sets: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType
+}) => {
   const {
     processedSets, processedLocations, isLoading, setIsLoading,
   } = useProcessedSetsAndLocations();
@@ -205,6 +209,7 @@ const Sets: React.FC = () => {
                                     set={set}
                                     searchText={setsSearchText}
                                     validationFunction={validateSetExists}
+                                    permissionType={permissionType}
                                   />
                                 ))
 }

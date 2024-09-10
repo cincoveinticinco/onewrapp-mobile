@@ -60,7 +60,7 @@ export default class HttpReplicator {
               const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
               const token = await getToken();
               const id = checkpointOrNull ? checkpointOrNull.id : 0;
-              const lastProjectId = checkpointOrNull ? checkpointOrNull.lastProjectId : 0;
+              const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : 0;
               const collectionName = collection.getSchemaName();
               
               const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);

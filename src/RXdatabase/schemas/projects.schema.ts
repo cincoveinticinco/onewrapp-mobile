@@ -43,6 +43,9 @@ const projectSchema = {
     year: {
       type: 'integer',
     },
+    companyId: {
+      type: 'number'
+    },
     updatedAt: {
       type: 'string',
     },

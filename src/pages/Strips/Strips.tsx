@@ -26,8 +26,13 @@ import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
+import { SecurePages } from '../../interfaces/securePages.types';
 
-const Strips: React.FC = () => {
+const Strips: React.FC<{
+  permissionType: SecurePages | null;
+}> = ({
+  permissionType
+}) => {
   const {
     offlineScenes,
     projectId,
@@ -161,6 +166,7 @@ const Strips: React.FC = () => {
         title="LVE STRIPS"
         sortTrigger="sort-scenes-modal-trigger"
         isLoading={scenesAreLoading}
+        permissionType={permissionType}
       >
         <IonContent scrollEvents color="tertiary" ref={contentRef} id="strips-container-ref">
           <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
@@ -188,7 +194,12 @@ const Strips: React.FC = () => {
               <IonGrid className="scenes-grid ion-margin">
                 <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
                   {displayedScenes.map((scene, i) => (
-                    <SceneCard key={`scene-item-${scene.id}-${i}`} scene={scene as any} searchText={searchText} />
+                    <SceneCard 
+                      key={`scene-item-${scene.id}-${i}`} 
+                      scene={scene as any} 
+                      searchText={searchText}
+                      permissionType={permissionType}
+                    />
                   ))}
                 </ScrollInfiniteContext>
               </IonGrid>

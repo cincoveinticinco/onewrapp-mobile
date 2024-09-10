@@ -16,10 +16,11 @@ interface MainPagesLayoutProps {
   sortTrigger?: string
   isLoading?: boolean
   customButtons?: any[]
+  permissionType?: number | null
 }
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [],
+  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [], permissionType
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
 
@@ -42,6 +43,7 @@ const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
           sortTrigger={sortTrigger}
           isLoading={isLoading}
           customButtons={customButtons}
+          permissionType={permissionType}
         />
       </IonHeader>
       {children}

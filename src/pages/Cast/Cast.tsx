@@ -22,7 +22,11 @@ import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 import useLoader from '../../hooks/Shared/useLoader';
 
-const Cast: React.FC = () => {
+const Cast: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType,
+}) => {
   // Context
 
   const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
@@ -198,7 +202,13 @@ const Cast: React.FC = () => {
                   {
                   displayedCast[category]
                   && displayedCast[category].map((character: any, index: number) => (
-                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
+                    <CastCard 
+                      key={`${category}-${index}`} 
+                      character={character} 
+                      searchText={castSearchText} 
+                      validationFunction={validateCastExistence}
+                      permissionType={permissionType}
+                    />
                   ))
                 }
                 </ScrollInfiniteContext>

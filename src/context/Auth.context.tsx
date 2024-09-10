@@ -1,9 +1,7 @@
 import React, {
-  useContext, useState, useCallback, useEffect,
+  useContext, useState, useCallback,
 } from 'react';
-import { set } from 'lodash';
 import environment from '../../environment';
-import NoUserFounded from '../pages/NoUserFounded/NoUserFounded';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -13,6 +11,7 @@ interface AuthContextType {
   logout: () => void;
   loading: boolean;
   getToken: () => Promise<string>;
+  setLoadingAuth: (loading: boolean) => void;
 }
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -23,6 +22,7 @@ export const AuthContext = React.createContext<AuthContextType>({
   logout: () => {},
   loading: true,
   getToken: () => new Promise(() => {}),
+  setLoadingAuth: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [token, setToken] = useState<string>('');
+  const [token, setToken] = useState<string>('')
 
   const checkSession = useCallback(async () => {
     const token = localStorage.getItem('token');
@@ -63,10 +63,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoggedIn(false);
     return false;
   }, []);
-
-  useEffect(() => {
-    checkSession().finally(() => setLoading(false));
-  }, [checkSession]);
 
   const saveLogin = useCallback((token: string, userData: any) => {
     localStorage.setItem('token', token);
@@ -101,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     loading,
     getToken,
+    setLoadingAuth: setLoading,
   };
 
   return (

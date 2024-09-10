@@ -20,6 +20,7 @@ import {
 } from '../../Ennums/ennums';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import { SecurePages } from '../../interfaces/securePages.types';
 
 interface SceneCardProps {
   scene: Scene & { frontId: string };
@@ -27,12 +28,15 @@ interface SceneCardProps {
   isShooting?: boolean;
   isProduced?: ShootingSceneStatusEnum;
   shootingDeleteScene?: () => void;
+  permissionType?: number | null;
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({
-  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene,
+  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene, permissionType
 }) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
+
+  const disableEditions = permissionType !== 1;
 
   const history = useHistory();
   const routeMatch = useRouteMatch();
@@ -228,17 +232,21 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItem>
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}>
+            <IonButton 
+              fill="clear" 
+              routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}
+              disabled={disableEditions}
+            >
               <CiEdit className="button-icon view" />
             </IonButton>
             {
                 !isShooting
                 && (
                 <>
-                  <IonButton fill="clear">
+                  <IonButton fill="clear" disabled={disableEditions}>
                     <PiProhibitLight className="button-icon ban" />
                   </IonButton>
-                  <IonButton fill="clear" onClick={openDeleteAlert}>
+                  <IonButton fill="clear" onClick={openDeleteAlert} disabled={disableEditions}>
                     <PiTrashSimpleLight className="button-icon trash" />
                   </IonButton>
                 </>
@@ -247,7 +255,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
             {
                 isShooting && shootingDeleteScene
                 && (
-                <IonButton fill="clear" onClick={() => shootingDeleteScene()}>
+                <IonButton fill="clear" onClick={() => shootingDeleteScene()} disabled={disableEditions}>
                   <IoIosRemoveCircleOutline className="button-icon ban" />
                 </IonButton>
                 )

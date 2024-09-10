@@ -53,6 +53,7 @@ interface ToolbarProps {
   addShoBanSc?: any;
   isLoading?: boolean;
   customButtons?: CustomButton[];
+  permissionType?: number | null;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -79,6 +80,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   addShoBanSc,
   isLoading = false,
   customButtons = [],
+  permissionType,
 }) => {
   const isMobile = useIsMobile();
 
@@ -88,6 +90,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const [inputs, setInputs] = useState<any>([]);
 
   const { id } = useParams<{ id: string }>();
+
+  const disableEditions = permissionType !== 1;
 
   useEffect(() => {
     if (offlineScenes.length > 0) setSceneToPrint(offlineScenes[0]._data);
@@ -153,7 +157,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </div>
       )}
       {addScene && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button">
+        <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button" style={{
+          display: disableEditions ? 'none' : 'flex',
+        }}>
           <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
         </IonButton>
       )}

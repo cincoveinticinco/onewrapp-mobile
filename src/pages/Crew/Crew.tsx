@@ -30,7 +30,9 @@ interface FormStructureInterface {
   department: string;
 }
 
-const Crew: React.FC = () => {
+const Crew: React.FC<{
+  permissionType?: number | null;
+}> = ({ permissionType }) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
   const [searchText, setSearchText] = useState('');
   const [addNewModalIsOpen, setAddNewModalIsOpen] = useState(false);
@@ -298,6 +300,9 @@ const Crew: React.FC = () => {
         slot="end"
         color="light"
         className="ion-no-padding toolbar-button"
+        style={{
+          display: permissionType !== 1 ? 'none' : 'flex',
+        }}
         onClick={() => openModal(null)}
       >
         <IoMdAdd className="toolbar-icon" />
@@ -313,6 +318,7 @@ const Crew: React.FC = () => {
       title="CREW"
       isLoading={isFetching}
       customButtons={[openModalButton]}
+      permissionType={permissionType}
     >
       <IonContent color='tertiary'>
         {filteredDepartments.length === 0 && !isFetching ? (
@@ -356,6 +362,7 @@ const Crew: React.FC = () => {
                     crew={member}
                     onEdit={openModal}
                     onDelete={() => console.log('Delete')}
+                    permissionType={permissionType}
                   />
                 ))}
               </div>

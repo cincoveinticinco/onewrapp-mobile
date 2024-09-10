@@ -17,6 +17,8 @@ import CrewSchema from '../RXdatabase/schemas/crew.schema';
 import { Provider } from 'rxdb-hooks';
 import CountriesSchema from '../RXdatabase/schemas/country.schema';
 import ServiceMatricesSchema from '../RXdatabase/schemas/serviceMatrices.schema';
+import UserSchema from '../RXdatabase/schemas/user.schema';
+import { User } from '../interfaces/user.types';
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
@@ -94,9 +96,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [talentsCollection, setTalentsCollection] = useState<TalentsSchema | null>(null);
   const [crewCollection, setCrewCollection] = useState<CrewSchema | null>(null);
   const [serviceMatricesCollection, setServiceMatricesCollection] = useState<ServiceMatricesSchema | null>(null);
+  const [userCollection, setUserCollection] = useState<UserSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
-  const { getToken } = useContext(AuthContext);
+  const { checkSession, setLoadingAuth, getToken, logout} = useContext(AuthContext);
 
   // Resync
 
@@ -112,7 +115,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
   const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
   const [replicationStatus, setReplicationStatus] = useState<string>('');
-  const isOnline = useNavigatorOnLine();
+  const [isOnline, setIsOnline ]= useState(useNavigatorOnLine());
   const [replicationPercentage, setReplicationPercentage] = useState(0);
   const [projectsAreOffline, setProjectsAreOffline] = useState<boolean>(
     localStorage.getItem('projectsAreOffline') ? JSON.parse(localStorage.getItem('projectsAreOffline') as string) : false,
@@ -133,8 +136,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         const crewColl = new CrewSchema();
         const countriesCollection = new CountriesSchema();
         const serviceMatricesCollection = new ServiceMatricesSchema();
+        const userCollection = new UserSchema();
 
-        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection]);
+        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection, userCollection]);
         const dbInstance = await RXdatabase.getDatabaseInstance();
 
         setOneWrapRXdatabase(dbInstance);
@@ -148,11 +152,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setCrewCollection(crewColl);
         setCountriesCollection(countriesCollection);
         setServiceMatricesCollection(serviceMatricesCollection);
+        setUserCollection(userCollection);
 
         setIsDatabaseReady(true);
 
         if (isOnline) {
-          const projectsReplicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
+          const projectsReplicator = new HttpReplicator(dbInstance, [projectColl, userCollection], null, null, getToken);
           await projectsReplicator.startReplicationPull();
           setProjectsAreLoading(false);
         }
@@ -168,6 +173,22 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       initializeDatabase();
     }
   }, [isOnline, oneWrapRXdatabase]);
+
+  useEffect(() => {
+    if(isOnline) {
+      checkSession().finally(() => setLoadingAuth(false));
+    } else {
+      const user: User = oneWrapRXdatabase?.user.findOne().exec()
+      if(user) {
+        const sessionEndsAt = new Date(user.sessionEndsAt).getTime()
+        const now = new Date().getTime()
+        if(now > sessionEndsAt) {
+          logout()
+          setLoadingAuth(false)
+        }
+      }
+    }
+  }, [checkSession, isOnline]);
 
   useEffect(() => {
     localStorage.setItem('projectId', projectId);

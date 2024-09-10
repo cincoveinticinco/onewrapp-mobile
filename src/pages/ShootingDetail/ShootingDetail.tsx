@@ -64,7 +64,11 @@ export interface ShootingDataProps {
   mergedScenesShootData: mergedSceneShoot[];
 }
 
-const ShootingDetail = () => {
+const ShootingDetail: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType
+}) => {
   const [isDisabled, _] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
   const { oneWrapDb, initializeShootingReplication } = useContext(DatabaseContext);
@@ -87,6 +91,7 @@ const ShootingDetail = () => {
   const sceneModalRef = useRef<HTMLIonModalElement>(null);
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
   const mealModalRef = useRef<HTMLIonModalElement>(null);
+  const disableEditions = permissionType !== 1;
 
   const closeMapModal = () => {
     setShowMapModal(false);
@@ -804,6 +809,7 @@ const ShootingDetail = () => {
         slot="end"
         color="light"
         className="ion-no-padding toolbar-button"
+        disabled={disableEditions}
         onClick={() => {
           setTimeout(() => {
             toggleAddMenu();
@@ -1016,6 +1022,7 @@ const ShootingDetail = () => {
           slot="end"
           color="light"
           className="ion-no-padding toolbar-button"
+          disabled={disableEditions}
           onClick={() => {
             if(scriptReportEditMode) {
               saveScriptReport();

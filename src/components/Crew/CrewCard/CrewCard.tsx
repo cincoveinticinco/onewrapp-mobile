@@ -17,9 +17,11 @@ interface CrewCardProps {
   crew: Crew;
   onEdit: (id: string) => void;
   onDelete: () => void;
+  permissionType?: number | null;
 }
 
-const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete }) => {
+const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete, permissionType }) => {
+  const disableEditions = permissionType !== 1;
   return (
     <IonItemSliding>
       <IonItem mode="md" className="crew-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
@@ -42,10 +44,10 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete }) => {
       </IonItem>
       <IonItemOptions className="crew-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={() => onEdit(crew.id)}>
+          <IonButton fill="clear" onClick={() => onEdit(crew.id)} disabled={disableEditions}>
             <CiEdit className="button-icon edit" />
           </IonButton>
-          <IonButton fill="clear" onClick={onDelete}>
+          <IonButton fill="clear" onClick={onDelete} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>
