@@ -7,6 +7,7 @@ import './MonthViewToolbar.css';
 import { useState } from 'react';
 import { LiaDotCircle } from "react-icons/lia";
 import { useHistory } from 'react-router';
+import AddButton from '../../Shared/AddButton/AddButton';
 
 interface MonthViewToolbarProps {
   currentDate: Date;
@@ -14,10 +15,11 @@ interface MonthViewToolbarProps {
   onNext: () => void;
   onDateChange: (date: Date) => void;
   isLoading?: boolean;
+  setOpenAddShootingModal?: () => void; 
 }
 
 const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
-  currentDate, onPrev, onNext, onDateChange, isLoading = false,
+  currentDate, onPrev, onNext, onDateChange, isLoading = false, setOpenAddShootingModal
 }) => {
   const [showDateTime, setShowDateTime] = useState(false);
   const history = useHistory();
@@ -44,6 +46,7 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
         </IonButtons>
         <IonTitle>{format(currentDate, 'MMMM yyyy').toUpperCase()}</IonTitle>
         <IonButtons slot="end">
+          <AddButton onClick={setOpenAddShootingModal} />
           <IonButton onClick={toggleDateTime} color={showDateTime ? 'primary' : ''} >
             <IonIcon slot="icon-only" icon={calendarOutline} style={{
               fontSize: '30px',

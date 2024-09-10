@@ -26,6 +26,7 @@ const Calendar: React.FC = () => {
   const { oneWrapDb, projectId, setProjectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
+  const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
 
   const legendItems = [
     { color: 'var(--ion-color-primary)', label: 'OPEN SHOOTING' },
@@ -171,6 +172,7 @@ const Calendar: React.FC = () => {
             onNext={nextMonth}
             onDateChange={handleDateChange}
             isLoading={isLoading}
+            setOpenAddShootingModal={() => setOpenAddShootingModal(true)}
           />
         ) : (
           // <weekViewToolbar

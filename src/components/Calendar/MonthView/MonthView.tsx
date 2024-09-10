@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek,
 } from 'date-fns';
@@ -6,14 +7,35 @@ import { Shooting } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 
 const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ currentDate, shootings }) => {
+  const [dayWithShootingCount, setDayWithShootingCount] = useState<{ [key: string]: number }>({});
+
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Comienza la semana en lunes
-  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 }); // Termina la semana en domingo
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+
+  useEffect(() => {
+    const countDaysWithShooting = () => {
+      let count = 1;
+      const newCount: { [key: string]: number } = {};
+      let day = startDate;
+
+      while (day <= endDate) {
+        if (dayHasShooting(day)) {
+          newCount[day.toISOString()] = count;
+          count++;
+        }
+        day = addDays(day, 1);
+      }
+
+      setDayWithShootingCount(newCount);
+    };
+
+    countDaysWithShooting();
+  }, [currentDate, shootings]);
 
   const dayHasShooting = (day: Date) => shootings.some((shooting) => {
     const shootDate = new Date(shooting.shootDate as string);
-    // Sumar 1 día a la fecha del shooting por un bug de renderizado
     const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
     return (
       day.getFullYear() === adjustedShootDate.getFullYear()
@@ -44,9 +66,17 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
       dayClass += (isCurrentDay ? ' current-day' : '');
       dayClass += (isSunday ? ' sunday' : '');
 
+      const dayCount = dayWithShootingCount[currentDay.toISOString()];
+
       days.push(
         <IonCol key={currentDay.toISOString()} className={dayClass}>
-          <span className="day-number">{format(currentDay, 'd')}</span>
+          <span className='ion-flex ion-align-items-center space-flex-row' style={{
+            fontSize: '10px',
+          }}>
+            {dayCount && <span>DAY #{dayCount}</span>}
+            <span className="day-number bold">{format(currentDay, 'd')}</span>
+          </span>
+
           {
             dayHasShooting(currentDay) && getSHootingsByDay(currentDay).map((shooting) => (
               isCurrentMonth && <ShootingCard key={shooting.id} shooting={shooting} className="month-shooting" />
