@@ -8,8 +8,8 @@ import ShootingCard from '../ShootingCard/ShootingCard';
 const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ currentDate, shootings }) => {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
-  const startDate = startOfWeek(monthStart);
-  const endDate = addDays(endOfWeek(monthEnd), 35);
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Comienza la semana en lunes
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 }); // Termina la semana en domingo
 
   const dayHasShooting = (day: Date) => shootings.some((shooting) => {
     const shootDate = new Date(shooting.shootDate as string);
@@ -21,6 +21,7 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
         && day.getDate() === adjustedShootDate.getDate()
     );
   });
+
   const getSHootingsByDay = (day: Date) => shootings.filter((shooting) => {
     const shootDate = new Date(shooting.shootDate as string);
     const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
@@ -38,8 +39,10 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
     while (currentDay <= endDate) {
       const isCurrentMonth = isSameMonth(currentDay, monthStart);
       const isCurrentDay = isCurrentMonth && currentDay.toDateString() === new Date().toDateString();
+      const isSunday = currentDay.getDay() === 0;
       let dayClass = isCurrentMonth ? 'calendar-day' : 'other-month';
       dayClass += (isCurrentDay ? ' current-day' : '');
+      dayClass += (isSunday ? ' sunday' : '');
 
       days.push(
         <IonCol key={currentDay.toISOString()} className={dayClass}>
@@ -61,13 +64,13 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
   return (
     <IonGrid className="calendar-grid">
       <IonRow className="day-names-row">
-        <IonCol>Sun</IonCol>
         <IonCol>Mon</IonCol>
         <IonCol>Tue</IonCol>
         <IonCol>Wed</IonCol>
         <IonCol>Thu</IonCol>
         <IonCol>Fri</IonCol>
         <IonCol>Sat</IonCol>
+        <IonCol>Sun</IonCol>
       </IonRow>
       {[...Array(6)].map((_, weekIndex) => (
         <IonRow key={weekIndex} className="week-row">

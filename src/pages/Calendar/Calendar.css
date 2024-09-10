@@ -33,13 +33,14 @@
 .calendar-grid {
   min-height: 100%;
   overflow: hidden;
-  outline: 0.5px solid #ccc;
+  margin: 6px;
 }
 
 .day-names-row {
   text-align: center;
   text-transform: uppercase;
   font-weight: bold;
+  background-color: var(--ion-color-dark);
 
   ion-col {
     border: 1px solid #ccc;
@@ -51,15 +52,17 @@
   text-align: right;
   color: var(--ion-color-white);
   outline: 0.5px solid var(--ion-color-light);
-  height: auto !important;
-  min-height: 100px;
+  min-height: 150px !important;
+}
+
+.sunday {
+  background-color: var(--ion-color-tertiary-dark);
 }
 
 .other-month {
   color: #ccc;
   outline: 0.5px solid #ccc;
   text-align: right;
-  background-color: #212730;
 }
 
 .current-day {
@@ -72,7 +75,7 @@
   .other-month,
   .calendar-day,
   .current-day {
-    height: 15vh;
+    height: 150px;
     max-width: calc(100% / 7);
 
     --landscape-height: 150px;
@@ -89,7 +92,6 @@
   .month-shooting {
     cursor: pointer;
     max-width: 100%;
-    min-height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -147,7 +149,7 @@
     .other-month,
     .calendar-day,
     .current-day {
-      height: 100px;
+      min-height: 70px;
     }
   }
 }
@@ -164,7 +166,7 @@
     .other-month,
     .calendar-day,
     .current-day {
-      height: 100px;
+      min-height: 70px;
     }
   }
 }

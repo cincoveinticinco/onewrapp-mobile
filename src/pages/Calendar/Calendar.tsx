@@ -28,9 +28,9 @@ const Calendar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const legendItems = [
-    { color: 'var(--ion-color-primary)', label: 'OPEN' },
-    { color: '#f3fb8c', label: 'CALLED' },
-    { color: 'var(--ion-color-success)', label: 'CLOSED' },
+    { color: 'var(--ion-color-primary)', label: 'OPEN SHOOTING' },
+    { color: '#f3fb8c', label: 'CALLED SHOOTING' },
+    { color: 'var(--ion-color-success)', label: 'CLOSED SHOOTING' },
   ];
 
   useIonViewDidEnter(() => {
