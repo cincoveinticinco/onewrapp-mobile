@@ -15,6 +15,7 @@ import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import useLoader from '../../hooks/Shared/useLoader';
 import Legend from '../../components/Shared/Legend/Legend';
+import EditionModal, { FormInput } from '../../components/Shared/EditionModal/EditionModal';
 
 const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
@@ -33,6 +34,39 @@ const Calendar: React.FC = () => {
     { color: '#f3fb8c', label: 'CALLED SHOOTING' },
     { color: 'var(--ion-color-success)', label: 'CLOSED SHOOTING' },
   ];
+
+  // to create a new shooting, we need only two inputs: the shooting date and the shooting unit number
+  
+// export interface FormInput {
+//   fieldKeyName: string;
+//   label: string;
+//   placeholder: string;
+//   type: string;
+//   col?: string;
+//   inputName?: string;
+//   required?: boolean;
+//   selectOptions?: SelectOptionsInterface[];
+//   search?: boolean;
+// }
+
+  const addShootingInputs: FormInput[] = [
+    {
+      fieldKeyName: 'shootDate',
+      label: 'Shoot Date',
+      placeholder: 'Enter shoot date',
+      type: 'date',
+      required: true,
+      col: '6',
+    },
+    {
+      fieldKeyName: 'unitNumber',
+      label: 'Unit Number',
+      placeholder: 'Enter unit number',
+      type: 'number',
+      required: true,
+      col: '6',
+    },
+  ]
 
   useIonViewDidEnter(() => {
     setProjectId(id);
@@ -132,6 +166,13 @@ const Calendar: React.FC = () => {
     }));
   };
 
+  const goToCurrentDay = () => {
+    setCalendarState((prevState) => ({
+      ...prevState,
+      currentDate: new Date(),
+    }));
+  }
+
   const prevWeek = () => {
     setCalendarState((prevState) => ({
       ...prevState,
@@ -170,6 +211,7 @@ const Calendar: React.FC = () => {
             currentDate={calendarState.currentDate}
             onPrev={prevMonth}
             onNext={nextMonth}
+            goToCurrentDay={goToCurrentDay}
             onDateChange={handleDateChange}
             isLoading={isLoading}
             setOpenAddShootingModal={() => setOpenAddShootingModal(true)}
@@ -193,6 +235,13 @@ const Calendar: React.FC = () => {
           <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
         )}
       </IonContent>
+      <EditionModal
+        isOpen={openAddShootingModal}
+        setIsOpen={setOpenAddShootingModal}
+        formInputs={addShootingInputs}
+        handleEdition={(form: any) => {console.log(form)}}
+        title="Add Shooting"
+      />
     </IonPage>
   );
 };

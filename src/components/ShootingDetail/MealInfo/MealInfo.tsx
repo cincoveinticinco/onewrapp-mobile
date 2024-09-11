@@ -45,27 +45,15 @@ const MealInfo: React.FC<MealInfoProps> = ({
 
   return (
     <>
-      <div
-        className="ion-padding-start"
-        style={editMode ? { width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' } : { width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}
-      >
+      <div className="ion-padding-start">
         <b
-          className="ion-flex ion-align-items-center"
+          className="ion-flex ion-align-items-center ion-justify-content-between"
           style={{ minHeight: '50px' }}
         >
           {meal.meal.toUpperCase()}
           :
-        </b>
-        <span
-          className="ion-flex ion-align-items-center"
-        >
-          FROM:
-          {getHourMinutesFomISO(meal.ready_at)}
-          {' '}
-          TO:
-          {getHourMinutesFomISO(meal.end_time)}
-        </span>
-        {
+
+          {
           editMode
           && (
           <div>
@@ -79,6 +67,16 @@ const MealInfo: React.FC<MealInfoProps> = ({
           </div>
           )
         }
+        </b>
+        <span
+          className="ion-flex ion-align-items-center"
+        >
+          FROM:
+          {getHourMinutesFomISO(meal.ready_at)}
+          {' '}
+          TO:
+          {getHourMinutesFomISO(meal.end_time)}
+        </span>
       </div>
       <EditModal />
     </>

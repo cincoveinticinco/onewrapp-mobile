@@ -13,6 +13,7 @@ import {
 import './Strips.scss';
 import {
   Redirect, useHistory, useLocation, useParams,
+  useRouteMatch,
 } from 'react-router';
 import ScenesContext, { defaultSortOptions } from '../../context/Scenes.context';
 import applyFilters from '../../utils/applyFilters';

@@ -46,7 +46,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
             }
           }
         >
-          DAY INFO
+          SHOOTING INFO
         </IonLabel>
       </IonTabButton>
       <IonTabButton
@@ -117,7 +117,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
             }
           }
         >
-          PRODUCTION REPORT
+          SERVICES
         </IonLabel>
       </IonTabButton>
     </IonTabBar>

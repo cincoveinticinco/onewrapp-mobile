@@ -43,7 +43,7 @@ interface EditionModalProps {
   title: string;
   formInputs: FormInput[];
   handleEdition: any;
-  defaultFormValues: any;
+  defaultFormValues?: any;
   validate?: (value: string, keyValue?: string) => (boolean | string),
   openModal?: (modalReference: any) => void;
   isOpen?: boolean;
@@ -77,9 +77,15 @@ const EditionModal: React.FC<EditionModalProps> = ({
   }, []);
 
   const resetFormValues = () => {
-    formInputs.forEach((input: any) => {
-      setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
-    });
+    if(defaultFormValues){
+      formInputs.forEach((input: any) => {
+        setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
+      });
+    } else {
+      formInputs.forEach((input: any) => {
+        resetField(input.fieldKeyName);
+      });
+    }
   };
 
   const closeModal = () => {

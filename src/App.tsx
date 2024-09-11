@@ -28,6 +28,7 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import useLoader from './hooks/Shared/useLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
+import PageNotExists from './pages/PageNotExists/PageNotExists';
 
 setupIonicReact();
 
@@ -59,6 +60,9 @@ const AppContent: React.FC = () => {
             </Route>
             <Route path="/my/projects/:id">
               <AppTabs />
+            </Route>
+            <Route path="/my/projects/:id/unauthorized">
+              <PageNotExists />
             </Route>
             <Route exact path="/">
               <Redirect to="/my/projects" />

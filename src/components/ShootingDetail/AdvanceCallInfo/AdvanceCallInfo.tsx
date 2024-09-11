@@ -42,29 +42,26 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
   };
   return (
     <>
-      <div
-        className="ion-padding-start"
-        style={editMode ? { width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' } : { width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}
-      >
-        <p>
+      <div className="ion-padding-start">
+        <p className='ion-flex ion-align-items-center ion-justify-content-between'>
           <b>
             {call.dep_name_eng && call.dep_name_eng.toUpperCase() || call.dep_name_esp && call.dep_name_esp.toUpperCase() || 'NO DEPARTMENT'}
             :
             {' '}
           </b>
+          {
+            editMode
+            && (
+            <div>
+              <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => openModal()}>
+                <VscEdit className="toolbar-icon" style={{ color: 'var(--ion-color-primary)' }} />
+              </IonButton>
+              <DeleteButton onClick={() => deleteAdvanceCall(call)} />
+            </div>
+            )
+          }
         </p>
         <p>{getHourMinutesFomISO(call.adv_call_time)}</p>
-        {
-          editMode
-          && (
-          <div>
-            <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => openModal()}>
-              <VscEdit className="toolbar-icon" style={{ color: 'var(--ion-color-primary)' }} />
-            </IonButton>
-            <DeleteButton onClick={() => deleteAdvanceCall(call)} />
-          </div>
-          )
-        }
       </div>
       <EditModal />
     </>

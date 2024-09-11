@@ -32,6 +32,12 @@ main {
   align-items: center;
 }
 
+.end-flex-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .center-flex-column {
   display: flex;
   flex-direction: column;
@@ -62,7 +68,7 @@ main {
 }
 
 ion-button {
-  font-size: var(--525-common-text-size);
+  font-size: var(--525-icons-size) !important;
   text-transform: none;
 }
 
@@ -323,4 +329,14 @@ ion-toast.error-toast {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.ow-icons {
+  font-size: 36px !important;
+  font-weight: bold;
+  padding: 6px;
+
+  &:hover{
+    color: var(--ion-color-primary);
+  }
 }

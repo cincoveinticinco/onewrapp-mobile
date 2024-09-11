@@ -9,6 +9,7 @@ import DeleteButton from "../../../Shared/DeleteButton/DeleteButton";
 import { VscEdit, VscSave } from "react-icons/vsc";
 import AdvanceCallInfo from "../../AdvanceCallInfo/AdvanceCallInfo";
 import MealInfo from "../../MealInfo/MealInfo";
+import './InfoView.css';
 
 interface InfoViewProps {
   shootingData: ShootingDataProps;
@@ -81,53 +82,62 @@ const InfoView: React.FC<InfoViewProps> = ({
         updateShootingTime={updateShootingTime}
         permissionType={permissionType}
       />
-
-      <LocationsSection
-        locations={shootingData.shotingInfo.locations}
-        open={openLocations}
-        setOpen={setOpenLocations}
-        editMode={locationsEditMode}
-        setEditMode={setLocationsEditMode}
-        onAddClick={openMapModal}
-        removeLocation={removeLocation}
-        permissionType={permissionType}
-      />
-
-      <HospitalsSection
-        hospitals={shootingData.shotingInfo.hospitals}
-        open={openHospitals}
-        setOpen={setOpenHospitals}
-        onAddClick={openHospitalsMapModal}
-        permissionType={permissionType}
-      />
-
-      <AdvanceCallsSection
-        advanceCalls={shootingData.shotingInfo.advanceCalls}
-        open={openadvanceCalls}
-        setOpen={setOpenAdvanceCalls}
-        editMode={advanceCallsEditMode}
-        setEditMode={setAdvanceCallsEditMode}
-        onAddClick={openAdvanceCallModal}
-        getHourMinutesFomISO={getHourMinutesFomISO}
-        deleteAdvanceCall={deleteAdvanceCall}
-        advanceCallInputs={advanceCallInputs}
-        handleEditAdvanceCall={handleEditAdvanceCall}
-        permissionType={permissionType}
-      />
-
-      <MealsSection
-        meals={shootingData.shotingInfo.meals}
-        open={openMeals}
-        setOpen={setOpenMeals}
-        editMode={mealsEditMode}
-        setEditMode={setMealsEditMode}
-        onAddClick={openMealModal}
-        getHourMinutesFomISO={getHourMinutesFomISO}
-        deleteMeal={deleteMeal}
-        mealInputs={mealInputs}
-        handleEditMeal={handleEditMeal}
-        permissionType={permissionType}
-      />
+     <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+     }}>
+      <div className="section-wrapper">
+        <LocationsSection
+          locations={shootingData.shotingInfo.locations}
+          open={openLocations}
+          setOpen={setOpenLocations}
+          editMode={locationsEditMode}
+          setEditMode={setLocationsEditMode}
+          onAddClick={openMapModal}
+          removeLocation={removeLocation}
+          permissionType={permissionType}
+        />
+      </div>
+      <div className="section-wrapper">
+        <HospitalsSection
+          hospitals={shootingData.shotingInfo.hospitals}
+          open={openHospitals}
+          setOpen={setOpenHospitals}
+          onAddClick={openHospitalsMapModal}
+          permissionType={permissionType}
+        />
+      </div>
+      <div className="section-wrapper">
+        <AdvanceCallsSection
+          advanceCalls={shootingData.shotingInfo.advanceCalls}
+          open={openadvanceCalls}
+          setOpen={setOpenAdvanceCalls}
+          editMode={advanceCallsEditMode}
+          setEditMode={setAdvanceCallsEditMode}
+          onAddClick={openAdvanceCallModal}
+          getHourMinutesFomISO={getHourMinutesFomISO}
+          deleteAdvanceCall={deleteAdvanceCall}
+          advanceCallInputs={advanceCallInputs}
+          handleEditAdvanceCall={handleEditAdvanceCall}
+          permissionType={permissionType}
+        />
+      </div>
+      <div className="section-wrapper">
+        <MealsSection
+          meals={shootingData.shotingInfo.meals}
+          open={openMeals}
+          setOpen={setOpenMeals}
+          editMode={mealsEditMode}
+          setEditMode={setMealsEditMode}
+          onAddClick={openMealModal}
+          getHourMinutesFomISO={getHourMinutesFomISO}
+          deleteMeal={deleteMeal}
+          mealInputs={mealInputs}
+          handleEditMeal={handleEditMeal}
+          permissionType={permissionType}
+        />
+      </div>
+     </div>
 
     </IonContent>
   )
@@ -206,12 +216,12 @@ export const Section: React.FC<SectionProps> = ({
   return (
     <>
       <div
-        className="ion-flex ion-justify-content-between ion-padding-start"
+        className="ion-flex ion-justify-content-between ion-padding-start ion-align-items-center"
         style={{
           border: '1px solid black',
-          backgroundColor: 'var(--ion-color-tertiary-shade)',
+          backgroundColor: 'var(--ion-color-tertiary-dark)',
+          height: '40px',
         }}
-        onClick={() => setOpen(!open)}
       >
         <p style={{ fontSize: '18px' }}><b>{title.toUpperCase()}</b></p>
         <div onClick={(e) => e.stopPropagation()}>
@@ -239,7 +249,6 @@ export const Section: React.FC<SectionProps> = ({
             </IonButton>
           )}
           <AddButton onClick={onAddClick} disabled={permissionType !== 1} />
-          <DropDownButton open={open} />
         </div>
       </div>
       {open && children}
@@ -270,10 +279,14 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
       {locations.length > 0 ? (
         locations.map((location) => (
           <div key={location.id} className="ion-padding-start">
-            <h5><b>{location.location_name.toUpperCase()}</b></h5>
+            <h5 className="ion-flex ion-align-items-center ion-justify-content-between">
+              <b>
+                {location.location_name.toUpperCase()}
+              </b>
+              {editMode && <DeleteButton onClick={() => removeLocation(location)} />}
+            </h5>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>{location.location_full_address}</p>
-              {editMode && <DeleteButton onClick={() => removeLocation(location)} />}
             </div>
           </div>
         ))

@@ -1,10 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
 import {
+  IonContent,
   IonIcon,
   IonLabel,
+  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -13,6 +15,7 @@ import {
 } from '@ionic/react';
 import {
   calendar, list, people, business, reader, settings,
+  listSharp,
 } from 'ionicons/icons';
 import AddScene from '../../../pages/AddScene/AddScene';
 import FilterScenes from '../../../pages/FilterScenes/FilterScenes';
@@ -36,39 +39,45 @@ import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute';
 import { SecurePages } from '../../../interfaces/securePages.types';
 import DatabaseContext from '../../../context/Database.context';
 import { User } from '../../../interfaces/user.types';
-import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './AppTabs.scss';
+import useLoader from '../../../hooks/Shared/useLoader';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
-  const { viewTabs } = useContext(DatabaseContext);
-  const { oneWrapDb, projectId } = useContext(DatabaseContext);
+  const { viewTabs, oneWrapDb, projectId } = useContext(DatabaseContext);
   const [user, setUser] = useState<User | null>(null);
   const [currentCompany, setCurrentCompany] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchUser = async () => {
     const userInstance = await oneWrapDb?.user.findOne().exec();
     setUser(userInstance._data);
-    return false;
   }
 
   const fetchCurrentProject = async () => {
     const projects = await oneWrapDb?.projects.find().exec();
     const cProject = projects?.find((project: any) => project._data.id == projectId);
     setCurrentCompany(cProject.companyId);
-    return false;
   }
 
-  const getSecurePageAccess = (pageId: number) => {
-    const company = user?.companies.find((company: any) => company.id == currentCompany);
-    const page = company?.securePages.find((page: any) => page.id == pageId);
-    return page?.access;
-  }
-
+  const getSecurePageAccess = useCallback((pageId: number) => {
+    if (currentCompany && user) {
+      const company = user.companies.find((company: any) => company.id == currentCompany);
+      const page = company?.securePages.find((page: any) => page.id == pageId);
+      return page?.access;
+    }
+    return null;
+  }, [currentCompany, user]);
+  
   useEffect(() => {
-    fetchUser();
-    fetchCurrentProject();
+    const loadData = async () => {
+      setIsLoading(true);
+      await fetchUser();
+      await fetchCurrentProject();
+      setIsLoading(false);
+    }
+    loadData();
   }, [oneWrapDb]);
 
   const urlString = '/my/projects/:id' as any;
@@ -76,13 +85,24 @@ const AppTabs: React.FC = () => {
   const unauthorizedRoute = `/my/projects/${projectId}/unauthorized`;
 
   const defineButtonClassAccess = (pageId: number, notInMobile: boolean = false) => {
-    if (getSecurePageAccess(pageId) === null || getSecurePageAccess(pageId) === undefined) {
+    const access = getSecurePageAccess(pageId);
+    if (access === null || access === undefined) {
       return 'tab-bar-buttons disabled';
     } else if(notInMobile) {
       return notInMobile ? 'tab-bar-buttons disabled' : 'tab-bar-buttons';
     } else {
       return 'tab-bar-buttons';
     }
+  }
+
+  if(isLoading) {
+    return (
+      <IonPage>
+        <IonContent>
+          {useLoader()}
+        </IonContent>
+      </IonPage>
+    )
   }
 
   return (
@@ -92,7 +112,6 @@ const AppTabs: React.FC = () => {
           <ReplicationPage />
         </Route>
 
-        {/* Rutas protegidas usando SecurePages enum */}
         <ProtectedRoute 
           exact 
           path={`${urlString}/addscene`} 
@@ -143,8 +162,6 @@ const AppTabs: React.FC = () => {
           unauthorizedRoute={unauthorizedRoute} 
         />
         
-        {/* Rutas adicionales que no fueron incluidas antes */}
-
         <ProtectedRoute
           exact 
           path={`${urlString}/editscene/:sceneId`}
@@ -176,10 +193,6 @@ const AppTabs: React.FC = () => {
           unauthorizedRoute={unauthorizedRoute}
         />
         
-        <Route exact path={`${urlString}/strips/details/scene/:sceneId`}>
-          <SceneDetails />
-        </Route>
-
         <ProtectedRoute
           exact
           path={`${urlString}/strips/details/scene/:sceneId`}
@@ -232,7 +245,6 @@ const AppTabs: React.FC = () => {
         <Redirect exact from={`${urlString}`} to={`${urlString}/strips`} />
       </IonRouterOutlet>
       
-      {/* Tabs protegidas */}
       <IonTabBar
         slot="bottom"
         className="app-tabs-container"
@@ -244,7 +256,7 @@ const AppTabs: React.FC = () => {
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
         <IonTabButton tab="strips" className={defineButtonClassAccess(SecurePages.SCENES)} href={`${url}/strips`}>
-          <IonIcon icon={list} className="tab-bar-icons" />
+          <IonIcon icon={listSharp} className="tab-bar-icons" />
           <IonLabel>STRIPS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>

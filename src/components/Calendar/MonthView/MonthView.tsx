@@ -70,7 +70,7 @@ const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ cur
 
       days.push(
         <IonCol key={currentDay.toISOString()} className={dayClass}>
-          <span className='ion-flex ion-align-items-center space-flex-row' style={{
+          <span className={`ion-flex ion-align-items-center ${dayCount ? 'space-flex-row' : 'end-flex-row'}`} style={{
             fontSize: '10px',
           }}>
             {dayCount && <span>DAY #{dayCount}</span>}

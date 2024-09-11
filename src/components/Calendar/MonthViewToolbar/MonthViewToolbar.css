@@ -9,6 +9,14 @@
 
   color: var(--ion-color-tertiary);
 
+  &::part(wheel-item) {
+    text-transform: uppercase;
+  }
+
+  &::part(wheel-item active){
+    color: var(--ion-color-primary);
+  }
+
   button {
     text-transform: uppercase !important;
   }
