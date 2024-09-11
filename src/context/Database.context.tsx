@@ -23,7 +23,6 @@ import { User } from '../interfaces/user.types';
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
   offlineScenes: any[];
-  offlineProjects: Project[] | null;
   setStartReplication: (startReplication: boolean) => void;
   projectId: number | null;
   setProjectId: (projectId: any) => void;
@@ -35,7 +34,6 @@ export interface DatabaseContextProps {
   setScenesAreLoading: (scenesAreLoading: boolean) => void;
   projectsAreLoading: boolean;
   setProjectsAreLoading: (projectsAreLoading: boolean) => void;
-  getOfflineProjects: () => void;
   initializeShootingReplication: () => Promise<boolean>;
   initializeSceneReplication: () => Promise<boolean>;
   initializeParagraphReplication: () => Promise<boolean>;
@@ -48,14 +46,12 @@ export interface DatabaseContextProps {
   initialReplicationFinished: boolean;
   projectsInfoIsOffline: {[key: string]: boolean};
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
-  resyncShootings: any;
-  resyncScenes: any;
+  initializeProjectsUserReplication: () => Promise<boolean>;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
   offlineScenes: [],
-  offlineProjects: null,
   setStartReplication: () => {},
   projectId: null,
   setProjectId: () => {},
@@ -67,7 +63,6 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   setScenesAreLoading: () => {},
   projectsAreLoading: true,
   setProjectsAreLoading: () => {},
-  getOfflineProjects: () => {},
   initializeShootingReplication: () => new Promise(() => false),
   initializeSceneReplication: () => new Promise(() => false),
   initializeParagraphReplication: () => new Promise(() => false),
@@ -80,8 +75,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initialReplicationFinished: false,
   projectsInfoIsOffline: {},
   setProjectsInfoIsOffline: () => {},
-  resyncScenes: null,
-  resyncShootings: null
+  initializeProjectsUserReplication: () => new Promise(() => false),
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -105,9 +99,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const resyncScenes: any = useRef(null)
   const resyncShootings: any = useRef(null)
+  const resyncProjectsUser: any = useRef(null)
 
   const [viewTabs, setViewTabs] = useState(true);
-  const [offlineProjects, setOfflineProjects] = useState<Project[] | null>(null);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
@@ -124,51 +118,51 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     localStorage.getItem('projectsInfoIsOffline') ? JSON.parse(localStorage.getItem('projectsInfoIsOffline') as string) : {},
   );
 
-  useEffect(() => {
-    const initializeDatabase = async () => {
-      try {
-        const sceneColl = new ScenesSchema();
-        const paragraphColl = new SceneParagraphsSchema();
-        const projectColl = new ProjectsSchema();
-        const unitsColl = new UnitsSchema();
-        const shootingsColl = new ShootingsSchema();
-        const talentsColl = new TalentsSchema();
-        const crewColl = new CrewSchema();
-        const countriesCollection = new CountriesSchema();
-        const serviceMatricesCollection = new ServiceMatricesSchema();
-        const userCollection = new UserSchema();
+  const initializeDatabase = async () => {
+    try {
+      const sceneColl = new ScenesSchema();
+      const paragraphColl = new SceneParagraphsSchema();
+      const projectColl = new ProjectsSchema();
+      const unitsColl = new UnitsSchema();
+      const shootingsColl = new ShootingsSchema();
+      const talentsColl = new TalentsSchema();
+      const crewColl = new CrewSchema();
+      const countriesCollection = new CountriesSchema();
+      const serviceMatricesCollection = new ServiceMatricesSchema();
+      const userCollection = new UserSchema();
 
-        const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection, userCollection]);
-        const dbInstance = await RXdatabase.getDatabaseInstance();
+      const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection, userCollection]);
+      const dbInstance = await RXdatabase.getDatabaseInstance();
 
-        setOneWrapRXdatabase(dbInstance);
-        localStorage.setItem('oneWrapRXdatabase', JSON.stringify(oneWrapRXdatabase));
-        setSceneCollection(sceneColl);
-        setParagraphCollection(paragraphColl);
-        setProjectCollection(projectColl);
-        setUnitsCollection(unitsColl);
-        setShootingsCollection(shootingsColl);
-        setTalentsCollection(talentsColl);
-        setCrewCollection(crewColl);
-        setCountriesCollection(countriesCollection);
-        setServiceMatricesCollection(serviceMatricesCollection);
-        setUserCollection(userCollection);
+      setOneWrapRXdatabase(dbInstance);
+      localStorage.setItem('oneWrapRXdatabase', JSON.stringify(oneWrapRXdatabase));
+      setSceneCollection(sceneColl);
+      setParagraphCollection(paragraphColl);
+      setProjectCollection(projectColl);
+      setUnitsCollection(unitsColl);
+      setShootingsCollection(shootingsColl);
+      setTalentsCollection(talentsColl);
+      setCrewCollection(crewColl);
+      setCountriesCollection(countriesCollection);
+      setServiceMatricesCollection(serviceMatricesCollection);
+      setUserCollection(userCollection);
 
-        setIsDatabaseReady(true);
+      setIsDatabaseReady(true);
 
-        if (isOnline) {
-          const projectsReplicator = new HttpReplicator(dbInstance, [projectColl, userCollection], null, null, getToken);
-          await projectsReplicator.startReplicationPull();
-          setProjectsAreLoading(false);
-        }
-      } catch (error) {
-        console.error('Error al obtener la instancia de la base de datos:', error);
-      } finally {
-        console.log('Base de datos inicializada');
-        setProjectsAreLoading(false);
+      if (isOnline) {
+        const projectsReplicator = new HttpReplicator(dbInstance, [projectColl, userCollection], null, null, getToken);
+        await projectsReplicator.startReplicationPull();
+        resyncProjectsUser.current = projectsReplicator
       }
-    };
+    } catch (error) {
+      console.error('Error al obtener la instancia de la base de datos:', error);
+    } finally {
+      console.log('Base de datos inicializada');
+    }
+  };
 
+
+  useEffect(() => {
     if (!oneWrapRXdatabase) {
       initializeDatabase();
     }
@@ -194,14 +188,15 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     localStorage.setItem('projectId', projectId);
     resyncScenes.current = null
     resyncShootings.current = null
+    resyncProjectsUser.current = null
   }, [projectId]);
+
 
   useEffect(() => {
     setProjectsAreLoading(true);
     if (oneWrapRXdatabase) {
       const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe({
         next: (data: Project[]) => {
-          setOfflineProjects(data);
           setProjectsAreOffline(true);
           const projects = data.map((project: any) => project._data);
           try {
@@ -257,18 +252,31 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   }, [oneWrapRXdatabase, projectId]);
 
-  const getOfflineProjects = useCallback(async () => {
-    if (oneWrapRXdatabase) {
-      try {
-        setProjectsAreLoading(true);
-        const projects = await oneWrapRXdatabase.projects.find().exec();
-        setOfflineProjects(projects);
-        setProjectsAreLoading(false);
-      } catch (error) {
-        console.error('Error al obtener los proyectos:', error);
+  const initializeProjectsUserReplication = async () => {
+    //handle resync also
+    if (!oneWrapRXdatabase) return false;
+    try {
+      const lastProject = await oneWrapRXdatabase.projects.find().sort({ updatedAt: 'desc' }).limit(1).exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+
+      const projectsReplicator = new HttpReplicator(oneWrapRXdatabase, [projectCollection, userCollection], null, lastProject, getToken);
+
+      if(!resyncProjectsUser.current) {
+        if (isOnline) {
+          await projectsReplicator.startReplicationPull();
+          await projectsReplicator.startReplicationPush();
+          resyncProjectsUser.current = projectsReplicator
+        }
+      } else {
+        isOnline && resyncProjectsUser.current.resyncReplication()
       }
+
+      return true;
+    } catch (error) {
+      console.error('Error during projects replication:', error);
+      return false;
     }
-  }, [oneWrapRXdatabase]);
+  }
 
   const initializeSceneReplication = async () => {
     if (!sceneCollection || !oneWrapRXdatabase || !projectId) {
@@ -582,7 +590,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             oneWrapDb: oneWrapRXdatabase,
             offlineScenes,
             setStartReplication,
-            offlineProjects,
             projectId: parseInt(projectId),
             setProjectId,
             startReplication,
@@ -593,7 +600,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             setScenesAreLoading,
             projectsAreLoading,
             setProjectsAreLoading,
-            getOfflineProjects,
             initializeShootingReplication,
             initializeSceneReplication,
             initializeParagraphReplication,
@@ -606,8 +612,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             initialReplicationFinished,
             projectsInfoIsOffline,
             setProjectsInfoIsOffline,
-            resyncScenes,
-            resyncShootings
+            initializeProjectsUserReplication,
           }}
         >
         {children}

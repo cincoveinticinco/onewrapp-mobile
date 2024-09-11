@@ -85,7 +85,9 @@ const Calendar: React.FC = () => {
   };
 
   useIonViewDidEnter(() => {
-    initializeReplication();
+    if(navigator.onLine) {
+      initializeReplication();
+    }
   });
 
   useEffect(() => {

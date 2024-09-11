@@ -38,7 +38,9 @@ const Strips: React.FC<{
     offlineScenes,
     projectId,
     setProjectId,
-    initialReplicationFinished, scenesAreLoading, initializeSceneReplication
+    initialReplicationFinished, 
+    scenesAreLoading, 
+    initializeSceneReplication
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -60,7 +62,7 @@ const Strips: React.FC<{
 
   useIonViewDidEnter(() => {
     toggleTabs.showTabs();
-    if(!replicatorCreated) {
+    if(!replicatorCreated && navigator.onLine) {
       initializeSceneReplication();
       setReplicatorCreated(true);
     }
