@@ -4,6 +4,7 @@ import {
   IonHeader,
   IonPage,
   useIonViewDidEnter,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
@@ -15,11 +16,18 @@ import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
 import useLoader from '../../hooks/Shared/useLoader';
 import Legend from '../../components/Shared/Legend/Legend';
-import EditionModal, { FormInput } from '../../components/Shared/EditionModal/EditionModal';
+import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
+import { useRxData } from 'rxdb-hooks';
+import { Unit } from '../../interfaces/unitTypes.types';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+
 
 const Calendar: React.FC = () => {
+  const LOCAL_STORAGE_KEY = 'calendarCurrentDate';
+  const localStorageDate = localStorage.getItem(LOCAL_STORAGE_KEY);
   const [calendarState, setCalendarState] = useState({
-    currentDate: new Date(),
+    currentDate: localStorageDate ? new Date(localStorageDate) : new Date(),
     viewMode: 'month' as 'month' | 'week',
     shootings: [] as Shooting[],
   });
@@ -28,6 +36,18 @@ const Calendar: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
+  const errorToast = useErrorToast();
+  const successToast = useSuccessToast();
+
+  useEffect(() => {
+    const storedDate = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedDate) {
+      setCalendarState((prevState) => ({
+        ...prevState,
+        currentDate: new Date(storedDate),
+      }));
+    }
+  }, []);
 
   const legendItems = [
     { color: 'var(--ion-color-primary)', label: 'OPEN SHOOTING' },
@@ -35,19 +55,88 @@ const Calendar: React.FC = () => {
     { color: 'var(--ion-color-success)', label: 'CLOSED SHOOTING' },
   ];
 
-  // to create a new shooting, we need only two inputs: the shooting date and the shooting unit number
-  
-// export interface FormInput {
-//   fieldKeyName: string;
-//   label: string;
-//   placeholder: string;
-//   type: string;
-//   col?: string;
-//   inputName?: string;
-//   required?: boolean;
-//   selectOptions?: SelectOptionsInterface[];
-//   search?: boolean;
-// }
+  const { result: units, isFetching: isFetchingUnits } = useRxData(
+    'units',
+    (collection) => collection.find().sort({ unitNumber: 'asc' })
+  );
+
+  const validateShootingExistence = (shootDate: string, unitId: string) => {
+    return calendarState.shootings.some((shooting) => (
+      shooting.shootDate === shootDate && shooting.unitId === parseInt(unitId)
+    ));
+  }
+
+  const createShooting = async (form: {
+    shootDate: string;
+    unitId: string;
+  }) => {
+    if (!oneWrapDb) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    if(validateShootingExistence(form.shootDate, form.unitId)) {
+      errorToast('Shooting already exists');
+      return;
+    }
+
+    try {
+      const unitId = form.unitId;
+      const unit = units.map((u: any) => u._data).find((u: Unit) => u.id === unitId);
+      if (!unit) {
+        errorToast('Unit not found');
+        return;
+      }
+
+      const tempId = `${form.shootDate}_${unit.id}`;
+
+      const newShooting: Partial<Shooting> = {
+        id: tempId,
+        projectId: projectId || undefined,
+        unitId: parseInt(unit.id),
+        unitNumber: unit.unitNumber,
+        shootDate: form.shootDate,
+        status: 1,
+        isTest: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        scenes: [],
+        banners: [],
+        locations: [],
+        hospitals: [],
+        meals: [],
+        services: [],
+        advanceCalls: [],
+        castCalls: [],
+        extraCalls: [],
+        crewCalls: [],
+        pictureCars: [],
+        otherCalls: [],
+      };
+
+      await oneWrapDb.shootings.insert(newShooting);
+      await getShootings();
+
+      setOpenAddShootingModal(false);
+    } catch (error) {
+      console.error('Error creating new shooting:', error);
+      errorToast('Error creating new shooting');
+      return;
+    } finally {
+      successToast('Shooting created successfully');
+    }
+  };
+
+  const getUnitOptions = (units: Unit[]): SelectOptionsInterface[] => {
+    return units.map((unit) => ({
+      label: unit.unitName || 'No name',
+      value: unit.id
+    }));
+  }
+
+  const saveDateToLocalStorage = (date: Date) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, date.toISOString());
+  };
 
   const addShootingInputs: FormInput[] = [
     {
@@ -59,18 +148,34 @@ const Calendar: React.FC = () => {
       col: '6',
     },
     {
-      fieldKeyName: 'unitNumber',
-      label: 'Unit Number',
-      placeholder: 'Enter unit number',
-      type: 'number',
+      fieldKeyName: 'unitId',
+      label: 'Unit',
+      placeholder: 'Select unit',
+      type: 'select',
       required: true,
+      selectOptions: getUnitOptions(units as any),
       col: '6',
     },
   ]
 
-  useIonViewDidEnter(() => {
+  useIonViewWillEnter(() => {
     setProjectId(id);
-    initializeShootingReplication()
+    {
+      const initializeReplication = async () => {
+        try {
+          setIsLoading(true);
+          await initializeShootingReplication()
+        } catch (error) {
+          console.error('Error initializing replication:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      if(navigator.onLine) {
+        initializeReplication();
+      }
+    }
   });
 
   const initializeReplication = async () => {
@@ -148,32 +253,47 @@ const Calendar: React.FC = () => {
   };
 
   const prevMonth = () => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() - 1, 1),
-    }));
+    setCalendarState((prevState) => {
+      const newDate = new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() - 1, 1);
+      saveDateToLocalStorage(newDate);
+      return {
+        ...prevState,
+        currentDate: newDate,
+      };
+    });
   };
 
   const nextMonth = () => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() + 1, 1),
-    }));
+    setCalendarState((prevState) => {
+      const newDate = new Date(prevState.currentDate.getFullYear(), prevState.currentDate.getMonth() + 1, 1);
+      saveDateToLocalStorage(newDate);
+      return {
+        ...prevState,
+        currentDate: newDate,
+      };
+    });
   };
 
   const handleDateChange = (newDate: Date) => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: newDate,
-    }));
+    setCalendarState((prevState) => {
+      saveDateToLocalStorage(newDate);
+      return {
+        ...prevState,
+        currentDate: newDate,
+      };
+    });
   };
 
   const goToCurrentDay = () => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: new Date(),
-    }));
-  }
+    const today = new Date();
+    setCalendarState((prevState) => {
+      saveDateToLocalStorage(today);
+      return {
+        ...prevState,
+        currentDate: today,
+      };
+    });
+  };
 
   const prevWeek = () => {
     setCalendarState((prevState) => ({
@@ -216,7 +336,7 @@ const Calendar: React.FC = () => {
             goToCurrentDay={goToCurrentDay}
             onDateChange={handleDateChange}
             isLoading={isLoading}
-            setOpenAddShootingModal={() => setOpenAddShootingModal(true)}
+            setOpenAddShootingModal={() => setOpenAddShootingModal(!openAddShootingModal)}
           />
         ) : (
           // <weekViewToolbar
@@ -229,7 +349,7 @@ const Calendar: React.FC = () => {
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
         <Legend items={legendItems} />
-        {isLoading ? (
+        {isLoading || isFetchingUnits ? (
           useLoader()
         ) : calendarState.viewMode === 'month' ? (
           <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
@@ -241,7 +361,7 @@ const Calendar: React.FC = () => {
         isOpen={openAddShootingModal}
         setIsOpen={setOpenAddShootingModal}
         formInputs={addShootingInputs}
-        handleEdition={(form: any) => {console.log(form)}}
+        handleEdition={createShooting}
         title="Add Shooting"
       />
     </IonPage>

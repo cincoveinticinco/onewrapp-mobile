@@ -13,7 +13,7 @@ const shootingSchema = {
       maxLength: 250,
     },
     projectId: {
-      type: 'number',
+      type: ['number', 'null'],
     },
     unitId: {
       type: 'number',

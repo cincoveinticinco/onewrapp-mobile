@@ -159,6 +159,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
     setValue(fieldKeyName, checked);
   };
+  
 
   return (
     <IonModal
