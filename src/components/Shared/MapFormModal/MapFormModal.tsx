@@ -294,12 +294,12 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
       <IonHeader>
-        <IonToolbar color="tertiary">
+        {/* <IonToolbar color="tertiary">
           <IonTitle>Map</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleCloseModal}>Close</IonButton>
           </IonButtons>
-        </IonToolbar>
+        </IonToolbar> */}
       </IonHeader>
       <IonContent color="tertiary">
         {!map && <IonSpinner />}
@@ -311,7 +311,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
             height: '400px',
           }}
         />
-        <IonGrid>
+        <IonGrid style={{width: '400px'}}>
           <IonRow>
             <IonCol size="6">
               <IonInput
@@ -322,7 +322,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                 label="Location name"
               />
             </IonCol>
-            <IonCol size="6" style={hospital ? { display: 'none' } : {}}>
+            <IonCol size="12" style={hospital ? { display: 'none' } : {}}>
               <CustomSelect
                 input={{
                   label: 'LOCATION TYPE',
@@ -384,8 +384,16 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
             </IonCol>
           </IonRow> */}
           <IonRow>
-            <IonCol size="12">
-              <OutlinePrimaryButton onClick={handleSubmit} buttonName="Save" style={{ marginTop: '150px' }} />
+            <IonCol size="12" className='ion-flex-column ion-align-items-center'>
+              <OutlinePrimaryButton 
+                onClick={handleSubmit} 
+                buttonName="Save" 
+                style={{ marginTop: '50px', maxHeight: '30px' }}
+                color='success'
+              />
+              <IonButton fill='clear' color='light' onClick={closeModal}>
+                CANCEL
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
