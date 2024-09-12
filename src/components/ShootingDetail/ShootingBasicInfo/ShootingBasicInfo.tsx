@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonCol, IonGrid, IonRow, IonInput, IonButton, IonIcon,
 } from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
 import { saveOutline } from 'ionicons/icons';
-import { transform } from 'lodash';
+import { LocationInfo } from '../../../interfaces/shooting.types';
+import './ShootingBasicInfo.scss';
+import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
 
 interface ShootingInfoLabelsProps {
   info: string;
@@ -26,12 +28,12 @@ const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({
     <p
       className="ion-no-margin"
       style={{
-        fontSize: '16px', display: 'flex', justifyContent: 'center', width: '100%',
+        fontSize: '24px', display: 'flex', justifyContent: 'center', width: '100%',
       }}
     >
       <b>{info.toUpperCase()}</b>
-      {symbol && <span className="symbol-part" style={{ fontSize: '14px', fontWeight: 'bold' }}>{symbol}</span>}
-    </p>
+        {symbol && <span className="symbol-part" style={{ fontSize: '14px', fontWeight: 'bold' }}>{symbol}</span>}
+      </p>
     <p className="ion-no-margin" style={{ fontSize: '12px' }}>
       {title.toUpperCase()}
       {isEditable && (
@@ -57,6 +59,7 @@ interface ShootingBasicInfoProps {
     scenes: number;
     pages: string;
     min: string;
+    locations: LocationInfo[];
   };
   permissionType?: number | null;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: { hours: string; minutes: string }) => void;
@@ -70,6 +73,19 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
     const [main, symbol] = value.split(/[:.\/]/);
     return { main: main || '--', symbol: symbol ? (value.includes(':') ? `:${symbol}` : `/${symbol}`) : '' };
   };
+
+  const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
+  const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (shootingInfo.locations.length > 0) {
+      setFirstLocationLat(parseFloat(shootingInfo.locations[0].lat));
+      setFirstLocationLng(parseFloat(shootingInfo.locations[0].lng));
+      console.log(shootingInfo.locations[0])
+      console.log('firstLocationLat', firstLocationLat);
+      console.log('firstLocationLng', firstLocationLng);
+    }
+  }, [shootingInfo.locations]);
 
   const validateTime = (value: string) => {
     const [hours, minutes] = value.split(':');
@@ -99,7 +115,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
     }
   };
 
-  const renderEditableField = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string, title: string) => {
+  const renderEditableField = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string, title: string, withSymbol: boolean) => {
     const { main, symbol } = separateTimeOrPages(value);
 
     if (editingField === field) {
@@ -131,8 +147,8 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 
     return (
       <ShootingInfoLabels
-        info={main}
-        symbol={symbol}
+        info={withSymbol ? main : value}
+        symbol={withSymbol ? symbol : ''}
         title={title}
         onEdit={() => handleEdit(field as any, value)}
         isEditable={permissionType === 1}
@@ -141,46 +157,75 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   };
 
   return (
-    <IonGrid fixed style={{ width: '100%', marginTop: '24px', marginBottom: '24px' }}>
+    <IonGrid fixed style={{ width: '100%'}}>
       <IonRow>
-        <IonCol size="6" size-sm="3">
-          {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call')}
+        <IonCol size='8'>
+          {
+            shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
+              <div>
+                <GoogleMapComponent
+                  lat={firstLocationLat}
+                  lng={firstLocationLng}
+                />
+              </div>
+            ) : (
+              <div className='map-container ion-flex ion-justify-content-center ion-align-items-center'>
+                <p> PLEASE ADD LOCATION TO LOAD MAP</p>
+              </div>
+            )
+          }
         </IonCol>
-        <IonCol size="6" size-sm="3">
-          {renderEditableField('onSet', shootingInfo.onSet, 'Ready to Shoot')}
+        <IonCol size='4'>
+          <IonRow>
+            <IonCol size="12" className='ion-padding'>
+              {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call', false)}
+            </IonCol>
+            <IonCol size="12" className='ion-padding'>
+              {renderEditableField('onSet', shootingInfo.onSet, 'Ready to Shoot', false)}
+            </IonCol>
+            <IonCol size="12" className='ion-padding'>
+              {renderEditableField('estimatedWrap', shootingInfo.estimatedWrap, 'Estimated Wrap',false)}
+            </IonCol>
+          </IonRow>
+          <IonRow style={{position: 'relative', textAlign: 'center', height: '50px'}}>
+            <p className='bold center-absolute'>NO WEATHER AVAILABLE</p>
+          </IonRow>
         </IonCol>
-        <IonCol size="6" size-sm="3">
-          {renderEditableField('estimatedWrap', shootingInfo.estimatedWrap, 'Estimated Wrap')}
-        </IonCol>
-        <IonCol size="6" size-sm="3">
-          {renderEditableField('wrap', shootingInfo.wrap, 'Wrap')}
-        </IonCol>
-      </IonRow>
-      <IonRow>
-        <IonCol size="6" size-sm="3">
-          {renderEditableField('lastOut', shootingInfo.lastOut, 'Last Out')}
-        </IonCol>
-        <IonCol size="6" size-sm="3">
-          <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />
-        </IonCol>
-        <IonCol size="6" size-sm="3">
-          <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
-        </IonCol>
-        <IonCol size="6" size-sm="3">
-          <ShootingInfoLabels
-            info={separateTimeOrPages(shootingInfo.pages).main}
-            symbol={separateTimeOrPages(shootingInfo.pages).symbol}
-            title="Pages"
-          />
-        </IonCol>
-      </IonRow>
-      <IonRow>
-        <IonCol size="12">
-          <ShootingInfoLabels
-            info={separateTimeOrPages(shootingInfo.min).main}
-            symbol={separateTimeOrPages(shootingInfo.min).symbol}
-            title="Min"
-          />
+        <IonCol size='12'>
+          <IonRow class="ion-justify-content-between">
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Protections" />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels
+                info={separateTimeOrPages(shootingInfo.pages).main}
+                symbol={separateTimeOrPages(shootingInfo.pages).symbol}
+                title="Pages"
+              />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels
+                info={separateTimeOrPages(shootingInfo.min).main}
+                symbol={separateTimeOrPages(shootingInfo.min).symbol}
+                title="Minutes"
+              />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={shootingInfo.locations.length.toString()} title="Locations" />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={'0'} title="Script Days" />
+            </IonCol>
+            <IonCol size='auto'>
+              <ShootingInfoLabels info={'0'} title="Extras" />
+            </IonCol>
+          </IonRow>
         </IonCol>
       </IonRow>
     </IonGrid>
@@ -188,3 +233,48 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 };
 
 export default ShootingBasicInfo;
+
+
+// (<IonGrid fixed style={{ width: '100%', marginTop: '24px', marginBottom: '24px' }}>
+    //   <IonRow>
+    //     <IonCol size="6" size-sm="3">
+    //       {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call')}
+    //     </IonCol>
+    //     <IonCol size="6" size-sm="3">
+    //       {renderEditableField('onSet', shootingInfo.onSet, 'Ready to Shoot')}
+    //     </IonCol>
+    //     <IonCol size="6" size-sm="3">
+    //       {renderEditableField('estimatedWrap', shootingInfo.estimatedWrap, 'Estimated Wrap')}
+    //     </IonCol>
+    //     <IonCol size="6" size-sm="3">
+    //       {renderEditableField('wrap', shootingInfo.wrap, 'Wrap')}
+    //     </IonCol>
+    //   </IonRow>
+    //   <IonRow>
+    //     <IonCol size="6" size-sm="3">
+    //       {renderEditableField('lastOut', shootingInfo.lastOut, 'Last Out')}
+    //     </IonCol>
+        // <IonCol size="6" size-sm="3">
+        //   <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />
+        // </IonCol>
+    //     <IonCol size="6" size-sm="3">
+    //       <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
+    //     </IonCol>
+    //     <IonCol size="6" size-sm="3">
+    //       <ShootingInfoLabels
+    //         info={separateTimeOrPages(shootingInfo.pages).main}
+    //         symbol={separateTimeOrPages(shootingInfo.pages).symbol}
+    //         title="Pages"
+    //       />
+    //     </IonCol>
+    //   </IonRow>
+    //   <IonRow>
+        // <IonCol size="12">
+        //   <ShootingInfoLabels
+        //     info={separateTimeOrPages(shootingInfo.min).main}
+        //     symbol={separateTimeOrPages(shootingInfo.min).symbol}
+        //     title="Min"
+        //   />
+        // </IonCol>
+    //   </IonRow>
+    // </IonGrid>)

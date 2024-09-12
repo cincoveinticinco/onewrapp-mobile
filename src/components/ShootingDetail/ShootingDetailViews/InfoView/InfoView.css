@@ -21,6 +21,12 @@
   overflow-y: auto;
   background-color: var(--ion-color-tertiary-dark);
   padding: 6px;
+  flex-direction: column;
+
+  h5 {
+    margin: 7px 0;
+  }
+
 
   /* hide scroll bar */
   &::-webkit-scrollbar {
@@ -28,7 +34,44 @@
   }
 }
 
+.location-info-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "location-name location-name"
+    "location-address location-address";
 
+  h5 {
+    grid-column: 1 / span 10;
+    grid-row: 1 / 2;
+    display: flex;
+    align-items: center;
+  }
+
+  .location-address {
+    grid-column: 1 / span 10;
+    grid-row: 2 / 3;
+    align-content: center;
+    
+    p {
+      margin: 0px !important;
+    }
+  }
+
+  .location-buttons {
+    grid-column: 11 / span 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    justify-content: space-between;
+
+    ion-button {
+      margin: 0px !important;
+      height: 10px !important
+    }
+  }
+}
 
 .toolbar-icon {
  font-size: 20px;

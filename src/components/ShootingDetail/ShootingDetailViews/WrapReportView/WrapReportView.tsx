@@ -16,7 +16,7 @@ interface WrapReportViewProps {
   setLocationsEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   locationsEditMode: boolean;
   openMapModal: () => void;
-  removeLocation: (location: LocationInfo) => void;
+  removeLocation: (location: LocationInfo, locationIndex: number) => void;
   setOpenHospitals: React.Dispatch<React.SetStateAction<boolean>>;
   openHospitals: boolean;
   openHospitalsMapModal: () => void;

@@ -21,7 +21,7 @@ interface InfoViewProps {
   setLocationsEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   locationsEditMode: boolean;
   openMapModal: () => void;
-  removeLocation: (location: LocationInfo) => void;
+  removeLocation: (location: LocationInfo, locationIndex: number) => void;
   setOpenHospitals: React.Dispatch<React.SetStateAction<boolean>>;
   openHospitals: boolean;
   openHospitalsMapModal: () => void;
@@ -89,25 +89,29 @@ const InfoView: React.FC<InfoViewProps> = ({
         gridTemplateColumns: '1fr 1fr',
      }}>
       <div className="section-wrapper">
-        <LocationsSection
-          locations={shootingData.shotingInfo.locations}
-          open={openLocations}
-          setOpen={setOpenLocations}
-          editMode={locationsEditMode}
-          setEditMode={setLocationsEditMode}
-          onAddClick={openMapModal}
-          removeLocation={removeLocation}
-          permissionType={permissionType}
-        />
+        <div>
+          <LocationsSection
+            locations={shootingData.shotingInfo.locations}
+            open={openLocations}
+            setOpen={setOpenLocations}
+            editMode={locationsEditMode}
+            setEditMode={setLocationsEditMode}
+            onAddClick={openMapModal}
+            removeLocation={removeLocation}
+            permissionType={permissionType}
+          />
+        </div>
       </div>
       <div className="section-wrapper">
-        <HospitalsSection
-          hospitals={shootingData.shotingInfo.hospitals}
-          open={openHospitals}
-          setOpen={setOpenHospitals}
-          onAddClick={openHospitalsMapModal}
-          permissionType={permissionType}
-        />
+        <div>
+          <HospitalsSection
+            hospitals={shootingData.shotingInfo.hospitals}
+            open={openHospitals}
+            setOpen={setOpenHospitals}
+            onAddClick={openHospitalsMapModal}
+            permissionType={permissionType}
+          />
+        </div>
       </div>
       <div className="section-wrapper">
         <AdvanceCallsSection
@@ -154,7 +158,7 @@ interface LocationsSectionProps {
   editMode: boolean;
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   onAddClick: () => void;
-  removeLocation: (location: LocationInfo) => void;
+  removeLocation: (location: LocationInfo, locationIndex: number) => void;
   permissionType?: number | null;
 }
 
@@ -244,7 +248,7 @@ export const Section: React.FC<SectionProps> = ({
           <AddButton onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
       </div>
-      <div className="children-wrapper ion-flex ion-justify-content-center">
+      <div className="children-wrapper">
         {open && children}
       </div>
     </>
@@ -272,16 +276,19 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
       permissionType={permissionType}
     >
       {locations.length > 0 ? (
-        locations.map((location) => (
-          <div key={location.id} className="ion-padding-start">
-            <h5 className="ion-flex ion-align-items-center ion-justify-content-between">
+        locations.map((location, locationIndex) => (
+          <div key={location.lat + location.lng} className="ion-padding-start location-info-grid" style={{width: '100%'}}>
+            <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>
-                {location.location_name.toUpperCase()}
+                {location.locationName.toUpperCase()}
               </b>
-              {editMode && <DeleteButton onClick={() => removeLocation(location)} />}
             </h5>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p>{location.location_full_address}</p>
+            <div className="location-address">
+              <p>{location.locationAddress}</p>
+            </div>
+            <div className="ion-flex-column location-buttons">
+              {editMode && <IonButton fill="clear" slot="end" color="light" className="toolbar-button"><VscEdit /></IonButton>} 
+              {editMode && <DeleteButton onClick={() => removeLocation(location, locationIndex)} />}
             </div>
           </div>
         ))
@@ -307,7 +314,7 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
   open,
   setOpen,
   onAddClick,
-  permissionType
+  permissionType,
 }) => {
   return (
     <Section
@@ -319,9 +326,9 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
     >
       {hospitals.length > 0 ? (
         hospitals.map((hospital) => (
-          <div key={hospital.id} className="ion-padding-start">
-            <h5><b>{hospital.location_name.toUpperCase()}</b></h5>
-            <p>{hospital.location_full_address}</p>
+          <div key={hospital.lat + hospital.lng} className="ion-padding-start" style={{width: '100%'}}>
+            <h5><b>{hospital.locationName.toUpperCase()}</b></h5>
+            <p>{hospital.locationAddress}</p>
           </div>
         ))
       ) : (

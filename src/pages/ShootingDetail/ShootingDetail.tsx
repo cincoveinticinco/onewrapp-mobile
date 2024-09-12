@@ -33,6 +33,8 @@ import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/
 import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
 import { get } from 'lodash';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -93,6 +95,8 @@ const ShootingDetail: React.FC<{
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
   const mealModalRef = useRef<HTMLIonModalElement>(null);
   const disableEditions = permissionType !== 1;
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
   const closeMapModal = () => {
     setShowMapModal(false);
@@ -313,7 +317,14 @@ const ShootingDetail: React.FC<{
     advanceCall.adv_call_time = timeToISOString(advanceCall.adv_call_time, shootingCopy.shootDate);
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCall];
 
-    await oneWrapDb?.shootings.upsert(shootingCopy);
+    try {
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+    } catch(error) {
+      errorToast(`Error adding advance call: ${error}`);
+      return;
+    } finally {
+      successToast('Advance call added successfully');
+    }
 
     setShootingData((prev: any) => ({
       ...prev,
@@ -356,7 +367,14 @@ const ShootingDetail: React.FC<{
     meal.end_time = timeToISOString(meal.end_time, shootingCopy.shootDate);
 
     shootingCopy.meals = [...shootingCopy.meals, meal];
-    await oneWrapDb?.shootings.upsert(shootingCopy);
+    try {
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+    } catch(error) {
+      errorToast(`Error adding meal: ${error}`);
+      return;
+    } finally {
+      successToast('Meal added successfully');
+    }
 
     setShootingData((prev: any) => ({
       ...prev,
@@ -444,7 +462,10 @@ const ShootingDetail: React.FC<{
           }
         }
       } catch (error) {
-        console.error('Error updating advance call:', error);
+        errorToast(`Error updating advance call: ${error}`);
+        return;
+      } finally {
+        successToast('Advance call updated successfully');
       }
     }
   };
@@ -538,11 +559,11 @@ const ShootingDetail: React.FC<{
     };
 
     setShootingData((prev: any) => {
-      const updatedScenes = [...prev.scenes, { cardType: 'scene', ...shootingScene, ...scene }];
+      const updatedScenes = [...prev.mergedSceneBanners, { cardType: 'scene', ...shootingScene, ...scene }];
       const updatedInfo = calculateUpdatedInfo(updatedScenes);
       return {
         ...prev,
-        scenes: updatedScenes,
+        mergedSceneBanners: updatedScenes,
         shotingInfo: {
           ...prev.shotingInfo,
           ...updatedInfo,
@@ -945,31 +966,12 @@ const ShootingDetail: React.FC<{
   const addNewLocation = async (formData: Partial<LocationInfo>) => {
     try {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-      const shootingDate = new Date(shooting._data.shootDate);
       const locationInfo = {
-        id: `location-${shootingData.shotingInfo.locations.length + 1}`,
-        location_type_id: formData.location_type_id ?? null,
-        location_id: null,
-        call_time: formData.call_time ?? null,
-        location_full_address: formData.location_full_address ?? null,
-        location_city_state: formData.location_city_state ?? null,
-        company_id: formData.company_id ?? null,
-        location_name: formData.location_name ?? null,
-        location_address: formData.location_address ?? null,
-        location_addres_2: formData.location_address ?? null,
-        city_id: formData.city_id ?? null,
-        location_postal_code: formData.location_postal_code ?? null,
-        lat: formData.lat ?? null,
-        lng: formData.lng ?? null,
-        city_name_eng: formData.city_name_eng ?? null,
-        city_name_esp: formData.city_name_esp ?? null,
-        state_id: formData.state_id ?? null,
-        state_name_eng: formData.state_name_eng ?? null,
-        state_name_esp: formData.state_name_esp ?? null,
-        country_id: formData.country_id ?? null,
-        country_name_eng: formData.country_name_eng ?? null,
-        country_name_esp: formData.country_name_esp ?? null,
-        shoot_date: shootingDate.toISOString(),
+        locationTypeId: formData.locationTypeId,
+        locationName: formData.locationName,
+        locationAddress: formData.locationAddress,
+        lat: formData.lat,
+        lng: formData.lng,
       };
 
       const shootingCopy = {
@@ -987,16 +989,56 @@ const ShootingDetail: React.FC<{
         },
       }));
     } catch (error) {
-      console.error('Error adding new location:', error);
+      errorToast(`Error adding location: ${error}`);
+      return
+    } finally {
+      successToast('Location added successfully');
     }
   };
 
-  const removeLocation = async (location: LocationInfo) => {
-    const locationId = location.id;
+  const addNewHospital = async (formData: Partial<LocationInfo>) => {
+    console.log('formData:', formData); 
     try {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingDate = new Date(shooting._data.shootDate);
+      const hospitalInfo = {
+        locationTypeId: formData.locationTypeId,
+        locationName: formData.locationName,
+        locationAddress: formData.locationAddress,
+        lat: formData.lat,
+        lng: formData.lng,
+      };
+
+      const shootingCopy = {
+        ...shooting._data,
+        hospitals: [...shooting._data.hospitals, hospitalInfo],
+      };
+
+      await oneWrapDb?.shootings.upsert(shootingCopy);
+
+      setShootingData((prev: any) => ({
+        ...prev,
+        shotingInfo: {
+          ...prev.shotingInfo,
+          hospitals: [...prev.shotingInfo.hospitals, hospitalInfo],
+        },
+      }));
+    } catch (error) {
+      errorToast(`Error adding hospital`);
+      console.error('Error adding hospital:', error);
+      return
+    } finally {
+      successToast('Hospital added successfully');
+    }
+  }
+
+  const removeLocation = async (location: LocationInfo, locationIndex: number) => {
+    try {
+      console.log(locationIndex)
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
-      const updatedLocations = shootingCopy.locations.filter((loc: LocationInfo) => loc.id !== locationId);
+      const updatedLocations = shootingCopy.locations.filter((loc: LocationInfo, index: number) => index !== locationIndex);
+      console.log(updatedLocations)
       shootingCopy.locations = updatedLocations;
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
@@ -1012,6 +1054,10 @@ const ShootingDetail: React.FC<{
       initializeShootingReplication();
     } catch (error) {
       console.error('Error removing location:', error);
+      errorToast(`Error removing location: ${error}`);
+      return;
+    } finally {
+      successToast('Location removed successfully');
     }
   };
 
@@ -1067,6 +1113,10 @@ const ShootingDetail: React.FC<{
   
     } catch (error) {
       console.error('Error saving script report:', error);
+      errorToast(`Error saving script report: ${error}`);
+      return
+    } finally {
+      successToast('Script report saved successfully');
     }
   }
 
@@ -1076,6 +1126,7 @@ const ShootingDetail: React.FC<{
       mergedScenesShootData: scenes,
     }));
   }
+
   return (
     <IonPage>
       <IonHeader>
@@ -1121,6 +1172,7 @@ const ShootingDetail: React.FC<{
                     isShooting
                     isProduced={scene.status}
                     shootingDeleteScene={() => shootingDeleteScene(scene)}
+                    permissionType={permissionType}
                   />
                 ) : (
                   <ShootingBanner
@@ -1234,7 +1286,7 @@ const ShootingDetail: React.FC<{
       <AddNewAdvanceCallModal />
       <AddNewMeal />
       <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={addNewLocation} />
-      <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={addNewLocation} />
+      <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={addNewHospital} hospital={true}/>
     </IonPage>
   );
 };

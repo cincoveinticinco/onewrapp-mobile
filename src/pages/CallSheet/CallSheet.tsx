@@ -767,7 +767,6 @@ const CallSheet: React.FC<CallSheetProps> = ({
             backgroundColor: 'var(--ion-color-dark)',
             alignItems: 'flex-end',
           }}
-          onClick={() => setOpen(!open)}
         >
           <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
           <div onClick={(e) => e.stopPropagation()}>
@@ -811,7 +810,6 @@ const CallSheet: React.FC<CallSheetProps> = ({
                 </IonButton>
               )
             }
-            <DropDownButton open={open} />
           </div>
         </div>
         {open && renderContent()}

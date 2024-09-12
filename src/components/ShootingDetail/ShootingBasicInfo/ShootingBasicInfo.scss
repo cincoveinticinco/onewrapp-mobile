@@ -1,0 +1,12 @@
+.map-container {
+  min-height: 200px;
+  height: 100%;
+  background-color: #EFEFEF;
+
+  p{
+    width: 200px;
+    color: var(--ion-color-dark);
+    text-align: center;
+    font-weight: bold;
+  }
+}
