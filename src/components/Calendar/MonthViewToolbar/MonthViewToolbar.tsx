@@ -43,23 +43,23 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
       <IonToolbar color="tertiary" className="month-toolbar">
         <IonButtons slot="start">
           <IonButton onClick={() => handleBack()}>
-            <IonIcon icon={chevronBackOutline} />
+            <IonIcon icon={chevronBackOutline} style={{fontSize: '30px'}} />
           </IonButton>
         </IonButtons>
         <IonTitle>{format(currentDate, 'MMMM yyyy').toUpperCase()}</IonTitle>
         <IonButtons slot="end">
           <IonButton onClick={setOpenAddShootingModal}>
-            <IonIcon icon={addOutline} />
+            <IonIcon icon={addOutline} style={{fontSize: '30px'}} />
           </IonButton>
           <IonButton onClick={toggleDateTime} color={showDateTime ? 'primary' : ''} >
-            <IonIcon icon={calendarOutline} />
+            <IonIcon icon={calendarOutline} style={{fontSize: '30px'}} />
           </IonButton>
           <IonButton onClick={onPrev}>
-            <IonIcon icon={chevronBackOutline} />
+            <IonIcon icon={chevronBackOutline} style={{fontSize: '30px'}} />
           </IonButton>
           <LiaDotCircle className='ow-icons' onClick={goToCurrentDay}/>
           <IonButton onClick={onNext} >
-            <IonIcon icon={chevronForwardOutline} style={{fontSize: '36px'}} />
+            <IonIcon icon={chevronForwardOutline} style={{fontSize: '30px'}} />
           </IonButton>
         </IonButtons>
         {

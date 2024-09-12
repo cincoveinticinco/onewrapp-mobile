@@ -764,7 +764,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           className="ion-flex ion-justify-content-between ion-padding-start"
           style={{
             border: '1px solid black',
-            backgroundColor: 'var(--ion-color-tertiary-shade)',
+            backgroundColor: 'var(--ion-color-dark)',
             alignItems: 'flex-end',
           }}
           onClick={() => setOpen(!open)}

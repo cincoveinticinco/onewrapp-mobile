@@ -162,7 +162,9 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
         </Section>
       </div>
       <div className='section-wrapper scenes-table'>
-        <CallSheet isSection={true} />
+        <div className='children-wrapper'>
+          <CallSheet isSection={true} />
+        </div>
       </div>
     </div>
   )

@@ -10,6 +10,8 @@ import { VscEdit, VscSave } from "react-icons/vsc";
 import AdvanceCallInfo from "../../AdvanceCallInfo/AdvanceCallInfo";
 import MealInfo from "../../MealInfo/MealInfo";
 import './InfoView.css';
+import OutlinePrimaryButton from "../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton";
+import { RiFontSize } from "react-icons/ri";
 
 interface InfoViewProps {
   shootingData: ShootingDataProps;
@@ -183,32 +185,23 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
 
   const renderEditSaveButton = () => {
-    const disableEditions = permissionType !== 1;
 
     if (saveFunction && setEditMode) {
-      return (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          className="toolbar-button"
-          disabled={disableEditions}
-        >
-          {editMode ? (
-            <VscSave
-              className="toolbar-icon"
-              style={{ color: 'var(--ion-color-primary)' }}
-              onClick={saveFunction}
-            />
-          ) : (
-            <VscEdit
-              className="toolbar-icon"
-              style={{ color: 'var(--ion-color-light)' }}
-              onClick={() => setEditMode(!editMode)}
-            />
-          )}
-        </IonButton>
-      );
+      if(editMode) {
+        return (
+          <VscSave
+            className="toolbar-icon"
+            style={{ color: 'var(--ion-color-primary)' }}
+            onClick={saveFunction}
+          />
+        );
+      } else {
+        <VscEdit
+          className="toolbar-icon"
+          style={{ color: 'var(--ion-color-light)' }}
+          onClick={() => setEditMode(!editMode)}
+        />
+      }
     }
     return null;
   };
@@ -219,7 +212,7 @@ export const Section: React.FC<SectionProps> = ({
         className="ion-flex ion-justify-content-between ion-padding-start ion-align-items-center"
         style={{
           border: '1px solid black',
-          backgroundColor: 'var(--ion-color-tertiary-dark)',
+          backgroundColor: 'var(--ion-color-dark)',
           height: '40px',
         }}
       >
@@ -232,13 +225,13 @@ export const Section: React.FC<SectionProps> = ({
               color="light"
               className="toolbar-button"
               disabled={permissionType !== 1}
-              onClick={() => setEditMode && setEditMode(!editMode)}
             >
              {
               !saveAfterEdit ? (
                 <VscEdit
                   className="toolbar-icon"
                   style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
+                  onClick={() => setEditMode && setEditMode(!editMode)}
                 />
               ) : (
                 <>
@@ -251,7 +244,9 @@ export const Section: React.FC<SectionProps> = ({
           <AddButton onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
       </div>
-      {open && children}
+      <div className="children-wrapper ion-flex ion-justify-content-center">
+        {open && children}
+      </div>
     </>
   );
 }
@@ -291,8 +286,8 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
           </div>
         ))
       ) : (
-        <div className="ion-padding-start">
-          <p>NO LOCATIONS ADDED</p>
+        <div className="ion-padding-start ion-flex ion-align-items-center ion-justify-content-center" style={{height: '100%', width: '100%'}}>
+          <OutlinePrimaryButton buttonName="ADD" onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
       )}
     </Section>
@@ -330,8 +325,8 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
           </div>
         ))
       ) : (
-        <div className="ion-padding-start">
-          <p>NO HOSPITALS ADDED</p>
+        <div className="ion-padding-start ion-flex ion-align-items-center ion-justify-content-center" style={{height: '100%', width: '100%'}}>
+          <OutlinePrimaryButton buttonName="ADD" onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
       )}
     </Section>
@@ -388,8 +383,8 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
           />
         ))
       ) : (
-        <div className="ion-padding-start">
-          <p>NO ADVANCE CALLS ADDED</p>
+        <div className="ion-padding-start ion-flex ion-align-items-center ion-justify-content-center" style={{height: '100%', width: '100%'}}>
+          <OutlinePrimaryButton buttonName="ADD" onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
       )}
     </Section>
@@ -433,23 +428,25 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
-      {meals.length > 0 ? (
-        meals.map((meal) => (
-          <MealInfo
-            key={meal.id}
-            meal={meal}
-            editMode={editMode}
-            getHourMinutesFomISO={getHourMinutesFomISO}
-            deleteMeal={deleteMeal}
-            editionInputs={mealInputs}
-            handleEdition={handleEditMeal}
-          />
-        ))
-      ) : (
-        <div className="ion-padding-start">
-          <p>NO MEALS ADDED</p>
-        </div>
-      )}
+      <div style={{width: '100%'}}>
+        {meals.length > 0 ? (
+          meals.map((meal) => (
+              <MealInfo
+                key={meal.id}
+                meal={meal}
+                editMode={editMode}
+                getHourMinutesFomISO={getHourMinutesFomISO}
+                deleteMeal={deleteMeal}
+                editionInputs={mealInputs}
+                handleEdition={handleEditMeal}
+              />
+          ))
+        ) : (
+          <div className="ion-padding-start ion-flex ion-align-items-center ion-justify-content-center" style={{height: '100%', width: '100%'}}>
+            <OutlinePrimaryButton buttonName="ADD" onClick={onAddClick} disabled={permissionType !== 1}/>
+          </div>
+        )}
+      </div>
     </Section>
   );
 }

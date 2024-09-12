@@ -32,6 +32,7 @@ import { VscEdit } from 'react-icons/vsc';
 import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
 import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
 import { get } from 'lodash';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 
 export type ShootingViews = 'scenes' | 'info'  | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -75,7 +76,7 @@ const ShootingDetail: React.FC<{
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
-  const [view, setView] = useState<ShootingViews>('scenes');
+  const [view, setView] = useState<ShootingViews>('info');
   const [openLocations, setOpenLocations] = useState(true);
   const [openHospitals, setOpenHospitals] = useState(true);
   const [openadvanceCalls, setOpenAdvanceCalls] = useState(true);
@@ -1103,8 +1104,13 @@ const ShootingDetail: React.FC<{
             {isLoading ? (
               useLoader()
             ) : shootingData.mergedSceneBanners.length === 0 ? (
-              <div className="ion-padding-start">
-                <ExploreContainer name="NO SCENES ADDED" />
+              <div className="ion-padding-start ion-flex" style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}>
+                <OutlinePrimaryButton onClick={openSceneModal} buttonName="Add New" disabled={ disableEditions}/>
               </div>
             ) : (
               shootingData.mergedSceneBanners.map((scene: any) => (
@@ -1170,6 +1176,7 @@ const ShootingDetail: React.FC<{
             editMode={scriptReportEditMode}
             setMergedScenesShoot={setMergedScenesShootData}
             permissionType={permissionType}
+            openSceneModal={openSceneModal}
           ></ScriptReportView>
         </IonContent> 
       }

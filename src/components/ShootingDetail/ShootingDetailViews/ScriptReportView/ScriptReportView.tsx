@@ -1,35 +1,37 @@
-import { IonContent } from '@ionic/react'
-import React, { useEffect } from 'react'
-import { mergedSceneShoot } from '../../../../pages/ShootingDetail/ShootingDetail'
-import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
-import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums'
-import { set } from 'lodash'
+import React, { useEffect } from 'react';
+import { IonContent } from '@ionic/react';
+import { mergedSceneShoot } from '../../../../pages/ShootingDetail/ShootingDetail';
+import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
+import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums';
+import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface ScriptReportViewProps {
-  mergedScenesShoot: mergedSceneShoot[]
-  editMode: boolean
-  setMergedScenesShoot: (mergedScenesShoot: mergedSceneShoot[]) => void
-  permissionType?: number | null
+  mergedScenesShoot: mergedSceneShoot[];
+  editMode: boolean;
+  setMergedScenesShoot: (mergedScenesShoot: mergedSceneShoot[]) => void;
+  permissionType?: number | null;
+  openSceneModal?: () => void;
 }
 
 const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   mergedScenesShoot,
   editMode,
   setMergedScenesShoot,
-  permissionType
+  permissionType,
+  openSceneModal
 }) => {
   useEffect(() => {
-    console.log(mergedScenesShoot)
-  }, [mergedScenesShoot])
+    console.log(mergedScenesShoot);
+  }, [mergedScenesShoot]);
 
-  const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any, type: any) => {
+  const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any) => {
     const copy: mergedSceneShoot[] = mergedScenesShoot.map((item, index) => {
       if (index === rowIndex) {
         return { ...item, [rowKey]: rowValue };
       }
       return item;
     });
-    setMergedScenesShoot(copy); 
+    setMergedScenesShoot(copy);
   };
 
   const disableEditions = permissionType !== 1;
@@ -40,92 +42,100 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       title: 'Scene',
       sticky: true,
       textAlign: 'center',
-      backgroundColor: 'backgroundColor'
+      backgroundColor: 'backgroundColor',
     },
     {
       key: 'estimatedSeconds',
       title: 'Est. Time(mm:ss)',
       type: 'seconds',
-      textAlign: 'center'
+      textAlign: 'center',
     },
     {
       key: 'rehersalStart',
-      title: 'Rehersal Start',
+      title: 'Rehearsal Start',
       type: 'hour',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'rehersalEnd',
-      title: 'Rehersal End',
+      title: 'Rehearsal End',
       type: 'hour',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'startShooting',
       title: 'Shoot Start',
       type: 'hour',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'endShooting',
       title: 'Shoot End',
       type: 'hour',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'setups',
       title: 'Setups',
       type: 'number',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'producedSeconds',
       title: 'Produced Time (mm:ss)',
       type: 'seconds',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'partiality',
       title: 'Partially Shoot',
       type: 'boolean',
       textAlign: 'center',
-      editable: true,
+      editable: !disableEditions,
     },
     {
       key: 'comment',
       title: 'Comment',
       textAlign: 'center',
-      editable: true
+      editable: !disableEditions,
     },
     {
       key: 'status',
       title: 'Status',
       textAlign: 'center',
-      type: 'switch', 
-      editable: true,
+      type: 'switch',
+      editable: !disableEditions,
       switchValues: {
         left: ShootingSceneStatusEnum.NotShoot,
         neutral: ShootingSceneStatusEnum.Assigned,
         right: ShootingSceneStatusEnum.Shoot,
       },
       showOnlyWhenEdit: true,
-    }
-  ]
+    },
+  ];
 
   return (
-    <GeneralTable
-      columns={tableColumns}
-      data={mergedScenesShoot}
-      editMode={editMode}
-      editFunction={editFunction}
-    />
-  )
-}
+    <>
+      {mergedScenesShoot.length > 0 ? (
+        <GeneralTable
+          columns={tableColumns}
+          data={mergedScenesShoot}
+          editMode={editMode}
+          editFunction={editFunction}
+        />
+      ) : (
+        <div className='center-absolute'>
+          <OutlinePrimaryButton buttonName="Add New" onClick={openSceneModal} disabled={permissionType !== 1} />
+        </div>
+      )}
+    </>
+  );
+};
 
-export default ScriptReportView
+export default ScriptReportView;
