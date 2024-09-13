@@ -4,6 +4,7 @@ import { LocationInfo } from '../../../../interfaces/shooting.types';
 import { Section } from '../../../Shared/Section/Section';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import truncateString from '../../../../utils/truncateString';
+import generateLocationLink from '../../../../utils/getLocationLink';
 
 interface HospitalsSectionProps {
   hospitals: LocationInfo[];
@@ -43,7 +44,14 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
             <b>{truncateString(hospital.locationName.toUpperCase(), 50)}</b>
           </h5>
           <div className="location-address">
-            <p>{truncateString(hospital.locationAddress.toUpperCase(), 50)}</p>
+            <p>
+              {truncateString(hospital.locationAddress.toUpperCase(), 50)}
+              <br></br>
+              <a href={generateLocationLink(hospital.lat, hospital.lng)} target="_blank" rel="noreferrer">
+                <b> GOOGLE MAP LINK</b>
+              </a>
+            </p>
+           
           </div>
           <div className="ion-flex-column location-buttons">
             {editMode && <VscEdit className="edit-location" onClick={() => openEditModal(hospitalIndex)} />}

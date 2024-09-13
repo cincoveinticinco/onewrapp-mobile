@@ -45,7 +45,7 @@
   border: 1px solid var(--ion-color-tertiary);
 
   h5 {
-    grid-column: 1 / span 10;
+    grid-column: 1 / span 11;
     grid-row: 1 / 2;
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
   }
 
   .location-address {
-    grid-column: 1 / span 10;
+    grid-column: 1 / span 11;
     grid-row: 2 / 3;
     align-content: center;
     
@@ -63,7 +63,7 @@
   }
 
   .location-buttons {
-    grid-column: 11 / span 2;
+    grid-column: 12 / span 1;
     grid-row: 1 / span 2;
     display: flex;
     justify-content: space-around;
@@ -84,3 +84,35 @@
  font-size: 20px;
 }
 
+@media (max-width: 500px) {
+  .location-info-grid {
+  
+    h5 {
+      font-size: 14px;
+    }
+  
+    .location-address {
+      
+      p {
+        font-size: 12px;
+      }
+    }
+  
+    .location-buttons {
+      grid-column: 12 / span 1;
+      grid-row: 1 / span 2;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding-right: 6px;
+      
+      .edit-location {
+        color: var(--ion-color-primary);
+      }
+  
+      .delete-location {
+        color: var(--ion-color-danger);
+      }
+    }
+  }
+}
