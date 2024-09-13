@@ -7,6 +7,7 @@ import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
+import useIsMobile from '../../../../hooks/Shared/useIsMobile';
 
 interface InfoViewProps {
   shootingData: any;
@@ -85,7 +86,7 @@ const InfoView: React.FC<InfoViewProps> = ({
     />
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr',
     }}
     >
       <div className="section-wrapper">

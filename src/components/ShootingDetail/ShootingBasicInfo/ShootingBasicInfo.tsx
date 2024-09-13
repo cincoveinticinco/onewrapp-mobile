@@ -8,6 +8,8 @@ import './ShootingBasicInfo.scss';
 import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
 import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
+import separateTimeOrPages from '../../../utils/SeparateTimeOrPages';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
 
 interface ShootingInfoLabelsProps {
   info: string;
@@ -17,37 +19,26 @@ interface ShootingInfoLabelsProps {
   isEditable?: boolean;
 }
 
-const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({
+export const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({
   info, title, symbol, onEdit, isEditable,
-}) => (
-  <div
-    className="ion-flex-column"
-    style={{
-      textAlign: 'center', height: '100%', justifyContent: 'center', position: 'relative',
-    }}
-  >
-    <p
-      className="ion-no-margin"
-      style={{
-        fontSize: '24px', display: 'flex', justifyContent: 'center', width: '100%',
-      }}
-    >
-      <b>{info.toUpperCase()}</b>
-      {symbol && <span className="symbol-part" style={{ fontSize: '14px', fontWeight: 'bold' }}>{symbol}</span>}
-    </p>
-    <p className="ion-no-margin" style={{ fontSize: '12px' }}>
-      {title.toUpperCase()}
+}) => {
+  const isMobile = useIsMobile();
+
+  return (
+    <div className="shooting-label-grid">
+      <p className="ion-no-margin ion-flex label-info">
+        <b>{info.toUpperCase()}</b>
+        {symbol && <span className="symbol-part">{symbol}</span>}
+      </p>
       {isEditable && (
-        <VscEdit
-          onClick={onEdit}
-          style={{
-            cursor: 'pointer', color: 'var(--ion-color-primary)', position: 'absolute', right: '12px', top: '0',
-          }}
-        />
+        <VscEdit onClick={onEdit} className='label-button' />
       )}
-    </p>
-  </div>
-);
+      <p className="ion-no-margin labels-title">
+        {title.toUpperCase()}
+      </p>
+    </div>
+  );
+}
 
 interface ShootingBasicInfoProps {
   shootingInfo: {
@@ -61,6 +52,7 @@ interface ShootingBasicInfoProps {
     pages: string;
     min: string;
     locations: LocationInfo[];
+    protectedScenes: number;
   };
   permissionType?: number | null;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => void;
@@ -78,11 +70,6 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
       setFirstLocationLng(parseFloat(shootingInfo.locations[0].lng));
     }
   }, [shootingInfo.locations]);
-
-  const separateTimeOrPages = (value: string): { main: string; symbol: string } => {
-    const [main, symbol] = value.split(/[:.\/]/);
-    return { main: main || '--', symbol: symbol ? (value.includes(':') ? `:${symbol}` : `/${symbol}`) : '' };
-  };
 
   const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut') => {
     setEditingField(field);
@@ -155,8 +142,10 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               {renderEditableField('estimatedWrap', (getHourMinutesFomISO(shootingInfo.estimatedWrap, true)), 'Estimated Wrap', false)}
             </IonCol>
           </IonRow>
-          <IonRow style={{ position: 'relative', textAlign: 'center', height: '50px' }}>
-            <p className="bold center-absolute">NO WEATHER AVAILABLE</p>
+          <IonRow className='weather-container'>
+            <IonCol size="12" className="ion-padding">
+              <p className="bold">NO WEATHER AVAILABLE</p>
+            </IonCol>
           </IonRow>
         </IonCol>
         <IonCol size="12">
@@ -165,7 +154,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
             </IonCol>
             <IonCol size="auto">
-              <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Protections" />
+              <ShootingInfoLabels info={shootingInfo.protectedScenes.toString()} title="Protections" />
             </IonCol>
             <IonCol size="auto">
               <ShootingInfoLabels

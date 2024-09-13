@@ -11,6 +11,7 @@ import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/H
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
 import { Section } from '../../../Shared/Section/Section';
+import useIsMobile from '../../../../hooks/Shared/useIsMobile';
 
 interface WrapReportViewProps {
   shootingData: ShootingDataProps;
@@ -92,93 +93,107 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
   return (
-    <div className="wrap-report-view">
+    <div className="wrap-report-view" style={{gridTemplateColumns:  useIsMobile() ? '1fr' : '1fr 1fr'}}>
       <div className="section-wrapper scenes-table">
-        <ShootingBasicInfo
-          shootingInfo={shootingData.shotingInfo}
-          updateShootingTime={updateShootingTime}
-          permissionType={permissionType}
-        />
-      </div>
-      <div className="section-wrapper">
-        <LocationsSection
-          locations={shootingData.shotingInfo.locations}
-          open={openLocations}
-          setOpen={setOpenLocations}
-          editMode={true}
-          setEditMode={setLocationsEditMode}
-          onAddClick={openMapModal}
-          removeLocation={removeLocation}
-          permissionType={permissionType}
-          openEditModal={openEditLocationModal}
-        />
-      </div>
-      <div className="section-wrapper">
-        <HospitalsSection
-          hospitals={shootingData.shotingInfo.hospitals}
-          open={openHospitals}
-          setOpen={setOpenHospitals}
-          onAddClick={openHospitalsMapModal}
-          permissionType={permissionType}
-          openEditModal={openEditHospitalModal}
-          removeHospital={removeHospital}
-          editMode
-          setEditMode={() => true}
-        />
-      </div>
-      <div className="section-wrapper">
-        <AdvanceCallsSection
-          advanceCalls={shootingData.shotingInfo.advanceCalls}
-          open={openadvanceCalls}
-          setOpen={setOpenAdvanceCalls}
-          editMode={advanceCallsEditMode}
-          setEditMode={setAdvanceCallsEditMode}
-          onAddClick={openAdvanceCallModal}
-          getHourMinutesFomISO={getHourMinutesFomISO}
-          deleteAdvanceCall={deleteAdvanceCall}
-          advanceCallInputs={advanceCallInputs}
-          handleEditAdvanceCall={handleEditAdvanceCall}
-          permissionType={permissionType}
-        />
-      </div>
-      <div className="section-wrapper">
-        <MealsSection
-          meals={shootingData.shotingInfo.meals}
-          open={openMeals}
-          setOpen={setOpenMeals}
-          editMode={mealsEditMode}
-          setEditMode={setMealsEditMode}
-          onAddClick={openMealModal}
-          getHourMinutesFomISO={getHourMinutesFomISO}
-          deleteMeal={deleteMeal}
-          mealInputs={mealInputs}
-          handleEditMeal={handleEditMeal}
-          permissionType={permissionType}
-        />
-      </div>
-      <div className="section-wrapper scenes-table">
-        <Section
-          title="Scenes"
-          open={openScenes}
-          setOpen={setOpenScenes}
-          editMode={scriptReportEditMode}
-          setEditMode={setScriptReportEditMode}
-          onAddClick={() => {}}
-          saveAfterEdit
-          saveFunction={saveScriptReport}
-          permissionType={permissionType}
-        >
-          <ScriptReportView
-            mergedScenesShoot={mergedScenesShoot}
-            editMode={scriptReportEditMode}
-            setMergedScenesShoot={setMergedScenesShoot}
+        <div>
+          <ShootingBasicInfo
+            shootingInfo={shootingData.shotingInfo}
+            updateShootingTime={updateShootingTime}
             permissionType={permissionType}
           />
-        </Section>
+        </div>
+      </div>
+      <div className="section-wrapper">
+        <div>
+          <LocationsSection
+            locations={shootingData.shotingInfo.locations}
+            open={openLocations}
+            setOpen={setOpenLocations}
+            editMode={true}
+            setEditMode={setLocationsEditMode}
+            onAddClick={openMapModal}
+            removeLocation={removeLocation}
+            permissionType={permissionType}
+            openEditModal={openEditLocationModal}
+          />
+        </div>
+      </div>
+      <div className="section-wrapper">
+        <div>
+          <HospitalsSection
+            hospitals={shootingData.shotingInfo.hospitals}
+            open={openHospitals}
+            setOpen={setOpenHospitals}
+            onAddClick={openHospitalsMapModal}
+            permissionType={permissionType}
+            openEditModal={openEditHospitalModal}
+            removeHospital={removeHospital}
+            editMode
+            setEditMode={() => true}
+          />
+        </div> 
+      </div>
+      <div className="section-wrapper">
+        <div>
+          <AdvanceCallsSection
+            advanceCalls={shootingData.shotingInfo.advanceCalls}
+            open={openadvanceCalls}
+            setOpen={setOpenAdvanceCalls}
+            editMode={advanceCallsEditMode}
+            setEditMode={setAdvanceCallsEditMode}
+            onAddClick={openAdvanceCallModal}
+            getHourMinutesFomISO={getHourMinutesFomISO}
+            deleteAdvanceCall={deleteAdvanceCall}
+            advanceCallInputs={advanceCallInputs}
+            handleEditAdvanceCall={handleEditAdvanceCall}
+            permissionType={permissionType}
+          />
+        </div>
+      </div>
+      <div className="section-wrapper">
+        <div>
+          <MealsSection
+            meals={shootingData.shotingInfo.meals}
+            open={openMeals}
+            setOpen={setOpenMeals}
+            editMode={mealsEditMode}
+            setEditMode={setMealsEditMode}
+            onAddClick={openMealModal}
+            getHourMinutesFomISO={getHourMinutesFomISO}
+            deleteMeal={deleteMeal}
+            mealInputs={mealInputs}
+            handleEditMeal={handleEditMeal}
+            permissionType={permissionType}
+          />
+        </div>
+      </div>
+      <div className="section-wrapper scenes-table">
+        <div>
+          <Section
+            title="Scenes"
+            open={openScenes}
+            setOpen={setOpenScenes}
+            editMode={scriptReportEditMode}
+            setEditMode={setScriptReportEditMode}
+            onAddClick={() => {}}
+            saveAfterEdit
+            saveFunction={saveScriptReport}
+            permissionType={permissionType}
+          >
+            <ScriptReportView
+              mergedScenesShoot={mergedScenesShoot}
+              editMode={scriptReportEditMode}
+              setMergedScenesShoot={setMergedScenesShoot}
+              permissionType={permissionType}
+            />
+          </Section>
+        </div>
       </div>
       <div className="section-wrapper scenes-table">
         <div className="children-wrapper">
-          <CallSheet isSection />
+          <div>
+            <CallSheet isSection />
+          </div>
         </div>
       </div>
     </div>

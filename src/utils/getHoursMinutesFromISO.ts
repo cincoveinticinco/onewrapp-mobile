@@ -18,7 +18,7 @@ const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string =>
   const formattedHours = hours.toString().padStart(2, '0');
   const formattedMinutes = minutes.toString().padStart(2, '0');
 
-  return withampm ? `${formattedHours}:${formattedMinutes}${ampm}` : `${formattedHours}:${formattedMinutes}`;
+  return withampm ? `${formattedHours}:${formattedMinutes} ${ampm}` : `${formattedHours}:${formattedMinutes}`;
 };
 
 export default getHourMinutesFomISO;

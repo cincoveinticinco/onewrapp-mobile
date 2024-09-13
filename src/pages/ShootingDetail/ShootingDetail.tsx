@@ -9,7 +9,6 @@ import { useHistory, useParams } from 'react-router';
 import { IoMdAdd } from 'react-icons/io';
 import { save } from 'ionicons/icons';
 import { VscEdit } from 'react-icons/vsc';
-import { get } from 'lodash';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import DatabaseContext from '../../context/Database.context';
@@ -34,6 +33,10 @@ import ProductionReportView from '../../components/ShootingDetail/ShootingDetail
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
+import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -50,6 +53,7 @@ interface ShootingInfo {
   lastOut: string;
   sets: number;
   scenes: number;
+  protectedScenes: number;
   pages: string;
   min: string;
   locations: LocationInfo[];
@@ -98,6 +102,7 @@ const ShootingDetail: React.FC<{
   const disableEditions = permissionType !== 1;
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
+  const isMobile = useIsMobile()
 
   const closeMapModal = () => {
     setShowMapModal(false);
@@ -157,6 +162,7 @@ const ShootingDetail: React.FC<{
       hospitals: [],
       advanceCalls: [],
       meals: [],
+      protectedScenes: 0,
     },
     shootingFormattedDate: '',
     mergedScenesShootData: [],
@@ -723,15 +729,6 @@ const ShootingDetail: React.FC<{
     }));
   };
 
-  const getHourMinutesFomISO = (iso: string) => {
-    const date = new Date(iso);
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    hours %= 12;
-    hours = hours || 12; // la hora '0' debe ser '12'
-    return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-  };
-
   const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
     if (scene.status === ShootingSceneStatusEnum.NotShoot) {
       return 'var(--ion-color-danger-shade)';
@@ -786,6 +783,7 @@ const ShootingDetail: React.FC<{
       hospitals: shootings[0]._data.hospitals,
       advanceCalls: shootings[0]._data.advanceCalls,
       meals: shootings[0]._data.meals,
+      protectedScenes: scenesData?.filter((scene: Scene) => scene.protectionType).length || 0,
     };
 
     const formatShootingDate = (dateString: string, unitNumber: number) => {
@@ -1307,6 +1305,42 @@ const ShootingDetail: React.FC<{
       )}
       {view === 'scenes' && (
         <IonContent color="tertiary" fullscreen>
+          <div className='shooting-scenes-info'>
+            {/* PRINT GENERAL CALL, READY TO SHOOT, PROTECTIONS, PAGES, MINUTES */}
+            <div className={'shooting-scenes-info-item ion-flex ion-padding ion-justify-content-between' + (isMobile ? ' mobile-shooting-scenes-info' : '')}>
+              <ShootingInfoLabels
+                info={getHourMinutesFomISO(shootingData.shotingInfo.generalCall, true)}
+                title='General Call'
+                isEditable={false}
+              />
+              <ShootingInfoLabels
+                info={getHourMinutesFomISO(shootingData.shotingInfo.onSet, true)}
+                title='On Set'
+                isEditable={false}
+              />
+              <ShootingInfoLabels
+                info={shootingData.shotingInfo.scenes.toString()}
+                title='Scenes'
+                isEditable={false}
+              />
+              <ShootingInfoLabels
+                info={shootingData.shotingInfo.protectedScenes.toString()}
+                title='Protections'
+                isEditable={false}
+              />
+              <ShootingInfoLabels
+                info={separateTimeOrPages(shootingData.shotingInfo.pages).main}
+                symbol={separateTimeOrPages(shootingData.shotingInfo.pages).symbol}
+                title="Pages"
+              />
+              <ShootingInfoLabels
+                info={separateTimeOrPages(shootingData.shotingInfo.min).main}
+                symbol={separateTimeOrPages(shootingData.shotingInfo.min).symbol}
+                title="Minutes"
+              />
+            </div>
+            
+          </div>
           <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
             {isLoading ? (
               useLoader()
