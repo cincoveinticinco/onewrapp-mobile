@@ -35,18 +35,16 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
     title="Meals"
     open={open}
     setOpen={setOpen}
-    editMode={editMode}
-    setEditMode={setEditMode}
     onAddClick={onAddClick}
     permissionType={permissionType}
   >
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       {meals.length > 0 ? (
         meals.map((meal) => (
           <MealInfo
             key={meal.id}
             meal={meal}
-            editMode={editMode}
+            editMode={true}
             getHourMinutesFomISO={getHourMinutesFomISO}
             deleteMeal={deleteMeal}
             editionInputs={mealInputs}

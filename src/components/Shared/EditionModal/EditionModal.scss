@@ -16,19 +16,19 @@
       grid-column: 2/3;
     }
   }
+}
 
-  .edit-new-option-buttons-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 350px;
-    margin: 10% auto;
+.edit-new-option-buttons-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 350px;
+  margin: 36px auto;
 
-    ion-button {
-      max-width: 150px;
-      margin: 0 !important;
-      padding: 0;
-    }
+  ion-button {
+    max-width: 150px;
+    margin: 0 !important;
+    padding: 0;
   }
 }
 
@@ -50,4 +50,10 @@ ion-select {
     border-radius: 100%;
     padding: 8px;
   }
+}
+
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }

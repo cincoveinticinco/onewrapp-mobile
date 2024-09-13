@@ -1,6 +1,5 @@
 import { IonContent } from '@ionic/react';
 import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
-import { ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
 import { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import './InfoView.css';
@@ -10,7 +9,7 @@ import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSec
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
 
 interface InfoViewProps {
-  shootingData: ShootingDataProps;
+  shootingData: any;
   updateShootingTime: any;
   setOpenLocations: React.Dispatch<React.SetStateAction<boolean>>;
   openLocations: boolean;
@@ -124,8 +123,8 @@ const InfoView: React.FC<InfoViewProps> = ({
           advanceCalls={shootingData.shotingInfo.advanceCalls}
           open={openadvanceCalls}
           setOpen={setOpenAdvanceCalls}
-          editMode={advanceCallsEditMode}
-          setEditMode={setAdvanceCallsEditMode}
+          editMode={true}
+          setEditMode={() => true}
           onAddClick={openAdvanceCallModal}
           getHourMinutesFomISO={getHourMinutesFomISO}
           deleteAdvanceCall={deleteAdvanceCall}

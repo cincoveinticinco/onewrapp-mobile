@@ -3,6 +3,7 @@ import { PiTrashSimpleLight } from 'react-icons/pi';
 import { LocationInfo } from '../../../../interfaces/shooting.types';
 import { Section } from '../../../Shared/Section/Section';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import truncateString from '../../../../utils/truncateString';
 
 interface HospitalsSectionProps {
   hospitals: LocationInfo[];
@@ -39,10 +40,10 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
       hospitals.map((hospital, hospitalIndex) => (
         <div key={hospital.lat + hospital.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
           <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
-            <b>{hospital.locationName.toUpperCase()}</b>
+            <b>{truncateString(hospital.locationName.toUpperCase(), 50)}</b>
           </h5>
           <div className="location-address">
-            <p>{hospital.locationAddress}</p>
+            <p>{truncateString(hospital.locationAddress.toUpperCase(), 50)}</p>
           </div>
           <div className="ion-flex-column location-buttons">
             {editMode && <VscEdit className="edit-location" onClick={() => openEditModal(hospitalIndex)} />}

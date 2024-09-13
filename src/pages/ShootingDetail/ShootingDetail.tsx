@@ -27,7 +27,6 @@ import ShootingBanner from '../../components/ShootingDetail/ShootingBannerCard/S
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 import InfoView from '../../components/ShootingDetail/ShootingDetailViews/InfoView/InfoView';
 import ScriptReportView from '../../components/ShootingDetail/ShootingDetailViews/ScriptReportView/ScriptReportView';
 import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
@@ -296,13 +295,13 @@ const ShootingDetail: React.FC<{
 
   const advanceCallInputs = [
     {
-      label: 'Department', type: 'text', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '4',
+      label: 'Department', type: 'text', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6',
     },
     {
-      label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '4',
+      label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '6',
     },
     {
-      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '4',
+      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12',
     },
   ];
 
@@ -342,17 +341,17 @@ const ShootingDetail: React.FC<{
 
   const mealInputs:FormInput[] = [
     {
-      label: 'Meal', type: 'text', fieldKeyName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '4',
+      label: 'Meal', type: 'text', fieldKeyName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '9',
     },
     {
-      label: 'From Time', type: 'time', fieldKeyName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '4',
+      label: 'Quantity', type: 'number', fieldKeyName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '3',
     },
     {
-      label: 'End Time', type: 'time', fieldKeyName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '4',
+      label: 'From Time', type: 'time', fieldKeyName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '6',
     },
     {
-      label: 'Quantity', type: 'number', fieldKeyName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '4',
-    },
+      label: 'End Time', type: 'time', fieldKeyName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '6',
+    }
   ];
 
   const addNewMeal = async (meal: any) => {
@@ -510,7 +509,7 @@ const ShootingDetail: React.FC<{
     <EditionModal
       modalRef={advanceCallModalRef}
       modalTrigger={`${'open-add-new-advance-call-modal' + '-'}${shootingId}`}
-      title="Add New Advance Call"
+      title="Add New Department Call"
       formInputs={advanceCallInputs}
       handleEdition={addNewAdvanceCall}
       defaultFormValues={{}}
@@ -728,10 +727,9 @@ const ShootingDetail: React.FC<{
     const date = new Date(iso);
     let hours = date.getHours();
     const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12; // la hora '0' debe ser '12'
-    return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${ampm}`;
+    return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
   };
 
   const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
@@ -779,11 +777,11 @@ const ShootingDetail: React.FC<{
 
     const shootingInfo: ShootingInfo = {
       ...updatedInfo,
-      generalCall: getHourMinutesFomISO(shootings[0]._data.generalCall),
-      onSet: getHourMinutesFomISO(shootings[0]._data.onSet),
-      estimatedWrap: getHourMinutesFomISO(shootings[0]._data.estimatedWrap),
-      wrap: getHourMinutesFomISO(shootings[0]._data.wrap),
-      lastOut: getHourMinutesFomISO(shootings[0]._data.lastOut),
+      generalCall: shootings[0]._data.generalCall,
+      onSet: shootings[0]._data.onSet,
+      estimatedWrap: shootings[0]._data.estimatedWrap,
+      wrap: shootings[0]._data.wrap,
+      lastOut: shootings[0]._data.lastOut,
       locations: shootings[0]._data.locations,
       hospitals: shootings[0]._data.hospitals,
       advanceCalls: shootings[0]._data.advanceCalls,
@@ -858,28 +856,40 @@ const ShootingDetail: React.FC<{
     return newDate.toISOString();
   };
 
-  const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: { hours: string, minutes: string }) => {
+  const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => {
+    const timeToISOString = (time: string, date: string): string => {
+      const [hours, minutes] = time.split(':');
+      const dateObj = new Date(date);
+      dateObj.setHours(parseInt(hours), parseInt(minutes));
+      return dateObj.toISOString();
+    };
+    console.log('field:', field, 'time:', time);
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-
+  
         if (shooting) {
           const shootingCopy = { ...shooting._data };
-
-          const newTimeISO = timeToISOString(time, shootingCopy.shootDate);
-
+  
+          // Convertir el tiempo a formato de 24 horas si es necesario
+          const [hours, minutes] = time.split(':');
+          const is24HourFormat = parseInt(hours) > 12;
+          const formattedTime = is24HourFormat ? time : convertTo24Hour(time);
+  
+          const newTimeISO = timeToISOString(formattedTime, shootingCopy.shootDate);
+  
           shootingCopy[field] = newTimeISO;
-
+  
           await oneWrapDb.shootings.upsert(shootingCopy);
-
+  
           setShootingData((prev: any) => ({
             ...prev,
             shotingInfo: {
               ...prev.shotingInfo,
-              [field]: `${time.hours.padStart(2, '0')}:${time.minutes.padStart(2, '0')}`,
+              [field]: time, // Mantenemos el formato original (12 o 24 horas)
             },
           }));
-
+  
           console.log(`${field} updated successfully`);
         }
       } catch (error) {
@@ -887,6 +897,19 @@ const ShootingDetail: React.FC<{
       }
     }
   };
+  
+  // Función auxiliar para convertir de 12 a 24 horas si es necesario
+  const convertTo24Hour = (time: string): string => {
+    const [hours, minutes] = time.split(':');
+    let hour = parseInt(hours);
+    if (hour < 12 && time.toLowerCase().includes('pm')) {
+      hour += 12;
+    } else if (hour === 12 && time.toLowerCase().includes('am')) {
+      hour = 0;
+    }
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  };
+  
 
   const deleteMeal = async (mealToDelete: Meal) => {
     if (oneWrapDb && shootingId) {
@@ -1262,6 +1285,10 @@ const ShootingDetail: React.FC<{
     }, 10);
   };
 
+  if(isLoading){
+    return (<IonContent color="tertiary" fullscreen>{ useLoader()}</IonContent>)
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -1277,13 +1304,6 @@ const ShootingDetail: React.FC<{
           </IonButton>
         </div>
       )}
-      {
-        isLoading && (
-          <IonContent color="tertiary" fullscreen>
-            { useLoader()}
-          </IonContent>
-        )
-      }
       {view === 'scenes' && (
         <IonContent color="tertiary" fullscreen>
           <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>

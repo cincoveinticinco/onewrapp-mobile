@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-  IonCol, IonGrid, IonRow, IonInput, IonButton, IonIcon,
+  IonCol, IonGrid, IonRow,
 } from '@ionic/react';
 import { VscEdit } from 'react-icons/vsc';
-import { saveOutline } from 'ionicons/icons';
 import { LocationInfo } from '../../../interfaces/shooting.types';
 import './ShootingBasicInfo.scss';
 import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
+import EditionModal from '../../Shared/EditionModal/EditionModal';
+import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 
 interface ShootingInfoLabelsProps {
   info: string;
@@ -62,95 +63,61 @@ interface ShootingBasicInfoProps {
     locations: LocationInfo[];
   };
   permissionType?: number | null;
-  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: { hours: string; minutes: string }) => void;
+  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => void;
 }
 
 const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType }) => {
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [time, setTime] = useState('');
+  const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | null>(null);
+  const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
+  const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
+  const editionModalRef = useRef<HTMLIonModalElement>(null);
+
+  useEffect(() => {
+    if (shootingInfo.locations.length > 0) {
+      setFirstLocationLat(parseFloat(shootingInfo.locations[0].lat));
+      setFirstLocationLng(parseFloat(shootingInfo.locations[0].lng));
+    }
+  }, [shootingInfo.locations]);
 
   const separateTimeOrPages = (value: string): { main: string; symbol: string } => {
     const [main, symbol] = value.split(/[:.\/]/);
     return { main: main || '--', symbol: symbol ? (value.includes(':') ? `:${symbol}` : `/${symbol}`) : '' };
   };
 
-  const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
-  const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (shootingInfo.locations.length > 0) {
-      setFirstLocationLat(parseFloat(shootingInfo.locations[0].lat));
-      setFirstLocationLng(parseFloat(shootingInfo.locations[0].lng));
-      console.log(shootingInfo.locations[0]);
-      console.log('firstLocationLat', firstLocationLat);
-      console.log('firstLocationLng', firstLocationLng);
-    }
-  }, [shootingInfo.locations]);
-
-  const validateTime = (value: string) => {
-    const [hours, minutes] = value.split(':');
-    const validatedHours = hours.padStart(2, '0');
-    const validatedMinutes = minutes.padStart(2, '0');
-    return `${validatedHours}:${validatedMinutes}`;
-  };
-
-  const handleTimeChange = (e: CustomEvent) => {
-    const validatedTime = validateTime(e.detail.value!);
-    setTime(validatedTime);
-  };
-
-  const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string) => {
+  const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut') => {
     setEditingField(field);
-    setTime(value);
-  };
-
-  const handleSave = () => {
-    if (editingField) {
-      const [hours, minutes] = time.split(':');
-      updateShootingTime(editingField as any, {
-        hours: hours.padStart(2, '0'),
-        minutes: minutes.padStart(2, '0'),
-      });
-      setEditingField(null);
+    if (editionModalRef.current) {
+      editionModalRef.current.present();
     }
   };
+
+  const handleEdition = (formData: { time: string }) => {
+    if (editingField) {
+      updateShootingTime(editingField, formData.time);
+    }
+    setEditingField(null);
+  };
+
+  const editionInputs = [
+    {
+      fieldKeyName: 'time',
+      label: 'Time',
+      placeholder: 'Enter time',
+      type: 'time',
+      required: true,
+      offset: '3'
+    },
+  ];
 
   const renderEditableField = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string, title: string, withSymbol: boolean) => {
     const { main, symbol } = separateTimeOrPages(value);
-
-    if (editingField === field) {
-      return (
-        <div className="editable-form-wrapper">
-          <div className="inputs-wrapper">
-            <IonInput
-              type="time"
-              value={time}
-              onIonChange={handleTimeChange}
-              style={{ display: 'inline-block', width: '80%' }}
-              autoFocus
-            />
-            <IonButton
-              fill="clear"
-              onClick={handleSave}
-              size="small"
-              disabled={permissionType !== 1}
-              style={{
-                position: 'absolute', right: '0', top: '50%', transform: 'translateY(-60%)',
-              }}
-            >
-              <IonIcon icon={saveOutline} />
-            </IonButton>
-          </div>
-        </div>
-      );
-    }
 
     return (
       <ShootingInfoLabels
         info={withSymbol ? main : value}
         symbol={withSymbol ? symbol : ''}
         title={title}
-        onEdit={() => handleEdit(field as any, value)}
+        onEdit={() => handleEdit(field)}
         isEditable={permissionType === 1}
       />
     );
@@ -178,13 +145,13 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         <IonCol size="4">
           <IonRow>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call', false)}
+              {renderEditableField('generalCall', getHourMinutesFomISO(shootingInfo.generalCall, true), 'General Call', false)}
             </IonCol>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('onSet', shootingInfo.onSet, 'Ready to Shoot', false)}
+              {renderEditableField('onSet', getHourMinutesFomISO(shootingInfo.estimatedWrap, true), 'Ready to Shoot', false)}
             </IonCol>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('estimatedWrap', shootingInfo.estimatedWrap, 'Estimated Wrap', false)}
+              {renderEditableField('estimatedWrap', (getHourMinutesFomISO(shootingInfo.estimatedWrap, true)), 'Estimated Wrap', false)}
             </IonCol>
           </IonRow>
           <IonRow style={{ position: 'relative', textAlign: 'center', height: '50px' }}>
@@ -228,52 +195,19 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
           </IonRow>
         </IonCol>
       </IonRow>
+      <EditionModal
+        modalRef={editionModalRef}
+        modalTrigger={`open-edit-time-modal-${editingField}`}
+        title={`Edit ${editingField}`}
+        formInputs={editionInputs}
+        handleEdition={handleEdition}
+        defaultFormValues={{
+          time: editingField ? getHourMinutesFomISO(shootingInfo[editingField as 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut']): '',
+        }}
+        modalId={`edit-time-modal-${editingField}`}
+      />
     </IonGrid>
   );
 };
 
 export default ShootingBasicInfo;
-
-// (<IonGrid fixed style={{ width: '100%', marginTop: '24px', marginBottom: '24px' }}>
-//   <IonRow>
-//     <IonCol size="6" size-sm="3">
-//       {renderEditableField('generalCall', shootingInfo.generalCall, 'General Call')}
-//     </IonCol>
-//     <IonCol size="6" size-sm="3">
-//       {renderEditableField('onSet', shootingInfo.onSet, 'Ready to Shoot')}
-//     </IonCol>
-//     <IonCol size="6" size-sm="3">
-//       {renderEditableField('estimatedWrap', shootingInfo.estimatedWrap, 'Estimated Wrap')}
-//     </IonCol>
-//     <IonCol size="6" size-sm="3">
-//       {renderEditableField('wrap', shootingInfo.wrap, 'Wrap')}
-//     </IonCol>
-//   </IonRow>
-//   <IonRow>
-//     <IonCol size="6" size-sm="3">
-//       {renderEditableField('lastOut', shootingInfo.lastOut, 'Last Out')}
-//     </IonCol>
-// <IonCol size="6" size-sm="3">
-//   <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />
-// </IonCol>
-//     <IonCol size="6" size-sm="3">
-//       <ShootingInfoLabels info={shootingInfo.scenes.toString()} title="Scenes" />
-//     </IonCol>
-//     <IonCol size="6" size-sm="3">
-//       <ShootingInfoLabels
-//         info={separateTimeOrPages(shootingInfo.pages).main}
-//         symbol={separateTimeOrPages(shootingInfo.pages).symbol}
-//         title="Pages"
-//       />
-//     </IonCol>
-//   </IonRow>
-//   <IonRow>
-// <IonCol size="12">
-//   <ShootingInfoLabels
-//     info={separateTimeOrPages(shootingInfo.min).main}
-//     symbol={separateTimeOrPages(shootingInfo.min).symbol}
-//     title="Min"
-//   />
-// </IonCol>
-//   </IonRow>
-// </IonGrid>)

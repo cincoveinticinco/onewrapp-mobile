@@ -1,15 +1,24 @@
-const getHourMinutesFomISO = (iso: string): string => {
+import { trainOutline } from "ionicons/icons";
+
+const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
 
   if (isNaN(date.getTime())) {
     return '--:--';
   }
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
 
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convertir a formato de 12 horas
+  hours = hours % 12;
+  hours = hours ? hours : 12; // la hora '0' debe ser '12'
+
+  const formattedHours = hours.toString().padStart(2, '0');
   const formattedMinutes = minutes.toString().padStart(2, '0');
 
-  return `${hours < 10 ? `0${hours}` : hours}:${formattedMinutes}`;
+  return withampm ? `${formattedHours}:${formattedMinutes}${ampm}` : `${formattedHours}:${formattedMinutes}`;
 };
 
 export default getHourMinutesFomISO;

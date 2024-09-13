@@ -1,3 +1,102 @@
+// VARIABLES
+
+$colors: (
+  danger: var(--ion-color-danger),
+  dark: var(--ion-color-dark),
+  light: var(--ion-color-light),
+  primary: var(--ion-color-primary),
+  secondary: var(--ion-color-secondary),
+  success: var(--ion-color-success),
+  tertiary: var(--ion-color-tertiary),
+  warning: var(--ion-color-warning),
+);
+
+
+// CUSTOM COLOR STYLES
+
+@each $color, $value in $colors {
+  .outline-#{$color}-button {
+    --background: var(--ion-color-tertiary-dark);
+    --background-hover: #{$value};
+    --background-activated: #{$value};
+    --background-focused: #{$value};
+    --color: var(--ion-color-light);
+    --border-radius: 0;
+    --border-color: #{$value};
+    --border-style: solid;
+    --border-width: 1px;
+    --background-activated-opacity: 1;
+  
+    transition: all 0.3s ease-in-out;
+    min-width: 180px;
+    margin: 6px auto;
+    width: 180px;
+    min-height: 40px;
+    text-transform: uppercase;
+    font-size: 14px !important;
+  
+    &:active {
+      background-color: #{$value};
+    }
+  
+    @media (min-width: 500px) {
+      max-width: 250px;
+    }
+  }
+
+  .filled-#{$color}-button {
+    --background: #{$value};
+    --color: var(--ion-color-light);
+    --border-radius: 0;
+    --border-color: #{$value};
+    --border-style: solid;
+    --border-width: 1px;
+  
+    transition: all 0.3s ease-in-out;
+    min-width: 180px;
+    margin: 6px auto;
+    width: 180px;
+    min-height: 40px;
+    text-transform: uppercase;
+    font-size: 14px !important;
+  
+    &:active {
+      background-color: #{$value};
+    }
+  
+    @media (min-width: 500px) {
+      max-width: 250px;
+    }
+  }
+
+  .clear-#{$color}-button {
+    --background: transparent;
+    --color: var(--ion-color-light);
+    --border-radius: 0;
+    --border-color: #{$value};
+    --border-style: solid;
+    --border-width: 0px;
+    --background-activated: #{$value};
+    --background-hover: #{$value};
+    --background-focused: #{$value};
+  
+    transition: all 0.3s ease-in-out;
+    min-width: 180px;
+    margin-top: 0px;  
+    width: 180px;
+    min-height: 40px;
+    text-transform: uppercase;
+    font-size: 14px !important;
+
+    @media (min-width: 500px) {
+      max-width: 250px;
+    }
+  }
+}
+
+// STYLES
+
+
 ion-content {
   overflow: auto;
 
@@ -85,94 +184,6 @@ ion-button.outline-light-button {
   min-width: 120px;
   margin: 6px auto;
   width: calc(100% - 32px);
-}
-
-ion-button.filled-primary-button {
-  --background: var(--ion-color-primary);
-  --color: var(--ion-color-light);
-  --border-radius: 0;
-  --border-color: var(--ion-color-primary);
-  --border-style: solid;
-  --border-width: 1px;
-
-  transition: all 0.3s ease-in-out;
-  min-width: 120px;
-  margin: 6px auto;
-  width: calc(100% - 32px);
-}
-
-
-
-.filled-success-button {
-  --background: var(--ion-color-success);
-  --color: var(--ion-color-light);
-  --border-radius: 0;
-  --border-color: var(--ion-color-success);
-  --border-style: solid;
-  --border-width: 1px;
-
-  transition: all 0.3s ease-in-out;
-  min-width: 120px;
-  margin: 6px auto;
-  width: calc(100% - 32px);
-}
-
-.outline-primary-button {
-  --background: var(--ion-color-tertiary-dark);
-  --background-hover: var(--ion-color-primary);
-  --background-activated: var(--ion-color-primary);
-  --background-focused: var(--ion-color-primary);
-  --color: var(--ion-color-light);
-  --border-radius: 0;
-  --border-color: var(--ion-color-primary);
-  --border-style: solid;
-  --border-width: 1px;
-  --background-activated-opacity: 1;
-
-  transition: all 0.3s ease-in-out;
-  min-width: 180px;
-  margin: 6px auto;
-  width: 180px;
-  min-height: 40px;
-  text-transform: uppercase;
-  font-size: 14px !important;
-
-  &:active {
-    background-color: var(--ion-color-primary);
-  }
-
-  @media (min-width: 500px) {
-    max-width: 250px;
-  }
-}
-
-.outline-success-button {
-  --background: var(--ion-color-tertiary-dark);
-  --background-hover: var(--ion-color-success);
-  --background-activated: var(--ion-color-success);
-  --background-focused: var(--ion-color-success);
-  --color: var(--ion-color-light);
-  --border-radius: 0;
-  --border-color: var(--ion-color-success);
-  --border-style: solid;
-  --border-width: 1px;
-  --background-activated-opacity: 1;
-  font-size: 14px !important;
-
-  transition: all 0.3s ease-in-out;
-  min-width: 180px;
-  margin: 6px auto;
-  width: 180px;
-  min-height: 40px;
-  text-transform: uppercase;
-  
-  &:active {
-    background-color: var(--ion-color-success);
-  }
-
-  @media (min-width: 500px) {
-    max-width: 250px;
-  }
 }
 
 .cancel-button {
@@ -380,4 +391,3 @@ ion-toast.error-toast {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-

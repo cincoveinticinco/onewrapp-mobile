@@ -3,6 +3,7 @@ import { PiTrashSimpleLight } from 'react-icons/pi';
 import { LocationInfo } from '../../../../interfaces/shooting.types';
 import { Section } from '../../../Shared/Section/Section';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import truncateString from '../../../../utils/truncateString';
 
 interface LocationsSectionProps {
   locations: LocationInfo[];
@@ -40,11 +41,11 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
         <div key={location.lat + location.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
           <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
             <b>
-              {location.locationName.toUpperCase()}
+              {truncateString(location.locationName.toUpperCase(), 50)}
             </b>
           </h5>
           <div className="location-address">
-            <p>{location.locationAddress}</p>
+            <p>{truncateString(location.locationAddress.toUpperCase(), 50)}</p>
           </div>
           <div className="ion-flex-column location-buttons">
             {editMode && <VscEdit className="edit-location" onClick={() => openEditModal(locationIndex)} />}

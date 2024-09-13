@@ -42,12 +42,14 @@
   grid-template-areas:
     "location-name location-name"
     "location-address location-address";
+  border: 1px solid var(--ion-color-tertiary);
 
   h5 {
     grid-column: 1 / span 10;
     grid-row: 1 / 2;
     display: flex;
     align-items: center;
+    margin: 3px 0px !important;
   }
 
   .location-address {
@@ -56,7 +58,7 @@
     align-content: center;
     
     p {
-      margin: 0px !important;
+      margin: 3px 0px 9px 0px!important;
     }
   }
 

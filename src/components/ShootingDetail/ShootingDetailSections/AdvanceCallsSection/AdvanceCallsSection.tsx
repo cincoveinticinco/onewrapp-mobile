@@ -34,7 +34,6 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
     open={open}
     setOpen={setOpen}
     editMode={editMode}
-    setEditMode={setEditMode}
     onAddClick={onAddClick}
     permissionType={permissionType}
   >

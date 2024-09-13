@@ -416,7 +416,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                 style={{ marginTop: '50px', maxHeight: '30px' }}
                 color="success"
               />
-              <IonButton fill="clear" color="light" onClick={closeModal}>
+              <IonButton onClick={closeModal} className='clear-danger-button'>
                 CANCEL
               </IonButton>
             </IonCol>

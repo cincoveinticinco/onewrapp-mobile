@@ -1,13 +1,12 @@
 import {
+  IonButton,
   IonCheckbox,
-  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow, IonSelect, IonSelectOption,
+  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
 import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import SelectItem from '../SelectInput/SelectInput';
@@ -168,22 +167,17 @@ const EditionModal: React.FC<EditionModalProps> = ({
       onDidPresent={() => onDidPresent()}
       isOpen={isOpen}
     >
-      <IonHeader>
-        <ModalToolbar
-          handleSave={closeModal}
-          toolbarTitle={title}
-          handleReset={() => {}}
-          handleBack={closeModal}
-          showReset={false}
-        />
-      </IonHeader>
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios" />
+        <IonButton fill='clear' className='back-button' onClick={closeModal}>
+          BACK
+        </IonButton>
+        <h1 style={{width: '100%', textAlign: 'center', marginTop: '20%'}}>{title.toUpperCase()}</h1>
         {formInputs && (
-          <IonGrid className="edit-inputs-wrapper" fixed>
+          <IonGrid className="edit-inputs-wrapper" fixed style={{maxWidth: '600px'}}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
+                <IonCol key={i} offset={input.offset || 0} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
                     input.search ? (
                       <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
@@ -239,17 +233,19 @@ const EditionModal: React.FC<EditionModalProps> = ({
             </IonRow>
           </IonGrid>
         )}
-        <div className="edit-new-option-buttons-container">
+        <div className="edit-new-option-buttons-container ion-flex-column ">
           <OutlinePrimaryButton
             buttonName="SAVE"
             onClick={handleSubmit(submitEdition)}
-            className="ion-margin modal-confirm-button"
+            className="modal-confirm-button"
+            color='success'
           />
-          <OutlineLightButton
-            buttonName="CANCEL"
+          <IonButton
             onClick={closeModal}
-            className="ion-margin cancel-input-modal-button cancel-button"
-          />
+            className="modal-cancel-button clear-danger-button"
+          >
+            CANCEL
+          </IonButton>
         </div>
       </IonContent>
     </IonModal>
