@@ -21,7 +21,7 @@ const serviceMatricesSchema = {
       type: 'string',
     },
     serviceUnitCost: {
-      type:[ 'string', 'null'],
+      type: ['string', 'null'],
     },
     quantityProjected: {
       type: 'number',

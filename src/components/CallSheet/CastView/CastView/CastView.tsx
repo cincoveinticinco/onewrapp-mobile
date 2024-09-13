@@ -25,7 +25,7 @@ const CastView: React.FC<CastViewProps> = ({
   addNewCastCall,
   castOptions,
   editCastCall,
-  permissionType
+  permissionType,
 }) => {
   const columns: Column[] = [
     {

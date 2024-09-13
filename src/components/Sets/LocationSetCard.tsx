@@ -76,7 +76,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const LocationSetCard: React.FC<LocationSetCardProps> = ({
-  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading,permissionType
+  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading, permissionType,
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);

@@ -77,7 +77,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   }, []);
 
   const resetFormValues = () => {
-    if(defaultFormValues){
+    if (defaultFormValues) {
       formInputs.forEach((input: any) => {
         setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
       });
@@ -109,7 +109,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
     handleSubmit,
     setValue,
     resetField,
-    watch
+    watch,
   } = useForm({
     defaultValues: defaultFormValues,
   });
@@ -159,7 +159,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
   const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
     setValue(fieldKeyName, checked);
   };
-  
 
   return (
     <IonModal
@@ -181,13 +180,13 @@ const EditionModal: React.FC<EditionModalProps> = ({
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios" />
         {formInputs && (
-          <IonGrid className="edit-inputs-wrapper" fixed={true}>
+          <IonGrid className="edit-inputs-wrapper" fixed>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} sizeSm={input.col || '6'} sizeXs='12' className="ion-flex ion-justify-content-center">
+                <IonCol key={i} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
                     input.search ? (
-                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch={true} />
+                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
                     ) : (
                       <SelectItem
                         control={control}
@@ -206,17 +205,17 @@ const EditionModal: React.FC<EditionModalProps> = ({
                     )
                   ) : input.type === 'checkbox' ? (
                     <IonItem
-                      color='tertiary'
+                      color="tertiary"
                       lines="none"
-                      className='checkbox'
+                      className="checkbox"
                       style={{
-                        width: '100%'
+                        width: '100%',
                       }}
                     >
                       <IonCheckbox
                         checked={watch(input.fieldKeyName)}
                         onIonChange={(e) => handleCheckboxChange(input.fieldKeyName, e.detail.checked)}
-                        class='checkbox'
+                        class="checkbox"
                       />
                       <IonLabel className="ion-padding-start">{input.label}</IonLabel>
                     </IonItem>

@@ -43,7 +43,9 @@ interface CastCardProps {
   permissionType?: number | null;
 }
 
-const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction, permissionType }) => {
+const CastCard: React.FC<CastCardProps> = ({
+  character, searchText, validationFunction, permissionType,
+}) => {
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
   const disableEditions = permissionType !== 1;

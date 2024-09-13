@@ -9,6 +9,7 @@ import {
 import { startOfWeek, addDays, startOfDay } from 'date-fns';
 import './Calendar.css';
 import { useParams } from 'react-router';
+import { useRxData } from 'rxdb-hooks';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import { Shooting } from '../../interfaces/shooting.types';
 import WeekView from '../../components/Calendar/WeekView/WeekView';
@@ -17,11 +18,9 @@ import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthVi
 import useLoader from '../../hooks/Shared/useLoader';
 import Legend from '../../components/Shared/Legend/Legend';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import { useRxData } from 'rxdb-hooks';
 import { Unit } from '../../interfaces/unitTypes.types';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';
@@ -32,7 +31,9 @@ const Calendar: React.FC = () => {
     shootings: [] as Shooting[],
   });
 
-  const { oneWrapDb, projectId, setProjectId, initializeShootingReplication } = useContext<DatabaseContextProps>(DatabaseContext);
+  const {
+    oneWrapDb, projectId, setProjectId, initializeShootingReplication,
+  } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
@@ -57,14 +58,12 @@ const Calendar: React.FC = () => {
 
   const { result: units, isFetching: isFetchingUnits } = useRxData(
     'units',
-    (collection) => collection.find().sort({ unitNumber: 'asc' })
+    (collection) => collection.find().sort({ unitNumber: 'asc' }),
   );
 
-  const validateShootingExistence = (shootDate: string, unitId: string) => {
-    return calendarState.shootings.some((shooting) => (
-      shooting.shootDate === shootDate && shooting.unitId === parseInt(unitId)
-    ));
-  }
+  const validateShootingExistence = (shootDate: string, unitId: string) => calendarState.shootings.some((shooting) => (
+    shooting.shootDate === shootDate && shooting.unitId === parseInt(unitId)
+  ));
 
   const createShooting = async (form: {
     shootDate: string;
@@ -75,13 +74,13 @@ const Calendar: React.FC = () => {
       return;
     }
 
-    if(validateShootingExistence(form.shootDate, form.unitId)) {
+    if (validateShootingExistence(form.shootDate, form.unitId)) {
       errorToast('Shooting already exists');
       return;
     }
 
     try {
-      const unitId = form.unitId;
+      const { unitId } = form;
       const unit = units.map((u: any) => u._data).find((u: Unit) => u.id === unitId);
       if (!unit) {
         errorToast('Unit not found');
@@ -127,12 +126,10 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const getUnitOptions = (units: Unit[]): SelectOptionsInterface[] => {
-    return units.map((unit) => ({
-      label: unit.unitName || 'No name',
-      value: unit.id
-    }));
-  }
+  const getUnitOptions = (units: Unit[]): SelectOptionsInterface[] => units.map((unit) => ({
+    label: unit.unitName || 'No name',
+    value: unit.id,
+  }));
 
   const saveDateToLocalStorage = (date: Date) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, date.toISOString());
@@ -156,7 +153,7 @@ const Calendar: React.FC = () => {
       selectOptions: getUnitOptions(units as any),
       col: '6',
     },
-  ]
+  ];
 
   useIonViewWillEnter(() => {
     setProjectId(id);
@@ -164,15 +161,15 @@ const Calendar: React.FC = () => {
       const initializeReplication = async () => {
         try {
           setIsLoading(true);
-          await initializeShootingReplication()
+          await initializeShootingReplication();
         } catch (error) {
           console.error('Error initializing replication:', error);
         } finally {
           setIsLoading(false);
         }
-      }
+      };
 
-      if(navigator.onLine) {
+      if (navigator.onLine) {
         initializeReplication();
       }
     }
@@ -190,7 +187,7 @@ const Calendar: React.FC = () => {
   };
 
   useIonViewDidEnter(() => {
-    if(navigator.onLine) {
+    if (navigator.onLine) {
       initializeReplication();
     }
   });

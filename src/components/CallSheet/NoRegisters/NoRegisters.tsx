@@ -10,9 +10,14 @@ const NoRegisters: FC<NoRegistersProps> = ({ addNew }, disabled) => (
   <div
     className="empty-table"
   >
-    <OutlinePrimaryButton buttonName="Add New" onClick={() => addNew()} className="center-absolute" disabled={
+    <OutlinePrimaryButton
+      buttonName="Add New"
+      onClick={() => addNew()}
+      className="center-absolute"
+      disabled={
       disabled
-    } />
+    }
+    />
   </div>
 );
 

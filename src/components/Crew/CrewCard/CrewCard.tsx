@@ -8,9 +8,9 @@ import {
   IonLabel,
   IonTitle,
 } from '@ionic/react';
-import { Crew } from '../../../interfaces/crew.types';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { Crew } from '../../../interfaces/crew.types';
 import './CrewCard.scss';
 
 interface CrewCardProps {
@@ -20,7 +20,9 @@ interface CrewCardProps {
   permissionType?: number | null;
 }
 
-const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete, permissionType }) => {
+const CrewCard: React.FC<CrewCardProps> = ({
+  crew, onEdit, onDelete, permissionType,
+}) => {
   const disableEditions = permissionType !== 1;
   return (
     <IonItemSliding>
@@ -36,8 +38,14 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, onEdit, onDelete, permissionT
           </div>
           <div className="crew-card-content">
             <IonLabel>
-              <p>Email: {crew.email || 'N/A'}</p>
-              <p>Teléfono: {crew.phone || 'N/A'}</p>
+              <p>
+                Email:
+                {crew.email || 'N/A'}
+              </p>
+              <p>
+                Teléfono:
+                {crew.phone || 'N/A'}
+              </p>
             </IonLabel>
           </div>
         </div>

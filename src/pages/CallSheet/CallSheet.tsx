@@ -57,7 +57,7 @@ interface CallSheetProps {
 
 const CallSheet: React.FC<CallSheetProps> = ({
   isSection = false,
-  permissionType
+  permissionType,
 }) => {
   const tabsController = useHideTabs();
   const [view, setView] = useState<CallSheetView>('cast');
@@ -715,7 +715,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
     }
   };
 
-  if(!isSection) {
+  if (!isSection) {
     return (
       <IonPage>
         <IonHeader>
@@ -753,69 +753,78 @@ const CallSheet: React.FC<CallSheetProps> = ({
         <IonContent color="tertiary" fullscreen>
           {renderContent()}
         </IonContent>
-        <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()}/>
+        <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()} />
       </IonPage>
     );
-  } else {
-    const [open, setOpen] = useState(true);
-    return (
-      <>
-        <div
-          className="ion-flex ion-justify-content-between ion-padding-start"
-          style={{
-            border: '1px solid black',
-            backgroundColor: 'var(--ion-color-dark)',
-            alignItems: 'flex-end',
-          }}
-        >
-          <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
-          <div onClick={(e) => e.stopPropagation()}>
-            {/* BUTTON FOR EVERY VIEW */}
-            <button
-              onClick={() => setView('cast')}
-              className={`section-button ${view === 'cast' ? 'active' : ''}`}
-            >
-              Cast
-            </button>
-            <button
-              onClick={() => setView('extras')}
-              className={`section-button ${view === 'extras' ? 'active' : ''}`}
-            >
-              Extras
-            </button>
-            <button
-              onClick={() => setView('pictureCars')}
-              className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
-            >
-              Cars
-            </button>
-            <button
-              onClick={() => setView('others')}
-              className={`section-button ${view === 'others' ? 'active' : ''}`}
-            >
-              Others
-            </button>
-            {
+  }
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <div
+        className="ion-flex ion-justify-content-between ion-padding-start"
+        style={{
+          border: '1px solid black',
+          backgroundColor: 'var(--ion-color-dark)',
+          alignItems: 'flex-end',
+        }}
+      >
+        <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
+        <div onClick={(e) => e.stopPropagation()}>
+          {/* BUTTON FOR EVERY VIEW */}
+          <button
+            onClick={() => setView('cast')}
+            className={`section-button ${view === 'cast' ? 'active' : ''}`}
+          >
+            Cast
+          </button>
+          <button
+            onClick={() => setView('extras')}
+            className={`section-button ${view === 'extras' ? 'active' : ''}`}
+          >
+            Extras
+          </button>
+          <button
+            onClick={() => setView('pictureCars')}
+            className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
+          >
+            Cars
+          </button>
+          <button
+            onClick={() => setView('others')}
+            className={`section-button ${view === 'others' ? 'active' : ''}`}
+          >
+            Others
+          </button>
+          {
               !editMode ? (
-                <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} style={{
-                  marginBottom: '12px'
-                }}>
+                <IonButton
+                  fill="clear"
+                  color={!editMode ? 'light' : 'success'}
+                  onClick={() => toggleEditMode()}
+                  style={{
+                    marginBottom: '12px',
+                  }}
+                >
                   <VscEdit />
                 </IonButton>
               ) : (
-                <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()} style={{
-                  marginBottom: '12px'
-                }}>
+                <IonButton
+                  fill="clear"
+                  color={!editMode ? 'light' : 'success'}
+                  onClick={() => saveEdition()}
+                  style={{
+                    marginBottom: '12px',
+                  }}
+                >
                   <IonIcon icon={save} />
                 </IonButton>
               )
             }
-          </div>
         </div>
-        {open && renderContent()}
-      </>    
-    );
-  }
+      </div>
+      {open && renderContent()}
+    </>
+  );
 };
 
 export default CallSheet;

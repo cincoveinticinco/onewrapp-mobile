@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
         <Route exact path="/login">
           <LoginPage />
         </Route>
-        <Route exact path='/user-not-found'>
+        <Route exact path="/user-not-found">
           <NoUserFounded />
         </Route>
         {loggedIn ? (

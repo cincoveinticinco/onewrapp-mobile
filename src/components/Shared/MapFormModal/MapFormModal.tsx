@@ -16,7 +16,7 @@ interface MapFormModalProps {
   closeModal: () => void;
   onSubmit: (formData: Partial<LocationInfo>) => void;
   hospital?: boolean;
-  editLocation?: Partial<LocationInfo>;
+  selectedLocation?: LocationInfo | null;
 }
 
 interface Color {
@@ -27,7 +27,7 @@ interface Color {
 }
 
 const MapFormModal: React.FC<MapFormModalProps> = ({
-  isOpen, closeModal, onSubmit, hospital, editLocation,
+  isOpen, closeModal, onSubmit, hospital, selectedLocation,
 }) => {
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
@@ -42,18 +42,20 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const [locationPostalCode, setLocationPostalCode] = useState('');
   const [locationTypeId, setLocationTypeId] = useState<number | null>(hospital ? 3 : null);
   const [locationAddress, setLocationAddress] = useState('');
+  // const [markerIcon, setMarkerIcon] = useState<any>('default');
+  // const [markerColor, setMarkerColor] = useState<Color>({ r: 255, g: 0, b: 0, a: 255 });
 
   useEffect(() => {
-    if (editLocation) {
-      setLocationName(editLocation.locationName || '');
-      setLocationTypeId(editLocation.locationTypeId || null);
-      setLocationAddress(editLocation.locationAddress || '');
-      setLocationPostalCode(editLocation.locationPostalCode || '');
-      setLat(editLocation.lat ? parseFloat(editLocation.lat) : null);
-      setLng(editLocation.lng ? parseFloat(editLocation.lng) : null);
-      setSearchTerm(editLocation.locationAddress || '');
+    if (selectedLocation) {
+      setLocationName(selectedLocation.locationName);
+      console.log('selectedLocation', selectedLocation);
+      setLocationTypeId(selectedLocation.locationTypeId);
+      setLocationAddress(selectedLocation.locationAddress);
+      setLat(parseFloat(selectedLocation.lat));
+      setLng(parseFloat(selectedLocation.lng));
+      setSearchTerm(selectedLocation.locationAddress);
     }
-  }, [editLocation]);
+  }, [selectedLocation]);
 
   useEffect(() => {
     if (isOpen && !mapInitialized) {
@@ -63,7 +65,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     } else if (map && lat && lng) {
       addMarker(lat, lng);
     }
-  }, [isOpen, mapInitialized, lat, lng]);
+  }, [isOpen, mapInitialized, selectedLocation]);
 
   const createMap = async () => {
     if (!mapRef.current) return;
@@ -75,8 +77,8 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         apiKey: environment.MAPS_KEY,
         config: {
           center: {
-            lat: lat || 33.6,
-            lng: lng || -117.9,
+            lat: 33.6,
+            lng: -117.9,
           },
           zoom: 8,
         },
@@ -87,10 +89,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       await newMap.setOnMapClickListener((event) => {
         addMarker(event.latitude, event.longitude);
       });
-
-      if (lat && lng) {
-        addMarker(lat, lng);
-      }
     } catch (error) {
       console.error('Error creating map:', error);
     }
@@ -110,6 +108,16 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         draggable: true,
       };
 
+      // if (markerIcon !== 'default') {
+      //   console.log('markerIcon', markerIcon);
+      //   markerOptions.iconUrl = markerIcon.icon;
+      //   markerOptions.iconSize = {
+      //     width: 60,
+      //     height: 60
+      //   }
+
+      // }
+
       const newMarker = await map.addMarker(markerOptions);
 
       setMarker(newMarker);
@@ -121,6 +129,23 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       });
 
       updateAddress(lat, lng);
+    }
+  };
+
+  const getColorObject = (color: string) => {
+    switch (color) {
+      case 'blue':
+        return {
+          r: 0, g: 0, b: 255, a: 255,
+        };
+      case 'green':
+        return {
+          r: 0, g: 255, b: 0, a: 255,
+        };
+      default:
+        return {
+          r: 255, g: 0, b: 0, a: 255,
+        };
     }
   };
 
@@ -158,7 +183,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const handleCloseModal = () => {
     setMapInitialized(false);
     closeModal();
-    resetForm();
+    setCurrentAddress('');
+    setSuggestions([]);
+    setSearchTerm('');
+    setMarker(null);
+    setMap(null);
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -213,30 +242,26 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     if (lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
       const formData: Partial<LocationInfo> = {
         locationTypeId: hospital ? 3 : locationTypeId,
-        locationName: locationName,
-        locationAddress: locationAddress,
-        locationPostalCode: locationPostalCode,
+        locationName,
+        locationAddress,
+        locationPostalCode,
         lat: lat.toString(),
         lng: lng.toString(),
       };
       await onSubmit(formData);
-      resetForm();
+      setLocationTypeId(null);
+      setLocationName('');
+      setLocationAddress('');
+      setLocationPostalCode('');
+      setLat(null);
+      setLng(null);
+      setSearchTerm('');
+      setCurrentAddress('');
+      setSuggestions([]);
+      setMarker(null);
+      setMapInitialized(false);
       closeModal();
     }
-  };
-
-  const resetForm = () => {
-    setLocationTypeId(null);
-    setLocationName('');
-    setLocationAddress('');
-    setLocationPostalCode('');
-    setLat(null);
-    setLng(null);
-    setSearchTerm('');
-    setCurrentAddress('');
-    setSuggestions([]);
-    setMarker(null);
-    setMapInitialized(false);
   };
 
   const selectOptions = [
@@ -245,24 +270,72 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     { value: 4, label: 'Pickup' },
   ];
 
+  const colorOptions = [
+    {
+      value: JSON.stringify({
+        r: 255, g: 0, b: 0, a: 255,
+      }),
+      label: 'Red',
+    },
+    {
+      value: JSON.stringify({
+        r: 0, g: 0, b: 255, a: 255,
+      }),
+      label: 'Blue',
+    },
+    {
+      value: JSON.stringify({
+        r: 0, g: 255, b: 0, a: 255,
+      }),
+      label: 'Green',
+    },
+    {
+      value: JSON.stringify({
+        r: 255, g: 255, b: 0, a: 255,
+      }),
+      label: 'Yellow',
+    },
+    {
+      value: JSON.stringify({
+        r: 128, g: 0, b: 128, a: 255,
+      }),
+      label: 'Purple',
+    },
+  ];
+
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
       <IonHeader>
+        {/* <IonToolbar color="tertiary">
+          <IonTitle>Map</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={handleCloseModal}>Close</IonButton>
+          </IonButtons>
+        </IonToolbar> */}
       </IonHeader>
       <IonContent color="tertiary">
-        {!map && useLoader()}
-        <capacitor-google-map
-          ref={mapRef}
-          style={{
-            display: 'inline-block',
-            width: '100%', 
-            height: '400px',
-          }}
-        />
-        <h1 style={{width: '100%', textAlign: 'center'}}>
-          {hospital ? 'NEAREST HOSPITAL' : editLocation ? 'EDIT LOCATION' : 'NEW LOCATION'}
-        </h1>
-        <IonGrid style={{width: '400px'}}>
+        <div style={{
+          minHeight: '400px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+        >
+          {!map && useLoader()}
+          <capacitor-google-map
+            ref={mapRef}
+            style={{
+              display: 'inline-block',
+              width: '100%',
+              height: '400px',
+            }}
+          />
+        </div>
+
+        <h1 style={{ width: '100%', textAlign: 'center' }}>{hospital ? 'NEAREST HOSPITAL' : 'NEW LOCATION'}</h1>
+        <IonGrid style={{ width: '400px' }}>
           <IonRow>
             <IonCol size="6">
               <IonInput
@@ -280,6 +353,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                   fieldKeyName: 'location_type_id',
                   selectOptions,
                   placeholder: 'Tipo de ubicación',
+                  value: locationTypeId,
                 }}
                 setNewOptionValue={(fieldKeyName: string, value: string) => setLocationTypeId(parseInt(value))}
               />
@@ -306,15 +380,43 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               </IonList>
             </IonCol>
           </IonRow>
-          <IonRow>
-            <IonCol size="12" className='ion-flex-column ion-align-items-center'>
-              <OutlinePrimaryButton 
-                onClick={handleSubmit} 
-                buttonName={editLocation ? "Update" : "Save"} 
-                style={{ marginTop: '50px', maxHeight: '30px' }}
-                color='success'
+          {/* <IonRow>
+            <IonCol size="6">
+              <CustomSelect
+                input={{
+                  label: 'MARKER ICON',
+                  fieldKeyName: 'marker_icon',
+                  selectOptions: [
+                    { value: 'default', label: 'Default' },
+                    { value: {icon}, label: 'Custom Icon' },
+                    // Add more icon options as needed
+                  ],
+                  placeholder: 'Select marker icon',
+                }}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerIcon(value)}
               />
-              <IonButton fill='clear' color='light' onClick={closeModal}>
+            </IonCol>
+            <IonCol size="6">
+              <CustomSelect
+                input={{
+                  label: 'MARKER COLOR',
+                  fieldKeyName: 'marker_color',
+                  selectOptions: colorOptions,
+                  placeholder: 'Select marker color',
+                }}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerColor(JSON.parse(value))}
+              />
+            </IonCol>
+          </IonRow> */}
+          <IonRow>
+            <IonCol size="12" className="ion-flex-column ion-align-items-center">
+              <OutlinePrimaryButton
+                onClick={handleSubmit}
+                buttonName="Save"
+                style={{ marginTop: '50px', maxHeight: '30px' }}
+                color="success"
+              />
+              <IonButton fill="clear" color="light" onClick={closeModal}>
                 CANCEL
               </IonButton>
             </IonCol>

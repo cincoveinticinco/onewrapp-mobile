@@ -43,7 +43,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
   return (
     <>
       <div className="ion-padding-start">
-        <p className='ion-flex ion-align-items-center ion-justify-content-between'>
+        <p className="ion-flex ion-align-items-center ion-justify-content-between">
           <b>
             {call.dep_name_eng && call.dep_name_eng.toUpperCase() || call.dep_name_esp && call.dep_name_esp.toUpperCase() || 'NO DEPARTMENT'}
             :

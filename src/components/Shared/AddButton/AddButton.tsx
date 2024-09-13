@@ -16,7 +16,7 @@ const AddButton: React.FC<AddButtonProps> = ({
   className,
   onClick,
   slot,
-  disabled
+  disabled,
 }) => (
   <IonButton
     fill="clear"

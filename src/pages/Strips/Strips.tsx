@@ -32,15 +32,15 @@ import { SecurePages } from '../../interfaces/securePages.types';
 const Strips: React.FC<{
   permissionType: SecurePages | null;
 }> = ({
-  permissionType
+  permissionType,
 }) => {
   const {
     offlineScenes,
     projectId,
     setProjectId,
-    initialReplicationFinished, 
-    scenesAreLoading, 
-    initializeSceneReplication
+    initialReplicationFinished,
+    scenesAreLoading,
+    initializeSceneReplication,
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -62,7 +62,7 @@ const Strips: React.FC<{
 
   useIonViewDidEnter(() => {
     toggleTabs.showTabs();
-    if(!replicatorCreated && navigator.onLine) {
+    if (!replicatorCreated && navigator.onLine) {
       initializeSceneReplication();
       setReplicatorCreated(true);
     }
@@ -197,9 +197,9 @@ const Strips: React.FC<{
               <IonGrid className="scenes-grid ion-margin">
                 <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
                   {displayedScenes.map((scene, i) => (
-                    <SceneCard 
-                      key={`scene-item-${scene.id}-${i}`} 
-                      scene={scene as any} 
+                    <SceneCard
+                      key={`scene-item-${scene.id}-${i}`}
+                      scene={scene as any}
                       searchText={searchText}
                       permissionType={permissionType}
                     />

@@ -157,9 +157,16 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </div>
       )}
       {addScene && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button" style={{
-          display: disableEditions ? 'none' : 'flex',
-        }}>
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          routerLink="addscene"
+          className="ion-no-padding toolbar-button"
+          style={{
+            display: disableEditions ? 'none' : 'flex',
+          }}
+        >
           <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
         </IonButton>
       )}
@@ -206,7 +213,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       }
       {
         customButtons.map((renderFunction: any, index) => (
-            renderFunction()
+          renderFunction()
         ))
       }
       {

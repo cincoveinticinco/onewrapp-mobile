@@ -18,5 +18,5 @@ export default {
   COUNTRIES_ENDPOINT_PULL: 'app_countries_list',
   SERVICE_MATRICES_ENDPOINT_PULL: 'app_service_matrices_list',
   SERVICE_MATRICES_ENDPOINT_PUSH: 'app_service_matrices_push',
-  USER_ENDPOINT_PULL: 'app_user_info'
+  USER_ENDPOINT_PULL: 'app_user_info',
 };

@@ -2,6 +2,8 @@
 import React, { useState, useMemo } from 'react';
 import { IonButton, IonContent, IonIcon } from '@ionic/react';
 import { useRxData, useRxDB } from 'rxdb-hooks';
+import { IoMdAdd } from 'react-icons/io';
+import { useParams } from 'react-router';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import { Crew as CrewInterface } from '../../interfaces/crew.types';
@@ -10,9 +12,7 @@ import { caretDown, caretUp } from 'ionicons/icons';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import { Unit } from '../../interfaces/unitTypes.types';
-import { IoMdAdd } from 'react-icons/io';
 import { Country } from '../../interfaces/country.types';
-import { useParams } from 'react-router';
 
 interface FormStructureInterface {
   fullName: string;
@@ -43,17 +43,17 @@ const Crew: React.FC<{
   // Fetch crew data using useRxData
   const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
     'crew',
-    (collection) => collection.find()
+    (collection) => collection.find(),
   );
 
   const { result: units = [] }: {result: Unit[]} = useRxData(
     'units',
-    (collection) => collection.find()
+    (collection) => collection.find(),
   );
 
   const { result: countries = [] }: {result: Country[]} = useRxData(
     'countries',
-    (collection) => collection.find()
+    (collection) => collection.find(),
   );
 
   // Create or update crew member
@@ -90,7 +90,7 @@ const Crew: React.FC<{
     } catch (error) {
       console.error('Error upserting crew member', error);
     }
-  }
+  };
 
   // Group crew members by department
   const crewByDepartment = useMemo(() => {
@@ -106,9 +106,7 @@ const Crew: React.FC<{
   }, [crew]);
 
   // Sort departments alphabetically
-  const sortedDepartments = useMemo(() => {
-    return sortArrayAlphabeticaly(Object.keys(crewByDepartment));
-  }, [crewByDepartment]);
+  const sortedDepartments = useMemo(() => sortArrayAlphabeticaly(Object.keys(crewByDepartment)), [crewByDepartment]);
 
   // Set initial dropdown states
   useMemo(() => {
@@ -120,14 +118,10 @@ const Crew: React.FC<{
   }, [sortedDepartments]);
 
   // Filtered departments based on searchText
-  const filteredDepartments = sortedDepartments.filter((department) => {
-    return (
-      crewByDepartment[department].some((member) =>
-        member.fullName.toLowerCase().includes(searchText.toLowerCase())
-      ) ||
-      department.toLowerCase().includes(searchText.toLowerCase())
-    );
-  });
+  const filteredDepartments = sortedDepartments.filter((department) => (
+    crewByDepartment[department].some((member) => member.fullName.toLowerCase().includes(searchText.toLowerCase()))
+      || department.toLowerCase().includes(searchText.toLowerCase())
+  ));
 
   const unitsOptions: SelectOptionsInterface[] = units.map((unit) => ({
     value: unit.id,
@@ -146,8 +140,8 @@ const Crew: React.FC<{
 
     return {
       value: departmentId,
-      label: department
-    }
+      label: department,
+    };
   });
 
   const crewFormInputs: FormInput[] = [
@@ -158,7 +152,7 @@ const Crew: React.FC<{
       required: true,
       placeholder: 'Enter department',
       col: '12',
-      selectOptions: departmentsOptions
+      selectOptions: departmentsOptions,
     },
     {
       fieldKeyName: 'fullName',
@@ -191,7 +185,7 @@ const Crew: React.FC<{
       required: true,
       selectOptions: countryOptions,
       placeholder: 'Select country',
-      col: '3'
+      col: '3',
     },
     {
       fieldKeyName: 'phone',
@@ -208,7 +202,7 @@ const Crew: React.FC<{
       required: true,
       selectOptions: unitsOptions,
       placeholder: 'Select unit',
-      col: '6'
+      col: '6',
     },
     {
       fieldKeyName: 'order',
@@ -252,7 +246,7 @@ const Crew: React.FC<{
       type: 'checkbox',
       required: false,
       placeholder: 'EMERGENCY CONTACT',
-    }
+    },
   ];
 
   const getDefaultValuesById = (id: string | null) => {
@@ -273,42 +267,38 @@ const Crew: React.FC<{
       emergencyContact: crewMember.emergencyContact,
       countryId: crewMember.countryId,
     };
-  }
+  };
 
-  const AddEditCrewModal = () => {
-    return (
-      <EditionModal
-        isOpen={addNewModalIsOpen}
-        title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
-        formInputs={crewFormInputs}
-        handleEdition={() => console.log('Add/Edit Crew')}
-        defaultFormValues={getDefaultValuesById(selectedCrewId)}
-        setIsOpen={setAddNewModalIsOpen}
-      />
-    )
-  }
+  const AddEditCrewModal = () => (
+    <EditionModal
+      isOpen={addNewModalIsOpen}
+      title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
+      formInputs={crewFormInputs}
+      handleEdition={() => console.log('Add/Edit Crew')}
+      defaultFormValues={getDefaultValuesById(selectedCrewId)}
+      setIsOpen={setAddNewModalIsOpen}
+    />
+  );
 
   const openModal = (id: string | null) => {
     setSelectedCrewId(id);
     setAddNewModalIsOpen(true);
-  }
+  };
 
-  const openModalButton = (): JSX.Element => {
-    return (
-      <IonButton
-        fill="clear"
-        slot="end"
-        color="light"
-        className="ion-no-padding toolbar-button"
-        style={{
-          display: permissionType !== 1 ? 'none' : 'flex',
-        }}
-        onClick={() => openModal(null)}
-      >
-        <IoMdAdd className="toolbar-icon" />
-      </IonButton>
-    )
-  }
+  const openModalButton = (): JSX.Element => (
+    <IonButton
+      fill="clear"
+      slot="end"
+      color="light"
+      className="ion-no-padding toolbar-button"
+      style={{
+        display: permissionType !== 1 ? 'none' : 'flex',
+      }}
+      onClick={() => openModal(null)}
+    >
+      <IoMdAdd className="toolbar-icon" />
+    </IonButton>
+  );
 
   return (
     <MainPagesLayout
@@ -320,7 +310,7 @@ const Crew: React.FC<{
       customButtons={[openModalButton]}
       permissionType={permissionType}
     >
-      <IonContent color='tertiary'>
+      <IonContent color="tertiary">
         {filteredDepartments.length === 0 && !isFetching ? (
           <p style={
             {
@@ -329,15 +319,16 @@ const Crew: React.FC<{
               left: '50%',
               transform: 'translate(-50%, -50%)',
               color: 'white',
-              fontSize: '1.2rem'
+              fontSize: '1.2rem',
             }
-          }>NO CREW MEMBERS FOUND</p>
+          }
+          >
+            NO CREW MEMBERS FOUND
+          </p>
         ) : (
           filteredDepartments.map((department) => {
-            const departmentMembers = crewByDepartment[department].filter((member) =>
-              member.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
-              department.toLowerCase().includes(searchText.toLowerCase())
-            );
+            const departmentMembers = crewByDepartment[department].filter((member) => member.fullName.toLowerCase().includes(searchText.toLowerCase())
+              || department.toLowerCase().includes(searchText.toLowerCase()));
 
             if (departmentMembers.length === 0) return null;
 
@@ -348,9 +339,13 @@ const Crew: React.FC<{
                     ...prev,
                     [department]: !prev[department],
                   }))}
-                  className='department-dropdown'
+                  className="department-dropdown"
                 >
-                  {department} ({departmentMembers.length})
+                  {department}
+                  {' '}
+                  (
+                  {departmentMembers.length}
+                  )
                   <IonIcon
                     color={isDropDownOpen[department] ? 'primary' : 'light'}
                     icon={isDropDownOpen[department] ? caretUp : caretDown}

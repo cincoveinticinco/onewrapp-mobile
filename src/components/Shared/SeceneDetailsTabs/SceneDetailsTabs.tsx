@@ -12,12 +12,12 @@ interface SceneDetailsTabsProps {
   routeScript?: string;
 }
 
-const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, routeScript}) => {
+const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, routeScript }) => {
   // const { loggedIn } = useAuth();
 
   const isMobile = useIsMobile();
 
-  const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet'
+  const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
 
   // EXACT PATHS
 

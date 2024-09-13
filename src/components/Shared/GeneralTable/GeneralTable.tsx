@@ -28,16 +28,14 @@ interface GeneralTableProps {
 }
 
 const GeneralTable: React.FC<GeneralTableProps> = ({
-  columns, data, stickyColumnCount = 1, editMode = false, editFunction
+  columns, data, stickyColumnCount = 1, editMode = false, editFunction,
 }) => {
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-  };
+  const formatCurrency = (value: number): string => new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
 
   const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
     const value = row[column.key];
@@ -60,7 +58,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   const formatValue = (value: any, type: string, switchValues?: { left: any, neutral: any, right: any }) => {
     switch (type) {
       case 'hour':
-        return getHourMinutesFomISO(value) + ' ' + getAmOrPm(value);
+        return `${getHourMinutesFomISO(value)} ${getAmOrPm(value)}`;
       case 'seconds':
         return value ? secondsToMinSec(value) : '-- : --';
       case 'number':
@@ -84,7 +82,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     onChange: any,
     rowIndex: any,
     rowKey: any,
-    switchValues?: { left: any; neutral: any; right: any }
+    switchValues?: { left: any; neutral: any; right: any },
   ) => {
     const handleChange = (newValue: any) => {
       let formattedValue = newValue;
@@ -113,7 +111,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
       case 'boolean':
         return (
           <IonCheckbox
-            class='table-checkbox'
+            class="table-checkbox"
             checked={value}
             onIonChange={(e) => handleChange(e.detail.checked)}
           />
@@ -125,7 +123,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
             min={-1}
             max={1}
             step={1}
-            snaps={true}
+            snaps
             class={rangeValue === -1 ? 'switch negative' : rangeValue === 1 ? 'switch positive' : 'switch neutral'}
             value={rangeValue}
             onIonChange={(e) => handleChange(e.detail.value)}
@@ -178,7 +176,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
 
   const visibleColumns = editMode
     ? columns
-    : columns.filter(column => !column.showOnlyWhenEdit);
+    : columns.filter((column) => !column.showOnlyWhenEdit);
 
   const getFontColor = (backgroundColor: string) => {
     const hex = backgroundColor.replace('#', '');
@@ -187,7 +185,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     const b = parseInt(hex.substring(4, 6), 16);
     const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
     return (yiq >= 128) ? 'black' : 'white';
-  }
+  };
 
   return (
     <div className="table-container">
@@ -208,17 +206,17 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (
-              <tr 
+              <tr
                 key={rowIndex}
               >
                 {visibleColumns.map((column, colIndex) => (
                   <td
                     key={`${rowIndex}-${column.key}`}
                     className={colIndex < stickyColumnCount ? 'sticky-column' : ''}
-                    style={{ 
-                      left: `${colIndex * 150}px`, 
-                      textAlign: column.textAlign || 'center', 
-                      backgroundColor: row[column.backgroundColor as any] 
+                    style={{
+                      left: `${colIndex * 150}px`,
+                      textAlign: column.textAlign || 'center',
+                      backgroundColor: row[column.backgroundColor as any],
                     }}
                   >
                     {getColumnValue(row, column, editMode, rowIndex)}

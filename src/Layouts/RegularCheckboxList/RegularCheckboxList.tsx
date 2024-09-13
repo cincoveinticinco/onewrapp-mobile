@@ -49,15 +49,15 @@ const RegularList: React.FC<RegularListProps> = ({
 
   const handleItemStyles = (label: string) => {
     if (optionsWithStyles) {
-      console.log(optionsWithStyles)
+      console.log(optionsWithStyles);
       const optionStyle = optionsWithStyles.find((optionStyle: SelectOptionsInterface) => optionStyle.label === label);
-      console.log(optionStyle)
+      console.log(optionStyle);
       if (optionStyle) {
         console.log(optionStyle.style);
         return optionStyle.style;
       }
     }
-  }
+  };
 
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>

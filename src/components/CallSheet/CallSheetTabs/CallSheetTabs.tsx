@@ -17,13 +17,13 @@ interface CallSheetTabsProps {
 
 const CallSheetTabs: React.FC<CallSheetTabsProps> = ({ setView, view, handleBack }) => (
   <IonTabBar slot="bottom" color="dark" mode="md">
-      <IonTabButton
+    <IonTabButton
       tab="cast"
       className="tab-bar-buttons"
       onClick={() => handleBack()}
-      >
-        <IonIcon icon={home} />
-        <IonLabel>
+    >
+      <IonIcon icon={home} />
+      <IonLabel>
         HOME
       </IonLabel>
     </IonTabButton>

@@ -18,7 +18,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
   nextScene,
   changeToPreviousScene,
   changeToNextScene,
-  status
+  status,
 }) => (
   <IonToolbar
     className={`scene-theme-${sceneColor}`}

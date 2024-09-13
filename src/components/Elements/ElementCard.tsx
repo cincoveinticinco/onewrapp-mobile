@@ -58,7 +58,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const ElementCard: React.FC<ElementCardProps> = ({
-  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction, permissionType
+  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction, permissionType,
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);

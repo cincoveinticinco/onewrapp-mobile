@@ -1,4 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import {
   useRouteMatch, Redirect, Route,
 } from 'react-router-dom';
@@ -11,7 +13,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact
+  setupIonicReact,
 } from '@ionic/react';
 import {
   calendar, list, people, business, reader, settings,
@@ -53,13 +55,13 @@ const AppTabs: React.FC = () => {
   const fetchUser = async () => {
     const userInstance = await oneWrapDb?.user.findOne().exec();
     setUser(userInstance._data);
-  }
+  };
 
   const fetchCurrentProject = async () => {
     const projects = await oneWrapDb?.projects.find().exec();
     const cProject = projects?.find((project: any) => project._data.id == projectId);
     setCurrentCompany(cProject.companyId);
-  }
+  };
 
   const getSecurePageAccess = useCallback((pageId: number) => {
     if (currentCompany && user) {
@@ -69,14 +71,14 @@ const AppTabs: React.FC = () => {
     }
     return null;
   }, [currentCompany, user]);
-  
+
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       await fetchUser();
       await fetchCurrentProject();
       setIsLoading(false);
-    }
+    };
     loadData();
   }, [oneWrapDb]);
 
@@ -88,21 +90,20 @@ const AppTabs: React.FC = () => {
     const access = getSecurePageAccess(pageId);
     if (access === null || access === undefined) {
       return 'tab-bar-buttons disabled';
-    } else if(notInMobile) {
+    } if (notInMobile) {
       return notInMobile ? 'tab-bar-buttons disabled' : 'tab-bar-buttons';
-    } else {
-      return 'tab-bar-buttons';
     }
-  }
+    return 'tab-bar-buttons';
+  };
 
-  if(isLoading) {
+  if (isLoading) {
     return (
       <IonPage>
         <IonContent>
           {useLoader()}
         </IonContent>
       </IonPage>
-    )
+    );
   }
 
   return (
@@ -112,65 +113,65 @@ const AppTabs: React.FC = () => {
           <ReplicationPage />
         </Route>
 
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/addscene`} 
-          permissionType={getSecurePageAccess(SecurePages.SCENES)} 
-          component={AddScene} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/calendar`} 
-          permissionType={getSecurePageAccess(SecurePages.CALENDAR)} 
-          component={Calendar} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/cast`} 
-          permissionType={getSecurePageAccess(SecurePages.CAST)} 
-          component={Cast} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/crew`} 
-          permissionType={getSecurePageAccess(SecurePages.CREW)} 
-          component={Crew} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/sets`} 
-          permissionType={getSecurePageAccess(SecurePages.SETS)} 
-          component={Sets} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/elements`} 
-          permissionType={getSecurePageAccess(SecurePages.ELEMENTS)} 
-          component={Elements} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/strips`} 
-          permissionType={getSecurePageAccess(SecurePages.SCENES)} 
-          component={Strips} 
-          unauthorizedRoute={unauthorizedRoute} 
-        />
-        
         <ProtectedRoute
-          exact 
+          exact
+          path={`${urlString}/addscene`}
+          permissionType={getSecurePageAccess(SecurePages.SCENES)}
+          component={AddScene}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/calendar`}
+          permissionType={getSecurePageAccess(SecurePages.CALENDAR)}
+          component={Calendar}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/cast`}
+          permissionType={getSecurePageAccess(SecurePages.CAST)}
+          component={Cast}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/crew`}
+          permissionType={getSecurePageAccess(SecurePages.CREW)}
+          component={Crew}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/sets`}
+          permissionType={getSecurePageAccess(SecurePages.SETS)}
+          component={Sets}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/elements`}
+          permissionType={getSecurePageAccess(SecurePages.ELEMENTS)}
+          component={Elements}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+        <ProtectedRoute
+          exact
+          path={`${urlString}/strips`}
+          permissionType={getSecurePageAccess(SecurePages.SCENES)}
+          component={Strips}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+
+        <ProtectedRoute
+          exact
           path={`${urlString}/editscene/:sceneId`}
           component={EditScene}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
           unauthorizedRoute={unauthorizedRoute}
         />
         <ProtectedRoute
-          exact 
+          exact
           path={`${urlString}/editscene/:sceneId/details`}
           component={EditSceneToDetails}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
@@ -178,21 +179,21 @@ const AppTabs: React.FC = () => {
         />
 
         <ProtectedRoute
-          exact 
+          exact
           path={`${urlString}/shooting/:shootingId`}
           component={ShootingDetail}
           permissionType={getSecurePageAccess(SecurePages.SHOOTING_DETAIL)}
           unauthorizedRoute={unauthorizedRoute}
         />
-        
+
         <ProtectedRoute
-          exact 
+          exact
           path={`${urlString}/shooting/:shootingId/callsheet`}
           component={CallSheet}
           permissionType={getSecurePageAccess(SecurePages.SHOOTING_DETAIL)}
           unauthorizedRoute={unauthorizedRoute}
         />
-        
+
         <ProtectedRoute
           exact
           path={`${urlString}/strips/details/scene/:sceneId`}
@@ -224,13 +225,13 @@ const AppTabs: React.FC = () => {
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
           unauthorizedRoute={unauthorizedRoute}
         />
-          
-        <ProtectedRoute 
-          exact 
-          path={`${urlString}/strips/filters`} 
-          permissionType={1} 
-          component={FilterScenes} 
-          unauthorizedRoute={unauthorizedRoute} 
+
+        <ProtectedRoute
+          exact
+          path={`${urlString}/strips/filters`}
+          permissionType={1}
+          component={FilterScenes}
+          unauthorizedRoute={unauthorizedRoute}
         />
 
         <Route exact path={`${urlString}/stripboard`}>
@@ -244,7 +245,7 @@ const AppTabs: React.FC = () => {
         </Route>
         <Redirect exact from={`${urlString}`} to={`${urlString}/strips`} />
       </IonRouterOutlet>
-      
+
       <IonTabBar
         slot="bottom"
         className="app-tabs-container"

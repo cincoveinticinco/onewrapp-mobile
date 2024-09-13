@@ -11,7 +11,10 @@ interface LegendProps {
 }
 
 const Legend: React.FC<LegendProps> = ({ items }) => (
-  <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px'}}>
+  <div style={{
+    display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px',
+  }}
+  >
     {items.map((item, index) => (
       <IonChip key={index} style={{ backgroundColor: 'transparent' }}>
         <div

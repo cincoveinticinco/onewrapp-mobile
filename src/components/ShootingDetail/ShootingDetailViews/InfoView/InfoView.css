@@ -64,11 +64,16 @@
     grid-column: 11 / span 2;
     grid-row: 1 / span 2;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-right: 6px;
+    
+    .edit-location {
+      color: var(--ion-color-primary);
+    }
 
-    ion-button {
-      margin: 0px !important;
-      height: 10px !important
+    .delete-location {
+      color: var(--ion-color-danger);
     }
   }
 }

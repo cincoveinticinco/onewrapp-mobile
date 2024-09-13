@@ -18,7 +18,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   editMode,
   setMergedScenesShoot,
   permissionType,
-  openSceneModal
+  openSceneModal,
 }) => {
   useEffect(() => {
     console.log(mergedScenesShoot);
@@ -130,7 +130,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
           editFunction={editFunction}
         />
       ) : (
-        <div className='center-absolute'>
+        <div className="center-absolute">
           <OutlinePrimaryButton buttonName="Add New" onClick={openSceneModal} disabled={permissionType !== 1} />
         </div>
       )}

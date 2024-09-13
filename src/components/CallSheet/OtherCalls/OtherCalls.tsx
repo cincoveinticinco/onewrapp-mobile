@@ -22,7 +22,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   addNewOtherCall,
   editMode,
   editOtherCall,
-  permissionType
+  permissionType,
 }) => {
   // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [

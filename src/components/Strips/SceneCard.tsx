@@ -32,7 +32,7 @@ interface SceneCardProps {
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({
-  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene, permissionType
+  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene, permissionType,
 }) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
@@ -232,8 +232,8 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItem>
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
-            <IonButton 
-              fill="clear" 
+            <IonButton
+              fill="clear"
               routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}
               disabled={disableEditions}
             >

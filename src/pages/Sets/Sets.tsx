@@ -22,7 +22,7 @@ import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 const Sets: React.FC<{
   permissionType?: number | null;
 }> = ({
-  permissionType
+  permissionType,
 }) => {
   const {
     processedSets, processedLocations, isLoading, setIsLoading,

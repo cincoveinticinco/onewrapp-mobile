@@ -1,12 +1,16 @@
-import React from 'react'
-import { AdvanceCallsSection, HospitalsSection, LocationsSection, MealsSection, Section } from '../InfoView/InfoView'
-import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
+import React from 'react';
 import { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
-import './WrapReportView.css'
+import './WrapReportView.css';
 import ScriptReportView from '../ScriptReportView/ScriptReportView';
 import CallSheet from '../../../../pages/CallSheet/CallSheet';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
+import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
+import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
+import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
+import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
+import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
+import { Section } from '../../../Shared/Section/Section';
 
 interface WrapReportViewProps {
   shootingData: ShootingDataProps;
@@ -42,6 +46,9 @@ interface WrapReportViewProps {
   setMergedScenesShoot: (mergedScenesShoot: mergedSceneShoot[]) => void
   saveScriptReport: () => void
   permissionType?: number | null
+  openEditLocationModal: (index: number) => void
+  openEditHospitalModal: (index: number) => void
+  removeHospital: (hospital: LocationInfo, hospitalIndex: number) => void
 }
 
 const WrapReportView: React.FC<WrapReportViewProps> = ({
@@ -77,20 +84,23 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   editMode,
   setMergedScenesShoot,
   saveScriptReport,
-  permissionType
+  permissionType,
+  openEditLocationModal,
+  openEditHospitalModal,
+  removeHospital,
 }) => {
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
   return (
-    <div className='wrap-report-view'>
-      <div className='section-wrapper scenes-table'>
+    <div className="wrap-report-view">
+      <div className="section-wrapper scenes-table">
         <ShootingBasicInfo
           shootingInfo={shootingData.shotingInfo}
           updateShootingTime={updateShootingTime}
           permissionType={permissionType}
         />
       </div>
-      <div className='section-wrapper'>
+      <div className="section-wrapper">
         <LocationsSection
           locations={shootingData.shotingInfo.locations}
           open={openLocations}
@@ -100,18 +110,23 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
           onAddClick={openMapModal}
           removeLocation={removeLocation}
           permissionType={permissionType}
+          openEditModal={openEditLocationModal}
         />
       </div>
-      <div className='section-wrapper'>
+      <div className="section-wrapper">
         <HospitalsSection
           hospitals={shootingData.shotingInfo.hospitals}
           open={openHospitals}
           setOpen={setOpenHospitals}
           onAddClick={openHospitalsMapModal}
           permissionType={permissionType}
+          openEditModal={openEditHospitalModal}
+          removeHospital={removeHospital}
+          editMode
+          setEditMode={() => true}
         />
       </div>
-      <div className='section-wrapper'>
+      <div className="section-wrapper">
         <AdvanceCallsSection
           advanceCalls={shootingData.shotingInfo.advanceCalls}
           open={openadvanceCalls}
@@ -126,7 +141,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
           permissionType={permissionType}
         />
       </div>
-      <div className='section-wrapper'>
+      <div className="section-wrapper">
         <MealsSection
           meals={shootingData.shotingInfo.meals}
           open={openMeals}
@@ -141,15 +156,15 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
           permissionType={permissionType}
         />
       </div>
-      <div className='section-wrapper scenes-table'>
-        <Section 
-          title='Scenes'
+      <div className="section-wrapper scenes-table">
+        <Section
+          title="Scenes"
           open={openScenes}
           setOpen={setOpenScenes}
           editMode={scriptReportEditMode}
           setEditMode={setScriptReportEditMode}
           onAddClick={() => {}}
-          saveAfterEdit={true}
+          saveAfterEdit
           saveFunction={saveScriptReport}
           permissionType={permissionType}
         >
@@ -161,13 +176,13 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
           />
         </Section>
       </div>
-      <div className='section-wrapper scenes-table'>
-        <div className='children-wrapper'>
-          <CallSheet isSection={true} />
+      <div className="section-wrapper scenes-table">
+        <div className="children-wrapper">
+          <CallSheet isSection />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WrapReportView
+export default WrapReportView;

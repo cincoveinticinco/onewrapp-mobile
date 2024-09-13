@@ -1,5 +1,5 @@
-import environment from "../../../environment";
-import DatabaseSchema from "../database_schema";
+import environment from '../../../environment';
+import DatabaseSchema from '../database_schema';
 
 const crewSchema = {
   title: 'crew schema',
@@ -72,7 +72,7 @@ const crewSchema = {
     },
     countryId: {
       type: ['string', 'null'],
-    }
+    },
   },
   required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber', 'departmentId'],
 };

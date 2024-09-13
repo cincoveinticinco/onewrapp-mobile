@@ -70,7 +70,10 @@ const ReplicationPage: React.FC = () => {
               className="progress-bar"
             />
             <IonText>
-              <h3 className="replication-percentage">{replicationPercentage}%</h3>
+              <h3 className="replication-percentage">
+                {replicationPercentage}
+                %
+              </h3>
               <p>{replicationStatus}</p>
             </IonText>
           </IonCardContent>
@@ -89,8 +92,8 @@ const ReplicationPage: React.FC = () => {
           className="retry-button"
           style={{
             backgroundColor: {
-              '--background': 'var(--ion-color-yellow)'
-            }
+              '--background': 'var(--ion-color-yellow)',
+            },
           }}
         >
           <IonIcon icon={refresh} slot="start" />

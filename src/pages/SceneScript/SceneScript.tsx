@@ -18,7 +18,9 @@ import './SceneScript.scss';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/Scenes.context';
 import applyFilters from '../../utils/applyFilters';
-import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum } from '../../Ennums/ennums';
+import {
+  DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
+} from '../../Ennums/ennums';
 import {
   Character, Element, Extra, Note, Scene,
 } from '../../interfaces/scenes.types';
@@ -34,8 +36,7 @@ const SceneScript: React.FC = () => {
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
-  const {
-    oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {
@@ -66,7 +67,6 @@ const SceneScript: React.FC = () => {
       setShootingId(urlShootingId);
     }
   }, [urlShootingId]);
-
 
   const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
   const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
@@ -210,9 +210,7 @@ const SceneScript: React.FC = () => {
 
   useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) =>
-        isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id
-      );
+      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id));
       setCurrentSceneIndex(index);
     }
   }, [filteredScenes, thisScene, isShooting]);
@@ -229,7 +227,7 @@ const SceneScript: React.FC = () => {
       if (shootingId && oneWrapDb && thisScene) {
         const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
         const sceneShooting = shooting?._data?.scenes.find(
-          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene.sceneId
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene.sceneId,
         );
         setThisSceneShooting(sceneShooting || null);
       }
@@ -360,11 +358,11 @@ const SceneScript: React.FC = () => {
     }
   }, [thisScene, isShooting]);
 
-const getSceneColor = async (scene: Scene) => {
+  const getSceneColor = async (scene: Scene) => {
     if (isShooting) {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
       const sceneInShooting = shooting?.[0]?.scenes.find(
-        (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene?.sceneId
+        (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene?.sceneId,
       );
 
       const sceneStatus = sceneInShooting?.status;
@@ -567,7 +565,7 @@ const getSceneColor = async (scene: Scene) => {
           )
         }
         <SceneDetailsTabs
-          routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}` } 
+          routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
           routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
         />
       </IonPage>

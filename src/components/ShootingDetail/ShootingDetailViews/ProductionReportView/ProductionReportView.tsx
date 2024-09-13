@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react'
-import { useRxData } from 'rxdb-hooks'
-import useLoader from '../../../../hooks/Shared/useLoader'
-import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types'
-import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
-import { useParams } from 'react-router'
-import { Shooting } from '../../../../interfaces/shooting.types'
-import { RxDocument } from 'rxdb'
-import DatabaseContext from '../../../../context/Database.context'
-import { IonButton } from '@ionic/react'
-import { VscEdit, VscSave } from 'react-icons/vsc'
-import DropDownButton from '../../../Shared/DropDownButton/DropDownButton'
+import React, {
+  useEffect, useState, useMemo, useContext,
+} from 'react';
+import { useRxData } from 'rxdb-hooks';
+import { useParams } from 'react-router';
+import { RxDocument } from 'rxdb';
+import { IonButton } from '@ionic/react';
+import { VscEdit, VscSave } from 'react-icons/vsc';
+import useLoader from '../../../../hooks/Shared/useLoader';
+import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types';
+import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
+import { Shooting } from '../../../../interfaces/shooting.types';
+import DatabaseContext from '../../../../context/Database.context';
+import DropDownButton from '../../../Shared/DropDownButton/DropDownButton';
 
 interface ServiceDraft {
   id: string;
@@ -29,33 +31,33 @@ interface ServiceDraft {
 }
 
 const ProductionReportView: React.FC = () => {
-  const { shootingId } = useParams<{ shootingId: string }>()
-  const { oneWrapDb } = useContext(DatabaseContext)
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({})
-  const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({})
-  const [groupedServices, setGroupedServices] = useState<{ [key: string]: { prServiceTypeName: string, services: ServiceDraft[] } }>({})
+  const { shootingId } = useParams<{ shootingId: string }>();
+  const { oneWrapDb } = useContext(DatabaseContext);
+  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+  const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
+  const [groupedServices, setGroupedServices] = useState<{ [key: string]: { prServiceTypeName: string, services: ServiceDraft[] } }>({});
 
   const { result: serviceMatrices, isFetching }: {
     result: ServiceMatrices[];
     isFetching: boolean;
   } = useRxData(
     'service_matrices',
-    collection => collection.find()
-  )
+    (collection) => collection.find(),
+  );
 
   const { result: [shooting], isFetching: isShootingFetching }: {
     result: RxDocument<Shooting>[];
     isFetching: boolean;
   } = useRxData(
     'shootings',
-    collection => collection.find({
+    (collection) => collection.find({
       selector: {
         id: {
-          $eq: shootingId
-        }
-      }
-    })
-  )
+          $eq: shootingId,
+        },
+      },
+    }),
+  );
 
   // LAS MATRICES SON SOLO BORRADORES DE SERVICIOS, NO SON SERVICIOS EN SI
   // CUANDO SE CREA UNA MATRIZ EN LA APLICACIÓN WEB, ESTA MATRIZ PUEDE SER UTILIZADA PARA CREAR UN SERVICIO Y SUS VALORES SE IRÁN COMO PLANTILLA PARA CREAR EL SERVICIO
@@ -66,11 +68,10 @@ const ProductionReportView: React.FC = () => {
   // TAMBIEN EXISTE LA POSIBILIDAD DE QUE YA HAYA CREADO UN SERVICIO A PARTIR DE UNA MATRIZ, POR LO QUE NO SE DEBERÍA CREAR UN SERVICIO VACÍO
   // LA FORMA EN LA QUE ESTAMOS ASOCIANDO LAS MATRICES CON LOS SERVICIOS ES QUE SI, AL CREAR UN SERVICIO VACIO A PARTIR DE UNA MATRIZ SE ENCUENTRA UN SERVICIO CREADO CON LA MISMA DESCRIPCIÓN Y EL MISMO PROVEEDOR QUIERE DECIR QUE YA SE CREÓ UN SERVICIO ANTES A PARTIR DE ESA MATRIZ Y QUE TIENE DATOS QUE SON RELEVANTES, POR LO QUE NO ES NECESARIO CREAR UNO VACÍO
 
-
   const getServiceDraftFromMatrix = (matrix: any): ServiceDraft => {
-    const service = shooting?.services?.find((service: any) => service.description === matrix.serviceDescription)
-    const totalCost = parseInt(service?.unitCost ?? '') * parseInt(service?.quantity ?? '')
-    const totalCostAsCurrency = totalCost && totalCost.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })
+    const service = shooting?.services?.find((service: any) => service.description === matrix.serviceDescription);
+    const totalCost = parseInt(service?.unitCost ?? '') * parseInt(service?.quantity ?? '');
+    const totalCostAsCurrency = totalCost && totalCost.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
 
     return {
       id: matrix.id,
@@ -87,90 +88,88 @@ const ProductionReportView: React.FC = () => {
       aiuPercent: null,
       aiuValue: null,
       files: 0,
+    };
+  };
+
+  const groupedServiceDrafts = useMemo(() => serviceMatrices.reduce((acc: any, matrix) => {
+    const key: any = matrix.prServiceTypeId;
+    if (!acc[key]) {
+      acc[key] = {
+        prServiceTypeName: matrix.prServiceTypeName,
+        totalSection: 0,
+        services: [],
+      };
     }
-  }
+    const serviceDraft = getServiceDraftFromMatrix(matrix);
+    acc[key].services.push(serviceDraft);
 
-  const groupedServiceDrafts = useMemo(() => {
-    return serviceMatrices.reduce((acc: any, matrix) => {
-      const key: any = matrix.prServiceTypeId
-      if (!acc[key]) {
-        acc[key] = {
-          prServiceTypeName: matrix.prServiceTypeName,
-          totalSection: 0,
-          services: []
-        }
-      }
-      const serviceDraft = getServiceDraftFromMatrix(matrix)
-      acc[key].services.push(serviceDraft)
-      
-      // Calculate totalSection
-      acc[key].totalSection = acc[key].services.reduce((total: number, service: ServiceDraft) => {
-        const serviceTotalCost = service.quantity && service.unitCost 
-          ? service.quantity * service.unitCost 
-          : 0
-        return total + serviceTotalCost
-      }, 0)
+    // Calculate totalSection
+    acc[key].totalSection = acc[key].services.reduce((total: number, service: ServiceDraft) => {
+      const serviceTotalCost = service.quantity && service.unitCost
+        ? service.quantity * service.unitCost
+        : 0;
+      return total + serviceTotalCost;
+    }, 0);
 
-      return acc
-    }, {} as { [key: string]: { prServiceTypeName: string, totalSection: number, services: ServiceDraft[] } })
-  }, [serviceMatrices, shooting])
+    return acc;
+  }, {} as { [key: string]: { prServiceTypeName: string, totalSection: number, services: ServiceDraft[] } }), [serviceMatrices, shooting]);
 
   useEffect(() => {
     setGroupedServices(groupedServiceDrafts);
-  
+
     const initialSections = Object.keys(groupedServiceDrafts).reduce((acc, key) => {
       acc[key] = true;
       return acc;
     }, {} as { [key: string]: boolean });
-  
+
     const initialEditModes = Object.keys(groupedServiceDrafts).reduce((acc, key) => {
       acc[key] = false;
       return acc;
     }, {} as { [key: string]: boolean });
-  
+
     setOpenSections(initialSections);
     setEditModes(initialEditModes);
   }, [groupedServiceDrafts]);
 
   useEffect(() => {
-    console.log(groupedServiceDrafts)
-  }, [groupedServiceDrafts])
+    console.log(groupedServiceDrafts);
+  }, [groupedServiceDrafts]);
 
   const toggleSection = (id: string) => {
-    setOpenSections(prev => ({
+    setOpenSections((prev) => ({
       ...prev,
-      [id]: !prev[id]
-    }))
-  }
+      [id]: !prev[id],
+    }));
+  };
 
   const toggleEditMode = (id: string) => {
-    setEditModes(prev => ({
+    setEditModes((prev) => ({
       ...prev,
-      [id]: !prev[id]
-    }))
-  }
+      [id]: !prev[id],
+    }));
+  };
 
   const saveSection = async (id: string) => {
-    console.log('Saving')
+    console.log('Saving');
     try {
       // GET THE SERVICES FROM THE GROUPED SERVICES
       const shootingInstance: any = await oneWrapDb?.shootings.findOne(shootingId).exec().then((doc: any) => doc._data);
-      const services = groupedServices[id].services;
-  
-      const shootingCopy: any = { ...shootingInstance,
+      const { services } = groupedServices[id];
+
+      const shootingCopy: any = {
+        ...shootingInstance,
         updatedAt: new Date().toISOString(),
-       };
-  
+      };
+
       // Create a new array with the updated services
       const updatedServices = services.map((service: ServiceDraft) => {
         const existingService = shootingInstance.services.find(
-          (s: any) =>
-            s.description === service.serviceDescription &&
-            s.providerName === service.providerName
+          (s: any) => s.description === service.serviceDescription
+            && s.providerName === service.providerName,
         );
-  
+
         if (existingService) {
-          if(service.quantity !== null && service.unitCost !== null) {
+          if (service.quantity !== null && service.unitCost !== null) {
             return {
               ...existingService,
               quantity: service.quantity.toString(),
@@ -200,18 +199,18 @@ const ProductionReportView: React.FC = () => {
           return null;
         }
       }).filter(Boolean);
-      
+
       const filteredServices = shootingCopy.services.filter((service: any) => service.prServiceTypeId !== parseInt(id));
       shootingCopy.services = [...filteredServices, ...updatedServices];
 
       console.log(updatedServices);
-  
+
       // Serialize and deserialize the object before saving
       const shootingCopyJson = JSON.stringify(shootingCopy);
       const shootingCopyDeserialized = JSON.parse(shootingCopyJson);
       await oneWrapDb?.shootings.upsert(shootingCopyDeserialized);
       console.log(shootingCopyDeserialized);
-  
+
       setEditModes((prev) => ({
         ...prev,
         [id]: false,
@@ -257,54 +256,52 @@ const ProductionReportView: React.FC = () => {
       key: 'observations',
       title: 'Observations',
       type: 'text',
-      editable: true
-    }
-  ]
+      editable: true,
+    },
+  ];
 
   if (isFetching || isShootingFetching) {
-    return useLoader()
+    return useLoader();
   }
 
   const editService = (groupIndex: keyof ServiceDraft, rowIndex: number, rowKey: keyof any, rowValue: any, type: any) => {
-    const copy = { ...groupedServiceDrafts }
-    copy[groupIndex].services[rowIndex][rowKey] = rowValue
-    setGroupedServices(copy)
-  }
-
-  const renderEditSaveButton = (prServiceTypeId: string) => {
-    return (
-      editModes[prServiceTypeId] ? (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          className="toolbar-button"
-          onClick={() => saveSection(prServiceTypeId)} 
-        >
-          <VscSave
-            className="toolbar-icon"
-            style={{ color: 'var(--ion-color-primary)' }}
-          />
-        </IonButton>
-      ) : (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          className="toolbar-button"
-          onClick={() => toggleEditMode(prServiceTypeId)}
-        >
-          <VscEdit
-            className="toolbar-icon"
-            style={{ color: 'var(--ion-color-light)' }}
-          />
-        </IonButton>
-      )
-    );
+    const copy = { ...groupedServiceDrafts };
+    copy[groupIndex].services[rowIndex][rowKey] = rowValue;
+    setGroupedServices(copy);
   };
 
+  const renderEditSaveButton = (prServiceTypeId: string) => (
+    editModes[prServiceTypeId] ? (
+      <IonButton
+        fill="clear"
+        slot="end"
+        color="light"
+        className="toolbar-button"
+        onClick={() => saveSection(prServiceTypeId)}
+      >
+        <VscSave
+          className="toolbar-icon"
+          style={{ color: 'var(--ion-color-primary)' }}
+        />
+      </IonButton>
+    ) : (
+      <IonButton
+        fill="clear"
+        slot="end"
+        color="light"
+        className="toolbar-button"
+        onClick={() => toggleEditMode(prServiceTypeId)}
+      >
+        <VscEdit
+          className="toolbar-icon"
+          style={{ color: 'var(--ion-color-light)' }}
+        />
+      </IonButton>
+    )
+  );
+
   if (isFetching || isShootingFetching) {
-    return useLoader()
+    return useLoader();
   }
 
   return (
@@ -320,14 +317,14 @@ const ProductionReportView: React.FC = () => {
             onClick={() => toggleSection(prServiceTypeId)}
           >
             <p style={{ fontSize: '18px' }}><b>{group.prServiceTypeName.toUpperCase()}</b></p>
-            <div 
+            <div
               onClick={(e) => e.stopPropagation()}
               style={{
                 display: 'flex',
               }}
             >
-              <div 
-                className='total-label'
+              <div
+                className="total-label"
                 style={
                   {
                     textAlign: 'center',
@@ -340,10 +337,12 @@ const ProductionReportView: React.FC = () => {
                   }
                 }
               >
-                <p 
-                  className='ion-no-margin'
+                <p
+                  className="ion-no-margin"
                   style={{ paddingBottom: '5px' }}
-                >{group.totalSection.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+                >
+                  {group.totalSection.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
+                </p>
                 <small><b>TOTAL COST</b></small>
               </div>
               {renderEditSaveButton(prServiceTypeId)}
@@ -361,7 +360,7 @@ const ProductionReportView: React.FC = () => {
         </React.Fragment>
       ))}
     </>
-  )
-}
+  );
+};
 
-export default ProductionReportView
+export default ProductionReportView;

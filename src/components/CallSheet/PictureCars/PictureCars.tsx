@@ -15,7 +15,7 @@ interface PictureCarsProps {
 }
 
 const PictureCars: React.FC<PictureCarsProps> = ({
-  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar, permissionType
+  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar, permissionType,
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
@@ -79,8 +79,16 @@ const PictureCars: React.FC<PictureCarsProps> = ({
 
   if (isOpen) return <AddNewModal />;
 
-  if (!pictureCars.length) return <NoRegisters addNew={() => setIsOpen(true)} disabled={
-  permissionType !== 1}/>;
+  if (!pictureCars.length) {
+    return (
+      <NoRegisters
+        addNew={() => setIsOpen(true)}
+        disabled={
+  permissionType !== 1
+}
+      />
+    );
+  }
 
   return (
     <>

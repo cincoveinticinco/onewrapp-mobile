@@ -220,8 +220,8 @@ const shootingSchema = {
             type: ['string', 'null'],
           },
           prServiceTypeId: {
-            type: ['number']
-          }
+            type: ['number'],
+          },
         },
         required: ['description', 'providerName', 'providerId', 'quantity', 'unitCost', 'totalCost', 'files'], // Puedes ajustar los campos requeridos según tus necesidades
       },

@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [token, setToken] = useState<string>('')
+  const [token, setToken] = useState<string>('');
 
   const checkSession = useCallback(async () => {
     const token = localStorage.getItem('token');

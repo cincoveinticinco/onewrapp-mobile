@@ -1,5 +1,5 @@
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage
+  IonButton, IonContent, IonHeader, IonIcon, IonPage,
 } from '@ionic/react';
 import { Redirect, useHistory } from 'react-router';
 import { useAuth } from '../../context/Auth.context';
@@ -50,7 +50,6 @@ const LoginPage: React.FC<Props> = ({}) => {
         })
         .catch((error) => {
           console.error('Error:', error);
-         
         });
     },
     onError: errorMessage,

@@ -17,14 +17,14 @@ const Projects: React.FC = () => {
 
   const { result: projects, isFetching } = useRxData(
     'projects',
-    (collection) => collection.find().sort({ projName: 'asc' })
+    (collection) => collection.find().sort({ projName: 'asc' }),
   );
 
   useIonViewWillEnter(() => {
     if (isOnline && currentPath === '/projects') {
       initializeProjectsUserReplication();
     }
-  })
+  });
 
   return (
     <IonPage>

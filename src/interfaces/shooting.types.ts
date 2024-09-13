@@ -186,7 +186,7 @@ export interface FormattedService {
   aiuUtility: number | null;
   aiuPercent: number | null;
   aiuValue: number | null;
-  totalCost: string  | null;
+  totalCost: string | null;
   files: number;
   observations: string | null;
 }

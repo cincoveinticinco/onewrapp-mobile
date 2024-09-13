@@ -24,7 +24,7 @@ import useLoader from '../../hooks/Shared/useLoader';
 const Elements: React.FC<{
   permissionType?: number | null;
 }> = ({
-  permissionType
+  permissionType,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [displayedElements, setDisplayedElements] = useState<any>({});

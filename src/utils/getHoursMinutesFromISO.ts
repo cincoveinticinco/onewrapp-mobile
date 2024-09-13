@@ -4,7 +4,7 @@ const getHourMinutesFomISO = (iso: string): string => {
   if (isNaN(date.getTime())) {
     return '--:--';
   }
-  let hours = date.getHours();
+  const hours = date.getHours();
   const minutes = date.getMinutes();
 
   const formattedMinutes = minutes.toString().padStart(2, '0');
@@ -22,4 +22,4 @@ export const getAmOrPm = (iso: string): string => {
   }
 
   return date.getHours() < 12 ? 'AM' : 'PM';
-}
+};

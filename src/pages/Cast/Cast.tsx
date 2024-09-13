@@ -202,10 +202,10 @@ const Cast: React.FC<{
                   {
                   displayedCast[category]
                   && displayedCast[category].map((character: any, index: number) => (
-                    <CastCard 
-                      key={`${category}-${index}`} 
-                      character={character} 
-                      searchText={castSearchText} 
+                    <CastCard
+                      key={`${category}-${index}`}
+                      character={character}
+                      searchText={castSearchText}
                       validationFunction={validateCastExistence}
                       permissionType={permissionType}
                     />

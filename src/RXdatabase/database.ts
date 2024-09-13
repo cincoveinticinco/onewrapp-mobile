@@ -66,11 +66,10 @@ export default class AppDataBase {
       // If the instance was already created, return it
       if (this.dbInstance) {
         return this.dbInstance;
-      } else {
-        // If the instance was not created, create it and return it
-        this.dbInstance = this.initializeDatabase();
-        return this
       }
+      // If the instance was not created, create it and return it
+      this.dbInstance = this.initializeDatabase();
+      return this;
     }
 
     public getCollections() {

@@ -10,6 +10,7 @@ interface CustomSelectProps {
     label: string;
     placeholder: string;
     selectOptions: SelectOption[];
+    value?: any;
   };
   setNewOptionValue: (fieldKeyName: string, value: any) => void;
   enableSearch?: boolean;
@@ -31,7 +32,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
         <InputLabel id={`${input.fieldKeyName}-label`}>{input.label}</InputLabel>
         <Select
           labelId={`${input.fieldKeyName}-label`}
-          value={value}
+          value={input.value || value}
           label={input.label}
           onChange={(e) => {
             setValue(e.target.value as string);

@@ -1,6 +1,8 @@
-import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/react'
-import React from 'react'
-import ReactPlayer from 'react-player'
+import {
+  IonButton, IonContent, IonHeader, IonIcon, IonPage,
+} from '@ionic/react';
+import React from 'react';
+import ReactPlayer from 'react-player';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import './PageNotExists.scss';
@@ -9,9 +11,7 @@ import { useHistory } from 'react-router';
 const PageNotExists = () => {
   const history = useHistory();
 
-  const handleGoBack = () => {
-    return history.push('/my/projects');
-  }
+  const handleGoBack = () => history.push('/my/projects');
   return (
     <IonPage>
       <IonHeader />
@@ -30,9 +30,12 @@ const PageNotExists = () => {
         <div className="main-logo-wrapper">
           <img src={logo} alt="logo" className="login-logo" />
         </div>
-        <div className='text-wrapper'>
+        <div className="text-wrapper">
           <p>
-            The page you are looking for does not exist. Go <a onClick={() => handleGoBack()}>back</a>.
+            The page you are looking for does not exist. Go
+            {' '}
+            <a onClick={() => handleGoBack()}>back</a>
+            .
           </p>
         </div>
         <div className="footer-login">
@@ -42,6 +45,6 @@ const PageNotExists = () => {
       </IonContent>
     </IonPage>
   );
-}
+};
 
-export default PageNotExists
+export default PageNotExists;

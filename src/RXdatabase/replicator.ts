@@ -49,7 +49,7 @@ export default class HttpReplicator {
     const currentTimestamp = new Date().toISOString();
     const { getToken } = this;
     console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
-  
+
     try {
       const replicationState = replicateRxCollection({
         collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -62,7 +62,7 @@ export default class HttpReplicator {
               const id = checkpointOrNull ? checkpointOrNull.id : 0;
               const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : 0;
               const collectionName = collection.getSchemaName();
-              
+
               const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);
               url.searchParams.append('updated_at', updatedAt);
               url.searchParams.append('id', id.toString());
@@ -77,17 +77,17 @@ export default class HttpReplicator {
                 url.searchParams.append('last_item_id', lastItem.id.toString());
                 url.searchParams.append('last_item_updated_at', lastItem.updatedAt);
               }
-  
+
               const response = await fetch(url.toString(), {
                 headers: {
                   owsession: token,
                 },
               });
-  
+
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
-  
+
               const data = await response.json();
               return {
                 documents: data[collectionName],
@@ -100,25 +100,25 @@ export default class HttpReplicator {
           },
         },
       });
-  
+
       replicationState.error$.subscribe((err) => {
         console.error(`Replication error in ${collection.SchemaName()}:`, err);
       });
-  
+
       await this.monitorReplicationStatus(replicationState);
-  
+
       this.replicationStates.push(replicationState);
     } catch (error) {
       console.error(`Error setting up replication PULL for ${collection.SchemaName()}:`, error);
       throw error;
     }
   }
-  
+
   private async setupHttpReplicationPush(collection: any) {
     const currentTimestamp = new Date().toISOString();
     const { getToken } = this;
     console.log('Setting up replication PUSH for', collection.SchemaName(), currentTimestamp);
-  
+
     try {
       const replicationState = replicateRxCollection({
         collection: this.database[collection.SchemaName() as keyof AppDataBase],
@@ -136,11 +136,11 @@ export default class HttpReplicator {
                 },
                 body: JSON.stringify(changeRows),
               });
-  
+
               if (!rawResponse.ok) {
                 throw new Error(`HTTP error! status: ${rawResponse.status}`);
               }
-  
+
               const conflictsArray = await rawResponse.json();
               return conflictsArray;
             } catch (error) {
@@ -150,11 +150,11 @@ export default class HttpReplicator {
           },
         },
       });
-  
+
       replicationState.error$.subscribe((err) => {
         console.error(`Replication error in ${collection.SchemaName()}:`, err);
       });
-  
+
       this.replicationStates.push(replicationState);
     } catch (error) {
       console.error(`Error setting up replication PUSH for ${collection.SchemaName()}:`, error);
@@ -167,10 +167,10 @@ export default class HttpReplicator {
   }
 
   public resyncReplication() {
-    if(this.replicationStates) {
-       this.replicationStates.forEach((replicationState) => {
-      replicationState.reSync();
-    });
+    if (this.replicationStates) {
+      this.replicationStates.forEach((replicationState) => {
+        replicationState.reSync();
+      });
     }
   }
 

@@ -2,13 +2,15 @@ import {
   IonButton, IonButtons, IonDatetime, IonIcon, IonProgressBar, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { format } from 'date-fns';
-import { addOutline, calendarClear, calendarOutline, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import {
+  addOutline, calendarClear, calendarOutline, chevronBackOutline, chevronForwardOutline,
+} from 'ionicons/icons';
 import './MonthViewToolbar.css';
 import { useState } from 'react';
-import { LiaDotCircle } from "react-icons/lia";
+import { LiaDotCircle } from 'react-icons/lia';
 import { useHistory } from 'react-router';
-import AddButton from '../../Shared/AddButton/AddButton';
 import { add } from 'lodash';
+import AddButton from '../../Shared/AddButton/AddButton';
 
 interface MonthViewToolbarProps {
   currentDate: Date;
@@ -36,30 +38,30 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
     setShowDateTime(false);
   };
 
-  const handleBack = () => history.push('/my/projects');  
+  const handleBack = () => history.push('/my/projects');
 
   return (
     <>
       <IonToolbar color="tertiary" className="month-toolbar">
         <IonButtons slot="start">
           <IonButton onClick={() => handleBack()}>
-            <IonIcon icon={chevronBackOutline} style={{fontSize: '30px'}} />
+            <IonIcon icon={chevronBackOutline} style={{ fontSize: '30px' }} />
           </IonButton>
         </IonButtons>
         <IonTitle>{format(currentDate, 'MMMM yyyy').toUpperCase()}</IonTitle>
         <IonButtons slot="end">
           <IonButton onClick={setOpenAddShootingModal}>
-            <IonIcon icon={addOutline} style={{fontSize: '30px'}} />
+            <IonIcon icon={addOutline} style={{ fontSize: '30px' }} />
           </IonButton>
-          <IonButton onClick={toggleDateTime} color={showDateTime ? 'primary' : ''} >
-            <IonIcon icon={calendarOutline} style={{fontSize: '30px'}} />
+          <IonButton onClick={toggleDateTime} color={showDateTime ? 'primary' : ''}>
+            <IonIcon icon={calendarOutline} style={{ fontSize: '30px' }} />
           </IonButton>
           <IonButton onClick={onPrev}>
-            <IonIcon icon={chevronBackOutline} style={{fontSize: '30px'}} />
+            <IonIcon icon={chevronBackOutline} style={{ fontSize: '30px' }} />
           </IonButton>
-          <LiaDotCircle className='ow-icons' onClick={goToCurrentDay}/>
-          <IonButton onClick={onNext} >
-            <IonIcon icon={chevronForwardOutline} style={{fontSize: '30px'}} />
+          <LiaDotCircle className="ow-icons" onClick={goToCurrentDay} />
+          <IonButton onClick={onNext}>
+            <IonIcon icon={chevronForwardOutline} style={{ fontSize: '30px' }} />
           </IonButton>
         </IonButtons>
         {

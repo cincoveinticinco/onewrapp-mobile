@@ -20,7 +20,7 @@ interface MainPagesLayoutProps {
 }
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [], permissionType
+  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [], permissionType,
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
 

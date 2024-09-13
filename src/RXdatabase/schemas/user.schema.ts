@@ -1,5 +1,5 @@
-import environment from "../../../environment";
-import DatabaseSchema from "../database_schema";
+import environment from '../../../environment';
+import DatabaseSchema from '../database_schema';
 
 const userSchema = {
   title: 'userSchema',
@@ -46,9 +46,9 @@ const userSchema = {
                 access: { type: ['number', 'null'] },
                 id: { type: 'number' },
                 page: { type: ['string', 'null'] },
-                parentId: { type: ['number', 'null'] }
-              }
-            }
+                parentId: { type: ['number', 'null'] },
+              },
+            },
           },
           projects: {
             type: ['array', 'null'],
@@ -65,16 +65,16 @@ const userSchema = {
                       access: { type: 'number' },
                       id: { type: 'number' },
                       page: { type: 'string' },
-                      parentId: { type: 'number' }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                      parentId: { type: 'number' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   required: ['id', 'sessionEndsAt', 'sessionToken', 'companies'],
 };
@@ -84,7 +84,7 @@ const userSchemaInput = {
     schema: userSchema,
     checkpointFields: [
       'id',
-      'updatedAt'
+      'updatedAt',
     ],
     deletedField: 'deleted',
   },

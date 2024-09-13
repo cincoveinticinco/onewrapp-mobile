@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router';
-import { IonContent, IonHeader, IonPage, useIonViewDidEnter } from '@ionic/react';
+import {
+  IonContent, IonHeader, IonPage, useIonViewDidEnter,
+} from '@ionic/react';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import ScenesContext from '../../context/Scenes.context';
 import { Scene } from '../../interfaces/scenes.types';
-import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum } from '../../Ennums/ennums';
+import {
+  DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
+} from '../../Ennums/ennums';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useLoader from '../../hooks/Shared/useLoader';
@@ -71,12 +75,12 @@ const SceneDetails: React.FC = () => {
       setSceneIsLoading(true);
       let filtered: Scene[];
       if (!isShooting) {
-        filtered = selectedFilterOptions 
-          ? applyFilters(offlineScenes, selectedFilterOptions) 
+        filtered = selectedFilterOptions
+          ? applyFilters(offlineScenes, selectedFilterOptions)
           : offlineScenes;
       } else {
         const scenesInShooting = await getScenesInShooting();
-        filtered = []
+        filtered = [];
         for (const sceneId of scenesInShooting) {
           const scene = offlineScenes.find((scene: any) => parseInt(scene.sceneId) === sceneId);
           if (scene) {
@@ -105,9 +109,7 @@ const SceneDetails: React.FC = () => {
 
   useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) => 
-        isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId) : scene.id === thisScene.id
-      );
+      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId) : scene.id === thisScene.id));
       setCurrentSceneIndex(index);
     }
   }, [filteredScenes, thisScene, isShooting]);
@@ -135,7 +137,7 @@ const SceneDetails: React.FC = () => {
 
   const changeToNextScene = () => {
     if (nextScene) {
-      const route = `${rootRoute}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}` 
+      const route = `${rootRoute}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
       history.push(route);
       localStorage.setItem('editionBackRoute', route);
     }
@@ -143,7 +145,7 @@ const SceneDetails: React.FC = () => {
 
   const changeToPreviousScene = () => {
     if (previousScene) {
-      const route = `${rootRoute}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`
+      const route = `${rootRoute}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
       history.push(route);
       localStorage.setItem('editionBackRoute', route);
     }
@@ -160,8 +162,8 @@ const SceneDetails: React.FC = () => {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
       const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
 
-      const sceneStatus = sceneInShooting?.status
-      console.log(sceneStatus)
+      const sceneStatus = sceneInShooting?.status;
+      console.log(sceneStatus);
       switch (sceneStatus) {
         case ShootingSceneStatusEnum.Assigned: return 'light';
         case ShootingSceneStatusEnum.NotShoot: return 'danger';
@@ -169,7 +171,6 @@ const SceneDetails: React.FC = () => {
         default: return 'light';
       }
     } else {
-
       const interior = IntOrExtOptionEnum.INT;
       const exterior = IntOrExtOptionEnum.EXT;
       const intExt = IntOrExtOptionEnum.INT_EXT;
@@ -183,20 +184,20 @@ const SceneDetails: React.FC = () => {
 
       if (scene.sceneType === protectionType) {
         return 'rose';
-      } 
+      }
       if (scene.sceneType === sceneType) {
         if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
           return 'dark';
-        } 
+        }
         if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
           return 'light';
-        } 
+        }
         if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
           return 'success';
-        } 
+        }
         if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
           return 'yellow';
-        } 
+        }
         if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
           return 'primary';
         }
@@ -241,20 +242,20 @@ const SceneDetails: React.FC = () => {
       case ShootingSceneStatusEnum.Shoot: return 'SHOOT';
       default: return 'NOT ASSIGNED';
     }
-  }
+  };
 
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar 
-          name="" 
-          backString 
-          prohibited 
-          deleteButton 
-          edit 
-          editRoute={`/my/projects/${id}/editscene/${sceneId}/details`} 
-          handleBack={handleBack} 
-          deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} 
+        <Toolbar
+          name=""
+          backString
+          prohibited
+          deleteButton
+          edit
+          editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
+          handleBack={handleBack}
+          deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
         />
         <SceneHeader
           sceneColor={sceneColor}
@@ -264,7 +265,7 @@ const SceneDetails: React.FC = () => {
           changeToPreviousScene={changeToPreviousScene}
           changeToNextScene={changeToNextScene}
           status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
-        
+
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
@@ -275,26 +276,26 @@ const SceneDetails: React.FC = () => {
             <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
             {
               isShooting && (
-                <div className='shoot-info'>
-                <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-                  <p style={{ fontSize: '18px' }}><b>Script Info</b></p>
-                  <DropDownButton open={openShootDropDown} />
-                </div>   
-                {
+                <div className="shoot-info">
+                  <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
+                    <p style={{ fontSize: '18px' }}><b>Script Info</b></p>
+                    <DropDownButton open={openShootDropDown} />
+                  </div>
+                  {
                   !openShootDropDown && (
-                    <div className='info'>
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalStart) || 'N/A'} title='rehersal start'></SceneInfoLabels>
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalEnd) || 'N/A'} title='rehersal end'></SceneInfoLabels>
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootStart) || 'N/A'} title='shoot start'></SceneInfoLabels>
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootEnd) || 'N/A'} title='shoot end'></SceneInfoLabels>
-                      <SceneInfoLabels info={secondsToMinSec(thisScene?.estimatedSeconds) || 'N/A'} title='Estimated Time'></SceneInfoLabels>
-                      <SceneInfoLabels info={thisSceneShooting?.set || 'N/A'} title='set'></SceneInfoLabels>
-                      <SceneInfoLabels info={thisSceneShooting?.partiality ? '✓' : 'x'} title='scene partial'></SceneInfoLabels>
-                      <SceneInfoLabels info={thisSceneShooting?.comment || 'N/A'} title='comment'></SceneInfoLabels>
+                    <div className="info">
+                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalStart) || 'N/A'} title="rehersal start" />
+                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalEnd) || 'N/A'} title="rehersal end" />
+                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootStart) || 'N/A'} title="shoot start" />
+                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootEnd) || 'N/A'} title="shoot end" />
+                      <SceneInfoLabels info={secondsToMinSec(thisScene?.estimatedSeconds) || 'N/A'} title="Estimated Time" />
+                      <SceneInfoLabels info={thisSceneShooting?.set || 'N/A'} title="set" />
+                      <SceneInfoLabels info={thisSceneShooting?.partiality ? '✓' : 'x'} title="scene partial" />
+                      <SceneInfoLabels info={thisSceneShooting?.comment || 'N/A'} title="comment" />
                     </div>
                   )
-                }         
-              </div>
+                }
+                </div>
               )
             }
             <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
@@ -302,8 +303,8 @@ const SceneDetails: React.FC = () => {
           </div>
         )}
       </IonContent>
-      <SceneDetailsTabs 
-        routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}` } 
+      <SceneDetailsTabs
+        routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
         routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
       />
       <InputAlert
