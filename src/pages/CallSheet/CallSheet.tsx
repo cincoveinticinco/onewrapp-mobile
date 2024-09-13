@@ -118,12 +118,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   ) => {
     setCastCalls((prevCastCalls) => {
       const editedCastCall = JSON.parse(JSON.stringify(prevCastCalls[castIndex]));
-      editedCastCall[castKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedCastCall[castKey] = newValue
       const newCastCalls = [
         ...prevCastCalls.slice(0, castIndex),
         editedCastCall,

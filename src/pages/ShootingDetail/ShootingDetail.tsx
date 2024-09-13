@@ -844,25 +844,24 @@ const ShootingDetail: React.FC<{
 
   const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
     const shootingDay = new Date(shootingDate);
-
+    
+    // Crear una nueva fecha con la zona horaria local
     const newDate = new Date(
       shootingDay.getFullYear(),
       shootingDay.getMonth(),
       shootingDay.getDate(),
       parseInt(time.hours),
-      parseInt(time.minutes),
+      parseInt(time.minutes)
     );
-
-    return newDate.toISOString();
+  
+    // Convertir a ISO string pero ajustar para la zona horaria local
+    const offset = newDate.getTimezoneOffset();
+    const localISOTime = new Date(newDate.getTime() - (offset*60*1000)).toISOString().slice(0, -1);
+    
+    return localISOTime;
   };
 
   const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => {
-    const timeToISOString = (time: string, date: string): string => {
-      const [hours, minutes] = time.split(':');
-      const dateObj = new Date(date);
-      dateObj.setHours(parseInt(hours), parseInt(minutes));
-      return dateObj.toISOString();
-    };
     console.log('field:', field, 'time:', time);
     if (oneWrapDb && shootingId) {
       try {
@@ -871,12 +870,13 @@ const ShootingDetail: React.FC<{
         if (shooting) {
           const shootingCopy = { ...shooting._data };
   
-          // Convertir el tiempo a formato de 24 horas si es necesario
-          const [hours, minutes] = time.split(':');
-          const is24HourFormat = parseInt(hours) > 12;
-          const formattedTime = is24HourFormat ? time : convertTo24Hour(time);
+          // Asegurarse de que el tiempo esté en formato de 24 horas
+          const formattedTime = convertTo24Hour(time);
+          console.log('Formatted time:', formattedTime);
   
-          const newTimeISO = timeToISOString(formattedTime, shootingCopy.shootDate);
+          const [hours, minutes] = formattedTime.split(':');
+          const newTimeISO = timeToISOString({ hours, minutes }, shootingCopy.shootDate);
+          console.log('New ISO time:', newTimeISO);
   
           shootingCopy[field] = newTimeISO;
   
@@ -886,7 +886,7 @@ const ShootingDetail: React.FC<{
             ...prev,
             shotingInfo: {
               ...prev.shotingInfo,
-              [field]: time, // Mantenemos el formato original (12 o 24 horas)
+              [field]: newTimeISO,
             },
           }));
   
@@ -897,19 +897,20 @@ const ShootingDetail: React.FC<{
       }
     }
   };
-  
-  // Función auxiliar para convertir de 12 a 24 horas si es necesario
+
   const convertTo24Hour = (time: string): string => {
-    const [hours, minutes] = time.split(':');
-    let hour = parseInt(hours);
-    if (hour < 12 && time.toLowerCase().includes('pm')) {
+    const [timeStr, period] = time.split(' ');
+    let [hours, minutes] = timeStr.split(':');
+    let hour = parseInt(hours, 10);
+  
+    if (period && period.toLowerCase() === 'pm' && hour !== 12) {
       hour += 12;
-    } else if (hour === 12 && time.toLowerCase().includes('am')) {
+    } else if (period && period.toLowerCase() === 'am' && hour === 12) {
       hour = 0;
     }
-    return `${hour.toString().padStart(2, '0')}:${minutes}`;
-  };
   
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  }; 
 
   const deleteMeal = async (mealToDelete: Meal) => {
     if (oneWrapDb && shootingId) {

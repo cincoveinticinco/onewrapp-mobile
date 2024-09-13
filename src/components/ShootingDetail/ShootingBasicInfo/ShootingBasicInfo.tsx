@@ -93,6 +93,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 
   const handleEdition = (formData: { time: string }) => {
     if (editingField) {
+      console.log('formData', formData);
       updateShootingTime(editingField, formData.time);
     }
     setEditingField(null);
@@ -148,7 +149,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               {renderEditableField('generalCall', getHourMinutesFomISO(shootingInfo.generalCall, true), 'General Call', false)}
             </IonCol>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('onSet', getHourMinutesFomISO(shootingInfo.estimatedWrap, true), 'Ready to Shoot', false)}
+              {renderEditableField('onSet', getHourMinutesFomISO(shootingInfo.onSet, true), 'Ready to Shoot', false)}
             </IonCol>
             <IonCol size="12" className="ion-padding">
               {renderEditableField('estimatedWrap', (getHourMinutesFomISO(shootingInfo.estimatedWrap, true)), 'Estimated Wrap', false)}
