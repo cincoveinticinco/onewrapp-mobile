@@ -395,3 +395,10 @@ ion-toast.error-toast {
 .ion-flex-wrap {
   flex-wrap: wrap;
 }
+
+.ion-invalid {
+  color: var(--ion-color-danger);
+  * {
+    --border-color: var(--ion-color-danger) !important
+  }
+}

@@ -4,6 +4,7 @@ import {
 } from 'react';
 import {
   IonButton, IonContent, IonHeader, IonModal, IonInput, IonList, IonItem, IonGrid, IonRow, IonCol,
+  IonText,
 } from '@ionic/react';
 import environment from '../../../../environment';
 import CustomSelect from '../CustomSelect/CustomSelect';
@@ -17,13 +18,6 @@ interface MapFormModalProps {
   onSubmit: (formData: Partial<LocationInfo>) => void;
   hospital?: boolean;
   selectedLocation?: LocationInfo | null;
-}
-
-interface Color {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
 }
 
 const MapFormModal: React.FC<MapFormModalProps> = ({
@@ -42,13 +36,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const [locationPostalCode, setLocationPostalCode] = useState('');
   const [locationTypeId, setLocationTypeId] = useState<number | null>(hospital ? 3 : null);
   const [locationAddress, setLocationAddress] = useState('');
-  // const [markerIcon, setMarkerIcon] = useState<any>('default');
-  // const [markerColor, setMarkerColor] = useState<Color>({ r: 255, g: 0, b: 0, a: 255 });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     if (selectedLocation) {
       setLocationName(selectedLocation.locationName);
-      console.log('selectedLocation', selectedLocation);
       setLocationTypeId(selectedLocation.locationTypeId);
       setLocationAddress(selectedLocation.locationAddress);
       setLat(parseFloat(selectedLocation.lat));
@@ -63,9 +55,9 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         createMap();
       }, 300);
     } else if (map && lat && lng) {
-      addMarker(lat, lng);
+      updateMarker(lat, lng);
     }
-  }, [isOpen, mapInitialized, selectedLocation]);
+  }, [isOpen, mapInitialized, map, lat, lng]);
 
   const createMap = async () => {
     if (!mapRef.current) return;
@@ -77,89 +69,65 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         apiKey: environment.MAPS_KEY,
         config: {
           center: {
-            lat: 33.6,
-            lng: -117.9,
+            lat: selectedLocation ? parseFloat(selectedLocation.lat) : 33.6,
+            lng: selectedLocation ? parseFloat(selectedLocation.lng) : -117.9,
           },
-          zoom: 8,
+          zoom: selectedLocation ? 15 : 8,
         },
       });
       setMap(newMap);
       setMapInitialized(true);
 
       await newMap.setOnMapClickListener((event) => {
-        addMarker(event.latitude, event.longitude);
+        updateMarker(event.latitude, event.longitude);
       });
+
+      if (selectedLocation) {
+        updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
+      }
     } catch (error) {
       console.error('Error creating map:', error);
     }
   };
 
-  const addMarker = async (lat: number, lng: number) => {
-    if (map) {
-      if (marker) {
-        await map.removeMarker(marker);
-      }
-
-      const markerOptions: any = {
-        coordinate: {
-          lat,
-          lng,
-        },
-        draggable: true,
-      };
-
-      // if (markerIcon !== 'default') {
-      //   console.log('markerIcon', markerIcon);
-      //   markerOptions.iconUrl = markerIcon.icon;
-      //   markerOptions.iconSize = {
-      //     width: 60,
-      //     height: 60
-      //   }
-
-      // }
-
-      const newMarker = await map.addMarker(markerOptions);
-
-      setMarker(newMarker);
-      setLat(lat);
-      setLng(lng);
-
-      await map.setOnMarkerDragEndListener(async (event) => {
-        updateAddress(event.latitude, event.longitude);
-      });
-
-      updateAddress(lat, lng);
+const updateMarker = async (latitude: number, longitude: number) => {
+  if (map) {
+    if (marker) {
+      await map.removeMarker(marker);
     }
-  };
 
-  const getColorObject = (color: string) => {
-    switch (color) {
-      case 'blue':
-        return {
-          r: 0, g: 0, b: 255, a: 255,
-        };
-      case 'green':
-        return {
-          r: 0, g: 255, b: 0, a: 255,
-        };
-      default:
-        return {
-          r: 255, g: 0, b: 0, a: 255,
-        };
-    }
-  };
+    const newMarker = await map.addMarker({
+      coordinate: {
+        lat: latitude,
+        lng: longitude,
+      },
+      draggable: true,
+    });
+
+    setMarker(newMarker);
+    setLat(latitude);
+    setLng(longitude);
+
+    await map.setOnMarkerDragEndListener(async (event) => {
+      updateMarker(event.latitude, event.longitude);
+    });
+
+    updateAddress(latitude, longitude);
+  }
+};
 
   const updateAddress = async (lat: number, lng: number) => {
     const geocoder = new google.maps.Geocoder();
     const latlng = { lat, lng };
-
+  
     geocoder.geocode({ location: latlng }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK && results) {
         if (results[0]) {
-          setCurrentAddress(results[0].formatted_address);
-          setSearchTerm(results[0].formatted_address);
-          setLocationAddress(results[0].formatted_address);
-
+          const address = results[0].formatted_address;
+          setCurrentAddress(address);
+          setSearchTerm(address);
+          setLocationAddress(address);
+  
           const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
           if (postalCode) {
             setLocationPostalCode(postalCode.long_name);
@@ -234,33 +202,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       });
       setSearchTerm(suggestion.formatted_address);
       setSuggestions([]);
-      addMarker(location.lat(), location.lng());
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (lat && lng && locationName && locationTypeId && locationAddress && locationPostalCode) {
-      const formData: Partial<LocationInfo> = {
-        locationTypeId: hospital ? 3 : locationTypeId,
-        locationName,
-        locationAddress,
-        locationPostalCode,
-        lat: lat.toString(),
-        lng: lng.toString(),
-      };
-      await onSubmit(formData);
-      setLocationTypeId(null);
-      setLocationName('');
-      setLocationAddress('');
-      setLocationPostalCode('');
-      setLat(null);
-      setLng(null);
-      setSearchTerm('');
-      setCurrentAddress('');
-      setSuggestions([]);
-      setMarker(null);
-      setMapInitialized(false);
-      closeModal();
+      updateMarker(location.lat(), location.lng());
     }
   };
 
@@ -270,38 +212,48 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     { value: 4, label: 'Pickup' },
   ];
 
-  const colorOptions = [
-    {
-      value: JSON.stringify({
-        r: 255, g: 0, b: 0, a: 255,
-      }),
-      label: 'Red',
-    },
-    {
-      value: JSON.stringify({
-        r: 0, g: 0, b: 255, a: 255,
-      }),
-      label: 'Blue',
-    },
-    {
-      value: JSON.stringify({
-        r: 0, g: 255, b: 0, a: 255,
-      }),
-      label: 'Green',
-    },
-    {
-      value: JSON.stringify({
-        r: 255, g: 255, b: 0, a: 255,
-      }),
-      label: 'Yellow',
-    },
-    {
-      value: JSON.stringify({
-        r: 128, g: 0, b: 128, a: 255,
-      }),
-      label: 'Purple',
-    },
-  ];
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!locationName.trim()) {
+      newErrors.locationName = 'Location name is required';
+    }
+
+    if (!hospital && !locationTypeId) {
+      newErrors.locationType = 'Location type is required';
+    }
+
+    if (!locationAddress.trim()) {
+      newErrors.locationAddress = 'Address is required';
+    }
+
+    if (!locationPostalCode.trim()) {
+      newErrors.locationPostalCode = 'Postal code is required';
+    }
+
+    if (!lat || !lng) {
+      newErrors.location = 'Please select a location on the map';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      const formData: Partial<LocationInfo> = {
+        locationTypeId: hospital ? 3 : locationTypeId!,
+        locationName,
+        locationAddress,
+        locationPostalCode,
+        lat: lat!.toString(),
+        lng: lng!.toString(),
+      };
+      await onSubmit(formData);
+      // ... (reset form fields)
+      closeModal();
+    }
+  };
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
@@ -341,18 +293,20 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               <IonInput
                 value={locationName}
                 onIonInput={(e) => setLocationName((e.target as any).value)}
-                className="input-item"
+                className={`${errors.locationName ? 'ion-invalid' : ''}`}
                 labelPlacement="floating"
-                label="Location name"
+                label={errors.locationName ? 'REQUIRED LOCATION *' : 'Location Name'}
+                placeholder={errors.locationName ? 'Location Name' : ''}
+                required
               />
             </IonCol>
             <IonCol size="12" style={hospital ? { display: 'none' } : {}}>
               <CustomSelect
                 input={{
-                  label: 'LOCATION TYPE',
+                  label: errors.locationType ? 'REQUIRED TYPE *' : 'LOCATION TYPE',
                   fieldKeyName: 'location_type_id',
                   selectOptions,
-                  placeholder: 'Tipo de ubicación',
+                  placeholder: errors.locationType ? 'Location Type' : 'Tipo de ubicación',
                   value: locationTypeId,
                 }}
                 setNewOptionValue={(fieldKeyName: string, value: string) => setLocationTypeId(parseInt(value))}
@@ -362,10 +316,13 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
           <IonRow>
             <IonCol size="12">
               <IonInput
-                label="Address"
                 value={searchTerm}
                 onIonInput={handleInputChange}
+                className={`${errors.locationAddress ? 'ion-invalid' : ''}`}
                 labelPlacement="floating"
+                label={errors.locationAddress ? 'REQUIRED ADDRESS *' : 'Address'}
+                placeholder={errors.locationAddress ? 'Address' : ''}
+                required
               />
             </IonCol>
           </IonRow>
@@ -380,34 +337,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               </IonList>
             </IonCol>
           </IonRow>
-          {/* <IonRow>
-            <IonCol size="6">
-              <CustomSelect
-                input={{
-                  label: 'MARKER ICON',
-                  fieldKeyName: 'marker_icon',
-                  selectOptions: [
-                    { value: 'default', label: 'Default' },
-                    { value: {icon}, label: 'Custom Icon' },
-                    // Add more icon options as needed
-                  ],
-                  placeholder: 'Select marker icon',
-                }}
-                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerIcon(value)}
-              />
-            </IonCol>
-            <IonCol size="6">
-              <CustomSelect
-                input={{
-                  label: 'MARKER COLOR',
-                  fieldKeyName: 'marker_color',
-                  selectOptions: colorOptions,
-                  placeholder: 'Select marker color',
-                }}
-                setNewOptionValue={(fieldKeyName: string, value: string) => setMarkerColor(JSON.parse(value))}
-              />
-            </IonCol>
-          </IonRow> */}
           <IonRow>
             <IonCol size="12" className="ion-flex-column ion-align-items-center">
               <OutlinePrimaryButton
