@@ -699,7 +699,7 @@ const ShootingDetail: React.FC<{
     setViewTabs(true);
   });
 
-  const shootingDeleteScene = (scene: ShootingScene & Scene) => {
+  const shootingDeleteScene =(scene: ShootingScene & Scene) => {
     const updatedScenes = shootingData.mergedSceneBanners.filter((s: any) => {
       if (s.cardType === 'scene') {
         if (s.id === null) {
@@ -712,6 +712,7 @@ const ShootingDetail: React.FC<{
       return true;
     });
     setShootingData({ ...shootingData, mergedSceneBanners: updatedScenes });
+    successToast('Scene deleted successfully');
   };
 
   const shootingDeleteBanner = (banner: mergedSceneBanner) => {
@@ -731,6 +732,7 @@ const ShootingDetail: React.FC<{
       ...prev,
       scenes: updatedScenes,
     }));
+    successToast('Banner deleted successfully');
   };
 
   const getSceneBackgroundColor = (scene: mergedSceneShoot) => {

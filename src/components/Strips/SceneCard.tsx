@@ -42,10 +42,17 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const routeMatch = useRouteMatch();
   const detailsRoute = `${routeMatch.url}/details/scene/${scene.sceneId}`;
   const alertRef = React.useRef<HTMLIonAlertElement>(null);
+  const alertShooSceneRef = React.useRef<HTMLIonAlertElement>(null);
 
   const openDeleteAlert = async () => {
     if (alertRef.current) {
       await alertRef.current.present();
+    }
+  };
+  
+  const openUnassignAlert = async () => {
+    if (alertShooSceneRef.current) {
+      await alertShooSceneRef.current.present();
     }
   };
 
@@ -255,7 +262,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
             {
                 isShooting && shootingDeleteScene
                 && (
-                <IonButton fill="clear" onClick={() => shootingDeleteScene()} disabled={disableEditions}>
+                <IonButton fill="clear" onClick={() => openUnassignAlert()} disabled={disableEditions}>
                   <IoIosRemoveCircleOutline className="button-icon ban" />
                 </IonButton>
                 )
@@ -270,6 +277,18 @@ const SceneCard: React.FC<SceneCardProps> = ({
         inputs={[]}
         ref={alertRef}
       />
+      {
+        shootingDeleteScene && (
+          <InputAlert
+            header="Unassign Scene"
+            message={`Are you sure you want to unassign scene ${getSceneHeader(scene)}?`}
+            handleOk={() => shootingDeleteScene()}
+            inputs={[]}
+            ref={alertShooSceneRef}
+          />
+        )
+      }
+        
     </IonRow>
   );
 

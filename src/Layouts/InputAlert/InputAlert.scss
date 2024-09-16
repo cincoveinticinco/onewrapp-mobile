@@ -85,12 +85,13 @@
       }
 
       .alert-button {
-        border: 1px solid var(--ion-color-primary);
+        border: 1px solid var(--ion-color-success);
         min-width: auto;
         margin: 6px auto;
         font-size: var(--525-common-text-size);
         display: flex;
         text-transform: uppercase;
+        color: var(--ion-color-light);
         width: calc(100% - 32px) !important;
         max-width: calc(100% - 32px) !important;
 
@@ -117,7 +118,7 @@
         }
 
         &.secondary {
-          border: 1px solid var(--ion-color-light);
+          border: 1px solid var(--ion-color-danger);
           color: var(--ion-color-light);
           margin: 6px auto;
           margin: 12px;

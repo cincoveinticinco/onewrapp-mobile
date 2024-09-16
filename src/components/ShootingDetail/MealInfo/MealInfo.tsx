@@ -4,6 +4,7 @@ import { PiTrashSimpleLight } from 'react-icons/pi';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
 import { Meal } from '../../../interfaces/shooting.types';
 import { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
+import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 
 interface MealInfoProps {
   meal: Meal;
@@ -23,6 +24,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
   handleEdition,
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
+  const alertRef = React.useRef<any>(null);
 
   const formatDefaultValues = (meal: Meal) => {
     const formattedMealValues = {
@@ -42,9 +44,20 @@ const MealInfo: React.FC<MealInfoProps> = ({
     }
   };
 
+  const openAlert = () => {
+    alertRef.current?.present();
+  };
+
   return (
     <>
       <div className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
+        <InputAlert
+          handleOk={() => deleteMeal(meal)}
+          header='Delete Meal'
+          message={`Are you sure you want to delete the ${meal.meal.toUpperCase()} meal?`}
+          ref={alertRef}
+          inputs={[]}
+        />
         <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
           <b>{meal.meal.toUpperCase()}</b>
         </h5>
@@ -56,7 +69,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
         {editMode && (
           <div className="ion-flex-column location-buttons">
             <VscEdit className="edit-location" onClick={openEditModal} />
-            <PiTrashSimpleLight className="delete-location" onClick={() => deleteMeal(meal)} />
+            <PiTrashSimpleLight className="delete-location" onClick={openAlert} />
           </div>
         )}
       </div>

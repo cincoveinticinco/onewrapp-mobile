@@ -3,6 +3,7 @@ import { VscEdit } from 'react-icons/vsc';
 import { PiTrashSimpleLight } from 'react-icons/pi';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
 import { AdvanceCall } from '../../../interfaces/shooting.types';
+import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 
 interface AdvanceCallInfoProps {
   call: AdvanceCall;
@@ -22,6 +23,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
   handleEdition,
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
+  const alertRef = React.useRef<any>(null);
 
   const formatDefaultValues = (call: AdvanceCall) => ({
     ...call,
@@ -34,11 +36,22 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
     }
   };
 
+  const openAlert = () => {
+    alertRef.current?.present();
+  };
+
   const departmentName = call.dep_name_eng?.toUpperCase() || call.dep_name_esp?.toUpperCase() || 'NO DEPARTMENT';
 
   return (
     <>
       <div className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
+        <InputAlert
+          handleOk={() => deleteAdvanceCall(call)}
+          header='Delete Advance Call'
+          message={`Are you sure you want to delete the advance call for ${departmentName}?`}
+          ref={alertRef}
+          inputs={[]}
+        />
         <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
           <b>{departmentName}</b>
         </h5>
@@ -48,7 +61,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
         {editMode && (
           <div className="ion-flex-column location-buttons">
             <VscEdit className="edit-location" onClick={openEditModal} />
-            <PiTrashSimpleLight className="delete-location" onClick={() => deleteAdvanceCall(call)} />
+            <PiTrashSimpleLight className="delete-location" onClick={openAlert} />
           </div>
         )}
       </div>
