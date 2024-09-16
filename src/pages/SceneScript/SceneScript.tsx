@@ -323,6 +323,15 @@ const SceneScript: React.FC<{
     }
   };
 
+  const getSceneStatus = (scene: ShootingScene) => {
+    switch (scene.status) {
+      case ShootingSceneStatusEnum.Assigned: return 'ASSIGNED';
+      case ShootingSceneStatusEnum.NotShoot: return 'NOT SHOOT';
+      case ShootingSceneStatusEnum.Shoot: return 'SHOOT';
+      default: return 'NOT ASSIGNED';
+    }
+  };
+
   const changeToPreviousScene = () => {
     if (previousScene) {
       const route = `${rootRouteScript}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
@@ -516,6 +525,7 @@ const SceneScript: React.FC<{
             nextScene={nextScene}
             changeToPreviousScene={changeToPreviousScene}
             changeToNextScene={changeToNextScene}
+            status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
           />
         </IonHeader>
         <IonContent
