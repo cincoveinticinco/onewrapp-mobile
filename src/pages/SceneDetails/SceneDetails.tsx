@@ -27,6 +27,7 @@ import './SceneDetails.scss';
 import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { ShootingScene } from '../../interfaces/shooting.types';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 
 const SceneDetails: React.FC = () => {
   const toggleTabs = useHideTabs();
@@ -37,6 +38,7 @@ const SceneDetails: React.FC = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const isShooting = searchParams.get('isShooting') === 'true';
+  const isMobile = useIsMobile()
 
   const [thisScene, setThisScene] = useState<any | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
@@ -270,36 +272,43 @@ const SceneDetails: React.FC = () => {
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
         {sceneIsLoading ? useLoader() : <SceneBasicInfo scene={thisScene} />}
-        {!sceneIsLoading && thisScene && (
-          <div className="ion-padding-top ion-padding-bottom">
-            <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CAST" characters />
-            <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
-            {
-              isShooting && (
-                <div className="shoot-info">
-                  <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-                    <p style={{ fontSize: '18px' }}><b>Script Info</b></p>
-                    <DropDownButton open={openShootDropDown} />
-                  </div>
-                  {
-                  !openShootDropDown && (
-                    <div className="info">
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalStart) || 'N/A'} title="rehersal start" />
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalEnd) || 'N/A'} title="rehersal end" />
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootStart) || 'N/A'} title="shoot start" />
-                      <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootEnd) || 'N/A'} title="shoot end" />
-                      <SceneInfoLabels info={secondsToMinSec(thisScene?.estimatedSeconds) || 'N/A'} title="Estimated Time" />
-                      <SceneInfoLabels info={thisSceneShooting?.set || 'N/A'} title="set" />
-                      <SceneInfoLabels info={thisSceneShooting?.partiality ? '✓' : 'x'} title="scene partial" />
-                      <SceneInfoLabels info={thisSceneShooting?.comment || 'N/A'} title="comment" />
-                    </div>
-                  )
-                }
+        {
+          isShooting && (
+            <div className="shoot-info">
+              <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
+                <p style={{ fontSize: '18px' }}><b>Script Info</b></p>
+              </div>
+              {
+              !openShootDropDown && (
+                <div className="info">
+                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalStart) || 'N/A'} title="rehersal start" />
+                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalEnd) || 'N/A'} title="rehersal end" />
+                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootStart) || 'N/A'} title="shoot start" />
+                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootEnd) || 'N/A'} title="shoot end" />
+                  <SceneInfoLabels info={secondsToMinSec(thisScene?.estimatedSeconds) || 'N/A'} title="Estimated Time" />
+                  <SceneInfoLabels info={thisSceneShooting?.set || 'N/A'} title="set" />
+                  <SceneInfoLabels info={thisSceneShooting?.partiality ? '✓' : 'x'} title="scene partial" />
+                  <SceneInfoLabels info={thisSceneShooting?.comment || 'N/A'} title="comment" />
                 </div>
               )
             }
-            <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
-            <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />
+            </div>
+          )
+        }
+        {!sceneIsLoading && thisScene && (
+          <div className="grid-scene-info">
+            <div className='section-wrapper characters-info'>
+             <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CHARACTERS" characters />
+            </div>
+            <div className='section-wrapper extras-info'>
+              <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
+            </div>
+            <div className='section-wrapper elements-info'>
+              <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
+            </div>
+            <div className='section-wrapper notes-info'>
+              <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />
+            </div>
           </div>
         )}
       </IonContent>

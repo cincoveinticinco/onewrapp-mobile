@@ -1341,42 +1341,44 @@ const ShootingDetail: React.FC<{
             </div>
             
           </div>
-          <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
-            {isLoading ? (
-              useLoader()
-            ) : shootingData.mergedSceneBanners.length === 0 ? (
-              <div
-                className="ion-padding-start ion-flex"
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                <OutlinePrimaryButton onClick={openSceneModal} buttonName="Add New" disabled={disableEditions} />
-              </div>
-            ) : (
-              shootingData.mergedSceneBanners.map((scene: any) => (
-                scene.cardType === 'scene' ? (
-                  <SceneCard
-                    key={scene.sceneId}
-                    scene={scene}
-                    isShooting
-                    isProduced={scene.status}
-                    shootingDeleteScene={() => shootingDeleteScene(scene)}
-                    permissionType={permissionType}
-                  />
-                ) : (
-                  <ShootingBanner
-                    key={scene.id}
-                    banner={scene}
-                    shootingDeleteBanner={() => shootingDeleteBanner(scene)}
-                  />
-                )
-              ))
-            )}
-          </IonReorderGroup>
+          <div className='ion-padding'>
+            <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
+              {isLoading ? (
+                useLoader()
+              ) : shootingData.mergedSceneBanners.length === 0 ? (
+                <div
+                  className="ion-padding-start ion-flex"
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  <OutlinePrimaryButton onClick={openSceneModal} buttonName="Add New" disabled={disableEditions} />
+                </div>
+              ) : (
+                shootingData.mergedSceneBanners.map((scene: any) => (
+                  scene.cardType === 'scene' ? (
+                    <SceneCard
+                      key={scene.sceneId}
+                      scene={scene}
+                      isShooting
+                      isProduced={scene.status}
+                      shootingDeleteScene={() => shootingDeleteScene(scene)}
+                      permissionType={permissionType}
+                    />
+                  ) : (
+                    <ShootingBanner
+                      key={scene.id}
+                      banner={scene}
+                      shootingDeleteBanner={() => shootingDeleteBanner(scene)}
+                    />
+                  )
+                ))
+              )}
+            </IonReorderGroup>
+          </div>
         </IonContent>
       )}
       {

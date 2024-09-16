@@ -78,7 +78,9 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
           <SceneInfoLabels info={scene?.dayOrNightOption ? scene?.dayOrNightOption : '-'} title="Day/Night" />
         </IonCol>
       </IonRow>
-      <IonRow>
+      <IonRow style={{
+        backgroundColor: 'var(--ion-color-tertiary-dark)',
+      }}>
         <IonCol>
           <p style={{ textAlign: 'center', fontSize: '16px' }}><b>{scene?.synopsis}</b></p>
         </IonCol>

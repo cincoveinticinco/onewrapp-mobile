@@ -14,9 +14,6 @@ const NoRegisters: FC<NoRegistersProps> = ({ addNew }, disabled) => (
       buttonName="Add New"
       onClick={() => addNew()}
       className="center-absolute"
-      disabled={
-      disabled
-    }
     />
   </div>
 );

@@ -49,22 +49,20 @@ const CategoryContainer = ({
 
   if (getValuesByCategory(categoryName, scene).length > 0) {
     return (
-      <IonCard
-        color="tertiary"
-        className="scene-details-card ion-padding-bottom"
-        style={notes ? { gridColumn: '1 / span 3' } : {}}
-      >
+      <>
         <IonCardHeader>
           <p>
-            {capitalize(categoryName)}
-            {' '}
+            <b>
+              {categoryName.toUpperCase()}{' '}
+              {' '}
+            </b>
           </p>
         </IonCardHeader>
         <IonCardContent>
           {
             getValuesByCategory(categoryName, scene).map((value: any, i) => (
               <p
-                style={{ fontSize: '16px', margin: '6px 0px' }}
+                style={{ fontSize: '14px', margin: '6px 0px' }}
                 key={i + Math.random()}
               >
                 {
@@ -90,7 +88,7 @@ const CategoryContainer = ({
             ))
           }
         </IonCardContent>
-      </IonCard>
+      </>
     );
   }
 };

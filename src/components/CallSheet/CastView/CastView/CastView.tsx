@@ -71,7 +71,6 @@ const CastView: React.FC<CastViewProps> = ({
         type: 'select',
         required: true,
         selectOptions: castOptions,
-        search: true,
         col: '6',
       },
       {
