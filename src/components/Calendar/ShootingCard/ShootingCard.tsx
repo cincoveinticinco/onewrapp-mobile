@@ -17,8 +17,6 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
     history.push(`/my/projects/${id}/shooting/${shootingId}`);
   };
 
-  const getLocationsString = () => shooting.locations.map((location: LocationInfo) => location.location_name).join(', ');
-
   const getShootingColor = () => {
     if (shooting.status === ShootingStatusEnum.Called) {
       return '#f3fb8c';
@@ -35,6 +33,7 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
       onClick={() => goToDetail(shooting.id)}
       style={{
         backgroundColor: getShootingColor(),
+        width: '100%',
       }}
     >
       <IonCardContent style={{ width: '100%', padding: '6px' }}>

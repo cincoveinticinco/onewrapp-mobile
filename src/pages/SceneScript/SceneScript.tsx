@@ -31,7 +31,9 @@ import { ShootingScene } from '../../interfaces/shooting.types';
 // YELLOW ELEMENT
 // GREEN EXTRA
 
-const SceneScript: React.FC = () => {
+const SceneScript: React.FC<{
+  isShooting?: boolean;
+}> = ({isShooting = false}) => {
   const { hideTabs, showTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
@@ -59,8 +61,7 @@ const SceneScript: React.FC = () => {
   const [previousScene, setPreviousScene] = useState<Scene | null>(null);
   const [nextScene, setNextScene] = useState<Scene | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
-  const searchParams = new URLSearchParams(location.search);
-  const isShooting = searchParams.get('isShooting') === 'true';
+
 
   useEffect(() => {
     if (urlShootingId) {
@@ -567,6 +568,7 @@ const SceneScript: React.FC = () => {
         <SceneDetailsTabs
           routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
           routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+          currentRoute='scenescript'
         />
       </IonPage>
     </>

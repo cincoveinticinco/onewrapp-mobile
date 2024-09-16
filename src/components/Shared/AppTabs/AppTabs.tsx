@@ -208,6 +208,7 @@ const AppTabs: React.FC = () => {
           component={SceneDetails}
           permissionType={getSecurePageAccess(SecurePages.SHOOTING_DETAIL)}
           unauthorizedRoute={unauthorizedRoute}
+          additionalProps={{ isShooting: true }}
         />
 
         <ProtectedRoute
@@ -216,6 +217,7 @@ const AppTabs: React.FC = () => {
           component={SceneScript}
           permissionType={getSecurePageAccess(SecurePages.SHOOTING_DETAIL)}
           unauthorizedRoute={unauthorizedRoute}
+          additionalProps={{ isShooting: true }}
         />
 
         <ProtectedRoute

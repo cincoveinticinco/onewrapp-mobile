@@ -53,6 +53,12 @@
   color: var(--ion-color-white);
   outline: 0.5px solid var(--ion-color-light);
   min-height: 150px !important;
+  padding: 6px;
+
+  ion-card {
+    margin: 6px 0px !important;
+    border-radius: 0px;
+  }
 }
 
 .sunday {

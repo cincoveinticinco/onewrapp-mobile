@@ -10,9 +10,10 @@ import { useParams } from 'react-router';
 interface SceneDetailsTabsProps {
   routeDetails?: string;
   routeScript?: string;
+  currentRoute?: 'scenedetails' | 'scenescript';
 }
 
-const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, routeScript }) => {
+const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, routeScript, currentRoute }) => {
   // const { loggedIn } = useAuth();
 
   const isMobile = useIsMobile();
@@ -29,8 +30,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, route
         href={`${routeDetails}`}
         onClick={() => localStorage.setItem('editionBackRoute', `${routeDetails}`)}
       >
-        <IonIcon icon={serverOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE DETAILS</IonLabel>
+        <IonIcon icon={serverOutline} className="tab-bar-icons" color={currentRoute === 'scenedetails' ? 'primary' : 'light' }/>
+        <IonLabel color={currentRoute === 'scenedetails' ? 'primary' : 'light' }>SCENE DETAILS</IonLabel>
       </IonTabButton>
       <IonTabButton
         tab="scenescript"
@@ -38,8 +39,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, route
         href={`${routeScript}`}
         onClick={() => localStorage.setItem('editionBackRoute', `${routeScript}`)}
       >
-        <IonIcon icon={documentTextOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE SCRIPT</IonLabel>
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color={currentRoute === 'scenescript' ? 'primary' : 'light' } />
+        <IonLabel color={currentRoute === 'scenescript' ? 'primary' : 'light' }>SCENE SCRIPT</IonLabel>
       </IonTabButton>
     </IonTabBar>
   );

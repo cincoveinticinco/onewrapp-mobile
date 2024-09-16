@@ -1,6 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router';
 import {
+  IonButton,
+  IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
 } from '@ionic/react';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
@@ -28,17 +30,80 @@ import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import { ShootingScene } from '../../interfaces/shooting.types';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
+import { EditableField, ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import timeToISOString from '../../utils/timeToIsoString';
+import EditionModal from '../../components/Shared/EditionModal/EditionModal';
 
-const SceneDetails: React.FC = () => {
+export const EditableTimeField: React.FC<{
+  value: number | null;
+  title: string;
+  updateTime: (minutes: number, seconds: number) => void;
+}> = ({ value, title, updateTime }) => {
+  const editionModalRef = useRef<HTMLIonModalElement>(null);
+
+  const handleEdit = () => {
+    if (editionModalRef.current) {
+      editionModalRef.current.present();
+    }
+  };
+
+  const handleEdition = (formData: { minutes: string; seconds: string }) => {
+    updateTime(parseInt(formData.minutes), parseInt(formData.seconds));
+  };
+
+  const editionInputs = [
+    {
+      fieldKeyName: 'minutes',
+      label: 'Minutes',
+      placeholder: 'Enter minutes',
+      type: 'number',
+      required: true,
+      col:  '6'
+    },
+    {
+      fieldKeyName: 'seconds',
+      label: 'Seconds',
+      placeholder: 'Enter seconds',
+      type: 'number',
+      required: true,
+      col: '6'
+    },
+  ];
+
+  const [minutes, seconds] = value ? [Math.floor(value / 60), value % 60] : [0, 0];
+
+  return (
+    <>
+      <ShootingInfoLabels
+        info={`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}
+        title={title}
+        onEdit={handleEdit}
+        isEditable={true}
+      />
+      <EditionModal
+        modalRef={editionModalRef}
+        modalTrigger={`open-edit-time-modal-produced-seconds`}
+        title={`Edit ${title} (MM:SS)`}
+        formInputs={editionInputs}
+        handleEdition={handleEdition}
+        defaultFormValues={{
+          minutes: minutes.toString(),
+          seconds: seconds.toString(),
+        }}
+        modalId={`edit-time-modal-produced-seconds`}
+      />
+    </>
+  );
+};
+
+const SceneDetails: React.FC<{
+  isShooting?: boolean;
+}> = ({isShooting = false}) => {
   const toggleTabs = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId: string }>();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const { selectedFilterOptions } = useContext(ScenesContext);
   const history = useHistory();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const isShooting = searchParams.get('isShooting') === 'true';
-  const isMobile = useIsMobile()
 
   const [thisScene, setThisScene] = useState<any | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
@@ -52,6 +117,139 @@ const SceneDetails: React.FC = () => {
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
 
   const successMessageSceneToast = useSuccessToast();
+  
+  const convertTo24Hour = (time: string): string => {
+    const [timeStr, period] = time.split(' ');
+    let [hours, minutes] = timeStr.split(':');
+    let hour = parseInt(hours, 10);
+  
+    if (period && period.toLowerCase() === 'pm' && hour !== 12) {
+      hour += 12;
+    } else if (period && period.toLowerCase() === 'am' && hour === 12) {
+      hour = 0;
+    }
+  
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  }; 
+
+  const updateShootingTime = async (field: string, time: string) => {
+    if (oneWrapDb && shootingId && thisScene) {
+     try {
+      const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+      if (shooting) {
+        const formattedTime = convertTo24Hour(time);
+        const [hours, minutes] = formattedTime.split(':');
+        const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
+        const updatedScenes = shooting.scenes.map((scene: any) => {
+          if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            console.log('scene', scene);
+            return { ...scene, [field]: newTimeISO };
+          }
+          return scene;
+        });
+        await shooting.update({ $set: { scenes: updatedScenes } });
+        setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO});
+      }
+
+      successMessageSceneToast('Scene updated successfully');
+     } catch(error) {
+      console.error('Error updating scene:', error);
+     }
+    }
+  };
+
+  const updateProducedSeconds = async (minutes: number, seconds: number) => {
+    if (oneWrapDb && shootingId && thisScene) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        if (shooting) {
+          const totalSeconds = minutes * 60 + seconds;
+          const updatedScenes = shooting.scenes.map((scene: any) => {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+              return { ...scene, producedSeconds: totalSeconds };
+            }
+            return scene;
+          });
+          await shooting.update({ $set: { scenes: updatedScenes } });
+          setThisSceneShooting({ ...thisSceneShooting, producedSeconds: totalSeconds });
+        }
+        successMessageSceneToast('Produced seconds updated successfully');
+      } catch (error) {
+        console.error('Error updating produced seconds:', error);
+      }
+    }
+  };
+
+  const updatePartiality = async (isPartial: boolean) => {
+    if (oneWrapDb && shootingId && thisScene) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        if (shooting) {
+          const updatedScenes = shooting.scenes.map((scene: any) => {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+              return { ...scene, partiality: isPartial };
+            }
+            return scene;
+          });
+          await shooting.update({ $set: { scenes: updatedScenes } });
+          setThisSceneShooting({ ...thisSceneShooting, partiality: isPartial });
+        }
+        successMessageSceneToast('Partiality updated successfully');
+      } catch (error) {
+        console.error('Error updating partiality:', error);
+      }
+    }
+  };
+
+  const toggleShootingSceneStatus = (
+    currentStatus: ShootingSceneStatusEnum,
+    clickedButton: 'shoot' | 'notShoot'
+  ): ShootingSceneStatusEnum => {
+    switch (clickedButton) {
+      case 'shoot':
+        return currentStatus === ShootingSceneStatusEnum.Shoot
+          ? ShootingSceneStatusEnum.Assigned
+          : ShootingSceneStatusEnum.Shoot;
+      case 'notShoot':
+        return currentStatus === ShootingSceneStatusEnum.NotShoot
+          ? ShootingSceneStatusEnum.Assigned
+          : ShootingSceneStatusEnum.NotShoot;
+      default:
+        return currentStatus;
+    }
+  };
+
+  const updateSceneStatus = async (newStatus: ShootingSceneStatusEnum) => {
+    if (oneWrapDb && shootingId && thisScene) {
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        if (shooting) {
+          const updatedScenes = shooting.scenes.map((scene: any) => {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+              return { ...scene, status: newStatus };
+            }
+            return scene;
+          });
+          await shooting.update({ $set: { scenes: updatedScenes } });
+          setThisSceneShooting({ ...thisSceneShooting, status: newStatus });
+        }
+        successMessageSceneToast('Scene status updated successfully');
+      } catch (error) {
+        console.error('Error updating scene status:', error);
+      }
+    }
+  };
+
+  const handleShootClick = () => {
+    const newStatus = toggleShootingSceneStatus(thisSceneShooting.status, 'shoot');
+    updateSceneStatus(newStatus);
+  };
+  
+  const handleNotShootClick = () => {
+    const newStatus = toggleShootingSceneStatus(thisSceneShooting.status, 'notShoot');
+    updateSceneStatus(newStatus);
+  };
+  
 
   useEffect(() => {
     if (urlShootingId) {
@@ -267,7 +465,6 @@ const SceneDetails: React.FC = () => {
           changeToPreviousScene={changeToPreviousScene}
           changeToNextScene={changeToNextScene}
           status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
-
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
@@ -276,19 +473,76 @@ const SceneDetails: React.FC = () => {
           isShooting && (
             <div className="shoot-info">
               <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-                <p style={{ fontSize: '18px' }}><b>Script Info</b></p>
+                <p style={{ fontSize: '18px' }}><b>SCRIPT INFO</b></p>
+                <div className='buttons-wrapper'>
+                  <IonButton 
+                    fill='clear' 
+                    className={'success' + (thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : '')} 
+                    size='small'
+                    onClick={handleShootClick}
+                  >
+                    <b>SHOOT</b>
+                  </IonButton>
+                  <IonButton 
+                    className={'danger' + (thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : '')} 
+                    fill='clear' 
+                    size='small'
+                    onClick={handleNotShootClick}
+                  >
+                    <b>NOT SHOOT</b>
+                  </IonButton>
+                </div>
               </div>
               {
               !openShootDropDown && (
                 <div className="info">
-                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalStart) || 'N/A'} title="rehersal start" />
-                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.rehersalEnd) || 'N/A'} title="rehersal end" />
-                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootStart) || 'N/A'} title="shoot start" />
-                  <SceneInfoLabels info={getHourMinutesFomISO(thisSceneShooting?.shootEnd) || 'N/A'} title="shoot end" />
-                  <SceneInfoLabels info={secondsToMinSec(thisScene?.estimatedSeconds) || 'N/A'} title="Estimated Time" />
-                  <SceneInfoLabels info={thisSceneShooting?.set || 'N/A'} title="set" />
-                  <SceneInfoLabels info={thisSceneShooting?.partiality ? '✓' : 'x'} title="scene partial" />
-                  <SceneInfoLabels info={thisSceneShooting?.comment || 'N/A'} title="comment" />
+                  <EditableField
+                    field="rehersalStart"
+                    value={thisSceneShooting?.rehersalStart || ''}
+                    title="Rehersal Start"
+                    withSymbol={false}
+                    permissionType={1}
+                    updateShootingTime={updateShootingTime}
+                  />
+                  <EditableField
+                    field="rehersalEnd"
+                    value={thisSceneShooting?.rehersalEnd || ''}
+                    title="Rehersal End"
+                    withSymbol={false}
+                    permissionType={1}
+                    updateShootingTime={updateShootingTime}
+                  />
+                  <EditableField
+                    field="shootStart"
+                    value={thisSceneShooting?.shootStart || ''}
+                    title="Shoot Start"
+                    withSymbol={false}
+                    permissionType={1}
+                    updateShootingTime={updateShootingTime}
+                  />
+                  <EditableField
+                    field="shootEnd"
+                    value={thisSceneShooting?.shootEnd || ''}
+                    title="Shoot End"
+                    withSymbol={false}
+                    permissionType={1}
+                    updateShootingTime={updateShootingTime}
+                  />
+                  <EditableTimeField
+                    value={thisSceneShooting?.producedSeconds || null}
+                    title="Shoot Time"
+                    updateTime={updateProducedSeconds}
+                  />
+                  <div>
+                    <IonCheckbox
+                      checked={thisSceneShooting?.partiality || false}
+                      onIonChange={(e) => updatePartiality(e.detail.checked)}
+                      labelPlacement='end'
+                      className='partiality-checkbox'
+                    >
+                      PARTIALY SHOOT
+                    </IonCheckbox>
+                 </div>
                 </div>
               )
             }
@@ -315,6 +569,7 @@ const SceneDetails: React.FC = () => {
       <SceneDetailsTabs
         routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
         routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+        currentRoute={'scenedetails'}
       />
       <InputAlert
         header="Delete Scene"

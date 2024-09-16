@@ -187,6 +187,10 @@ const ShootingDetail: React.FC<{
     }
   };
 
+  useIonViewDidEnter(() => {
+    fetchData();
+  })
+
   useEffect(() => {
     fetchData();
   }, [oneWrapDb, shootingId]);
@@ -870,11 +874,9 @@ const ShootingDetail: React.FC<{
   
           // Asegurarse de que el tiempo esté en formato de 24 horas
           const formattedTime = convertTo24Hour(time);
-          console.log('Formatted time:', formattedTime);
   
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shootingCopy.shootDate);
-          console.log('New ISO time:', newTimeISO);
   
           shootingCopy[field] = newTimeISO;
   
@@ -1311,7 +1313,6 @@ const ShootingDetail: React.FC<{
               <ShootingInfoLabels
                 info={getHourMinutesFomISO(shootingData.shotingInfo.generalCall, true)}
                 title='General Call'
-                isEditable={false}
               />
               <ShootingInfoLabels
                 info={getHourMinutesFomISO(shootingData.shotingInfo.onSet, true)}

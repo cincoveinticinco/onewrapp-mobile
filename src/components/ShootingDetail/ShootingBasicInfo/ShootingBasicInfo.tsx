@@ -11,6 +11,71 @@ import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesF
 import separateTimeOrPages from '../../../utils/SeparateTimeOrPages';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 
+interface EditableFieldProps {
+  field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';
+  value: string;
+  title: string;
+  withSymbol: boolean;
+  permissionType?: number | null;
+  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
+}
+
+export const EditableField: React.FC<EditableFieldProps> = ({
+  field,
+  value,
+  title,
+  withSymbol,
+  permissionType,
+  updateShootingTime,
+}) => {
+  const editionModalRef = useRef<HTMLIonModalElement>(null);
+  const { main, symbol } = separateTimeOrPages(value);
+
+  const handleEdit = () => {
+    if (editionModalRef.current) {
+      editionModalRef.current.present();
+    }
+  };
+
+  const handleEdition = (formData: { time: string }) => {
+    updateShootingTime(field, formData.time);
+  };
+
+  const editionInputs = [
+    {
+      fieldKeyName: 'time',
+      label: 'Time',
+      placeholder: 'Enter time',
+      type: 'time',
+      required: true,
+      offset: '3'
+    },
+  ];
+
+  return (
+    <>
+      <ShootingInfoLabels
+        info={withSymbol ? main : getHourMinutesFomISO(value, true)}
+        symbol={withSymbol ? symbol : ''}
+        title={title}
+        onEdit={handleEdit}
+        isEditable={permissionType === 1}
+      />
+      <EditionModal
+        modalRef={editionModalRef}
+        modalTrigger={`open-edit-time-modal-${field}`}
+        title={`Edit ${field}`}
+        formInputs={editionInputs}
+        handleEdition={handleEdition}
+        defaultFormValues={{
+          time: getHourMinutesFomISO(value),
+        }}
+        modalId={`edit-time-modal-${field}`}
+      />
+    </>
+  );
+};
+
 interface ShootingInfoLabelsProps {
   info: string;
   title: string;
@@ -55,11 +120,11 @@ interface ShootingBasicInfoProps {
     protectedScenes: number;
   };
   permissionType?: number | null;
-  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => void;
+  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
 }
 
 const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType }) => {
-  const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | null>(null);
+  const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds' | null>(null);
   const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
   const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
   const editionModalRef = useRef<HTMLIonModalElement>(null);
@@ -97,20 +162,6 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
     },
   ];
 
-  const renderEditableField = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', value: string, title: string, withSymbol: boolean) => {
-    const { main, symbol } = separateTimeOrPages(value);
-
-    return (
-      <ShootingInfoLabels
-        info={withSymbol ? main : value}
-        symbol={withSymbol ? symbol : ''}
-        title={title}
-        onEdit={() => handleEdit(field)}
-        isEditable={permissionType === 1}
-      />
-    );
-  };
-
   return (
     <IonGrid fixed style={{ width: '100%' }}>
       <IonRow>
@@ -131,20 +182,41 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
           }
         </IonCol>
         <IonCol size="4">
-          <IonRow>
+        <IonRow>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('generalCall', getHourMinutesFomISO(shootingInfo.generalCall, true), 'General Call', false)}
+              <EditableField
+                field="generalCall"
+                value={shootingInfo.generalCall}
+                title="General Call"
+                withSymbol={false}
+                permissionType={permissionType}
+                updateShootingTime={updateShootingTime}
+              />
             </IonCol>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('onSet', getHourMinutesFomISO(shootingInfo.onSet, true), 'Ready to Shoot', false)}
+              <EditableField
+                field="onSet"
+                value={shootingInfo.onSet}
+                title="Ready to Shoot"
+                withSymbol={false}
+                permissionType={permissionType}
+                updateShootingTime={updateShootingTime}
+              />
             </IonCol>
             <IonCol size="12" className="ion-padding">
-              {renderEditableField('estimatedWrap', (getHourMinutesFomISO(shootingInfo.estimatedWrap, true)), 'Estimated Wrap', false)}
+              <EditableField
+                field="estimatedWrap"
+                value={shootingInfo.estimatedWrap}
+                title="Estimated Wrap"
+                withSymbol={false}
+                permissionType={permissionType}
+                updateShootingTime={updateShootingTime}
+              />
             </IonCol>
-          </IonRow>
-          <IonRow className='weather-container'>
-            <IonCol size="12" className="ion-padding">
-              <p className="bold">NO WEATHER AVAILABLE</p>
+            <IonCol size="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
+              <h3 style={{
+                textAlign: 'center',
+              }}><b>NO WEATHER AVAILABLE</b></h3>
             </IonCol>
           </IonRow>
         </IonCol>

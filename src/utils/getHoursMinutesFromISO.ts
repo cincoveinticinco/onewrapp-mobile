@@ -2,6 +2,8 @@ import { trainOutline } from "ionicons/icons";
 
 const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
+  console.log('iso', iso);
+  console.log('date', date);
 
   if (isNaN(date.getTime())) {
     return '--:--';

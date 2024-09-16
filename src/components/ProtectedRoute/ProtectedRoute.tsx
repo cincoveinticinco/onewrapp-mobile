@@ -6,7 +6,8 @@ interface ProtectedRouteProps {
   path: string;
   exact?: boolean;
   permissionType?: any;
-  unauthorizedRoute: string
+  unauthorizedRoute: string;
+  additionalProps?: Record<string, any>;  // Objeto que contiene las propiedades adicionales
 }
 
 export enum PermisionTypes {
@@ -15,15 +16,21 @@ export enum PermisionTypes {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  component: Component, permissionType, unauthorizedRoute, ...rest
+  component: Component,
+  permissionType,
+  unauthorizedRoute,
+  additionalProps = {}, // Se inicializa con un objeto vacío si no se pasa
+  ...rest
 }) => (
   <Route
     {...rest}
-    render={(props) => (permissionType === 0 || permissionType === 1 ? (
-      <Component {...props} permissionType={permissionType} />
-    ) : (
-      <Redirect to={unauthorizedRoute} />
-    ))}
+    render={(props) =>
+      permissionType === PermisionTypes.READ || permissionType === PermisionTypes.READ_AND_WRITE ? (
+        <Component {...props} {...additionalProps} permissionType={permissionType} />
+      ) : (
+        <Redirect to={unauthorizedRoute} />
+      )
+    }
   />
 );
 
