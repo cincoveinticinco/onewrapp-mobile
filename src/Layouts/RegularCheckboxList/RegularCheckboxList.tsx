@@ -4,7 +4,6 @@ import useIsMobile from '../../hooks/Shared/useIsMobile';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './RegularCheckboxList.scss';
-import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 
 interface RegularListProps {
@@ -49,11 +48,8 @@ const RegularList: React.FC<RegularListProps> = ({
 
   const handleItemStyles = (label: string) => {
     if (optionsWithStyles) {
-      console.log(optionsWithStyles);
       const optionStyle = optionsWithStyles.find((optionStyle: SelectOptionsInterface) => optionStyle.label === label);
-      console.log(optionStyle);
       if (optionStyle) {
-        console.log(optionStyle.style);
         return optionStyle.style;
       }
     }

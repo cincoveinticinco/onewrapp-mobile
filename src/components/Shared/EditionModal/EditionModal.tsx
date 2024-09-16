@@ -117,7 +117,9 @@ const EditionModal: React.FC<EditionModalProps> = ({
     if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       return setValue(fieldKeyName, null);
     }
-    return setValue(fieldKeyName, value);
+    console.log(value);
+    setValue(fieldKeyName, value);
+    console.log(watch(fieldKeyName));
   };
 
   const handleValidation = (value: string, fieldKeyName: string, required: boolean) => {
@@ -156,6 +158,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   };
 
   const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
+    console.log('fieldKeyName', fieldKeyName, 'TESTING');
     setValue(fieldKeyName, checked);
   };
 

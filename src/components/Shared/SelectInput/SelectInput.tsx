@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
-import { Controller, FieldValues, ValidateResult } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import SelectionModal from '../../../Layouts/SelectionModal/SelectionModal';
 import { SelectOptionsInterface } from '../EditionModal/EditionModal';
 
@@ -45,9 +45,29 @@ const SelectItem: React.FC<SelectItemProps> = ({
 
   const currentFieldValue = watchValue(fieldKeyName);
 
+  const mapValueToString = (value: any): string => {
+    if (typeof value === 'object' && value !== null) {
+      return value.getValue || value.id || JSON.stringify(value);
+    }
+    return String(value);
+  };
+
+  const mapStringToValue = (str: string): any => {
+    const option = options.find(o => mapValueToString(o.value) === str);
+    return option ? option.value : str;
+  };
+
+  const mappedOptions = useMemo(() => 
+    options.map(option => ({
+      ...option,
+      mappedValue: mapValueToString(option.value)
+    })),
+    [options]
+  );
+
   const handleSelectCheckbox = (label: string) => {
     const option = options.find((o) => o.label === label);
-    if (currentFieldValue === option?.value) {
+    if (mapValueToString(currentFieldValue) === mapValueToString(option?.value)) {
       setValue(fieldKeyName, null);
     } else {
       setValue(fieldKeyName, option?.value);
@@ -82,20 +102,20 @@ const SelectItem: React.FC<SelectItemProps> = ({
             label={showError && validate && (validate(field.value)) ? (validate(field.value)) : label.toLocaleUpperCase()}
             labelPlacement="floating"
             interface="alert"
-            value={watchValue(fieldKeyName)}
-            onIonChange={(e) => { setValue(fieldKeyName, e.detail.value); }}
+            value={mapValueToString(watchValue(fieldKeyName))}
+            onIonChange={(e) => { setValue(fieldKeyName, mapStringToValue(e.detail.value)); }}
             className={(showError ? 'error' : '')}
             mode="ios"
             disabled={disabled}
             class="uppercase"
-            style={
-              {
-                width: '100%',
-              }
-            }
+            style={{
+              width: '100%',
+            }}
           >
-            {options.map((option, index) => (
-              <IonSelectOption key={index} value={option.value} className="uppercase">{option.label.toUpperCase()}</IonSelectOption>
+            {mappedOptions.map((option) => (
+              <IonSelectOption key={option.mappedValue} value={option.mappedValue}>
+                {option.label}
+              </IonSelectOption>
             ))}
           </IonSelect>
         )}

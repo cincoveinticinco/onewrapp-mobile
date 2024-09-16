@@ -43,6 +43,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   const currentFieldValue = watchValue(fieldKeyName);
 
   const handleSelectCheckbox = (option: string) => {
+    console.log('option', option);
     currentFieldValue === option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
 
     if (validate(currentFieldValue)) {

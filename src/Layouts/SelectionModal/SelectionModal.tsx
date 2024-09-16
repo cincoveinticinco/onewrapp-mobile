@@ -1,7 +1,7 @@
 import {
   IonContent, IonHeader, IonModal,
 } from '@ionic/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -26,8 +26,8 @@ interface SelectionModalProps {
   optionName: string;
   listOfOptions: (SelectOptionsInterface)[];
   modalTrigger: string;
-  handleCheckboxToggle: (option: string) => void;
-  selectedOptions: string[];
+  handleCheckboxToggle: (option: any) => void;
+  selectedOptions: any[];
   setSelectedOptions?: any;
   clearSelections: () => void;
   multipleSelections?: boolean;
@@ -55,6 +55,10 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const [searchText, setSearchText] = useState('');
   const [createNewMode, setCreateNewMode] = useState(false);
 
+  useEffect(() => {
+    console.log(optionName)
+  }, [selectedOptions])
+
   const modalRef = useRef<HTMLIonModalElement>(null);
 
   const isMobile = useIsMobile();
@@ -75,7 +79,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const uncheckedOptions = listOfStrings.filter((label: string) => {
     const option = listOfOptions.find((option: any) => option.label === label);
     if (option) {
-      return !selectedOptions.includes(option.value);
+      return !selectedOptions.includes(option?.value)  || selectedOptions[0]?.id !== option?.value.id;
     }
   });
 
@@ -85,12 +89,12 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const checkedSelectedOptions: any[] = listOfStrings.filter((option: string) => {
     const optionValue = listOfOptions.find((o: any) => o.label === option);
-    return selectedOptions.includes(optionValue?.value);
+    return selectedOptions.includes(optionValue?.value)  || selectedOptions[0]?.id == optionValue?.value.id;
   });
 
   const isOptionChecked = (label: string) => {
     const option = listOfOptions.find((o: any) => o.label === label);
-    return selectedOptions.includes(option?.value);
+    return selectedOptions.includes(option?.value)  || selectedOptions[0]?.id == option?.value?.id
   };
 
   const defaultFormValues: any = {};

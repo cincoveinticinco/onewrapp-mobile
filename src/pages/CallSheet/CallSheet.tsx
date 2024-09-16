@@ -596,6 +596,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
   const createNewCastCall = async (formData: any): Promise<void> => {
     try {
+      console.log('formData', formData);
       const shootingIdInt = shootingId ? parseInt(shootingId) : 0;
 
       const callTime = formData.callTime && timeToISOString({
