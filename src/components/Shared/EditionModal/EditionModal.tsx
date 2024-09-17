@@ -21,6 +21,7 @@ export interface FormInput {
   required?: boolean;
   selectOptions?: SelectOptionsInterface[];
   search?: boolean;
+  offset?: string;
 }
 
 export interface SelectOptionsInterface {

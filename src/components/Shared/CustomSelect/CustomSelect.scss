@@ -9,8 +9,9 @@
   color: var(--ion-color-light) !important;
 }
 
-.css-q8hpuo-MuiFormControl-root {
-  width: 100% !important;
+.css-q8hpuo-MuiFormControl-root,
+.css-fzem9i-MuiAutocomplete-root {
+  width: 90% !important;
 }
 
 .MuiInput-root::before {
@@ -47,11 +48,11 @@
 }
 
 .MuiAutocomplete-root .MuiInputBase-root::before {
-  border-bottom: 2px solid var(--ion-color-light) !important;
+  border-bottom: 1px solid var(--ion-color-light) !important;
 }
 
 .MuiAutocomplete-root .MuiInputBase-root:hover:not(.Mui-focused)::before {
-  border-bottom: 2px solid var(--ion-color-light) !important;
+  border-bottom: 1px solid var(--ion-color-light) !important;
 }
 
 .MuiAutocomplete-root .MuiInputBase-root::after {

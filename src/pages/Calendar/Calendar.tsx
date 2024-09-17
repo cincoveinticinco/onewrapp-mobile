@@ -143,6 +143,7 @@ const Calendar: React.FC = () => {
       type: 'date',
       required: true,
       col: '6',
+      offset: '3',
     },
     {
       fieldKeyName: 'unitId',
@@ -150,8 +151,10 @@ const Calendar: React.FC = () => {
       placeholder: 'Select unit',
       type: 'select',
       required: true,
+      search: true,
       selectOptions: getUnitOptions(units as any),
       col: '6',
+      offset: '3',
     },
   ];
 

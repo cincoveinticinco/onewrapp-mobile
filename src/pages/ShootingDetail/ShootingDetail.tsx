@@ -145,7 +145,7 @@ const ShootingDetail: React.FC<{
     }, 100);
   };
 
-  const [shootingData, setShootingData] = useState<ShootingDataProps>({
+  const shootingDataInitial: ShootingDataProps = {
     mergedSceneBanners: [],
     notIncludedScenes: [],
     shotingInfo: {
@@ -166,7 +166,9 @@ const ShootingDetail: React.FC<{
     },
     shootingFormattedDate: '',
     mergedScenesShootData: [],
-  });
+  }
+
+  const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
 
   const fetchData = async () => {
     try {
@@ -187,13 +189,9 @@ const ShootingDetail: React.FC<{
     }
   };
 
-  useIonViewDidEnter(() => {
-    fetchData();
-  })
-
   useEffect(() => {
     fetchData();
-  }, [oneWrapDb, shootingId]);
+  }, [oneWrapDb, shootingId, permissionType]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -636,7 +634,7 @@ const ShootingDetail: React.FC<{
   });
 
   const saveShooting = async () => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrapDb && shootingId && !isLoading) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         const updatedScenes = shootingData.mergedSceneBanners
@@ -648,8 +646,9 @@ const ShootingDetail: React.FC<{
         const shootingCopy = { ...shooting._data };
         shootingCopy.scenes = updatedScenes;
         shootingCopy.banners = updatedBanners;
-
+        
         return await oneWrapDb.shootings.upsert(shootingCopy);
+
       } catch (error) {
         console.error('Error saving new Shooting:', error);
       }
