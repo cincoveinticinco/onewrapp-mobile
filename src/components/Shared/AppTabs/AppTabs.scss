@@ -6,6 +6,8 @@
 
   .tab-bar-buttons {
     @include tab-bar-buttons;
+
+    font-size: 10px !important;
   }
 
   .tab-bar-buttons.tablet {
@@ -20,8 +22,4 @@
 .disabled {
   opacity: 0.5;
   pointer-events: none;
-}
-
-.tab-bar-buttons {
-  font-size: 10px !important;
 }
