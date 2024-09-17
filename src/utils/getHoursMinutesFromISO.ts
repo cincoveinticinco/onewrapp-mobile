@@ -1,7 +1,7 @@
 const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
 
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return '--:--';
   }
 
@@ -26,7 +26,7 @@ export default getHourMinutesFomISO;
 export const getAmOrPm = (iso: string): string => {
   const date = new Date(iso);
 
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return '';
   }
 

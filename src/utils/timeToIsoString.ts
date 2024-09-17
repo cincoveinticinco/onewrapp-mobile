@@ -5,8 +5,8 @@ const timeToISOString = (time: { hours: string, minutes: string }, shootingDate:
     shootingDay.getFullYear(),
     shootingDay.getMonth(),
     shootingDay.getDate(),
-    parseInt(time.hours),
-    parseInt(time.minutes),
+    parseInt(time.hours, 10),
+    parseInt(time.minutes, 10),
   );
 
   return newDate.toISOString();
