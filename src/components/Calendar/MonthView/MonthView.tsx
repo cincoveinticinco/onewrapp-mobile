@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { IonCol, IonGrid, IonRow } from '@ionic/react';
 import {
   addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek,
 } from 'date-fns';
-import { IonCol, IonGrid, IonRow } from '@ionic/react';
+import React, { useEffect, useState } from 'react';
 import { Shooting } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 

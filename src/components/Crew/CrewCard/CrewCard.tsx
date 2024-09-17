@@ -1,15 +1,15 @@
 // CrewCard.tsx
-import React from 'react';
 import {
-  IonItemSliding,
-  IonItemOptions,
   IonButton,
   IonItem,
+  IonItemOptions,
+  IonItemSliding,
   IonLabel,
   IonTitle,
 } from '@ionic/react';
+import React from 'react';
 import { CiEdit } from 'react-icons/ci';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { PiTrashSimpleLight } from 'react-icons/pi';
 import { Crew } from '../../../interfaces/crew.types';
 import './CrewCard.scss';
 

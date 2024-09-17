@@ -886,7 +886,6 @@ const ShootingDetail: React.FC<{
               [field]: newTimeISO,
             },
           }));
-
         }
       } catch (error) {
         console.error(`Error updating ${field}:`, error);
@@ -973,7 +972,6 @@ const ShootingDetail: React.FC<{
               advanceCalls: shootingCopy.advanceCalls,
             },
           }));
-
         }
       } catch (error) {
         console.error('Error deleting advance call:', error);

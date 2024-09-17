@@ -1,30 +1,30 @@
+import { IonButton } from '@ionic/react';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { PiNotePencil } from 'react-icons/pi';
-import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
-import { IonButton } from '@ionic/react';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
+import { PiNotePencil } from 'react-icons/pi';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import useLoader from '../../hooks/Shared/useLoader';
+import useTextSelection from '../../hooks/Shared/useSelectedText';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import {
   Character, Element, Extra, Note,
 } from '../../interfaces/scenes.types';
+import InputModal from '../../Layouts/InputModal/InputModal';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import removeAccents from '../../utils/removeAccents';
+import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
+import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import useTextSelection from '../../hooks/Shared/useSelectedText';
-import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import removeAccents from '../../utils/removeAccents';
-import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import SceneParagraph from './SceneParagraph/SceneParagraph';
-import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
-import useLoader from '../../hooks/Shared/useLoader';
-import InputModal from '../../Layouts/InputModal/InputModal';
 
 interface ScriptPageProps {
   zoomLevel: number;

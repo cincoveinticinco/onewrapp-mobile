@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { IonModal } from '@ionic/react';
 import { useParams } from 'react-router';
 import { normalizeString } from 'rxdb';
 import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal';

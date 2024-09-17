@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import OutlinePrimaryButton from '../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface NoRegistersProps {

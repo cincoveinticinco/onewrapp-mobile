@@ -32,7 +32,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
       ready_at: getHourMinutesFomISO(meal.ready_at, false),
       end_time: getHourMinutesFomISO(meal.end_time, false),
     };
-    
+
     return formattedMealValues;
   };
 

@@ -1,4 +1,4 @@
-import { IonInput, IonItem, IonTextarea } from '@ionic/react';
+import { IonItem, IonTextarea } from '@ionic/react';
 import { useState } from 'react';
 import { Note } from '../../../interfaces/scenes.types';
 

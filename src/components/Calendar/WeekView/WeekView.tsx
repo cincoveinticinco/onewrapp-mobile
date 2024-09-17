@@ -1,10 +1,10 @@
 import {
+  IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow,
+} from '@ionic/react';
+import {
   addDays, endOfWeek, format, startOfWeek,
 } from 'date-fns';
 import { useCallback, useMemo } from 'react';
-import {
-  IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow,
-} from '@ionic/react';
 import { Shooting } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 

@@ -1,11 +1,10 @@
 import {
-  IonBadge, IonCard, IonCardContent, IonItem, IonLabel,
+  IonCard, IonCardContent
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
-import { LocationInfo, Shooting } from '../../../interfaces/shooting.types';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import truncateString from '../../../utils/truncateString';
+import { Shooting } from '../../../interfaces/shooting.types';
 
 const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ className, shooting }) => {
   const history = useHistory();

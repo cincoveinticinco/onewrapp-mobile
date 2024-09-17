@@ -166,8 +166,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         resyncProjectsUser.current = projectsReplicator;
       }
     } catch (error) {
-      throw error
-    } 
+      throw error;
+    }
   };
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
@@ -435,7 +435,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setReplicationStatus(`Starting ${step.name} replication...`);
         incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
         await step.function().then((result) => {
-        
+
         }).catch((error) => {
           setReplicationStatus(`Error during ${step.name} replication`);
         });

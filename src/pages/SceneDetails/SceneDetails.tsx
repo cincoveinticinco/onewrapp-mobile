@@ -142,7 +142,6 @@ const SceneDetails: React.FC<{
           const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
           const updatedScenes = shooting.scenes.map((scene: any) => {
             if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
-         
               return { ...scene, [field]: newTimeISO };
             }
             return scene;

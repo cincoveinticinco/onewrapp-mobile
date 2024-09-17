@@ -3,14 +3,13 @@ import {
 } from '@ionic/react';
 import { format } from 'date-fns';
 import {
-  addOutline, calendarClear, calendarOutline, chevronBackOutline, chevronForwardOutline,
+  addOutline,
+  calendarOutline, chevronBackOutline, chevronForwardOutline
 } from 'ionicons/icons';
-import './MonthViewToolbar.css';
 import { useState } from 'react';
 import { LiaDotCircle } from 'react-icons/lia';
 import { useHistory } from 'react-router';
-import { add } from 'lodash';
-import AddButton from '../../Shared/AddButton/AddButton';
+import './MonthViewToolbar.css';
 
 interface MonthViewToolbarProps {
   currentDate: Date;

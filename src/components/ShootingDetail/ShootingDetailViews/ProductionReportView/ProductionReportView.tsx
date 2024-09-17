@@ -203,8 +203,6 @@ const ProductionReportView: React.FC = () => {
       const filteredServices = shootingCopy.services.filter((service: any) => service.prServiceTypeId !== parseInt(id));
       shootingCopy.services = [...filteredServices, ...updatedServices];
 
-      
-
       // Serialize and deserialize the object before saving
       const shootingCopyJson = JSON.stringify(shootingCopy);
       const shootingCopyDeserialized = JSON.parse(shootingCopyJson);
@@ -214,7 +212,7 @@ const ProductionReportView: React.FC = () => {
         ...prev,
         [id]: false,
       }));
-      
+
       successToast('Section saved successfully');
     } catch (error) {
       errorToast('Error saving section');

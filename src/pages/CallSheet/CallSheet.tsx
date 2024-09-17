@@ -80,8 +80,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
-  const successToast = useSuccessToast()
-  const errorToast = useErrorToast()
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
   const getTalentCastOptions = async () => {
     const talents = await oneWrapDb?.talents.find({}).exec() || [];

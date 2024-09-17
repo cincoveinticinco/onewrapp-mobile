@@ -1,21 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router';
-import { checkmarkCircle, closeCircle } from 'ionicons/icons';
-import { useIonToast } from '@ionic/react';
-import InputItem from './AddSceneFormInputs/InputItem';
-import SelectItem from './AddSceneFormInputs/SelectItem';
+import React, { useContext } from 'react';
+import { useHistory } from 'react-router';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import './AddSceneForm.scss';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
-import './AddSceneForm.scss';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
-import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import InputItem from './AddSceneFormInputs/InputItem';
+import SelectItem from './AddSceneFormInputs/SelectItem';
 
 import DatabaseContext from '../../context/Database.context';
 import {

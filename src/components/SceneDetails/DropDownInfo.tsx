@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
-import { text } from 'ionicons/icons';
+import { useState } from 'react';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import CategoryContainer from './CategoryContainer';
 
 const DropDownInfo = ({

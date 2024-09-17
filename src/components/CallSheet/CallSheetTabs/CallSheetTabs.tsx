@@ -1,11 +1,13 @@
-import React from 'react';
 import {
   IonIcon, IonLabel, IonTabBar, IonTabButton,
 } from '@ionic/react';
 import {
-  peopleOutline, personOutline, carOutline, albumsOutline, briefcaseOutline,
+  albumsOutline, briefcaseOutline,
+  carOutline,
   home,
+  peopleOutline, personOutline,
 } from 'ionicons/icons';
+import React from 'react';
 
 type ProductionView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 

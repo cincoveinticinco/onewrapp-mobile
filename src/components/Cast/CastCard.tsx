@@ -52,7 +52,7 @@ const CastCard: React.FC<CastCardProps> = ({
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
   const disableEditions = permissionType !== 1;
   const errorToast = useErrorToast();
-  const successToast = useSuccessToast()
+  const successToast = useSuccessToast();
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -202,7 +202,7 @@ const CastCard: React.FC<CastCardProps> = ({
     } catch (error) {
       errorToast('Error updating character');
 
-      throw error
+      throw error;
     }
   };
 
@@ -230,7 +230,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
-      throw error
+      throw error;
     }
   };
 
@@ -251,8 +251,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
-      
-      throw error
+      throw error;
     }
   };
 

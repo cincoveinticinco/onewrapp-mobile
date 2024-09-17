@@ -19,12 +19,12 @@ interface Props {
 
 const LoginPage: React.FC<Props> = ({}) => {
   const { saveLogin } = useAuth();
-  const errorToast = useErrorToast()
+  const errorToast = useErrorToast();
 
   const history = useHistory();
 
   const errorMessage = (error: any): any => {
-    errorToast(error)
+    errorToast(error);
   };
 
   const login = useGoogleLogin({

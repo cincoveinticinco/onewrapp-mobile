@@ -278,7 +278,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
       });
 
       await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-      
+
       setTimeout(() => {
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
@@ -339,7 +339,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
             <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
               <CiEdit className="button-icon view" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) =>  values) : scenesToEditWithElement()?.then((values: any) =>  values))} disabled={disableEditions}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => values) : scenesToEditWithElement()?.then((values: any) => values))} disabled={disableEditions}>
               <PiProhibitLight className="button-icon ban" />
             </IonButton>
             <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>

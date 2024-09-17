@@ -1,8 +1,8 @@
 import { IonCol, IonGrid, IonRow } from '@ionic/react';
 import { Scene } from '../../interfaces/scenes.types';
-import SceneInfoLabels from './SceneInfoLabels';
-import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import SceneInfoLabels from './SceneInfoLabels';
 
 interface SceneBasicInfoProps {
   scene: Scene;
