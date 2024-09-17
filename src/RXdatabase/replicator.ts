@@ -1,5 +1,4 @@
 import { replicateRxCollection } from 'rxdb/plugins/replication';
-import { RxDatabase } from 'rxdb';
 import environment from '../../environment';
 import AppDataBase from './database';
 
@@ -12,9 +11,9 @@ export default class HttpReplicator {
 
   private lastItem: any;
 
-  private replicationStates: any[] = [];
+  public replicationStates: any[] = [];
 
-  public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})
+  public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {});
 
   constructor(database: any, collections: any, projectId: (number | null) = null, lastItem: any = null, getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})) {
     this.database = database;
@@ -24,16 +23,13 @@ export default class HttpReplicator {
     this.getToken = getToken;
   }
 
-  public async startReplicationPull() {
+  // Unificar el inicio de replicación tanto de PUSH como PULL
+  public async startReplication(pull: boolean = true, push: boolean = true) {
     const { collections } = this;
-    const promises = collections.map((collection: any) => this.setupHttpReplicationPull(collection, this.projectId, this.lastItem));
-    await Promise.all(promises); // Espera a que todas las replicaciones de pull se hayan iniciado
-  }
-
-  public async startReplicationPush() {
-    const { collections } = this;
-    const promises = collections.map((collection: any) => this.setupHttpReplicationPush(collection));
-    await Promise.all(promises); // Espera a que todas las replicaciones de push se hayan iniciado
+    const promises = collections.map((collection: any) =>
+      this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push)
+    );
+    await Promise.all(promises);
   }
 
   public stopReplication() {
@@ -45,16 +41,20 @@ export default class HttpReplicator {
     this.replicationStates = [];
   }
 
-  private async setupHttpReplicationPull(collection: any, projectId: (number | null), lastItem: any = null) {
+  private async setupHttpReplication(collection: any, projectId: (number | null), lastItem: any = null, pull: boolean, push: boolean) {
     const currentTimestamp = new Date().toISOString();
     const { getToken } = this;
-    console.log('Setting up replication PULL for', collection.SchemaName(), currentTimestamp);
+    console.log('Setting up replication for', collection.SchemaName(), currentTimestamp);
 
     try {
-      const replicationState = replicateRxCollection({
+      const replicationConfig: any = {
         collection: this.database[collection.SchemaName() as keyof AppDataBase],
-        replicationIdentifier: 'my-http-replication',
-        pull: {
+        replicationIdentifier: `my-http-replication-${collection.SchemaName()}`,
+      };
+
+      // Configuración del PULL
+      if (pull) {
+        replicationConfig.pull = {
           async handler(checkpointOrNull: any, batchSize: number) {
             try {
               const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
@@ -98,32 +98,12 @@ export default class HttpReplicator {
               throw error;
             }
           },
-        },
-      });
+        };
+      }
 
-      replicationState.error$.subscribe((err) => {
-        console.error(`Replication error in ${collection.SchemaName()}:`, err);
-      });
-
-      await this.monitorReplicationStatus(replicationState);
-
-      this.replicationStates.push(replicationState);
-    } catch (error) {
-      console.error(`Error setting up replication PULL for ${collection.SchemaName()}:`, error);
-      throw error;
-    }
-  }
-
-  private async setupHttpReplicationPush(collection: any) {
-    const currentTimestamp = new Date().toISOString();
-    const { getToken } = this;
-    console.log('Setting up replication PUSH for', collection.SchemaName(), currentTimestamp);
-
-    try {
-      const replicationState = replicateRxCollection({
-        collection: this.database[collection.SchemaName() as keyof AppDataBase],
-        replicationIdentifier: 'my-http-replication',
-        push: {
+      // Configuración del PUSH
+      if (push) {
+        replicationConfig.push = {
           async handler(changeRows: any): Promise<any> {
             try {
               const token = await getToken();
@@ -134,7 +114,7 @@ export default class HttpReplicator {
                   'Content-Type': 'application/json',
                   owsession: token,
                 },
-                body: JSON.stringify(changeRows),
+                body: JSON.stringify({ changeRows })
               });
 
               if (!rawResponse.ok) {
@@ -148,16 +128,20 @@ export default class HttpReplicator {
               throw error;
             }
           },
-        },
-      });
+        };
+      }
+
+      const replicationState = replicateRxCollection(replicationConfig);
 
       replicationState.error$.subscribe((err) => {
         console.error(`Replication error in ${collection.SchemaName()}:`, err);
       });
 
+      await this.monitorReplicationStatus(replicationState);
+
       this.replicationStates.push(replicationState);
     } catch (error) {
-      console.error(`Error setting up replication PUSH for ${collection.SchemaName()}:`, error);
+      console.error(`Error setting up replication for ${collection.SchemaName()}:`, error);
       throw error;
     }
   }

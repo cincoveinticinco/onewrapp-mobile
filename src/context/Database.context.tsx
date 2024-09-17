@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext, useEffect, useRef, useState,
+  useContext, useEffect, useRef, useState,
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
@@ -8,7 +8,6 @@ import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
 import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
 import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs.schema';
 import HttpReplicator from '../RXdatabase/replicator';
-import useNavigatorOnLine from '../hooks/Shared/useNavigatorOnline';
 import UnitsSchema from '../RXdatabase/schemas/units.schema';
 import ShootingsSchema from '../RXdatabase/schemas/shootings.schema';
 import TalentsSchema from '../RXdatabase/schemas/talents.schema';
@@ -99,9 +98,19 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   // Resync
 
+  const getOnLineStatus = () => (typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean'
+    ? navigator.onLine
+    : true);
+
   const resyncScenes: any = useRef(null);
   const resyncShootings: any = useRef(null);
   const resyncProjectsUser: any = useRef(null);
+  const resyncParagraphs: any = useRef(null);
+  const resyncUnits: any = useRef(null);
+  const resyncTalents: any = useRef(null);
+  const resyncCrew: any = useRef(null);
+  const resyncServiceMatrices: any = useRef(null);
+  const resyncCountries: any = useRef(null);
 
   const [viewTabs, setViewTabs] = useState(true);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -111,7 +120,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
   const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
   const [replicationStatus, setReplicationStatus] = useState<string>('');
-  const [isOnline, setIsOnline] = useState(useNavigatorOnLine());
+  const [isOnline, setIsOnline] = useState(getOnLineStatus());
   const [replicationPercentage, setReplicationPercentage] = useState(0);
   const [projectsAreOffline, setProjectsAreOffline] = useState<boolean>(
     localStorage.getItem('projectsAreOffline') ? JSON.parse(localStorage.getItem('projectsAreOffline') as string) : false,
@@ -153,7 +162,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       if (isOnline) {
         const projectsReplicator = new HttpReplicator(dbInstance, [projectColl, userCollection], null, null, getToken);
-        await projectsReplicator.startReplicationPull();
+        await projectsReplicator.startReplication(true, false); // Solo PULL para proyectos y usuarios
         resyncProjectsUser.current = projectsReplicator;
       }
     } catch (error) {
@@ -162,6 +171,86 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       console.log('Base de datos inicializada');
     }
   };
+
+  const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
+    if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) return false;
+  
+    const canPush = ['scenes', 'shootings'].includes(collection.getSchemaName().toLowerCase());
+  
+    try {
+      const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })
+        .sort({ updatedAt: 'desc' })
+        .limit(1)
+        .exec()
+        .then((data: any) => (data[0] ? data[0] : null));
+  
+      if (!resyncRef.current) {
+        const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
+        if (isOnline) {
+          await replicator.startReplication(true, canPush); // Only PULL for others, PUSH and PULL for scenes and shootings
+          resyncRef.current = replicator;
+        }
+      } else {
+        isOnline && resyncRef.current.resyncReplication();
+      }
+  
+      return true;
+    } catch (error) {
+      console.error(`Error during ${collection.getSchemaName()} replication:`, error);
+      return false;
+    }
+  };
+  
+  const initializeProjectsUserReplication = () => initializeReplication(projectCollection, {}, resyncProjectsUser);
+  
+  const initializeSceneReplication = () => initializeReplication(sceneCollection, { projectId: parseInt(projectId) }, resyncScenes, parseInt(projectId));
+  
+  const initializeServiceMatricesReplication = () => initializeReplication(serviceMatricesCollection, { projectId: parseInt(projectId) }, resyncServiceMatrices, parseInt(projectId));
+  
+  const initializeParagraphReplication = () => initializeReplication(paragraphCollection, { projectId: parseInt(projectId) }, resyncParagraphs, parseInt(projectId));
+  
+  const initializeTalentsReplication = () => initializeReplication(talentsCollection, { projectId: parseInt(projectId) }, resyncTalents, parseInt(projectId));
+  
+  const initializeUnitReplication = () => initializeReplication(unitsCollection, { projectId: parseInt(projectId) }, resyncUnits, parseInt(projectId));
+  
+  const initializeShootingReplication = () => initializeReplication(shootingsCollection, { projectId: parseInt(projectId) }, resyncShootings, parseInt(projectId));
+  
+  const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId) }, resyncCrew, parseInt(projectId));
+  
+  const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  
+  useEffect(() => {
+    if (oneWrapRXdatabase && isOnline && projectId) {
+      const initializeAllReplications = async () => {
+        await initializeProjectsUserReplication();
+        await initializeSceneReplication();
+        await initializeServiceMatricesReplication();
+        await initializeParagraphReplication();
+        await initializeTalentsReplication();
+        await initializeUnitReplication();
+        await initializeShootingReplication();
+        await initializeCrewReplication();
+        await initializeCountriesReplication();
+      };
+  
+      initializeAllReplications();
+    }
+  }, [oneWrapRXdatabase, isOnline, projectId]);
 
   useEffect(() => {
     if (!oneWrapRXdatabase) {
@@ -251,214 +340,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return () => { subscription.unsubscribe(); };
     }
   }, [oneWrapRXdatabase, projectId]);
-
-  const initializeProjectsUserReplication = async () => {
-    // handle resync also
-    if (!oneWrapRXdatabase) return false;
-    try {
-      const lastProject = await oneWrapRXdatabase.projects.find().sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const projectsReplicator = new HttpReplicator(oneWrapRXdatabase, [projectCollection, userCollection], null, lastProject, getToken);
-
-      if (!resyncProjectsUser.current) {
-        if (isOnline) {
-          await projectsReplicator.startReplicationPull();
-          await projectsReplicator.startReplicationPush();
-          resyncProjectsUser.current = projectsReplicator;
-        }
-      } else {
-        isOnline && resyncProjectsUser.current.resyncReplication();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error during projects replication:', error);
-      return false;
-    }
-  };
-
-  const initializeSceneReplication = async () => {
-    if (!sceneCollection || !oneWrapRXdatabase || !projectId) {
-      console.log('No scene collection');
-      return false;
-    }
-    try {
-      const lastSceneInProject = await oneWrapRXdatabase.scenes.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      if (!resyncScenes.current) {
-        const scenesReplicator = new HttpReplicator(oneWrapRXdatabase, [sceneCollection], parseInt(projectId), lastSceneInProject, getToken);
-
-        if (isOnline) {
-          await scenesReplicator.startReplicationPull();
-          await scenesReplicator.startReplicationPush();
-        }
-      } else {
-        resyncScenes.current.resyncReplication();
-      }
-      return true;
-    } catch (error) {
-      console.error('Error durante la replicación de escenas:', error);
-      return false;
-    }
-  };
-
-  const initializeServiceMatricesReplication = async () => {
-    if (!serviceMatricesCollection || !oneWrapRXdatabase || !projectId) {
-      console.log('No service matrices collection');
-      return false;
-    }
-    try {
-      const lastServiceMatrix = await oneWrapRXdatabase.service_matrices.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const serviceMatricesReplicator = new HttpReplicator(oneWrapRXdatabase, [serviceMatricesCollection], parseInt(projectId), lastServiceMatrix, getToken);
-
-      if (isOnline) {
-        await serviceMatricesReplicator.startReplicationPull();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error during service matrices replication:', error);
-    }
-  };
-
-  const initializeParagraphReplication = async () => {
-    try {
-      const lastParagraphInProject = await oneWrapRXdatabase?.paragraphs.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const paragraphsReplicator = new HttpReplicator(oneWrapRXdatabase, [paragraphCollection], parseInt(projectId), lastParagraphInProject, getToken);
-
-      if (isOnline) {
-        await paragraphsReplicator.startReplicationPull();
-      }
-    } catch (error) {
-      console.error('Error durante la replicación de párrafos:', error);
-      return false;
-    } finally {
-      console.log('Paragraphs replication finished');
-    }
-    return true;
-  };
-
-  const initializeTalentsReplication = async () => {
-    if (!talentsCollection || !oneWrapRXdatabase || !projectId) return false;
-    try {
-      const lastTalentInProject = await oneWrapRXdatabase.talents.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const talentsReplicator = new HttpReplicator(oneWrapRXdatabase, [talentsCollection], parseInt(projectId), lastTalentInProject, getToken);
-
-      if (isOnline) {
-        await talentsReplicator.startReplicationPull();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error durante la replicación de talentos:', error);
-      return false;
-    }
-  };
-
-  const initializeUnitReplication = async () => {
-    if (!unitsCollection || !oneWrapRXdatabase || !projectId) return false;
-    try {
-      const lastUnitInProject = await oneWrapRXdatabase.units.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const unitsReplicator = new HttpReplicator(oneWrapRXdatabase, [unitsCollection], parseInt(projectId), lastUnitInProject, getToken);
-
-      if (isOnline) {
-        await unitsReplicator.startReplicationPull();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error durante la replicación de unidades:', error);
-      return false;
-    }
-  };
-
-  const initializeShootingReplication = async () => {
-    if (!shootingsCollection || !oneWrapRXdatabase || !projectId) return false;
-    try {
-      const lastShootingInProject = await oneWrapRXdatabase.shootings.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      if (!resyncShootings.current) {
-        const shootingsReplicator = new HttpReplicator(oneWrapRXdatabase, [shootingsCollection], parseInt(projectId), lastShootingInProject, getToken);
-
-        if (isOnline) {
-          await shootingsReplicator.startReplicationPull();
-          await shootingsReplicator.startReplicationPush();
-
-          resyncShootings.current = shootingsReplicator;
-        }
-      } else {
-        resyncShootings.current.resyncReplication();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error durante la replicación de shootings:', error);
-      return false;
-    }
-  };
-
-  const initializeCrewReplication = async () => {
-    if (!crewCollection || !oneWrapRXdatabase || !projectId) return false;
-    try {
-      const lastCrewInProject = await oneWrapRXdatabase.crew.find({
-        selector: { projectId: parseInt(projectId) },
-      }).sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const crewReplicator = new HttpReplicator(oneWrapRXdatabase, [crewCollection], parseInt(projectId), lastCrewInProject, getToken);
-
-      if (isOnline) {
-        await crewReplicator.startReplicationPull();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error durante la replicación de crew:', error);
-      return false;
-    }
-  };
-
-  const initializeCountriesReplication = async () => {
-    if (!countriesCollection || !oneWrapRXdatabase) return false;
-    try {
-      const lastCountry = await oneWrapRXdatabase.countries.find().sort({ updatedAt: 'desc' }).limit(1).exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      const countriesReplicator = new HttpReplicator(oneWrapRXdatabase, [countriesCollection], null, lastCountry, getToken);
-
-      if (isOnline) {
-        await countriesReplicator.startReplicationPull();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error during countries replication:', error);
-      return false;
-    }
-  };
 
   // This initial replication, is the first replication that is done when the user enters in a project. The idea is to replicate all the data from the server to the local database and use a loader to notify the status of replication. After this first replication, it is not necessary to replicate all the data again, and we can avoid the loaders
   let cancelCurrentIncrement: (() => void) | null = null;

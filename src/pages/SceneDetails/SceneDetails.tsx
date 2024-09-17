@@ -236,6 +236,8 @@ const SceneDetails: React.FC<{
         successMessageSceneToast('Scene status updated successfully');
       } catch (error) {
         console.error('Error updating scene status:', error);
+      } finally {
+        getSceneColor(thisScene).then(setSceneColor);
       }
     }
   };
@@ -322,16 +324,15 @@ const SceneDetails: React.FC<{
   }, [currentSceneIndex, filteredScenes]);
 
   // Set this scene shooting
+  const fetchSceneShooting = async () => {
+    if (shootingId && oneWrapDb && thisScene) {
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId));
+      setThisSceneShooting(sceneShooting || null);
+    }
+  };
 
   useEffect(() => {
-    const fetchSceneShooting = async () => {
-      if (shootingId && oneWrapDb && thisScene) {
-        const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-        const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId));
-        setThisSceneShooting(sceneShooting || null);
-      }
-    };
-
     fetchSceneShooting();
   }, [shootingId, oneWrapDb, thisScene]);
 
@@ -410,7 +411,7 @@ const SceneDetails: React.FC<{
     if (thisScene) {
       getSceneColor(thisScene).then(setSceneColor);
     }
-  }, [thisScene, isShooting]);
+  }, [thisScene, isShooting, oneWrapDb]);
 
   useIonViewDidEnter(() => {
     setTimeout(() => {

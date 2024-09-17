@@ -1,5 +1,3 @@
-import { trainOutline } from "ionicons/icons";
-
 const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
   console.log('iso', iso);
@@ -13,9 +11,11 @@ const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string =>
   const minutes = date.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';
 
-  // Convertir a formato de 12 horas
-  hours = hours % 12;
-  hours = hours ? hours : 12; // la hora '0' debe ser '12'
+  if (withampm) {
+    // Convert to 12-hour format only if withampm is true
+    hours = hours % 12;
+    hours = hours ? hours : 12; // '0' should be '12' in 12-hour format
+  }
 
   const formattedHours = hours.toString().padStart(2, '0');
   const formattedMinutes = minutes.toString().padStart(2, '0');

@@ -34,16 +34,12 @@ setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { loggedIn, loading } = useAuth();
-  const { isDatabaseReady, projectId } = React.useContext(DatabaseContext);
-
-  useEffect(() => {
-    console.log('projectId', projectId);
-  }, [projectId]);
+  const { isDatabaseReady, projectId, initializeSceneReplication, initializeShootingReplication } = React.useContext(DatabaseContext);
 
   if (loading || !isDatabaseReady) {
     return useLoader();
   }
-
+  
   return (
     <IonReactRouter>
       <IonRouterOutlet>
@@ -81,17 +77,11 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
-    <IonApp>
-      <AuthProvider>
-        <DatabaseContextProvider>
-          <ScenesContextProvider>
-            <AppContent />
-          </ScenesContextProvider>
-        </DatabaseContextProvider>
-      </AuthProvider>
-    </IonApp>
-  </GoogleOAuthProvider>
+  <IonApp>
+    <ScenesContextProvider>
+      <AppContent />
+    </ScenesContextProvider>
+  </IonApp>
 );
 
 export default App;

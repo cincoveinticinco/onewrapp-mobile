@@ -1,6 +1,6 @@
 import React from 'react';
 import './GeneralTable.css';
-import { IonInput, IonCheckbox, IonRange } from '@ionic/react';
+import { IonInput, IonCheckbox, IonRange, IonDatetime } from '@ionic/react';
 import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import timeToISOString from '../../../utils/timeToIsoString';
 import secondsToMinSec from '../../../utils/secondsToMinSec';
@@ -58,7 +58,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   const formatValue = (value: any, type: string, switchValues?: { left: any, neutral: any, right: any }) => {
     switch (type) {
       case 'hour':
-        return `${getHourMinutesFomISO(value)} ${getAmOrPm(value)}`;
+        return `${getHourMinutesFomISO(value, true)}`;
       case 'seconds':
         return value ? secondsToMinSec(value) : '-- : --';
       case 'number':

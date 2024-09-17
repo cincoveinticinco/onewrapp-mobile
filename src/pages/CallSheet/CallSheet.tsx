@@ -128,9 +128,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const getUniqueArrayValuesByKey = (array: any[], key: string) => [...new Map(array.map((item) => [item[key], item])).values()];
 
       const copyEditedCastCalls = [...editedCastCalls];
-      console.log('copyEditedCastCalls', copyEditedCastCalls);
       const newEditedCastCalls = [...copyEditedCastCalls, editedCastCall];
-      console.log('newEditedCastCalls', newEditedCastCalls);
       const uniqueEditedCastCalls = getUniqueArrayValuesByKey(newEditedCastCalls, 'castName');
 
       setEditedCastCalls(uniqueEditedCastCalls);

@@ -63,7 +63,6 @@ const Strips: React.FC<{
   useIonViewDidEnter(() => {
     toggleTabs.showTabs();
     if (!replicatorCreated && navigator.onLine) {
-      initializeSceneReplication();
       setReplicatorCreated(true);
     }
   });

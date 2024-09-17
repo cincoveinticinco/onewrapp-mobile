@@ -161,7 +161,6 @@ const Calendar: React.FC = () => {
       const initializeReplication = async () => {
         try {
           setIsLoading(true);
-          await initializeShootingReplication();
         } catch (error) {
           console.error('Error initializing replication:', error);
         } finally {
