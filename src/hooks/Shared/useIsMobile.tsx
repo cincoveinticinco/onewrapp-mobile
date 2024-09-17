@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useIsMobile():boolean {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 500);

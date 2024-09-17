@@ -1,18 +1,18 @@
 import {
   IonButton, IonContent, IonHeader, IonIcon, IonPage,
 } from '@ionic/react';
-import { Redirect, useHistory } from 'react-router';
-import { useAuth } from '../../context/Auth.context';
-import ReactPlayer from 'react-player';
-import './LoginPage.css';
-import {
-  logoApple, logoGoogle, logoWindows, mail,
-} from 'ionicons/icons';
 import { useGoogleLogin } from '@react-oauth/google';
+import {
+  logoGoogle
+} from 'ionicons/icons';
+import ReactPlayer from 'react-player';
+import { useHistory } from 'react-router';
+import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
-import environment from '../../../environment';
+import { useAuth } from '../../context/Auth.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import './LoginPage.css';
 
 interface Props {
 }

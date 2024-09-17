@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   IonButton,
   IonContent,
@@ -10,32 +9,32 @@ import {
   useIonViewDidEnter,
 } from '@ionic/react';
 import { chevronBackOutline, save } from 'ionicons/icons';
+import React, { useEffect, useState } from 'react';
+import { VscEdit } from 'react-icons/vsc';
 import { useParams } from 'react-router';
 import { normalizeString } from 'rxdb';
-import { VscEdit } from 'react-icons/vsc';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
 import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
 import CastView from '../../components/CallSheet/CastView/CastView/CastView';
-import DatabaseContext from '../../context/Database.context';
-import { Character, Scene } from '../../interfaces/scenes.types';
-import { Talent } from '../../RXdatabase/schemas/talents.schema';
+import CrewView from '../../components/CallSheet/CrewView/CrewView';
+import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
+import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
+import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import AddButton from '../../components/Shared/AddButton/AddButton';
+import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import DatabaseContext from '../../context/Database.context';
+import { ShootingStatusEnum } from '../../Ennums/ennums';
+import useHandleBack from '../../hooks/Shared/useHandleBack';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import { Character, Scene } from '../../interfaces/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
 } from '../../interfaces/shooting.types';
-import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
-import CrewView from '../../components/CallSheet/CrewView/CrewView';
-import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
-import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
-import { ShootingStatusEnum } from '../../Ennums/ennums';
+import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import timeToISOString from '../../utils/timeToIsoString';
-import useHandleBack from '../../hooks/Shared/useHandleBack';
-import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
 
-import './CallSheet.css';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import './CallSheet.css';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 

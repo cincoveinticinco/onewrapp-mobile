@@ -1,36 +1,36 @@
-import React, {
-  useContext, useEffect, useRef, useState,
-} from 'react';
-import { useParams, useHistory } from 'react-router';
 import {
   IonButton,
   IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
 } from '@ionic/react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
+import { useHistory, useParams } from 'react-router';
+import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
+import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
+import EditionModal from '../../components/Shared/EditionModal/EditionModal';
+import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import { EditableField, ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import ScenesContext from '../../context/Scenes.context';
-import { Scene } from '../../interfaces/scenes.types';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useLoader from '../../hooks/Shared/useLoader';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import { Scene } from '../../interfaces/scenes.types';
+import { ShootingScene } from '../../interfaces/shooting.types';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../utils/applyFilters';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
-import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
-import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import SceneHeader from './SceneHeader';
-import './SceneDetails.scss';
-import { ShootingScene } from '../../interfaces/shooting.types';
-import { EditableField, ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
 import timeToISOString from '../../utils/timeToIsoString';
-import EditionModal from '../../components/Shared/EditionModal/EditionModal';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
+import './SceneDetails.scss';
+import SceneHeader from './SceneHeader';
 
 export const EditableTimeField: React.FC<{
   value: number | null;

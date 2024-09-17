@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -6,21 +5,22 @@ import {
   useIonViewDidEnter,
   useIonViewWillEnter,
 } from '@ionic/react';
-import { startOfWeek, addDays, startOfDay } from 'date-fns';
-import './Calendar.css';
+import { addDays, startOfDay, startOfWeek } from 'date-fns';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import { Shooting } from '../../interfaces/shooting.types';
-import WeekView from '../../components/Calendar/WeekView/WeekView';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
-import useLoader from '../../hooks/Shared/useLoader';
-import Legend from '../../components/Shared/Legend/Legend';
+import WeekView from '../../components/Calendar/WeekView/WeekView';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import { Unit } from '../../interfaces/unitTypes.types';
+import Legend from '../../components/Shared/Legend/Legend';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useLoader from '../../hooks/Shared/useLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import { Shooting } from '../../interfaces/shooting.types';
+import { Unit } from '../../interfaces/unitTypes.types';
+import './Calendar.css';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';

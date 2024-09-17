@@ -1,12 +1,12 @@
-import { VscEdit } from 'react-icons/vsc';
-import { PiTrashSimpleLight } from 'react-icons/pi';
 import { useRef } from 'react';
+import { PiTrashSimpleLight } from 'react-icons/pi';
+import { VscEdit } from 'react-icons/vsc';
 import { LocationInfo } from '../../../../interfaces/shooting.types';
-import { Section } from '../../../Shared/Section/Section';
-import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import truncateString from '../../../../utils/truncateString';
-import generateLocationLink from '../../../../utils/getLocationLink';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
+import generateLocationLink from '../../../../utils/getLocationLink';
+import truncateString from '../../../../utils/truncateString';
+import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../Shared/Section/Section';
 
 interface LocationsSectionProps {
   locations: LocationInfo[];

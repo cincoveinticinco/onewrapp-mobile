@@ -1,33 +1,37 @@
-import React, {
-  useEffect, useState, Suspense, useContext, useRef, useMemo, useCallback,
-} from 'react';
 import {
   IonButton,
   IonContent,
   IonGrid,
   IonRefresher,
   IonRefresherContent,
-  useIonViewDidEnter,
-  useIonViewWillEnter,
+  useIonViewDidEnter
 } from '@ionic/react';
-import './Strips.scss';
+import React, {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
-  Redirect, useHistory, useLocation, useParams,
-  useRouteMatch,
+  useHistory, useLocation, useParams
 } from 'react-router';
+import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import SceneCard from '../../components/Strips/SceneCard';
+import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import ScenesContext, { defaultSortOptions } from '../../context/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
+import { Scene } from '../../interfaces/scenes.types';
+import { SecurePages } from '../../interfaces/securePages.types';
+import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import SceneCard from '../../components/Strips/SceneCard';
-import { Scene } from '../../interfaces/scenes.types';
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import { SecurePages } from '../../interfaces/securePages.types';
+import './Strips.scss';
 
 const Strips: React.FC<{
   permissionType: SecurePages | null;

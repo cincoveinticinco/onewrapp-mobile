@@ -1,18 +1,19 @@
 import {
-  IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+  IonContent,
+  useIonViewWillEnter
 } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useLoader from '../../hooks/Shared/useLoader';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 
 const EditSceneToDetails: React.FC = () => {
   const history = useHistory();

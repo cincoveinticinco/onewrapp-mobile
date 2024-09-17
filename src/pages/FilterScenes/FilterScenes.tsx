@@ -1,31 +1,31 @@
 import {
-  IonCol, IonContent, IonGrid, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
+  IonCol, IonContent, IonGrid, IonRow,
+  useIonViewWillEnter, useIonViewWillLeave
 } from '@ionic/react';
 import React, {
   useCallback, useContext, useEffect, useMemo,
 } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import './FilterScenes.scss';
+import { useHistory, useParams } from 'react-router';
+import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import customArraySort from '../../utils/customArraySort';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
+import DatabaseContext from '../../context/Database.context';
+import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import useLoader from '../../hooks/Shared/useLoader';
 import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
+import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
+import customArraySort from '../../utils/customArraySort';
 import getCharactersArray from '../../utils/getCharactersArray';
 import getOptionsArray from '../../utils/getOptionsArray';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
-import DatabaseContext from '../../context/Database.context';
-import useHandleBack from '../../hooks/Shared/useHandleBack';
-import useLoader from '../../hooks/Shared/useLoader';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import './FilterScenes.scss';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);

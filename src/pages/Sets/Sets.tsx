@@ -1,23 +1,24 @@
-import React, {
-  useContext, useEffect, useState, useRef,
-} from 'react';
 import {
-  IonContent, useIonViewDidEnter, useIonViewWillLeave,
+  IonContent
 } from '@ionic/react';
+import React, {
+  useContext, useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 
-import SetCard from '../../components/Sets/LocationSetCard';
-import LocationSetCard from '../../components/Sets/LocationSetCard';
-import './Sets.scss';
-import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/Shared/useLoader';
+import { default as LocationSetCard, default as SetCard } from '../../components/Sets/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
+import useLoader from '../../hooks/Shared/useLoader';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
+import removeAccents from '../../utils/removeAccents';
+import './Sets.scss';
 
 const Sets: React.FC<{
   permissionType?: number | null;

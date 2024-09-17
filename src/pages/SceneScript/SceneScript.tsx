@@ -1,32 +1,35 @@
 import {
-  IonContent, IonHeader, IonPage, IonTabBar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+  IonContent, IonHeader, IonPage,
+  useIonViewDidEnter,
+  useIonViewWillEnter
 } from '@ionic/react';
-import { useHistory, useLocation, useParams } from 'react-router';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext, useEffect,
+  useState
 } from 'react';
-import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
-import { PiNotePencil } from 'react-icons/pi';
-import { MdOutlineFaceUnlock } from 'react-icons/md';
-import { HiMiniUsers } from 'react-icons/hi2';
 import { FaClipboardList } from 'react-icons/fa';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import { HiMiniUsers } from 'react-icons/hi2';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
+import { PiNotePencil } from 'react-icons/pi';
+import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
+import { useHistory, useParams } from 'react-router';
+import ScriptPage from '../../components/SceneScript/ScriptPage';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import './SceneScript.scss';
-import SceneHeader from '../SceneDetails/SceneHeader';
 import ScenesContext from '../../context/Scenes.context';
-import applyFilters from '../../utils/applyFilters';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 import {
   Character, Element, Extra, Note, Scene,
 } from '../../interfaces/scenes.types';
-import ScriptPage from '../../components/SceneScript/ScriptPage';
 import { ShootingScene } from '../../interfaces/shooting.types';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
+import applyFilters from '../../utils/applyFilters';
+import SceneHeader from '../SceneDetails/SceneHeader';
+import './SceneScript.scss';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT

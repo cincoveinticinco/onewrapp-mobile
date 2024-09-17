@@ -1,12 +1,12 @@
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage,
+  IonContent, IonHeader,
+  IonPage
 } from '@ionic/react';
-import React from 'react';
 import ReactPlayer from 'react-player';
+import { useHistory } from 'react-router';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import './PageNotExists.scss';
-import { useHistory } from 'react-router';
 
 const PageNotExists = () => {
   const history = useHistory();

@@ -1,13 +1,17 @@
-import React, { useContext, useEffect } from 'react';
 import {
-  IonContent, IonHeader, IonPage, IonGrid, IonRow, IonCol,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader, IonPage,
+  IonRow,
   useIonViewWillEnter,
 } from '@ionic/react';
+import React, { useContext } from 'react';
 import { useRxData } from 'rxdb-hooks';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import useLoader from '../../hooks/Shared/useLoader';
 import DatabaseContext from '../../context/Database.context';
+import useLoader from '../../hooks/Shared/useLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);

@@ -1,20 +1,20 @@
 // ReplicationPage.tsx
-import React, { useContext, useEffect } from 'react';
 import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonProgressBar,
-  IonText,
+  IonButton,
   IonCard,
   IonCardContent,
-  IonButton,
+  IonContent,
+  IonHeader,
   IonIcon,
+  IonPage,
+  IonProgressBar,
+  IonText,
+  IonTitle,
+  IonToolbar,
   useIonViewDidEnter,
 } from '@ionic/react';
 import { refresh } from 'ionicons/icons';
+import React, { useContext, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';

@@ -1,18 +1,18 @@
 // Crew.tsx
-import React, { useState, useMemo } from 'react';
 import { IonButton, IonContent, IonIcon } from '@ionic/react';
-import { useRxData, useRxDB } from 'rxdb-hooks';
+import { caretDown, caretUp } from 'ionicons/icons';
+import React, { useMemo, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { useParams } from 'react-router';
-import CrewCard from '../../components/Crew/CrewCard/CrewCard';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import { Crew as CrewInterface } from '../../interfaces/crew.types';
-import './Crew.scss';
-import { caretDown, caretUp } from 'ionicons/icons';
+import { useRxData, useRxDB } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
+import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import { Unit } from '../../interfaces/unitTypes.types';
 import { Country } from '../../interfaces/country.types';
+import { Crew as CrewInterface } from '../../interfaces/crew.types';
+import { Unit } from '../../interfaces/unitTypes.types';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import './Crew.scss';
 
 interface FormStructureInterface {
   fullName: string;

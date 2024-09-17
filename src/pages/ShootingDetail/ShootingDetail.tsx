@@ -2,41 +2,46 @@ import {
   IonButton, IonContent, IonHeader, IonIcon, IonItem, IonPage, IonReorderGroup,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
+import { save } from 'ionicons/icons';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useParams } from 'react-router';
 import { IoMdAdd } from 'react-icons/io';
-import { save } from 'ionicons/icons';
 import { VscEdit } from 'react-icons/vsc';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
-import DatabaseContext from '../../context/Database.context';
-import SceneCard from '../../components/Strips/SceneCard';
-import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
-import useLoader from '../../hooks/Shared/useLoader';
-import {
-  ShootingScene, ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, Meal, AdvanceCall,
-} from '../../interfaces/shooting.types';
-import './ShootingDetail.css';
+import { useHistory, useParams } from 'react-router';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import { Scene } from '../../interfaces/scenes.types';
-import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
-import ShootingBanner from '../../components/ShootingDetail/ShootingBannerCard/ShootingBanner';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import ShootingBanner from '../../components/ShootingDetail/ShootingBannerCard/ShootingBanner';
+import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import ShootingDetailTabs from '../../components/ShootingDetail/ShootingDetailTabs/ShootingDetailTabs';
 import InfoView from '../../components/ShootingDetail/ShootingDetailViews/InfoView/InfoView';
+import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
 import ScriptReportView from '../../components/ShootingDetail/ShootingDetailViews/ScriptReportView/ScriptReportView';
 import WrapReportView from '../../components/ShootingDetail/ShootingDetailViews/WrapReportView/WrapReportView';
-import ProductionReportView from '../../components/ShootingDetail/ShootingDetailViews/ProductionReportView/ProductionReportView';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import SceneCard from '../../components/Strips/SceneCard';
+import DatabaseContext from '../../context/Database.context';
+import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
-import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
-import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
-import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
+import useLoader from '../../hooks/Shared/useLoader';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import { Scene } from '../../interfaces/scenes.types';
+import {
+  AdvanceCall,
+  AdvanceCalls,
+  LocationInfo,
+  Meal,
+  ShootingBanner as ShootingBannerType,
+  ShootingScene,
+} from '../../interfaces/shooting.types';
+import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
+import floatToFraction from '../../utils/floatToFraction';
+import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
+import './ShootingDetail.css';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
