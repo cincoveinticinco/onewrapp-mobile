@@ -44,7 +44,6 @@ const Strips: React.FC<{
     setProjectId,
     initialReplicationFinished,
     scenesAreLoading,
-    initializeSceneReplication,
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const {
     selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,

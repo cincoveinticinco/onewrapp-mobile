@@ -90,6 +90,7 @@ const sortByCriterias = (data: any, criterias: any) => {
     orderSortOptions(criterias);
     return criterias.reduce((acc: any, criteria: any) => applySortCriteria(acc, criteria), data);
   }
+  return data;
 };
 
 export default sortByCriterias;
