@@ -1,6 +1,6 @@
 import {
   IonCol, IonContent, IonGrid, IonRow,
-  useIonViewWillEnter, useIonViewWillLeave
+  useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
 import React, {
   useCallback, useContext, useEffect, useMemo,

@@ -1,6 +1,6 @@
 import {
   IonButton, IonItem,
-  IonItemOptions, IonItemSliding, IonReorder
+  IonItemOptions, IonItemSliding, IonReorder,
 } from '@ionic/react';
 import React from 'react';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';

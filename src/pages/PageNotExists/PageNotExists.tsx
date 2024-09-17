@@ -1,6 +1,6 @@
 import {
   IonContent, IonHeader,
-  IonPage
+  IonPage,
 } from '@ionic/react';
 import ReactPlayer from 'react-player';
 import { useHistory } from 'react-router';

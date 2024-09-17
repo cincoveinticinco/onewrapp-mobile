@@ -1,9 +1,9 @@
 .map-container {
   min-height: 170px;
   height: 100%;
-  background-color: #EFEFEF;
+  background-color: #efefef;
 
-  p{
+  p {
     width: 200px;
     color: var(--ion-color-dark);
     text-align: center;
@@ -70,11 +70,10 @@
   .map-container {
     min-height: 100px;
     height: 100px;
-    background-color: #EFEFEF;
+    background-color: #efefef;
   }
-  
-  .shooting-label-grid {
 
+  .shooting-label-grid {
     .labels-title {
       grid-column: 1 / 10;
       grid-row: 1fr;
@@ -83,7 +82,7 @@
       font-size: 8px;
       text-wrap: nowrap;
     }
-  
+
     .label-info {
       font-size: 16px;
     }
@@ -95,12 +94,12 @@
       top: 6px;
       font-size: 1px;
     }
-  
+
     .symbol-part {
       font-size: 6px;
     }
   }
-  
+
   .weather-container {
     position: relative;
 

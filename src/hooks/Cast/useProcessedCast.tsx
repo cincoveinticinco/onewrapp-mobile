@@ -1,6 +1,6 @@
 import {
   useContext, useEffect,
-  useState
+  useState,
 } from 'react';
 import DatabaseContext from '../../context/Database.context';
 import ScenesContext from '../../context/Scenes.context';

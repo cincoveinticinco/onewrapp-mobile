@@ -1,11 +1,11 @@
 import {
   IonContent, IonHeader, IonPage,
   useIonViewDidEnter,
-  useIonViewWillEnter
+  useIonViewWillEnter,
 } from '@ionic/react';
 import React, {
   useContext, useEffect,
-  useState
+  useState,
 } from 'react';
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';

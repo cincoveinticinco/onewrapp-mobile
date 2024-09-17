@@ -1,5 +1,5 @@
 import {
-  IonContent
+  IonContent,
 } from '@ionic/react';
 import React, {
   useContext, useEffect,

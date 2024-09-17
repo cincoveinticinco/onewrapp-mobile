@@ -14,7 +14,7 @@ import {
   calendar,
   listSharp,
   people,
-  reader, settings
+  reader, settings,
 } from 'ionicons/icons';
 import React, {
   useCallback, useContext, useEffect, useState,

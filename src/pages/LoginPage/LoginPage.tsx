@@ -3,7 +3,7 @@ import {
 } from '@ionic/react';
 import { useGoogleLogin } from '@react-oauth/google';
 import {
-  logoGoogle
+  logoGoogle,
 } from 'ionicons/icons';
 import ReactPlayer from 'react-player';
 import { useHistory } from 'react-router';

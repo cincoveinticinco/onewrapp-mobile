@@ -9,7 +9,7 @@ import {
   IonItem,
   IonList,
   IonModal,
-  IonRow
+  IonRow,
 } from '@ionic/react';
 import {
   useCallback,

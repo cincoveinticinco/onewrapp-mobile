@@ -4,7 +4,7 @@ import {
 import { format } from 'date-fns';
 import {
   addOutline,
-  calendarOutline, chevronBackOutline, chevronForwardOutline
+  calendarOutline, chevronBackOutline, chevronForwardOutline,
 } from 'ionicons/icons';
 import { useState } from 'react';
 import { LiaDotCircle } from 'react-icons/lia';

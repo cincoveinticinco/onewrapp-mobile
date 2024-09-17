@@ -7,7 +7,6 @@ import { LuGripHorizontal } from 'react-icons/lu';
 import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
 import './SortPosibilityCheckbox.scss';
 
-
 interface SortPosibilityCheckboxProps {
   sortPosibility: any;
   index: number;

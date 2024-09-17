@@ -1,6 +1,6 @@
 import {
   IonContent,
-  useIonViewWillEnter, useIonViewWillLeave
+  useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,

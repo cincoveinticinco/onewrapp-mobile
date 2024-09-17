@@ -3,7 +3,7 @@ import {
   IonItem,
   IonItemOptions,
   IonItemSliding,
-  IonTitle
+  IonTitle,
 } from '@ionic/react';
 import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';

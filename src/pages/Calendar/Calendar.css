@@ -56,8 +56,8 @@
   padding: 6px;
 
   ion-card {
-    margin: 6px 0px !important;
-    border-radius: 0px;
+    margin: 6px 0 !important;
+    border-radius: 0;
   }
 }
 

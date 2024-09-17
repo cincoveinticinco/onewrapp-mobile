@@ -43,7 +43,7 @@ const Elements: React.FC<{
 
   const defaultElementsSortPosibilities = [
     {
-      id: 'NAME', label: 'NAME', optionKey: ('elementName' || 'categoryName'), defaultIndex: 0,
+      id: 'NAME', label: 'NAME', optionKey: ('elementName'), defaultIndex: 0,
     },
     {
       id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 1,

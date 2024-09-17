@@ -39,14 +39,16 @@
 ion-select {
   border-bottom: 1px solid var(--ion-color-light);
 }
+
 .checkbox {
   ion-checkbox {
     --size: 12px;
-    --checkbox-background-checked: radial-gradient(circle, yellow 35%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 48%, yellow 50%, rgba(255,255,255,1) 58%);
+    --checkbox-background-checked: radial-gradient(circle, yellow 35%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 1) 48%, yellow 50%, rgba(255, 255, 255, 1) 58%);
     --border-color-checked: none;
   }
+
   ion-checkbox::part(container) {
-    border: .5px solid black;
+    border: 0.5px solid black;
     border-radius: 100%;
     padding: 8px;
   }

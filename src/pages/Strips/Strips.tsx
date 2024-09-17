@@ -4,7 +4,7 @@ import {
   IonGrid,
   IonRefresher,
   IonRefresherContent,
-  useIonViewDidEnter
+  useIonViewDidEnter,
 } from '@ionic/react';
 import React, {
   Suspense,
@@ -16,7 +16,7 @@ import React, {
   useState,
 } from 'react';
 import {
-  useHistory, useLocation, useParams
+  useHistory, useLocation, useParams,
 } from 'react-router';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import SceneCard from '../../components/Strips/SceneCard';

@@ -13,7 +13,7 @@
     text-transform: uppercase;
   }
 
-  &::part(wheel-item active){
+  &::part(wheel-item active) {
     color: var(--ion-color-primary);
   }
 

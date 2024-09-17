@@ -29,9 +29,11 @@
 
 .retry-button {
   margin-top: 50px;
+
   --background: var(--ion-color-yellow);
   --background-hover: #4c8dff;
   --background-activated: #4c8dff;
+
   max-width: 250px;
   margin: 50px auto;
 }

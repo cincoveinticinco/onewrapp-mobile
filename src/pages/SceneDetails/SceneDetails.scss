@@ -141,9 +141,10 @@
 
     .partiality-checkbox {
       margin: 12px;
+
       &::part(container) {
-        
         border: 1px solid var(--ion-color-light);
+
         --checkbox-background-checked: var(--ion-color-primary);
       }
     }
@@ -182,13 +183,11 @@
 
   .elements-info {
     grid-row: 1/4;
-    
   }
 
   .notes-info {
     grid-column: 2/4;
   }
-
 }
 
 @media (min-width: 400px) {
@@ -204,6 +203,7 @@
 
   .shoot-info {
     width: 100%;
+
     .info {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -215,5 +215,4 @@
       }
     }
   }
-  
 }

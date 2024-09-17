@@ -78,12 +78,14 @@
   --knob-background: var(--ion-color-primary);
   --pin-background: var(--ion-color-primary);
   --pin-color: #fff;
+
   width: 50px;
   margin: 0 auto;
 }
 
 .editable-minute {
   display: flex;
+
   ion-input {
     width: 50px !important;
   }
@@ -92,8 +94,9 @@
 .table-checkbox {
   --border-radius: 100%;
   --checkbox-background-checked: yellow;
+
   &::part(container) {
-    border: 0px solid var(--ion-color-tertiary-dark);
+    border: 0 solid var(--ion-color-tertiary-dark);
     padding: 3px;
   }
 }

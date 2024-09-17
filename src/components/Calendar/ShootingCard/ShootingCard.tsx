@@ -1,5 +1,5 @@
 import {
-  IonCard, IonCardContent
+  IonCard, IonCardContent,
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';

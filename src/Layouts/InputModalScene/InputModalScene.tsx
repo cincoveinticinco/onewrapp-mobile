@@ -2,7 +2,7 @@ import {
   IonCol,
   IonContent, IonGrid, IonHeader, IonItem,
   IonModal,
-  IonRow
+  IonRow,
 } from '@ionic/react';
 import React, { useMemo, useState } from 'react';
 import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
