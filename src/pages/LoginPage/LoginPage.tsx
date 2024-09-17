@@ -12,17 +12,19 @@ import { useGoogleLogin } from '@react-oauth/google';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import environment from '../../../environment';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 interface Props {
 }
 
 const LoginPage: React.FC<Props> = ({}) => {
   const { saveLogin } = useAuth();
+  const errorToast = useErrorToast()
 
   const history = useHistory();
 
   const errorMessage = (error: any): any => {
-    console.log(error);
+    errorToast(error)
   };
 
   const login = useGoogleLogin({

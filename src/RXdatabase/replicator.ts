@@ -26,9 +26,7 @@ export default class HttpReplicator {
   // Unificar el inicio de replicación tanto de PUSH como PULL
   public async startReplication(pull: boolean = true, push: boolean = true) {
     const { collections } = this;
-    const promises = collections.map((collection: any) =>
-      this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push)
-    );
+    const promises = collections.map((collection: any) => this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push));
     await Promise.all(promises);
   }
 
@@ -44,7 +42,6 @@ export default class HttpReplicator {
   private async setupHttpReplication(collection: any, projectId: (number | null), lastItem: any = null, pull: boolean, push: boolean) {
     const currentTimestamp = new Date().toISOString();
     const { getToken } = this;
-    console.log('Setting up replication for', collection.SchemaName(), currentTimestamp);
 
     try {
       const replicationConfig: any = {
@@ -114,7 +111,7 @@ export default class HttpReplicator {
                   'Content-Type': 'application/json',
                   owsession: token,
                 },
-                body: JSON.stringify({ changeRows })
+                body: JSON.stringify({ changeRows }),
               });
 
               if (!rawResponse.ok) {

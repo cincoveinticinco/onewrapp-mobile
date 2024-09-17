@@ -1,12 +1,12 @@
 import { VscEdit } from 'react-icons/vsc';
 import { PiTrashSimpleLight } from 'react-icons/pi';
+import { useRef } from 'react';
 import { LocationInfo } from '../../../../interfaces/shooting.types';
 import { Section } from '../../../Shared/Section/Section';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import truncateString from '../../../../utils/truncateString';
 import generateLocationLink from '../../../../utils/getLocationLink';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import { useRef } from 'react';
 
 interface LocationsSectionProps {
   locations: LocationInfo[];
@@ -30,14 +30,13 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
   removeLocation,
   permissionType,
   openEditModal,
-}) => 
-{
+}) => {
   const alertRef: any = useRef(null);
-  
+
   const openAlert = () => {
-    alertRef.current?.present()
-  }
-  
+    alertRef.current?.present();
+  };
+
   return (
     <Section
       title="Locations"
@@ -52,11 +51,11 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
           <div key={location.lat + location.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert
               handleOk={() => removeLocation(location, locationIndex)}
-              header='Delete Location'
+              header="Delete Location"
               message={`Are you sure you want to delete ${location.locationName}?`}
               ref={alertRef}
               inputs={[]}
-            />  
+            />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>
                 {truncateString(location.locationName.toUpperCase(), 50)}
@@ -65,7 +64,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
             <div className="location-address">
               <p>
                 {truncateString(location.locationAddress.toUpperCase(), 50)}
-                <br></br>
+                <br />
                 <a href={generateLocationLink(location.lat, location.lng)} target="_blank" rel="noreferrer">
                   <b> GOOGLE MAP LINK</b>
                 </a>
@@ -81,8 +80,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
         <div className="ion-padding-start ion-flex ion-align-items-center ion-justify-content-center" style={{ height: '100%', width: '100%' }}>
           <OutlinePrimaryButton buttonName="ADD" onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
-      )
-      }
+      )}
     </Section>
-  )
-}
+  );
+};

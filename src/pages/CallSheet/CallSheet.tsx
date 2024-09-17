@@ -34,6 +34,8 @@ import useHandleBack from '../../hooks/Shared/useHandleBack';
 import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
 
 import './CallSheet.css';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -78,6 +80,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
+  const successToast = useSuccessToast()
+  const errorToast = useErrorToast()
 
   const getTalentCastOptions = async () => {
     const talents = await oneWrapDb?.talents.find({}).exec() || [];
@@ -118,7 +122,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   ) => {
     setCastCalls((prevCastCalls) => {
       const editedCastCall = JSON.parse(JSON.stringify(prevCastCalls[castIndex]));
-      editedCastCall[castKey] = newValue
+      editedCastCall[castKey] = newValue;
       const newCastCalls = [
         ...prevCastCalls.slice(0, castIndex),
         editedCastCall,
@@ -186,7 +190,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       setThisShooting(newShooting);
       await oneWrapDb?.shootings.upsert(newShooting);
     } catch (error) {
-      console.error('Error al editar Cast Call:', error);
+      errorToast('Error saving Cast Calls');
       throw error;
     } finally {
       setEditedCastCalls([]);
@@ -218,7 +222,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      console.error('Error al editar Extra Call:', error);
+      errorToast('Error saving Extra Calls');
       throw error;
     }
   };
@@ -253,7 +257,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      console.error('Error al editar Other Call:', error);
+      errorToast('Error saving Other Calls');
       throw error;
     }
   };
@@ -296,7 +300,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      console.error('Error al editar Picture Car:', error);
+      errorToast('Error saving Picture Cars');
       throw error;
     }
   };
@@ -385,7 +389,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const { pictureCars } = shootings[0]._data;
       setPictureCars(pictureCars);
     } catch (err) {
-      console.error(err);
+      errorToast('Error fetching Cast Calls');
     }
   };
 
@@ -521,9 +525,9 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setExtraCalls([...extraCalls, newExtraCall]);
-      console.log('Extra Call created:', newExtraCall);
+      successToast('Extra Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Extra Call:', error);
+      errorToast('Error creating Extra Call');
       throw error;
     }
   };
@@ -553,9 +557,9 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setPictureCars([...pictureCars, newPictureCar]);
-      console.log('Picture Car created:', newPictureCar);
+      successToast('Picture Car created');
     } catch (error) {
-      console.error('Error al crear nuevo Picture Car:', error);
+      errorToast('Error creating Picture Car');
       throw error;
     }
   };
@@ -585,16 +589,15 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setOtherCalls([...otherCalls, newOtherCall]);
-      console.log('Other Call created:', newOtherCall);
+      successToast('Other Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Other Call:', error);
+      errorToast('Error creating Other Call');
       throw error;
     }
   };
 
   const createNewCastCall = async (formData: any): Promise<void> => {
     try {
-      console.log('formData', formData);
       const shootingIdInt = shootingId ? parseInt(shootingId) : 0;
 
       const callTime = formData.callTime && timeToISOString({
@@ -702,9 +705,9 @@ const CallSheet: React.FC<CallSheetProps> = ({
       };
 
       setCastCalls([...castCalls, formattedCastCall].sort((a, b) => a.cast.localeCompare(b.cast)));
-      console.log('Cast Call created:', newCastCall);
+      successToast('Cast Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Cast Call:', error);
+      errorToast('Error creating Cast Call');
       throw error;
     }
   };

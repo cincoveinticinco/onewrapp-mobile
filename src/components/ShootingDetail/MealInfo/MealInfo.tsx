@@ -31,10 +31,8 @@ const MealInfo: React.FC<MealInfoProps> = ({
       ...meal,
       ready_at: getHourMinutesFomISO(meal.ready_at, false),
       end_time: getHourMinutesFomISO(meal.end_time, false),
-    }
-
-    console.log('formattedMealValues', formattedMealValues);
-
+    };
+    
     return formattedMealValues;
   };
 
@@ -53,7 +51,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
       <div className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
         <InputAlert
           handleOk={() => deleteMeal(meal)}
-          header='Delete Meal'
+          header="Delete Meal"
           message={`Are you sure you want to delete the ${meal.meal.toUpperCase()} meal?`}
           ref={alertRef}
           inputs={[]}
@@ -63,7 +61,13 @@ const MealInfo: React.FC<MealInfoProps> = ({
         </h5>
         <div className="location-address">
           <p>
-            FROM: {getHourMinutesFomISO(meal.ready_at) + getAmOrPm(meal.ready_at)} TO: {getHourMinutesFomISO(meal.end_time) + getAmOrPm(meal.end_time)}
+            FROM:
+            {' '}
+            {getHourMinutesFomISO(meal.ready_at) + getAmOrPm(meal.ready_at)}
+            {' '}
+            TO:
+            {' '}
+            {getHourMinutesFomISO(meal.end_time) + getAmOrPm(meal.end_time)}
           </p>
         </div>
         {editMode && (

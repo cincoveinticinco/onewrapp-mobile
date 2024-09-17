@@ -1,7 +1,7 @@
 import {
   IonButton,
   IonCheckbox,
-  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow
+  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -118,9 +118,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
     if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       return setValue(fieldKeyName, null);
     }
-    console.log(value);
     setValue(fieldKeyName, value);
-    console.log(watch(fieldKeyName));
   };
 
   const handleValidation = (value: string, fieldKeyName: string, required: boolean) => {
@@ -159,7 +157,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
   };
 
   const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
-    console.log('fieldKeyName', fieldKeyName, 'TESTING');
     setValue(fieldKeyName, checked);
   };
 
@@ -173,12 +170,12 @@ const EditionModal: React.FC<EditionModalProps> = ({
     >
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios" />
-        <IonButton fill='clear' className='back-button' onClick={closeModal}>
+        <IonButton fill="clear" className="back-button" onClick={closeModal}>
           BACK
         </IonButton>
-        <h1 style={{width: '100%', textAlign: 'center', marginTop: '20%'}}>{title.toUpperCase()}</h1>
+        <h1 style={{ width: '100%', textAlign: 'center', marginTop: '20%' }}>{title.toUpperCase()}</h1>
         {formInputs && (
-          <IonGrid className="edit-inputs-wrapper" fixed style={{maxWidth: '600px'}}>
+          <IonGrid className="edit-inputs-wrapper" fixed style={{ maxWidth: '600px' }}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
                 <IonCol key={i} offset={input.offset || 0} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
@@ -242,7 +239,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
             buttonName="SAVE"
             onClick={handleSubmit(submitEdition)}
             className="modal-confirm-button"
-            color='success'
+            color="success"
           />
           <IonButton
             onClick={closeModal}

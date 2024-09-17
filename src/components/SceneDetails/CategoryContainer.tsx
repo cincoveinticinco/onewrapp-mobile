@@ -53,7 +53,8 @@ const CategoryContainer = ({
         <IonCardHeader>
           <p>
             <b>
-              {categoryName.toUpperCase()}{' '}
+              {categoryName.toUpperCase()}
+              {' '}
               {' '}
             </b>
           </p>

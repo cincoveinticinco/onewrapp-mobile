@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useParams, useLocation, useHistory } from 'react-router';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
+import { useParams, useHistory } from 'react-router';
 import {
   IonButton,
   IonCheckbox,
@@ -23,16 +25,12 @@ import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
 import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import SceneHeader from './SceneHeader';
-import DropDownButton from '../../components/Shared/DropDownButton/DropDownButton';
-import SceneInfoLabels from '../../components/SceneDetails/SceneInfoLabels';
 import './SceneDetails.scss';
-import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
-import secondsToMinSec from '../../utils/secondsToMinSec';
 import { ShootingScene } from '../../interfaces/shooting.types';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
 import { EditableField, ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
 import timeToISOString from '../../utils/timeToIsoString';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -40,6 +38,7 @@ export const EditableTimeField: React.FC<{
   updateTime: (minutes: number, seconds: number) => void;
 }> = ({ value, title, updateTime }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
+  const errorToast = useErrorToast();
 
   const handleEdit = () => {
     if (editionModalRef.current) {
@@ -58,7 +57,7 @@ export const EditableTimeField: React.FC<{
       placeholder: 'Enter minutes',
       type: 'number',
       required: true,
-      col:  '6'
+      col: '6',
     },
     {
       fieldKeyName: 'seconds',
@@ -66,7 +65,7 @@ export const EditableTimeField: React.FC<{
       placeholder: 'Enter seconds',
       type: 'number',
       required: true,
-      col: '6'
+      col: '6',
     },
   ];
 
@@ -78,11 +77,11 @@ export const EditableTimeField: React.FC<{
         info={`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}
         title={title}
         onEdit={handleEdit}
-        isEditable={true}
+        isEditable
       />
       <EditionModal
         modalRef={editionModalRef}
-        modalTrigger={`open-edit-time-modal-produced-seconds`}
+        modalTrigger="open-edit-time-modal-produced-seconds"
         title={`Edit ${title} (MM:SS)`}
         formInputs={editionInputs}
         handleEdition={handleEdition}
@@ -90,7 +89,7 @@ export const EditableTimeField: React.FC<{
           minutes: minutes.toString(),
           seconds: seconds.toString(),
         }}
-        modalId={`edit-time-modal-produced-seconds`}
+        modalId="edit-time-modal-produced-seconds"
       />
     </>
   );
@@ -98,7 +97,7 @@ export const EditableTimeField: React.FC<{
 
 const SceneDetails: React.FC<{
   isShooting?: boolean;
-}> = ({isShooting = false}) => {
+}> = ({ isShooting = false }) => {
   const toggleTabs = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId: string }>();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -117,44 +116,45 @@ const SceneDetails: React.FC<{
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
 
   const successMessageSceneToast = useSuccessToast();
-  
+  const errorToast = useErrorToast();
+
   const convertTo24Hour = (time: string): string => {
     const [timeStr, period] = time.split(' ');
-    let [hours, minutes] = timeStr.split(':');
+    const [hours, minutes] = timeStr.split(':');
     let hour = parseInt(hours, 10);
-  
+
     if (period && period.toLowerCase() === 'pm' && hour !== 12) {
       hour += 12;
     } else if (period && period.toLowerCase() === 'am' && hour === 12) {
       hour = 0;
     }
-  
+
     return `${hour.toString().padStart(2, '0')}:${minutes}`;
-  }; 
+  };
 
   const updateShootingTime = async (field: string, time: string) => {
     if (oneWrapDb && shootingId && thisScene) {
-     try {
-      const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-      if (shooting) {
-        const formattedTime = convertTo24Hour(time);
-        const [hours, minutes] = formattedTime.split(':');
-        const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
-        const updatedScenes = shooting.scenes.map((scene: any) => {
-          if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
-            console.log('scene', scene);
-            return { ...scene, [field]: newTimeISO };
-          }
-          return scene;
-        });
-        await shooting.update({ $set: { scenes: updatedScenes } });
-        setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO});
-      }
+      try {
+        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        if (shooting) {
+          const formattedTime = convertTo24Hour(time);
+          const [hours, minutes] = formattedTime.split(':');
+          const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
+          const updatedScenes = shooting.scenes.map((scene: any) => {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+         
+              return { ...scene, [field]: newTimeISO };
+            }
+            return scene;
+          });
+          await shooting.update({ $set: { scenes: updatedScenes } });
+          setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO });
+        }
 
-      successMessageSceneToast('Scene updated successfully');
-     } catch(error) {
-      console.error('Error updating scene:', error);
-     }
+        successMessageSceneToast('Scene updated successfully');
+      } catch (error) {
+        console.error('Error updating scene:', error);
+      }
     }
   };
 
@@ -203,7 +203,7 @@ const SceneDetails: React.FC<{
 
   const toggleShootingSceneStatus = (
     currentStatus: ShootingSceneStatusEnum,
-    clickedButton: 'shoot' | 'notShoot'
+    clickedButton: 'shoot' | 'notShoot',
   ): ShootingSceneStatusEnum => {
     switch (clickedButton) {
       case 'shoot':
@@ -246,12 +246,11 @@ const SceneDetails: React.FC<{
     const newStatus = toggleShootingSceneStatus(thisSceneShooting.status, 'shoot');
     updateSceneStatus(newStatus);
   };
-  
+
   const handleNotShootClick = () => {
     const newStatus = toggleShootingSceneStatus(thisSceneShooting.status, 'notShoot');
     updateSceneStatus(newStatus);
   };
-  
 
   useEffect(() => {
     if (urlShootingId) {
@@ -364,7 +363,6 @@ const SceneDetails: React.FC<{
       const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
 
       const sceneStatus = sceneInShooting?.status;
-      console.log(sceneStatus);
       switch (sceneStatus) {
         case ShootingSceneStatusEnum.Assigned: return 'light';
         case ShootingSceneStatusEnum.NotShoot: return 'danger';
@@ -426,7 +424,7 @@ const SceneDetails: React.FC<{
       history.push(`/my/projects/${id}/strips`);
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
-      console.error('Error deleting scene:', error);
+      errorToast('Error deleting scene');
     }
   };
 
@@ -475,19 +473,19 @@ const SceneDetails: React.FC<{
             <div className="shoot-info">
               <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
                 <p style={{ fontSize: '18px' }}><b>SCRIPT INFO</b></p>
-                <div className='buttons-wrapper'>
-                  <IonButton 
-                    fill='clear' 
-                    className={'success' + (thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : '')} 
-                    size='small'
+                <div className="buttons-wrapper">
+                  <IonButton
+                    fill="clear"
+                    className={`success${thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : ''}`}
+                    size="small"
                     onClick={handleShootClick}
                   >
                     <b>SHOOT</b>
                   </IonButton>
-                  <IonButton 
-                    className={'danger' + (thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : '')} 
-                    fill='clear' 
-                    size='small'
+                  <IonButton
+                    className={`danger${thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : ''}`}
+                    fill="clear"
+                    size="small"
                     onClick={handleNotShootClick}
                   >
                     <b>NOT SHOOT</b>
@@ -538,12 +536,12 @@ const SceneDetails: React.FC<{
                     <IonCheckbox
                       checked={thisSceneShooting?.partiality || false}
                       onIonChange={(e) => updatePartiality(e.detail.checked)}
-                      labelPlacement='end'
-                      className='partiality-checkbox'
+                      labelPlacement="end"
+                      className="partiality-checkbox"
                     >
                       PARTIALY SHOOT
                     </IonCheckbox>
-                 </div>
+                  </div>
                 </div>
               )
             }
@@ -552,16 +550,16 @@ const SceneDetails: React.FC<{
         }
         {!sceneIsLoading && thisScene && (
           <div className="grid-scene-info">
-            <div className='section-wrapper characters-info'>
-             <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CHARACTERS" characters />
+            <div className="section-wrapper characters-info">
+              <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CHARACTERS" characters />
             </div>
-            <div className='section-wrapper extras-info'>
+            <div className="section-wrapper extras-info">
               <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
             </div>
-            <div className='section-wrapper elements-info'>
+            <div className="section-wrapper elements-info">
               <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
             </div>
-            <div className='section-wrapper notes-info'>
+            <div className="section-wrapper notes-info">
               <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />
             </div>
           </div>
@@ -570,7 +568,7 @@ const SceneDetails: React.FC<{
       <SceneDetailsTabs
         routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
         routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
-        currentRoute={'scenedetails'}
+        currentRoute="scenedetails"
       />
       <InputAlert
         header="Delete Scene"

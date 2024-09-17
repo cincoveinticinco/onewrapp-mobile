@@ -90,36 +90,36 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     }
   };
 
-const updateMarker = async (latitude: number, longitude: number) => {
-  if (map) {
-    if (marker) {
-      await map.removeMarker(marker);
+  const updateMarker = async (latitude: number, longitude: number) => {
+    if (map) {
+      if (marker) {
+        await map.removeMarker(marker);
+      }
+
+      const newMarker = await map.addMarker({
+        coordinate: {
+          lat: latitude,
+          lng: longitude,
+        },
+        draggable: true,
+      });
+
+      setMarker(newMarker);
+      setLat(latitude);
+      setLng(longitude);
+
+      await map.setOnMarkerDragEndListener(async (event) => {
+        updateMarker(event.latitude, event.longitude);
+      });
+
+      updateAddress(latitude, longitude);
     }
-
-    const newMarker = await map.addMarker({
-      coordinate: {
-        lat: latitude,
-        lng: longitude,
-      },
-      draggable: true,
-    });
-
-    setMarker(newMarker);
-    setLat(latitude);
-    setLng(longitude);
-
-    await map.setOnMarkerDragEndListener(async (event) => {
-      updateMarker(event.latitude, event.longitude);
-    });
-
-    updateAddress(latitude, longitude);
-  }
-};
+  };
 
   const updateAddress = async (lat: number, lng: number) => {
     const geocoder = new google.maps.Geocoder();
     const latlng = { lat, lng };
-  
+
     geocoder.geocode({ location: latlng }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK && results) {
         if (results[0]) {
@@ -127,7 +127,7 @@ const updateMarker = async (latitude: number, longitude: number) => {
           setCurrentAddress(address);
           setSearchTerm(address);
           setLocationAddress(address);
-  
+
           const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
           if (postalCode) {
             setLocationPostalCode(postalCode.long_name);
@@ -345,7 +345,7 @@ const updateMarker = async (latitude: number, longitude: number) => {
                 style={{ marginTop: '50px', maxHeight: '30px' }}
                 color="success"
               />
-              <IonButton onClick={closeModal} className='clear-danger-button'>
+              <IonButton onClick={closeModal} className="clear-danger-button">
                 CANCEL
               </IonButton>
             </IonCol>

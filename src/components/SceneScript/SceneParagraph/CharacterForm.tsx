@@ -13,8 +13,6 @@ interface CharacterFormProps {
 const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, characterCategories }) => {
   const [isFocused, setIsFocused] = useState([false, false, false]);
 
-  console.log(characterCategories);
-
   return (
     <>
       <IonItem color="tertiary">

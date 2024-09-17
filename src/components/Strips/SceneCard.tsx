@@ -49,7 +49,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
       await alertRef.current.present();
     }
   };
-  
+
   const openUnassignAlert = async () => {
     if (alertShooSceneRef.current) {
       await alertShooSceneRef.current.present();
@@ -288,7 +288,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
           />
         )
       }
-        
+
     </IonRow>
   );
 

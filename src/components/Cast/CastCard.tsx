@@ -20,6 +20,8 @@ import DatabaseContext, { DatabaseContextProps } from '../../context/Database.co
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 import useWarningToast from '../../hooks/Shared/useWarningToast';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 
 interface Cast {
   characterNum: string;
@@ -49,6 +51,8 @@ const CastCard: React.FC<CastCardProps> = ({
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
   const disableEditions = permissionType !== 1;
+  const errorToast = useErrorToast();
+  const successToast = useSuccessToast()
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -167,20 +171,14 @@ const CastCard: React.FC<CastCardProps> = ({
 
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName);
 
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting character');
     }
   };
 
@@ -200,13 +198,11 @@ const CastCard: React.FC<CastCardProps> = ({
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
-
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
-      console.error(error);
+      errorToast('Error updating character');
+
+      throw error
     }
   };
 
@@ -232,13 +228,9 @@ const CastCard: React.FC<CastCardProps> = ({
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Extra deleted');
-
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -257,13 +249,10 @@ const CastCard: React.FC<CastCardProps> = ({
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Extra deleted');
-
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
-      console.error(error);
+      
+      throw error
     }
   };
 
@@ -304,7 +293,7 @@ const CastCard: React.FC<CastCardProps> = ({
           <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))} disabled={disableEditions}>
+          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
           <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>

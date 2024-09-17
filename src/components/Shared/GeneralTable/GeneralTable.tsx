@@ -1,6 +1,8 @@
 import React from 'react';
 import './GeneralTable.css';
-import { IonInput, IonCheckbox, IonRange, IonDatetime } from '@ionic/react';
+import {
+  IonInput, IonCheckbox, IonRange, IonDatetime,
+} from '@ionic/react';
 import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import timeToISOString from '../../../utils/timeToIsoString';
 import secondsToMinSec from '../../../utils/secondsToMinSec';

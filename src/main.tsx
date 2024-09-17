@@ -17,7 +17,8 @@ root.render(
     <AuthProvider>
       <DatabaseContextProvider>
         <App />
-      </DatabaseContextProvider>,
+      </DatabaseContextProvider>
+      ,
     </AuthProvider>
-  </GoogleOAuthProvider>
+  </GoogleOAuthProvider>,
 );

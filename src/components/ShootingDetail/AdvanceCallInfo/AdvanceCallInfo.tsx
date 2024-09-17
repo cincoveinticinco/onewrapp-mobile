@@ -47,7 +47,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
       <div className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
         <InputAlert
           handleOk={() => deleteAdvanceCall(call)}
-          header='Delete Advance Call'
+          header="Delete Advance Call"
           message={`Are you sure you want to delete the advance call for ${departmentName}?`}
           ref={alertRef}
           inputs={[]}

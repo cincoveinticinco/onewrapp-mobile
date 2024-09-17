@@ -102,7 +102,7 @@ const ShootingDetail: React.FC<{
   const disableEditions = permissionType !== 1;
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   const closeMapModal = () => {
     setShowMapModal(false);
@@ -166,7 +166,7 @@ const ShootingDetail: React.FC<{
     },
     shootingFormattedDate: '',
     mergedScenesShootData: [],
-  }
+  };
 
   const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
 
@@ -359,7 +359,7 @@ const ShootingDetail: React.FC<{
     },
     {
       label: 'End Time', type: 'time', fieldKeyName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '6',
-    }
+    },
   ];
 
   const addNewMeal = async (meal: any) => {
@@ -427,7 +427,7 @@ const ShootingDetail: React.FC<{
               },
             }));
 
-            console.log('Meal updated successfully');
+            successToast('Meal updated successfully');
           }
         }
       } catch (error) {
@@ -467,8 +467,6 @@ const ShootingDetail: React.FC<{
                 advanceCalls: updatedAdvanceCalls,
               },
             }));
-
-            console.log('Advance Call updated successfully');
           }
         }
       } catch (error) {
@@ -646,9 +644,8 @@ const ShootingDetail: React.FC<{
         const shootingCopy = { ...shooting._data };
         shootingCopy.scenes = updatedScenes;
         shootingCopy.banners = updatedBanners;
-        
-        return await oneWrapDb.shootings.upsert(shootingCopy);
 
+        return await oneWrapDb.shootings.upsert(shootingCopy);
       } catch (error) {
         console.error('Error saving new Shooting:', error);
       }
@@ -698,7 +695,7 @@ const ShootingDetail: React.FC<{
     setViewTabs(true);
   });
 
-  const shootingDeleteScene =(scene: ShootingScene & Scene) => {
+  const shootingDeleteScene = (scene: ShootingScene & Scene) => {
     const updatedScenes = shootingData.mergedSceneBanners.filter((s: any) => {
       if (s.cardType === 'scene') {
         if (s.id === null) {
@@ -847,42 +844,41 @@ const ShootingDetail: React.FC<{
 
   const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
     const shootingDay = new Date(shootingDate);
-    
+
     // Crear una nueva fecha con la zona horaria local
     const newDate = new Date(
       shootingDay.getFullYear(),
       shootingDay.getMonth(),
       shootingDay.getDate(),
       parseInt(time.hours),
-      parseInt(time.minutes)
+      parseInt(time.minutes),
     );
-  
+
     // Convertir a ISO string pero ajustar para la zona horaria local
     const offset = newDate.getTimezoneOffset();
-    const localISOTime = new Date(newDate.getTime() - (offset*60*1000)).toISOString().slice(0, -1);
-    
+    const localISOTime = new Date(newDate.getTime() - (offset * 60 * 1000)).toISOString().slice(0, -1);
+
     return localISOTime;
   };
 
   const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => {
-    console.log('field:', field, 'time:', time);
     if (oneWrapDb && shootingId) {
       try {
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-  
+
         if (shooting) {
           const shootingCopy = { ...shooting._data };
-  
+
           // Asegurarse de que el tiempo esté en formato de 24 horas
           const formattedTime = convertTo24Hour(time);
-  
+
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shootingCopy.shootDate);
-  
+
           shootingCopy[field] = newTimeISO;
-  
+
           await oneWrapDb.shootings.upsert(shootingCopy);
-  
+
           setShootingData((prev: any) => ({
             ...prev,
             shotingInfo: {
@@ -890,8 +886,7 @@ const ShootingDetail: React.FC<{
               [field]: newTimeISO,
             },
           }));
-  
-          console.log(`${field} updated successfully`);
+
         }
       } catch (error) {
         console.error(`Error updating ${field}:`, error);
@@ -901,17 +896,17 @@ const ShootingDetail: React.FC<{
 
   const convertTo24Hour = (time: string): string => {
     const [timeStr, period] = time.split(' ');
-    let [hours, minutes] = timeStr.split(':');
+    const [hours, minutes] = timeStr.split(':');
     let hour = parseInt(hours, 10);
-  
+
     if (period && period.toLowerCase() === 'pm' && hour !== 12) {
       hour += 12;
     } else if (period && period.toLowerCase() === 'am' && hour === 12) {
       hour = 0;
     }
-  
+
     return `${hour.toString().padStart(2, '0')}:${minutes}`;
-  }; 
+  };
 
   const deleteMeal = async (mealToDelete: Meal) => {
     if (oneWrapDb && shootingId) {
@@ -943,8 +938,6 @@ const ShootingDetail: React.FC<{
               meals: shootingCopy.meals,
             },
           }));
-
-          console.log('Meal deleted successfully');
         }
       } catch (error) {
         console.error('Error deleting meal:', error);
@@ -981,7 +974,6 @@ const ShootingDetail: React.FC<{
             },
           }));
 
-          console.log('Advance call deleted successfully');
         }
       } catch (error) {
         console.error('Error deleting advance call:', error);
@@ -1023,7 +1015,6 @@ const ShootingDetail: React.FC<{
   };
 
   const addNewHospital = async (formData: Partial<LocationInfo>) => {
-    console.log('formData:', formData);
     try {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingDate = new Date(shooting._data.shootDate);
@@ -1072,11 +1063,7 @@ const ShootingDetail: React.FC<{
         lng: formData.lng,
       };
 
-      console.log(updatedLocations[currentLocationIndex]);
-
       shootingCopy.locations = updatedLocations;
-
-      console.log(shootingCopy.locations);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
 
@@ -1136,11 +1123,9 @@ const ShootingDetail: React.FC<{
 
   const removeLocation = async (location: LocationInfo, locationIndex: number) => {
     try {
-      console.log(locationIndex);
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       const updatedLocations = shootingCopy.locations.filter((loc: LocationInfo, index: number) => index !== locationIndex);
-      console.log(updatedLocations);
       shootingCopy.locations = updatedLocations;
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
@@ -1287,8 +1272,8 @@ const ShootingDetail: React.FC<{
     }, 10);
   };
 
-  if(isLoading){
-    return (<IonContent color="tertiary" fullscreen>{ useLoader()}</IonContent>)
+  if (isLoading) {
+    return (<IonContent color="tertiary" fullscreen>{ useLoader()}</IonContent>);
   }
 
   return (
@@ -1308,26 +1293,26 @@ const ShootingDetail: React.FC<{
       )}
       {view === 'scenes' && (
         <IonContent color="tertiary" fullscreen>
-          <div className='shooting-scenes-info'>
+          <div className="shooting-scenes-info">
             {/* PRINT GENERAL CALL, READY TO SHOOT, PROTECTIONS, PAGES, MINUTES */}
-            <div className={'shooting-scenes-info-item ion-flex ion-padding ion-justify-content-between' + (isMobile ? ' mobile-shooting-scenes-info' : '')}>
+            <div className={`shooting-scenes-info-item ion-flex ion-padding ion-justify-content-between${isMobile ? ' mobile-shooting-scenes-info' : ''}`}>
               <ShootingInfoLabels
                 info={getHourMinutesFomISO(shootingData.shotingInfo.generalCall, true)}
-                title='General Call'
+                title="General Call"
               />
               <ShootingInfoLabels
                 info={getHourMinutesFomISO(shootingData.shotingInfo.onSet, true)}
-                title='On Set'
+                title="On Set"
                 isEditable={false}
               />
               <ShootingInfoLabels
                 info={shootingData.shotingInfo.scenes.toString()}
-                title='Scenes'
+                title="Scenes"
                 isEditable={false}
               />
               <ShootingInfoLabels
                 info={shootingData.shotingInfo.protectedScenes.toString()}
-                title='Protections'
+                title="Protections"
                 isEditable={false}
               />
               <ShootingInfoLabels
@@ -1341,9 +1326,9 @@ const ShootingDetail: React.FC<{
                 title="Minutes"
               />
             </div>
-            
+
           </div>
-          <div className='ion-padding'>
+          <div className="ion-padding">
             <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
               {isLoading ? (
                 useLoader()

@@ -55,10 +55,6 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const [searchText, setSearchText] = useState('');
   const [createNewMode, setCreateNewMode] = useState(false);
 
-  useEffect(() => {
-    console.log(optionName)
-  }, [selectedOptions])
-
   const modalRef = useRef<HTMLIonModalElement>(null);
 
   const isMobile = useIsMobile();
@@ -79,7 +75,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const uncheckedOptions = listOfStrings.filter((label: string) => {
     const option = listOfOptions.find((option: any) => option.label === label);
     if (option) {
-      return !selectedOptions.includes(option?.value)  || selectedOptions[0]?.id !== option?.value.id;
+      return !selectedOptions.includes(option?.value) || selectedOptions[0]?.id !== option?.value.id;
     }
   });
 
@@ -89,12 +85,12 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const checkedSelectedOptions: any[] = listOfStrings.filter((option: string) => {
     const optionValue = listOfOptions.find((o: any) => o.label === option);
-    return selectedOptions.includes(optionValue?.value)  || selectedOptions[0]?.id == optionValue?.value.id;
+    return selectedOptions.includes(optionValue?.value) || selectedOptions[0]?.id == optionValue?.value.id;
   });
 
   const isOptionChecked = (label: string) => {
     const option = listOfOptions.find((o: any) => o.label === label);
-    return selectedOptions.includes(option?.value)  || selectedOptions[0]?.id == option?.value?.id
+    return selectedOptions.includes(option?.value) || selectedOptions[0]?.id == option?.value?.id;
   };
 
   const defaultFormValues: any = {};

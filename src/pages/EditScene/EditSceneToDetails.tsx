@@ -22,7 +22,6 @@ const EditSceneToDetails: React.FC = () => {
   const projectId = parseInt(id);
   const handleBack = () => {
     const backRoute = localStorage.getItem('editionBackRoute');
-    console.log(backRoute);
     backRoute
       ? history.push(backRoute)
       : history.push(`/my/projects/${projectId}/strips/details/scene/${sceneId}`);

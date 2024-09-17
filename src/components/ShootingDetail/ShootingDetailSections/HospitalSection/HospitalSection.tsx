@@ -1,12 +1,12 @@
 import { VscEdit } from 'react-icons/vsc';
 import { PiTrashSimpleLight } from 'react-icons/pi';
+import { useRef } from 'react';
 import { LocationInfo } from '../../../../interfaces/shooting.types';
 import { Section } from '../../../Shared/Section/Section';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import truncateString from '../../../../utils/truncateString';
 import generateLocationLink from '../../../../utils/getLocationLink';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import { useRef } from 'react';
 
 interface HospitalsSectionProps {
   hospitals: LocationInfo[];
@@ -32,10 +32,10 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
   openEditModal,
 }) => {
   const alertRef: any = useRef(null);
-  
+
   const openAlert = () => {
-    alertRef.current?.present()
-  }
+    alertRef.current?.present();
+  };
 
   return (
     <Section
@@ -51,18 +51,18 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
           <div key={hospital.lat + hospital.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert
               handleOk={() => removeHospital(hospital, hospitalIndex)}
-              header='Delete Hospital'
+              header="Delete Hospital"
               message={`Are you sure you want to delete ${hospital.locationName}?`}
               ref={alertRef}
               inputs={[]}
-            />  
+            />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>{truncateString(hospital.locationName.toUpperCase(), 50)}</b>
             </h5>
             <div className="location-address">
               <p>
                 {truncateString(hospital.locationAddress.toUpperCase(), 50)}
-                <br></br>
+                <br />
                 <a href={generateLocationLink(hospital.lat, hospital.lng)} target="_blank" rel="noreferrer">
                   <b> GOOGLE MAP LINK</b>
                 </a>

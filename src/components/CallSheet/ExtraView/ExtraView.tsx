@@ -119,7 +119,6 @@ const ExtraView: React.FC<ExtraViewProps> = ({
 
     const validateExtraExists = (extraName: string, fieldKeyName: any) => {
       const extraExists = extraViewData.some((extra: ExtraCall) => normalizeString(extra.extraName || '') === normalizeString(extraName));
-      console.log(fieldKeyName, '************');
       if (extraExists && fieldKeyName === 'extraName') return 'This extra already exists';
       return false;
     };

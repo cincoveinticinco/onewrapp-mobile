@@ -12,6 +12,8 @@ import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable'
 import { Shooting } from '../../../../interfaces/shooting.types';
 import DatabaseContext from '../../../../context/Database.context';
 import DropDownButton from '../../../Shared/DropDownButton/DropDownButton';
+import useSuccessToast from '../../../../hooks/Shared/useSuccessToast';
+import useErrorToast from '../../../../hooks/Shared/useErrorToast';
 
 interface ServiceDraft {
   id: string;
@@ -36,6 +38,9 @@ const ProductionReportView: React.FC = () => {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
   const [groupedServices, setGroupedServices] = useState<{ [key: string]: { prServiceTypeName: string, services: ServiceDraft[] } }>({});
+
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
   const { result: serviceMatrices, isFetching }: {
     result: ServiceMatrices[];
@@ -131,10 +136,6 @@ const ProductionReportView: React.FC = () => {
     setEditModes(initialEditModes);
   }, [groupedServiceDrafts]);
 
-  useEffect(() => {
-    console.log(groupedServiceDrafts);
-  }, [groupedServiceDrafts]);
-
   const toggleSection = (id: string) => {
     setOpenSections((prev) => ({
       ...prev,
@@ -150,7 +151,6 @@ const ProductionReportView: React.FC = () => {
   };
 
   const saveSection = async (id: string) => {
-    console.log('Saving');
     try {
       // GET THE SERVICES FROM THE GROUPED SERVICES
       const shootingInstance: any = await oneWrapDb?.shootings.findOne(shootingId).exec().then((doc: any) => doc._data);
@@ -203,21 +203,23 @@ const ProductionReportView: React.FC = () => {
       const filteredServices = shootingCopy.services.filter((service: any) => service.prServiceTypeId !== parseInt(id));
       shootingCopy.services = [...filteredServices, ...updatedServices];
 
-      console.log(updatedServices);
+      
 
       // Serialize and deserialize the object before saving
       const shootingCopyJson = JSON.stringify(shootingCopy);
       const shootingCopyDeserialized = JSON.parse(shootingCopyJson);
       await oneWrapDb?.shootings.upsert(shootingCopyDeserialized);
-      console.log(shootingCopyDeserialized);
 
       setEditModes((prev) => ({
         ...prev,
         [id]: false,
       }));
-      console.log('Saved');
+      
+      successToast('Section saved successfully');
     } catch (error) {
-      console.error(error);
+      errorToast('Error saving section');
+
+      throw error;
     } finally {
       toggleEditMode(id);
     }

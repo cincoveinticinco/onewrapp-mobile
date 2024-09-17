@@ -80,7 +80,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
       </IonRow>
       <IonRow style={{
         backgroundColor: 'var(--ion-color-tertiary-dark)',
-      }}>
+      }}
+      >
         <IonCol>
           <p style={{ textAlign: 'center', fontSize: '16px' }}><b>{scene?.synopsis}</b></p>
         </IonCol>

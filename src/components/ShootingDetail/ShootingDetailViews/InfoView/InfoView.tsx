@@ -124,7 +124,7 @@ const InfoView: React.FC<InfoViewProps> = ({
           advanceCalls={shootingData.shotingInfo.advanceCalls}
           open={openadvanceCalls}
           setOpen={setOpenAdvanceCalls}
-          editMode={true}
+          editMode
           setEditMode={() => true}
           onAddClick={openAdvanceCallModal}
           getHourMinutesFomISO={getHourMinutesFomISO}

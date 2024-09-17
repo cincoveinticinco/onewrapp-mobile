@@ -274,7 +274,7 @@ const Crew: React.FC<{
       isOpen={addNewModalIsOpen}
       title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
       formInputs={crewFormInputs}
-      handleEdition={() => console.log('Add/Edit Crew')}
+      handleEdition={() => {}}
       defaultFormValues={getDefaultValuesById(selectedCrewId)}
       setIsOpen={setAddNewModalIsOpen}
     />
@@ -356,7 +356,7 @@ const Crew: React.FC<{
                     key={member.id}
                     crew={member}
                     onEdit={openModal}
-                    onDelete={() => console.log('Delete')}
+                    onDelete={() => {}}
                     permissionType={permissionType}
                   />
                 ))}

@@ -96,7 +96,6 @@ const InputModalScene: React.FC<InputModalProps> = ({
   const saveOption = () => {
     if (selectedOption) {
       handleCheckboxToggle(selectedOption);
-      console.log(selectedOption);
       closeModal();
     }
   };

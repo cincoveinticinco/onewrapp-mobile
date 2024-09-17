@@ -53,17 +53,15 @@ const SelectItem: React.FC<SelectItemProps> = ({
   };
 
   const mapStringToValue = (str: string): any => {
-    const option = options.find(o => mapValueToString(o.value) === str);
+    const option = options.find((o) => mapValueToString(o.value) === str);
     return option ? option.value : str;
   };
 
-  const mappedOptions = useMemo(() => 
-    options.map(option => ({
-      ...option,
-      mappedValue: mapValueToString(option.value)
-    })),
-    [options]
-  );
+  const mappedOptions = useMemo(() => options.map((option) => ({
+    ...option,
+    mappedValue: mapValueToString(option.value),
+  })),
+  [options]);
 
   const handleSelectCheckbox = (label: string) => {
     const option = options.find((o) => o.label === label);

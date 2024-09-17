@@ -30,8 +30,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, route
         href={`${routeDetails}`}
         onClick={() => localStorage.setItem('editionBackRoute', `${routeDetails}`)}
       >
-        <IonIcon icon={serverOutline} className="tab-bar-icons" color={currentRoute === 'scenedetails' ? 'primary' : 'light' }/>
-        <IonLabel color={currentRoute === 'scenedetails' ? 'primary' : 'light' }>SCENE DETAILS</IonLabel>
+        <IonIcon icon={serverOutline} className="tab-bar-icons" color={currentRoute === 'scenedetails' ? 'primary' : 'light'} />
+        <IonLabel color={currentRoute === 'scenedetails' ? 'primary' : 'light'}>SCENE DETAILS</IonLabel>
       </IonTabButton>
       <IonTabButton
         tab="scenescript"
@@ -39,8 +39,8 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, route
         href={`${routeScript}`}
         onClick={() => localStorage.setItem('editionBackRoute', `${routeScript}`)}
       >
-        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color={currentRoute === 'scenescript' ? 'primary' : 'light' } />
-        <IonLabel color={currentRoute === 'scenescript' ? 'primary' : 'light' }>SCENE SCRIPT</IonLabel>
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color={currentRoute === 'scenescript' ? 'primary' : 'light'} />
+        <IonLabel color={currentRoute === 'scenescript' ? 'primary' : 'light'}>SCENE SCRIPT</IonLabel>
       </IonTabButton>
     </IonTabBar>
   );

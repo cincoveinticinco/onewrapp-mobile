@@ -26,6 +26,7 @@ import {
 } from '../../interfaces/scenes.types';
 import ScriptPage from '../../components/SceneScript/ScriptPage';
 import { ShootingScene } from '../../interfaces/shooting.types';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -33,7 +34,7 @@ import { ShootingScene } from '../../interfaces/shooting.types';
 
 const SceneScript: React.FC<{
   isShooting?: boolean;
-}> = ({isShooting = false}) => {
+}> = ({ isShooting = false }) => {
   const { hideTabs, showTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
@@ -61,7 +62,7 @@ const SceneScript: React.FC<{
   const [previousScene, setPreviousScene] = useState<Scene | null>(null);
   const [nextScene, setNextScene] = useState<Scene | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
-
+  const errorToast = useErrorToast();
 
   useEffect(() => {
     if (urlShootingId) {
@@ -124,7 +125,7 @@ const SceneScript: React.FC<{
       const newScene = { ...thisScene, elements: Array.from(sceneElements) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating element');
     }
   };
 
@@ -135,7 +136,7 @@ const SceneScript: React.FC<{
       const newScene = { ...thisScene, characters: Array.from(sceneCharacters) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating character');
     }
   };
 
@@ -146,7 +147,7 @@ const SceneScript: React.FC<{
       const newScene = { ...thisScene, extras: Array.from(sceneExtras) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating extra');
     }
   };
 
@@ -157,7 +158,7 @@ const SceneScript: React.FC<{
       const newScene = { ...thisScene, notes: Array.from(sceneNotes) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating note');
     }
   };
 
@@ -578,7 +579,7 @@ const SceneScript: React.FC<{
         <SceneDetailsTabs
           routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
           routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
-          currentRoute='scenescript'
+          currentRoute="scenescript"
         />
       </IonPage>
     </>

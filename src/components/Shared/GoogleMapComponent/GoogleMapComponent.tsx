@@ -16,7 +16,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     createMap();

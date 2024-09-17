@@ -44,7 +44,7 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
           <MealInfo
             key={meal.id}
             meal={meal}
-            editMode={true}
+            editMode
             getHourMinutesFomISO={getHourMinutesFomISO}
             deleteMeal={deleteMeal}
             editionInputs={mealInputs}

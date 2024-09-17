@@ -20,10 +20,6 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   permissionType,
   openSceneModal,
 }) => {
-  useEffect(() => {
-    console.log(mergedScenesShoot);
-  }, [mergedScenesShoot]);
-
   const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any) => {
     const copy: mergedSceneShoot[] = mergedScenesShoot.map((item, index) => {
       if (index === rowIndex) {

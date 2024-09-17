@@ -243,7 +243,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   const handleCheckboxToggle = (sceneHeader: string) => {
     const sceneId = scenesList.find((scene) => scene.sceneHeader.toLowerCase() === sceneHeader.toLowerCase())?.sceneId;
     setSelectedSceneId(sceneId);
-    console.log('SETTING NEW SCENE ID', sceneId);
   };
 
   if (paragraphs.length === 0) {

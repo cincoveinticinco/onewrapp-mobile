@@ -54,9 +54,7 @@ const EditScene: React.FC = () => {
   const { sceneId }: any = useParams();
 
   const getExistingScene = async () => {
-    console.log(typeof sceneId);
     const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-    console.log(scene);
     return scene?._data;
   };
 

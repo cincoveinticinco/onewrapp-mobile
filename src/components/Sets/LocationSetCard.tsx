@@ -178,7 +178,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Location updated successfully');
       }, 500);
@@ -210,7 +209,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Set updated successfully');
       }, 300);
@@ -271,7 +269,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Set deleted successfully');
       }, 500);

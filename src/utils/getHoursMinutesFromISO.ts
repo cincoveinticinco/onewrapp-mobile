@@ -1,7 +1,5 @@
 const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
-  console.log('iso', iso);
-  console.log('date', date);
 
   if (isNaN(date.getTime())) {
     return '--:--';
@@ -13,8 +11,8 @@ const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string =>
 
   if (withampm) {
     // Convert to 12-hour format only if withampm is true
-    hours = hours % 12;
-    hours = hours ? hours : 12; // '0' should be '12' in 12-hour format
+    hours %= 12;
+    hours = hours || 12; // '0' should be '12' in 12-hour format
   }
 
   const formattedHours = hours.toString().padStart(2, '0');

@@ -34,12 +34,14 @@ setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { loggedIn, loading } = useAuth();
-  const { isDatabaseReady, projectId, initializeSceneReplication, initializeShootingReplication } = React.useContext(DatabaseContext);
+  const {
+    isDatabaseReady, projectId, initializeSceneReplication, initializeShootingReplication,
+  } = React.useContext(DatabaseContext);
 
   if (loading || !isDatabaseReady) {
     return useLoader();
   }
-  
+
   return (
     <IonReactRouter>
       <IonRouterOutlet>

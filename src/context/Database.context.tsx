@@ -166,24 +166,22 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         resyncProjectsUser.current = projectsReplicator;
       }
     } catch (error) {
-      console.error('Error al obtener la instancia de la base de datos:', error);
-    } finally {
-      console.log('Base de datos inicializada');
-    }
+      throw error
+    } 
   };
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
     if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) return false;
-  
+
     const canPush = ['scenes', 'shootings'].includes(collection.getSchemaName().toLowerCase());
-  
+
     try {
       const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })
         .sort({ updatedAt: 'desc' })
         .limit(1)
         .exec()
         .then((data: any) => (data[0] ? data[0] : null));
-  
+
       if (!resyncRef.current) {
         const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
         if (isOnline) {
@@ -193,30 +191,30 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       } else {
         isOnline && resyncRef.current.resyncReplication();
       }
-  
+
       return true;
     } catch (error) {
       console.error(`Error during ${collection.getSchemaName()} replication:`, error);
       return false;
     }
   };
-  
+
   const initializeProjectsUserReplication = () => initializeReplication(projectCollection, {}, resyncProjectsUser);
-  
+
   const initializeSceneReplication = () => initializeReplication(sceneCollection, { projectId: parseInt(projectId) }, resyncScenes, parseInt(projectId));
-  
+
   const initializeServiceMatricesReplication = () => initializeReplication(serviceMatricesCollection, { projectId: parseInt(projectId) }, resyncServiceMatrices, parseInt(projectId));
-  
+
   const initializeParagraphReplication = () => initializeReplication(paragraphCollection, { projectId: parseInt(projectId) }, resyncParagraphs, parseInt(projectId));
-  
+
   const initializeTalentsReplication = () => initializeReplication(talentsCollection, { projectId: parseInt(projectId) }, resyncTalents, parseInt(projectId));
-  
+
   const initializeUnitReplication = () => initializeReplication(unitsCollection, { projectId: parseInt(projectId) }, resyncUnits, parseInt(projectId));
-  
+
   const initializeShootingReplication = () => initializeReplication(shootingsCollection, { projectId: parseInt(projectId) }, resyncShootings, parseInt(projectId));
-  
+
   const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId) }, resyncCrew, parseInt(projectId));
-  
+
   const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
 
   useEffect(() => {
@@ -233,7 +231,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-  
+
   useEffect(() => {
     if (oneWrapRXdatabase && isOnline && projectId) {
       const initializeAllReplications = async () => {
@@ -247,7 +245,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         await initializeCrewReplication();
         await initializeCountriesReplication();
       };
-  
+
       initializeAllReplications();
     }
   }, [oneWrapRXdatabase, isOnline, projectId]);
@@ -437,9 +435,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         setReplicationStatus(`Starting ${step.name} replication...`);
         incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
         await step.function().then((result) => {
-          console.log('Replication finished:', result);
+        
         }).catch((error) => {
-          console.error('Error during replication:', error);
+          setReplicationStatus(`Error during ${step.name} replication`);
         });
         incrementPercentage(step.startPercentage + 5, step.endPercentage, 10000);
 

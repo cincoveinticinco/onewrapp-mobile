@@ -6,12 +6,10 @@ const useHideTabs = () => {
 
   const hideTabs = useCallback(() => {
     setViewTabs(false);
-    console.log('Tabs hidden', viewTabs);
   }, []);
 
   const showTabs = useCallback(() => {
     setViewTabs(true);
-    console.log('Tabs shown', viewTabs);
   }, []);
 
   return {

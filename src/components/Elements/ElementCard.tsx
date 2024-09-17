@@ -198,15 +198,11 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
-
       setTimeout(() => {
         successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
     } catch (error) {
-      console.error(error);
+      errorToast('Error updating element');
     }
   };
 
@@ -220,23 +216,16 @@ const ElementCard: React.FC<ElementCardProps> = ({
         const updatedScene = { ...scene._data };
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.elementName !== data.elementName);
-
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Element deleted');
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       setTimeout(() => {
         successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
       });
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting element');
     }
   };
 
@@ -251,16 +240,10 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.categoryName !== data.categoryName);
 
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Category deleted');
 
       setTimeout(() => {
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
@@ -294,12 +277,8 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
-
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
+      
       setTimeout(() => {
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
@@ -313,8 +292,6 @@ const ElementCard: React.FC<ElementCardProps> = ({
     if (section === 'category') {
       return validationFunction(name, data.categoryName);
     }
-
-    console.log('Validation function:', validationFunction(name, data.elementName), name, data.elementName);
 
     return validationFunction(name, data.elementName);
   };
@@ -362,7 +339,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
             <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
               <CiEdit className="button-icon view" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))} disabled={disableEditions}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) =>  values) : scenesToEditWithElement()?.then((values: any) =>  values))} disabled={disableEditions}>
               <PiProhibitLight className="button-icon ban" />
             </IonButton>
             <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>

@@ -48,7 +48,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       placeholder: 'Enter time',
       type: 'time',
       required: true,
-      offset: '3'
+      offset: '3',
     },
   ];
 
@@ -96,14 +96,14 @@ export const ShootingInfoLabels: React.FC<ShootingInfoLabelsProps> = ({
         {symbol && <span className="symbol-part">{symbol}</span>}
       </p>
       {isEditable && (
-        <VscEdit onClick={onEdit} className='label-button' />
+        <VscEdit onClick={onEdit} className="label-button" />
       )}
       <p className="ion-no-margin labels-title">
         {title.toUpperCase()}
       </p>
     </div>
   );
-}
+};
 
 interface ShootingBasicInfoProps {
   shootingInfo: {
@@ -145,7 +145,6 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 
   const handleEdition = (formData: { time: string }) => {
     if (editingField) {
-      console.log('formData', formData);
       updateShootingTime(editingField, formData.time);
     }
     setEditingField(null);
@@ -158,7 +157,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
       placeholder: 'Enter time',
       type: 'time',
       required: true,
-      offset: '3'
+      offset: '3',
     },
   ];
 
@@ -182,7 +181,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
           }
         </IonCol>
         <IonCol size="4">
-        <IonRow>
+          <IonRow>
             <IonCol size="12" className="ion-padding">
               <EditableField
                 field="generalCall"
@@ -216,7 +215,10 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
             <IonCol size="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
               <h3 style={{
                 textAlign: 'center',
-              }}><b>NO WEATHER AVAILABLE</b></h3>
+              }}
+              >
+                <b>NO WEATHER AVAILABLE</b>
+              </h3>
             </IonCol>
           </IonRow>
         </IonCol>
@@ -264,7 +266,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         formInputs={editionInputs}
         handleEdition={handleEdition}
         defaultFormValues={{
-          time: editingField ? getHourMinutesFomISO(shootingInfo[editingField as 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut']): '',
+          time: editingField ? getHourMinutesFomISO(shootingInfo[editingField as 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut']) : '',
         }}
         modalId={`edit-time-modal-${editingField}`}
       />

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
+import { text } from 'ionicons/icons';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import CategoryContainer from './CategoryContainer';
-import { text } from 'ionicons/icons';
 
 const DropDownInfo = ({
   categories, scene, title, characters = false, extras = false, elements = false, notes = false,
@@ -34,14 +34,17 @@ const DropDownInfo = ({
               valuesByCategory
               && (
                 <IonCardHeader
-                  className='ion-padding'
+                  className="ion-padding"
                   style={{
-                    height: '100%'
+                    height: '100%',
                   }}
                 >
-                  <IonCardSubtitle className="no-items-card-title ion-flex ion-justify-content-center ion-align-items-center ion-padding" style={{
-                    height: '100%', textAlign: 'center'
-                  }}>
+                  <IonCardSubtitle
+                    className="no-items-card-title ion-flex ion-justify-content-center ion-align-items-center ion-padding"
+                    style={{
+                      height: '100%', textAlign: 'center',
+                    }}
+                  >
                     {
                       characters
                       && 'NO CHARACTERS ADDED TO THIS SCENE'

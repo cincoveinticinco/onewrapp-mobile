@@ -93,7 +93,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
   return (
-    <div className="wrap-report-view" style={{gridTemplateColumns:  useIsMobile() ? '1fr' : '1fr 1fr'}}>
+    <div className="wrap-report-view" style={{ gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr' }}>
       <div className="section-wrapper scenes-table">
         <div>
           <ShootingBasicInfo
@@ -109,7 +109,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             locations={shootingData.shotingInfo.locations}
             open={openLocations}
             setOpen={setOpenLocations}
-            editMode={true}
+            editMode
             setEditMode={setLocationsEditMode}
             onAddClick={openMapModal}
             removeLocation={removeLocation}
@@ -131,7 +131,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             editMode
             setEditMode={() => true}
           />
-        </div> 
+        </div>
       </div>
       <div className="section-wrapper">
         <div>
