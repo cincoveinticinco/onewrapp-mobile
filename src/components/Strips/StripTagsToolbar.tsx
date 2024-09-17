@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
 import { IonList } from '@ionic/react';
+import { useContext } from 'react';
 import ScenesContext from '../../context/Scenes.context';
 import StripTag from './StripTag';
 import './StripTagsToolbar.scss';

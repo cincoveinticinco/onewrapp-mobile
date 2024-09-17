@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
+import React, { useEffect, useMemo } from 'react';
 import { Controller } from 'react-hook-form';
 import SelectionModal from '../../../Layouts/SelectionModal/SelectionModal';
 import { SelectOptionsInterface } from '../EditionModal/EditionModal';

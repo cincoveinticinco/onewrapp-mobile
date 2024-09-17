@@ -1,13 +1,13 @@
 import { IonContent } from '@ionic/react';
+import useIsMobile from '../../../../hooks/Shared/useIsMobile';
 import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
 import { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
-import './InfoView.css';
-import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
-import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
-import useIsMobile from '../../../../hooks/Shared/useIsMobile';
+import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
+import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
+import './InfoView.css';
 
 interface InfoViewProps {
   shootingData: any;

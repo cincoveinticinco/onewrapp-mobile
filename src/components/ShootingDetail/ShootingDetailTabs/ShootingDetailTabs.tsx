@@ -1,10 +1,10 @@
-import React from 'react';
 import {
   IonIcon, IonLabel, IonTabBar, IonTabButton,
 } from '@ionic/react';
 import {
   documentTextOutline, home, informationCircleOutline, serverOutline,
 } from 'ionicons/icons';
+import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import { ShootingViews } from '../../../pages/ShootingDetail/ShootingDetail';
 import './ShootingDetailTabs.css';

@@ -1,18 +1,17 @@
 import {
   IonCol,
-  IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal,
-  IonRow,
-  IonSelect,
-  IonSelectOption,
+  IonContent, IonGrid, IonHeader, IonItem,
+  IonModal,
+  IonRow
 } from '@ionic/react';
-import React, { useRef, useState, useMemo } from 'react';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import './InputModalScene.scss';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import { Scene } from '../../interfaces/scenes.types';
+import React, { useMemo, useState } from 'react';
 import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import { Scene } from '../../interfaces/scenes.types';
+import './InputModalScene.scss';
 
 interface InputModalProps {
   sceneName: string;

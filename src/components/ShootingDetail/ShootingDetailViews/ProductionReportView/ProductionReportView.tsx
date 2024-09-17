@@ -1,19 +1,22 @@
+import { IonButton } from '@ionic/react';
 import React, {
-  useEffect, useState, useMemo, useContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
-import { useRxData } from 'rxdb-hooks';
+import { VscEdit, VscSave } from 'react-icons/vsc';
 import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
-import { IonButton } from '@ionic/react';
-import { VscEdit, VscSave } from 'react-icons/vsc';
-import useLoader from '../../../../hooks/Shared/useLoader';
-import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types';
-import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
-import { Shooting } from '../../../../interfaces/shooting.types';
+import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../context/Database.context';
-import DropDownButton from '../../../Shared/DropDownButton/DropDownButton';
-import useSuccessToast from '../../../../hooks/Shared/useSuccessToast';
 import useErrorToast from '../../../../hooks/Shared/useErrorToast';
+import useLoader from '../../../../hooks/Shared/useLoader';
+import useSuccessToast from '../../../../hooks/Shared/useSuccessToast';
+import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types';
+import { Shooting } from '../../../../interfaces/shooting.types';
+import DropDownButton from '../../../Shared/DropDownButton/DropDownButton';
+import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
 
 interface ServiceDraft {
   id: string;

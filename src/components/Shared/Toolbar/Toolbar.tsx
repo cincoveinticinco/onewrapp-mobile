@@ -1,22 +1,30 @@
+import {
+  IonButton, IonIcon,
+  IonInput,
+  IonProgressBar,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react';
+import { generate } from '@pdfme/generator';
+import {
+  addOutline,
+  caretForward,
+  chevronBack,
+  funnelOutline,
+  menuOutline, searchOutline,
+  swapVerticalOutline,
+} from 'ionicons/icons';
 import React, {
   memo, useContext, useEffect, useRef, useState,
 } from 'react';
-import {
-  IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
-  IonProgressBar,
-} from '@ionic/react';
-import {
-  menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
-} from 'ionicons/icons';
-import './Toolbar.scss';
-import { RiDownload2Line } from 'react-icons/ri';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import { generate } from '@pdfme/generator';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { RiDownload2Line } from 'react-icons/ri';
 import { useParams } from 'react-router';
-import template from '../../../templates/MinimalTemplate';
-import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import DatabaseContext from '../../../context/Database.context';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
+import template from '../../../templates/MinimalTemplate';
+import './Toolbar.scss';
 
 export interface ToolbarButton {
   name: string;

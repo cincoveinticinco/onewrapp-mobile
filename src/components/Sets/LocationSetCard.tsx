@@ -1,27 +1,25 @@
-import React, { useContext, useRef } from 'react';
 import {
-  IonItemSliding,
-  IonItemOptions,
   IonButton,
   IonItem,
-  IonTitle,
-  IonAlert,
+  IonItemOptions,
+  IonItemSliding,
+  IonTitle
 } from '@ionic/react';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
-import HighlightedText from '../Shared/HighlightedText/HighlightedText';
-import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, pencilOutline } from 'ionicons/icons';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import DropDownButton from '../Shared/DropDownButton/DropDownButton';
-import EditionModal from '../Shared/EditionModal/EditionModal';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useWarningToast from '../../hooks/Shared/useWarningToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import DropDownButton from '../Shared/DropDownButton/DropDownButton';
+import EditionModal from '../Shared/EditionModal/EditionModal';
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
 
 interface Set {
   setName: string;

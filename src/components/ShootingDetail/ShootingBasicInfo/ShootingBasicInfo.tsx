@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
 import {
   IonCol, IonGrid, IonRow,
 } from '@ionic/react';
+import React, { useEffect, useRef, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
-import { LocationInfo } from '../../../interfaces/shooting.types';
-import './ShootingBasicInfo.scss';
-import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
-import EditionModal from '../../Shared/EditionModal/EditionModal';
-import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
-import separateTimeOrPages from '../../../utils/SeparateTimeOrPages';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
+import { LocationInfo } from '../../../interfaces/shooting.types';
+import getHourMinutesFomISO from '../../../utils/getHoursMinutesFromISO';
+import separateTimeOrPages from '../../../utils/SeparateTimeOrPages';
+import EditionModal from '../../Shared/EditionModal/EditionModal';
+import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
+import './ShootingBasicInfo.scss';
 
 interface EditableFieldProps {
   field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';

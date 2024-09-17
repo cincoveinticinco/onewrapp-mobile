@@ -1,5 +1,5 @@
-import React from 'react';
 import { IonChip, IonLabel } from '@ionic/react';
+import React from 'react';
 
 interface LegendItem {
   color: string;

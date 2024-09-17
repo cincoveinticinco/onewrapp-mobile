@@ -1,16 +1,25 @@
 import { GoogleMap } from '@capacitor/google-maps';
 import {
-  useEffect, useRef, useState, useCallback,
-} from 'react';
-import {
-  IonButton, IonContent, IonHeader, IonModal, IonInput, IonList, IonItem, IonGrid, IonRow, IonCol,
-  IonText,
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonList,
+  IonModal,
+  IonRow
 } from '@ionic/react';
+import {
+  useCallback,
+  useEffect, useRef, useState,
+} from 'react';
 import environment from '../../../../environment';
-import CustomSelect from '../CustomSelect/CustomSelect';
-import { LocationInfo } from '../../../interfaces/shooting.types';
-import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import useLoader from '../../../hooks/Shared/useLoader';
+import { LocationInfo } from '../../../interfaces/shooting.types';
+import CustomSelect from '../CustomSelect/CustomSelect';
+import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface MapFormModalProps {
   isOpen: boolean;

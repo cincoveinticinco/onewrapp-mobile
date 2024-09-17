@@ -1,17 +1,17 @@
 import React from 'react';
-import { FormInput } from '../../../Shared/EditionModal/EditionModal';
-import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
-import './WrapReportView.css';
-import ScriptReportView from '../ScriptReportView/ScriptReportView';
-import CallSheet from '../../../../pages/CallSheet/CallSheet';
-import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
-import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
-import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
-import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
-import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
-import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
-import { Section } from '../../../Shared/Section/Section';
 import useIsMobile from '../../../../hooks/Shared/useIsMobile';
+import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
+import CallSheet from '../../../../pages/CallSheet/CallSheet';
+import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
+import { FormInput } from '../../../Shared/EditionModal/EditionModal';
+import { Section } from '../../../Shared/Section/Section';
+import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
+import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
+import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
+import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
+import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
+import ScriptReportView from '../ScriptReportView/ScriptReportView';
+import './WrapReportView.css';
 
 interface WrapReportViewProps {
   shootingData: ShootingDataProps;

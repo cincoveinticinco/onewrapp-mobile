@@ -1,9 +1,9 @@
 import React from 'react';
-import { VscEdit } from 'react-icons/vsc';
 import { PiTrashSimpleLight } from 'react-icons/pi';
-import EditionModal from '../../Shared/EditionModal/EditionModal';
+import { VscEdit } from 'react-icons/vsc';
 import { AdvanceCall } from '../../../interfaces/shooting.types';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
+import EditionModal from '../../Shared/EditionModal/EditionModal';
 
 interface AdvanceCallInfoProps {
   call: AdvanceCall;

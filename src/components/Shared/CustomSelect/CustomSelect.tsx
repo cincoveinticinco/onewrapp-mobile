@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
 import {
-  Select, MenuItem, FormControl, InputLabel, Autocomplete, TextField,
+  Autocomplete,
+  FormControl, InputLabel,
+  MenuItem,
+  Select,
+  TextField,
 } from '@mui/material';
+import React, { useState } from 'react';
 import './CustomSelect.scss';
 
 interface CustomSelectProps {

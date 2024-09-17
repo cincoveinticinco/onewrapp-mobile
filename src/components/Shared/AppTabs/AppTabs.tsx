@@ -1,9 +1,3 @@
-import React, {
-  useCallback, useContext, useEffect, useState,
-} from 'react';
-import {
-  useRouteMatch, Redirect, Route,
-} from 'react-router-dom';
 import {
   IonContent,
   IonIcon,
@@ -16,33 +10,43 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import {
-  calendar, list, people, business, reader, settings,
+  business,
+  calendar,
   listSharp,
+  people,
+  reader, settings
 } from 'ionicons/icons';
+import React, {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
+import {
+  Redirect, Route,
+  useRouteMatch,
+} from 'react-router-dom';
+import DatabaseContext from '../../../context/Database.context';
+import useLoader from '../../../hooks/Shared/useLoader';
+import { SecurePages } from '../../../interfaces/securePages.types';
+import { User } from '../../../interfaces/user.types';
 import AddScene from '../../../pages/AddScene/AddScene';
-import FilterScenes from '../../../pages/FilterScenes/FilterScenes';
 import Calendar from '../../../pages/Calendar/Calendar';
+import CallSheet from '../../../pages/CallSheet/CallSheet';
 import Cast from '../../../pages/Cast/Cast';
-import Elements from '../../../pages/Elements/Elements';
-import Reports from '../../../pages/Reports/Reports';
-import Settings from '../../../pages/Settings/Settings';
-import Sets from '../../../pages/Sets/Sets';
-import StripBoard from '../../../pages/StripBoard/StripBoard';
-import Strips from '../../../pages/Strips/Strips';
+import Crew from '../../../pages/Crew/Crew';
 import EditScene from '../../../pages/EditScene/EditScene';
+import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
+import Elements from '../../../pages/Elements/Elements';
+import FilterScenes from '../../../pages/FilterScenes/FilterScenes';
+import ReplicationPage from '../../../pages/ReplicationPage/ReplicationPage';
+import Reports from '../../../pages/Reports/Reports';
 import SceneDetails from '../../../pages/SceneDetails/SceneDetails';
 import SceneScript from '../../../pages/SceneScript/SceneScript';
-import EditSceneToDetails from '../../../pages/EditScene/EditSceneToDetails';
+import Sets from '../../../pages/Sets/Sets';
+import Settings from '../../../pages/Settings/Settings';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
-import CallSheet from '../../../pages/CallSheet/CallSheet';
-import ReplicationPage from '../../../pages/ReplicationPage/ReplicationPage';
-import Crew from '../../../pages/Crew/Crew';
+import StripBoard from '../../../pages/StripBoard/StripBoard';
+import Strips from '../../../pages/Strips/Strips';
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute';
-import { SecurePages } from '../../../interfaces/securePages.types';
-import DatabaseContext from '../../../context/Database.context';
-import { User } from '../../../interfaces/user.types';
 import './AppTabs.scss';
-import useLoader from '../../../hooks/Shared/useLoader';
 
 setupIonicReact();
 

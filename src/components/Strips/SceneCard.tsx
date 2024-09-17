@@ -1,26 +1,30 @@
-import React, { useContext } from 'react';
 import {
-  IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonButton, useIonToast,
+  IonButton,
+  IonCol,
+  IonGrid, IonItem, IonItemOptions,
+  IonItemSliding,
   IonReorder,
+  IonRow,
+  useIonToast,
 } from '@ionic/react';
-import { useHistory, useParams, useRouteMatch } from 'react-router';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { CiEdit } from 'react-icons/ci';
-import { LuGripHorizontal } from 'react-icons/lu';
 import { checkmarkCircle } from 'ionicons/icons';
+import React, { useContext } from 'react';
+import { CiEdit } from 'react-icons/ci';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
-import { Scene } from '../../interfaces/scenes.types';
-import './SceneCard.scss';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
-import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import { LuGripHorizontal } from 'react-icons/lu';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
   ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { SecurePages } from '../../interfaces/securePages.types';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import { Scene } from '../../interfaces/scenes.types';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import './SceneCard.scss';
 
 interface SceneCardProps {
   scene: Scene & { frontId: string };

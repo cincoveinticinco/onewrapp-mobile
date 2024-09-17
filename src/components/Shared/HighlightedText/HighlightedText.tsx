@@ -1,6 +1,6 @@
 import React from 'react';
-import './HighlightedText.scss';
 import removeAccents from '../../../utils/removeAccents';
+import './HighlightedText.scss';
 
 interface HighlightedTextProps {
   text: string;

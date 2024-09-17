@@ -1,8 +1,8 @@
 import { IonButton, IonIcon } from '@ionic/react';
+import { close } from 'ionicons/icons';
 import React, { useContext } from 'react';
-import './StripTag.scss';
-import { close, closeCircleOutline } from 'ionicons/icons';
 import ScenesContext from '../../context/Scenes.context';
+import './StripTag.scss';
 
 interface StripTagProps {
   tagKey: string;

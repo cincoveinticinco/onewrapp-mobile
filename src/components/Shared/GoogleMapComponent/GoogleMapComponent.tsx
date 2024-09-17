@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap } from '@capacitor/google-maps';
+import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
-import useLoader from '../../../hooks/Shared/useLoader';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
+import useLoader from '../../../hooks/Shared/useLoader';
 
 interface GoogleMapComponentProps {
   lat: number;

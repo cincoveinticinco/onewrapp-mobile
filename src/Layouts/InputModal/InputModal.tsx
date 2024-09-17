@@ -3,15 +3,15 @@ import {
 } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import './InputModal.scss';
-import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
-import removeNumberAndDot from '../../utils/removeNumberAndDot';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import InputItem from '../../components/AddScene/AddSceneFormInputs/InputItem';
+import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
+import './InputModal.scss';
 
 interface FormInputsProps {
   label: string;

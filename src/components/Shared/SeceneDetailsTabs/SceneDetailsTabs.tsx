@@ -5,7 +5,6 @@ import {
 import { documentTextOutline, serverOutline } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './SceneDetailsTabs.scss';
-import { useParams } from 'react-router';
 
 interface SceneDetailsTabsProps {
   routeDetails?: string;

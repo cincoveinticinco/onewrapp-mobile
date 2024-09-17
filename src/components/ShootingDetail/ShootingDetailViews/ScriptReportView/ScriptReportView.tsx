@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
-import { IonContent } from '@ionic/react';
+import React from 'react';
+import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums';
 import { mergedSceneShoot } from '../../../../pages/ShootingDetail/ShootingDetail';
 import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
-import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface ScriptReportViewProps {

@@ -1,10 +1,10 @@
 import React from 'react';
-import { VscEdit } from 'react-icons/vsc';
 import { PiTrashSimpleLight } from 'react-icons/pi';
-import EditionModal from '../../Shared/EditionModal/EditionModal';
+import { VscEdit } from 'react-icons/vsc';
 import { Meal } from '../../../interfaces/shooting.types';
-import { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
+import { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
+import EditionModal from '../../Shared/EditionModal/EditionModal';
 
 interface MealInfoProps {
   meal: Meal;

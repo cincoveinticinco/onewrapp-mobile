@@ -6,10 +6,10 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
-import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
+import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import SelectItem from '../SelectInput/SelectInput';
+import './EditionModal.scss';
 
 export interface FormInput {
   fieldKeyName: string;
