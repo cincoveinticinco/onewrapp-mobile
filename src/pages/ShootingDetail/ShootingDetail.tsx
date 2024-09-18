@@ -80,7 +80,30 @@ const ShootingDetail: React.FC<{
 }> = ({
   permissionType,
 }) => {
-  const [isDisabled, _] = useState(false);
+  const shootingDataInitial: ShootingDataProps = {
+    mergedSceneBanners: [],
+    notIncludedScenes: [],
+    shotingInfo: {
+      generalCall: '--:--',
+      onSet: '--:--',
+      estimatedWrap: '--:--',
+      wrap: '--:--',
+      lastOut: '--:--',
+      sets: 1,
+      scenes: 0,
+      pages: '0/0',
+      min: '--:--',
+      locations: [],
+      hospitals: [],
+      advanceCalls: [],
+      meals: [],
+      protectedScenes: 0,
+    },
+    shootingFormattedDate: '',
+    mergedScenesShootData: [],
+  };
+
+  const [isDisabled, unused] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
   const { oneWrapDb, initializeShootingReplication } = useContext(DatabaseContext);
   const history = useHistory();
@@ -100,6 +123,9 @@ const ShootingDetail: React.FC<{
   const [scriptReportEditMode, setScriptReportEditMode] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<LocationInfo | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<LocationInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
+
   const bannerModalRef = useRef<HTMLIonModalElement>(null);
   const sceneModalRef = useRef<HTMLIonModalElement>(null);
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
@@ -108,6 +134,20 @@ const ShootingDetail: React.FC<{
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const isMobile = useIsMobile();
+
+  const convertTo24Hour = (time: string): string => {
+    const [timeStr, period] = time.split(' ');
+    const [hours, minutes] = timeStr.split(':');
+    let hour = parseInt(hours, 10);
+
+    if (period && period.toLowerCase() === 'pm' && hour !== 12) {
+      hour += 12;
+    } else if (period && period.toLowerCase() === 'am' && hour === 12) {
+      hour = 0;
+    }
+
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  };
 
   const closeMapModal = () => {
     setShowMapModal(false);
@@ -150,31 +190,6 @@ const ShootingDetail: React.FC<{
     }, 100);
   };
 
-  const shootingDataInitial: ShootingDataProps = {
-    mergedSceneBanners: [],
-    notIncludedScenes: [],
-    shotingInfo: {
-      generalCall: '--:--',
-      onSet: '--:--',
-      estimatedWrap: '--:--',
-      wrap: '--:--',
-      lastOut: '--:--',
-      sets: 1,
-      scenes: 0,
-      pages: '0/0',
-      min: '--:--',
-      locations: [],
-      hospitals: [],
-      advanceCalls: [],
-      meals: [],
-      protectedScenes: 0,
-    },
-    shootingFormattedDate: '',
-    mergedScenesShootData: [],
-  };
-
-  const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
-
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -187,8 +202,8 @@ const ShootingDetail: React.FC<{
         shootingFormattedDate: scenesData.formattedDate,
       });
     } catch (error) {
-      console.error('Error fetching scenes:', error);
       setIsLoading(false);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -197,8 +212,6 @@ const ShootingDetail: React.FC<{
   useEffect(() => {
     fetchData();
   }, [oneWrapDb, shootingId, permissionType]);
-
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading) {
@@ -436,7 +449,7 @@ const ShootingDetail: React.FC<{
           }
         }
       } catch (error) {
-        console.error('Error updating meal:', error);
+        throw error;
       }
     }
   };
@@ -652,7 +665,7 @@ const ShootingDetail: React.FC<{
 
         return await oneWrapDb.shootings.upsert(shootingCopy);
       } catch (error) {
-        console.error('Error saving new Shooting:', error);
+        throw error;
       }
     }
   };
@@ -680,7 +693,8 @@ const ShootingDetail: React.FC<{
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      console.error('Error reordering scenes:', error);
+      errorToast(`Error reordering scenes: ${error}`);
+      throw error;
     } finally {
       event.detail.complete();
     }
@@ -855,8 +869,8 @@ const ShootingDetail: React.FC<{
       shootingDay.getFullYear(),
       shootingDay.getMonth(),
       shootingDay.getDate(),
-      parseInt(time.hours),
-      parseInt(time.minutes),
+      parseInt(time.hours, 10),
+      parseInt(time.minutes, 10),
     );
 
     // Convertir a ISO string pero ajustar para la zona horaria local
@@ -893,23 +907,10 @@ const ShootingDetail: React.FC<{
           }));
         }
       } catch (error) {
-        console.error(`Error updating ${field}:`, error);
+        errorToast(`Error updating time: ${error}`);
+        throw error;
       }
     }
-  };
-
-  const convertTo24Hour = (time: string): string => {
-    const [timeStr, period] = time.split(' ');
-    const [hours, minutes] = timeStr.split(':');
-    let hour = parseInt(hours, 10);
-
-    if (period && period.toLowerCase() === 'pm' && hour !== 12) {
-      hour += 12;
-    } else if (period && period.toLowerCase() === 'am' && hour === 12) {
-      hour = 0;
-    }
-
-    return `${hour.toString().padStart(2, '0')}:${minutes}`;
   };
 
   const deleteMeal = async (mealToDelete: Meal) => {
@@ -944,7 +945,8 @@ const ShootingDetail: React.FC<{
           }));
         }
       } catch (error) {
-        console.error('Error deleting meal:', error);
+        errorToast('Error deleting meal');
+        throw error;
       }
     }
   };
@@ -979,7 +981,8 @@ const ShootingDetail: React.FC<{
           }));
         }
       } catch (error) {
-        console.error('Error deleting advance call:', error);
+        errorToast('Error deleting advance call');
+        throw error;
       }
     }
   };
@@ -1045,8 +1048,7 @@ const ShootingDetail: React.FC<{
       }));
     } catch (error) {
       errorToast('Error adding hospital');
-      console.error('Error adding hospital:', error);
-      return;
+      throw error;
     } finally {
       successToast('Hospital added successfully');
     }
@@ -1080,9 +1082,8 @@ const ShootingDetail: React.FC<{
 
       initializeShootingReplication();
     } catch (error) {
-      console.error('Error updating location:', error);
       errorToast(`Error updating location: ${error}`);
-      return;
+      throw error;
     } finally {
       successToast('Location updated successfully');
     }
@@ -1116,9 +1117,8 @@ const ShootingDetail: React.FC<{
 
       initializeShootingReplication();
     } catch (error) {
-      console.error('Error updating hospital:', error);
       errorToast(`Error updating hospital: ${error}`);
-      return;
+      throw error;
     } finally {
       successToast('Hospital updated successfully');
     }
@@ -1143,9 +1143,8 @@ const ShootingDetail: React.FC<{
 
       initializeShootingReplication();
     } catch (error) {
-      console.error('Error removing location:', error);
       errorToast(`Error removing location: ${error}`);
-      return;
+      throw error;
     } finally {
       successToast('Location removed successfully');
     }
@@ -1170,9 +1169,8 @@ const ShootingDetail: React.FC<{
 
       initializeShootingReplication();
     } catch (error) {
-      console.error('Error removing hospital:', error);
       errorToast(`Error removing hospital: ${error}`);
-      return;
+      throw error;
     } finally {
       successToast('Hospital removed successfully');
     }
@@ -1226,9 +1224,8 @@ const ShootingDetail: React.FC<{
         return newState;
       });
     } catch (error) {
-      console.error('Error saving script report:', error);
       errorToast(`Error saving script report: ${error}`);
-      return;
+      throw error;
     } finally {
       successToast('Script report saved successfully');
     }

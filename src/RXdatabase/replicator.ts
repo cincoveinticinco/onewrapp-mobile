@@ -91,7 +91,6 @@ export default class HttpReplicator {
                 checkpoint: data.checkpoint,
               };
             } catch (error) {
-              console.error(`Error in pull handler for ${collection.SchemaName()}:`, error);
               throw error;
             }
           },
@@ -121,7 +120,6 @@ export default class HttpReplicator {
               const conflictsArray = await rawResponse.json();
               return conflictsArray;
             } catch (error) {
-              console.error(`Error in push handler for ${collection.SchemaName()}:`, error);
               throw error;
             }
           },
@@ -131,14 +129,13 @@ export default class HttpReplicator {
       const replicationState = replicateRxCollection(replicationConfig);
 
       replicationState.error$.subscribe((err) => {
-        console.error(`Replication error in ${collection.SchemaName()}:`, err);
+        throw err;
       });
 
       await this.monitorReplicationStatus(replicationState);
 
       this.replicationStates.push(replicationState);
     } catch (error) {
-      console.error(`Error setting up replication for ${collection.SchemaName()}:`, error);
       throw error;
     }
   }
