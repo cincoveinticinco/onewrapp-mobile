@@ -46,12 +46,12 @@ const LoginPage: React.FC<Props> = ({}) => {
             history.push('/my/projects');
           } else {
           // Maneja el error
-            console.error(data.error);
             history.push('/user-not-found');
+            throw errorToast(data.error);
           }
         })
         .catch((error) => {
-          console.error('Error:', error);
+          throw error;
         });
     },
     onError: errorMessage,

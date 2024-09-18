@@ -152,7 +152,7 @@ const SceneDetails: React.FC<{
 
         successMessageSceneToast('Scene updated successfully');
       } catch (error) {
-        console.error('Error updating scene:', error);
+        throw error;
       }
     }
   };
@@ -174,7 +174,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Produced seconds updated successfully');
       } catch (error) {
-        console.error('Error updating produced seconds:', error);
+        throw error;
       }
     }
   };
@@ -195,7 +195,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Partiality updated successfully');
       } catch (error) {
-        console.error('Error updating partiality:', error);
+        throw error;
       }
     }
   };
@@ -234,7 +234,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Scene status updated successfully');
       } catch (error) {
-        console.error('Error updating scene status:', error);
+        throw error;
       } finally {
         getSceneColor(thisScene).then(setSceneColor);
       }

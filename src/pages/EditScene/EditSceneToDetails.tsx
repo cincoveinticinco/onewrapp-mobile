@@ -112,7 +112,7 @@ const EditSceneToDetails: React.FC = () => {
 
   const onSubmit = (formData: any): void => {
     scrollToTop();
-    sceneId ? updateScene(formData) : console.error('No sceneId found');
+    sceneId ? updateScene(formData) : errorToast('Error updating scene');
   };
 
   const handleSave = () => {
