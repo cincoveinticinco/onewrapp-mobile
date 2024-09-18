@@ -150,7 +150,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
         return {
           id: callInDb?.id || '',
           projectCastId: callInDb?.projectCastId || 0,
-          shootingId: parseInt(shootingId),
+          shootingId: parseInt(shootingId, 10),
           pickUp: call.pickUp,
           callTime: call.callTime,
           onMakeUp: call.onMakeUp,
@@ -239,7 +239,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           hours: newValue.split(':')[0],
           minutes: newValue.split(':')[1],
         }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+        : type === 'number' ? parseInt(newValue, 10) : newValue;
       const newOtherCalls = [
         ...prevOtherCalls.slice(0, otherIndex),
         editedOtherCall,

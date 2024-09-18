@@ -88,7 +88,7 @@ const Crew: React.FC<{
     try {
       await oneWrappDb?.crew.upsert(formmatedData);
     } catch (error) {
-      console.error('Error upserting crew member', error);
+      throw error;
     }
   };
 
