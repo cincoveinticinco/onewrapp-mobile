@@ -78,7 +78,7 @@ const ProductionReportView: React.FC = () => {
 
   const getServiceDraftFromMatrix = (matrix: any): ServiceDraft => {
     const service = shooting?.services?.find((service: any) => service.description === matrix.serviceDescription);
-    const totalCost = parseInt(service?.unitCost ?? '') * parseInt(service?.quantity ?? '');
+    const totalCost = parseInt(service?.unitCost ?? '', 10) * parseInt(service?.quantity ?? '', 10);
     const totalCostAsCurrency = totalCost && totalCost.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
 
     return {
@@ -86,7 +86,7 @@ const ProductionReportView: React.FC = () => {
       serviceDescription: matrix.serviceDescription,
       providerName: matrix.providerName,
       providerId: matrix.providerId,
-      quantity: parseInt(service?.quantity ?? '') || null,
+      quantity: parseInt(service?.quantity ?? '', 10) || null,
       unitCost: matrix.serviceUnitCost,
       totalCost: totalCostAsCurrency || null,
       observations: service?.observations || null,
@@ -186,7 +186,7 @@ const ProductionReportView: React.FC = () => {
               description: service.serviceDescription,
               providerName: service.providerName,
               providerId: service.providerId,
-              prServiceTypeId: parseInt(id),
+              prServiceTypeId: parseInt(id, 10),
               quantity: service.quantity.toString(),
               unitCost: service.unitCost.toString(),
               tax: null,
@@ -203,7 +203,7 @@ const ProductionReportView: React.FC = () => {
         }
       }).filter(Boolean);
 
-      const filteredServices = shootingCopy.services.filter((service: any) => service.prServiceTypeId !== parseInt(id));
+      const filteredServices = shootingCopy.services.filter((service: any) => service.prServiceTypeId !== parseInt(id, 10));
       shootingCopy.services = [...filteredServices, ...updatedServices];
 
       // Serialize and deserialize the object before saving

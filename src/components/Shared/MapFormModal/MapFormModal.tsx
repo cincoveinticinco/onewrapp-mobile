@@ -95,7 +95,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
       }
     } catch (error) {
-      console.error('Error creating map:', error);
+      throw error;
     }
   };
 
@@ -148,7 +148,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
           setLocationPostalCode('');
         }
       } else {
-        console.error(`Geocoder failed due to: ${status}`);
         setCurrentAddress('Error al obtener la dirección');
         setSearchTerm('');
         setLocationAddress('');
@@ -318,7 +317,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                   placeholder: errors.locationType ? 'Location Type' : 'Tipo de ubicación',
                   value: locationTypeId,
                 }}
-                setNewOptionValue={(fieldKeyName: string, value: string) => setLocationTypeId(parseInt(value))}
+                setNewOptionValue={(fieldKeyName: string, value: string) => setLocationTypeId(parseInt(value, 10))}
               />
             </IonCol>
           </IonRow>

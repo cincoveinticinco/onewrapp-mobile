@@ -54,7 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoggedIn(false);
         return false;
       } catch (error) {
-        console.error('Error verifying session:', error);
         localStorage.removeItem('token');
         setUser(null);
         setLoggedIn(false);

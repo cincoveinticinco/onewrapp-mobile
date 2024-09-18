@@ -70,8 +70,7 @@ const Calendar: React.FC = () => {
     unitId: string;
   }) => {
     if (!oneWrapDb) {
-      console.error('Database not initialized');
-      return;
+      throw errorToast('Database not initialized');
     }
 
     if (validateShootingExistence(form.shootDate, form.unitId)) {
@@ -118,9 +117,8 @@ const Calendar: React.FC = () => {
 
       setOpenAddShootingModal(false);
     } catch (error) {
-      console.error('Error creating new shooting:', error);
       errorToast('Error creating new shooting');
-      return;
+      throw error;
     } finally {
       successToast('Shooting created successfully');
     }
@@ -165,7 +163,7 @@ const Calendar: React.FC = () => {
         try {
           setIsLoading(true);
         } catch (error) {
-          console.error('Error initializing replication:', error);
+          throw error;
         } finally {
           setIsLoading(false);
         }
@@ -182,7 +180,7 @@ const Calendar: React.FC = () => {
       setIsLoading(true);
       await getShootings();
     } catch (error) {
-      console.error('Error initializing replication:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -215,7 +213,7 @@ const Calendar: React.FC = () => {
             }));
           },
           error: (error) => {
-            console.error('Error in shootings subscription:', error);
+            throw error;
           },
         });
 
@@ -225,8 +223,7 @@ const Calendar: React.FC = () => {
 
   const getShootings = async () => {
     if (!oneWrapDb) {
-      console.error('Database not initialized');
-      return;
+      throw errorToast('Database not initialized');
     }
 
     try {
@@ -247,7 +244,7 @@ const Calendar: React.FC = () => {
           : prevState.currentDate,
       }));
     } catch (error) {
-      console.error('Error fetching shootings:', error);
+      throw error;
     }
   };
 

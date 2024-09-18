@@ -92,7 +92,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     const scriptDay = scene.scriptDay || '';
     const year = scene.year || '';
 
-    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
+    const sceneHeader = `${parseInt(episodeNumber, 10) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
       year})` : ''}`;
 
     return sceneHeader.toUpperCase();
@@ -175,7 +175,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
       await sceneToDelete?.remove();
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
-      console.error('Error deleting scene:', error);
+      throw error;
     }
   };
 

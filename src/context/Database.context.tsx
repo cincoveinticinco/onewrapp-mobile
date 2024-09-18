@@ -194,26 +194,25 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       return true;
     } catch (error) {
-      console.error(`Error during ${collection.getSchemaName()} replication:`, error);
-      return false;
+      throw error;
     }
   };
 
   const initializeProjectsUserReplication = () => initializeReplication(projectCollection, {}, resyncProjectsUser);
 
-  const initializeSceneReplication = () => initializeReplication(sceneCollection, { projectId: parseInt(projectId) }, resyncScenes, parseInt(projectId));
+  const initializeSceneReplication = () => initializeReplication(sceneCollection, { projectId: parseInt(projectId, 10) }, resyncScenes, parseInt(projectId, 10));
 
-  const initializeServiceMatricesReplication = () => initializeReplication(serviceMatricesCollection, { projectId: parseInt(projectId) }, resyncServiceMatrices, parseInt(projectId));
+  const initializeServiceMatricesReplication = () => initializeReplication(serviceMatricesCollection, { projectId: parseInt(projectId, 10) }, resyncServiceMatrices, parseInt(projectId, 10));
 
-  const initializeParagraphReplication = () => initializeReplication(paragraphCollection, { projectId: parseInt(projectId) }, resyncParagraphs, parseInt(projectId));
+  const initializeParagraphReplication = () => initializeReplication(paragraphCollection, { projectId: parseInt(projectId, 10) }, resyncParagraphs, parseInt(projectId, 10));
 
-  const initializeTalentsReplication = () => initializeReplication(talentsCollection, { projectId: parseInt(projectId) }, resyncTalents, parseInt(projectId));
+  const initializeTalentsReplication = () => initializeReplication(talentsCollection, { projectId: parseInt(projectId, 10) }, resyncTalents, parseInt(projectId, 10));
 
-  const initializeUnitReplication = () => initializeReplication(unitsCollection, { projectId: parseInt(projectId) }, resyncUnits, parseInt(projectId));
+  const initializeUnitReplication = () => initializeReplication(unitsCollection, { projectId: parseInt(projectId, 10) }, resyncUnits, parseInt(projectId, 10));
 
-  const initializeShootingReplication = () => initializeReplication(shootingsCollection, { projectId: parseInt(projectId) }, resyncShootings, parseInt(projectId));
+  const initializeShootingReplication = () => initializeReplication(shootingsCollection, { projectId: parseInt(projectId, 10) }, resyncShootings, parseInt(projectId, 10));
 
-  const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId) }, resyncCrew, parseInt(projectId));
+  const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId, 10) }, resyncCrew, parseInt(projectId, 10));
 
   const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
 
@@ -297,11 +296,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             );
             setProjectsInfoIsOffline(projectsInfoIsOffline);
           } catch (error) {
-            console.error('Error processing projects:', error);
+            throw error;
           }
         },
         error: (error: any) => {
-          console.error('Error fetching projects:', error);
           setProjectsAreLoading(false);
         },
         complete: () => {
@@ -447,9 +445,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setReplicationStatus('Replication finished');
       setReplicationPercentage(100);
     } catch (error) {
-      console.error('Error during initial replication:', error);
       setReplicationStatus('Error during initial replication');
       setReplicationPercentage(0);
+      throw error;
     } finally {
       setInitialReplicationFinished(true);
       setProjectsInfoIsOffline({
