@@ -71,7 +71,7 @@ export const Section: React.FC<SectionProps> = ({
           height: '40px',
         }}
       >
-        <p style={{ fontSize: '18px' }}><b>{title.toUpperCase()}</b></p>
+        <p style={{ fontSize: '14px' }}><b>{title.toUpperCase()}</b></p>
         <div onClick={(e) => e.stopPropagation()}>
           {editMode !== undefined && setEditMode && (
             <>

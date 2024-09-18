@@ -164,7 +164,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   return (
     <IonGrid fixed style={{ width: '100%' }}>
       <IonRow>
-        <IonCol size="8">
+        <IonCol size="10">
           {
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
               <div>
@@ -180,7 +180,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
             )
           }
         </IonCol>
-        <IonCol size="4">
+        <IonCol size="2">
           <IonRow>
             <IonCol size="12" className="ion-padding">
               <EditableField
@@ -213,12 +213,12 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               />
             </IonCol>
             <IonCol size="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
-              <h3 style={{
+              <p style={{
                 textAlign: 'center',
               }}
               >
                 <b>NO WEATHER AVAILABLE</b>
-              </h3>
+              </p>
             </IonCol>
           </IonRow>
         </IonCol>

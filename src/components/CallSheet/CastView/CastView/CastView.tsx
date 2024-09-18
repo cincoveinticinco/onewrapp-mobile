@@ -30,8 +30,7 @@ const CastView: React.FC<CastViewProps> = ({
     {
       key: 'cast', title: 'CAST', type: 'text', textAlign: 'left',
     },
-    { key: 'name', title: 'TALENT', type: 'text' },
-    { key: 'tScn', title: 'T. SCN.', type: 'text' },
+    { key: 'tScn', title: 'SCN.', type: 'text' },
     {
       key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true,
     },
@@ -45,7 +44,7 @@ const CastView: React.FC<CastViewProps> = ({
       key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true,
     },
     {
-      key: 'readyToShoot', title: 'READY', type: 'hour', editable: true,
+      key: 'readyToShoot', title: 'READY AT', type: 'hour', editable: true,
     },
     {
       key: 'notes', title: 'NOTES', type: 'text', editable: true,

@@ -149,16 +149,17 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       const newCastCalls = editedCastCalls.map((call: any) => {
         // Buscar si existe un call en la base de datos
+        console.log('call', call);
         const callInDb = shootingCopy.castCalls?.find((callInDb: any) => callInDb.castName === call.castName);
         return {
           id: callInDb?.id || '',
           projectCastId: callInDb?.projectCastId || 0,
           shootingId: parseInt(shootingId, 10),
           pickUp: call.pickUp,
-          callTime: call.callTime,
-          onMakeUp: call.onMakeUp,
-          onWardrobe: call.onWardrobe,
-          readyToShoot: call.readyToShoot,
+          callTime: call.callTime || callInDb?.callTime || '',
+          onMakeUp: call.onMakeUp  || callInDb?.onMakeUp || '',
+          onWardrobe: call.onWardrobe || callInDb?.onWardrobe || '',
+          readyToShoot: call.readyToShoot || callInDb?.readyToShoot || '',
           arrived: callInDb?.arrived || '',
           wrap: callInDb?.wrap || '',
           startProcesses: callInDb?.startProcesses || '',
@@ -172,7 +173,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           castNumber: call.castNumber || '',
           castCategory: call.castCategory || '',
           castCategoryId: callInDb?.castCategoryId || 0,
-          notes: call.notes,
+          notes: call.notes || callInDb?.notes || '',
           createdAt: callInDb?.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
