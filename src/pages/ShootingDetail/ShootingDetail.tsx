@@ -1110,24 +1110,30 @@ const ShootingDetail: React.FC<{
     />
   );
 
-  const addShoBanSc = () => (
-    <div className="button-wrapper" slot="end" key="custom-add-button">
-      <IonButton
-        fill="clear"
-        slot="end"
-        color="light"
-        className="ion-no-padding toolbar-button"
-        disabled={disableEditions}
-        onClick={() => {
-          setTimeout(() => {
-            toggleAddMenu();
-          }, 0);
-        }}
-      >
-        <IoMdAdd className="toolbar-icon" />
-      </IonButton>
-    </div>
-  );
+  const addShoBanSc = () => {
+    if(view === 'scenes') {
+      return (
+        <div className="button-wrapper" slot="end" key="custom-add-button">
+          <IonButton
+            fill="clear"
+            slot="end"
+            color="light"
+            className="ion-no-padding toolbar-button"
+            disabled={disableEditions}
+            onClick={() => {
+              setTimeout(() => {
+                toggleAddMenu();
+              }, 0);
+            }}
+          >
+            <IoMdAdd className="toolbar-icon" />
+          </IonButton>
+        </div>
+      );
+    }
+
+    return
+  }
 
   const editScriptReportButton: any = () => {
     if (view === 'script-report') {

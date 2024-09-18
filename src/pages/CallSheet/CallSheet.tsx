@@ -37,6 +37,7 @@ import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import './CallSheet.css';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -764,14 +765,20 @@ const CallSheet: React.FC<CallSheetProps> = ({
         </IonHeader>
         <IonContent color="tertiary" fullscreen>
           <div className='ion-flex'>
-            <div className='ion-margin'>
+            <div 
+              style={!useIsMobile() ? {width: '150px'} : {}}
+              className='ion-flex ion-align-items-center ion-padding'
+            >
               <ShootingInfoLabels 
                 isEditable={false}
                 title='general call'
                 info={getHourMinutesFomISO(thisShooting?.generalCall || '', true) }
               />
             </div>
-            <div className='ion-margin'>
+            <div 
+              style={!useIsMobile() ? {width: '150px'} : {}}
+              className='ion-flex ion-align-items-center ion-padding'
+            >
               <ShootingInfoLabels 
                 isEditable={false}
                 title='ready to shoot'
