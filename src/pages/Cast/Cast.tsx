@@ -20,7 +20,7 @@ import useProcessedCast from '../../hooks/Cast/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 
 const Cast: React.FC<{
   permissionType?: number | null;
@@ -182,7 +182,7 @@ const Cast: React.FC<{
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
             isLoading
-            && useLoader()
+            && AppLoader()
           }
           {
             !isLoading

@@ -25,7 +25,7 @@ import DatabaseContext from '../../context/Database.context';
 import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { Scene } from '../../interfaces/scenes.types';
 import {
@@ -1273,7 +1273,7 @@ const ShootingDetail: React.FC<{
   };
 
   if (isLoading) {
-    return (<IonContent color="tertiary" fullscreen>{ useLoader()}</IonContent>);
+    return (<IonContent color="tertiary" fullscreen>{ AppLoader()}</IonContent>);
   }
 
   return (
@@ -1331,7 +1331,7 @@ const ShootingDetail: React.FC<{
           <div className="ion-padding">
             <IonReorderGroup disabled={isDisabled} onIonItemReorder={handleReorder}>
               {isLoading ? (
-                useLoader()
+                AppLoader()
               ) : shootingData.mergedSceneBanners.length === 0 ? (
                 <div
                   className="ion-padding-start ion-flex"
@@ -1345,24 +1345,27 @@ const ShootingDetail: React.FC<{
                   <OutlinePrimaryButton onClick={openSceneModal} buttonName="Add New" disabled={disableEditions} />
                 </div>
               ) : (
-                shootingData.mergedSceneBanners.map((scene: any) => (
-                  scene.cardType === 'scene' ? (
-                    <SceneCard
-                      key={scene.sceneId}
-                      scene={scene}
-                      isShooting
-                      isProduced={scene.status}
-                      shootingDeleteScene={() => shootingDeleteScene(scene)}
-                      permissionType={permissionType}
-                    />
-                  ) : (
+                shootingData.mergedSceneBanners.map((scene: any) => {
+                  if (scene.cardType === 'scene') {
+                    return (
+                      <SceneCard
+                        key={scene.sceneId}
+                        scene={scene}
+                        isShooting
+                        isProduced={scene.status}
+                        shootingDeleteScene={() => shootingDeleteScene(scene)}
+                        permissionType={permissionType}
+                      />
+                    );
+                  }
+                  return (
                     <ShootingBanner
                       key={scene.id}
                       banner={scene}
                       shootingDeleteBanner={() => shootingDeleteBanner(scene)}
                     />
-                  )
-                ))
+                  );
+                })
               )}
             </IonReorderGroup>
           </div>

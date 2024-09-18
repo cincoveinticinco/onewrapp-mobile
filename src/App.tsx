@@ -26,7 +26,7 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
-import useLoader from './hooks/Shared/useLoader';
+import AppLoader from './hooks/Shared/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
 
@@ -39,7 +39,7 @@ const AppContent: React.FC = () => {
   } = React.useContext(DatabaseContext);
 
   if (loading || !isDatabaseReady) {
-    return useLoader();
+    return AppLoader();
   }
 
   return (

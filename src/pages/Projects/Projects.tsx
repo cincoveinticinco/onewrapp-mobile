@@ -11,7 +11,7 @@ import { useRxData } from 'rxdb-hooks';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database.context';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);
@@ -37,7 +37,7 @@ const Projects: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding" color="tertiary">
         {isFetching ? (
-          useLoader()
+          AppLoader()
         ) : (
           <IonGrid>
             <IonRow>

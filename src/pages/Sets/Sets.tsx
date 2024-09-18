@@ -15,7 +15,7 @@ import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 
 import { default as LocationSetCard, default as SetCard } from '../../components/Sets/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
 import removeAccents from '../../utils/removeAccents';
 import './Sets.scss';
@@ -168,7 +168,7 @@ const Sets: React.FC<{
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           {
               isLoading && (
-                useLoader()
+                AppLoader()
               )
             }
           {

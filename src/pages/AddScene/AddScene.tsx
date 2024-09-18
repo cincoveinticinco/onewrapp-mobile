@@ -11,7 +11,7 @@ import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import './AddScene.css';
@@ -144,7 +144,7 @@ const AddScene: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef} style={{ zIndex: '20' }}>
         {
           dataIsLoading && (
-            useLoader()
+            AppLoader()
           )
         }
         {

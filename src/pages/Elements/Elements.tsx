@@ -19,7 +19,7 @@ import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import ElementCard from '../../components/Elements/ElementCard';
 import './Elements.scss';
 import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 
 const Elements: React.FC<{
   permissionType?: number | null;
@@ -261,7 +261,7 @@ const Elements: React.FC<{
         <IonContent color="tertiary" fullscreen>
           {
             dataIsLoading
-            && useLoader()
+            && AppLoader()
           }
           {
             !dataIsLoading

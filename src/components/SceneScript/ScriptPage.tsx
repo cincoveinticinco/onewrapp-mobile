@@ -9,7 +9,7 @@ import { PiNotePencil } from 'react-icons/pi';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useTextSelection from '../../hooks/Shared/useSelectedText';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import {
@@ -235,7 +235,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
           zoom: zoomLevel,
         }}
       >
-        {useLoader()}
+        {AppLoader()}
       </div>
     );
   }

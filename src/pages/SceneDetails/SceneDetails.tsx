@@ -20,7 +20,7 @@ import {
 } from '../../Ennums/ennums';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { Scene } from '../../interfaces/scenes.types';
 import { ShootingScene } from '../../interfaces/shooting.types';
@@ -466,7 +466,7 @@ const SceneDetails: React.FC<{
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? useLoader() : <SceneBasicInfo scene={thisScene} />}
+        {sceneIsLoading ? AppLoader() : <SceneBasicInfo scene={thisScene} />}
         {
           isShooting && (
             <div className="shoot-info">

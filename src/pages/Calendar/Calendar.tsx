@@ -16,7 +16,7 @@ import EditionModal, { FormInput, SelectOptionsInterface } from '../../component
 import Legend from '../../components/Shared/Legend/Legend';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { Shooting } from '../../interfaces/shooting.types';
 import { Unit } from '../../interfaces/unitTypes.types';
@@ -346,7 +346,7 @@ const Calendar: React.FC = () => {
       <IonContent color="tertiary" fullscreen>
         <Legend items={legendItems} />
         {isLoading || isFetchingUnits ? (
-          useLoader()
+          AppLoader()
         ) : calendarState.viewMode === 'month' ? (
           <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
         ) : (

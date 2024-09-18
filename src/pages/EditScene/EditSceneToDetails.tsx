@@ -11,7 +11,7 @@ import AddScenesForm from '../../components/AddScene/AddSceneForm';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 
@@ -136,7 +136,7 @@ const EditSceneToDetails: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef}>
         {
           sceneDataIsLoading
-            ? useLoader()
+            ? AppLoader()
             : (
               <AddScenesForm
                 scrollToTop={() => scrollToTop()}

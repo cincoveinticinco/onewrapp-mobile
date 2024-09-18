@@ -11,7 +11,7 @@ import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../context/Database.context';
 import useErrorToast from '../../../../hooks/Shared/useErrorToast';
-import useLoader from '../../../../hooks/Shared/useLoader';
+import AppLoader from '../../../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../../../hooks/Shared/useSuccessToast';
 import { ServiceMatrices } from '../../../../interfaces/serviceMatrices.types';
 import { Shooting } from '../../../../interfaces/shooting.types';
@@ -264,7 +264,7 @@ const ProductionReportView: React.FC = () => {
   ];
 
   if (isFetching || isShootingFetching) {
-    return useLoader();
+    return AppLoader();
   }
 
   const editService = (groupIndex: keyof ServiceDraft, rowIndex: number, rowKey: keyof any, rowValue: any, type: any) => {
@@ -304,7 +304,7 @@ const ProductionReportView: React.FC = () => {
   );
 
   if (isFetching || isShootingFetching) {
-    return useLoader();
+    return AppLoader();
   }
 
   return (

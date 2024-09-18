@@ -24,7 +24,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import DatabaseContext from '../../../context/Database.context';
-import useLoader from '../../../hooks/Shared/useLoader';
+import AppLoader from '../../../hooks/Shared/AppLoader';
 import { SecurePages } from '../../../interfaces/securePages.types';
 import { User } from '../../../interfaces/user.types';
 import AddScene from '../../../pages/AddScene/AddScene';
@@ -104,7 +104,7 @@ const AppTabs: React.FC = () => {
     return (
       <IonPage>
         <IonContent>
-          {useLoader()}
+          {AppLoader()}
         </IonContent>
       </IonPage>
     );

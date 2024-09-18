@@ -38,7 +38,7 @@ import './SceneScript.scss';
 const SceneScript: React.FC<{
   isShooting?: boolean;
 }> = ({ isShooting = false }) => {
-  const { hideTabs, showTabs } = useHideTabs();
+  const { hideTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
@@ -64,7 +64,6 @@ const SceneScript: React.FC<{
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
   const [previousScene, setPreviousScene] = useState<Scene | null>(null);
   const [nextScene, setNextScene] = useState<Scene | null>(null);
-  const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const errorToast = useErrorToast();
 
   useEffect(() => {
@@ -87,26 +86,21 @@ const SceneScript: React.FC<{
 
   useEffect(() => {
     const filterScenes = async () => {
-      setSceneIsLoading(true);
       let filtered: Scene[];
+
       if (!isShooting) {
         filtered = selectedFilterOptions ? applyFilters(offlineScenes, selectedFilterOptions) : offlineScenes;
       } else {
         const scenesInShooting = await getScenesInShooting();
-        filtered = [];
-        for (const id of scenesInShooting) {
-          const scene = offlineScenes.find((scene: any) => parseInt(scene.sceneId) === id);
-          if (scene) {
-            filtered.push(scene);
-          }
-        }
+
+        filtered = offlineScenes.filter((scene: any) => scenesInShooting.includes(parseInt(scene.sceneId, 10)));
       }
+
       setFilteredScenes(filtered);
-      setSceneIsLoading(false);
     };
 
     filterScenes();
-  }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
+  }, [isShooting, offlineScenes, selectedFilterOptions]);
 
   useEffect(() => {
     const printParagraphs = async () => {

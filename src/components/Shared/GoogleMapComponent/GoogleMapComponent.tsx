@@ -2,7 +2,7 @@ import { GoogleMap } from '@capacitor/google-maps';
 import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import useLoader from '../../../hooks/Shared/useLoader';
+import AppLoader from '../../../hooks/Shared/AppLoader';
 
 interface GoogleMapComponentProps {
   lat: number;
@@ -55,7 +55,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
 
   return (
     <div style={{ position: 'relative', width: '100%', height: isMobile ? '300px' : '400px' }}>
-      {isLoading && useLoader()}
+      {isLoading && AppLoader()}
       <capacitor-google-map
         ref={mapRef}
         style={{

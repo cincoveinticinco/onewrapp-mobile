@@ -16,7 +16,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import environment from '../../../../environment';
-import useLoader from '../../../hooks/Shared/useLoader';
+import AppLoader from '../../../hooks/Shared/AppLoader';
 import { LocationInfo } from '../../../interfaces/shooting.types';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
@@ -283,7 +283,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
           position: 'relative',
         }}
         >
-          {!map && useLoader()}
+          {!map && AppLoader()}
           <capacitor-google-map
             ref={mapRef}
             style={{

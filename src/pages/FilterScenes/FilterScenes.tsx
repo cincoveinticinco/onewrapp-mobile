@@ -16,7 +16,7 @@ import DatabaseContext from '../../context/Database.context';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
 import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
 import customArraySort from '../../utils/customArraySort';
@@ -112,7 +112,7 @@ const FilterScenes = () => {
       <IonContent color="tertiary">
         {
           dataIsLoading
-          && useLoader()
+          && AppLoader()
         }
         {
           !dataIsLoading
