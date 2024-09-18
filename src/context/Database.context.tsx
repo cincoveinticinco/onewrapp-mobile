@@ -78,9 +78,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(
-    localStorage.getItem('oneWrapRXdatabase') ? JSON.parse(localStorage.getItem('oneWrapRXdatabase') as string) : null,
-  );
+  const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(null);
   const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
   const [paragraphCollection, setParagraphCollection] = useState<SceneParagraphsSchema | null>(null);
   const [projectCollection, setProjectCollection] = useState<ProjectsSchema | null>(null);

@@ -56,7 +56,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
           <b>{departmentName}</b>
         </h5>
         <div className="location-address">
-          <p>{getHourMinutesFomISO(call.adv_call_time)}</p>
+          <p>{getHourMinutesFomISO(call.adv_call_time, true)}</p>
         </div>
         {editMode && (
           <div className="ion-flex-column location-buttons">
