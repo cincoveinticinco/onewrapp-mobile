@@ -3,7 +3,7 @@ import { Section } from '../../../Shared/Section/Section';
 import AdvanceCallInfo from '../../AdvanceCallInfo/AdvanceCallInfo';
 
 interface AdvanceCallsSectionProps {
-  advanceCalls: any[]; // Cambiar a un tipo más específico si está disponible
+  advanceCalls: any[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editMode: boolean;
@@ -11,7 +11,7 @@ interface AdvanceCallsSectionProps {
   onAddClick: any;
   getHourMinutesFomISO: (isoString: string) => string;
   deleteAdvanceCall: (call: any) => void;
-  advanceCallInputs: any; // Tipo más específico si está disponible
+  advanceCallInputs: any;
   handleEditAdvanceCall: (call: any) => void;
   permissionType?: number | null;
 }

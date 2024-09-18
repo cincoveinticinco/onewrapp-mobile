@@ -13,7 +13,7 @@ import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes.cont
 import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 
-import { default as LocationSetCard, default as SetCard } from '../../components/Sets/LocationSetCard';
+import LocationSetCard from '../../components/Sets/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
@@ -99,17 +99,19 @@ const Sets: React.FC<{
   }, [processedLocations, filteredSets]);
 
   useEffect(() => {
-    processedLocations
-      && processedLocations.forEach((location: any) => {
+    if (processedLocations) {
+      processedLocations.forEach((location: any) => {
         setDropDownIsOpen((prev: any) => ({ ...prev, [location.locationName]: true }));
       });
+    }
   }, [processedLocations]);
 
   useEffect(() => {
-    processedLocations
-      && processedLocations.forEach((location: any) => {
+    if (processedLocations) {
+      processedLocations.forEach((location: any) => {
         setDisplayedSets((prev: any) => ({ ...prev, [location.locationName]: [] }));
       });
+    }
   }, [processedLocations]);
 
   const cleartSortSelections = () => {
@@ -140,6 +142,8 @@ const Sets: React.FC<{
 
       return locationExists ? 'Location already exists' : true;
     }
+
+    return 'Location name is required';
   };
 
   const validateSetExists = (setName: string, currentSetName: string) => {
@@ -153,6 +157,8 @@ const Sets: React.FC<{
 
       return setExists ? 'Set already exists' : true;
     }
+
+    return 'Set name is required';
   };
 
   return (
@@ -205,7 +211,7 @@ const Sets: React.FC<{
                               {
                                 displayedSets[location.locationName]
                                 && displayedSets[location.locationName].map((set: any, index: number) => (
-                                  <SetCard
+                                  <LocationSetCard
                                     key={index}
                                     set={set}
                                     searchText={setsSearchText}

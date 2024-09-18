@@ -58,6 +58,15 @@ const EditScene: React.FC = () => {
     return scene?._data;
   };
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm({ defaultValues: formData });
+
   const fetchScene = async () => {
     if (sceneId) {
       const existingScene = await getExistingScene();
@@ -79,15 +88,6 @@ const EditScene: React.FC = () => {
   useEffect(() => {
     fetchScene();
   }, [offlineScenes]);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm({ defaultValues: formData });
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();

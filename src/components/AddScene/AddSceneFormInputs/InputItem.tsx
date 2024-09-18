@@ -1,6 +1,6 @@
+import { IonInput, IonItem } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import { IonItem, IonInput } from '@ionic/react';
-import { Controller, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import './InputItem.scss';
 
 interface InputItemProps {

@@ -13,6 +13,7 @@ import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
 import { useHistory, useParams } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
 import ScriptPage from '../../components/SceneScript/ScriptPage';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
@@ -356,15 +357,11 @@ const SceneScript: React.FC<{
     if (popupType === 'extras') {
       return '150px';
     }
+
+    return '16px';
   };
 
   const [sceneColor, setSceneColor] = useState<string>('light');
-
-  useEffect(() => {
-    if (thisScene) {
-      getSceneColor(thisScene).then(setSceneColor);
-    }
-  }, [thisScene, isShooting]);
 
   const getSceneColor = async (scene: Scene) => {
     if (isShooting) {
@@ -406,6 +403,12 @@ const SceneScript: React.FC<{
       return 'light';
     }
   };
+
+  useEffect(() => {
+    if (thisScene) {
+      getSceneColor(thisScene).then(setSceneColor);
+    }
+  }, [thisScene, isShooting]);
 
   const handleZoomIn = () => {
     const newZoomLevel = zoomLevel < 1.5 ? zoomLevel + 0.1 : zoomLevel;
@@ -477,7 +480,7 @@ const SceneScript: React.FC<{
               )}
             </div>
             )
-}
+          }
           {
             popupType && popupType !== 'notes' && showTotalsPopup && (
             <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
@@ -490,7 +493,7 @@ const SceneScript: React.FC<{
                 </div>
               )
                 : getPopupCategories(popupType).map((category: string) => (
-                  <div className="popup-category-container">
+                  <div className="popup-category-container" key={uuidv4()}>
                     <p
                       key={category + popupType}
                       className="popup-category ion-no-margin ion-padding"

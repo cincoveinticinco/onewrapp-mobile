@@ -152,8 +152,57 @@ const SceneDetails: React.FC<{
 
         successMessageSceneToast('Scene updated successfully');
       } catch (error) {
+        errorToast('Error updating scene');
         throw error;
       }
+    }
+  };
+
+  const getSceneColor = async (scene: Scene) => {
+    if (isShooting) {
+      const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
+      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
+
+      const sceneStatus = sceneInShooting?.status;
+      switch (sceneStatus) {
+        case ShootingSceneStatusEnum.Assigned: return 'light';
+        case ShootingSceneStatusEnum.NotShoot: return 'danger';
+        case ShootingSceneStatusEnum.Shoot: return 'success';
+        default: return 'light';
+      }
+    } else {
+      const interior = IntOrExtOptionEnum.INT;
+      const exterior = IntOrExtOptionEnum.EXT;
+      const intExt = IntOrExtOptionEnum.INT_EXT;
+      const extInt = IntOrExtOptionEnum.EXT_INT;
+      const protectionType = SceneTypeEnum.PROTECTION;
+      const sceneType = SceneTypeEnum.SCENE;
+      const day = DayOrNightOptionEnum.DAY;
+      const night = DayOrNightOptionEnum.NIGHT;
+
+      const intOrExt: any = [exterior, intExt, extInt];
+
+      if (scene.sceneType === protectionType) {
+        return 'rose';
+      }
+      if (scene.sceneType === sceneType) {
+        if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
+          return 'dark';
+        }
+        if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
+          return 'light';
+        }
+        if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
+          return 'success';
+        }
+        if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
+          return 'yellow';
+        }
+        if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
+          return 'primary';
+        }
+      }
+      return 'light';
     }
   };
 
@@ -174,6 +223,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Produced seconds updated successfully');
       } catch (error) {
+        errorToast('Error updating produced seconds');
         throw error;
       }
     }
@@ -195,6 +245,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Partiality updated successfully');
       } catch (error) {
+        errorToast('Error updating partiality');
         throw error;
       }
     }
@@ -234,6 +285,7 @@ const SceneDetails: React.FC<{
         }
         successMessageSceneToast('Scene status updated successfully');
       } catch (error) {
+        errorToast('Error updating scene status');
         throw error;
       } finally {
         getSceneColor(thisScene).then(setSceneColor);
@@ -354,54 +406,6 @@ const SceneDetails: React.FC<{
     const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
     history.push(backRoute);
     toggleTabs.showTabs();
-  };
-
-  const getSceneColor = async (scene: Scene) => {
-    if (isShooting) {
-      const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
-      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
-
-      const sceneStatus = sceneInShooting?.status;
-      switch (sceneStatus) {
-        case ShootingSceneStatusEnum.Assigned: return 'light';
-        case ShootingSceneStatusEnum.NotShoot: return 'danger';
-        case ShootingSceneStatusEnum.Shoot: return 'success';
-        default: return 'light';
-      }
-    } else {
-      const interior = IntOrExtOptionEnum.INT;
-      const exterior = IntOrExtOptionEnum.EXT;
-      const intExt = IntOrExtOptionEnum.INT_EXT;
-      const extInt = IntOrExtOptionEnum.EXT_INT;
-      const protectionType = SceneTypeEnum.PROTECTION;
-      const sceneType = SceneTypeEnum.SCENE;
-      const day = DayOrNightOptionEnum.DAY;
-      const night = DayOrNightOptionEnum.NIGHT;
-
-      const intOrExt: any = [exterior, intExt, extInt];
-
-      if (scene.sceneType === protectionType) {
-        return 'rose';
-      }
-      if (scene.sceneType === sceneType) {
-        if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
-          return 'dark';
-        }
-        if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
-          return 'light';
-        }
-        if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
-          return 'success';
-        }
-        if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
-          return 'yellow';
-        }
-        if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
-          return 'primary';
-        }
-      }
-      return 'light';
-    }
   };
 
   useEffect(() => {
