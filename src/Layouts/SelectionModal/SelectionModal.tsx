@@ -72,11 +72,9 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const listOfStrings = listOfOptions.map((option: any) => option.label);
 
   const uncheckedOptions = listOfStrings.filter((label: string) => {
-    const option = listOfOptions.find((option: any) => option.label === label);
-    if (option) {
-      return !selectedOptions.includes(option?.value) || selectedOptions[0]?.id !== option?.value.id;
-    }
-  });
+    const option = listOfOptions.find((o: any) => o.label === label);
+    return !selectedOptions.includes(option?.value) || selectedOptions[0]?.id !== option?.value?.id;
+  })
 
   const filteredOptions = listOfStrings.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
@@ -84,7 +82,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const checkedSelectedOptions: any[] = listOfStrings.filter((option: string) => {
     const optionValue = listOfOptions.find((o: any) => o.label === option);
-    return selectedOptions.includes(optionValue?.value) || selectedOptions[0]?.id == optionValue?.value.id;
+    return selectedOptions.includes(optionValue?.value) || selectedOptions[0]?.id == optionValue?.value?.id;
   });
 
   const isOptionChecked = (label: string) => {

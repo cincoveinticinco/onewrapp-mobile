@@ -1,3 +1,10 @@
+.edit-mode {
+  .custom-table th  {
+    background-color: var(--ion-color-yellow) !important;
+    color: black !important;
+  }
+}
+
 .table-container {
   overflow-x: hidden;
   position: relative;
@@ -46,7 +53,7 @@
   position: sticky;
   z-index: 5;
   outline: 1px solid #ddd;
-  background-color: var(--ion-color-tertiary-dark);
+  background-color: var(--ion-color-tertiary);
 }
 
 .custom-table th.sticky-column {

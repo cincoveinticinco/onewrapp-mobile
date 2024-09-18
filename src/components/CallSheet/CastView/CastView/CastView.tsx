@@ -52,11 +52,6 @@ const CastView: React.FC<CastViewProps> = ({
     },
   ];
 
-  const valiateCastExists = (talentName: string, fieldKeyName: any) => {
-    const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
-    if (talentExists && fieldKeyName === 'cast') return 'This talent already exists';
-    return false;
-  };
 
   const AddCastCallModal: React.FC = () => {
     const modalRef = useRef<HTMLIonModalElement>(null);
@@ -135,6 +130,12 @@ const CastView: React.FC<CastViewProps> = ({
         validate={valiateCastExists}
       />
     );
+  };
+
+  const valiateCastExists = (talentName: string, fieldKeyName: any) => {
+    const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
+    if (talentExists && fieldKeyName === 'cast') return 'This talent already exists';
+    return false;
   };
 
   if (addNewModalIsOpen) return <AddCastCallModal />;

@@ -176,7 +176,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             editMode={scriptReportEditMode}
             setEditMode={setScriptReportEditMode}
             onAddClick={() => {}}
-            saveAfterEdit
+            saveAfterEdit={true}
             saveFunction={saveScriptReport}
             permissionType={permissionType}
           >
@@ -190,7 +190,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
         </div>
       </div>
       <div className="section-wrapper scenes-table">
-        <div className="children-wrapper">
+        <div>
           <div>
             <CallSheet isSection />
           </div>

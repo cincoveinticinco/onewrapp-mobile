@@ -13,7 +13,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
 
   useEffect(() => {
     setPageInteger(Math.floor(observedField || 0));
-    setPageFraction(Math.round((observedField || 0) % 1 * 8));
+    setPageFraction(Math.round((observedField || 0) % (1 * 8)));
   }, []);
 
   useEffect(() => {

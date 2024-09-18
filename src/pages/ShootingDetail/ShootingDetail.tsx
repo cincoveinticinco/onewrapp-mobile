@@ -1,8 +1,8 @@
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonItem, IonPage, IonReorderGroup,
-  ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+  IonButton, IonContent, IonHeader,
+  IonItem, IonPage, IonReorderGroup,
+  ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
 } from '@ionic/react';
-import { save } from 'ionicons/icons';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
@@ -1131,29 +1131,67 @@ const ShootingDetail: React.FC<{
 
   const editScriptReportButton: any = () => {
     if (view === 'script-report') {
-      return (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          className="ion-no-padding toolbar-button"
-          disabled={disableEditions}
-          onClick={() => {
-            if (scriptReportEditMode) {
-              saveScriptReport();
-              setScriptReportEditMode(!scriptReportEditMode);
-            } else {
-              setScriptReportEditMode(!scriptReportEditMode);
-            }
-          }}
-          key="custom-edit"
-        >
-          {scriptReportEditMode
-            ? <IonIcon icon={save} color="success" />
-            : <VscEdit size="20px" color="white" />}
-        </IonButton>
-      );
+      if(!scriptReportEditMode) {
+        return (
+          <IonButton
+            fill="clear"
+            slot="end"
+            color="light"
+            className="ion-no-padding toolbar-button"
+            disabled={disableEditions}
+            onClick={() => {
+              if (scriptReportEditMode) {
+                saveScriptReport();
+                setScriptReportEditMode(!scriptReportEditMode);
+              } else {
+                setScriptReportEditMode(!scriptReportEditMode);
+              }
+            }}
+            key="custom-edit"
+          >
+           <VscEdit size="20px" color="white" />
+          </IonButton>
+        );
+      } else {
+        return (
+          <>
+            <IonButton
+              fill="clear"
+              slot="end"
+              color="light"
+              className="outline-success-button-small"
+              disabled={disableEditions}
+              onClick={() => {
+                if (scriptReportEditMode) {
+                  saveScriptReport();
+                  setScriptReportEditMode(!scriptReportEditMode);
+                } else {
+                  setScriptReportEditMode(!scriptReportEditMode);
+                }
+              }}
+              key="custom-edit"
+            >
+              SAVE
+            </IonButton>
+            <IonButton
+              fill="clear"
+              slot="end"
+              color="light"
+              className="outline-danger-button-small"
+              disabled={disableEditions}
+              onClick={() => {
+                setScriptReportEditMode(false);
+                fetchData();
+              }}
+              key="custom-cancel"
+            >
+              CANCEL
+            </IonButton>
+          </>
+        )
+      }
     }
+    return
   };
 
   if (isLoading) {

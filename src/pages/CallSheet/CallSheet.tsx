@@ -32,8 +32,10 @@ import {
 import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import timeToISOString from '../../utils/timeToIsoString';
 
+import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import './CallSheet.css';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
@@ -188,6 +190,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       };
       setThisShooting(newShooting);
       await oneWrapDb?.shootings.upsert(newShooting);
+      successToast('Cast Calls saved');
     } catch (error) {
       errorToast('Error saving Cast Calls');
       throw error;
@@ -220,6 +223,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       shootingCopy.extraCalls = extraCalls;
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Extra Calls saved');
     } catch (error) {
       errorToast('Error saving Extra Calls');
       throw error;
@@ -255,6 +259,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       shootingCopy.otherCalls = otherCalls;
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Other Calls saved');
     } catch (error) {
       errorToast('Error saving Other Calls');
       throw error;
@@ -358,7 +363,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
               const talentCallInfo = getCallInfo(character.characterName);
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
-                cast: `${character.characterNum}. ${character.characterName}`,
+                cast: `${character.characterNum ? (character.characterNum + '.'): ''} ${character.characterName}`,
                 name: talent?.name,
                 tScn: getNumberScenesByCast(character.characterName),
                 pickUp: talentCallInfo?.pickUp || '--',
@@ -724,29 +729,56 @@ const CallSheet: React.FC<CallSheetProps> = ({
             >
               <IonIcon slot="icon-only" icon={chevronBackOutline} />
             </IonButton>
-            <IonTitle>CALL TIME</IonTitle>
+            <IonTitle>{view.toUpperCase()} CALL TIME</IonTitle>
             {
               thisShooting
               && thisShooting.status !== ShootingStatusEnum.Closed && (
                 <div slot="end">
                   {
                     !editMode ? (
+                      <>
                       <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
                         <VscEdit />
                       </IonButton>
+                      </>
                     ) : (
-                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()} disabled={permissionType !== 1}>
-                        <IonIcon icon={save} />
-                      </IonButton>
+                      <>
+                        <IonButton className='outline-success-button-small' onClick={() => saveEdition()} disabled={permissionType !== 1}>
+                          SAVE
+                        </IonButton>
+                        <IonButton className='outline-danger-button-small' onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                          CANCEL
+                        </IonButton>
+                      </>
                     )
                   }
-                  <AddButton onClick={() => openAddNewModal()} disabled={permissionType !== 1} />
+                  {
+                    !editMode && (
+                      <AddButton onClick={() => openAddNewModal()} disabled={permissionType !== 1} />
+                    )
+                  }
                 </div>
               )
             }
           </IonToolbar>
         </IonHeader>
         <IonContent color="tertiary" fullscreen>
+          <div className='ion-flex'>
+            <div className='ion-margin'>
+              <ShootingInfoLabels 
+                isEditable={false}
+                title='general call'
+                info={getHourMinutesFomISO(thisShooting?.generalCall || '', true) }
+              />
+            </div>
+            <div className='ion-margin'>
+              <ShootingInfoLabels 
+                isEditable={false}
+                title='ready to shoot'
+                info={getHourMinutesFomISO(thisShooting?.shootDate || '', true) }
+              />
+            </div>
+          </div>
           {renderContent()}
         </IonContent>
         <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()} />
@@ -761,61 +793,65 @@ const CallSheet: React.FC<CallSheetProps> = ({
         style={{
           border: '1px solid black',
           backgroundColor: 'var(--ion-color-dark)',
-          alignItems: 'flex-end',
+          alignItems: 'center',
         }}
       >
         <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div onClick={(e) => e.stopPropagation()} className='ion-flex ion-align-items-center'>
           {/* BUTTON FOR EVERY VIEW */}
-          <button
-            onClick={() => setView('cast')}
-            className={`section-button ${view === 'cast' ? 'active' : ''}`}
-          >
-            Cast
-          </button>
-          <button
-            onClick={() => setView('extras')}
-            className={`section-button ${view === 'extras' ? 'active' : ''}`}
-          >
-            Extras
-          </button>
-          <button
-            onClick={() => setView('pictureCars')}
-            className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
-          >
-            Cars
-          </button>
-          <button
-            onClick={() => setView('others')}
-            className={`section-button ${view === 'others' ? 'active' : ''}`}
-          >
-            Others
-          </button>
           {
-              !editMode ? (
-                <IonButton
-                  fill="clear"
-                  color={!editMode ? 'light' : 'success'}
-                  onClick={() => toggleEditMode()}
-                  style={{
-                    marginBottom: '12px',
-                  }}
+            !editMode && (
+              <>
+                <button
+                  onClick={() => setView('cast')}
+                  className={`section-button ${view === 'cast' ? 'active' : ''}`}
                 >
-                  <VscEdit />
-                </IonButton>
-              ) : (
-                <IonButton
-                  fill="clear"
-                  color={!editMode ? 'light' : 'success'}
-                  onClick={() => saveEdition()}
-                  style={{
-                    marginBottom: '12px',
-                  }}
+                  Cast
+                </button>
+                <button
+                  onClick={() => setView('extras')}
+                  className={`section-button ${view === 'extras' ? 'active' : ''}`}
                 >
-                  <IonIcon icon={save} />
+                  Extras
+                </button>
+                <button
+                  onClick={() => setView('pictureCars')}
+                  className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
+                >
+                  Cars
+                </button>
+                <button
+                  onClick={() => setView('others')}
+                  className={`section-button ${view === 'others' ? 'active' : ''}`}
+                >
+                  Others
+                </button>
+              </>
+            )
+          }
+          {
+            !editMode ? (
+              <IonButton
+                fill="clear"
+                color={!editMode ? 'light' : 'success'}
+                onClick={() => toggleEditMode()}
+                style={{
+                  marginBottom: '12px',
+                }}
+              >
+                <VscEdit />
+              </IonButton>
+            ) : (
+              <div className='ion-flex ion-align-items-center'>
+                <IonButton className='outline-success-button-small' onClick={saveEdition}>
+                  SAVE
                 </IonButton>
-              )
-            }
+                <IonButton className='outline-danger-button-small' onClick={toggleEditMode}>
+                  CANCEL
+                </IonButton>
+              </div>
+            )
+          }
         </div>
       </div>
       {open && renderContent()}

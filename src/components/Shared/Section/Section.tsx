@@ -1,3 +1,4 @@
+import React from 'react';
 import { IonButton } from '@ionic/react';
 import { VscEdit, VscSave } from 'react-icons/vsc';
 import AddButton from '../AddButton/AddButton';
@@ -10,9 +11,9 @@ interface SectionProps {
   setEditMode?: React.Dispatch<React.SetStateAction<boolean>>;
   onAddClick: () => void;
   children: React.ReactNode;
-  saveAfterEdit?: boolean
-  saveFunction?: () => void
-  permissionType?: number | null
+  saveAfterEdit?: boolean;
+  saveFunction?: () => void;
+  permissionType?: number | null;
 }
 
 export const Section: React.FC<SectionProps> = ({
@@ -31,18 +32,27 @@ export const Section: React.FC<SectionProps> = ({
     if (saveFunction && setEditMode) {
       if (editMode) {
         return (
-          <VscSave
-            className="toolbar-icon"
-            style={{ color: 'var(--ion-color-primary)' }}
-            onClick={saveFunction}
-          />
+          <>
+          <IonButton onClick={()=> {
+            saveFunction();
+            setEditMode(!editMode);
+          }} fill='clear' className='outline-success-button-small'>
+            SAVE
+          </IonButton>
+          <IonButton onClick={() => setEditMode(!editMode)} fill='clear' className='outline-danger-button-small'>
+            CANCEL
+          </IonButton>
+        </>
         );
       }
-        <VscEdit
-          className="toolbar-icon"
-          style={{ color: 'var(--ion-color-light)' }}
-          onClick={() => setEditMode(!editMode)}
-        />;
+      return (
+        <IonButton onClick={() => setEditMode(!editMode)} fill='clear'>
+          <VscEdit
+            className="toolbar-icon"
+            style={{ color: 'var(--ion-color-light)' }}
+          />
+        </IonButton>
+      );
     }
     return null;
   };
@@ -60,27 +70,25 @@ export const Section: React.FC<SectionProps> = ({
         <p style={{ fontSize: '18px' }}><b>{title.toUpperCase()}</b></p>
         <div onClick={(e) => e.stopPropagation()}>
           {editMode !== undefined && setEditMode && (
-            <IonButton
-              fill="clear"
-              slot="end"
-              color="light"
-              className="toolbar-button"
-              disabled={permissionType !== 1}
-            >
-              {
-              !saveAfterEdit ? (
-                <VscEdit
-                  className="toolbar-icon"
-                  style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
-                  onClick={() => setEditMode && setEditMode(!editMode)}
-                />
+            <>
+              {!saveAfterEdit ? (
+                <IonButton
+                  fill="clear"
+                  slot="end"
+                  color="light"
+                  className="toolbar-button"
+                  disabled={permissionType !== 1}
+                  onClick={() => setEditMode(!editMode)}
+                >
+                  <VscEdit
+                    className="toolbar-icon"
+                    style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
+                  />
+                </IonButton>
               ) : (
-                <>
-                  {renderEditSaveButton()}
-                </>
-              )
-             }
-            </IonButton>
+                renderEditSaveButton()
+              )}
+            </>
           )}
           <AddButton onClick={onAddClick} disabled={permissionType !== 1} />
         </div>
