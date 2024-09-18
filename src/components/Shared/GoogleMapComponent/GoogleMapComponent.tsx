@@ -47,7 +47,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
         draggable: false,
       });
     } catch (error) {
-      console.error('Error creating map:', error);
+      throw error;
+    } finally {
       setIsLoading(false);
     }
   };

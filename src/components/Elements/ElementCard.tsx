@@ -249,7 +249,8 @@ const ElementCard: React.FC<ElementCardProps> = ({
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
       }, 600);
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting category');
+      throw error;
     }
   };
 
@@ -283,8 +284,8 @@ const ElementCard: React.FC<ElementCardProps> = ({
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
     } catch (error: any) {
-      console.error(error);
       errorToast(error || 'Error updating category');
+      throw error;
     }
   };
 

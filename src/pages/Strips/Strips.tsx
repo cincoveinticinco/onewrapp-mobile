@@ -54,9 +54,42 @@ const Strips: React.FC<{
   const location = useLocation();
   useScrollToTop(contentRef, location);
   const { id } = useParams<any>();
-  const [renderScenes, setRenderScenes] = useState<boolean>(false);
   const toggleTabs = useHideTabs();
+
+  const defaultSortPosibilitiesOrder = [
+    {
+      id: 'EPISODE_NUMBER', label: 'EP NUMBER', optionKey: 'episodeNumber', defaultIndex: 0,
+    },
+    {
+      id: 'SCENE_NUMBER', label: 'SCENE NUMBER', optionKey: 'sceneNumber', defaultIndex: 1,
+    },
+    {
+      id: 'DAY_OR_NIGHT', label: 'DAY OR NIGHT', optionKey: 'dayOrNightOption', defaultIndex: 2,
+    },
+    {
+      id: 'INT_OR_EXT', label: 'INT OR EXT', optionKey: 'intOrExtOption', defaultIndex: 3,
+    },
+    {
+      id: 'LOCATION_NAME', label: 'LOCATION NAME', optionKey: 'locationName', defaultIndex: 4,
+    },
+    {
+      id: 'SET_NAME', label: 'SET NAME', optionKey: 'setName', defaultIndex: 5,
+    },
+    {
+      id: 'SCRIPT_DAY', label: 'SCRIPT DAY', optionKey: 'scriptDay', defaultIndex: 6,
+    },
+  ];
+
+  const [renderScenes, setRenderScenes] = useState<boolean>(false);
   const [replicatorCreated, setReplicatorCreated] = useState<boolean>(false);
+  const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
+  const [sortPosibilities, setSortPosibilities] = useState<any[]>(() => {
+    const savedOrder = localStorage.getItem('sortPosibilitiesOrder');
+    if (savedOrder) {
+      return JSON.parse(savedOrder);
+    }
+    return defaultSortPosibilitiesOrder;
+  });
 
   useEffect(() => {
     setRenderScenes(initialReplicationFinished);
@@ -120,43 +153,50 @@ const Strips: React.FC<{
     setSelectedSortOptions(defaultSortOptions);
   };
 
-  const defaultSortPosibilitiesOrder = [
-    {
-      id: 'EPISODE_NUMBER', label: 'EP NUMBER', optionKey: 'episodeNumber', defaultIndex: 0,
-    },
-    {
-      id: 'SCENE_NUMBER', label: 'SCENE NUMBER', optionKey: 'sceneNumber', defaultIndex: 1,
-    },
-    {
-      id: 'DAY_OR_NIGHT', label: 'DAY OR NIGHT', optionKey: 'dayOrNightOption', defaultIndex: 2,
-    },
-    {
-      id: 'INT_OR_EXT', label: 'INT OR EXT', optionKey: 'intOrExtOption', defaultIndex: 3,
-    },
-    {
-      id: 'LOCATION_NAME', label: 'LOCATION NAME', optionKey: 'locationName', defaultIndex: 4,
-    },
-    {
-      id: 'SET_NAME', label: 'SET NAME', optionKey: 'setName', defaultIndex: 5,
-    },
-    {
-      id: 'SCRIPT_DAY', label: 'SCRIPT DAY', optionKey: 'scriptDay', defaultIndex: 6,
-    },
-  ];
-
-  const [sortPosibilities, setSortPosibilities] = useState<any[]>(() => {
-    const savedOrder = localStorage.getItem('sortPosibilitiesOrder');
-    if (savedOrder) {
-      return JSON.parse(savedOrder);
-    }
-    return defaultSortPosibilitiesOrder;
-  });
-
-  const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
-
   useEffect(() => {
     localStorage.setItem('sortPosibilitiesOrder', JSON.stringify(sortPosibilities));
   }, [sortPosibilities]);
+
+  const renderContent = () => {
+    if (filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0) {
+      return (
+        <div className="no-items-message">
+          <p className="ion-no-margin">There are not any scenes that match your search. </p>
+          <IonButton
+            fill="clear"
+            color="primary"
+            className="ion-no-margin reset-filters-option"
+            onClick={() => setSelectedFilterOptions({})}
+          >
+            Reset Filters
+          </IonButton>
+        </div>
+      );
+    }
+
+    if (filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0) {
+      return (
+        <div className="no-items-message">
+          <p className="ion-no-margin">There are not any scenes in this project. </p>
+        </div>
+      );
+    }
+
+    return (
+      <IonGrid className="scenes-grid ion-margin">
+        <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
+          {displayedScenes.map((scene, i) => (
+            <SceneCard
+              key={`scene-item-${scene.id}-${i}`}
+              scene={scene as any}
+              searchText={searchText}
+              permissionType={permissionType}
+            />
+          ))}
+        </ScrollInfiniteContext>
+      </IonGrid>
+    );
+  };
 
   return (
     <>
@@ -179,36 +219,7 @@ const Strips: React.FC<{
           </IonRefresher>
           <StripTagsToolbar />
           <Suspense>
-            {filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length > 0 ? (
-              <div className="no-items-message">
-                <p className="ion-no-margin">There are not any scenes that match your search. </p>
-                <IonButton
-                  fill="clear"
-                  color="primary"
-                  className="ion-no-margin reset-filters-option"
-                  onClick={() => setSelectedFilterOptions({})}
-                >
-                  Reset Filters
-                </IonButton>
-              </div>
-            ) : filteredScenes.length === 0 && Object.keys(selectedFilterOptions).length === 0 ? (
-              <div className="no-items-message">
-                <p className="ion-no-margin">There are not any scenes in this project. </p>
-              </div>
-            ) : (
-              <IonGrid className="scenes-grid ion-margin">
-                <ScrollInfiniteContext setDisplayedData={setDisplayedScenes} filteredData={filteredScenes} batchSize={20}>
-                  {displayedScenes.map((scene, i) => (
-                    <SceneCard
-                      key={`scene-item-${scene.id}-${i}`}
-                      scene={scene as any}
-                      searchText={searchText}
-                      permissionType={permissionType}
-                    />
-                  ))}
-                </ScrollInfiniteContext>
-              </IonGrid>
-            )}
+            { renderContent() }
           </Suspense>
         </IonContent>
       </MainPagesLayout>
