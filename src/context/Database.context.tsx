@@ -171,7 +171,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
     if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) return false;
 
-    const canPush = ['scenes', 'shootings'].includes(collection.getSchemaName().toLowerCase());
+    const canPush = ['scenes', 'shootings', 'crew'].includes(collection.getSchemaName().toLowerCase());
 
     try {
       const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })

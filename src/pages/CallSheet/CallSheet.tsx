@@ -364,7 +364,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
               const talentCallInfo = getCallInfo(character.characterName);
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
-                cast: `${character.characterNum ? (character.characterNum + '.'): ''} ${character.characterName}`,
+                cast: `${character.characterNum ? (`${character.characterNum}.`) : ''} ${character.characterName}`,
                 name: talent?.name,
                 tScn: getNumberScenesByCast(character.characterName),
                 pickUp: talentCallInfo?.pickUp || '--',
@@ -730,7 +730,11 @@ const CallSheet: React.FC<CallSheetProps> = ({
             >
               <IonIcon slot="icon-only" icon={chevronBackOutline} />
             </IonButton>
-            <IonTitle>{view.toUpperCase()} CALL TIME</IonTitle>
+            <IonTitle>
+              {view.toUpperCase()}
+              {' '}
+              CALL TIME
+            </IonTitle>
             {
               thisShooting
               && thisShooting.status !== ShootingStatusEnum.Closed && (
@@ -738,16 +742,16 @@ const CallSheet: React.FC<CallSheetProps> = ({
                   {
                     !editMode ? (
                       <>
-                      <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
-                        <VscEdit />
-                      </IonButton>
+                        <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                          <VscEdit />
+                        </IonButton>
                       </>
                     ) : (
                       <>
-                        <IonButton className='outline-success-button-small' onClick={() => saveEdition()} disabled={permissionType !== 1}>
+                        <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={permissionType !== 1}>
                           SAVE
                         </IonButton>
-                        <IonButton className='outline-danger-button-small' onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                        <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
                           CANCEL
                         </IonButton>
                       </>
@@ -764,25 +768,25 @@ const CallSheet: React.FC<CallSheetProps> = ({
           </IonToolbar>
         </IonHeader>
         <IonContent color="tertiary" fullscreen>
-          <div className='ion-flex'>
-            <div 
-              style={!useIsMobile() ? {width: '150px'} : {}}
-              className='ion-flex ion-align-items-center ion-padding'
+          <div className="ion-flex">
+            <div
+              style={!useIsMobile() ? { width: '150px' } : {}}
+              className="ion-flex ion-align-items-center ion-padding"
             >
-              <ShootingInfoLabels 
+              <ShootingInfoLabels
                 isEditable={false}
-                title='general call'
-                info={getHourMinutesFomISO(thisShooting?.generalCall || '', true) }
+                title="general call"
+                info={getHourMinutesFomISO(thisShooting?.generalCall || '', true)}
               />
             </div>
-            <div 
-              style={!useIsMobile() ? {width: '150px'} : {}}
-              className='ion-flex ion-align-items-center ion-padding'
+            <div
+              style={!useIsMobile() ? { width: '150px' } : {}}
+              className="ion-flex ion-align-items-center ion-padding"
             >
-              <ShootingInfoLabels 
+              <ShootingInfoLabels
                 isEditable={false}
-                title='ready to shoot'
-                info={getHourMinutesFomISO(thisShooting?.shootDate || '', true) }
+                title="ready to shoot"
+                info={getHourMinutesFomISO(thisShooting?.shootDate || '', true)}
               />
             </div>
           </div>
@@ -804,7 +808,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
         }}
       >
         <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
-        <div onClick={(e) => e.stopPropagation()} className='ion-flex ion-align-items-center'>
+        <div onClick={(e) => e.stopPropagation()} className="ion-flex ion-align-items-center">
           {/* BUTTON FOR EVERY VIEW */}
           {
             !editMode && (
@@ -849,11 +853,11 @@ const CallSheet: React.FC<CallSheetProps> = ({
                 <VscEdit />
               </IonButton>
             ) : (
-              <div className='ion-flex ion-align-items-center'>
-                <IonButton className='outline-success-button-small' onClick={saveEdition}>
+              <div className="ion-flex ion-align-items-center">
+                <IonButton className="outline-success-button-small" onClick={saveEdition}>
                   SAVE
                 </IonButton>
-                <IonButton className='outline-danger-button-small' onClick={toggleEditMode}>
+                <IonButton className="outline-danger-button-small" onClick={toggleEditMode}>
                   CANCEL
                 </IonButton>
               </div>

@@ -73,21 +73,30 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const uncheckedOptions = listOfStrings.filter((label: string) => {
     const option = listOfOptions.find((o: any) => o.label === label);
-    return !selectedOptions.includes(option?.value) || selectedOptions[0]?.id !== option?.value?.id;
+    if(typeof option?.value === 'string') {
+      return !selectedOptions.includes(option?.value);
+    }
+    return selectedOptions[0]?.id !== option?.value?.id;
   })
-
+  
   const filteredOptions = listOfStrings.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
   const uncheckedFilteredOptions = uncheckedOptions.filter((option: string) => option.toLowerCase().includes(searchText.toLowerCase()));
 
   const checkedSelectedOptions: any[] = listOfStrings.filter((option: string) => {
     const optionValue = listOfOptions.find((o: any) => o.label === option);
-    return selectedOptions.includes(optionValue?.value) || selectedOptions[0]?.id == optionValue?.value?.id;
+    if(typeof optionValue?.value === 'string') {
+      return selectedOptions.includes(optionValue?.value);
+    }
+    return selectedOptions[0]?.id === optionValue?.value?.id;
   });
 
   const isOptionChecked = (label: string) => {
     const option = listOfOptions.find((o: any) => o.label === label);
-    return selectedOptions.includes(option?.value) || selectedOptions[0]?.id == option?.value?.id;
+    if(typeof option?.value === 'string') {
+      return selectedOptions.includes(option?.value) 
+    }
+    return selectedOptions[0]?.id === option?.value?.id;
   };
 
   const defaultFormValues: any = {};

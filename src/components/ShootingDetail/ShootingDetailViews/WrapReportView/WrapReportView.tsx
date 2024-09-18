@@ -176,7 +176,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             editMode={scriptReportEditMode}
             setEditMode={setScriptReportEditMode}
             onAddClick={() => {}}
-            saveAfterEdit={true}
+            saveAfterEdit
             saveFunction={saveScriptReport}
             permissionType={permissionType}
           >

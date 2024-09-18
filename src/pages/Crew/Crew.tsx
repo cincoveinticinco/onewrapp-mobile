@@ -3,7 +3,7 @@ import { IonButton, IonContent, IonIcon } from '@ionic/react';
 import { caretDown, caretUp } from 'ionicons/icons';
 import React, { useMemo, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { useRxData, useRxDB } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
@@ -13,6 +13,8 @@ import { Crew as CrewInterface } from '../../interfaces/crew.types';
 import { Unit } from '../../interfaces/unitTypes.types';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './Crew.scss';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
 
 interface FormStructureInterface {
   fullName: string;
@@ -39,6 +41,9 @@ const Crew: React.FC<{
   const [selectedCrewId, setSelectedCrewId] = useState<string | null>(null);
   const { id } = useParams<{ id: string }>();
   const oneWrappDb: any = useRxDB();
+  const history = useHistory();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast()
 
   // Fetch crew data using useRxData
   const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
@@ -59,8 +64,7 @@ const Crew: React.FC<{
   // Create or update crew member
   const handleUpsert = async (data: FormStructureInterface) => {
     const unit = units.find((unit) => unit.id === data.unitId);
-    const department = departmentsOptions.find((department: any) => department.label === data.department);
-    const formmatedData: CrewInterface = {
+    const formattedData: CrewInterface = {
       id: selectedCrewId || `${Date.now()}`,
       fullName: data.fullName,
       positionEsp: data.position,
@@ -71,24 +75,37 @@ const Crew: React.FC<{
       unitId: data.unitId,
       unitName: unit?.unitName || '',
       unitNumber: unit?.unitNumber || 0,
-      departmentId: department?.value || 0,
       order: parseInt(data.order),
       visibleOnCall: data.visibleOnCall,
       visibleOnHeader: data.visibleOnHeader,
       onCall: data.onCall,
       dailyReportSignature: data.dailyReportSignature,
       emergencyContact: data.emergencyContact,
-      depNameEng: department?.label || '',
-      depNameEsp: department?.label || '',
+      depNameEng: data.department.toUpperCase(),
+      depNameEsp: data.department.toUpperCase(),
       projectId: parseInt(id),
       updatedAt: new Date().toISOString(),
-
     };
-
+  
     try {
-      await oneWrappDb?.crew.upsert(formmatedData);
+      await oneWrappDb.crew.upsert(formattedData);
+      successToast(`Crew member ${selectedCrewId ? 'updated' : 'added'} successfully`);
+      setAddNewModalIsOpen(false);
+      setSelectedCrewId(null);
     } catch (error) {
-      throw error;
+      errorToast(`Error ${selectedCrewId ? 'updating' : 'adding'} crew member`);
+      console.error(`Error ${selectedCrewId ? 'updating' : 'adding'} crew member:`, error);
+    }
+  };
+
+  const handleDeleteCrew = async (id: string) => {
+    try {
+      await oneWrappDb.crew.findOne({ selector: { id } }).remove();
+      successToast('Crew member deleted successfully');
+      // Optionally, you might want to update the local state or refetch the crew data
+    } catch (error) {
+      errorToast('Error deleting crew member');
+      console.error('Error deleting crew member:', error);
     }
   };
 
@@ -125,7 +142,7 @@ const Crew: React.FC<{
 
   const unitsOptions: SelectOptionsInterface[] = units.map((unit) => ({
     value: unit.id,
-    label: unit.unitName,
+    label: unit.unitName || 'NO NAME UNIT',
   }));
 
   const countryOptions: SelectOptionsInterface[] = countries.map((country) => ({
@@ -136,10 +153,9 @@ const Crew: React.FC<{
   // departments value = id, label = name
 
   const departmentsOptions: SelectOptionsInterface[] = Object.keys(crewByDepartment).map((department: any) => {
-    const departmentId: any = crew.find((member: any) => member?.depNameEng === department || member.depNameEsp == department)?.departmentId;
 
     return {
-      value: departmentId,
+      value: department,
       label: department,
     };
   });
@@ -148,11 +164,11 @@ const Crew: React.FC<{
     {
       fieldKeyName: 'department',
       label: 'Department',
-      type: 'select',
+      type: 'text',
       required: true,
       placeholder: 'Enter department',
-      col: '12',
       selectOptions: departmentsOptions,
+      col: '12',
     },
     {
       fieldKeyName: 'fullName',
@@ -249,23 +265,25 @@ const Crew: React.FC<{
     },
   ];
 
-  const getDefaultValuesById = (id: string | null) => {
+  const getDefaultValuesById = (id: string | null): Partial<FormStructureInterface> => {
     if (!id) return {};
-    const crewMember: any = crew.find((member: any) => member.id === id);
+    const crewMember = crew.find((member) => member.id === id);
+    console.log(crewMember);
     if (!crewMember) return {};
     return {
       fullName: crewMember.fullName,
-      department: crewMember.depNameEng || crewMember.depNameEsp,
+      position: crewMember.positionEng || crewMember.positionEsp,
       email: crewMember.email,
+      countryId: crewMember.countryId,
       phone: crewMember.phone,
-      unitId: parseInt(crewMember.unitId),
-      order: crewMember.order,
+      unitId: crewMember.unitId,
+      order: crewMember.order.toString(),
       visibleOnCall: crewMember.visibleOnCall,
       visibleOnHeader: crewMember.visibleOnHeader,
       onCall: crewMember.onCall,
       dailyReportSignature: crewMember.dailyReportSignature,
       emergencyContact: crewMember.emergencyContact,
-      countryId: crewMember.countryId,
+      department: crewMember.depNameEng || crewMember.depNameEsp,
     };
   };
 
@@ -274,7 +292,7 @@ const Crew: React.FC<{
       isOpen={addNewModalIsOpen}
       title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
       formInputs={crewFormInputs}
-      handleEdition={() => {}}
+      handleEdition={handleUpsert}
       defaultFormValues={getDefaultValuesById(selectedCrewId)}
       setIsOpen={setAddNewModalIsOpen}
     />
@@ -300,6 +318,8 @@ const Crew: React.FC<{
     </IonButton>
   );
 
+  const handleBack = () => history.push('/my/projects');
+
   return (
     <MainPagesLayout
       search
@@ -309,6 +329,7 @@ const Crew: React.FC<{
       isLoading={isFetching}
       customButtons={[openModalButton]}
       permissionType={permissionType}
+      handleBack={handleBack}
     >
       <IonContent color="tertiary">
         {filteredDepartments.length === 0 && !isFetching ? (
@@ -356,7 +377,7 @@ const Crew: React.FC<{
                     key={member.id}
                     crew={member}
                     onEdit={openModal}
-                    onDelete={() => {}}
+                    onDelete={handleDeleteCrew}
                     permissionType={permissionType}
                   />
                 ))}

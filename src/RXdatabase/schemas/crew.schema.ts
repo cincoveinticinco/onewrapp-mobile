@@ -43,9 +43,6 @@ const crewSchema = {
     unitNumber: {
       type: ['integer', 'null'],
     },
-    departmentId: {
-      type: 'number',
-    },
     order: {
       type: ['integer', 'null'],
     },
@@ -61,7 +58,7 @@ const crewSchema = {
     dailyReportSignature: {
       type: 'boolean',
     },
-    emercencyContact: {
+    emergencyContact: {
       type: 'boolean',
     },
     unitName: {
@@ -74,7 +71,7 @@ const crewSchema = {
       type: ['string', 'null'],
     },
   },
-  required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber', 'departmentId'],
+  required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber'],
 };
 
 const crewSchemaInput = {

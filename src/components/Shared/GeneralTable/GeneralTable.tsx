@@ -181,7 +181,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     : columns.filter((column) => !column.showOnlyWhenEdit);
 
   return (
-    <div className={"table-container" + (editMode && " edit-mode")}>
+    <div className={`table-container${editMode && ' edit-mode'}`}>
       <div className="table-wrapper">
         <table className="custom-table">
           <thead>

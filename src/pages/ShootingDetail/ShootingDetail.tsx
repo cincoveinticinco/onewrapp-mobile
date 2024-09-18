@@ -1,7 +1,7 @@
 import {
   IonButton, IonContent, IonHeader,
   IonItem, IonPage, IonReorderGroup,
-  ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter
+  ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
   useContext, useEffect, useRef, useState,
@@ -44,6 +44,7 @@ import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
+import { useRxDB } from 'rxdb-hooks';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -189,7 +190,7 @@ const ShootingDetail: React.FC<{
 
   const [isDisabled, unused_] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
-  const { oneWrapDb } = useContext(DatabaseContext);
+  const oneWrappDb: any = useRxDB()
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
@@ -513,16 +514,16 @@ const ShootingDetail: React.FC<{
 
   const getShootingData = async () => {
     setIsLoading(true);
-    const shootings: any = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
+    const shootings: any = await oneWrappDb?.shootings.find({ selector: { id: shootingId } }).exec();
     const scenesInShoot = shootings[0]._data.scenes;
     const bannersInShoot = shootings[0]._data.banners;
     const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
 
-    const scenesData = await oneWrapDb?.scenes.find({
+    const scenesData = await oneWrappDb?.scenes.find({
       selector: { sceneId: { $in: scenesIds } },
     }).exec();
 
-    const scenesNotIncluded = await oneWrapDb?.scenes.find({
+    const scenesNotIncluded = await oneWrappDb?.scenes.find({
       selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } },
     }).exec();
 
@@ -607,11 +608,11 @@ const ShootingDetail: React.FC<{
 
   const saveScriptReport = async () => {
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       shootingCopy.scenes = shootingData.mergedScenesShootData;
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
@@ -622,9 +623,9 @@ const ShootingDetail: React.FC<{
   };
 
   const updateShootingTime = async (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut', time: string) => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrappDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
 
         if (shooting) {
           const shootingCopy = { ...shooting._data };
@@ -636,7 +637,7 @@ const ShootingDetail: React.FC<{
 
           shootingCopy[field] = newTimeISO;
 
-          await oneWrapDb.shootings.upsert(shootingCopy);
+          await oneWrappDb.shootings.upsert(shootingCopy);
 
           fetchData();
         }
@@ -648,9 +649,9 @@ const ShootingDetail: React.FC<{
   };
 
   const deleteMeal = async (mealToDelete: Meal) => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrappDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
 
         if (shooting) {
           const shootingCopy = { ...shooting._data };
@@ -668,7 +669,7 @@ const ShootingDetail: React.FC<{
             }
           }
 
-          await oneWrapDb.shootings.upsert(shootingCopy);
+          await oneWrappDb.shootings.upsert(shootingCopy);
 
           fetchData();
         }
@@ -680,9 +681,9 @@ const ShootingDetail: React.FC<{
   };
 
   const deleteAdvanceCall = async (callToDelete: AdvanceCall) => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrappDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
 
         if (shooting) {
           const shootingCopy = { ...shooting._data };
@@ -698,7 +699,7 @@ const ShootingDetail: React.FC<{
             }
           }
 
-          await oneWrapDb.shootings.upsert(shootingCopy);
+          await oneWrappDb.shootings.upsert(shootingCopy);
         }
       } catch (error) {
         errorToast('Error deleting advance call');
@@ -709,7 +710,7 @@ const ShootingDetail: React.FC<{
 
   const addNewLocation = async (formData: Partial<LocationInfo>) => {
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const locationInfo = {
         locationTypeId: formData.locationTypeId,
         locationName: formData.locationName,
@@ -723,7 +724,7 @@ const ShootingDetail: React.FC<{
         locations: [...shooting._data.locations, locationInfo],
       };
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
 
       fetchData();
     } catch (error) {
@@ -736,7 +737,7 @@ const ShootingDetail: React.FC<{
 
   const addNewHospital = async (formData: Partial<LocationInfo>) => {
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const hospitalInfo = {
         locationTypeId: formData.locationTypeId,
         locationName: formData.locationName,
@@ -750,7 +751,7 @@ const ShootingDetail: React.FC<{
         hospitals: [...shooting._data.hospitals, hospitalInfo],
       };
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast('Error adding hospital');
@@ -763,7 +764,7 @@ const ShootingDetail: React.FC<{
   const updateExistingLocation = async (formData: Partial<LocationInfo>) => {
     try {
       const currentLocationIndex = shootingData.shotingInfo.locations.findIndex((location: LocationInfo) => location.locationName === selectedLocation?.locationName);
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       const updatedLocations = [...shootingCopy.locations];
       updatedLocations[currentLocationIndex] = {
@@ -776,7 +777,7 @@ const ShootingDetail: React.FC<{
 
       shootingCopy.locations = updatedLocations;
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast(`Error updating location: ${error}`);
@@ -789,7 +790,7 @@ const ShootingDetail: React.FC<{
   const updateExistingHospital = async (formData: Partial<LocationInfo>) => {
     try {
       const currentHospitalIndex = shootingData.shotingInfo.hospitals.findIndex((hospital: LocationInfo) => hospital.locationName === selectedHospital?.locationName);
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       const updatedHospitals = [...shootingCopy.hospitals];
       updatedHospitals[currentHospitalIndex] = {
@@ -802,7 +803,7 @@ const ShootingDetail: React.FC<{
 
       shootingCopy.hospitals = updatedHospitals;
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast(`Error updating hospital: ${error}`);
@@ -814,12 +815,12 @@ const ShootingDetail: React.FC<{
 
   const removeLocation = async (location: LocationInfo, locationIndex: number) => {
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       const updatedLocations = shootingCopy.locations.filter((loc: LocationInfo, index: number) => index !== locationIndex);
       shootingCopy.locations = updatedLocations;
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast(`Error removing location: ${error}`);
@@ -831,12 +832,12 @@ const ShootingDetail: React.FC<{
 
   const removeHospital = async (hospital: LocationInfo, hospitalIndex: number) => {
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       const updatedHospitals = shootingCopy.hospitals.filter((hosp: LocationInfo, index: number) => index !== hospitalIndex);
       shootingCopy.hospitals = updatedHospitals;
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
       errorToast(`Error removing hospital: ${error}`);
@@ -862,7 +863,7 @@ const ShootingDetail: React.FC<{
   };
 
   const addNewAdvanceCall = async (advanceCall: any) => {
-    const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+    const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
 
     const advanceCallCopy = { ...advanceCall };
 
@@ -878,7 +879,7 @@ const ShootingDetail: React.FC<{
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCallCopy];
 
     try {
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
       errorToast(`Error adding advance call: ${error}`);
       return;
@@ -888,7 +889,7 @@ const ShootingDetail: React.FC<{
   };
 
   const addNewMeal = async (meal: any) => {
-    const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+    const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
     const mealCopy = { ...meal };
     mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
     mealCopy.shootingId = parseInt(shootingId);
@@ -904,7 +905,7 @@ const ShootingDetail: React.FC<{
 
     shootingCopy.meals = [...shootingCopy.meals, mealCopy];
     try {
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
       errorToast(`Error adding meal: ${error}`);
       return;
@@ -914,9 +915,9 @@ const ShootingDetail: React.FC<{
   };
 
   const handleEditMeal = async (meal: Meal) => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrappDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
 
         if (shooting) {
           const shootingCopy = { ...shooting._data };
@@ -934,7 +935,7 @@ const ShootingDetail: React.FC<{
 
             shootingCopy.meals = updatedMeals;
 
-            await oneWrapDb.shootings.upsert(shootingCopy);
+            await oneWrappDb.shootings.upsert(shootingCopy);
 
             successToast('Meal updated successfully');
           }
@@ -947,9 +948,9 @@ const ShootingDetail: React.FC<{
   };
 
   const handleEditAdvanceCall = async (advanceCall: AdvanceCall) => {
-    if (oneWrapDb && shootingId) {
+    if (oneWrappDb && shootingId) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
 
         if (shooting) {
           const shootingCopy = { ...shooting._data };
@@ -966,7 +967,7 @@ const ShootingDetail: React.FC<{
 
             shootingCopy.advanceCalls = updatedAdvanceCalls;
 
-            await oneWrapDb.shootings.upsert(shootingCopy);
+            await oneWrappDb.shootings.upsert(shootingCopy);
           }
         }
       } catch (error) {
@@ -993,13 +994,13 @@ const ShootingDetail: React.FC<{
     }));
 
     try {
-      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
       shootingCopy.scenes = updatedItems.filter((item: any) => item.cardType === 'scene').map((scene: any) => formatSceneAsShootingScene(scene));
       // eslint-disable-next-line
       shootingCopy.banners = updatedItems.filter((item: any) => item.cardType === 'banner').map(({ cardType, ...banner } : mergedSceneBanner) => banner);
 
-      await oneWrapDb?.shootings.upsert(shootingCopy);
+      await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
       errorToast(`Error reordering scenes: ${error}`);
       throw error;
@@ -1009,9 +1010,9 @@ const ShootingDetail: React.FC<{
   };
 
   const saveShooting = async () => {
-    if (oneWrapDb && shootingId && !isLoading) {
+    if (oneWrappDb && shootingId && !isLoading) {
       try {
-        const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         const updatedScenes = shootingData.mergedSceneBanners
           .filter((item: any) => item.cardType === 'scene')
           .map((scene: any) => formatSceneAsShootingScene(scene));
@@ -1023,7 +1024,7 @@ const ShootingDetail: React.FC<{
         shootingCopy.scenes = updatedScenes;
         shootingCopy.banners = updatedBanners;
 
-        await oneWrapDb.shootings.upsert(shootingCopy);
+        await oneWrappDb.shootings.upsert(shootingCopy);
       } catch (error) {
         errorToast('Error saving shooting');
         throw error;
@@ -1036,7 +1037,7 @@ const ShootingDetail: React.FC<{
   //* ***************************** EFFECTS *****************************/
   useEffect(() => {
     fetchData();
-  }, [oneWrapDb]);
+  }, [oneWrappDb]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -1111,7 +1112,7 @@ const ShootingDetail: React.FC<{
   );
 
   const addShoBanSc = () => {
-    if(view === 'scenes') {
+    if (view === 'scenes') {
       return (
         <div className="button-wrapper" slot="end" key="custom-add-button">
           <IonButton
@@ -1131,13 +1132,11 @@ const ShootingDetail: React.FC<{
         </div>
       );
     }
-
-    return
-  }
+  };
 
   const editScriptReportButton: any = () => {
     if (view === 'script-report') {
-      if(!scriptReportEditMode) {
+      if (!scriptReportEditMode) {
         return (
           <IonButton
             fill="clear"
@@ -1155,49 +1154,47 @@ const ShootingDetail: React.FC<{
             }}
             key="custom-edit"
           >
-           <VscEdit size="20px" color="white" />
+            <VscEdit size="20px" color="white" />
           </IonButton>
         );
-      } else {
-        return (
-          <>
-            <IonButton
-              fill="clear"
-              slot="end"
-              color="light"
-              className="outline-success-button-small"
-              disabled={disableEditions}
-              onClick={() => {
-                if (scriptReportEditMode) {
-                  saveScriptReport();
-                  setScriptReportEditMode(!scriptReportEditMode);
-                } else {
-                  setScriptReportEditMode(!scriptReportEditMode);
-                }
-              }}
-              key="custom-edit"
-            >
-              SAVE
-            </IonButton>
-            <IonButton
-              fill="clear"
-              slot="end"
-              color="light"
-              className="outline-danger-button-small"
-              disabled={disableEditions}
-              onClick={() => {
-                setScriptReportEditMode(false);
-                fetchData();
-              }}
-              key="custom-cancel"
-            >
-              CANCEL
-            </IonButton>
-          </>
-        )
       }
+      return (
+        <>
+          <IonButton
+            fill="clear"
+            slot="end"
+            color="light"
+            className="outline-success-button-small"
+            disabled={disableEditions}
+            onClick={() => {
+              if (scriptReportEditMode) {
+                saveScriptReport();
+                setScriptReportEditMode(!scriptReportEditMode);
+              } else {
+                setScriptReportEditMode(!scriptReportEditMode);
+              }
+            }}
+            key="custom-edit"
+          >
+            SAVE
+          </IonButton>
+          <IonButton
+            fill="clear"
+            slot="end"
+            color="light"
+            className="outline-danger-button-small"
+            disabled={disableEditions}
+            onClick={() => {
+              setScriptReportEditMode(false);
+              fetchData();
+            }}
+            key="custom-cancel"
+          >
+            CANCEL
+          </IonButton>
+        </>
+      );
     }
-    return
   };
 
   if (isLoading) {

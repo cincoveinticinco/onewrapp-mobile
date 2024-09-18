@@ -16,7 +16,7 @@ import './CrewCard.scss';
 interface CrewCardProps {
   crew: Crew;
   onEdit: (id: string) => void;
-  onDelete: () => void;
+  onDelete: (id: string) => void;
   permissionType?: number | null;
 }
 
@@ -55,7 +55,7 @@ const CrewCard: React.FC<CrewCardProps> = ({
           <IonButton fill="clear" onClick={() => onEdit(crew.id)} disabled={disableEditions}>
             <CiEdit className="button-icon edit" />
           </IonButton>
-          <IonButton fill="clear" onClick={onDelete} disabled={disableEditions}>
+          <IonButton fill="clear" onClick={() => onDelete(crew.id)} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

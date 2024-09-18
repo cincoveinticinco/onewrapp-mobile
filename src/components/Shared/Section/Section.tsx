@@ -33,20 +33,24 @@ export const Section: React.FC<SectionProps> = ({
       if (editMode) {
         return (
           <>
-          <IonButton onClick={()=> {
-            saveFunction();
-            setEditMode(!editMode);
-          }} fill='clear' className='outline-success-button-small'>
-            SAVE
-          </IonButton>
-          <IonButton onClick={() => setEditMode(!editMode)} fill='clear' className='outline-danger-button-small'>
-            CANCEL
-          </IonButton>
-        </>
+            <IonButton
+              onClick={() => {
+                saveFunction();
+                setEditMode(!editMode);
+              }}
+              fill="clear"
+              className="outline-success-button-small"
+            >
+              SAVE
+            </IonButton>
+            <IonButton onClick={() => setEditMode(!editMode)} fill="clear" className="outline-danger-button-small">
+              CANCEL
+            </IonButton>
+          </>
         );
       }
       return (
-        <IonButton onClick={() => setEditMode(!editMode)} fill='clear'>
+        <IonButton onClick={() => setEditMode(!editMode)} fill="clear">
           <VscEdit
             className="toolbar-icon"
             style={{ color: 'var(--ion-color-light)' }}

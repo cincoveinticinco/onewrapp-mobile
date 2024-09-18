@@ -10,7 +10,6 @@ export interface Crew {
   phone: string;
   updatedAt: string;
   unitNumber: number;
-  departmentId: number;
   order: number;
   visibleOnCall: boolean;
   visibleOnHeader: boolean;

@@ -227,6 +227,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       type={input.type}
                       errorMessage={errorMessage}
                       style={{ width: '100%' }}
+                      suggestions={input.selectOptions?.map((option: FormInput) => option.label) || []}
                     />
                   )}
                 </IonCol>
