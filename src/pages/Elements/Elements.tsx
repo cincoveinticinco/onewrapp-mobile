@@ -1,25 +1,28 @@
-import React, {
-  useContext, useState, useMemo, useRef, useEffect,
-} from 'react';
 import {
   IonContent,
 } from '@ionic/react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo, useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router';
+import ElementCard from '../../components/Elements/ElementCard';
+import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import DatabaseContext from '../../context/Database.context';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import { SceneTypeEnum } from '../../Ennums/ennums';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import { SceneTypeEnum } from '../../Ennums/ennums';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/Scenes.context';
-import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import ElementCard from '../../components/Elements/ElementCard';
-import './Elements.scss';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../utils/removeAccents';
-import AppLoader from '../../hooks/Shared/AppLoader';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import './Elements.scss';
 
 const Elements: React.FC<{
   permissionType?: number | null;
@@ -150,15 +153,11 @@ const Elements: React.FC<{
 
   useEffect(() => {
     setFilteredCategories(categoriesData);
-  }, [
-    categoriesData,
-  ]);
+  }, [categoriesData]);
 
   useEffect(() => {
     setFilteredElements(elementsData);
-  }, [
-    elementsData,
-  ]);
+  }, [elementsData]);
 
   useEffect(() => {
     if (searchText.length > 0) {

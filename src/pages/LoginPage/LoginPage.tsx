@@ -17,7 +17,7 @@ import './LoginPage.css';
 interface Props {
 }
 
-const LoginPage: React.FC<Props> = ({}) => {
+const LoginPage: React.FC<Props> = () => {
   const { saveLogin } = useAuth();
   const errorToast = useErrorToast();
 
