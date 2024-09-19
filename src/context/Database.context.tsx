@@ -1,25 +1,25 @@
+import { debounce } from 'lodash';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
-import { debounce } from 'lodash';
 import AppDataBase from '../RXdatabase/database';
-import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
-import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
-import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs.schema';
 import HttpReplicator from '../RXdatabase/replicator';
-import UnitsSchema from '../RXdatabase/schemas/units.schema';
+import CrewSchema from '../RXdatabase/schemas/crew.schema';
+import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs.schema';
+import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
+import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
 import ShootingsSchema from '../RXdatabase/schemas/shootings.schema';
 import TalentsSchema from '../RXdatabase/schemas/talents.schema';
+import UnitsSchema from '../RXdatabase/schemas/units.schema';
 import AuthContext from './Auth.context';
-import CrewSchema from '../RXdatabase/schemas/crew.schema';
 
 import CountriesSchema from '../RXdatabase/schemas/country.schema';
 import ServiceMatricesSchema from '../RXdatabase/schemas/serviceMatrices.schema';
 import UserSchema from '../RXdatabase/schemas/user.schema';
+import useNetworkStatus from '../hooks/Shared/useNetworkStatus';
 import { User } from '../interfaces/user.types';
-
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
   offlineScenes: any[];
@@ -95,12 +95,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     checkSession, setLoadingAuth, getToken, logout,
   } = useContext(AuthContext);
 
-  // Resync
-
-  const getOnLineStatus = () => (typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean'
-    ? navigator.onLine
-    : true);
-
   const resyncScenes: any = useRef(null);
   const resyncShootings: any = useRef(null);
   const resyncProjectsUser: any = useRef(null);
@@ -119,7 +113,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
   const [initialReplicationFinished, setInitialReplicationFinished] = useState(true);
   const [replicationStatus, setReplicationStatus] = useState<string>('');
-  const [isOnline, setIsOnline] = useState(getOnLineStatus());
+  const isOnline =  useNetworkStatus();
   const [replicationPercentage, setReplicationPercentage] = useState(0);
   const [projectsAreOffline, setProjectsAreOffline] = useState<boolean>(
     localStorage.getItem('projectsAreOffline') ? JSON.parse(localStorage.getItem('projectsAreOffline') as string) : false,
@@ -214,21 +208,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId, 10) }, resyncCrew, parseInt(projectId, 10));
 
   const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
-
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
 
   useEffect(() => {
     initializeProjectsUserReplication();
