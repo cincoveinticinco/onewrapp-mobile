@@ -27,16 +27,31 @@ const CastView: React.FC<CastViewProps> = ({
   permissionType,
 }) => {
   const columns: Column[] = [
-    { key: 'cast', title: 'CAST', type: 'double-data', textAlign: 'left', secondaryKey: 'name'},
-    { key: 'tScn', title: 'SCN.', type: 'text', notShowWhenEdit: true },
-    { key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true},
-    { key: 'callTime', title: 'CALL', type: 'hour', editable: true},
-    { key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true},
-    { key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true},
-    { key: 'readyToShoot', title: 'READY AT', type: 'hour', editable: true},
-    { key: 'notes', title: 'NOTES', type: 'text', editable: true},
+    {
+      key: 'cast', title: 'CAST', type: 'double-data', textAlign: 'left', secondaryKey: 'name',
+    },
+    {
+      key: 'tScn', title: 'SCN.', type: 'text', notShowWhenEdit: true,
+    },
+    {
+      key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true,
+    },
+    {
+      key: 'callTime', title: 'CALL', type: 'hour', editable: true,
+    },
+    {
+      key: 'onMakeUp', title: 'MAKEUP', type: 'hour', editable: true,
+    },
+    {
+      key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true,
+    },
+    {
+      key: 'readyToShoot', title: 'READY AT', type: 'hour', editable: true,
+    },
+    {
+      key: 'notes', title: 'NOTES', type: 'text', editable: true,
+    },
   ];
-
 
   const AddCastCallModal: React.FC = () => {
     const modalRef = useRef<HTMLIonModalElement>(null);

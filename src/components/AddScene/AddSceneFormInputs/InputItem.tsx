@@ -51,9 +51,7 @@ const InputItem: React.FC<InputItemProps> = ({
 
     // Filter suggestions based on input
     if (suggestions.length > 0) {
-      const filtered = suggestions.filter(suggestion =>
-        suggestion.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = suggestions.filter((suggestion) => suggestion.toLowerCase().includes(value.toLowerCase()));
       setFilteredSuggestions(filtered);
       setShowSuggestions(filtered.length > 0);
     }

@@ -34,7 +34,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
 
   const tabs: TabConfig[] = [
     {
-      tab: 'shootingScenes', label: 'BACK', icon: home, onClick: handleBack,
+      tab: 'shootingScenes', label: 'CALENDAR', icon: home, onClick: handleBack,
     },
     {
       tab: 'shootingInfo', label: 'SHOOTING INFO', icon: informationCircleOutline, onClick: () => setView('info'), view: 'info',

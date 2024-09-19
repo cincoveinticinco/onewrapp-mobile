@@ -43,7 +43,7 @@ const Crew: React.FC<{
   const oneWrappDb: any = useRxDB();
   const history = useHistory();
   const successToast = useSuccessToast();
-  const errorToast = useErrorToast()
+  const errorToast = useErrorToast();
 
   // Fetch crew data using useRxData
   const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
@@ -86,7 +86,7 @@ const Crew: React.FC<{
       projectId: parseInt(id),
       updatedAt: new Date().toISOString(),
     };
-  
+
     try {
       await oneWrappDb.crew.upsert(formattedData);
       successToast(`Crew member ${selectedCrewId ? 'updated' : 'added'} successfully`);
@@ -152,13 +152,10 @@ const Crew: React.FC<{
 
   // departments value = id, label = name
 
-  const departmentsOptions: SelectOptionsInterface[] = Object.keys(crewByDepartment).map((department: any) => {
-
-    return {
-      value: department,
-      label: department,
-    };
-  });
+  const departmentsOptions: SelectOptionsInterface[] = Object.keys(crewByDepartment).map((department: any) => ({
+    value: department,
+    label: department,
+  }));
 
   const crewFormInputs: FormInput[] = [
     {

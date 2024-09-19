@@ -9,6 +9,7 @@ import {
 import { IoMdAdd } from 'react-icons/io';
 import { VscEdit } from 'react-icons/vsc';
 import { useHistory, useParams } from 'react-router';
+import { useRxDB } from 'rxdb-hooks';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -44,7 +45,6 @@ import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
-import { useRxDB } from 'rxdb-hooks';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -190,7 +190,7 @@ const ShootingDetail: React.FC<{
 
   const [isDisabled, unused_] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
-  const oneWrappDb: any = useRxDB()
+  const oneWrappDb: any = useRxDB();
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
@@ -210,6 +210,8 @@ const ShootingDetail: React.FC<{
   const [selectedHospital, setSelectedHospital] = useState<LocationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
+  const [searchText, setSearchText] = useState('');
+  const [searchMode, setSearchMode] = useState(false);
 
   // *************************** STATES ************************************//
 
@@ -610,10 +612,13 @@ const ShootingDetail: React.FC<{
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
+      console.log(shootingCopy);
       shootingCopy.scenes = shootingData.mergedScenesShootData;
 
       await oneWrappDb?.shootings.upsert(shootingCopy);
-      fetchData();
+      setTimeout(() => {
+        fetchData();
+      }, 200);
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
@@ -1186,7 +1191,6 @@ const ShootingDetail: React.FC<{
             disabled={disableEditions}
             onClick={() => {
               setScriptReportEditMode(false);
-              fetchData();
             }}
             key="custom-cancel"
           >
@@ -1201,10 +1205,20 @@ const ShootingDetail: React.FC<{
     return (<IonContent color="tertiary" fullscreen>{ AppLoader()}</IonContent>);
   }
 
+  const renderSearchBar = () => (
+    view === 'production-report' && {
+      search: true,
+      searchMode,
+      setSearchMode,
+      setSearchText,
+      searchText,
+    }
+  );
+
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar name={shootingData.shootingFormattedDate} customButtons={[editScriptReportButton, addShoBanSc]} back handleBack={handleBack} />
+        <Toolbar name={shootingData.shootingFormattedDate} customButtons={[editScriptReportButton, addShoBanSc]} back handleBack={handleBack} {...renderSearchBar()} />
       </IonHeader>
       {additionMenu && (
         <div className="add-menu" style={{ backgroundColor: 'black', outline: '1px solid white' }}>
@@ -1402,7 +1416,7 @@ const ShootingDetail: React.FC<{
         view === 'production-report'
         && (
         <IonContent color="tertiary" fullscreen>
-          <ProductionReportView />
+          <ProductionReportView searchText={searchText} />
         </IonContent>
         )
       }

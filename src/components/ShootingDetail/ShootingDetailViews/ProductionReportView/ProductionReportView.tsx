@@ -35,7 +35,11 @@ interface ServiceDraft {
   files: number;
 }
 
-const ProductionReportView: React.FC = () => {
+interface ProductionReportViewProps {
+  searchText?: string;
+}
+
+const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText }) => {
   const { shootingId } = useParams<{ shootingId: string }>();
   const { oneWrapDb } = useContext(DatabaseContext);
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
@@ -275,18 +279,20 @@ const ProductionReportView: React.FC = () => {
 
   const renderEditSaveButton = (prServiceTypeId: string) => (
     editModes[prServiceTypeId] ? (
-      <IonButton
-        fill="clear"
-        slot="end"
-        color="light"
-        className="toolbar-button"
-        onClick={() => saveSection(prServiceTypeId)}
-      >
-        <VscSave
-          className="toolbar-icon"
-          style={{ color: 'var(--ion-color-primary)' }}
-        />
-      </IonButton>
+      <>
+        <IonButton
+          className="outline-success-button-small"
+          onClick={() => saveSection(prServiceTypeId)}
+        >
+          SAVE
+        </IonButton>
+        <IonButton
+          className="outline-danger-button-small"
+          onClick={() => toggleEditMode(prServiceTypeId)}
+        >
+          CANCEL
+        </IonButton>
+      </>
     ) : (
       <IonButton
         fill="clear"
@@ -315,13 +321,18 @@ const ProductionReportView: React.FC = () => {
             className="ion-flex ion-justify-content-between"
             style={{
               border: '1px solid black',
-              backgroundColor: 'var(--ion-color-tertiary-dark)',
+              backgroundColor: 'var(--ion-color-dark)',
             }}
             onClick={() => toggleSection(prServiceTypeId)}
-          > 
-            <div className='ion-flex'>
+          >
+            <div className="ion-flex">
               <DropDownButton open={openSections[prServiceTypeId]} />
-              <p className='common-title'><b>TOTAL {group.prServiceTypeName.toUpperCase()}</b></p>
+              <p className="common-title">
+                <b>
+                  TOTAL
+                  {group.prServiceTypeName.toUpperCase()}
+                </b>
+              </p>
             </div>
             <div
               onClick={(e) => e.stopPropagation()}
@@ -330,11 +341,11 @@ const ProductionReportView: React.FC = () => {
               }}
             >
               <div className="ion-text-center ion-flex ion-align-items-center">
+                {renderEditSaveButton(prServiceTypeId)}
                 <p className="ion-no-margin">
                   {group.totalSection.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
                 </p>
               </div>
-              {renderEditSaveButton(prServiceTypeId)}
             </div>
           </div>
           {openSections[prServiceTypeId] && (
@@ -343,6 +354,7 @@ const ProductionReportView: React.FC = () => {
               data={group.services}
               editFunction={(rowIndex, rowKey, rowValue, type) => editService(prServiceTypeId, rowIndex, rowKey, rowValue, type)}
               editMode={editModes[prServiceTypeId] || false}
+              searchText={searchText}
             />
           )}
         </React.Fragment>

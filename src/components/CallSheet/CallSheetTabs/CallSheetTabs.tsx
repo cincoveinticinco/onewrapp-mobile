@@ -26,7 +26,7 @@ const CallSheetTabs: React.FC<CallSheetTabsProps> = ({ setView, view, handleBack
     >
       <IonIcon icon={home} />
       <IonLabel>
-        HOME
+        SHOOTING
       </IonLabel>
     </IonTabButton>
     <IonTabButton

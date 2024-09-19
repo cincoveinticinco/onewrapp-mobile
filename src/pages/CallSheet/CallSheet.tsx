@@ -157,7 +157,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           shootingId: parseInt(shootingId, 10),
           pickUp: call.pickUp,
           callTime: call.callTime || callInDb?.callTime || '',
-          onMakeUp: call.onMakeUp  || callInDb?.onMakeUp || '',
+          onMakeUp: call.onMakeUp || callInDb?.onMakeUp || '',
           onWardrobe: call.onWardrobe || callInDb?.onWardrobe || '',
           readyToShoot: call.readyToShoot || callInDb?.readyToShoot || '',
           arrived: callInDb?.arrived || '',

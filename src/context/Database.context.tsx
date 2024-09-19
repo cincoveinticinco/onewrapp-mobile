@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
+import { debounce } from 'lodash';
 import AppDataBase from '../RXdatabase/database';
 import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
 import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
@@ -116,7 +117,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(localStorage.getItem('projectId') || null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
+  const [initialReplicationFinished, setInitialReplicationFinished] = useState(true);
   const [replicationStatus, setReplicationStatus] = useState<string>('');
   const [isOnline, setIsOnline] = useState(getOnLineStatus());
   const [replicationPercentage, setReplicationPercentage] = useState(0);
@@ -230,9 +231,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (oneWrapRXdatabase && isOnline && projectId) {
+    initializeProjectsUserReplication();
+    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
       const initializeAllReplications = async () => {
-        await initializeProjectsUserReplication();
         await initializeSceneReplication();
         await initializeServiceMatricesReplication();
         await initializeParagraphReplication();
@@ -243,7 +244,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         await initializeCountriesReplication();
       };
 
-      initializeAllReplications();
+      debounce(initializeAllReplications, 1000)();
     }
   }, [oneWrapRXdatabase, isOnline, projectId]);
 

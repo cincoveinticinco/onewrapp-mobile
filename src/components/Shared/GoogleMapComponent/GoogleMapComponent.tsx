@@ -54,7 +54,10 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: isMobile ? '300px' : '400px' }}>
+    <div style={{
+      position: 'relative', width: '100%', height: isMobile ? '300px' : '400px', background: 'var(--ion-color-tertiary-dark)',
+    }}
+    >
       {isLoading && AppLoader()}
       <capacitor-google-map
         ref={mapRef}

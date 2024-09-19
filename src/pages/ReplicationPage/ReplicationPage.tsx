@@ -1,4 +1,4 @@
-// ReplicationPage.tsx
+import React, { useContext, useEffect, useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -12,9 +12,9 @@ import {
   IonTitle,
   IonToolbar,
   useIonViewDidEnter,
+  IonSpinner,
 } from '@ionic/react';
 import { refresh } from 'ionicons/icons';
-import React, { useContext, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
@@ -32,6 +32,16 @@ const ReplicationPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const toggleTabs = useHideTabs();
+  const [isReplicating, setIsReplicating] = useState(false);
+  const [dots, setDots] = useState('');
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  const messages = [
+    'Please wait, replication can take some minutes to finish',
+    'Do not close or refresh the app',
+    'Replication is in progress, please be patient',
+    'Syncing data, this may take a while',
+  ];
 
   useIonViewDidEnter(() => {
     toggleTabs.hideTabs();
@@ -39,17 +49,35 @@ const ReplicationPage: React.FC = () => {
 
   const handleRetry = () => {
     if (isOnline) {
+      setIsReplicating(true);
       initialProjectReplication();
     }
   };
 
   useEffect(() => {
     if (isOnline && !projectsInfoIsOffline[`project_${id}`]) {
+      setIsReplicating(true);
       initialProjectReplication().finally(() => {
+        setIsReplicating(false);
         history.push(`/my/projects/${id}/strips`);
       });
     }
   }, [isOnline, id]);
+
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? '' : `${prev}.`));
+    }, 500);
+
+    const messageInterval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000); // Change message every 10 seconds
+
+    return () => {
+      clearInterval(dotsInterval);
+      clearInterval(messageInterval);
+    };
+  }, []);
 
   return (
     <IonPage>
@@ -64,6 +92,14 @@ const ReplicationPage: React.FC = () => {
             <IonText color="primary">
               <h2>Replication Progress</h2>
             </IonText>
+            {isReplicating && (
+              <div className="spinner-container">
+                <p>
+                  {messages[messageIndex]}
+                  {dots}
+                </p>
+              </div>
+            )}
             <IonProgressBar
               value={replicationPercentage / 100}
               style={{ height: '20px', margin: '20px 0', borderRadius: '10px' }}
@@ -88,17 +124,16 @@ const ReplicationPage: React.FC = () => {
         <IonButton
           expand="block"
           onClick={handleRetry}
-          disabled={!isOnline || (replicationPercentage > 0 && replicationPercentage < 100)}
+          disabled={!isOnline || isReplicating}
           className="retry-button"
           style={{
-            backgroundColor: {
-              '--background': 'var(--ion-color-yellow)',
-            },
+            '--background': 'var(--ion-color-yellow)',
           }}
         >
           <IonIcon icon={refresh} slot="start" />
           Retry Replication
         </IonButton>
+        <IonSpinner name="crescent" color="primary" />
       </IonContent>
     </IonPage>
   );

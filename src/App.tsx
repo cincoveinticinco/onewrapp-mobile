@@ -35,7 +35,7 @@ setupIonicReact();
 const AppContent: React.FC = () => {
   const { loggedIn, loading } = useAuth();
   const {
-    isDatabaseReady, projectId, initializeSceneReplication, initializeShootingReplication,
+    isDatabaseReady,
   } = React.useContext(DatabaseContext);
 
   if (loading || !isDatabaseReady) {

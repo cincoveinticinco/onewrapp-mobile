@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './GeneralTable.css';
 import {
   IonInput, IonCheckbox, IonRange, IonDatetime,
 } from '@ionic/react';
+import { debounce } from 'lodash';
 import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import timeToISOString from '../../../utils/timeToIsoString';
 import secondsToMinSec from '../../../utils/secondsToMinSec';
 import minSecToSeconds from '../../../utils/minSecToSeconds';
+import HighlightedText from '../HighlightedText/HighlightedText';
 
 export interface Column {
   key: string;
@@ -29,11 +31,61 @@ interface GeneralTableProps {
   stickyColumnCount?: number;
   editMode?: boolean;
   editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
+  searchText?: string;
+}
+
+export interface Column {
+  key: string;
+  title: string;
+  sticky?: boolean;
+  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency' | 'double-data';
+  textAlign?: 'left' | 'center' | 'right';
+  editable?: boolean;
+  showOnlyWhenEdit?: boolean;
+  selectableOptions?: string[];
+  switchValues?: { left: any, neutral: any, right: any };
+  backgroundColor?: string;
+  secondaryKey?: string;
+  notShowWhenEdit?: boolean;
+  minWidth?: number;
+}
+
+interface GeneralTableProps {
+  columns: Column[];
+  data: any[];
+  stickyColumnCount?: number;
+  editMode?: boolean;
+  editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
+  searchText?: string;
 }
 
 const GeneralTable: React.FC<GeneralTableProps> = ({
-  columns, data, stickyColumnCount = 1, editMode = false, editFunction,
+  columns, data, stickyColumnCount = 1, editMode = false, editFunction, searchText,
 }) => {
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      if (searchText && searchText !== '') {
+        const lowerCaseSearchText = searchText.toLowerCase();
+        const newFilteredData = data.filter((row) => {
+          const rowValues = Object.values(row);
+          return rowValues.some((value) => {
+            if (typeof value === 'string') {
+              return value.toLowerCase().includes(lowerCaseSearchText);
+            }
+            return false;
+          });
+        });
+        setFilteredData(newFilteredData);
+      } else {
+        setFilteredData(data);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchText, data]);
+
   const formatCurrency = (value: number): string => new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
@@ -41,11 +93,10 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     maximumFractionDigits: 2,
   }).format(value);
 
-
   const renderDoubleData = (row: any, column: Column) => {
     const primaryValue = row[column.key] || '';
     const secondaryValue = column.secondaryKey ? row[column.secondaryKey] : '';
-  
+
     return (
       <div className="double-data-container">
         <div className="primary-data">{primaryValue}</div>
@@ -53,7 +104,6 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
       </div>
     );
   };
-  
 
   const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
     const value = row[column.key];
@@ -71,7 +121,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     }
 
     if (editMode && column.editable) {
-      return renderEditableInput(value, column.type || 'text', editFunction, rowIndex, column.key, column?.switchValues);
+      return renderEditableInput(value, column.type || 'text', rowIndex, column.key, column?.switchValues);
     }
 
     return formatValue(value, column.type || 'text', column.switchValues);
@@ -98,15 +148,27 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     }
   };
 
+  const handleEdit = (rowIndex: number, rowKey: string, newValue: any, type: string) => {
+    const updatedData = [...filteredData];
+    const dataIndex = data.findIndex((item) => item === filteredData[rowIndex]);
+
+    if (dataIndex !== -1) {
+      updatedData[rowIndex] = { ...updatedData[rowIndex], [rowKey]: newValue };
+      setFilteredData(updatedData);
+
+      if (editFunction) {
+        editFunction(dataIndex, rowKey, newValue, type);
+      }
+    }
+  };
+
   const renderEditableInput = (
     value: any,
     type: string,
-    onChange: any,
-    rowIndex: any,
-    rowKey: any,
+    rowIndex: number,
+    rowKey: string,
     switchValues?: { left: any; neutral: any; right: any },
   ) => {
-
     const handleChange = (newValue: any) => {
       let formattedValue = newValue;
 
@@ -127,7 +189,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
         formattedValue = newValue;
       }
 
-      onChange(rowIndex, rowKey, formattedValue, type);
+      handleEdit(rowIndex, rowKey, formattedValue, type);
     };
 
     switch (type) {
@@ -186,7 +248,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
             />
           </div>
         );
-        case 'double-data':
+      case 'double-data':
       default:
         return (
           <IonInput
@@ -201,53 +263,56 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   const visibleColumns = columns.filter((column) => {
     if (editMode) {
       return !column.notShowWhenEdit;
-    } else {
-      return !column.showOnlyWhenEdit;
     }
+    return !column.showOnlyWhenEdit;
   });
 
-  return (
-    <div className={`table-container${editMode && ' edit-mode'}`}>
-      <div className="table-wrapper">
-        <table className="custom-table">
-          <thead>
-            <tr>
-              {visibleColumns.map((column, index) => (
-                <th
-                  key={column.key}
-                  className={index < stickyColumnCount ? 'sticky-column' : ''}
-                  style={{ left: `${index * 150}px` }}
-                >
-                  {column.title.toUpperCase()}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-              >
-                {visibleColumns.map((column, colIndex) => (
-                  <td
-                    key={`${rowIndex}-${column.key}`}
-                    className={colIndex < stickyColumnCount ? 'sticky-column' : ''}
-                    style={{
-                      left: `${colIndex * 150}px`,
-                      textAlign: column.textAlign || 'center',
-                      backgroundColor: row[column.backgroundColor as any],
-                    }}
+  if (filteredData.length > 0) {
+    return (
+      <div className={`table-container${editMode && ' edit-mode'}`}>
+        <div className="table-wrapper">
+          <table className="custom-table">
+            <thead>
+              <tr>
+                {visibleColumns.map((column, index) => (
+                  <th
+                    key={column.key}
+                    className={index < stickyColumnCount ? 'sticky-column' : ''}
+                    style={{ left: `${index * 150}px` }}
                   >
-                    {getColumnValue(row, column, editMode, rowIndex)}
-                  </td>
+                    {column.title.toUpperCase()}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredData.map((row: any, rowIndex: number) => (
+                <tr key={rowIndex}>
+                  {visibleColumns.map((column, colIndex) => (
+                    <td
+                      key={`${rowIndex}-${column.key}`}
+                      className={colIndex < stickyColumnCount ? 'sticky-column' : ''}
+                      style={{
+                        left: `${colIndex * 150}px`,
+                        textAlign: column.textAlign || 'center',
+                        backgroundColor: row[column.backgroundColor as any],
+                        color: column.type === 'boolean' ? row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)' : 'var(--ion-color-light)',
+                        minWidth: column.minWidth ? `${column.minWidth}px` : 'auto',
+                      }}
+                    >
+                      {getColumnValue(row, column, editMode, rowIndex)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 };
 
 export default GeneralTable;

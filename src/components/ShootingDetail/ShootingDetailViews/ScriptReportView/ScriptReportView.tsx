@@ -20,13 +20,15 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   openSceneModal,
 }) => {
   const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any) => {
-    const copy: mergedSceneShoot[] = mergedScenesShoot.map((item, index) => {
+    const copy: mergedSceneShoot[] = [...mergedScenesShoot];
+    const copyMergedScenesInShoot = copy.map((item, index) => {
       if (index === rowIndex) {
         return { ...item, [rowKey]: rowValue };
       }
       return item;
     });
-    setMergedScenesShoot(copy);
+    console.log(copyMergedScenesInShoot);
+    setMergedScenesShoot(copyMergedScenesInShoot);
   };
 
   const disableEditions = permissionType !== 1;
@@ -99,6 +101,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       title: 'Comment',
       textAlign: 'center',
       editable: !disableEditions,
+      minWidth: 200,
     },
     {
       key: 'status',

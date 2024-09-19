@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'io.onewrapp.mobile',
   appName: 'one-wrapp-mobile',
   webDir: 'dist',
   server: {
