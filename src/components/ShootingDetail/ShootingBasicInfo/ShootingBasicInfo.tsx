@@ -164,7 +164,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   return (
     <IonGrid fixed style={{ width: '100%' }}>
       <IonRow>
-        <IonCol size="10">
+        <IonCol sizeSm="10" sizeXs='12'>
           {
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
               <div>
@@ -180,9 +180,9 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
             )
           }
         </IonCol>
-        <IonCol size="2">
+        <IonCol sizeSm='2' sizeXs='12'>
           <IonRow>
-            <IonCol size="12" className="ion-padding">
+            <IonCol sizeSm="12" sizeXs="4" className="ion-padding">
               <EditableField
                 field="generalCall"
                 value={shootingInfo.generalCall}
@@ -192,7 +192,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
                 updateShootingTime={updateShootingTime}
               />
             </IonCol>
-            <IonCol size="12" className="ion-padding">
+            <IonCol sizeSm="12" sizeXs="4" className="ion-padding">
               <EditableField
                 field="onSet"
                 value={shootingInfo.onSet}
@@ -202,7 +202,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
                 updateShootingTime={updateShootingTime}
               />
             </IonCol>
-            <IonCol size="12" className="ion-padding">
+            <IonCol sizeSm="12" sizeXs="4" className="ion-padding">
               <EditableField
                 field="estimatedWrap"
                 value={shootingInfo.estimatedWrap}
@@ -212,7 +212,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
                 updateShootingTime={updateShootingTime}
               />
             </IonCol>
-            <IonCol size="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
+            <IonCol sizeSm="12" sizeXs="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
               <p style={{
                 textAlign: 'center',
               }}

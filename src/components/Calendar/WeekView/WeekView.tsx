@@ -39,7 +39,7 @@ const WeekView: React.FC<WeekViewProps> = ({ currentDate, shootings }) => {
   const renderDays = useCallback(
     () => days.map((day) => (
       <IonCol key={day.toISOString()} className="week-day" size="12">
-        <IonCard className={format(day, 'dd') === format(currentDate, 'dd') ? 'current-day' : ''}>
+        <IonCard className={format(day, 'dd') === format(currentDate, 'dd') ? 'current-day' : ''} color='dark'>
           <IonCardHeader>
             <IonCardTitle>{format(day, 'EEEE')}</IonCardTitle>
             <IonCardTitle>{format(day, 'dd')}</IonCardTitle>

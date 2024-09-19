@@ -21,6 +21,8 @@ import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { Shooting } from '../../interfaces/shooting.types';
 import { Unit } from '../../interfaces/unitTypes.types';
 import './Calendar.css';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import WeekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';
@@ -39,6 +41,7 @@ const Calendar: React.FC = () => {
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     const storedDate = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -292,17 +295,25 @@ const Calendar: React.FC = () => {
   };
 
   const prevWeek = () => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: startOfWeek(addDays(prevState.currentDate, -7), { weekStartsOn: 1 }),
-    }));
+    setCalendarState((prevState) => {
+      const newDate = addDays(prevState.currentDate, -7);
+      saveDateToLocalStorage(newDate); // Guardar la nueva fecha en localStorage
+      return {
+        ...prevState,
+        currentDate: newDate,
+      };
+    });
   };
-
+  
   const nextWeek = () => {
-    setCalendarState((prevState) => ({
-      ...prevState,
-      currentDate: startOfWeek(addDays(prevState.currentDate, 7), { weekStartsOn: 1 }),
-    }));
+    setCalendarState((prevState) => {
+      const newDate = addDays(prevState.currentDate, 7);
+      saveDateToLocalStorage(newDate); // Guardar la nueva fecha en localStorage
+      return {
+        ...prevState,
+        currentDate: newDate,
+      };
+    });
   };
 
   return (
@@ -324,7 +335,7 @@ const Calendar: React.FC = () => {
             <IonLabel>Semana</IonLabel>
           </IonSegmentButton>
         </IonSegment> */}
-        {calendarState.viewMode === 'month' ? (
+        {!isMobile ? (
           <MonthViewToolbar
             currentDate={calendarState.currentDate}
             onPrev={prevMonth}
@@ -335,19 +346,22 @@ const Calendar: React.FC = () => {
             setOpenAddShootingModal={() => setOpenAddShootingModal(!openAddShootingModal)}
           />
         ) : (
-          // <weekViewToolbar
-          //   currentDate={calendarState.currentDate}
-          //   onPrev={prevWeek}
-          //   onNext={nextWeek}
-          // />
-          <></>
+          <WeekViewToolbar
+            currentDate={calendarState.currentDate}
+            onPrev={prevWeek}
+            onNext={nextWeek}
+            goToCurrentDay={goToCurrentDay}
+            onDateChange={handleDateChange}
+            isLoading={isLoading}
+          />
+        
         )}
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
         <Legend items={legendItems} />
         {isLoading || isFetchingUnits ? (
           AppLoader()
-        ) : calendarState.viewMode === 'month' ? (
+        ) : !isMobile  ? (
           <MonthView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
         ) : (
           <WeekView currentDate={calendarState.currentDate} shootings={calendarState.shootings} />
