@@ -112,3 +112,12 @@
     padding: 3px;
   }
 }
+
+.primary-data,
+.secondary-data {
+  text-transform: uppercase;
+}
+
+.primary-data {
+  font-weight: bold;
+}

@@ -240,12 +240,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   ) => {
     setOtherCalls((prevOtherCalls) => {
       const editedOtherCall = JSON.parse(JSON.stringify(prevOtherCalls[otherIndex]));
-      editedOtherCall[otherKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue, 10) : newValue;
+      editedOtherCall[otherKey] = newValue;
       const newOtherCalls = [
         ...prevOtherCalls.slice(0, otherIndex),
         editedOtherCall,
@@ -275,18 +270,10 @@ const CallSheet: React.FC<CallSheetProps> = ({
     type: string,
   ) => {
     setPictureCars((prevPictureCars) => {
-      // Crear una copia profunda del pictureCar que estamos editando
       const editedPictureCar = JSON.parse(JSON.stringify(prevPictureCars[pictureCarIndex]));
 
-      // Actualizar el campo específico
-      editedPictureCar[pictureCarKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedPictureCar[pictureCarKey] = newValue;
 
-      // Crear un nuevo array con el pictureCar actualizado
       const newPictureCars = [
         ...prevPictureCars.slice(0, pictureCarIndex),
         editedPictureCar,
@@ -305,6 +292,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       setThisShooting(shootingCopy as Shooting);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Picture Cars saved');
     } catch (error) {
       errorToast('Error saving Picture Cars');
       throw error;
@@ -366,7 +354,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
                 cast: `${character.characterNum ? (`${character.characterNum}.`) : ''} ${character.characterName}`,
-                name: talent?.name,
+                name: `${talent?.name || ''} ${talent?.lastName || ''}`,
                 tScn: getNumberScenesByCast(character.characterName),
                 pickUp: talentCallInfo?.pickUp || '--',
                 callTime: talentCallInfo?.callTime || '--',

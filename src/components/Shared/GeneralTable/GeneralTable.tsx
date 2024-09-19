@@ -12,13 +12,15 @@ export interface Column {
   key: string;
   title: string;
   sticky?: boolean;
-  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency';
+  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency' | 'double-data';
   textAlign?: 'left' | 'center' | 'right';
   editable?: boolean;
   showOnlyWhenEdit?: boolean;
   selectableOptions?: string[];
   switchValues?: { left: any, neutral: any, right: any };
   backgroundColor?: string;
+  secondaryKey?: string;
+  notShowWhenEdit?: boolean;
 }
 
 interface GeneralTableProps {
@@ -39,8 +41,26 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     maximumFractionDigits: 2,
   }).format(value);
 
+
+  const renderDoubleData = (row: any, column: Column) => {
+    const primaryValue = row[column.key] || '';
+    const secondaryValue = column.secondaryKey ? row[column.secondaryKey] : '';
+  
+    return (
+      <div className="double-data-container">
+        <div className="primary-data">{primaryValue}</div>
+        <div className="secondary-data">{secondaryValue}</div>
+      </div>
+    );
+  };
+  
+
   const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
     const value = row[column.key];
+
+    if (column.type === 'double-data') {
+      return renderDoubleData(row, column);
+    }
 
     if (!editMode && column.type) {
       return formatValue(value, column.type, column.switchValues);
@@ -86,6 +106,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     rowKey: any,
     switchValues?: { left: any; neutral: any; right: any },
   ) => {
+
     const handleChange = (newValue: any) => {
       let formattedValue = newValue;
 
@@ -165,6 +186,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
             />
           </div>
         );
+        case 'double-data':
       default:
         return (
           <IonInput
@@ -176,9 +198,13 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     }
   };
 
-  const visibleColumns = editMode
-    ? columns
-    : columns.filter((column) => !column.showOnlyWhenEdit);
+  const visibleColumns = columns.filter((column) => {
+    if (editMode) {
+      return !column.notShowWhenEdit;
+    } else {
+      return !column.showOnlyWhenEdit;
+    }
+  });
 
   return (
     <div className={`table-container${editMode && ' edit-mode'}`}>

@@ -312,44 +312,29 @@ const ProductionReportView: React.FC = () => {
       {Object.entries(groupedServices).map(([prServiceTypeId, group]: any) => (
         <React.Fragment key={prServiceTypeId}>
           <div
-            className="ion-flex ion-justify-content-between ion-padding-start"
+            className="ion-flex ion-justify-content-between"
             style={{
               border: '1px solid black',
-              backgroundColor: 'var(--ion-color-tertiary-shade)',
+              backgroundColor: 'var(--ion-color-tertiary-dark)',
             }}
             onClick={() => toggleSection(prServiceTypeId)}
-          >
-            <p style={{ fontSize: '18px' }}><b>{group.prServiceTypeName.toUpperCase()}</b></p>
+          > 
+            <div className='ion-flex'>
+              <DropDownButton open={openSections[prServiceTypeId]} />
+              <p className='common-title'><b>TOTAL {group.prServiceTypeName.toUpperCase()}</b></p>
+            </div>
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
                 display: 'flex',
               }}
             >
-              <div
-                className="total-label"
-                style={
-                  {
-                    textAlign: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 10px',
-                    height: '100%',
-                  }
-                }
-              >
-                <p
-                  className="ion-no-margin"
-                  style={{ paddingBottom: '5px' }}
-                >
+              <div className="ion-text-center ion-flex ion-align-items-center">
+                <p className="ion-no-margin">
                   {group.totalSection.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
                 </p>
-                <small><b>TOTAL COST</b></small>
               </div>
               {renderEditSaveButton(prServiceTypeId)}
-              <DropDownButton open={openSections[prServiceTypeId]} />
             </div>
           </div>
           {openSections[prServiceTypeId] && (
