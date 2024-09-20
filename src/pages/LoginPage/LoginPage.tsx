@@ -1,13 +1,20 @@
-import { IonButton, IonIcon, IonPage, IonContent } from '@ionic/react';
-import { logoGoogle } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { useGoogleLogin } from '@react-oauth/google'; // Para web
-import { isPlatform } from '@ionic/react'; // Detectar plataforma
+import {
+  IonButton, IonContent, IonHeader, IonIcon, IonPage,
+  isPlatform,
+} from '@ionic/react';
+import { useGoogleLogin } from '@react-oauth/google';
+import {
+  logoGoogle,
+} from 'ionicons/icons';
+import ReactPlayer from 'react-player';
+import { useHistory } from 'react-router';
+import environment from '../../../environment';
+import footerLogo from '../../assets/images/footerLogo.png';
+import logo from '../../assets/images/logo_onewrapp.png';
 import { useAuth } from '../../context/Auth.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import './LoginPage.css';
-import environment from '../../../environment';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 const LoginPage: React.FC = () => {
   const { saveLogin } = useAuth();
@@ -76,14 +83,48 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonContent className="ion-padding">
-        <IonButton onClick={login} expand="block" className="login-button ion-no-padding">
-          <IonIcon icon={logoGoogle} slot="start" />
-          SIGN IN WITH GOOGLE
-        </IonButton>
-      </IonContent>
-    </IonPage>
+      <IonPage>
+        <IonHeader />
+        <IonContent className="ion-padding" fullscreen color="tertiary">
+          <div className="login-video-wrapper">
+            <ReactPlayer
+              className="react-player fixed-bottom"
+              url="videos/backgroundLogin.mp4"
+              width="100%"
+              height="100%"
+              controls={false}
+              muted
+              playing
+            />
+          </div>
+          <div className="main-logo-wrapper">
+            <img src={logo} alt="logo" className="login-logo" />
+          </div>
+          <div className="login-buttons-container">
+            {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage as any} /> */}
+            <IonButton expand="block" onClick={() => login()} className="login-button ion-no-padding">
+              <IonIcon slot="start" icon={logoGoogle} color="dark" />
+              <span className="button-text">SIGN IN WITH GOOGLE</span>
+            </IonButton>
+            {/* <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+              <IonIcon slot="start" icon={logoWindows} color="dark" />
+              <span className="button-text">SIGN IN WITH MICROSOFT</span>
+            </IonButton>
+            <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+              <IonIcon slot="start" icon={logoApple} color="dark" />
+              <span className="button-text">SIGN IN WITH APPLE</span>
+            </IonButton>
+            <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+              <IonIcon slot="start" icon={mail} color="dark" />
+              <span className="button-text">SIGN IN WITH APPLE</span>
+            </IonButton> */}
+          </div>
+          <div className="footer-login">
+            <span className="footer-text">ALL RIGHTS RESERVED ©2023.</span>
+            <img src={footerLogo} alt="logo" className="footer-logo" />
+          </div>
+        </IonContent>
+      </IonPage>
   );
 };
 
