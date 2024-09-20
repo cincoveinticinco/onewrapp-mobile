@@ -211,12 +211,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   useEffect(() => {
     if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
       const initializeAllReplications = async () => {
-        console.log('projectId', typeof projectId);
-        if (projectId) {
-          console.log('projectId is null, skipping replication');
-          return;
-        }
-        console.log('Initializing all replications');
         await initializeProjectsUserReplication();
         await initializeSceneReplication();
         await initializeServiceMatricesReplication();
