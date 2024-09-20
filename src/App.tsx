@@ -1,0 +1,94 @@
+import React, { useEffect } from 'react';
+import {
+  IonApp,
+  IonRouterOutlet,
+  setupIonicReact,
+} from '@ionic/react';
+import { Redirect, Route, useParams } from 'react-router-dom';
+import { IonReactRouter } from '@ionic/react-router';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import LoginPage from './pages/LoginPage/LoginPage';
+import Projects from './pages/Projects/Projects';
+import AppTabs from './components/Shared/AppTabs/AppTabs';
+import { ScenesContextProvider } from './context/ScenesContext';
+import DatabaseContext, { DatabaseContextProvider } from './hooks/Shared/database';
+import { AuthProvider, useAuth } from './context/Auth';
+import environment from '../environment';
+
+import '@ionic/react/css/core.css';
+import '@ionic/react/css/normalize.css';
+import '@ionic/react/css/structure.css';
+import '@ionic/react/css/typography.css';
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
+import './theme/variables.css';
+import useLoader from './hooks/Shared/useLoader';
+import PageNotExists from './pages/PageNotExists/PageNotExists';
+import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
+
+setupIonicReact();
+
+const AppContent: React.FC = () => {
+  const { loggedIn, loading } = useAuth();
+  const { isDatabaseReady, projectId } = React.useContext(DatabaseContext);
+
+  useEffect(() => {
+    console.log('projectId', projectId);
+  }, [projectId]);
+
+  if (loading || !isDatabaseReady) {
+    return useLoader();
+  }
+
+  return (
+    <IonReactRouter>
+      <IonRouterOutlet>
+        <Route exact path="/login">
+          <LoginPage />
+        </Route>
+        <Route exact path='/user-not-found'>
+          <NoUserFounded />
+        </Route>
+        {loggedIn ? (
+          <>
+            <Route exact path="/my/projects">
+              <Projects />
+            </Route>
+            <Route path="/my/projects/:id">
+              <AppTabs />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/my/projects" />
+            </Route>
+          </>
+        ) : (
+          <>
+            <Route>
+              <Redirect to="/login" />
+            </Route>
+          </>
+        )}
+      </IonRouterOutlet>
+    </IonReactRouter>
+  );
+};
+
+const App: React.FC = () => (
+  <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
+    <IonApp>
+      <AuthProvider>
+        <DatabaseContextProvider>
+          <ScenesContextProvider>
+            <AppContent />
+          </ScenesContextProvider>
+        </DatabaseContextProvider>
+      </AuthProvider>
+    </IonApp>
+  </GoogleOAuthProvider>
+);
+
+export default App;

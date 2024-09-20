@@ -1,0 +1,317 @@
+ion-content {
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+ion-input {
+  text-transform: uppercase;
+}
+
+main {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.input-wrapper {
+  flex-wrap: nowrap !important;
+}
+
+.center-flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.space-flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.center-flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ion-flex {
+  display: flex;
+}
+
+.ion-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* BUTTONS GENERAL STYLES */
+
+.reset-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+ion-button {
+  font-size: var(--525-common-text-size);
+  text-transform: none;
+}
+
+ion-button.outline-light-button {
+  --background: var(--ion-color-tertiary);
+  --background-activated: var(--ion-color-primary);
+  --color: var(--ion-color-light);
+  --border-radius: 0;
+  --border-color: var(--ion-color-light);
+  --border-style: solid;
+  --border-width: 1px;
+
+  height: 40px;
+  min-width: 120px;
+  margin: 6px auto;
+  width: calc(100% - 32px);
+}
+
+ion-button.filled-primary-button {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-light);
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+  --border-style: solid;
+  --border-width: 1px;
+
+  transition: all 0.3s ease-in-out;
+  min-width: 120px;
+  margin: 6px auto;
+  width: calc(100% - 32px);
+}
+
+.filled-success-button {
+  --background: var(--ion-color-success);
+  --color: var(--ion-color-light);
+  --border-radius: 0;
+  --border-color: var(--ion-color-success);
+  --border-style: solid;
+  --border-width: 1px;
+
+  transition: all 0.3s ease-in-out;
+  min-width: 120px;
+  margin: 6px auto;
+  width: calc(100% - 32px);
+}
+
+.outline-primary-button {
+  --background: var(--ion-color-tertiary);
+  --background-hover: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary);
+  --background-focused: var(--ion-color-primary);
+  --color: var(--ion-color-light);
+  --border-radius: 0;
+  --border-color: var(--ion-color-primary);
+  --border-style: solid;
+  --border-width: 1px;
+  --background-activated-opacity: 1;
+
+  transition: all 0.3s ease-in-out;
+  min-width: 120px;
+  margin: 6px auto;
+  width: calc(100% - 32px);
+  height: 40px;
+
+  &:active {
+    background-color: var(--ion-color-primary);
+  }
+
+  @media (min-width: 500px) {
+    max-width: 250px;
+  }
+}
+
+.cancel-button {
+  --background-activated: transparent !important;
+  --border-radius: 0;
+
+  &:active,
+  &:hover,
+  &:focus {
+    --color: var(--ion-color-danger);
+    --border-radius: 0;
+    --border-color: var(--ion-color-danger);
+
+    background-color: transparent !important;
+    border-color: 1px solid var(--ion-color-danger);
+    color: var(--ion-color-danger);
+  }
+}
+
+ion-toolbar {
+  --border-color: var(--ion-color-dark);
+}
+
+/* CHECKBOX STYLES */
+
+.checkbox-item-option {
+  box-shadow: none;
+  border-bottom: 1px solid rgb(0, 0, 0) !important;
+  background-color: var(--ion-color-tertiary);
+  cursor: pointer;
+
+  .checkbox-option {
+    background-color: transparent;
+  }
+
+  ion-checkbox {
+    --size: 16px;
+    --checkbox-background-checked: var(--ion-color-yellow);
+  }
+
+  ion-checkbox::part(container) {
+    border: none;
+    border-radius: 100%;
+    margin: 12px;
+    padding: 6px;
+  }
+
+  &:active,
+  &:focus {
+    filter: sepia(20%);
+  }
+}
+
+.no-items-message {
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+  width: 90%;
+  top: 10%;
+  left: 5%;
+  font-size: var(--525-medium-title-size);
+  margin: auto;
+  padding: 16px;
+
+  ion-button {
+    margin: 12px;
+    max-width: 150px;
+  }
+
+  .reset-filters-option {
+    text-decoration: none;
+    margin: 0;
+    width: auto;
+
+    --padding-top: 0;
+
+    font-size: var(--525-medium-title-size);
+  }
+}
+
+/* TOAST STYLES */
+
+ion-toast.success-toast {
+  --background: var(--ion-color-dark);
+  --color: var(--ion-color-light);
+  --border-style: solid;
+  --border-width: 1px;
+  --border-color: var(--ion-color-success);
+}
+
+ion-toast.warning-toast {
+  --background: var(--ion-color-dark);
+  --color: var(--ion-color-light);
+  --border-style: solid;
+  --border-width: 1px;
+  --border-color: var(--ion-color-warning);
+}
+
+ion-toast.warning-toast::part(icon) {
+  color: var(--ion-color-warning);
+}
+
+ion-toast.success-toast::part(icon) {
+  color: var(--ion-color-success);
+}
+
+.error-toast::part(icon) {
+  color: var(--ion-color-danger);
+}
+
+ion-toast.error-toast {
+  --background: var(--ion-color-dark);
+  --color: var(--ion-color-light);
+  --border-style: solid;
+  --border-width: 1px;
+  --border-color: var(--ion-color-danger);
+}
+
+.hide-tabs {
+  display: none;
+}
+
+.background-light {
+  background-color: var(--ion-color-light);
+}
+
+.background-dark {
+  background-color: var(--ion-color-dark);
+}
+
+.background-primary {
+  background-color: var(--ion-color-primary);
+}
+
+.background-secondary {
+  background-color: var(--ion-color-secondary);
+}
+
+.background-tertiary {
+  background-color: var(--ion-color-tertiary);
+}
+
+.background-success {
+  background-color: var(--ion-color-success);
+}
+
+.background-warning {
+  background-color: var(--ion-color-warning);
+}
+
+.background-danger {
+  background-color: var(--ion-color-danger);
+}
+
+.background-light-shade {
+  background-color: var(--ion-color-light-shade);
+}
+
+.background-dark-shade {
+  background-color: var(--ion-color-dark-shade);
+}
+
+.background-primary-shade {
+  background-color: var(--ion-color-primary-shade);
+}
+
+.background-secondary-shade {
+  background-color: var(--ion-color-secondary-shade);
+}
+
+.background-tertiary-shade {
+  background-color: var(--ion-color-tertiary-shade);
+}
+
+.background-success-shade {
+  background-color: var(--ion-color-success-shade);
+}
+
+.background-warning-shade {
+  background-color: var(--ion-color-warning-shade);
+}
+
+.background-danger-shade {
+  background-color: var(--ion-color-danger-shade);
+}

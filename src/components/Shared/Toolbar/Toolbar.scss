@@ -1,0 +1,122 @@
+#main-pages-toolbar {
+  display: flex;
+  height: 50px;
+
+  .toolbar-title-link {
+    color: var(--ion-color-primary);
+
+    .toolbar-title {
+      opacity: 1;
+      width: auto;
+      position: static;
+      padding: 0;
+      text-align: left;
+      font-size: var(--525-big-title-size);
+      height: 100%;
+      transition: opacity 1.3s ease-in-out;
+
+      &.hidden {
+        opacity: 0;
+      }
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: var(--ion-color-primary) !important;
+    }
+  }
+
+  .toolbar-burger-menu {
+    position: static;
+    font-size: 24px;
+    margin: 0;
+    height: 100%;
+  }
+
+  .toolbar-icon {
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .trash-icon {
+    &:hover,
+    &:active {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  .toolbar-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+
+    --background-activated-opacity: 0;
+
+    &:active {
+      .trash-icon {
+        color: var(--ion-color-danger);
+      }
+
+      .edit-icon {
+        color: var(--ion-color-primary);
+      }
+
+      .prohibit-icon {
+        color: var(--ion-color-danger);
+      }
+
+      ion-icon {
+        color: var(--ion-color-primary);
+        font-weight: bolder;
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .toolbar-search-wrapper {
+    display: flex;
+    width: 30px;
+    transition: all 0.5s ease;
+    border-radius: 30px;
+    overflow: hidden;
+
+    .toolbar-search-input {
+      opacity: 0;
+    }
+  }
+
+  .toolbar-search-wrapper.search {
+    width: 270px;
+    border: 1px solid var(--ion-color-light);
+    height: 30px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+
+    .toolbar-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+      padding: 7px;
+    }
+
+    .toolbar-search-input {
+      opacity: 1;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+  }
+}
+
+@media (min-width: 500px) {
+  #main-pages-toolbar {
+    .toolbar-search-wrapper.search {
+      width: 300px;
+    }
+  }
+}

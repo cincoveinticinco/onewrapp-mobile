@@ -1,0 +1,32 @@
+@import "../../../theme/mixins";
+
+.sort-modal {
+  @include modal-styling;
+
+  .options-list {
+    outline: 1px solid black;
+    border: 1px solid black;
+    box-shadow: none;
+
+    .checkbox-option {
+      font-size: var(--525-common-title-size);
+      text-align: left;
+    }
+  }
+
+  .modal-confirm-button {
+    margin: 5% 16px 16px 16px;
+  }
+
+  .cancel-input-modal-button {
+    margin-bottom: 5%;
+  }
+}
+
+@media (min-width: 500px) {
+  .sort-modal {
+    .modal-confirm-button {
+      margin: 20% auto 10% auto;
+    }
+  }
+}

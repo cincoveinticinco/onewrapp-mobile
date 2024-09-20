@@ -1,0 +1,32 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "plugins": ["stylelint-scss", "stylelint-csstree-validator"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["tailwind", "apply", "variants", "responsive", "screen", "mixin", "include"]
+      }
+    ],
+    "scss/at-rule-no-unknown":  [
+      true,
+      {
+        "ignoreAtRules": ["tailwind", "apply", "variants", "responsive", "screen", "mixin", "include"]
+      }
+    ],
+    "csstree/validator": true,
+    "selector-type-no-unknown": [
+      true,
+      {
+        "ignoreTypes": ["/^ion/"]
+      }
+    ],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["activated"]
+      }
+    ]
+  },
+  "ignoreFiles": ["build/**", "dist/**", "android/**", "**/reset*.css", "**/bootstrap*.css", "**/*.js", "**/*.jsx"]
+}

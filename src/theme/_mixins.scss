@@ -1,0 +1,85 @@
+/* Use it for modal styling */
+
+@mixin modal-styling {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  --overflow: show;
+
+  .ion-delegate-host {
+    min-height: 100vh !important;
+    min-width: 100vw !important;
+    display: flex;
+  }
+
+  .modal-wrapper {
+    min-height: 100vh !important;
+    min-width: 100vw !important;
+  }
+}
+
+@mixin slide-card-item-options {
+  background-color: var(--ion-color-dark);
+  width: auto;
+
+  .buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+
+    @media (min-width: 500px) {
+      flex-direction: row;
+      align-items: center;
+
+      ion-button {
+        .button-icon {
+          font-size: 30px;
+        }
+      }
+    }
+
+    ion-button {
+      padding: 16px;
+      margin: 0;
+      min-height: 0;
+
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+
+      &::part(native) {
+        padding: 0;
+        height: 30px !important;
+        min-height: 20px;
+      }
+
+      .button-icon {
+        font-size: 25px;
+
+        &.ban,
+        &.trash {
+          color: var(--ion-color-danger);
+        }
+      }
+    }
+  }
+}
+
+@mixin tab-bar-buttons {
+  --color: red !important;
+  --color-focused: var(--ion-color-primary) !important;
+  --color-selected: var(--ion-color-primary) !important;
+  --ripple-color: var(--ion-color-primary) !important;
+  --ion-color-contrast: var(--ion-color-primary);
+
+  &:activated {
+    --color: var(--ion-color-primary) !important;
+  }
+
+  .tab-bar-icons {
+    padding: 6px;
+    font-size: var(--525-icons-size);
+  }
+}

@@ -1,0 +1,19 @@
+
+.no-added-to-this-strip {
+  border: 1px solid var(--ion-color-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  margin: 0 16px 16px 16px !important;
+  font-size: var(--525-common-text-size);
+}
+
+@media (min-width: 500px) {
+  .no-added-to-this-strip {
+    border: none;
+    width: 100%;
+    text-align: center;
+    padding: 0 0 12px 0;
+  }
+}

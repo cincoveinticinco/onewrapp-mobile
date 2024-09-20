@@ -1,0 +1,16 @@
+export default {
+  URL_PATH: 'https://stgapi.onewrapp.com/owapp',
+  SCENES_ENDPOINT_PULL: 'app_scenes_list',
+  SCENE_PARAGRAPHS_ENDPOINT_PULL: 'app_scenes_paragraphs',
+  SCENES_ENDPOINT_PUSH: 'app_scenes_push',
+  SCENE_PARAGRAPHS_ENDPOINT_PUSH: 'app_scenes_paragraphs_push',
+  CLIENT_ID: '195018623531-mm7krht1hr7tj3501el59mug4rj62u5u.apps.googleusercontent.com',
+  PROJECTS_ENDPOINT_PULL: 'app_projects_list',
+  SHOOTINGS_ENDPOINT_PULL: 'app_shootings_list',
+  SHOOTINGS_ENDPOINT_PUSH: 'app_shootings_push',
+  UNITS_ENDPOINT_PULL: 'app_units_list',
+  UNITS_ENDPOINT_PUSH: 'app_units_push',
+  TALENTS_ENDPOINT_PULL: 'app_talents_list',
+  TALENTS_ENDPOINT_PUSH: 'app_talents_push',
+  MAPS_KEY: 'AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI',
+};

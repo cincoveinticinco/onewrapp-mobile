@@ -1,0 +1,122 @@
+@import "../../theme/mixins";
+
+#add-scenes-scenes-modal {
+  @include modal-styling;
+
+  display: flex;
+  z-index: 100 !important;
+
+  .search-bar-wrapper {
+    height: 50px;
+    width: 250px;
+    max-width: 500px;
+    position: relative;
+    top: 50px;
+    margin: auto;
+
+    .search-icon {
+      position: absolute;
+      right: 24px;
+      font-size: 24px;
+      color: var(--ion-color-primary);
+    }
+
+    .search-bar-toolbar {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      border-bottom: 0;
+      padding: 0;
+      max-height: 100%;
+      position: absolute;
+      top: -18px;
+
+      .toolbar-container {
+        max-height: 100% !important;
+      }
+
+      .searchbar-input-container {
+        --border-radius: 0;
+
+        height: 100% !important;
+
+        --margin-top: 0;
+
+        margin-top: 0;
+        padding: 0 !important;
+      }
+    }
+  }
+
+  .add-new-scene-description {
+    text-align: center;
+    margin: 5% 16px 5% 16px;
+    font-size: var(--525-common-title-size);
+  }
+
+  ion-input {
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+
+  ion-input.error {
+    color: var(--ion-color-danger);
+  }
+
+  .modal-confirm-button {
+    margin: 5% 16px 16px 16px;
+  }
+
+  .cancel-input-modal-button {
+    margin-bottom: 5%;
+  }
+
+  .add-new-scene-buttons-container {
+    margin: 16px;
+    margin-top: 5%;
+
+    .modal-confirm-button {
+      margin: 0;
+      width: 100%;
+    }
+
+    .cancel-input-modal-button {
+      margin-bottom: 0;
+      width: 100%;
+    }
+  }
+}
+
+.ion-margin-top {
+  margin-top: 0 !important;
+
+  --margin-top: 0 !important;
+}
+
+@media (min-width: 500px) {
+  #add-scenes-scenes-modal {
+    .modal-confirm-button {
+      margin: 20% auto 10% auto;
+    }
+
+    .add-new-scene-buttons-container {
+      display: flex;
+      justify-content: space-between;
+      width: 40%;
+      margin: 10% auto;
+
+      .modal-confirm-button {
+        margin: 0;
+        width: 20%;
+      }
+
+      .cancel-input-modal-button {
+        margin: 0;
+        width: 20%;
+      }
+    }
+  }
+}
+
+.inputs-grid {
+  margin-top: 10%;
+}
