@@ -20,9 +20,6 @@ interface Props {
 const LoginPage: React.FC<Props> = () => {
   const { saveLogin } = useAuth();
   const errorToast = useErrorToast();
-
-  console.log(environment.CLIENT_ID)
-
   const history = useHistory();
 
   const errorMessage = (error: any): any => {
