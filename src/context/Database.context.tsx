@@ -139,7 +139,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const dbInstance = await RXdatabase.getDatabaseInstance();
 
       setOneWrapRXdatabase(dbInstance);
-      localStorage.setItem('oneWrapRXdatabase', JSON.stringify(oneWrapRXdatabase));
       setSceneCollection(sceneColl);
       setParagraphCollection(paragraphColl);
       setProjectCollection(projectColl);
@@ -210,9 +209,15 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
 
   useEffect(() => {
-    initializeProjectsUserReplication();
     if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
       const initializeAllReplications = async () => {
+        console.log('projectId', typeof projectId);
+        if (projectId) {
+          console.log('projectId is null, skipping replication');
+          return;
+        }
+        console.log('Initializing all replications');
+        await initializeProjectsUserReplication();
         await initializeSceneReplication();
         await initializeServiceMatricesReplication();
         await initializeParagraphReplication();
@@ -222,10 +227,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         await initializeCrewReplication();
         await initializeCountriesReplication();
       };
-
+  
       debounce(initializeAllReplications, 1000)();
     }
-  }, [oneWrapRXdatabase, isOnline, projectId]);
+  }, [oneWrapRXdatabase, isOnline, projectId, initialReplicationFinished]);
 
   useEffect(() => {
     if (!oneWrapRXdatabase) {
@@ -250,10 +255,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [checkSession, isOnline]);
 
   useEffect(() => {
-    localStorage.setItem('projectId', projectId);
-    resyncScenes.current = null;
-    resyncShootings.current = null;
-    resyncProjectsUser.current = null;
+    if(projectId) {
+      localStorage.setItem('projectId', projectId);
+      resyncScenes.current = null;
+      resyncShootings.current = null;
+      resyncProjectsUser.current = null;
+    }
   }, [projectId]);
 
   useEffect(() => {
