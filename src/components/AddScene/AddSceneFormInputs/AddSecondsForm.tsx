@@ -10,13 +10,15 @@ interface AddSecondsFormProps {
 const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedField }) => {
   const [minutes, setMinutes]: any[] = React.useState(null);
   const [seconds, setSeconds]: any[] = React.useState(null);
+  const [formInitialized, setFormInitialized] = React.useState(false);
 
   useEffect(() => {
-    if (!observedField) {
-      setMinutes(null);
-      setSeconds(null);
+    if (!formInitialized) {
+      setMinutes(Math.floor(observedField / 60));
+      setSeconds(observedField % 60);
+      setFormInitialized(true);
     }
-  }, [observedField]);
+  }, []);
 
   useEffect(() => {
     handleChange(minSecToSeconds(minutes, seconds), 'estimatedSeconds');

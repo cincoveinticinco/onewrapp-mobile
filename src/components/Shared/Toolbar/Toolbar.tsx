@@ -1,31 +1,40 @@
+import {
+  IonButton, IonIcon,
+  IonInput,
+  IonProgressBar,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react';
+import { generate } from '@pdfme/generator';
+import {
+  addOutline,
+  caretForward,
+  chevronBack,
+  funnelOutline,
+  menuOutline, searchOutline,
+  swapVerticalOutline,
+} from 'ionicons/icons';
 import React, {
   memo, useContext, useEffect, useRef, useState,
 } from 'react';
-import {
-  IonToolbar, IonButton, IonIcon, IonTitle, IonInput,
-  IonProgressBar,
-} from '@ionic/react';
-import {
-  menuOutline, searchOutline, addOutline, funnelOutline, swapVerticalOutline, chevronBack, caretForward,
-} from 'ionicons/icons';
-import './Toolbar.scss';
-import { RiDownload2Line } from 'react-icons/ri';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import { generate } from '@pdfme/generator';
-import { add } from 'lodash';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { RiDownload2Line } from 'react-icons/ri';
 import { useParams } from 'react-router';
-import template from '../../../templates/MinimalTemplate';
+import DatabaseContext from '../../../context/Database.context';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import DatabaseContext from '../../../hooks/Shared/database';
+import template from '../../../templates/MinimalTemplate';
+import './Toolbar.scss';
 
-interface ToolbarButton {
+export interface ToolbarButton {
   name: string;
   icon: any;
   click: () => void;
   triggerId: string;
   show: boolean;
 }
+
+type CustomButton= () => JSX.Element;
 
 interface ToolbarProps {
   name: string;
@@ -51,6 +60,8 @@ interface ToolbarProps {
   download?: boolean;
   addShoBanSc?: any;
   isLoading?: boolean;
+  customButtons?: CustomButton[];
+  permissionType?: number | null;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -76,6 +87,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   download = true,
   addShoBanSc,
   isLoading = false,
+  customButtons = [],
+  permissionType,
 }) => {
   const isMobile = useIsMobile();
 
@@ -85,6 +98,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const [inputs, setInputs] = useState<any>([]);
 
   const { id } = useParams<{ id: string }>();
+
+  const disableEditions = permissionType !== 1;
 
   useEffect(() => {
     if (offlineScenes.length > 0) setSceneToPrint(offlineScenes[0]._data);
@@ -150,7 +165,16 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </div>
       )}
       {addScene && (
-        <IonButton fill="clear" slot="end" color="light" routerLink="addscene" className="ion-no-padding toolbar-button">
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          routerLink="addscene"
+          className="ion-no-padding toolbar-button"
+          style={{
+            display: disableEditions ? 'none' : 'flex',
+          }}
+        >
           <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
         </IonButton>
       )}
@@ -194,6 +218,11 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
             <PiTrashSimpleLight className="toolbar-icon trash-icon" />
           </IonButton>
         )
+      }
+      {
+        customButtons.map((renderFunction: any, index) => (
+          renderFunction()
+        ))
       }
       {
         addShoBanSc && (

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Character, Element, Extra, Note,
-} from '../../interfaces/scenesTypes';
-import removeAccents from '../../utils/removeAccents';
+} from '../../interfaces/scenes.types';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import removeAccents from '../../utils/removeAccents';
 
 interface UseFormTypeLogicReturnValue {
   formType: 'character' | 'element' | 'extra' | 'note' | null;

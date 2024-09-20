@@ -12,17 +12,21 @@ import CastCard from '../../components/Cast/CastCard';
 import DropDownCast from '../../components/Cast/DropDownCast';
 
 // Custom contexts and hooks imports
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import ScenesContext, { castDefaultSortOptions } from '../../context/ScenesContext';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes.context';
 import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import useProcessedCast from '../../hooks/Cast/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 
-const Cast: React.FC = () => {
+const Cast: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType,
+}) => {
   // Context
 
   const { castSelectedSortOptions, setCastSelectedSortOptions } = useContext(ScenesContext);
@@ -178,7 +182,7 @@ const Cast: React.FC = () => {
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
             isLoading
-            && useLoader()
+            && AppLoader()
           }
           {
             !isLoading
@@ -198,7 +202,13 @@ const Cast: React.FC = () => {
                   {
                   displayedCast[category]
                   && displayedCast[category].map((character: any, index: number) => (
-                    <CastCard key={`${category}-${index}`} character={character} searchText={castSearchText} validationFunction={validateCastExistence} />
+                    <CastCard
+                      key={`${category}-${index}`}
+                      character={character}
+                      searchText={castSearchText}
+                      validationFunction={validateCastExistence}
+                      permissionType={permissionType}
+                    />
                   ))
                 }
                 </ScrollInfiniteContext>

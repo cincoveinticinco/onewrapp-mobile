@@ -4,7 +4,7 @@ import {
   IonItem,
   IonList,
 } from '@ionic/react';
-import { Character } from '../../../interfaces/scenesTypes';
+import { Character } from '../../../interfaces/scenes.types';
 import InputModal from '../../../Layouts/InputModal/InputModal';
 import getCharactersArray from '../../../utils/getCharactersArray';
 import customArraySort from '../../../utils/customArraySort';
@@ -13,7 +13,7 @@ import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import applyFilters from '../../../utils/applyFilters';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../hooks/Shared/database';
+import DatabaseContext from '../../../context/Database.context';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
@@ -103,7 +103,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     {
       label: 'Character Number',
       type: 'text',
-      fieldName: 'characterNum',
+      fieldKeyName: 'characterNum',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-number-input',
@@ -111,7 +111,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     {
       label: 'Character Name',
       type: 'text',
-      fieldName: 'characterName',
+      fieldKeyName: 'characterName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-name-input',

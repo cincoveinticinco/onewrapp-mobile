@@ -1,10 +1,32 @@
+.edit-mode {
+  .custom-table th  {
+    background-color: var(--ion-color-yellow) !important;
+    color: black !important;
+  }
+}
+
 .table-container {
-  overflow-x: auto;
+  overflow-x: hidden;
   position: relative;
+  padding: 12px;
+
+  ion-input {
+    border-bottom: 1px solid var(--ion-color-light);
+    width: 80% !important;
+    margin: 3px auto;
+  }
 }
 
 .table-container::-webkit-scrollbar {
   display: none;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+
+  /* hidde scroll bar */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .custom-table {
@@ -18,18 +40,25 @@
   padding: 8px;
   width: auto;
   text-align: center;
+  min-width: 70px;
+}
+
+.custom-table td {
+  font-size: 12px;
 }
 
 .custom-table th {
   background-color: var(--ion-color-tertiary-dark);
+  font-size: 10px;
   top: 0;
   z-index: 10;
 }
 
 .sticky-column {
   position: sticky;
-  background-color: var(--ion-color-tertiary-dark);
   z-index: 5;
+  outline: 1px solid #ddd;
+  background-color: var(--ion-color-tertiary);
 }
 
 .custom-table th.sticky-column {
@@ -38,4 +67,57 @@
 
 .custom-table thead {
   position: sticky;
+}
+
+.switch.negative {
+  --knob-background: var(--ion-color-danger);
+  --pin-background: var(--ion-color-danger);
+  --bar-background-active: var(--ion-color-danger-shade);
+  --bar-background: var(--ion-color-danger-shade);
+}
+
+.switch.positive {
+  --knob-background: var(--ion-color-success);
+  --pin-background: var(--ion-color-success);
+  --bar-background-active: var(--ion-color-success-shade);
+  --bar-background: var(--ion-color-success-shade);
+}
+
+.switch {
+  --bar-background: var(--ion-color-tertiary-dark);
+  --bar-background-active: var(--ion-color-tertiary-dark);
+  --bar-height: 6px;
+  --knob-background: var(--ion-color-primary);
+  --pin-background: var(--ion-color-primary);
+  --pin-color: #fff;
+
+  width: 50px;
+  margin: 0 auto;
+}
+
+.editable-minute {
+  display: flex;
+
+  ion-input {
+    width: 50px !important;
+  }
+}
+
+.table-checkbox {
+  --border-radius: 100%;
+  --checkbox-background-checked: yellow;
+
+  &::part(container) {
+    border: 0 solid var(--ion-color-tertiary-dark);
+    padding: 3px;
+  }
+}
+
+.primary-data,
+.secondary-data {
+  text-transform: uppercase;
+}
+
+.primary-data {
+  font-weight: bold;
 }

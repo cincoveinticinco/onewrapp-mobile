@@ -8,8 +8,8 @@ import AddButton from '../../Shared/AddButton/AddButton';
 import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
-import { Extra } from '../../../interfaces/scenesTypes';
-import DatabaseContext from '../../../hooks/Shared/database';
+import { Extra } from '../../../interfaces/scenes.types';
+import DatabaseContext from '../../../context/Database.context';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;

@@ -1,4 +1,4 @@
-import { SelectedFilterOptionsInterface } from '../../context/ScenesContext';
+import { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
 
 const toggleNestedFilterOption = (
   prevOptions: SelectedFilterOptionsInterface,

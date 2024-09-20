@@ -1,10 +1,10 @@
-import React from 'react';
 import { IonCheckbox, IonList } from '@ionic/react';
+import React from 'react';
+import { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
+import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import truncateString from '../../utils/truncateString';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './RegularCheckboxList.scss';
-import removeNumberAndDot from '../../utils/removeNumberAndDot';
 
 interface RegularListProps {
   listOfOptions: string[];
@@ -15,6 +15,7 @@ interface RegularListProps {
   searchText: string;
   uncheckedFilteredOptions: string[];
   checkedSelectedOptions: string[];
+  optionsWithStyles?: SelectOptionsInterface[];
 }
 
 const RegularList: React.FC<RegularListProps> = ({
@@ -25,6 +26,7 @@ const RegularList: React.FC<RegularListProps> = ({
   searchText,
   uncheckedFilteredOptions,
   checkedSelectedOptions,
+  optionsWithStyles,
 }) => {
   const isMobile = useIsMobile();
 
@@ -44,6 +46,15 @@ const RegularList: React.FC<RegularListProps> = ({
     return {};
   };
 
+  const handleItemStyles = (label: string) => {
+    if (optionsWithStyles) {
+      const optionStyle = optionsWithStyles.find((optionStyle: SelectOptionsInterface) => optionStyle.label === label);
+      if (optionStyle) {
+        return optionStyle.style;
+      }
+    }
+  };
+
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
       {checkedSelectedOptions.map((option: string, i: number) => (
@@ -52,6 +63,7 @@ const RegularList: React.FC<RegularListProps> = ({
           key={`filter-item-${i}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
+          style={handleItemStyles(option)}
         >
           <IonCheckbox
             slot="start"
@@ -69,6 +81,7 @@ const RegularList: React.FC<RegularListProps> = ({
           key={`filter-item-${i}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
+          style={handleItemStyles(option)}
         >
           <IonCheckbox
             slot="start"

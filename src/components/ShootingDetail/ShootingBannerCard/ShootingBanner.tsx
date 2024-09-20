@@ -1,10 +1,11 @@
-import React from 'react';
 import {
-  IonButton, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonReorder,
+  IonButton, IonItem,
+  IonItemOptions, IonItemSliding, IonReorder,
 } from '@ionic/react';
+import React from 'react';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
 import { LuGripHorizontal } from 'react-icons/lu';
-import { ShootingBanner as ShootingBannerInterface } from '../../../interfaces/shootingTypes';
+import { ShootingBanner as ShootingBannerInterface } from '../../../interfaces/shooting.types';
 import './ShootingBanner.scss';
 
 interface ShootingBannerProps {

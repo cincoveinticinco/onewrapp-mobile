@@ -4,15 +4,15 @@ import {
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useLoader from '../../hooks/Shared/useLoader';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import AppLoader from '../../hooks/Shared/AppLoader';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 
 const EditScene: React.FC = () => {
   const history = useHistory();
@@ -54,9 +54,18 @@ const EditScene: React.FC = () => {
   const { sceneId }: any = useParams();
 
   const getExistingScene = async () => {
-    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
-    return scene._data;
+    const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
+    return scene?._data;
   };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm({ defaultValues: formData });
 
   const fetchScene = async () => {
     if (sceneId) {
@@ -80,15 +89,6 @@ const EditScene: React.FC = () => {
     fetchScene();
   }, [offlineScenes]);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm({ defaultValues: formData });
-
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
   };
@@ -110,7 +110,7 @@ const EditScene: React.FC = () => {
 
   const onSubmit = (formData: any): void => {
     scrollToTop();
-    sceneId ? updateScene(formData) : console.error('No sceneId found');
+    sceneId ? updateScene(formData) : errorToast('Error updating scene');
   };
 
   const handleSave = () => {
@@ -146,7 +146,7 @@ const EditScene: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef}>
         {
           sceneDataIsLoading && (
-            useLoader()
+            AppLoader()
           )
         }
         {

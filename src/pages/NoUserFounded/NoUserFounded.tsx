@@ -1,5 +1,5 @@
-import { IonContent, IonHeader, IonPage } from '@ionic/react'
-import ReactPlayer from 'react-player'
+import { IonContent, IonHeader, IonPage } from '@ionic/react';
+import ReactPlayer from 'react-player';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import './NoUserFounded.scss';
@@ -8,9 +8,8 @@ interface Props {
   text?: string;
 }
 
-const NoUserFounded = ({text = "User not found, please contact your provider." }: Props) => {
-  return (
-    <IonPage>
+const NoUserFounded = ({ text = 'User not found, please contact your provider.' }: Props) => (
+  <IonPage>
     <IonHeader />
     <IonContent className="ion-padding" fullscreen color="tertiary">
       <div className="login-video-wrapper">
@@ -27,7 +26,7 @@ const NoUserFounded = ({text = "User not found, please contact your provider." }
       <div className="main-logo-wrapper">
         <img src={logo} alt="logo" className="login-logo" />
       </div>
-      <div className='text-wrapper'>
+      <div className="text-wrapper">
         <p>
           {text}
         </p>
@@ -38,7 +37,6 @@ const NoUserFounded = ({text = "User not found, please contact your provider." }
       </div>
     </IonContent>
   </IonPage>
-  )
-}
+);
 
-export default NoUserFounded
+export default NoUserFounded;

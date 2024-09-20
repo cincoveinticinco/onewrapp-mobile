@@ -1,0 +1,21 @@
+@media (min-width: 768px) {
+  .wrap-report-view {
+    display: grid;
+
+    .section-wrapper {
+      box-sizing: border-box;
+      outline: 0.5px solid var(--ion-color-tertiary-dark);
+      padding: 3px;
+      position: relative;
+
+      .empty-table {
+        position: relative !important;
+        height: 150px;
+      }
+
+      &.scenes-table {
+        grid-column: 1 / 3;
+      }
+    }
+  }
+}

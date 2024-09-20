@@ -1,24 +1,39 @@
 import {
-  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonModal, IonRow, IonSelect, IonSelectOption,
+  IonButton,
+  IonCheckbox,
+  IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import InputItem from '../../AddScene/AddSceneFormInputs/InputItem';
-import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
-import './EditionModal.scss';
 import CustomSelect from '../CustomSelect/CustomSelect';
+import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
+import SelectItem from '../SelectInput/SelectInput';
+import './EditionModal.scss';
 
 export interface FormInput {
-  fieldName: string;
+  fieldKeyName: string;
   label: string;
   placeholder: string;
   type: string;
   col?: string;
   inputName?: string;
   required?: boolean;
-  selectOptions?: any[];
+  selectOptions?: SelectOptionsInterface[];
+  search?: boolean;
+  offset?: string;
+}
+
+export interface SelectOptionsInterface {
+  value: any;
+  label: string;
+  style?: {
+    [key: string]: string;
+  };
+}
+
+export interface defaultFormValues {
+  [key: string]: string | number | null;
 }
 
 interface EditionModalProps {
@@ -28,7 +43,7 @@ interface EditionModalProps {
   title: string;
   formInputs: FormInput[];
   handleEdition: any;
-  defaultFormValues: any;
+  defaultFormValues?: any;
   validate?: (value: string, keyValue?: string) => (boolean | string),
   openModal?: (modalReference: any) => void;
   isOpen?: boolean;
@@ -56,15 +71,21 @@ const EditionModal: React.FC<EditionModalProps> = ({
     formInputs.forEach((input: any) => {
       setShowError((prevState: any) => ({
         ...prevState,
-        [input.fieldName]: false,
+        [input.fieldKeyName]: false,
       }));
     });
   }, []);
 
   const resetFormValues = () => {
-    formInputs.forEach((input: any) => {
-      setValue(input.fieldName, defaultFormValues[input.fieldName]);
-    });
+    if (defaultFormValues) {
+      formInputs.forEach((input: any) => {
+        setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
+      });
+    } else {
+      formInputs.forEach((input: any) => {
+        resetField(input.fieldKeyName);
+      });
+    }
   };
 
   const closeModal = () => {
@@ -88,36 +109,37 @@ const EditionModal: React.FC<EditionModalProps> = ({
     handleSubmit,
     setValue,
     resetField,
+    watch,
   } = useForm({
     defaultValues: defaultFormValues,
   });
 
-  const setNewOptionValue = (fieldName: string, value: string) => {
-    if ((value === '' || !value) && fieldName !== 'characterNum') {
-      return setValue(fieldName, null);
+  const setNewOptionValue = (fieldKeyName: string, value: string) => {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
+      return setValue(fieldKeyName, null);
     }
-    return setValue(fieldName, value);
+    setValue(fieldKeyName, value);
   };
 
-  const handleValidation = (value: string, fieldName: string, required: boolean) => {
-    if ((value === '' || !value) && fieldName !== 'characterNum' && required) {
+  const handleValidation = (value: string, fieldKeyName: string, required: boolean) => {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum' && required) {
       setShowError(
         (prevState: any) => ({
           ...prevState,
-          [fieldName]: true,
+          [fieldKeyName]: true,
         }),
       );
       setErrorMessage('REQUIRED *');
       return 'This field is required';
     }
 
-    if (validate && fieldName !== 'characterNum' && required) {
-      const validation = validate(value, fieldName);
+    if (validate && fieldKeyName !== 'characterNum' && required) {
+      const validation = validate(value, fieldKeyName);
       if (typeof validation === 'string') {
         setShowError(
           (prevState: any) => ({
             ...prevState,
-            [fieldName]: true,
+            [fieldKeyName]: true,
           }),
         );
         setErrorMessage(validation);
@@ -133,6 +155,11 @@ const EditionModal: React.FC<EditionModalProps> = ({
     closeModal();
     setShowError({});
   };
+
+  const handleCheckboxChange = (fieldKeyName: string, checked: boolean) => {
+    setValue(fieldKeyName, checked);
+  };
+
   return (
     <IonModal
       ref={modalRef}
@@ -141,37 +168,66 @@ const EditionModal: React.FC<EditionModalProps> = ({
       onDidPresent={() => onDidPresent()}
       isOpen={isOpen}
     >
-      <IonHeader>
-        <ModalToolbar
-          handleSave={closeModal}
-          toolbarTitle={title}
-          handleReset={() => {}}
-          handleBack={closeModal}
-          showReset={false}
-        />
-      </IonHeader>
       <IonContent color="tertiary">
         <IonHeader className="add-new-option-description" mode="ios" />
+        <IonButton fill="clear" className="back-button" onClick={closeModal}>
+          BACK
+        </IonButton>
+        <h1 style={{ width: '100%', textAlign: 'center', marginTop: '20%' }}>{title.toUpperCase()}</h1>
         {formInputs && (
-          <IonGrid className="edit-inputs-wrapper">
+          <IonGrid className="edit-inputs-wrapper" fixed style={{ maxWidth: '600px' }}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} size={input.col || '12'} className="ion-flex ion-justify-content-center">
+                <IonCol key={i} offset={input.offset || 0} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
                   {input.type === 'select' ? (
-                    <CustomSelect input={input} setNewOptionValue={setNewOptionValue} />
+                    input.search ? (
+                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
+                    ) : (
+                      <SelectItem
+                        control={control}
+                        fieldKeyName={input.fieldKeyName}
+                        label={input.label}
+                        inputName={input.fieldKeyName}
+                        options={input.selectOptions}
+                        canCreateNew={false}
+                        setValue={setNewOptionValue}
+                        validate={() => true}
+                        watchValue={watch}
+                        editMode={false}
+                        detailsEditMode={false}
+                        style={{ width: '100%' }}
+                      />
+                    )
+                  ) : input.type === 'checkbox' ? (
+                    <IonItem
+                      color="tertiary"
+                      lines="none"
+                      className="checkbox"
+                      style={{
+                        width: '100%',
+                      }}
+                    >
+                      <IonCheckbox
+                        checked={watch(input.fieldKeyName)}
+                        onIonChange={(e) => handleCheckboxChange(input.fieldKeyName, e.detail.checked)}
+                        class="checkbox"
+                      />
+                      <IonLabel className="ion-padding-start">{input.label}</IonLabel>
+                    </IonItem>
                   ) : (
                     <InputItem
                       label={input.label}
                       placeholder={input.placeholder}
                       control={control}
-                      fieldName={input.fieldName}
+                      fieldKeyName={input.fieldKeyName}
                       inputName={input.inputName}
-                      displayError={input.fieldName !== 'characterNum' ? showError[input.fieldName as keyof typeof showError] : false}
+                      displayError={input.fieldKeyName !== 'characterNum' ? showError[input.fieldKeyName as keyof typeof showError] : false}
                       setValue={setNewOptionValue}
-                      validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName, input.required)}
+                      validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName, input.required)}
                       type={input.type}
                       errorMessage={errorMessage}
                       style={{ width: '100%' }}
+                      suggestions={input.selectOptions?.map((option: FormInput) => option.label) || []}
                     />
                   )}
                 </IonCol>
@@ -179,17 +235,19 @@ const EditionModal: React.FC<EditionModalProps> = ({
             </IonRow>
           </IonGrid>
         )}
-        <div className="edit-new-option-buttons-container">
+        <div className="edit-new-option-buttons-container ion-flex-column ">
           <OutlinePrimaryButton
             buttonName="SAVE"
             onClick={handleSubmit(submitEdition)}
-            className="ion-margin modal-confirm-button"
+            className="modal-confirm-button"
+            color="success"
           />
-          <OutlineLightButton
-            buttonName="CANCEL"
+          <IonButton
             onClick={closeModal}
-            className="ion-margin cancel-input-modal-button cancel-button"
-          />
+            className="modal-cancel-button clear-danger-button"
+          >
+            CANCEL
+          </IonButton>
         </div>
       </IonContent>
     </IonModal>

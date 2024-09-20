@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
+import { useState } from 'react';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import CategoryContainer from './CategoryContainer';
 
 const DropDownInfo = ({
@@ -17,24 +16,33 @@ const DropDownInfo = ({
 
   return (
     <>
-      <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-tertiary-shade)' }} onClick={() => setOpen(!open)}>
+      <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
         <p style={{ fontSize: '18px' }}><b>{title}</b></p>
-        <DropDownButton open={open} />
       </div>
       {
         open && (
           <div className="categories-card-container">
-            { scene
-              && categories.map((category: string) => <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
-            {
-              getUniqueCategoriesFromScene(scene, characters, extras, elements).length % 3 === 1 && <div className="scene-details-card" />
-            }
-            {
+            <IonCard
+              color="tertiary"
+              className="scene-details-card ion-flex-column ion-justify-content-start align-items-center"
+            >
+              { scene
+                && categories.map((category: string) => <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
+              {
               valuesByCategory
               && (
-              <IonCard color="tertiary" className="no-items-card">
-                <IonCardHeader>
-                  <IonCardSubtitle className="no-items-card-title">
+                <IonCardHeader
+                  className="ion-padding"
+                  style={{
+                    height: '100%',
+                  }}
+                >
+                  <IonCardSubtitle
+                    className="no-items-card-title ion-flex ion-justify-content-center ion-align-items-center ion-padding"
+                    style={{
+                      height: '100%', textAlign: 'center',
+                    }}
+                  >
                     {
                       characters
                       && 'NO CHARACTERS ADDED TO THIS SCENE'
@@ -53,9 +61,9 @@ const DropDownInfo = ({
                     }
                   </IonCardSubtitle>
                 </IonCardHeader>
-              </IonCard>
               )
             }
+            </IonCard>
           </div>
         )
       }

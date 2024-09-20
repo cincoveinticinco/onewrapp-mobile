@@ -1,23 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router';
-import { checkmarkCircle, closeCircle } from 'ionicons/icons';
-import { useIonToast } from '@ionic/react';
-import InputItem from './AddSceneFormInputs/InputItem';
-import SelectItem from './AddSceneFormInputs/SelectItem';
+import React, { useContext } from 'react';
+import { useHistory } from 'react-router';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import './AddSceneForm.scss';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from './AddSceneFormInputs/AddElementForm';
 import AddExtraForm from './AddSceneFormInputs/AddExtraForm';
-import './AddSceneForm.scss';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
 import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
-import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../Shared/OutlineLightButton/OutlineLightButton';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import InputItem from './AddSceneFormInputs/InputItem';
+import SelectItem from './AddSceneFormInputs/SelectItem';
 
-import DatabaseContext from '../../hooks/Shared/database';
+import DatabaseContext from '../../context/Database.context';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
 } from '../../Ennums/ennums';
@@ -103,7 +100,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         options={sceneTypeOptions}
         inputName="add-scene-type-input"
         displayError={!!errors.sceneType}
-        fieldName="sceneType"
+        fieldKeyName="sceneType"
         control={control}
         setValue={handleSetValue}
         watchValue={watch}
@@ -117,7 +114,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         disabled={getDisabled()}
         options={protectionTypeValues}
         inputName="add-protection-type-input"
-        fieldName="protectionType"
+        fieldKeyName="protectionType"
         displayError={!!errors.protectionType && !getDisabled()}
         watchValue={watch}
         control={control}
@@ -129,7 +126,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="EPISODE *"
         placeholder="EPISODE"
         control={control}
-        fieldName="episodeNumber"
+        fieldKeyName="episodeNumber"
         type="number"
         setValue={handleSetValue}
         inputName="add-episode-input"
@@ -141,7 +138,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="SCENE *"
         placeholder="INSERT"
         control={control}
-        fieldName="sceneNumber"
+        fieldKeyName="sceneNumber"
         setValue={handleSetValue}
         inputName="add-scene-number-input"
         displayError={!!errors.sceneNumber}
@@ -152,7 +149,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="SCRIPT DAY"
         placeholder="INSERT"
         control={control}
-        fieldName="scriptDay"
+        fieldKeyName="scriptDay"
         setValue={handleSetValue}
         inputName="add-script-day-input"
       />
@@ -161,7 +158,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="YEAR"
         placeholder="INSERT"
         control={control}
-        fieldName="year"
+        fieldKeyName="year"
         setValue={handleSetValue}
         inputName="add-year-input"
       />
@@ -172,7 +169,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="DAY/NIGHT"
         options={dayNightOptions}
         inputName="add-day-night-input"
-        fieldName="dayOrNightOption"
+        fieldKeyName="dayOrNightOption"
         control={control}
         watchValue={watch}
         setValue={handleSetValue}
@@ -184,7 +181,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="INT/EXT"
         options={intExtOptions}
         inputName="add-int-ext-input"
-        fieldName="intOrExtOption"
+        fieldKeyName="intOrExtOption"
         control={control}
         setValue={handleSetValue}
         watchValue={watch}
@@ -194,7 +191,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="SCRIPT PAGE"
         placeholder="INSERT"
         control={control}
-        fieldName="page"
+        fieldKeyName="page"
         type="number"
         setValue={handleSetValue}
         inputName="add-page-input"
@@ -215,7 +212,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         detailsEditMode={detailsEditMode}
         label="LOCATION"
         control={control}
-        fieldName="locationName"
+        fieldKeyName="locationName"
         options={locationOptions}
         inputName="add-location-input"
         watchValue={watch}
@@ -228,7 +225,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         detailsEditMode={detailsEditMode}
         label="SET *"
         control={control}
-        fieldName="setName"
+        fieldKeyName="setName"
         options={setOptions}
         inputName="add-set-input"
         watchValue={watch}
@@ -242,7 +239,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         label="DESCRIPTION/SYNOPSIS"
         placeholder="INSERT"
         control={control}
-        fieldName="synopsis"
+        fieldKeyName="synopsis"
         setValue={handleSetValue}
         inputName="add-synopsis-input"
       />

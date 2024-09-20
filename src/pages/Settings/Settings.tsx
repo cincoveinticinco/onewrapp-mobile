@@ -2,10 +2,8 @@ import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { useHistory } from 'react-router';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import { useAuth } from '../../context/Auth';
+import { useAuth } from '../../context/Auth.context';
 
 const Settings: React.FC = () => {
   const { logout } = useAuth();

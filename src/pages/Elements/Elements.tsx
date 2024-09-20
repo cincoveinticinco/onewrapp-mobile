@@ -1,27 +1,34 @@
-import React, {
-  useContext, useState, useMemo, useRef, useEffect,
-} from 'react';
 import {
   IonContent,
 } from '@ionic/react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo, useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router';
-import DatabaseContext from '../../hooks/Shared/database';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import ElementCard from '../../components/Elements/ElementCard';
+import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import DatabaseContext from '../../context/Database.context';
+import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import { SceneTypeEnum } from '../../Ennums/ennums';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { elementsCategoriesDefaultSortOptions, elementsDefaultSortOptions } from '../../context/ScenesContext';
-import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import ElementCard from '../../components/Elements/ElementCard';
-import './Elements.scss';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/Shared/useLoader';
+import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import './Elements.scss';
 
-const Elements: React.FC = () => {
+const Elements: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType,
+}) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const [displayedElements, setDisplayedElements] = useState<any>({});
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
@@ -39,7 +46,7 @@ const Elements: React.FC = () => {
 
   const defaultElementsSortPosibilities = [
     {
-      id: 'NAME', label: 'NAME', optionKey: ('elementName' || 'categoryName'), defaultIndex: 0,
+      id: 'NAME', label: 'NAME', optionKey: ('elementName'), defaultIndex: 0,
     },
     {
       id: 'SCENES_QUANTITY', label: 'SCENES QUANTITY', optionKey: 'scenesQuantity', defaultIndex: 1,
@@ -146,15 +153,11 @@ const Elements: React.FC = () => {
 
   useEffect(() => {
     setFilteredCategories(categoriesData);
-  }, [
-    categoriesData,
-  ]);
+  }, [categoriesData]);
 
   useEffect(() => {
     setFilteredElements(elementsData);
-  }, [
-    elementsData,
-  ]);
+  }, [elementsData]);
 
   useEffect(() => {
     if (searchText.length > 0) {
@@ -257,7 +260,7 @@ const Elements: React.FC = () => {
         <IonContent color="tertiary" fullscreen>
           {
             dataIsLoading
-            && useLoader()
+            && AppLoader()
           }
           {
             !dataIsLoading
@@ -300,6 +303,7 @@ const Elements: React.FC = () => {
                                   searchText={searchText}
                                   section="element"
                                   validationFunction={validateElementExists}
+                                  permissionType={permissionType}
                                 />
                               ))
 }

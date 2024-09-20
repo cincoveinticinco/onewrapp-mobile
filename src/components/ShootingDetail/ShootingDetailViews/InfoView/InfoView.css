@@ -1,0 +1,116 @@
+.section-wrapper {
+  box-sizing: border-box;
+  outline: 0.5px solid var(--ion-color-tertiary-dark);
+  padding: 3px;
+  position: relative;
+
+  .empty-table {
+    position: relative !important;
+    height: 150px;
+  }
+
+  &.scenes-table {
+    grid-column: 1 / 3;
+  }
+}
+
+.children-wrapper {
+  min-height: 250px;
+  height: 250px;
+  overflow-y: auto;
+  background-color: var(--ion-color-tertiary-dark);
+  padding: 6px;
+  flex-direction: column;
+
+  h5 {
+    margin: 7px 0;
+  }
+
+
+  /* hide scroll bar */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.location-info-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 0 0;
+  grid-template-areas:
+    "location-name location-name"
+    "location-address location-address";
+  border: 1px solid var(--ion-color-tertiary);
+
+  h5 {
+    grid-column: 1 / span 11;
+    grid-row: 1 / 2;
+    display: flex;
+    align-items: center;
+    margin: 3px 0 !important;
+    font-size: 12px;
+  }
+
+  .location-address {
+    grid-column: 1 / span 11;
+    grid-row: 2 / 3;
+    align-content: center;
+
+    p {
+      margin: 3px 0 9px 0 !important;
+    }
+  }
+
+  .location-buttons {
+    grid-column: 12 / span 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-right: 6px;
+
+    .edit-location {
+      color: var(--ion-color-primary);
+    }
+
+    .delete-location {
+      color: var(--ion-color-danger);
+    }
+  }
+}
+
+.toolbar-icon {
+  font-size: 20px;
+}
+
+@media (max-width: 500px) {
+  .location-info-grid {
+    h5 {
+      font-size: 14px;
+    }
+
+    .location-address {
+      p {
+        font-size: 12px;
+      }
+    }
+
+    .location-buttons {
+      grid-column: 12 / span 1;
+      grid-row: 1 / span 2;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding-right: 6px;
+
+      .edit-location {
+        color: var(--ion-color-primary);
+      }
+
+      .delete-location {
+        color: var(--ion-color-danger);
+      }
+    }
+  }
+}

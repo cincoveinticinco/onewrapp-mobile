@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { IonModal } from '@ionic/react';
 import { useParams } from 'react-router';
 import { normalizeString } from 'rxdb';
 import EditionModal, { FormInput } from '../../../Shared/EditionModal/EditionModal';
@@ -14,6 +13,7 @@ interface CastViewProps {
   addNewCastCall: (formData: any) => Promise<void>;
   castOptions: { value: any; label: string }[];
   editCastCall: (index: number, key: any, newValue: any, type: string) => void
+  permissionType?: number | null
 }
 
 const CastView: React.FC<CastViewProps> = ({
@@ -24,13 +24,15 @@ const CastView: React.FC<CastViewProps> = ({
   addNewCastCall,
   castOptions,
   editCastCall,
+  permissionType,
 }) => {
   const columns: Column[] = [
     {
-      key: 'cast', title: 'CAST', type: 'text', textAlign: 'left',
+      key: 'cast', title: 'CAST', type: 'double-data', textAlign: 'left', secondaryKey: 'name',
     },
-    { key: 'name', title: 'TALENT', type: 'text' },
-    { key: 'tScn', title: 'T. SCN.', type: 'text' },
+    {
+      key: 'tScn', title: 'SCN.', type: 'text', notShowWhenEdit: true,
+    },
     {
       key: 'pickUp', title: 'PICKUP', type: 'hour', editable: true,
     },
@@ -44,18 +46,12 @@ const CastView: React.FC<CastViewProps> = ({
       key: 'onWardrobe', title: 'WARDROBE', type: 'hour', editable: true,
     },
     {
-      key: 'readyToShoot', title: 'READY', type: 'hour', editable: true,
+      key: 'readyToShoot', title: 'READY AT', type: 'hour', editable: true,
     },
     {
       key: 'notes', title: 'NOTES', type: 'text', editable: true,
     },
   ];
-
-  const valiateCastExists = (talentName: string, fieldName: any) => {
-    const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
-    if (talentExists && fieldName === 'cast') return 'This talent already exists';
-    return false;
-  };
 
   const AddCastCallModal: React.FC = () => {
     const modalRef = useRef<HTMLIonModalElement>(null);
@@ -63,7 +59,7 @@ const CastView: React.FC<CastViewProps> = ({
 
     const castCallInputs: FormInput[] = [
       {
-        fieldName: 'cast',
+        fieldKeyName: 'cast',
         label: 'Cast',
         placeholder: 'Select cast',
         type: 'select',
@@ -72,7 +68,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'pickUp',
+        fieldKeyName: 'pickUp',
         label: 'Pick Up',
         placeholder: 'Enter pick up time',
         type: 'time',
@@ -80,7 +76,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '6',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',
@@ -88,7 +84,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'onMakeUp',
+        fieldKeyName: 'onMakeUp',
         label: 'Make Up',
         placeholder: 'Enter make up time',
         type: 'time',
@@ -96,7 +92,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'onWardrobe',
+        fieldKeyName: 'onWardrobe',
         label: 'Wardrobe',
         placeholder: 'Enter wardrobe time',
         type: 'time',
@@ -104,7 +100,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'readyToShoot',
+        fieldKeyName: 'readyToShoot',
         label: 'Ready to Shoot',
         placeholder: 'Enter ready time',
         type: 'time',
@@ -112,7 +108,7 @@ const CastView: React.FC<CastViewProps> = ({
         col: '3',
       },
       {
-        fieldName: 'notes',
+        fieldKeyName: 'notes',
         label: 'Notes',
         placeholder: 'Enter notes',
         type: 'text',
@@ -136,10 +132,16 @@ const CastView: React.FC<CastViewProps> = ({
     );
   };
 
+  const valiateCastExists = (talentName: string, fieldKeyName: any) => {
+    const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
+    if (talentExists && fieldKeyName === 'cast') return 'This talent already exists';
+    return false;
+  };
+
   if (addNewModalIsOpen) return <AddCastCallModal />;
 
   if (!castData || castData.length === 0) {
-    return <NoRegisters addNew={() => setIsOpen(true)} />;
+    return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
   }
 
   return (

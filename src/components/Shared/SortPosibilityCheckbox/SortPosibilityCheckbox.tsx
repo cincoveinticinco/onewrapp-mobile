@@ -1,13 +1,11 @@
-import React, { useContext, useEffect } from 'react';
-import './SortPosibilityCheckbox.scss';
-import { Draggable } from 'react-beautiful-dnd';
 import {
   IonButton, IonCheckbox, IonItem,
 } from '@ionic/react';
+import React, { useEffect } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import { LuGripHorizontal } from 'react-icons/lu';
 import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
-
-import ScenesContext from '../../../context/ScenesContext';
+import './SortPosibilityCheckbox.scss';
 
 interface SortPosibilityCheckboxProps {
   sortPosibility: any;

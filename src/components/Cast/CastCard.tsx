@@ -16,10 +16,12 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
 import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import InfoLabel from '../Shared/InfoLabel/InfoLabel';
 import useWarningToast from '../../hooks/Shared/useWarningToast';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 
 interface Cast {
   characterNum: string;
@@ -40,11 +42,17 @@ interface CastCardProps {
   character: Cast;
   searchText: string;
   validationFunction: (value: string, currentValue: string) => (boolean | string)
+  permissionType?: number | null;
 }
 
-const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFunction }) => {
+const CastCard: React.FC<CastCardProps> = ({
+  character, searchText, validationFunction, permissionType,
+}) => {
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
+  const disableEditions = permissionType !== 1;
+  const errorToast = useErrorToast();
+  const successToast = useSuccessToast();
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -94,7 +102,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Character Number',
       type: 'text',
-      fieldName: 'characterNum',
+      fieldKeyName: 'characterNum',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-number-input',
@@ -102,7 +110,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: false,
       inputName: 'add-category-name-input',
@@ -110,7 +118,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Character Name',
       type: 'text',
-      fieldName: 'characterName',
+      fieldKeyName: 'characterName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-character-name-input',
@@ -121,7 +129,7 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
     {
       label: 'Extra Name',
       type: 'text',
-      fieldName: 'extraName',
+      fieldKeyName: 'extraName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-extra-name-input',
@@ -163,20 +171,14 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
         updatedScene.characters = updatedScene.characters.filter((char: any) => char.characterName !== character.characterName);
 
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting character');
     }
   };
 
@@ -196,13 +198,11 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
-
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
-      console.error(error);
+      errorToast('Error updating character');
+
+      throw error;
     }
   };
 
@@ -228,13 +228,9 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Extra deleted');
-
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   };
 
@@ -253,13 +249,9 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Extra deleted');
-
       successMessageSceneToast(`${character.extraName ? character.extraName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   };
 
@@ -297,13 +289,13 @@ const CastCard: React.FC<CastCardProps> = ({ character, searchText, validationFu
       </IonItem>
       <IonItemOptions className="cast-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={openModalEdition}>
+          <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => console.log(values))}>
+          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}>
+          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

@@ -1,30 +1,30 @@
+import { IonButton } from '@ionic/react';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { PiNotePencil } from 'react-icons/pi';
-import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
-import { IonButton } from '@ionic/react';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
+import { PiNotePencil } from 'react-icons/pi';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import AppLoader from '../../hooks/Shared/AppLoader';
+import useTextSelection from '../../hooks/Shared/useSelectedText';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import {
   Character, Element, Extra, Note,
-} from '../../interfaces/scenesTypes';
+} from '../../interfaces/scenes.types';
+import InputModal from '../../Layouts/InputModal/InputModal';
+import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
+import removeAccents from '../../utils/removeAccents';
+import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
+import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import useTextSelection from '../../hooks/Shared/useSelectedText';
-import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import removeAccents from '../../utils/removeAccents';
-import { SearchTerm } from '../Shared/HighlightedTextWithArray/HighlightedTextWithArray';
 import SceneParagraph from './SceneParagraph/SceneParagraph';
-import FiilledSuccessButton from '../Shared/FilledSuccessButton/FillSuccessButton';
-import useLoader from '../../hooks/Shared/useLoader';
-import InputModal from '../../Layouts/InputModal/InputModal';
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -45,7 +45,7 @@ const MemoizedExtraForm = React.memo(ExtraForm);
 const MemoizedNoteForm = React.memo(NoteForm);
 
 const ScriptPage: React.FC<ScriptPageProps> = ({
-  zoomLevel, edition, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId,
+  zoomLevel, charactersArray, elementsArray, extrasArray, handleCreation, notesArray, paragraphs, paragraphsAreLoading, selectedSceneId, setSelectedSceneId,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const handlePopupOpen = (selectedText: string, x: number, y: number) => {
@@ -235,7 +235,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
           zoom: zoomLevel,
         }}
       >
-        {useLoader()}
+        {AppLoader()}
       </div>
     );
   }
@@ -243,7 +243,6 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   const handleCheckboxToggle = (sceneHeader: string) => {
     const sceneId = scenesList.find((scene) => scene.sceneHeader.toLowerCase() === sceneHeader.toLowerCase())?.sceneId;
     setSelectedSceneId(sceneId);
-    console.log('SETTING NEW SCENE ID', sceneId);
   };
 
   if (paragraphs.length === 0) {

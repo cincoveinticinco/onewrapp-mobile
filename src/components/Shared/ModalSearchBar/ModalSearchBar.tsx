@@ -1,5 +1,5 @@
-import { IonSearchbar, IonToolbar } from '@ionic/react';
-import { chevronBackOutline, closeOutline, trash } from 'ionicons/icons';
+import { IonSearchbar } from '@ionic/react';
+import { closeOutline } from 'ionicons/icons';
 import './ModalSearchBar.scss';
 
 const ModalSearchBar = ({

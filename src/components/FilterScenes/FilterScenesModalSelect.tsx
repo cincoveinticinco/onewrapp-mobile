@@ -4,7 +4,7 @@ import {
   IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import { chevronForward, search } from 'ionicons/icons';
-import ScenesContext from '../../context/ScenesContext';
+import ScenesContext from '../../context/Scenes.context';
 import './FilterScenesModalSelect.scss';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import OutlinePrimaryButton from '../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -15,7 +15,7 @@ import capitalizeString from '../../utils/capitalizeString';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import truncateString from '../../utils/truncateString';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
-import useLoader from '../../hooks/Shared/useLoader';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import RegularList from '../../Layouts/RegularCheckboxList/RegularCheckboxList';
 
 interface FilterScenesModalSelectProps {
@@ -192,7 +192,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
           {
             dataIsLoading && (
-              useLoader()
+              AppLoader()
             )
           }
           {
