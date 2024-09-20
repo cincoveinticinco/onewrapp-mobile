@@ -1,12 +1,13 @@
 import {
-  useContext, useEffect, useMemo, useState,
+  useContext, useEffect,
+  useState,
 } from 'react';
-import DatabaseContext from '../Shared/database';
+import DatabaseContext from '../../context/Database.context';
+import ScenesContext from '../../context/Scenes.context';
+import { SceneTypeEnum } from '../../Ennums/ennums';
+import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
-import ScenesContext from '../../context/ScenesContext';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import { SceneTypeEnum } from '../../Ennums/ennums';
 
 const useProcessedCast = () => {
   const { offlineScenes } = useContext(DatabaseContext);

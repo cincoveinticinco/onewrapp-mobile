@@ -6,6 +6,8 @@
 
   .tab-bar-buttons {
     @include tab-bar-buttons;
+
+    font-size: 10px !important;
   }
 
   .tab-bar-buttons.tablet {
@@ -15,4 +17,9 @@
 
 .hide-tabs {
   display: none;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }

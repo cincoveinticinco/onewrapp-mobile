@@ -17,7 +17,7 @@ import { checkmarkCircle } from 'ionicons/icons';
 import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import useWarningToast from '../../hooks/Shared/useWarningToast';
@@ -44,6 +44,7 @@ interface ElementCardProps {
   onClick?: () => void;
   elementsQuantity?: number;
   validationFunction: (name: string, currentName: string) => (boolean | string);
+  permissionType?: number | null;
 }
 
 const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
@@ -57,13 +58,14 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const ElementCard: React.FC<ElementCardProps> = ({
-  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction,
+  data, searchText, section, isOpen = false, onClick, elementsQuantity, validationFunction, permissionType,
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
+  const disableEditions = permissionType !== 1;
 
   const openEditModal = () => {
     modalRef.current?.present();
@@ -145,7 +147,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: false,
       inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,
@@ -153,7 +155,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Element Name',
       type: 'text',
-      fieldName: 'elementName',
+      fieldKeyName: 'elementName',
       placeholder: 'INSERT',
       required: true,
       inputName: `add-element-name-input-${data.elementName}`,
@@ -164,7 +166,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     {
       label: 'Category Name',
       type: 'text',
-      fieldName: 'categoryName',
+      fieldKeyName: 'categoryName',
       placeholder: 'INSERT',
       required: true,
       inputName: `add-category-name-input-${data.categoryName || Math.random() * 1000}`,
@@ -196,15 +198,11 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
-
       setTimeout(() => {
         successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
     } catch (error) {
-      console.error(error);
+      errorToast('Error updating element');
     }
   };
 
@@ -218,23 +216,16 @@ const ElementCard: React.FC<ElementCardProps> = ({
         const updatedScene = { ...scene._data };
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.elementName !== data.elementName);
-
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Element deleted');
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       setTimeout(() => {
         successMessageSceneToast(`${data.elementName ? data.elementName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
       });
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting element');
     }
   };
 
@@ -249,22 +240,17 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
         updatedScene.elements = updatedScene.elements.filter((el: any) => el.categoryName !== data.categoryName);
 
-        console.log('Updated Scene:', updatedScene);
-
         updatedScenes.push(updatedScene);
       });
 
       const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      console.log('Bulk update result:', result);
-
-      console.log('Category deleted');
-
       setTimeout(() => {
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
       }, 600);
     } catch (error) {
-      console.error(error);
+      errorToast('Error deleting category');
+      throw error;
     }
   };
 
@@ -292,18 +278,14 @@ const ElementCard: React.FC<ElementCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
-
-      console.log('Bulk update result:', result);
-
-      console.log('Character deleted');
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       setTimeout(() => {
         successMessageSceneToast(`${data.categoryName ? data.categoryName.toUpperCase() : 'NO NAME'} was successfully updated!`);
       }, 600);
     } catch (error: any) {
-      console.error(error);
       errorToast(error || 'Error updating category');
+      throw error;
     }
   };
 
@@ -311,8 +293,6 @@ const ElementCard: React.FC<ElementCardProps> = ({
     if (section === 'category') {
       return validationFunction(name, data.categoryName);
     }
-
-    console.log('Validation function:', validationFunction(name, data.elementName), name, data.elementName);
 
     return validationFunction(name, data.elementName);
   };
@@ -357,13 +337,13 @@ const ElementCard: React.FC<ElementCardProps> = ({
         </IonItem>
         <IonItemOptions className="element-card-item-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" onClick={openEditModal}>
+            <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
               <CiEdit className="button-icon view" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => console.log(values)) : scenesToEditWithElement()?.then((values: any) => console.log(values)))}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => values) : scenesToEditWithElement()?.then((values: any) => values))} disabled={disableEditions}>
               <PiProhibitLight className="button-icon ban" />
             </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())}>
+            <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>
               <PiTrashSimpleLight className="button-icon trash" />
             </IonButton>
           </div>

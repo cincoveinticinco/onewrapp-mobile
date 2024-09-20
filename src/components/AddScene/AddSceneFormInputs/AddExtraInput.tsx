@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
 import {
-  IonItem, IonButton, IonIcon, IonCardContent,
+  IonButton,
+  IonCardContent,
+  IonIcon,
+  IonItem,
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
-import { Extra } from '../../../interfaces/scenesTypes';
-import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
-import getOptionsArray from '../../../utils/getOptionsArray';
+import React, { useContext } from 'react';
+import DatabaseContext from '../../../context/Database.context';
 import InputModal from '../../../Layouts/InputModal/InputModal';
-import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import applyFilters from '../../../utils/applyFilters';
+import getOptionsArray from '../../../utils/getOptionsArray';
+import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
+import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddExtraInputProps {
   categoryName: string;
@@ -71,7 +73,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     {
       label: 'Extra Name',
       type: 'text',
-      fieldName: 'extraName',
+      fieldKeyName: 'extraName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-extra-name-input',

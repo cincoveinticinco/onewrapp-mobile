@@ -1,19 +1,20 @@
 import {
-  IonContent, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter, useIonViewWillLeave,
+  IonContent,
+  useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
-import './AddScene.css';
 import {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useLoader from '../../hooks/Shared/useLoader';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import AppLoader from '../../hooks/Shared/AppLoader';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
+import './AddScene.css';
 
 const AddScene: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -107,7 +108,6 @@ const AddScene: React.FC = () => {
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error inserting scene');
-      console.log(error);
       scrollToTop();
     }
 
@@ -144,7 +144,7 @@ const AddScene: React.FC = () => {
       <IonContent color="tertiary" ref={contentRef} style={{ zIndex: '20' }}>
         {
           dataIsLoading && (
-            useLoader()
+            AppLoader()
           )
         }
         {

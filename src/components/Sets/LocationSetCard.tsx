@@ -1,27 +1,25 @@
-import React, { useContext, useRef } from 'react';
 import {
-  IonItemSliding,
-  IonItemOptions,
   IonButton,
   IonItem,
+  IonItemOptions,
+  IonItemSliding,
   IonTitle,
-  IonAlert,
 } from '@ionic/react';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
-import HighlightedText from '../Shared/HighlightedText/HighlightedText';
-import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
-import { banOutline, pencilOutline } from 'ionicons/icons';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import DropDownButton from '../Shared/DropDownButton/DropDownButton';
-import EditionModal from '../Shared/EditionModal/EditionModal';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import useWarningToast from '../../hooks/Shared/useWarningToast';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import DropDownButton from '../Shared/DropDownButton/DropDownButton';
+import EditionModal from '../Shared/EditionModal/EditionModal';
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
 
 interface Set {
   setName: string;
@@ -54,6 +52,7 @@ interface LocationSetCardProps {
   isOpen?: boolean;
   validationFunction: (value: string, currentValue: string) => (any)
   setIsLoading?: (value: boolean) => void
+  permissionType?: number | null;
 }
 
 // EP, ....
@@ -75,7 +74,7 @@ const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: stri
 );
 
 const LocationSetCard: React.FC<LocationSetCardProps> = ({
-  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading,
+  set, searchText, location, setsQuantity, onClick, isOpen, validationFunction, setIsLoading, permissionType,
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -85,6 +84,8 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
   const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
+
+  const disableEditions = permissionType !== 1;
 
   const openEditModal = () => {
     if (modalRef.current) {
@@ -104,7 +105,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Location Name',
       type: 'text',
-      fieldName: 'locationName',
+      fieldKeyName: 'locationName',
       placeholder: 'Location Name',
       required: true,
       inputName: `edit-${location?.locationName || ''}-location-input`,
@@ -115,7 +116,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Location Name',
       type: 'text',
-      fieldName: 'locationName',
+      fieldKeyName: 'locationName',
       placeholder: 'Location Name',
       required: true,
       inputName: `edit-${set?.locationName || ''}-location-input`,
@@ -123,7 +124,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     {
       label: 'Set Name',
       type: 'text',
-      fieldName: 'setName',
+      fieldKeyName: 'setName',
       placeholder: 'Set Name',
       required: true,
       inputName: `edit-${set?.setName || ''}-set-input`,
@@ -175,7 +176,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Location updated successfully');
       }, 500);
@@ -207,7 +207,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Set updated successfully');
       }, 300);
@@ -268,7 +267,6 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         setIsLoading(false);
       }
 
-      console.log('result', result);
       setTimeout(() => {
         successMessageToast('Set deleted successfully');
       }, 500);
@@ -368,13 +366,13 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       </IonItem>
       <IonItemOptions className="location-set-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={() => openEditModal()}>
+          <IonButton fill="clear" onClick={() => openEditModal()} disabled={disableEditions}>
             <CiEdit className="button-icon view" />
           </IonButton>
-          <IonButton fill="clear">
+          <IonButton fill="clear" disabled={disableEditions}>
             <PiProhibitLight className="button-icon ban" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => openAlert()}>
+          <IonButton fill="clear" onClick={() => openAlert()} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

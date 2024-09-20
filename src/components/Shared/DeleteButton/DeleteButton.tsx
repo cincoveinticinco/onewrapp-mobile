@@ -1,7 +1,7 @@
 import { IonButton } from '@ionic/react';
 import React from 'react';
-import './DeleteButton.scss';
 import { PiTrashSimpleLight } from 'react-icons/pi';
+import './DeleteButton.scss';
 
 interface DeleteButtonProps {
   id?: string

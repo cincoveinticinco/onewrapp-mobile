@@ -1,18 +1,17 @@
 import {
   IonCol,
-  IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal,
+  IonContent, IonGrid, IonHeader, IonItem,
+  IonModal,
   IonRow,
-  IonSelect,
-  IonSelectOption,
 } from '@ionic/react';
-import React, { useRef, useState, useMemo } from 'react';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import './InputModalScene.scss';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import { Scene } from '../../interfaces/scenesTypes';
+import React, { useMemo, useState } from 'react';
 import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import { Scene } from '../../interfaces/scenes.types';
+import './InputModalScene.scss';
 
 interface InputModalProps {
   sceneName: string;
@@ -77,14 +76,14 @@ const InputModalScene: React.FC<InputModalProps> = ({
   };
 
   const episodeInput = {
-    fieldName: 'episode',
+    fieldKeyName: 'episode',
     label: 'Select episode',
     placeholder: 'Select episode',
     selectOptions: getUniqueEpisodes(),
   };
 
   const sceneInput = {
-    fieldName: 'scene',
+    fieldKeyName: 'scene',
     label: 'Select a scene',
     placeholder: 'Select a scene',
     selectOptions: filteredScenes.map((scene: Scene) => ({
@@ -96,7 +95,6 @@ const InputModalScene: React.FC<InputModalProps> = ({
   const saveOption = () => {
     if (selectedOption) {
       handleCheckboxToggle(selectedOption);
-      console.log(selectedOption);
       closeModal();
     }
   };
@@ -120,7 +118,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
                 <IonItem color="tertiary">
                   <CustomSelect
                     input={episodeInput}
-                    setNewOptionValue={(fieldName, value) => setSelectedEpisode(value)}
+                    setNewOptionValue={(fieldKeyName, value) => setSelectedEpisode(value)}
                     enableSearch
                   />
                 </IonItem>
@@ -129,7 +127,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
                 <IonItem color="tertiary">
                   <CustomSelect
                     input={sceneInput}
-                    setNewOptionValue={(fieldName, value: Scene) => {
+                    setNewOptionValue={(fieldKeyName, value: Scene) => {
                       setSelectedOption(value || null);
                     }}
                     enableSearch

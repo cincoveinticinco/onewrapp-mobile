@@ -1,28 +1,30 @@
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonPage
+  IonButton, IonContent, IonHeader, IonIcon, IonPage,
 } from '@ionic/react';
-import { Redirect, useHistory } from 'react-router';
-import { useAuth } from '../../context/Auth';
-import ReactPlayer from 'react-player';
-import './LoginPage.css';
-import {
-  logoApple, logoGoogle, logoWindows, mail,
-} from 'ionicons/icons';
 import { useGoogleLogin } from '@react-oauth/google';
+import {
+  logoGoogle,
+} from 'ionicons/icons';
+import ReactPlayer from 'react-player';
+import { useHistory } from 'react-router';
+import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
-import environment from '../../../environment';
+import { useAuth } from '../../context/Auth.context';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import './LoginPage.css';
 
 interface Props {
 }
 
-const LoginPage: React.FC<Props> = ({}) => {
+const LoginPage: React.FC<Props> = () => {
   const { saveLogin } = useAuth();
+  const errorToast = useErrorToast();
 
   const history = useHistory();
 
   const errorMessage = (error: any): any => {
-    console.log(error);
+    errorToast(error);
   };
 
   const login = useGoogleLogin({
@@ -44,13 +46,12 @@ const LoginPage: React.FC<Props> = ({}) => {
             history.push('/my/projects');
           } else {
           // Maneja el error
-            console.error(data.error);
             history.push('/user-not-found');
+            throw errorToast(data.error);
           }
         })
         .catch((error) => {
-          console.error('Error:', error);
-         
+          throw error;
         });
     },
     onError: errorMessage,

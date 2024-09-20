@@ -12,6 +12,30 @@
   }
 }
 
+.buttons-wrapper {
+  width: 200px;
+  display: flex;
+  align-items: center;
+
+  .success {
+    border: 1px solid var(--ion-color-success);
+    color: var(--ion-color-light);
+
+    &.active {
+      background-color: var(--ion-color-success);
+    }
+  }
+
+  .danger {
+    border: 1px solid var(--ion-color-danger);
+    color: var(--ion-color-light);
+
+    &.active {
+      background-color: var(--ion-color-danger);
+    }
+  }
+}
+
 .scene-theme-dark {
   --background: var(--ion-color-dark);
 
@@ -59,6 +83,15 @@
   }
 }
 
+.scene-theme-danger {
+  --background: var(--ion-color-danger);
+
+  &:active,
+  &:hover {
+    --background: var(--ion-color-danger-shade);
+  }
+}
+
 .scene-theme-primary {
   --background: var(--ion-color-primary);
 
@@ -72,7 +105,6 @@
   width: 100%;
   grid-template-columns: 1fr;
   margin: 0;
-  outline: 1px solid var(--ion-color-dark);
   border-radius: 0;
   box-shadow: none;
 
@@ -101,13 +133,64 @@
   }
 }
 
-.categories-card-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  border: 1px solid var(--ion-color-dark);
+.shoot-info {
+  .info {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background-color: var(--ion-color-tertiary-dark);
+
+    .partiality-checkbox {
+      margin: 12px;
+
+      &::part(container) {
+        border: 1px solid var(--ion-color-light);
+
+        --checkbox-background-checked: var(--ion-color-primary);
+      }
+    }
+  }
 }
 
-@media (min-width: 500px) {
+.grid-scene-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: 6px;
+
+  .section-wrapper {
+    background-color: var(--ion-color-tertiary-dark);
+    height: 100%;
+    justify-content: center;
+
+    .categories-card-container {
+      height: calc(100% - 57px);
+
+      ion-card {
+        height: 100%;
+        background-color: var(--ion-color-tertiary-dark);
+      }
+    }
+  }
+
+  .characters-info {
+    grid-row: 1/5;
+    grid-column: 1/2;
+  }
+
+  .extras-info {
+    grid-row: 1/4;
+  }
+
+  .elements-info {
+    grid-row: 1/4;
+  }
+
+  .notes-info {
+    grid-column: 2/4;
+  }
+}
+
+@media (min-width: 400px) {
   .categories-card-container {
     grid-template-columns: 1fr 1fr 1fr;
   }
@@ -116,5 +199,20 @@
     grid-column: 1 / 5;
     text-align: center;
     padding: 12px;
+  }
+
+  .shoot-info {
+    width: 100%;
+
+    .info {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      padding: 12px;
+
+      div {
+        padding: 3px;
+      }
+    }
   }
 }

@@ -1,11 +1,10 @@
 import {
-  IonBadge, IonCard, IonCardContent, IonItem, IonLabel,
+  IonCard, IonCardContent,
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
-import { LocationInfo, Shooting } from '../../../interfaces/shootingTypes';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import truncateString from '../../../utils/truncateString';
+import { Shooting } from '../../../interfaces/shooting.types';
 
 const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ className, shooting }) => {
   const history = useHistory();
@@ -16,8 +15,6 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
   const goToDetail = (shootingId: string) => {
     history.push(`/my/projects/${id}/shooting/${shootingId}`);
   };
-
-  const getLocationsString = () => shooting.locations.map((location: LocationInfo) => location.location_name).join(', ');
 
   const getShootingColor = () => {
     if (shooting.status === ShootingStatusEnum.Called) {
@@ -35,6 +32,7 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
       onClick={() => goToDetail(shooting.id)}
       style={{
         backgroundColor: getShootingColor(),
+        width: '100%',
       }}
     >
       <IonCardContent style={{ width: '100%', padding: '6px' }}>
@@ -63,30 +61,6 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
             )
           }
         </div>
-        {
-          shooting.locations.length > 0 && !isMobile && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-              className="location-info"
-            >
-              <IonBadge color="light" style={{ margin: '3px', fontSize: '10px' }}>
-                {shooting.locations.length}
-              </IonBadge>
-              <span style={{
-                fontSize: '10px',
-                fontWeight: '300',
-                marginLeft: '6px',
-                textAlign: 'left',
-              }}
-              >
-                {truncateString(getLocationsString(), 15)}
-              </span>
-            </div>
-          )
-        }
       </IonCardContent>
       <p />
     </IonCard>

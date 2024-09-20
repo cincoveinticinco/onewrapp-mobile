@@ -3,20 +3,20 @@ import {
 } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import './InputModal.scss';
-import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
-import removeNumberAndDot from '../../utils/removeNumberAndDot';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import InputItem from '../../components/AddScene/AddSceneFormInputs/InputItem';
+import ModalSearchBar from '../../components/Shared/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
+import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
+import './InputModal.scss';
 
 interface FormInputsProps {
   label: string;
   placeholder: string;
-  fieldName: string;
+  fieldKeyName: string;
   inputName: string;
   type: string;
 }
@@ -82,7 +82,7 @@ const InputModal: React.FC<InputModalProps> = ({
   const defaultFormValues: any = {};
 
   formInputs?.forEach((input: any) => {
-    defaultFormValues[input.fieldName] = null;
+    defaultFormValues[input.fieldKeyName] = null;
   });
 
   const [errorMessage, setErrorMessage] = useState('REQUIRED *');
@@ -99,7 +99,7 @@ const InputModal: React.FC<InputModalProps> = ({
 
   const handleSaveNewOption = (newOptionArgument: any) => {
     formInputs?.forEach((input: any) => {
-      resetField(input.fieldName);
+      resetField(input.fieldKeyName);
     });
     newOptionArgument.categoryName = optionCategory === 'NO CATEGORY' ? null : optionCategory;
     setCreateNewMode(false);
@@ -109,33 +109,33 @@ const InputModal: React.FC<InputModalProps> = ({
     closeModal();
   };
 
-  const setNewOptionValue = (fieldName: string, value: string) => {
-    if ((value === '' || !value) && fieldName !== 'characterNum') {
-      return setValue(fieldName, null);
+  const setNewOptionValue = (fieldKeyName: string, value: string) => {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
+      return setValue(fieldKeyName, null);
     }
-    return setValue(fieldName, value);
+    return setValue(fieldKeyName, value);
   };
 
-  const handleValidation = (value: string, fieldName: string) => {
-    if (fieldName === 'characterNum') {
+  const handleValidation = (value: string, fieldKeyName: string) => {
+    if (fieldKeyName === 'characterNum') {
       return true;
     }
 
-    if ((value === '' || !value) && fieldName !== 'characterNum') {
+    if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       setShowError(true);
       setErrorMessage('REQUIRED *');
       return 'This field is required';
     }
 
     const optionExists = existentOptions?.findIndex((option: any) => {
-      if (option[fieldName]) {
-        return option[fieldName].toLowerCase() === value.toLowerCase();
+      if (option[fieldKeyName]) {
+        return option[fieldKeyName].toLowerCase() === value.toLowerCase();
       }
     });
 
     const optionExistsInSelected = selectedOptions.findIndex((option: string) => option.toLowerCase() === value.toLowerCase());
 
-    if (fieldName !== 'characterNum' && (optionExists && optionExists > -1) || (optionExistsInSelected > -1)) {
+    if (fieldKeyName !== 'characterNum' && (optionExists && optionExists > -1) || (optionExistsInSelected > -1)) {
       setShowError(true);
       setErrorMessage('ALREADY EXISTS *');
       return 'This option already exists';
@@ -147,7 +147,7 @@ const InputModal: React.FC<InputModalProps> = ({
   const cancelForm = () => {
     setCreateNewMode(false);
     formInputs?.forEach((input: any) => {
-      setValue(input.fieldName, null);
+      setValue(input.fieldKeyName, null);
     });
     setShowError(false);
     setSearchText('');
@@ -181,11 +181,11 @@ const InputModal: React.FC<InputModalProps> = ({
                   label={input.label}
                   placeholder={input.placeholder}
                   control={control}
-                  fieldName={input.fieldName}
+                  fieldKeyName={input.fieldKeyName}
                   inputName={input.inputName}
-                  displayError={input.fieldName !== 'characterNum' ? showError : false}
+                  displayError={input.fieldKeyName !== 'characterNum' ? showError : false}
                   setValue={setNewOptionValue}
-                  validate={input.fieldName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldName)}
+                  validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName)}
                   type={input.type}
                   errorMessage={errorMessage}
                 />

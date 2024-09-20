@@ -33,16 +33,17 @@
 .calendar-grid {
   min-height: 100%;
   overflow: hidden;
-  outline: 0.5px solid #ccc;
+  margin: 10px;
 }
 
 .day-names-row {
   text-align: center;
   text-transform: uppercase;
   font-weight: bold;
+  background-color: var(--ion-color-dark);
 
   ion-col {
-    border: 1px solid #ccc;
+    outline: 1px solid #ccc;
     padding: 10px;
   }
 }
@@ -51,19 +52,28 @@
   text-align: right;
   color: var(--ion-color-white);
   outline: 0.5px solid var(--ion-color-light);
-  height: auto !important;
-  min-height: 100px;
+  min-height: 150px !important;
+  padding: 6px;
+
+  ion-card {
+    margin: 6px 0 !important;
+    border-radius: 0;
+  }
+}
+
+.sunday {
+  background-color: var(--ion-color-tertiary-dark);
 }
 
 .other-month {
   color: #ccc;
   outline: 0.5px solid #ccc;
   text-align: right;
-  background-color: #212730;
 }
 
 .current-day {
-  outline: 1px solid var(--ion-color-primary);
+  outline: 2px solid var(--ion-color-yellow);
+  color: var(--ion-color-yellow);
 }
 
 .week-row {
@@ -72,7 +82,7 @@
   .other-month,
   .calendar-day,
   .current-day {
-    height: 15vh;
+    height: 150px;
     max-width: calc(100% / 7);
 
     --landscape-height: 150px;
@@ -89,7 +99,6 @@
   .month-shooting {
     cursor: pointer;
     max-width: 100%;
-    max-height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -147,23 +156,24 @@
     .other-month,
     .calendar-day,
     .current-day {
-      height: 100px;
+      min-height: 70px;
     }
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   .week-row {
     .month-shooting {
-      height: 50px;
+      height: 20px;
       min-width: 25px;
+      min-height: 20px;
       border-radius: 100%;
     }
 
     .other-month,
     .calendar-day,
     .current-day {
-      height: 100px;
+      min-height: 70px;
     }
   }
 }

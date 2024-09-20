@@ -1,6 +1,6 @@
 import { IonSpinner } from '@ionic/react';
 
-const useLoader = () => (
+const AppLoader = () => (
   <IonSpinner
     name="bubbles"
     className="loader"
@@ -15,4 +15,4 @@ const useLoader = () => (
   />
 );
 
-export default useLoader;
+export default AppLoader;

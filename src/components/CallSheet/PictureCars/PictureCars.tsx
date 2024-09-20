@@ -1,8 +1,8 @@
 import React from 'react';
-import { PictureCar } from '../../../interfaces/shootingTypes';
-import NoRegisters from '../NoRegisters/NoRegisters';
-import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
+import { PictureCar } from '../../../interfaces/shooting.types';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
+import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
+import NoRegisters from '../NoRegisters/NoRegisters';
 
 interface PictureCarsProps {
   pictureCars: PictureCar[]
@@ -11,10 +11,11 @@ interface PictureCarsProps {
   addNewPictureCar: (pictureCar: PictureCar) => void;
   editMode: boolean;
   editPictureCar: (pictureCarIndex: number, key: any, newValue: any, type: any) => void;
+  permissionType?: number | null;
 }
 
 const PictureCars: React.FC<PictureCarsProps> = ({
-  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar,
+  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar, permissionType,
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
@@ -27,7 +28,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
   const AddNewModal = () => {
     const pictureCarInputs: FormInput[] = [
       {
-        fieldName: 'pictureCarName',
+        fieldKeyName: 'pictureCarName',
         label: 'Car Name',
         placeholder: 'Enter car name',
         type: 'text',
@@ -35,7 +36,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'quantity',
+        fieldKeyName: 'quantity',
         label: 'Quantity',
         placeholder: 'Enter quantity',
         type: 'number',
@@ -43,7 +44,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',
@@ -78,7 +79,16 @@ const PictureCars: React.FC<PictureCarsProps> = ({
 
   if (isOpen) return <AddNewModal />;
 
-  if (!pictureCars.length) return <NoRegisters addNew={() => setIsOpen(true)} />;
+  if (!pictureCars.length) {
+    return (
+      <NoRegisters
+        addNew={() => setIsOpen(true)}
+        disabled={
+  permissionType !== 1
+}
+      />
+    );
+  }
 
   return (
     <>

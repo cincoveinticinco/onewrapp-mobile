@@ -1,4 +1,4 @@
-import { Character } from '../interfaces/scenesTypes';
+import { Character } from '../interfaces/scenes.types';
 
 const getCharactersArray = (uniqueValuesArray: any[]) => {
   const charactersArray: string[] = [];

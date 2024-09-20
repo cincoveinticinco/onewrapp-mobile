@@ -1,8 +1,8 @@
 import {
   IonInput, IonItem, IonSelect, IonSelectOption,
 } from '@ionic/react';
-import { useEffect, useState } from 'react';
-import { Character } from '../../../interfaces/scenesTypes';
+import { useState } from 'react';
+import { Character } from '../../../interfaces/scenes.types';
 
 interface CharacterFormProps {
   character: Character;
@@ -12,8 +12,6 @@ interface CharacterFormProps {
 
 const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, characterCategories }) => {
   const [isFocused, setIsFocused] = useState([false, false, false]);
-
-  console.log(characterCategories);
 
   return (
     <>

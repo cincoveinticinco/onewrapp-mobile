@@ -1,25 +1,30 @@
-import React, {
-  useContext, useEffect, useState, useRef,
-} from 'react';
 import {
-  IonContent, useIonViewDidEnter, useIonViewWillLeave,
+  IonContent,
 } from '@ionic/react';
+import React, {
+  useContext, useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import ScrollInfiniteContext from '../../context/ScrollInfiniteContext';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { setsDefaultSortOptions } from '../../context/ScenesContext';
+import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 
-import SetCard from '../../components/Sets/LocationSetCard';
 import LocationSetCard from '../../components/Sets/LocationSetCard';
-import './Sets.scss';
-import removeAccents from '../../utils/removeAccents';
-import useLoader from '../../hooks/Shared/useLoader';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
+import AppLoader from '../../hooks/Shared/AppLoader';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
+import removeAccents from '../../utils/removeAccents';
+import './Sets.scss';
 
-const Sets: React.FC = () => {
+const Sets: React.FC<{
+  permissionType?: number | null;
+}> = ({
+  permissionType,
+}) => {
   const {
     processedSets, processedLocations, isLoading, setIsLoading,
   } = useProcessedSetsAndLocations();
@@ -94,17 +99,19 @@ const Sets: React.FC = () => {
   }, [processedLocations, filteredSets]);
 
   useEffect(() => {
-    processedLocations
-      && processedLocations.forEach((location: any) => {
+    if (processedLocations) {
+      processedLocations.forEach((location: any) => {
         setDropDownIsOpen((prev: any) => ({ ...prev, [location.locationName]: true }));
       });
+    }
   }, [processedLocations]);
 
   useEffect(() => {
-    processedLocations
-      && processedLocations.forEach((location: any) => {
+    if (processedLocations) {
+      processedLocations.forEach((location: any) => {
         setDisplayedSets((prev: any) => ({ ...prev, [location.locationName]: [] }));
       });
+    }
   }, [processedLocations]);
 
   const cleartSortSelections = () => {
@@ -135,6 +142,8 @@ const Sets: React.FC = () => {
 
       return locationExists ? 'Location already exists' : true;
     }
+
+    return 'Location name is required';
   };
 
   const validateSetExists = (setName: string, currentSetName: string) => {
@@ -148,6 +157,8 @@ const Sets: React.FC = () => {
 
       return setExists ? 'Set already exists' : true;
     }
+
+    return 'Set name is required';
   };
 
   return (
@@ -163,7 +174,7 @@ const Sets: React.FC = () => {
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           {
               isLoading && (
-                useLoader()
+                AppLoader()
               )
             }
           {
@@ -200,11 +211,12 @@ const Sets: React.FC = () => {
                               {
                                 displayedSets[location.locationName]
                                 && displayedSets[location.locationName].map((set: any, index: number) => (
-                                  <SetCard
+                                  <LocationSetCard
                                     key={index}
                                     set={set}
                                     searchText={setsSearchText}
                                     validationFunction={validateSetExists}
+                                    permissionType={permissionType}
                                   />
                                 ))
 }

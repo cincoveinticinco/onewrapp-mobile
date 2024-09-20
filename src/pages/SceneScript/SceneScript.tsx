@@ -1,40 +1,49 @@
 import {
-  IonContent, IonHeader, IonPage, IonTabBar, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+  IonContent, IonHeader, IonPage,
+  useIonViewDidEnter,
+  useIonViewWillEnter,
 } from '@ionic/react';
-import { useHistory, useLocation, useParams } from 'react-router';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext, useEffect,
+  useState,
 } from 'react';
-import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
-import { PiNotePencil } from 'react-icons/pi';
-import { MdOutlineFaceUnlock } from 'react-icons/md';
-import { HiMiniUsers } from 'react-icons/hi2';
 import { FaClipboardList } from 'react-icons/fa';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import { HiMiniUsers } from 'react-icons/hi2';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
+import { PiNotePencil } from 'react-icons/pi';
+import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
+import { useHistory, useParams } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
+import ScriptPage from '../../components/SceneScript/ScriptPage';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
-import './SceneScript.scss';
-import SceneHeader from '../SceneDetails/SceneHeader';
-import ScenesContext from '../../context/ScenesContext';
-import applyFilters from '../../utils/applyFilters';
-import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum } from '../../Ennums/ennums';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import ScenesContext from '../../context/Scenes.context';
+import {
+  DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
+} from '../../Ennums/ennums';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
 import {
   Character, Element, Extra, Note, Scene,
-} from '../../interfaces/scenesTypes';
-import ScriptPage from '../../components/SceneScript/ScriptPage';
+} from '../../interfaces/scenes.types';
+import { ShootingScene } from '../../interfaces/shooting.types';
+import applyFilters from '../../utils/applyFilters';
+import SceneHeader from '../SceneDetails/SceneHeader';
+import './SceneScript.scss';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
 // GREEN EXTRA
 
-const SceneScript: React.FC = () => {
-  const { hideTabs, showTabs } = useHideTabs();
-  const { sceneId } = useParams<{ sceneId: string }>();
+const SceneScript: React.FC<{
+  isShooting?: boolean;
+}> = ({ isShooting = false }) => {
+  const { hideTabs } = useHideTabs();
+  const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisScene, setThisScene] = useState<Scene | null>(null);
-  const {
-    oneWrapDb, offlineScenes, initializeParagraphReplication, projectId,
-  } = useContext<DatabaseContextProps>(DatabaseContext);
+  const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
+  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {
@@ -51,8 +60,48 @@ const SceneScript: React.FC = () => {
   const [paragraphs, setParagraphs] = useState<any[]>([]);
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+  const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
+  const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
+  const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
+  const [previousScene, setPreviousScene] = useState<Scene | null>(null);
+  const [nextScene, setNextScene] = useState<Scene | null>(null);
+  const errorToast = useErrorToast();
 
-  const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+    if (urlShootingId) {
+      setShootingId(urlShootingId);
+    }
+  }, [urlShootingId]);
+
+  const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
+  const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
+
+  const getScenesInShooting = async () => {
+    const shootingDoc = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+    if (!shootingDoc || !shootingDoc._data || !shootingDoc._data.scenes) {
+      return [];
+    }
+    const orderedScenes = [...shootingDoc._data.scenes].sort((a, b) => a.position - b.position);
+    return orderedScenes.map((scene: any) => parseInt(scene.sceneId));
+  };
+
+  useEffect(() => {
+    const filterScenes = async () => {
+      let filtered: Scene[];
+
+      if (!isShooting) {
+        filtered = selectedFilterOptions ? applyFilters(offlineScenes, selectedFilterOptions) : offlineScenes;
+      } else {
+        const scenesInShooting = await getScenesInShooting();
+
+        filtered = offlineScenes.filter((scene: any) => scenesInShooting.includes(parseInt(scene.sceneId, 10)));
+      }
+
+      setFilteredScenes(filtered);
+    };
+
+    filterScenes();
+  }, [isShooting, offlineScenes, selectedFilterOptions]);
 
   useEffect(() => {
     const printParagraphs = async () => {
@@ -74,7 +123,7 @@ const SceneScript: React.FC = () => {
       const newScene = { ...thisScene, elements: Array.from(sceneElements) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating element');
     }
   };
 
@@ -85,7 +134,7 @@ const SceneScript: React.FC = () => {
       const newScene = { ...thisScene, characters: Array.from(sceneCharacters) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating character');
     }
   };
 
@@ -96,7 +145,7 @@ const SceneScript: React.FC = () => {
       const newScene = { ...thisScene, extras: Array.from(sceneExtras) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating extra');
     }
   };
 
@@ -107,7 +156,7 @@ const SceneScript: React.FC = () => {
       const newScene = { ...thisScene, notes: Array.from(sceneNotes) };
       await oneWrapDb?.scenes.upsert(newScene);
     } catch (error) {
-      console.log(error);
+      errorToast('Error creating note');
     }
   };
 
@@ -124,14 +173,10 @@ const SceneScript: React.FC = () => {
   };
 
   const getCurrentScene = async () => {
-    const scene = await oneWrapDb?.scenes.findOne({ selector: { id: sceneId } }).exec();
+    const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
     if (scene._data) {
       return scene._data;
     }
-  };
-
-  const handleBack = () => {
-    history.push(`/my/projects/${id}/strips`);
   };
 
   const fetchScene = async () => {
@@ -163,17 +208,33 @@ const SceneScript: React.FC = () => {
     hideTabs();
   });
 
-  const filteredScenes = selectedFilterOptions && applyFilters(offlineScenes, selectedFilterOptions);
-  const currentSceneIndex = filteredScenes.findIndex((scene: any) => scene.id === sceneId);
-  const nextScene = filteredScenes[currentSceneIndex + 1];
-  const previousScene = filteredScenes[currentSceneIndex - 1];
-
-  const changeToNextScene = () => {
-    if (nextScene) {
-      history.push(`/my/projects/${id}/strips/details/script/${nextScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${nextScene.id}`);
+  useEffect(() => {
+    if (filteredScenes.length > 0 && thisScene) {
+      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id));
+      setCurrentSceneIndex(index);
     }
-  };
+  }, [filteredScenes, thisScene, isShooting]);
+
+  useEffect(() => {
+    if (currentSceneIndex >= 0) {
+      setPreviousScene(filteredScenes[currentSceneIndex - 1] || null);
+      setNextScene(filteredScenes[currentSceneIndex + 1] || null);
+    }
+  }, [currentSceneIndex, filteredScenes]);
+
+  useEffect(() => {
+    const fetchSceneShooting = async () => {
+      if (shootingId && oneWrapDb && thisScene) {
+        const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+        const sceneShooting = shooting?._data?.scenes.find(
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene.sceneId,
+        );
+        setThisSceneShooting(sceneShooting || null);
+      }
+    };
+
+    fetchSceneShooting();
+  }, [shootingId, oneWrapDb, thisScene]);
 
   const getPopupList = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
     let list: any = [];
@@ -253,11 +314,34 @@ const SceneScript: React.FC = () => {
     setShowTotalsPopup(true);
   };
 
+  const changeToNextScene = () => {
+    if (nextScene) {
+      const route = `${rootRouteScript}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
+      history.push(route);
+      localStorage.setItem('editionBackRoute', route);
+    }
+  };
+
+  const getSceneStatus = (scene: ShootingScene) => {
+    switch (scene.status) {
+      case ShootingSceneStatusEnum.Assigned: return 'ASSIGNED';
+      case ShootingSceneStatusEnum.NotShoot: return 'NOT SHOOT';
+      case ShootingSceneStatusEnum.Shoot: return 'SHOOT';
+      default: return 'NOT ASSIGNED';
+    }
+  };
+
   const changeToPreviousScene = () => {
     if (previousScene) {
-      history.push(`/my/projects/${id}/strips/details/script/${previousScene.id}`);
-      localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${previousScene.id}`);
+      const route = `${rootRouteScript}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
+      history.push(route);
+      localStorage.setItem('editionBackRoute', route);
     }
+  };
+
+  const handleBack = () => {
+    const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
+    history.push(backRoute);
   };
 
   const getPopupPositionTop = () => {
@@ -273,48 +357,58 @@ const SceneScript: React.FC = () => {
     if (popupType === 'extras') {
       return '150px';
     }
+
+    return '16px';
   };
 
   const [sceneColor, setSceneColor] = useState<string>('light');
 
-  useEffect(() => {
-    if (thisScene) {
-      setSceneColor(getSceneColor(thisScene));
-    }
-  }, [thisScene]);
+  const getSceneColor = async (scene: Scene) => {
+    if (isShooting) {
+      const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
+      const sceneInShooting = shooting?.[0]?.scenes.find(
+        (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene?.sceneId,
+      );
 
-  const interior = IntOrExtOptionEnum.INT;
-  const exterior = IntOrExtOptionEnum.EXT;
-  const intExt = IntOrExtOptionEnum.INT_EXT;
-  const extInt = IntOrExtOptionEnum.EXT_INT;
-  const protectionType = SceneTypeEnum.PROTECTION;
-  const sceneType = SceneTypeEnum.SCENE;
-  const day = DayOrNightOptionEnum.DAY;
-  const night = DayOrNightOptionEnum.NIGHT;
+      const sceneStatus = sceneInShooting?.status;
+      switch (sceneStatus) {
+        case ShootingSceneStatusEnum.Assigned: return 'light';
+        case ShootingSceneStatusEnum.NotShoot: return 'danger';
+        case ShootingSceneStatusEnum.Shoot: return 'success';
+        default: return 'light';
+      }
+    } else {
+      const intOrExt = [IntOrExtOptionEnum.EXT, IntOrExtOptionEnum.INT_EXT, IntOrExtOptionEnum.EXT_INT];
 
-  const getSceneColor = (scene: Scene) => {
-    const intOrExt: any = [exterior, intExt, extInt];
-
-    if (scene) {
-      if (scene.sceneType == protectionType) {
+      if (scene.sceneType === SceneTypeEnum.PROTECTION) {
         return 'rose';
-      } if (scene.sceneType == sceneType) {
-        if (scene.intOrExtOption === null || scene.dayOrNightOption === null) {
+      }
+      if (scene.sceneType === SceneTypeEnum.SCENE) {
+        if (!scene.intOrExtOption || !scene.dayOrNightOption) {
           return 'dark';
-        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === day) {
+        }
+        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
           return 'light';
-        } if (scene.intOrExtOption === interior && scene.dayOrNightOption === night) {
+        }
+        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
           return 'success';
-        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === day) {
+        }
+        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
           return 'yellow';
-        } if (intOrExt.includes((scene.intOrExtOption)?.toUpperCase()) && scene.dayOrNightOption === night) {
+        }
+        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
           return 'primary';
         }
       }
+      return 'light';
     }
-
-    return 'light';
   };
+
+  useEffect(() => {
+    if (thisScene) {
+      getSceneColor(thisScene).then(setSceneColor);
+    }
+  }, [thisScene, isShooting]);
 
   const handleZoomIn = () => {
     const newZoomLevel = zoomLevel < 1.5 ? zoomLevel + 0.1 : zoomLevel;
@@ -386,7 +480,7 @@ const SceneScript: React.FC = () => {
               )}
             </div>
             )
-}
+          }
           {
             popupType && popupType !== 'notes' && showTotalsPopup && (
             <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
@@ -399,7 +493,7 @@ const SceneScript: React.FC = () => {
                 </div>
               )
                 : getPopupCategories(popupType).map((category: string) => (
-                  <div className="popup-category-container">
+                  <div className="popup-category-container" key={uuidv4()}>
                     <p
                       key={category + popupType}
                       className="popup-category ion-no-margin ion-padding"
@@ -432,6 +526,7 @@ const SceneScript: React.FC = () => {
             nextScene={nextScene}
             changeToPreviousScene={changeToPreviousScene}
             changeToNextScene={changeToNextScene}
+            status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
           />
         </IonHeader>
         <IonContent
@@ -481,7 +576,11 @@ const SceneScript: React.FC = () => {
             </div>
           )
         }
-        <SceneDetailsTabs sceneId={sceneId} />
+        <SceneDetailsTabs
+          routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+          routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+          currentRoute="scenescript"
+        />
       </IonPage>
     </>
   );

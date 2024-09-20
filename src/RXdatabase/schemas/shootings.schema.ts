@@ -13,7 +13,7 @@ const shootingSchema = {
       maxLength: 250,
     },
     projectId: {
-      type: 'number',
+      type: ['number', 'null'],
     },
     unitId: {
       type: 'number',
@@ -125,6 +125,15 @@ const shootingSchema = {
           setups: {
             type: ['number', 'null'],
           },
+          partiality: {
+            type: ['boolean', 'null'],
+          },
+          comment: {
+            type: ['string', 'null'],
+          },
+          protectionTypeId: {
+            type: ['number', 'null'],
+          },
           createdAt: {
             type: 'string',
           },
@@ -139,29 +148,12 @@ const shootingSchema = {
       items: {
         type: 'object',
         properties: {
-          id: { type: ['number', 'string', 'null'] },
-          location_type_id: { type: 'number' },
-          location_id: { type: ['number', 'string', 'null'] },
-          call_time: { type: ['string', 'null'] },
-          location_full_address: { type: 'string' },
-          location_city_state: { type: ['string', 'null'] },
-          company_id: { type: ['number', 'null'] },
-          location_name: { type: 'string' },
-          location_address: { type: 'string' },
-          location_addres_2: { type: ['string', 'null'] },
-          city_id: { type: ['number', 'null'] },
-          location_postal_code: { type: ['string', 'null'] },
+          locationTypeId: { type: 'number' },
+          locationName: { type: 'string' },
+          locationAddress: { type: 'string' },
+          locationPostalCode: { type: ['string', 'null'] },
           lat: { type: ['string', 'null'] },
           lng: { type: ['string', 'null'] },
-          city_name_eng: { type: ['string', 'null'] },
-          city_name_esp: { type: ['string', 'null'] },
-          state_id: { type: ['number', 'null'] },
-          state_name_eng: { type: ['string', 'null'] },
-          state_name_esp: { type: ['string', 'null'] },
-          country_id: { type: ['number', 'null'] },
-          country_name_eng: { type: ['string', 'null'] },
-          country_name_esp: { type: ['string', 'null'] },
-          shoot_date: { type: 'string' },
         },
       },
     },
@@ -170,35 +162,69 @@ const shootingSchema = {
       items: {
         type: 'object',
         properties: {
-          id: { type: 'number' },
-          location_type_id: { type: 'number' },
-          location_id: { type: 'number' },
-          call_time: { type: ['string', 'null'] },
-          location_full_address: { type: 'string' },
-          location_city_state: { type: ['string', 'null'] },
-          company_id: { type: 'number' },
-          location_name: { type: 'string' },
-          location_address: { type: 'string' },
-          location_addres_2: { type: 'string' },
-          city_id: { type: ['number', 'null'] },
-          location_postal_code: { type: ['string', 'null'] },
+          locationTypeId: { type: 'number' },
+          locationName: { type: 'string' },
+          locationAddress: { type: 'string' },
+          locationPostalCode: { type: ['string', 'null'] },
           lat: { type: ['string', 'null'] },
           lng: { type: ['string', 'null'] },
-          city_name_eng: { type: ['string', 'null'] },
-          city_name_esp: { type: ['string', 'null'] },
-          state_id: { type: ['number', 'null'] },
-          state_name_eng: { type: ['string', 'null'] },
-          state_name_esp: { type: ['string', 'null'] },
-          country_id: { type: ['number', 'null'] },
-          country_name_eng: { type: ['string', 'null'] },
-          country_name_esp: { type: ['string', 'null'] },
-          shoot_date: { type: ['string', 'null'] },
         },
       },
     },
     meals: {
       type: 'array',
       additionalProperties: true,
+    },
+    services: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          description: {
+            type: ['string', 'null'],
+          },
+          providerName: {
+            type: ['string', 'null'],
+          },
+          providerId: {
+            type: ['number', 'null'],
+          },
+          quantity: {
+            type: ['string', 'null'],
+          },
+          unitCost: {
+            type: ['string', 'null'],
+          },
+          tax: {
+            type: ['string', 'null'],
+          },
+          retention: {
+            type: ['string', 'null'],
+          },
+          aiuUtility: {
+            type: ['number', 'null'],
+          },
+          aiuPercent: {
+            type: ['number', 'null'],
+          },
+          aiuValue: {
+            type: ['number', 'null'],
+          },
+          totalCost: {
+            type: ['number', 'null'],
+          },
+          files: {
+            type: ['number', 'null'],
+          },
+          observations: {
+            type: ['string', 'null'],
+          },
+          prServiceTypeId: {
+            type: ['number'],
+          },
+        },
+        required: ['description', 'providerName', 'providerId', 'quantity', 'unitCost', 'totalCost', 'files'], // Puedes ajustar los campos requeridos según tus necesidades
+      },
     },
     advanceCalls: {
       type: 'array',

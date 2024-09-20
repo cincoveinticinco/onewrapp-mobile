@@ -63,7 +63,13 @@ export default class AppDataBase {
     }
 
     public async getDatabaseInstance() {
-      return this.dbInstance;
+      // If the instance was already created, return it
+      if (this.dbInstance) {
+        return this.dbInstance;
+      }
+      // If the instance was not created, create it and return it
+      this.dbInstance = this.initializeDatabase();
+      return this;
     }
 
     public getCollections() {

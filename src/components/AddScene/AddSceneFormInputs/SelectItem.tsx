@@ -7,7 +7,7 @@ interface SelectItemProps {
   label: string;
   options: string[];
   control: any;
-  fieldName: string;
+  fieldKeyName: string;
   displayError?: boolean;
   inputName: string;
   disabled?: boolean;
@@ -23,7 +23,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   label,
   options,
   control,
-  fieldName,
+  fieldKeyName,
   displayError = false,
   inputName,
   disabled = false,
@@ -40,10 +40,10 @@ const SelectItem: React.FC<SelectItemProps> = ({
     setShowError(displayError);
   }, [displayError]);
 
-  const currentFieldValue = watchValue(fieldName);
+  const currentFieldValue = watchValue(fieldKeyName);
 
   const handleSelectCheckbox = (option: string) => {
-    currentFieldValue === option ? setValue(fieldName, null) : setValue(fieldName, option);
+    currentFieldValue === option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
 
     if (validate(currentFieldValue)) {
       setShowError(false);
@@ -64,7 +64,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
     <IonItem color="tertiary" id={defineTrigger()}>
       <Controller
         control={control}
-        name={fieldName}
+        name={fieldKeyName}
         rules={{
           validate: (validate || null),
         }}
@@ -74,8 +74,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
             label={showError && validate && (validate(field.value)) ? (validate(field.value)) : label}
             labelPlacement="floating"
             interface="alert"
-            value={watchValue(fieldName)}
-            onIonChange={(e) => { setValue(fieldName, e.detail.value); }}
+            value={watchValue(fieldKeyName)}
+            onIonChange={(e) => { setValue(fieldKeyName, e.detail.value); }}
             className={(showError ? 'error' : '')}
             mode="ios"
             disabled={disabled}
@@ -91,8 +91,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
         listOfOptions={options}
         modalTrigger={defineTrigger()}
         handleCheckboxToggle={handleSelectCheckbox}
-        selectedOptions={[watchValue(fieldName)]}
-        clearSelections={() => setValue(fieldName, null)}
+        selectedOptions={[watchValue(fieldKeyName)]}
+        clearSelections={() => setValue(fieldKeyName, null)}
         multipleSelections={false}
         canCreateNew={canCreateNew}
         editMode={editMode}

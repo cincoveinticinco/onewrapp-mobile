@@ -1,9 +1,8 @@
 @import '../../../theme/mixins.scss';
 
 .banner-card-options {
-  @include slide-card-item-options;
-
   width: 50px;
+  @include slide-card-item-options;
 }
 
 .slide-container {

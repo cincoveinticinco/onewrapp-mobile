@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
 import {
   IonCardContent,
   IonItem,
   IonList,
 } from '@ionic/react';
-import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
+import React, { useContext } from 'react';
+import DatabaseContext from '../../../context/Database.context';
 import InputModal from '../../../Layouts/InputModal/InputModal';
-import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
+import applyFilters from '../../../utils/applyFilters';
 import getOptionsArray from '../../../utils/getOptionsArray';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import applyFilters from '../../../utils/applyFilters';
+import sortArrayAlphabeticaly from '../../../utils/sortArrayAlphabeticaly';
+import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
 import NoAdded from '../../Shared/NoAdded/NoAdded';
-import DatabaseContext from '../../../hooks/Shared/database';
 
 interface AddElementInputProps {
   categoryName: string;
@@ -97,7 +97,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     {
       label: 'Element Name',
       type: 'text',
-      fieldName: 'elementName',
+      fieldKeyName: 'elementName',
       placeholder: 'INSERT',
       required: true,
       inputName: 'add-element-name-input',

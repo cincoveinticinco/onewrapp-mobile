@@ -1,4 +1,4 @@
-import { Scene } from '../interfaces/scenesTypes';
+import { Scene } from '../interfaces/scenes.types';
 
 interface SceneWithIndexSignature extends Scene {
   [key: string]: any;

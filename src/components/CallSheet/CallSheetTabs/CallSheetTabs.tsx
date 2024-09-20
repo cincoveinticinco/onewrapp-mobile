@@ -1,20 +1,34 @@
-import React from 'react';
 import {
   IonIcon, IonLabel, IonTabBar, IonTabButton,
 } from '@ionic/react';
 import {
-  peopleOutline, personOutline, carOutline, albumsOutline, briefcaseOutline,
+  albumsOutline, briefcaseOutline,
+  carOutline,
+  home,
+  peopleOutline, personOutline,
 } from 'ionicons/icons';
+import React from 'react';
 
 type ProductionView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
 interface CallSheetTabsProps {
   setView: (view: ProductionView) => void;
   view: ProductionView;
+  handleBack: () => void;
 }
 
-const CallSheetTabs: React.FC<CallSheetTabsProps> = ({ setView, view }) => (
+const CallSheetTabs: React.FC<CallSheetTabsProps> = ({ setView, view, handleBack }) => (
   <IonTabBar slot="bottom" color="dark" mode="md">
+    <IonTabButton
+      tab="cast"
+      className="tab-bar-buttons"
+      onClick={() => handleBack()}
+    >
+      <IonIcon icon={home} />
+      <IonLabel>
+        SHOOTING
+      </IonLabel>
+    </IonTabButton>
     <IonTabButton
       tab="cast"
       className="tab-bar-buttons"

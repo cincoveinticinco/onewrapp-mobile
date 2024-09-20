@@ -1,9 +1,9 @@
 import React from 'react';
 import { normalizeString } from 'rxdb';
-import { OtherCall } from '../../../interfaces/shootingTypes';
-import NoRegisters from '../NoRegisters/NoRegisters';
-import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
+import { OtherCall } from '../../../interfaces/shooting.types';
 import EditionModal, { FormInput } from '../../Shared/EditionModal/EditionModal';
+import GeneralTable, { Column } from '../../Shared/GeneralTable/GeneralTable';
+import NoRegisters from '../NoRegisters/NoRegisters';
 
 interface OtherCallsProps {
   otherCalls: OtherCall[]
@@ -12,6 +12,7 @@ interface OtherCallsProps {
   addNewOtherCall: (otherCall: OtherCall) => void
   editMode: boolean
   editOtherCall: (index: number, key: any, newValue: any, type: string) => void
+  permissionType?: number | null
 }
 
 const OtherCalls: React.FC<OtherCallsProps> = ({
@@ -21,6 +22,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   addNewOtherCall,
   editMode,
   editOtherCall,
+  permissionType,
 }) => {
   // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [
@@ -44,7 +46,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   const AddNewCallModal = () => {
     const callInputs: FormInput[] = [
       {
-        fieldName: 'otherCallName',
+        fieldKeyName: 'otherCallName',
         label: 'Other Call Name',
         placeholder: 'Enter other call name',
         type: 'text',
@@ -52,7 +54,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'quantity',
+        fieldKeyName: 'quantity',
         label: 'Quantity',
         placeholder: 'Enter quantity',
         type: 'number',
@@ -60,7 +62,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
         col: '4',
       },
       {
-        fieldName: 'callTime',
+        fieldKeyName: 'callTime',
         label: 'Call Time',
         placeholder: 'Enter call time',
         type: 'time',
@@ -85,7 +87,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
 
   if (isOpen) return <AddNewCallModal />;
 
-  if (!otherCalls.length) return <NoRegisters addNew={() => setIsOpen(true)} />;
+  if (!otherCalls.length) return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
 
   return (
     <>

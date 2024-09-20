@@ -1,0 +1,108 @@
+.map-container {
+  min-height: 170px;
+  height: 100%;
+  background-color: #efefef;
+
+  p {
+    width: 200px;
+    color: var(--ion-color-dark);
+    text-align: center;
+    font-weight: bold;
+  }
+}
+
+.shooting-label-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  width: 80px;
+  margin: auto;
+  justify-content: center;
+  position: relative;
+
+  .labels-title {
+    grid-column: 1 / 13;
+    font-weight: bold;
+    text-align: center;
+    font-size: 10px;
+    text-wrap: nowrap;
+  }
+
+  .label-info {
+    grid-column: 1 / 13;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+    width: 100%;
+    text-wrap: nowrap;
+    padding: 6px;
+  }
+
+  .label-button {
+    position: absolute;
+    right: -35px;
+    color: var(--ion-color-primary);
+    top: 16px;
+  }
+
+  .symbol-part {
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+.weather-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40%;
+
+  p {
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .map-container {
+    min-height: 100px;
+    height: 100px;
+    background-color: #efefef;
+  }
+
+  .shooting-label-grid {
+    .labels-title {
+      grid-column: 1 / 10;
+      font-weight: bold;
+      text-align: center;
+      font-size: 8px;
+      text-wrap: nowrap;
+    }
+
+    .label-info {
+      font-size: 16px;
+    }
+
+    .label-button {
+      position: absolute;
+      right: -20px;
+      color: var(--ion-color-primary);
+      top: 6px;
+      font-size: 1px;
+    }
+
+    .symbol-part {
+      font-size: 6px;
+    }
+  }
+
+  .weather-container {
+    position: relative;
+
+    p {
+      font-size: 14px;
+      text-align: center;
+    }
+  }
+}

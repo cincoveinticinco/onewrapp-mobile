@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   IonButton,
   IonContent,
@@ -10,26 +9,35 @@ import {
   useIonViewDidEnter,
 } from '@ionic/react';
 import { chevronBackOutline, save } from 'ionicons/icons';
+import React, { useEffect, useState } from 'react';
+import { VscEdit } from 'react-icons/vsc';
 import { useParams } from 'react-router';
 import { normalizeString } from 'rxdb';
-import { VscEdit } from 'react-icons/vsc';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
 import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
 import CastView from '../../components/CallSheet/CastView/CastView/CastView';
-import DatabaseContext from '../../hooks/Shared/database';
-import { Character, Scene } from '../../interfaces/scenesTypes';
-import { Talent } from '../../RXdatabase/schemas/talents';
+import CrewView from '../../components/CallSheet/CrewView/CrewView';
+import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
+import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
+import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import AddButton from '../../components/Shared/AddButton/AddButton';
+import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import DatabaseContext from '../../context/Database.context';
+import { ShootingStatusEnum } from '../../Ennums/ennums';
+import useHandleBack from '../../hooks/Shared/useHandleBack';
+import useHideTabs from '../../hooks/Shared/useHideTabs';
+import { Character, Scene } from '../../interfaces/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
-} from '../../interfaces/shootingTypes';
-import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
-import CrewView from '../../components/CallSheet/CrewView/CrewView';
-import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
-import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
-import { ShootingStatusEnum } from '../../Ennums/ennums';
+} from '../../interfaces/shooting.types';
+import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import timeToISOString from '../../utils/timeToIsoString';
+
+import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
+import './CallSheet.css';
+import useIsMobile from '../../hooks/Shared/useIsMobile';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -46,7 +54,15 @@ interface CastCallForTable {
   castName: string;
 }
 
-const CallSheet: React.FC = () => {
+interface CallSheetProps {
+  isSection?: boolean;
+  permissionType?: number | null;
+}
+
+const CallSheet: React.FC<CallSheetProps> = ({
+  isSection = false,
+  permissionType,
+}) => {
   const tabsController = useHideTabs();
   const [view, setView] = useState<CallSheetView>('cast');
   const { id, shootingId } = useParams<{ id: string, shootingId: string }>();
@@ -66,6 +82,8 @@ const CallSheet: React.FC = () => {
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
   const getTalentCastOptions = async () => {
     const talents = await oneWrapDb?.talents.find({}).exec() || [];
@@ -106,12 +124,7 @@ const CallSheet: React.FC = () => {
   ) => {
     setCastCalls((prevCastCalls) => {
       const editedCastCall = JSON.parse(JSON.stringify(prevCastCalls[castIndex]));
-      editedCastCall[castKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedCastCall[castKey] = newValue;
       const newCastCalls = [
         ...prevCastCalls.slice(0, castIndex),
         editedCastCall,
@@ -121,9 +134,7 @@ const CallSheet: React.FC = () => {
       const getUniqueArrayValuesByKey = (array: any[], key: string) => [...new Map(array.map((item) => [item[key], item])).values()];
 
       const copyEditedCastCalls = [...editedCastCalls];
-      console.log('copyEditedCastCalls', copyEditedCastCalls);
       const newEditedCastCalls = [...copyEditedCastCalls, editedCastCall];
-      console.log('newEditedCastCalls', newEditedCastCalls);
       const uniqueEditedCastCalls = getUniqueArrayValuesByKey(newEditedCastCalls, 'castName');
 
       setEditedCastCalls(uniqueEditedCastCalls);
@@ -138,16 +149,17 @@ const CallSheet: React.FC = () => {
 
       const newCastCalls = editedCastCalls.map((call: any) => {
         // Buscar si existe un call en la base de datos
+        console.log('call', call);
         const callInDb = shootingCopy.castCalls?.find((callInDb: any) => callInDb.castName === call.castName);
         return {
           id: callInDb?.id || '',
           projectCastId: callInDb?.projectCastId || 0,
-          shootingId: parseInt(shootingId),
+          shootingId: parseInt(shootingId, 10),
           pickUp: call.pickUp,
-          callTime: call.callTime,
-          onMakeUp: call.onMakeUp,
-          onWardrobe: call.onWardrobe,
-          readyToShoot: call.readyToShoot,
+          callTime: call.callTime || callInDb?.callTime || '',
+          onMakeUp: call.onMakeUp || callInDb?.onMakeUp || '',
+          onWardrobe: call.onWardrobe || callInDb?.onWardrobe || '',
+          readyToShoot: call.readyToShoot || callInDb?.readyToShoot || '',
           arrived: callInDb?.arrived || '',
           wrap: callInDb?.wrap || '',
           startProcesses: callInDb?.startProcesses || '',
@@ -161,7 +173,7 @@ const CallSheet: React.FC = () => {
           castNumber: call.castNumber || '',
           castCategory: call.castCategory || '',
           castCategoryId: callInDb?.castCategoryId || 0,
-          notes: call.notes,
+          notes: call.notes || callInDb?.notes || '',
           createdAt: callInDb?.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -180,8 +192,9 @@ const CallSheet: React.FC = () => {
       };
       setThisShooting(newShooting);
       await oneWrapDb?.shootings.upsert(newShooting);
+      successToast('Cast Calls saved');
     } catch (error) {
-      console.error('Error al editar Cast Call:', error);
+      errorToast('Error saving Cast Calls');
       throw error;
     } finally {
       setEditedCastCalls([]);
@@ -196,12 +209,7 @@ const CallSheet: React.FC = () => {
   ) => {
     setExtraCalls((prevExtraCalls) => {
       const editedExtraCall = JSON.parse(JSON.stringify(prevExtraCalls[extraIndex]));
-      editedExtraCall[extraKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedExtraCall[extraKey] = newValue;
       const newExtraCalls = [
         ...prevExtraCalls.slice(0, extraIndex),
         editedExtraCall,
@@ -217,8 +225,9 @@ const CallSheet: React.FC = () => {
       shootingCopy.extraCalls = extraCalls;
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Extra Calls saved');
     } catch (error) {
-      console.error('Error al editar Extra Call:', error);
+      errorToast('Error saving Extra Calls');
       throw error;
     }
   };
@@ -231,12 +240,7 @@ const CallSheet: React.FC = () => {
   ) => {
     setOtherCalls((prevOtherCalls) => {
       const editedOtherCall = JSON.parse(JSON.stringify(prevOtherCalls[otherIndex]));
-      editedOtherCall[otherKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedOtherCall[otherKey] = newValue;
       const newOtherCalls = [
         ...prevOtherCalls.slice(0, otherIndex),
         editedOtherCall,
@@ -252,8 +256,9 @@ const CallSheet: React.FC = () => {
       shootingCopy.otherCalls = otherCalls;
       setThisShooting(shootingCopy as Shooting);
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Other Calls saved');
     } catch (error) {
-      console.error('Error al editar Other Call:', error);
+      errorToast('Error saving Other Calls');
       throw error;
     }
   };
@@ -265,18 +270,10 @@ const CallSheet: React.FC = () => {
     type: string,
   ) => {
     setPictureCars((prevPictureCars) => {
-      // Crear una copia profunda del pictureCar que estamos editando
       const editedPictureCar = JSON.parse(JSON.stringify(prevPictureCars[pictureCarIndex]));
 
-      // Actualizar el campo específico
-      editedPictureCar[pictureCarKey] = type === 'hour'
-        ? timeToISOString({
-          hours: newValue.split(':')[0],
-          minutes: newValue.split(':')[1],
-        }, thisShooting?.shootDate || '')
-        : type === 'number' ? parseInt(newValue) : newValue;
+      editedPictureCar[pictureCarKey] = newValue;
 
-      // Crear un nuevo array con el pictureCar actualizado
       const newPictureCars = [
         ...prevPictureCars.slice(0, pictureCarIndex),
         editedPictureCar,
@@ -295,8 +292,9 @@ const CallSheet: React.FC = () => {
       setThisShooting(shootingCopy as Shooting);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
+      successToast('Picture Cars saved');
     } catch (error) {
-      console.error('Error al editar Picture Car:', error);
+      errorToast('Error saving Picture Cars');
       throw error;
     }
   };
@@ -355,8 +353,8 @@ const CallSheet: React.FC = () => {
               const talentCallInfo = getCallInfo(character.characterName);
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
-                cast: `${character.characterNum}. ${character.characterName}`,
-                name: talent?.name,
+                cast: `${character.characterNum ? (`${character.characterNum}.`) : ''} ${character.characterName}`,
+                name: `${talent?.name || ''} ${talent?.lastName || ''}`,
                 tScn: getNumberScenesByCast(character.characterName),
                 pickUp: talentCallInfo?.pickUp || '--',
                 callTime: talentCallInfo?.callTime || '--',
@@ -385,7 +383,7 @@ const CallSheet: React.FC = () => {
       const { pictureCars } = shootings[0]._data;
       setPictureCars(pictureCars);
     } catch (err) {
-      console.error(err);
+      errorToast('Error fetching Cast Calls');
     }
   };
 
@@ -407,6 +405,7 @@ const CallSheet: React.FC = () => {
             addNewCastCall={createNewCastCall}
             castOptions={castOptions}
             editCastCall={editCastCall}
+            permissionType={permissionType}
           />
         );
       case 'extras':
@@ -418,6 +417,7 @@ const CallSheet: React.FC = () => {
             setAddNewModalIsOpen={setAddNewExtraCAllModalIsOpen}
             addNewExtraCall={createNewExtraCall}
             editExtraCall={editExtraCall}
+            permissionType={permissionType}
           />
         );
       case 'pictureCars':
@@ -429,6 +429,7 @@ const CallSheet: React.FC = () => {
             addNewPictureCar={createNewPictureCar}
             editMode={editMode && view === 'pictureCars'}
             editPictureCar={editPictureCar}
+            permissionType={permissionType}
           />
         );
       case 'others':
@@ -440,6 +441,7 @@ const CallSheet: React.FC = () => {
             addNewOtherCall={createNewOtherCall}
             editMode={editMode && view === 'others'}
             editOtherCall={editOtherCall}
+            permissionType={permissionType}
           />
         );
       case 'crew':
@@ -517,9 +519,9 @@ const CallSheet: React.FC = () => {
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setExtraCalls([...extraCalls, newExtraCall]);
-      console.log('Extra Call created:', newExtraCall);
+      successToast('Extra Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Extra Call:', error);
+      errorToast('Error creating Extra Call');
       throw error;
     }
   };
@@ -549,9 +551,9 @@ const CallSheet: React.FC = () => {
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setPictureCars([...pictureCars, newPictureCar]);
-      console.log('Picture Car created:', newPictureCar);
+      successToast('Picture Car created');
     } catch (error) {
-      console.error('Error al crear nuevo Picture Car:', error);
+      errorToast('Error creating Picture Car');
       throw error;
     }
   };
@@ -581,9 +583,9 @@ const CallSheet: React.FC = () => {
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setOtherCalls([...otherCalls, newOtherCall]);
-      console.log('Other Call created:', newOtherCall);
+      successToast('Other Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Other Call:', error);
+      errorToast('Error creating Other Call');
       throw error;
     }
   };
@@ -697,52 +699,163 @@ const CallSheet: React.FC = () => {
       };
 
       setCastCalls([...castCalls, formattedCastCall].sort((a, b) => a.cast.localeCompare(b.cast)));
-      console.log('Cast Call created:', newCastCall);
+      successToast('Cast Call created');
     } catch (error) {
-      console.error('Error al crear nuevo Cast Call:', error);
+      errorToast('Error creating Cast Call');
       throw error;
     }
   };
 
+  if (!isSection) {
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar color="tertiary">
+            <IonButton
+              routerLink={`/my/projects/${id}/shooting/${shootingId}`}
+              color="light"
+              slot="start"
+              fill="clear"
+            >
+              <IonIcon slot="icon-only" icon={chevronBackOutline} />
+            </IonButton>
+            <IonTitle>
+              {view.toUpperCase()}
+              {' '}
+              CALL TIME
+            </IonTitle>
+            {
+              thisShooting
+              && thisShooting.status !== ShootingStatusEnum.Closed && (
+                <div slot="end">
+                  {
+                    !editMode ? (
+                      <>
+                        <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                          <VscEdit />
+                        </IonButton>
+                      </>
+                    ) : (
+                      <>
+                        <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={permissionType !== 1}>
+                          SAVE
+                        </IonButton>
+                        <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                          CANCEL
+                        </IonButton>
+                      </>
+                    )
+                  }
+                  {
+                    !editMode && (
+                      <AddButton onClick={() => openAddNewModal()} disabled={permissionType !== 1} />
+                    )
+                  }
+                </div>
+              )
+            }
+          </IonToolbar>
+        </IonHeader>
+        <IonContent color="tertiary" fullscreen>
+          <div className="ion-flex">
+            <div
+              style={!useIsMobile() ? { width: '150px' } : {}}
+              className="ion-flex ion-align-items-center ion-padding"
+            >
+              <ShootingInfoLabels
+                isEditable={false}
+                title="general call"
+                info={getHourMinutesFomISO(thisShooting?.generalCall || '', true)}
+              />
+            </div>
+            <div
+              style={!useIsMobile() ? { width: '150px' } : {}}
+              className="ion-flex ion-align-items-center ion-padding"
+            >
+              <ShootingInfoLabels
+                isEditable={false}
+                title="ready to shoot"
+                info={getHourMinutesFomISO(thisShooting?.shootDate || '', true)}
+              />
+            </div>
+          </div>
+          {renderContent()}
+        </IonContent>
+        <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()} />
+      </IonPage>
+    );
+  }
+  const [open, setOpen] = useState(true);
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar color="tertiary">
-          <IonButton
-            routerLink={`/my/projects/${id}/shooting/${shootingId}`}
-            color="light"
-            slot="start"
-            fill="clear"
-          >
-            <IonIcon slot="icon-only" icon={chevronBackOutline} />
-          </IonButton>
-          <IonTitle>CALL TIME</IonTitle>
+    <>
+      <div
+        className="ion-flex ion-justify-content-between ion-padding-start"
+        style={{
+          border: '1px solid black',
+          backgroundColor: 'var(--ion-color-dark)',
+          alignItems: 'center',
+        }}
+      >
+        <p style={{ fontSize: '18px' }}><b>CALL SHEET</b></p>
+        <div onClick={(e) => e.stopPropagation()} className="ion-flex ion-align-items-center">
+          {/* BUTTON FOR EVERY VIEW */}
           {
-            thisShooting
-            && thisShooting.status !== ShootingStatusEnum.Closed && (
-              <div slot="end">
-                {
-                  !editMode ? (
-                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()}>
-                      <VscEdit />
-                    </IonButton>
-                  ) : (
-                    <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => saveEdition()}>
-                      <IonIcon icon={save} />
-                    </IonButton>
-                  )
-                }
-                <AddButton onClick={() => openAddNewModal()} />
+            !editMode && (
+              <>
+                <button
+                  onClick={() => setView('cast')}
+                  className={`section-button ${view === 'cast' ? 'active' : ''}`}
+                >
+                  Cast
+                </button>
+                <button
+                  onClick={() => setView('extras')}
+                  className={`section-button ${view === 'extras' ? 'active' : ''}`}
+                >
+                  Extras
+                </button>
+                <button
+                  onClick={() => setView('pictureCars')}
+                  className={`section-button ${view === 'pictureCars' ? 'active' : ''}`}
+                >
+                  Cars
+                </button>
+                <button
+                  onClick={() => setView('others')}
+                  className={`section-button ${view === 'others' ? 'active' : ''}`}
+                >
+                  Others
+                </button>
+              </>
+            )
+          }
+          {
+            !editMode ? (
+              <IonButton
+                fill="clear"
+                color={!editMode ? 'light' : 'success'}
+                onClick={() => toggleEditMode()}
+                style={{
+                  marginBottom: '12px',
+                }}
+              >
+                <VscEdit />
+              </IonButton>
+            ) : (
+              <div className="ion-flex ion-align-items-center">
+                <IonButton className="outline-success-button-small" onClick={saveEdition}>
+                  SAVE
+                </IonButton>
+                <IonButton className="outline-danger-button-small" onClick={toggleEditMode}>
+                  CANCEL
+                </IonButton>
               </div>
             )
           }
-        </IonToolbar>
-      </IonHeader>
-      <IonContent color="tertiary" fullscreen>
-        {renderContent()}
-      </IonContent>
-      <CallSheetTabs view={view} setView={setView} />
-    </IonPage>
+        </div>
+      </div>
+      {open && renderContent()}
+    </>
   );
 };
 

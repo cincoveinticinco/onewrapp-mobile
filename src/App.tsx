@@ -10,9 +10,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs/AppTabs';
-import { ScenesContextProvider } from './context/ScenesContext';
-import DatabaseContext, { DatabaseContextProvider } from './hooks/Shared/database';
-import { AuthProvider, useAuth } from './context/Auth';
+import { ScenesContextProvider } from './context/Scenes.context';
+import DatabaseContext, { DatabaseContextProvider } from './context/Database.context';
+import { AuthProvider, useAuth } from './context/Auth.context';
 import environment from '../environment';
 
 import '@ionic/react/css/core.css';
@@ -26,22 +26,20 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
-import useLoader from './hooks/Shared/useLoader';
-import PageNotExists from './pages/PageNotExists/PageNotExists';
+import AppLoader from './hooks/Shared/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
+import PageNotExists from './pages/PageNotExists/PageNotExists';
 
 setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { loggedIn, loading } = useAuth();
-  const { isDatabaseReady, projectId } = React.useContext(DatabaseContext);
-
-  useEffect(() => {
-    console.log('projectId', projectId);
-  }, [projectId]);
+  const {
+    isDatabaseReady,
+  } = React.useContext(DatabaseContext);
 
   if (loading || !isDatabaseReady) {
-    return useLoader();
+    return AppLoader();
   }
 
   return (
@@ -50,7 +48,7 @@ const AppContent: React.FC = () => {
         <Route exact path="/login">
           <LoginPage />
         </Route>
-        <Route exact path='/user-not-found'>
+        <Route exact path="/user-not-found">
           <NoUserFounded />
         </Route>
         {loggedIn ? (
@@ -60,6 +58,9 @@ const AppContent: React.FC = () => {
             </Route>
             <Route path="/my/projects/:id">
               <AppTabs />
+            </Route>
+            <Route path="/my/projects/:id/unauthorized">
+              <PageNotExists />
             </Route>
             <Route exact path="/">
               <Redirect to="/my/projects" />
@@ -78,17 +79,11 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <GoogleOAuthProvider clientId={environment.CLIENT_ID}>
-    <IonApp>
-      <AuthProvider>
-        <DatabaseContextProvider>
-          <ScenesContextProvider>
-            <AppContent />
-          </ScenesContextProvider>
-        </DatabaseContextProvider>
-      </AuthProvider>
-    </IonApp>
-  </GoogleOAuthProvider>
+  <IonApp>
+    <ScenesContextProvider>
+      <AppContent />
+    </ScenesContextProvider>
+  </IonApp>
 );
 
 export default App;

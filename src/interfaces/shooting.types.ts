@@ -12,6 +12,8 @@ export interface ShootingScene {
   startShooting: string | null;
   endShooting: string | null;
   producedSeconds: number | null;
+  comment: string | null;
+  partiality: boolean | null;
   setups: number | null;
   createdAt: string;
   updatedAt: string;
@@ -44,6 +46,7 @@ export interface Shooting {
   crewCalls: CrewCall[];
   pictureCars: PictureCar[];
   otherCalls: OtherCall[];
+  services: FormattedService[];
 }
 
 export interface ShootingBanner {
@@ -78,29 +81,12 @@ export interface AdvanceCall {
 }
 
 export interface LocationInfo {
-  id: number | null | string;
-  location_type_id: number;
-  location_id: number;
-  call_time: string | null;
-  location_full_address: string;
-  location_city_state: string | null;
-  company_id: number;
-  location_name: string;
-  location_address: string;
-  location_addres_2: string;
-  city_id: number | null;
-  location_postal_code: string;
+  locationTypeId: number;
+  locationName: string;
+  locationAddress: string;
+  locationPostalCode: string;
   lat: string;
   lng: string;
-  city_name_eng: string | null;
-  city_name_esp: string | null;
-  state_id: number | null;
-  state_name_eng: string | null;
-  state_name_esp: string | null;
-  country_id: number | null;
-  country_name_eng: string | null;
-  country_name_esp: string | null;
-  shoot_date: string;
 }
 
 export interface Meal {
@@ -187,4 +173,20 @@ export interface Hospital {
   hospitalName: string;
   callTime: string;
   quantity: number;
+}
+
+export interface FormattedService {
+  description: string;
+  providerName: string;
+  providerId: number;
+  quantity: string;
+  unitCost: string;
+  tax: string | null;
+  retention: string | null;
+  aiuUtility: number | null;
+  aiuPercent: number | null;
+  aiuValue: number | null;
+  totalCost: string | null;
+  files: number;
+  observations: string | null;
 }

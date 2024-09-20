@@ -2,13 +2,13 @@ import {
   IonContent, IonHeader, IonModal,
 } from '@ionic/react';
 import React, { useEffect, useRef } from 'react';
-import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
-import './InputSortModal.scss';
-import ModalToolbar from '../ModalToolbar/ModalToolbar';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import useIsMobile from '../../../hooks/Shared/useIsMobile';
+import ModalToolbar from '../ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import SortPosibilityCheckbox from '../SortPosibilityCheckbox/SortPosibilityCheckbox';
+import './InputSortModal.scss';
 
 interface InputSortModalProps {
   pageName: string;

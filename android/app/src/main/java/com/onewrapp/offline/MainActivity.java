@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.onewrapp.offline;
 
 import com.getcapacitor.BridgeActivity;
 

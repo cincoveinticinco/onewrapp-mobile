@@ -1,86 +1,91 @@
 import React from 'react';
-import { IonButton } from '@ionic/react';
+import { PiTrashSimpleLight } from 'react-icons/pi';
 import { VscEdit } from 'react-icons/vsc';
-import DeleteButton from '../../Shared/DeleteButton/DeleteButton';
+import { Meal } from '../../../interfaces/shooting.types';
+import InputAlert from '../../../Layouts/InputAlert/InputAlert';
+import { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
-import { Meal } from '../../../interfaces/shootingTypes';
 
 interface MealInfoProps {
-  meal: any;
+  meal: Meal;
   editMode: boolean;
-  getHourMinutesFomISO: (iso: string) => string;
-  deleteMeal: (meal: any) => void;
+  getHourMinutesFomISO: (iso: string, withAmPm?: boolean) => string;
+  deleteMeal: (meal: Meal) => void;
   editionInputs: any;
   handleEdition: any;
 }
 
 const MealInfo: React.FC<MealInfoProps> = ({
-  meal, editMode, getHourMinutesFomISO, deleteMeal, editionInputs, handleEdition,
+  meal,
+  editMode,
+  getHourMinutesFomISO,
+  deleteMeal,
+  editionInputs,
+  handleEdition,
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
+  const alertRef = React.useRef<any>(null);
 
-  const formatDefaultValues = (meal: Meal) => ({
-    ...meal,
-    ready_at: getHourMinutesFomISO(meal.ready_at),
-    end_time: getHourMinutesFomISO(meal.end_time),
-  });
+  const formatDefaultValues = (meal: Meal) => {
+    const formattedMealValues = {
+      ...meal,
+      ready_at: getHourMinutesFomISO(meal.ready_at, false),
+      end_time: getHourMinutesFomISO(meal.end_time, false),
+    };
 
-  const EditModal = () => (
-    <EditionModal
-      modalRef={editionModalRef}
-      modalTrigger={`${'open-edit-meal-modal' + '-'}${meal.id}`}
-      title="Edit Meal"
-      formInputs={editionInputs}
-      handleEdition={handleEdition}
-      defaultFormValues={{ ...formatDefaultValues(meal) }}
-      modalId={`${'edit-meal-modal' + '-'}${meal.id}`}
-    />
-  );
+    return formattedMealValues;
+  };
 
-  const openModal = () => {
+  const openEditModal = () => {
     if (editionModalRef.current) {
       editionModalRef.current.present();
     }
   };
 
+  const openAlert = () => {
+    alertRef.current?.present();
+  };
+
   return (
     <>
-      <div
-        className="ion-padding-start"
-        style={editMode ? { width: '600px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' } : { width: '400px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}
-      >
-        <b
-          className="ion-flex ion-align-items-center"
-          style={{ minHeight: '50px' }}
-        >
-          {meal.meal.toUpperCase()}
-          :
-        </b>
-        <span
-          className="ion-flex ion-align-items-center"
-        >
-          FROM:
-          {getHourMinutesFomISO(meal.ready_at)}
-          {' '}
-          TO:
-          {getHourMinutesFomISO(meal.end_time)}
-        </span>
-        {
-          editMode
-          && (
-          <div>
-            <IonButton fill="clear" slot="end" color="light" className="toolbar-button" onClick={() => openModal()}>
-              <VscEdit
-                className="toolbar-icon"
-                style={{ color: 'var(--ion-color-primary)' }}
-              />
-            </IonButton>
-            <DeleteButton onClick={() => deleteMeal(meal)} />
+      <div className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
+        <InputAlert
+          handleOk={() => deleteMeal(meal)}
+          header="Delete Meal"
+          message={`Are you sure you want to delete the ${meal.meal.toUpperCase()} meal?`}
+          ref={alertRef}
+          inputs={[]}
+        />
+        <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
+          <b>{meal.meal.toUpperCase()}</b>
+        </h5>
+        <div className="location-address">
+          <p>
+            FROM:
+            {' '}
+            {getHourMinutesFomISO(meal.ready_at) + getAmOrPm(meal.ready_at)}
+            {' '}
+            TO:
+            {' '}
+            {getHourMinutesFomISO(meal.end_time) + getAmOrPm(meal.end_time)}
+          </p>
+        </div>
+        {editMode && (
+          <div className="ion-flex-column location-buttons">
+            <VscEdit className="edit-location" onClick={openEditModal} />
+            <PiTrashSimpleLight className="delete-location" onClick={openAlert} />
           </div>
-          )
-        }
+        )}
       </div>
-      <EditModal />
+      <EditionModal
+        modalRef={editionModalRef}
+        modalTrigger={`open-edit-meal-modal-${meal.id}`}
+        title="Edit Meal"
+        formInputs={editionInputs}
+        handleEdition={handleEdition}
+        defaultFormValues={formatDefaultValues(meal)}
+        modalId={`edit-meal-modal-${meal.id}`}
+      />
     </>
   );
 };

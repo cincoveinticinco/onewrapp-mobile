@@ -1,11 +1,10 @@
 import {
   IonButton, IonIcon, IonTitle, IonToolbar,
 } from '@ionic/react';
-import React from 'react';
 import { chevronBack } from 'ionicons/icons';
+import React from 'react';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './ModalToolbar.scss';
-import useHandleBack from '../../../hooks/Shared/useHandleBack';
 
 interface ModalToolbarProps {
   handleReset?: () => void

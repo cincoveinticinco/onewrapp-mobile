@@ -1,27 +1,28 @@
+import { IonInput, IonItem, IonList } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import { IonItem, IonInput } from '@ionic/react';
-import { Controller, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import './InputItem.scss';
 
 interface InputItemProps {
   label: string;
   placeholder?: string;
   control: any;
-  fieldName: string;
+  fieldKeyName: string;
   inputName: string;
   displayError?: boolean;
   setValue: any;
   validate?: any;
   type?: any;
   errorMessage?: string;
-  style?: any
+  style?: any;
+  suggestions?: string[]; // New prop for suggestions
 }
 
 const InputItem: React.FC<InputItemProps> = ({
   label,
   placeholder = '',
   control,
-  fieldName,
+  fieldKeyName,
   inputName,
   displayError = false,
   setValue,
@@ -29,46 +30,78 @@ const InputItem: React.FC<InputItemProps> = ({
   type = 'text',
   errorMessage = 'REQUIRED *',
   style,
+  suggestions = [], // Default to empty array
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
     setShowError(displayError);
   }, [displayError]);
 
+  const handleInputChange = (value: string) => {
+    if (validate && validate(value.trim()) !== true) {
+      setShowError(true);
+    } else {
+      setShowError(false);
+    }
+    setValue(fieldKeyName, value.trim());
+
+    // Filter suggestions based on input
+    if (suggestions.length > 0) {
+      const filtered = suggestions.filter((suggestion) => suggestion.toLowerCase().includes(value.toLowerCase()));
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setValue(fieldKeyName, suggestion);
+    setShowSuggestions(false);
+  };
+
   return (
-    <IonItem color="tertiary" id={inputName} style={style}>
-      <Controller
-        control={control}
-        name={fieldName}
-        rules={
-          {
+    <div style={style}>
+      <IonItem color="tertiary" id={inputName}>
+        <Controller
+          control={control}
+          name={fieldKeyName}
+          rules={{
             validate: (validate || null),
-          }
-        }
-        render={({ field }) => (
-          <IonInput
-            placeholder={showError ? label : placeholder}
-            type={type}
-            label={showError ? errorMessage : label}
-            labelPlacement="floating"
-            value={field.value}
-            onIonInput={(e) => {
-              if (validate && validate(e.detail.value?.trim()) !== true) {
-                setShowError(true);
-              } else {
-                setShowError(false);
-              }
-              setValue(fieldName, e.detail.value?.trim());
-            }}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''}`}
-          />
-        )}
-      />
-    </IonItem>
+          }}
+          render={({ field }) => (
+            <IonInput
+              placeholder={showError ? label : placeholder}
+              type={type}
+              label={showError ? errorMessage : label}
+              labelPlacement="floating"
+              value={field.value}
+              onIonInput={(e) => handleInputChange(e.detail.value || '')}
+              onFocus={() => {
+                setIsFocused(true);
+                setShowSuggestions(true);
+              }}
+              onBlur={() => {
+                setIsFocused(false);
+                setTimeout(() => setShowSuggestions(false), 200);
+              }}
+              className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''}`}
+            />
+          )}
+        />
+      </IonItem>
+      {showSuggestions && filteredSuggestions.length > 0 && (
+        <IonList className="suggestions-list">
+          {filteredSuggestions.map((suggestion, index) => (
+            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)}>
+              {suggestion}
+            </IonItem>
+          ))}
+        </IonList>
+      )}
+    </div>
   );
 };
 

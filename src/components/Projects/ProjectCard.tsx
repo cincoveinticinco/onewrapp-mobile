@@ -1,13 +1,13 @@
-import React from 'react';
 import {
   IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle,
   IonIcon,
 } from '@ionic/react';
-import './ProjectCard.css';
 import { cloudOfflineSharp } from 'ionicons/icons';
-import { Project } from '../../RXdatabase/schemas/projects';
+import React from 'react';
 import { ProjectStatusEnum } from '../../Ennums/ennums';
-import DatabaseContext from '../../hooks/Shared/database';
+import { Project } from '../../RXdatabase/schemas/projects.schema';
+import DatabaseContext from '../../context/Database.context';
+import './ProjectCard.css';
 
 interface ProjectCardProps {
   project: Project;

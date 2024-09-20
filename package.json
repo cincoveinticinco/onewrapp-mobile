@@ -23,6 +23,7 @@
     "@capacitor/google-maps": "^5.4.1",
     "@capacitor/haptics": "5.0.6",
     "@capacitor/keyboard": "5.0.7",
+    "@capacitor/network": "^5.0.6",
     "@capacitor/status-bar": "5.0.6",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -50,9 +51,11 @@
     "react-router-dom": "^5.3.4",
     "react-sortablejs": "^6.1.4",
     "rxdb": "^15.2.0",
+    "rxdb-hooks": "^5.0.2",
     "rxjs": "^7.8.1",
     "sass": "^1.69.7",
-    "sortablejs": "^1.15.2"
+    "sortablejs": "^1.15.2",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",
@@ -69,6 +72,7 @@
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.0.10",
     "@types/sortablejs": "^1.15.7",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-react": "^4.0.1",

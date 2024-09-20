@@ -8,6 +8,7 @@ interface SceneHeaderProps {
   nextScene: any;
   changeToPreviousScene: () => void;
   changeToNextScene: () => void;
+  status?: string;
 }
 
 const SceneHeader: React.FC<SceneHeaderProps> = ({
@@ -17,6 +18,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
   nextScene,
   changeToPreviousScene,
   changeToNextScene,
+  status,
 }) => (
   <IonToolbar
     className={`scene-theme-${sceneColor}`}
@@ -32,7 +34,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
       className="change-scene-button"
     />
     )}
-    <IonTitle style={{ fontWeight: 'light' }}>{`${sceneHeader} NOT ASSIGNED`}</IonTitle>
+    <IonTitle style={{ fontWeight: 'light' }}>{`${sceneHeader} ${status}`}</IonTitle>
     {nextScene && (
     <IonIcon
       icon={chevronForward}

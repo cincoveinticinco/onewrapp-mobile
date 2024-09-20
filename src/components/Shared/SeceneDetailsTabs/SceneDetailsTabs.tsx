@@ -5,20 +5,19 @@ import {
 import { documentTextOutline, serverOutline } from 'ionicons/icons';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import './SceneDetailsTabs.scss';
-import { useParams } from 'react-router';
 
 interface SceneDetailsTabsProps {
-  sceneId?: string;
+  routeDetails?: string;
+  routeScript?: string;
+  currentRoute?: 'scenedetails' | 'scenescript';
 }
 
-const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
+const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ routeDetails, routeScript, currentRoute }) => {
   // const { loggedIn } = useAuth();
 
   const isMobile = useIsMobile();
 
   const defineButtonClass = !isMobile ? 'tab-bar-buttons' : 'tab-bar-buttons tablet';
-
-  const { id } = useParams<{ id: string }>();
 
   // EXACT PATHS
 
@@ -27,20 +26,20 @@ const SceneDetailsTabs: React.FC<SceneDetailsTabsProps> = ({ sceneId }) => {
       <IonTabButton
         tab="scenedetails"
         className={defineButtonClass}
-        href={`/my/projects/${id}/strips/details/scene/${sceneId}`}
-        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/scene/${sceneId}`)}
+        href={`${routeDetails}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `${routeDetails}`)}
       >
-        <IonIcon icon={serverOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE DETAILS</IonLabel>
+        <IonIcon icon={serverOutline} className="tab-bar-icons" color={currentRoute === 'scenedetails' ? 'primary' : 'light'} />
+        <IonLabel color={currentRoute === 'scenedetails' ? 'primary' : 'light'}>SCENE DETAILS</IonLabel>
       </IonTabButton>
       <IonTabButton
         tab="scenescript"
         className="tab-bar-buttons"
-        href={`/my/projects/${id}/strips/details/script/${sceneId}`}
-        onClick={() => localStorage.setItem('editionBackRoute', `/my/projects/${id}/strips/details/script/${sceneId}`)}
+        href={`${routeScript}`}
+        onClick={() => localStorage.setItem('editionBackRoute', `${routeScript}`)}
       >
-        <IonIcon icon={documentTextOutline} className="tab-bar-icons" />
-        <IonLabel>SCENE SCRIPT</IonLabel>
+        <IonIcon icon={documentTextOutline} className="tab-bar-icons" color={currentRoute === 'scenescript' ? 'primary' : 'light'} />
+        <IonLabel color={currentRoute === 'scenescript' ? 'primary' : 'light'}>SCENE SCRIPT</IonLabel>
       </IonTabButton>
     </IonTabBar>
   );

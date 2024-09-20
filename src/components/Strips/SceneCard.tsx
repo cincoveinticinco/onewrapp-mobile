@@ -1,47 +1,62 @@
-import React, { useContext, useEffect, useMemo } from 'react';
 import {
-  IonRow, IonCol, IonItemSliding, IonGrid, IonItem, IonItemOptions, IonItemOption, IonButton, IonIcon, useIonToast,
+  IonButton,
+  IonCol,
+  IonGrid, IonItem, IonItemOptions,
+  IonItemSliding,
   IonReorder,
+  IonRow,
+  useIonToast,
 } from '@ionic/react';
-import { useHistory, useParams, useRouteMatch } from 'react-router';
-import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { CiEdit } from 'react-icons/ci';
-import { LuGripHorizontal } from 'react-icons/lu';
 import { checkmarkCircle } from 'ionicons/icons';
+import React, { useContext } from 'react';
+import { CiEdit } from 'react-icons/ci';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
-import { Scene } from '../../interfaces/scenesTypes';
-import './SceneCard.scss';
-import floatToFraction from '../../utils/floatToFraction';
-import secondsToMinSec from '../../utils/secondsToMinSec';
-import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import { LuGripHorizontal } from 'react-icons/lu';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
   ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
-import DatabaseContext, { DatabaseContextProps } from '../../hooks/Shared/database';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import { Scene } from '../../interfaces/scenes.types';
+import floatToFraction from '../../utils/floatToFraction';
+import secondsToMinSec from '../../utils/secondsToMinSec';
+import HighlightedText from '../Shared/HighlightedText/HighlightedText';
+import './SceneCard.scss';
 
 interface SceneCardProps {
-  scene: Scene;
+  scene: Scene & { frontId: string };
   searchText?: string;
   isShooting?: boolean;
   isProduced?: ShootingSceneStatusEnum;
   shootingDeleteScene?: () => void;
+  permissionType?: number | null;
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({
-  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene,
+  scene, searchText = '', isShooting = false, isProduced = false, shootingDeleteScene, permissionType,
 }) => {
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
 
+  const disableEditions = permissionType !== 1;
+
   const history = useHistory();
   const routeMatch = useRouteMatch();
-  const detailsRoute = `${routeMatch.url}/details/scene/${scene.id}`;
+  const detailsRoute = `${routeMatch.url}/details/scene/${scene.sceneId}`;
   const alertRef = React.useRef<HTMLIonAlertElement>(null);
+  const alertShooSceneRef = React.useRef<HTMLIonAlertElement>(null);
 
   const openDeleteAlert = async () => {
     if (alertRef.current) {
       await alertRef.current.present();
+    }
+  };
+
+  const openUnassignAlert = async () => {
+    if (alertShooSceneRef.current) {
+      await alertShooSceneRef.current.present();
     }
   };
 
@@ -77,7 +92,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     const scriptDay = scene.scriptDay || '';
     const year = scene.year || '';
 
-    const sceneHeader = `${parseInt(episodeNumber) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
+    const sceneHeader = `${parseInt(episodeNumber, 10) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
       year})` : ''}`;
 
     return sceneHeader.toUpperCase();
@@ -156,20 +171,18 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const deleteScene = async () => {
     try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.id } }).exec();
+      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.sceneId } }).exec();
       await sceneToDelete?.remove();
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
-      console.error('Error deleting scene:', error);
+      throw error;
     }
   };
 
   const goToSceneDetails = () => {
-    if (isShooting) {
-      return;
-    }
-    history.push(detailsRoute);
-    localStorage.setItem('editionBackRoute', detailsRoute);
+    const route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+    history.push(route);
+    localStorage.setItem('editionBackRoute', route);
   };
 
   const shootingCardSceneClass = (isShooting && (isProduced === ShootingSceneStatusEnum.Assigned ? 'background-light' : isProduced === ShootingSceneStatusEnum.Shoot ? 'background-success' : 'background-danger'));
@@ -230,17 +243,21 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItem>
         <IonItemOptions class="scene-card-options">
           <div className="buttons-wrapper">
-            <IonButton fill="clear" routerLink={`/my/projects/${id}/editscene/${scene.id}`}>
+            <IonButton
+              fill="clear"
+              routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}
+              disabled={disableEditions}
+            >
               <CiEdit className="button-icon view" />
             </IonButton>
             {
                 !isShooting
                 && (
                 <>
-                  <IonButton fill="clear">
+                  <IonButton fill="clear" disabled={disableEditions}>
                     <PiProhibitLight className="button-icon ban" />
                   </IonButton>
-                  <IonButton fill="clear" onClick={openDeleteAlert}>
+                  <IonButton fill="clear" onClick={openDeleteAlert} disabled={disableEditions}>
                     <PiTrashSimpleLight className="button-icon trash" />
                   </IonButton>
                 </>
@@ -249,7 +266,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
             {
                 isShooting && shootingDeleteScene
                 && (
-                <IonButton fill="clear" onClick={() => shootingDeleteScene()}>
+                <IonButton fill="clear" onClick={() => openUnassignAlert()} disabled={disableEditions}>
                   <IoIosRemoveCircleOutline className="button-icon ban" />
                 </IonButton>
                 )
@@ -264,6 +281,18 @@ const SceneCard: React.FC<SceneCardProps> = ({
         inputs={[]}
         ref={alertRef}
       />
+      {
+        shootingDeleteScene && (
+          <InputAlert
+            header="Unassign Scene"
+            message={`Are you sure you want to unassign scene ${getSceneHeader(scene)}?`}
+            handleOk={() => shootingDeleteScene()}
+            inputs={[]}
+            ref={alertShooSceneRef}
+          />
+        )
+      }
+
     </IonRow>
   );
 

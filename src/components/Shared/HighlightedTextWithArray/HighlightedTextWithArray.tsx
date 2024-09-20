@@ -1,6 +1,6 @@
 import React from 'react';
-import './HighlightedTextWithArray.scss';
 import removeAccents from '../../../utils/removeAccents';
+import './HighlightedTextWithArray.scss';
 
 export interface SearchTerm {
   searchTerm: string;
