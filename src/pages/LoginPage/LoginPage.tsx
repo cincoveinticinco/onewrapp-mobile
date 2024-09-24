@@ -1,8 +1,10 @@
 import {
   IonButton, IonContent, IonHeader, IonIcon, IonPage,
   isPlatform,
+  useIonViewDidEnter,
+  useIonViewWillEnter,
 } from '@ionic/react';
-import { useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleLogin } from '@react-oauth/google';
 import {
   logoGoogle,
 } from 'ionicons/icons';
@@ -20,12 +22,19 @@ const LoginPage: React.FC = () => {
   const { saveLogin } = useAuth();
   const errorToast = useErrorToast();
   const history = useHistory();
+  
+  useIonViewWillEnter(() => {
+    GoogleAuth.initialize({
+      clientId: environment.CLIENT_ID,
+      scopes: ['profile', 'email'],
+      grantOfflineAccess: true,
+    })
+  })
 
-  // Función para el login en móvil usando Capacitor
   const handleGoogleLoginMobile = async () => {
     try {
       const googleUser = await GoogleAuth.signIn();
-      const accessToken = googleUser.authentication.idToken;
+      const accessToken = googleUser.authentication.accessToken;
 
       const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
         method: 'POST',
@@ -45,41 +54,38 @@ const LoginPage: React.FC = () => {
       }
     } catch (error) {
       errorToast('Error during Google Sign In');
+      console.error(error)
     }
   };
 
-  // Función para el login en web usando @react-oauth/google
-  const handleGoogleLoginWeb = useGoogleLogin({
-    onSuccess: async (response) => {
-      const accessToken = response.access_token;
+  // // Función para el login en web usando @react-oauth/google
+  // const handleGoogleLoginWeb = useGoogleLogin({
+  //   onSuccess: async (response) => {
+  //     const accessToken = response.access_token;
 
-      const res = await fetch(`${environment.URL_PATH}/google_sign_in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ access_token: accessToken }),
-      });
-      const data = await res.json();
+  //     const res = await fetch(`${environment.URL_PATH}/google_sign_in`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ access_token: accessToken }),
+  //     });
+  //     const data = await res.json();
 
-      if (data.token) {
-        saveLogin(data.token, data.user);
-        history.push('/my/projects');
-      } else {
-        history.push('/user-not-found');
-        errorToast(data.error);
-      }
-    },
-    onError: (errorResponse) => errorToast(errorResponse.error_description || 'Error during Google Sign In'),
-  });
+  //     if (data.token) {
+  //       saveLogin(data.token, data.user);
+  //       history.push('/my/projects');
+  //     } else {
+  //       history.push('/user-not-found');
+  //       errorToast(data.error);
+  //     }
+  //   },
+  //   onError: (errorResponse) => errorToast(errorResponse.error_description || 'Error during Google Sign In'),
+  // });
 
   // Detectar la plataforma y ejecutar el código correspondiente
   const login = () => {
-    if (isPlatform('capacitor')) {
-      handleGoogleLoginMobile();
-    } else {
-      handleGoogleLoginWeb();
-    }
+    handleGoogleLoginMobile();
   };
 
   return (

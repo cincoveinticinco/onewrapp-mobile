@@ -6,7 +6,6 @@ import {
 } from '@ionic/react';
 import { Redirect, Route, useParams } from 'react-router-dom';
 import { IonReactRouter } from '@ionic/react-router';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs/AppTabs';
