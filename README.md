@@ -147,7 +147,8 @@ const config = {
 };
 export default config;
 ```
+# 📝 License <a name="license"></a>
 
-Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para obtener más información.
+Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo [LICENSE](./LICENCE) para obtener más información.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
