@@ -4,7 +4,7 @@
 
 <div align="center">
 
-  <img src="./src/assets/images/logo_onewrapp.png" alt="logo" width="140" height="auto" />
+  <img src="./src/assets/images/favicon.png" alt="logo" width="140" height="auto" />
   <br/>
 
 </div>
