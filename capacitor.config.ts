@@ -7,9 +7,6 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   bundledWebRuntime: false,
   plugins: {
-    GoogleMaps: {
-      AndroidApiKey: "AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI"
-    },
     GoogleAuth: {
       "scopes": [
         "profile",
