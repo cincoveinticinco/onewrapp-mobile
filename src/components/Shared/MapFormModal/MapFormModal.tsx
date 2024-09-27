@@ -32,12 +32,11 @@ interface MapFormModalProps {
 const MapFormModal: React.FC<MapFormModalProps> = ({
   isOpen, closeModal, onSubmit, hospital, selectedLocation,
 }) => {
-  const mapRef = useRef<HTMLElement | null>(null);
-  const [map, setMap] = useState<GoogleMap | null>(null);
-  const [mapInitialized, setMapInitialized] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
+  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [marker, setMarker] = useState<string | null>(null);
   const [currentAddress, setCurrentAddress] = useState('');
   const [locationName, setLocationName] = useState('');
   const [lat, setLat] = useState<number | null>(null);
@@ -59,96 +58,66 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   }, [selectedLocation]);
 
   useEffect(() => {
-    if (isOpen && !mapInitialized) {
-      setTimeout(() => {
-        createMap();
-      }, 300);
-    } else if (map && lat && lng) {
-      updateMarker(lat, lng);
+    if (isOpen && mapRef.current && !map) {
+      initMap();
     }
-  }, [isOpen, mapInitialized, map, lat, lng]);
+  }, [isOpen, map]);
 
-  const createMap = async () => {
-    if (!mapRef.current) return;
+  const initMap = () => {
+    const initialLocation = { lat: selectedLocation ? parseFloat(selectedLocation.lat) : 33.6, lng: selectedLocation ? parseFloat(selectedLocation.lng) : -117.9 };
+    const newMap = new google.maps.Map(mapRef.current!, {
+      center: initialLocation,
+      zoom: selectedLocation ? 15 : 8,
+    });
 
-    try {
-      const newMap = await GoogleMap.create({
-        id: 'my-cool-map',
-        element: mapRef.current,
-        apiKey: environment.MAPS_KEY,
-        config: {
-          center: {
-            lat: selectedLocation ? parseFloat(selectedLocation.lat) : 33.6,
-            lng: selectedLocation ? parseFloat(selectedLocation.lng) : -117.9,
-          },
-          zoom: selectedLocation ? 15 : 8,
-        },
-      });
-      setMap(newMap);
-      setMapInitialized(true);
+    setMap(newMap);
 
-      await newMap.setOnMapClickListener((event) => {
-        updateMarker(event.latitude, event.longitude);
-      });
+    const newMarker = new google.maps.Marker({
+      position: initialLocation,
+      map: newMap,
+      draggable: true,
+    });
 
-      if (selectedLocation) {
-        updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
-      }
-    } catch (error) {
-      throw error;
+    setMarker(newMarker);
+
+    newMap.addListener('click', (event: google.maps.MapMouseEvent) => {
+      updateMarker(event.latLng!);
+    });
+
+    newMarker.addListener('dragend', () => {
+      updateMarker(newMarker.getPosition()!);
+    });
+
+    if (selectedLocation) {
+      updateMarker(new google.maps.LatLng(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng)));
     }
   };
 
-  const updateMarker = async (latitude: number, longitude: number) => {
-    if (map) {
-      if (marker) {
-        await map.removeMarker(marker);
-      }
-
-      const newMarker = await map.addMarker({
-        coordinate: {
-          lat: latitude,
-          lng: longitude,
-        },
-        draggable: true,
-      });
-
-      setMarker(newMarker);
-      setLat(latitude);
-      setLng(longitude);
-
-      await map.setOnMarkerDragEndListener(async (event) => {
-        updateMarker(event.latitude, event.longitude);
-      });
-
-      updateAddress(latitude, longitude);
+  const updateMarker = (latLng: google.maps.LatLng) => {
+    if (marker && map) {
+      marker.setPosition(latLng);
+      map.panTo(latLng);
+      setLat(latLng.lat());
+      setLng(latLng.lng());
+      updateAddress(latLng);
     }
   };
 
-  const updateAddress = async (lat: number, lng: number) => {
+  const updateAddress = (latLng: google.maps.LatLng) => {
     const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
+    geocoder.geocode({ location: latLng }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK && results && results[0]) {
+        const address = results[0].formatted_address;
+        setCurrentAddress(address);
+        setSearchTerm(address);
+        setLocationAddress(address);
 
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK && results) {
-        if (results[0]) {
-          const address = results[0].formatted_address;
-          setCurrentAddress(address);
-          setSearchTerm(address);
-          setLocationAddress(address);
-
-          const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
-          if (postalCode) {
-            setLocationPostalCode(postalCode.long_name);
-          }
-        } else {
-          setCurrentAddress('Dirección no encontrada');
-          setSearchTerm('');
-          setLocationAddress('');
-          setLocationPostalCode('');
+        const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
+        if (postalCode) {
+          setLocationPostalCode(postalCode.long_name);
         }
       } else {
-        setCurrentAddress('Error al obtener la dirección');
+        setCurrentAddress('Address not found');
         setSearchTerm('');
         setLocationAddress('');
         setLocationPostalCode('');
@@ -157,7 +126,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   };
 
   const handleCloseModal = () => {
-    setMapInitialized(false);
     closeModal();
     setCurrentAddress('');
     setSuggestions([]);
@@ -184,11 +152,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     }
   };
 
-  const geocodeAddress = async (address: string) => {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
-        setSuggestions(results || []);
+  const geocodeAddress = (address: string) => {
+    const autocompleteService = new google.maps.places.AutocompleteService();
+    autocompleteService.getPlacePredictions({ input: address }, (predictions, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+        setSuggestions(predictions);
       } else {
         setSuggestions([]);
       }
@@ -197,20 +165,16 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
 
   const debouncedGeocodeAddress = useCallback(debounce(geocodeAddress, 300), []);
 
-  const handleSuggestionClick = async (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: google.maps.places.AutocompletePrediction) => {
     if (map) {
-      const { location } = suggestion.geometry;
-      await map.setCamera({
-        coordinate: {
-          lat: location.lat(),
-          lng: location.lng(),
-        },
-        zoom: 15,
-        animate: true,
+      const placesService = new google.maps.places.PlacesService(map);
+      placesService.getDetails({ placeId: suggestion.place_id }, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && place && place.geometry && place.geometry.location) {
+          updateMarker(place.geometry.location);
+          setSearchTerm(place.formatted_address || '');
+          setSuggestions([]);
+        }
       });
-      setSearchTerm(suggestion.formatted_address);
-      setSuggestions([]);
-      updateMarker(location.lat(), location.lng());
     }
   };
 
@@ -281,17 +245,8 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
-        }}
-        >
-          {!map && AppLoader()}
-          <capacitor-google-map
-            ref={mapRef}
-            style={{
-              display: 'inline-block',
-              width: '100%',
-              height: '400px',
-            }}
-          />
+        }}>
+          <div ref={mapRef} style={{ width: '100%', height: '400px' }} />
         </div>
 
         <h1 style={{ width: '100%', textAlign: 'center' }}>{hospital ? 'NEAREST HOSPITAL' : 'NEW LOCATION'}</h1>
@@ -339,7 +294,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
               <IonList color="tertiary" style={{ background: 'var(--ion-color-tertiary)' }}>
                 {suggestions.map((suggestion, index) => (
                   <IonItem key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                    {suggestion.formatted_address}
+                    {suggestion.description}
                   </IonItem>
                 ))}
               </IonList>

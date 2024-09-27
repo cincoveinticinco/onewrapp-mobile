@@ -1,6 +1,4 @@
-import { GoogleMap } from '@capacitor/google-maps';
 import React, { useEffect, useRef, useState } from 'react';
-import environment from '../../../../environment';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 
@@ -13,56 +11,69 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   lat,
   lng,
 }) => {
-  const mapRef = useRef<HTMLElement | null>(null);
-  const [map, setMap] = useState<GoogleMap | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    createMap();
-  }, [lat, lng]);
+    if (mapRef.current && !map) {
+      initMap();
+    }
+  }, [mapRef, map]);
 
-  const createMap = async () => {
-    if (!mapRef.current) return;
+  useEffect(() => {
+    if (map) {
+      updateMap();
+    }
+  }, [lat, lng, map]);
 
-    try {
-      const newMap = await GoogleMap.create({
-        id: 'google-map',
-        element: mapRef.current,
-        apiKey: environment.MAPS_KEY,
-        config: {
-          center: {
-            lat,
-            lng,
-          },
-          zoom: 14,
-        },
+  const initMap = () => {
+    const newMap = new google.maps.Map(mapRef.current!, {
+      center: { lat, lng },
+      zoom: 14,
+    });
+    setMap(newMap);
+    setIsLoading(false);
+  };
+
+  const updateMap = () => {
+    if (map) {
+      map.setCenter({ lat, lng });
+      clearMarkers();
+      addMarker();
+    }
+  };
+
+  const clearMarkers = () => {
+    if (map) {
+      map.data.forEach((feature) => {
+        map.data.remove(feature);
       });
-      setMap(newMap);
-      setIsLoading(false);
+    }
+  };
 
-      // Añadir el marcador en la posición inicial
-      await newMap.addMarker({
-        coordinate: { lat, lng },
-        draggable: false,
+  const addMarker = () => {
+    if (map) {
+      const marker = new google.maps.Marker({
+        position: { lat, lng },
+        map: map,
       });
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
     <div style={{
-      position: 'relative', width: '100%', height: isMobile ? '300px' : '400px', background: 'var(--ion-color-tertiary-dark)',
-    }}
-    >
+      position: 'relative',
+      width: '100%',
+      height: isMobile ? '300px' : '400px',
+      background: 'var(--ion-color-tertiary-dark)',
+    }}>
       {isLoading && AppLoader()}
-      <capacitor-google-map
+      <div
         ref={mapRef}
         style={{
-          display: isLoading ? 'none' : 'inline-block',
+          display: isLoading ? 'none' : 'block',
           width: '100%',
           height: '100%',
         }}
