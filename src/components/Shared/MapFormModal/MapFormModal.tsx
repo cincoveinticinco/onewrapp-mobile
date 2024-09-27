@@ -1,4 +1,3 @@
-import { GoogleMap } from '@capacitor/google-maps';
 import {
   IonButton,
   IonCol,
