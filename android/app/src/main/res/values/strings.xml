@@ -4,4 +4,5 @@
     <string name="title_activity_main">one-wrapp-mobile</string>
     <string name="package_name">com.onewrapp.offline</string>
     <string name="custom_url_scheme">com.onewrapp.offline</string>
+    <string name="server_client_id">195018623531-mm7krht1hr7tj3501el59mug4rj62u5u.apps.googleusercontent.com</string>
 </resources>

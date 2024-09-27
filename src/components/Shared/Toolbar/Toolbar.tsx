@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { generate } from '@pdfme/generator';
 import {
   addOutline,
   caretForward,
@@ -126,11 +125,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   };
 
   const generatePdf = (template: any, inputs: any) => {
-    offlineScenes.length > 0 && sceneToPrint
-    && generate({ template, inputs }).then((pdf) => {
-      const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
-      window.open(URL.createObjectURL(blob));
-    });
+    console.log('Generating PDF');
   };
 
   return (
