@@ -1,10 +1,8 @@
-## OneWrapp Offline
-
 <a name="readme-top"></a>
 
 <div align="center">
 
-  <img src="https://your-logo-url-here.com" alt="logo" width="140" height="auto" />
+  <img src="./src/assets/images/favicon.png" alt="logo" width="140" height="auto" />
   <br/>
 
 </div>
