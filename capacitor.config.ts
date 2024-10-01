@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 import environment from './environment';
 
 const config: CapacitorConfig = {
-  appId: 'com.onewrapp.offline',
+  appId: 'com.onewrapp.mobile',
   appName: 'one-wrapp-mobile',
   webDir: 'dist',
   bundledWebRuntime: false,
