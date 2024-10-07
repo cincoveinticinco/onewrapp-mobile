@@ -1,0 +1,82 @@
+.cards-container {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.general-card {
+  position: relative;
+  background: var(--ion-card-background, #1e1e1e);
+  border-radius: 10px;
+  overflow: hidden;
+  border-radius: 0px;
+}
+
+.general-card.editing {
+  border: 2px solid var(--ion-color-primary);
+}
+
+.card-header {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0px;
+}
+
+ion-card-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px !important;
+  margin-bottom: 12px !important;
+}
+
+ion-card-content {
+  padding: 6px;
+}
+
+.card-header {
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px;
+}
+
+.card-content {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+}
+
+.card-header-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+  font-size: 12px;
+  text-transform: uppercase;
+
+  .editable-minute {
+
+    span {
+      display: flex;
+      align-items: center;
+    }
+
+    ion-input {
+      text-align: center !important;
+    }
+  }
+}
+
+.field-label {
+  font-size: 8px;
+  color: var(--ion-color-light);
+  padding: 8px;
+  text-transform: uppercase;
+  padding: 0px;
+}

@@ -45,6 +45,8 @@ import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
+import getSceneHeader from '../../utils/getSceneHeader';
+import SceneHeader from '../SceneDetails/SceneHeader';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -535,6 +537,7 @@ const ShootingDetail: React.FC<{
         cardType: 'scene',
         backgroundColor: getSceneBackgroundColor(sceneShootingData),
         frontId: scene._data.id,
+        sceneHeader: getSceneHeader(scene._data),
         ...scene._data,
         ...sceneShootingData,
       };

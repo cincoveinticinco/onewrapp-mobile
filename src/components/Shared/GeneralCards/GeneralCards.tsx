@@ -1,67 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import './GeneralTable.css';
-import {
-  IonInput, IonCheckbox, IonRange
-} from '@ionic/react';
+import { IonInput, IonCheckbox, IonRange, IonCard, IonCardContent, IonCardHeader, IonCardTitle } from '@ionic/react';
 import getHourMinutesFomISO from '../../../utils/getHoursMinutesFromISO';
 import timeToISOString from '../../../utils/timeToIsoString';
 import secondsToMinSec from '../../../utils/secondsToMinSec';
 import minSecToSeconds from '../../../utils/minSecToSeconds';
-export interface Column {
-  key: string;
-  title: string;
-  sticky?: boolean;
-  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency' | 'double-data';
-  textAlign?: 'left' | 'center' | 'right';
-  editable?: boolean;
-  showOnlyWhenEdit?: boolean;
-  selectableOptions?: string[];
-  switchValues?: { left: any, neutral: any, right: any };
-  backgroundColor?: string;
-  secondaryKey?: string;
-  notShowWhenEdit?: boolean;
-  header?: boolean;
-  colSpan?: number;
-  placeHolder?: string;
-  emptyText?: string;
-}
+import { Column } from '../GeneralTable/GeneralTable';
+import './GeneralCards.css';
 
-interface GeneralTableProps {
+interface GeneralCardsProps {
   columns: Column[];
   data: any[];
-  stickyColumnCount?: number;
   editMode?: boolean;
   editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
   searchText?: string;
 }
 
-export interface Column {
-  key: string;
-  title: string;
-  sticky?: boolean;
-  type?: 'text' | 'hour' | 'number' | 'boolean' | 'switch' | 'seconds' | 'currency' | 'double-data';
-  textAlign?: 'left' | 'center' | 'right';
-  editable?: boolean;
-  showOnlyWhenEdit?: boolean;
-  selectableOptions?: string[];
-  switchValues?: { left: any, neutral: any, right: any };
-  backgroundColor?: string;
-  secondaryKey?: string;
-  notShowWhenEdit?: boolean;
-  minWidth?: number;
-}
-
-interface GeneralTableProps {
-  columns: Column[];
-  data: any[];
-  stickyColumnCount?: number;
-  editMode?: boolean;
-  editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
-  searchText?: string;
-}
-
-const GeneralTable: React.FC<GeneralTableProps> = ({
-  columns, data, stickyColumnCount = 1, editMode = false, editFunction, searchText,
+const GeneralCards: React.FC<GeneralCardsProps> = ({
+  columns,
+  data,
+  editMode = false,
+  editFunction,
+  searchText,
 }) => {
   const [filteredData, setFilteredData] = useState(data);
 
@@ -106,29 +65,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     );
   };
 
-  const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
-    const value = row[column.key];
-
-    if (column.type === 'double-data') {
-      return renderDoubleData(row, column);
-    }
-
-    if (!editMode && column.type) {
-      return formatValue(value, column.type, column.switchValues);
-    }
-
-    if (!column.editable && column.type) {
-      return formatValue(value, column.type, column.switchValues);
-    }
-
-    if (editMode && column.editable) {
-      return renderEditableInput(value, column.type || 'text', rowIndex, column.key, column?.switchValues);
-    }
-
-    return formatValue(value, column.type || 'text', column.switchValues);
-  };
-
-  const formatValue = (value: any, type: string, switchValues?: { left: any, neutral: any, right: any }) => {
+  const formatValue = (value: any, type: string, switchValues?: { left: any, neutral: any, right: any }, emptyText?: string) => {
     switch (type) {
       case 'hour':
         return `${getHourMinutesFomISO(value, true)}`;
@@ -145,7 +82,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
       case 'currency':
         return value != null ? formatCurrency(value) : '--';
       default:
-        return value?.toString().toUpperCase() || '--';
+        return value?.toString().toUpperCase() || emptyText || '--';
     }
   };
 
@@ -169,6 +106,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     rowIndex: number,
     rowKey: string,
     switchValues?: { left: any; neutral: any; right: any },
+    placeHolder?: string,
   ) => {
     const handleChange = (newValue: any) => {
       let formattedValue = newValue;
@@ -241,7 +179,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
               value={minutes}
               onIonChange={(e) => handleChange(`${e.detail.value}:${seconds}`)}
             />
-            <p>:</p>
+            <span>:</span>
             <IonInput
               type="number"
               value={seconds}
@@ -256,66 +194,126 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
             type="text"
             value={value}
             onIonChange={(e) => handleChange(e.detail.value)}
+            placeholder={placeHolder}
           />
         );
     }
   };
 
-  const visibleColumns = columns.filter((column) => {
-    if (editMode) {
-      return !column.notShowWhenEdit;
+  const renderHeaderContent = (row: any, column: Column, index: number) => {
+    const value = row[column.key];
+    const isEditing = editMode
+
+    if (isEditing && column.editable) {
+      return renderEditableInput(
+        value, 
+        column.type || 'text', 
+        index, 
+        column.key, 
+        column.switchValues,
+        column?.placeHolder
+      );
     }
-    return !column.showOnlyWhenEdit;
-  });
 
-  if (filteredData.length > 0) {
+    return formatValue(value, column.type || 'text', column.switchValues, column?.emptyText);
+  };
+
+  const renderCardContent = (row: any, index: number) => {
+    const isEditing = editMode
+
+    const headerColumn = columns.find(col => col.header === true);
+    const switchColumns = columns.filter(col => col.type === 'switch');
+    const contentColumns = columns.filter(col => {
+      if (col.header === true || col.type === 'switch') return false;
+      if (isEditing) return !col.notShowWhenEdit;
+      return !col.showOnlyWhenEdit;
+    });
+
     return (
-      <div className={`table-container${editMode && ' edit-mode'}`}>
-        <div className="table-wrapper">
-          <table className="custom-table">
-            <thead>
-              <tr>
-                {visibleColumns.map((column, index) => (
-                  <th
-                    key={column.key}
-                    className={index < stickyColumnCount ? 'sticky-column' : ''}
-                    style={{ left: `${index * 150}px` }}
-                  >
-                    {column.title.toUpperCase()}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((row: any, rowIndex: number) => (
-                <tr key={rowIndex}>
-                  {visibleColumns.map((column, colIndex) => (
-                    <td
-                      key={`${rowIndex}-${column.key}`}
-                      className={colIndex < stickyColumnCount ? 'sticky-column' : ''}
-                      style={{
-                        left: `${colIndex * 150}px`,
-                        textAlign: column.textAlign || 'center',
-                        backgroundColor: row[column.backgroundColor as any],
-                        color: column.type === 'boolean' ? row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)' : 'var(--ion-color-light)',
-                        minWidth: column.minWidth ? `${column.minWidth}px` : 'auto',
-                      }}
-                    >
-                      {getColumnValue(row, column, editMode, rowIndex)}
-                    </td>
+      <>
+        {(headerColumn || switchColumns.length > 0) && (
+          <IonCardHeader style={{
+            backgroundColor: !isEditing ? row?.backgroundColor : 'var(--ion-color-dark)',
+          }}>
+            <div className='card-header'>
+              {headerColumn && (
+                <IonCardTitle className={`card-header`} style={{
+                  color: isEditing ? row?.backgroundColor : 'var(--ion-color-dark)',
+                }}>
+                  {renderHeaderContent(row, headerColumn, index)}
+                </IonCardTitle>
+              )}
+              {switchColumns.length > 0 && editMode && (
+                <div className="card-header-switches">
+                  {switchColumns.map(switchColumn => (
+                    <div key={switchColumn.key} className="header-switch">
+                      {renderHeaderContent(row, switchColumn, index)}
+                    </div>
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
+                </div>
+              )}
+            </div>
+          </IonCardHeader>
+        )}
+        <IonCardContent>
+          <div className="card-content">
+            {contentColumns.map((column, index) => {
+              const value = row[column.key];
 
-  return null;
+              return (
+                <div key={column.key} className="card-field"
+                  style={{
+                    gridColumn: `span ${column?.colSpan || 2}`,
+                  }}
+                >
+                  <div className="field-label"
+                    style={{
+                      textAlign: 'left',
+                    }}
+                  >{column.title}</div>
+                  <div 
+                    className="field-value"
+                    style={{
+                      color: column.type === 'boolean' ? 
+                        (row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 
+                        'var(--ion-color-light)',
+                      justifyContent: 'center',
+                      // minWidth: column.minWidth ? `${column.minWidth}px` : 'auto'
+                    }}
+                  >
+                    {column.type === 'double-data' ? (
+                      renderDoubleData(row, column)
+                    ) : isEditing && column.editable ? (
+                      renderEditableInput(
+                        value, 
+                        column.type || 'text', 
+                        index, 
+                        column.key, 
+                        column.switchValues,
+                        column?.placeHolder
+                      )
+                    ) : (
+                      formatValue(value, column.type || 'text', column.switchValues, column?.emptyText)
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </IonCardContent>
+      </>
+    );
+  };
+
+  return (
+    <div className="cards-container">
+      {filteredData.map((row, index) => (
+        <IonCard key={index} className={`general-card ${editMode ? 'editing' : ''}`}>
+          {renderCardContent(row, index)}
+        </IonCard>
+      ))}
+    </div>
+  );
 };
 
-export default GeneralTable;
-
-
+export default GeneralCards;
