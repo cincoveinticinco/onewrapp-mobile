@@ -162,15 +162,25 @@ export default config;
     ```sh
     git pull
     ```
-2. Sincroniza la app para iOS:
+2. Ejecuta nvm use stable para asegurarte de que estás utilizando la versión estable de Node.js:
+    ```sh
+    nvm use stable
+    ```
+3. Verofica que esta versión tenga ionic y capacitor instalados:
+    ```sh
+    ionic -v
+    capacitor -v
+    ```
+  
+4. Sincroniza la app para iOS:
     ```sh
     ionic cap sync
     ```
-3. Abre el proyecto en Xcode:
+5. Abre el proyecto en Xcode:
     ```sh
     ionic cap open ios
     ```
-4. Sigue paso a paso la guía de [Step-by-Step Guide to Uploading Apps to TestFlight](https://www.qed42.com/insights/a-comprehensive-guide-to-deploying-apps-to-testflight-for-seamless-testing) para subir la aplicación a TestFlight aumentando la versión para que se actualice en la App Store.
+6. Sigue paso a paso la guía de [Step-by-Step Guide to Uploading Apps to TestFlight](https://www.qed42.com/insights/a-comprehensive-guide-to-deploying-apps-to-testflight-for-seamless-testing) para subir la aplicación a TestFlight aumentando la versión para que se actualice en la App Store.
 
 # 📝 License <a name="license"></a>
 
