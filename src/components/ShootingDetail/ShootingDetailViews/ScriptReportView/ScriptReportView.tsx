@@ -48,6 +48,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       title: 'Est. Time',
       type: 'seconds',
       textAlign: 'center',
+      notShowWhenEdit: true,
     },
     {
       key: 'rehersalStart',
@@ -111,7 +112,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
     {
       key: 'status',
       title: 'Status',
-      textAlign: 'center',
+      textAlign: 'left',
       type: 'switch',
       editable: !disableEditions,
       switchValues: {

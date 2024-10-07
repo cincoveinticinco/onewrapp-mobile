@@ -7,7 +7,7 @@
 
 .general-card {
   position: relative;
-  background: var(--ion-card-background, #1e1e1e);
+  background: var(--ion-color-tertiary-shade);
   border-radius: 10px;
   overflow: hidden;
   border-radius: 0px;
@@ -21,6 +21,8 @@
   font-size: 14px;
   font-weight: 600;
   padding: 0px;
+  display: flex;
+  align-items: center;
 }
 
 ion-card-header {
@@ -39,12 +41,11 @@ ion-card-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px;
+  padding: 3px;
 }
 
 .card-content {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
   gap: 0.75rem;
 }
 
@@ -79,4 +80,37 @@ ion-card-content {
   padding: 8px;
   text-transform: uppercase;
   padding: 0px;
+}
+
+.switch.negative {
+  --knob-background: var(--ion-color-danger) !important;
+  --pin-background: var(--ion-color-danger) !important;
+}
+
+.switch.positive {
+  --knob-background: var(--ion-color-success)!important;
+  --pin-background: var(--ion-color-success)!important;
+}
+
+.switch {
+  --bar-background: var(--ion-color-tertiary-shade) !important;
+  --bar-background-active: var(--ion-color-tertiary-shade) !important;
+
+  --knob-background: var(--ion-color-light) !important;
+  --pin-background: var(--ion-color-primary) !important;
+  --pin-color: #fff;
+  --knob-size: 30px;
+
+  border-radius: 12px;
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+.header-switch {
+  background-color: var(--ion-color-tertiary-shade);
+  width: 50px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
 }

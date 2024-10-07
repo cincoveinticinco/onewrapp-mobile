@@ -619,14 +619,19 @@ const ShootingDetail: React.FC<{
       shootingCopy.scenes = shootingData.mergedScenesShootData;
 
       await oneWrappDb?.shootings.upsert(shootingCopy);
-      setTimeout(() => {
-        fetchData();
-      }, 200);
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
     } finally {
       successToast('Script report saved successfully');
+      // calculate backgrond color
+      const mergedScenesShootData = shootingData.mergedScenesShootData.map((scene: any) => {
+        return {
+          ...scene,
+          backgroundColor: getSceneBackgroundColor(scene),
+        };
+      })
+      setMergedScenesShootData(mergedScenesShootData);
     }
   };
 

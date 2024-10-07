@@ -34,7 +34,7 @@ const userSchema = {
         type: 'object',
         properties: {
           id: { type: 'number' },
-          roleId: { type: 'number' },
+          roleId: { type: ['number', 'null'] },
           userTypeId: { type: 'number' },
           liteView: { type: 'boolean' },
           companyName: { type: 'string' },

@@ -6,6 +6,7 @@ import secondsToMinSec from '../../../utils/secondsToMinSec';
 import minSecToSeconds from '../../../utils/minSecToSeconds';
 import { Column } from '../GeneralTable/GeneralTable';
 import './GeneralCards.css';
+import colorIsDark from '../../../utils/colorIsDark';
 
 interface GeneralCardsProps {
   columns: Column[];
@@ -13,6 +14,7 @@ interface GeneralCardsProps {
   editMode?: boolean;
   editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
   searchText?: string;
+  numberOfColumns?: number;
 }
 
 const GeneralCards: React.FC<GeneralCardsProps> = ({
@@ -21,6 +23,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
   editMode = false,
   editFunction,
   searchText,
+  numberOfColumns = 12,
 }) => {
   const [filteredData, setFilteredData] = useState(data);
 
@@ -68,11 +71,11 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
   const formatValue = (value: any, type: string, switchValues?: { left: any, neutral: any, right: any }, emptyText?: string) => {
     switch (type) {
       case 'hour':
-        return `${getHourMinutesFomISO(value, true)}`;
+        return getHourMinutesFomISO(value, true);
       case 'seconds':
         return value ? secondsToMinSec(value) : '-- : --';
       case 'number':
-        return value != null ? value.toString() : '--';
+        return value != null ? value.toString() : 0;
       case 'boolean':
         return value ? '✓' : '✗';
       case 'switch':
@@ -87,16 +90,13 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
   };
 
   const handleEdit = (rowIndex: number, rowKey: string, newValue: any, type: string) => {
-    const updatedData = [...filteredData];
     const dataIndex = data.findIndex((item) => item === filteredData[rowIndex]);
-
-    if (dataIndex !== -1) {
+    
+    if (dataIndex !== -1 && editFunction) {
+      const updatedData = [...filteredData];
       updatedData[rowIndex] = { ...updatedData[rowIndex], [rowKey]: newValue };
       setFilteredData(updatedData);
-
-      if (editFunction) {
-        editFunction(dataIndex, rowKey, newValue, type);
-      }
+      editFunction(dataIndex, rowKey, newValue, type);
     }
   };
 
@@ -109,23 +109,31 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
     placeHolder?: string,
   ) => {
     const handleChange = (newValue: any) => {
-      let formattedValue = newValue;
+      let formattedValue: any;
 
-      if (type === 'hour') {
-        const [hours, minutes] = newValue.split(':');
-        const currentDate = new Date().toISOString();
-        formattedValue = timeToISOString({ hours, minutes }, currentDate);
-      } else if (type === 'number' || type === 'currency') {
-        formattedValue = Number(newValue);
-      } else if (type === 'boolean') {
-        formattedValue = Boolean(newValue);
-      } else if (type === 'switch') {
-        formattedValue = newValue === -1 ? switchValues?.left : newValue === 1 ? switchValues?.right : switchValues?.neutral;
-      } else if (type === 'seconds') {
-        const [minutes, seconds] = newValue.split(':');
-        formattedValue = minSecToSeconds(parseInt(minutes), parseInt(seconds));
-      } else {
-        formattedValue = newValue;
+      switch (type) {
+        case 'hour':
+          const [hours, minutes] = newValue.split(':');
+          formattedValue = timeToISOString({ hours, minutes }, new Date().toISOString());
+          break;
+        case 'number':
+        case 'currency':
+          formattedValue = Number(newValue);
+          break;
+        case 'boolean':
+          formattedValue = Boolean(newValue);
+          break;
+        case 'switch':
+          formattedValue = newValue === -1 ? switchValues?.left : 
+                          newValue === 1 ? switchValues?.right : 
+                          switchValues?.neutral;
+          break;
+        case 'seconds':
+          const [mins, secs] = newValue.split(':');
+          formattedValue = minSecToSeconds(parseInt(mins), parseInt(secs));
+          break;
+        default:
+          formattedValue = newValue;
       }
 
       handleEdit(rowIndex, rowKey, formattedValue, type);
@@ -135,20 +143,21 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
       case 'boolean':
         return (
           <IonCheckbox
-            class="table-checkbox"
+            className="table-checkbox"
             checked={value}
             onIonChange={(e) => handleChange(e.detail.checked)}
           />
         );
       case 'switch':
-        const rangeValue = value === switchValues?.left ? -1 : value === switchValues?.right ? 1 : 0;
+        const rangeValue = value === switchValues?.left ? -1 : 
+                          value === switchValues?.right ? 1 : 0;
         return (
           <IonRange
             min={-1}
             max={1}
             step={1}
             snaps
-            class={rangeValue === -1 ? 'switch negative' : rangeValue === 1 ? 'switch positive' : 'switch neutral'}
+            className={`switch ${rangeValue === -1 ? 'negative' : rangeValue === 1 ? 'positive' : 'neutral'}`}
             value={rangeValue}
             onIonChange={(e) => handleChange(e.detail.value)}
           />
@@ -159,6 +168,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
             type="time"
             value={getHourMinutesFomISO(value)}
             onIonChange={(e) => handleChange(e.detail.value)}
+            placeholder='00:00'
           />
         );
       case 'number':
@@ -166,8 +176,9 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
         return (
           <IonInput
             type="number"
-            value={value}
+            value={value || 0}
             onIonChange={(e) => handleChange(e.detail.value)}
+            placeholder="0"
           />
         );
       case 'seconds':
@@ -178,16 +189,17 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
               type="number"
               value={minutes}
               onIonChange={(e) => handleChange(`${e.detail.value}:${seconds}`)}
+              placeholder="00"
             />
             <span>:</span>
             <IonInput
               type="number"
               value={seconds}
               onIonChange={(e) => handleChange(`${minutes}:${e.detail.value}`)}
+              placeholder="00"
             />
           </div>
         );
-      case 'double-data':
       default:
         return (
           <IonInput
@@ -200,54 +212,59 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
     }
   };
 
-  const renderHeaderContent = (row: any, column: Column, index: number) => {
+  const renderField = (row: any, column: Column, rowIndex: number) => {
     const value = row[column.key];
-    const isEditing = editMode
-
-    if (isEditing && column.editable) {
+    
+    if (column.type === 'double-data') {
+      return renderDoubleData(row, column);
+    }
+    
+    if (editMode && column.editable) {
       return renderEditableInput(
-        value, 
-        column.type || 'text', 
-        index, 
-        column.key, 
+        value,
+        column.type || 'text',
+        rowIndex,
+        column.key,
         column.switchValues,
-        column?.placeHolder
+        column.placeHolder
       );
     }
-
-    return formatValue(value, column.type || 'text', column.switchValues, column?.emptyText);
+    
+    return formatValue(value, column.type || 'text', column.switchValues, column.emptyText);
   };
 
-  const renderCardContent = (row: any, index: number) => {
-    const isEditing = editMode
-
-    const headerColumn = columns.find(col => col.header === true);
+  const renderCardContent = (row: any, rowIndex: number) => {
+    const headerColumn = columns.find(col => col.header);
     const switchColumns = columns.filter(col => col.type === 'switch');
     const contentColumns = columns.filter(col => {
-      if (col.header === true || col.type === 'switch') return false;
-      if (isEditing) return !col.notShowWhenEdit;
-      return !col.showOnlyWhenEdit;
+      if (col.header || col.type === 'switch') return false;
+      return editMode ? !col.notShowWhenEdit : !col.showOnlyWhenEdit;
     });
 
     return (
       <>
         {(headerColumn || switchColumns.length > 0) && (
-          <IonCardHeader style={{
-            backgroundColor: !isEditing ? row?.backgroundColor : 'var(--ion-color-dark)',
-          }}>
-            <div className='card-header'>
+          <IonCardHeader 
+            style={{
+              backgroundColor: !editMode ? row?.backgroundColor : 'var(--ion-color-dark)',
+            }}
+          >
+            <div className="card-header">
               {headerColumn && (
-                <IonCardTitle className={`card-header`} style={{
-                  color: isEditing ? row?.backgroundColor : 'var(--ion-color-dark)',
-                }}>
-                  {renderHeaderContent(row, headerColumn, index)}
+                <IonCardTitle 
+                  className="card-header"
+                  style={{
+                    color: colorIsDark(row?.backgroundColor) ? 'var(--ion-color-light)' : 'var(--ion-color-light)',
+                  }}
+                >
+                  {renderField(row, headerColumn, rowIndex)}
                 </IonCardTitle>
               )}
               {switchColumns.length > 0 && editMode && (
                 <div className="card-header-switches">
-                  {switchColumns.map(switchColumn => (
-                    <div key={switchColumn.key} className="header-switch">
-                      {renderHeaderContent(row, switchColumn, index)}
+                  {switchColumns.map(column => (
+                    <div key={column.key} className="header-switch">
+                      {renderField(row, column, rowIndex)}
                     </div>
                   ))}
                 </div>
@@ -256,49 +273,39 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
           </IonCardHeader>
         )}
         <IonCardContent>
-          <div className="card-content">
-            {contentColumns.map((column, index) => {
-              const value = row[column.key];
-
-              return (
-                <div key={column.key} className="card-field"
+          <div 
+            className="card-content"
+            style={{
+              gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)`,
+            }}
+          >
+            {contentColumns.map((column) => (
+              <div 
+                key={column.key} 
+                className="card-field"
+                style={{
+                  gridColumn: `span ${column.colSpan || 2}`,
+                }}
+              >
+                <div 
+                  className="field-label"
+                  style={{ textAlign: column?.textAlign || 'center' }}
+                >
+                  {column.title}
+                </div>
+                <div 
+                  className="field-value"
                   style={{
-                    gridColumn: `span ${column?.colSpan || 2}`,
+                    color: column.type === 'boolean' 
+                      ? (row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') 
+                      : 'var(--ion-color-light)',
+                    justifyContent:  column?.textAlign || 'center',
                   }}
                 >
-                  <div className="field-label"
-                    style={{
-                      textAlign: 'left',
-                    }}
-                  >{column.title}</div>
-                  <div 
-                    className="field-value"
-                    style={{
-                      color: column.type === 'boolean' ? 
-                        (row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 
-                        'var(--ion-color-light)',
-                      justifyContent: 'center',
-                      // minWidth: column.minWidth ? `${column.minWidth}px` : 'auto'
-                    }}
-                  >
-                    {column.type === 'double-data' ? (
-                      renderDoubleData(row, column)
-                    ) : isEditing && column.editable ? (
-                      renderEditableInput(
-                        value, 
-                        column.type || 'text', 
-                        index, 
-                        column.key, 
-                        column.switchValues,
-                        column?.placeHolder
-                      )
-                    ) : (
-                      formatValue(value, column.type || 'text', column.switchValues, column?.emptyText)
-                    )}
-                  </div>
+                  {renderField(row, column, rowIndex)}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </IonCardContent>
       </>
