@@ -158,10 +158,10 @@ export default config;
 
 #### Deployment
 
-1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados
-  ```sh
-  git pull
-  ```
+1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados:
+    ```sh
+    git pull
+    ```
 2. Sincroniza la app para iOS:
     ```sh
     ionic cap sync
