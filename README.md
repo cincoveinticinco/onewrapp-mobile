@@ -20,6 +20,7 @@
     - [Usage](#usage)
     - [Run tests](#run-tests)
     - [Deployment](#deployment)
+    - [TestFlight](#testflight)
   - [📝 License](#license)
 
 # 📖 OneWrapp Offline <a name="about-project"></a>
@@ -145,6 +146,32 @@ const config = {
 };
 export default config;
 ```
+
+### TestFlight
+
+#### Prerequisites
+
+1. Apple Developer Account: Ask for an invitation to the Apple Developer Account and 525 team.
+2. Generate and configure necessary certificates and provisioning profiles in the Apple Developer Center to sign your app.
+3. Collect Apple IDs from individuals who will be testing your app.
+4. Install the latest version of Xcode, Apple's integrated development environment (IDE).
+
+#### Deployment
+
+1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados
+  ```sh
+  git pull
+  ```
+2. Sincroniza la app para iOS:
+    ```sh
+    ionic cap sync
+    ```
+3. Abre el proyecto en Xcode:
+    ```sh
+    ionic cap open ios
+    ```
+4. Sigue paso a paso la guía de [Step-by-Step Guide to Uploading Apps to TestFlight](https://www.qed42.com/insights/a-comprehensive-guide-to-deploying-apps-to-testflight-for-seamless-testing) para subir la aplicación a TestFlight aumentando la versión para que se actualice en la App Store.
+
 # 📝 License <a name="license"></a>
 
 Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo [LICENSE](./LICENCE) para obtener más información.
