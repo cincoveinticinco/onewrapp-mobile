@@ -158,7 +158,7 @@ export default config;
 
 #### Deployment
 
-1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados:
+1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados en la master:
     ```sh
     git pull
     ```
