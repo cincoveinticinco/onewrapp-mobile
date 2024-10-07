@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
     try {
       const googleUser = await GoogleAuth.signIn();
       const accessToken = googleUser.authentication.accessToken;
-
+      setIsLoading(true);
       const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
         method: 'POST',
         headers: {
@@ -60,6 +60,8 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       errorToast('Error during Google Sign In');
       console.error(error)
+    } finally {
+      setIsLoading(false);
     }
   };
 
