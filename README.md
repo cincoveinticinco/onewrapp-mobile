@@ -166,10 +166,9 @@ export default config;
     ```sh
     nvm use stable
     ```
-3. Verofica que esta versión tenga ionic y capacitor instalados:
+3. Verofica que esta versión tenga ionic instalado:
     ```sh
     ionic -v
-    capacitor -v
     ```
   
 4. Sincroniza la app para iOS:
