@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './GeneralTable.css';
 import {
-  IonInput, IonCheckbox, IonRange, IonDatetime,
+  IonInput, IonCheckbox, IonRange
 } from '@ionic/react';
-import { debounce } from 'lodash';
-import getHourMinutesFomISO, { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
+import getHourMinutesFomISO from '../../../utils/getHoursMinutesFromISO';
 import timeToISOString from '../../../utils/timeToIsoString';
 import secondsToMinSec from '../../../utils/secondsToMinSec';
 import minSecToSeconds from '../../../utils/minSecToSeconds';
-import HighlightedText from '../HighlightedText/HighlightedText';
-
 export interface Column {
   key: string;
   title: string;
@@ -23,6 +20,10 @@ export interface Column {
   backgroundColor?: string;
   secondaryKey?: string;
   notShowWhenEdit?: boolean;
+  header?: boolean;
+  colSpan?: number;
+  placeHolder?: string;
+  emptyText?: string;
 }
 
 interface GeneralTableProps {
@@ -316,3 +317,5 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
 };
 
 export default GeneralTable;
+
+

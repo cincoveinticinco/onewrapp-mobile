@@ -1,6 +1,7 @@
 #main-pages-toolbar {
   display: flex;
-  height: 50px;
+  height: auto;
+  min-height: 50px;
 
   .toolbar-title-link {
     color: var(--ion-color-primary);

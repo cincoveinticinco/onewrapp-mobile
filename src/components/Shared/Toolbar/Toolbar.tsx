@@ -128,6 +128,10 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
     console.log('Generating PDF');
   };
 
+  // Get if the platform is ios
+
+  
+
   return (
     <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
       {menu && (

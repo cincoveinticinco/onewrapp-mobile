@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -8,7 +7,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:name=".MainActivity"
@@ -16,12 +14,10 @@
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <provider
@@ -29,18 +25,20 @@
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
 
         <!-- Agregar el clientId de Google Sign-In -->
         <meta-data
             android:name="com.google.android.gms.auth.api.signin.CLIENT_ID"
-            android:value="195018623531-2uupgtedp36aiucvc1pnf3hbc9btb2e0.apps.googleusercontent.com" />
+            android:value="195018623531-2uupgtedp36aiucvc1pnf3hbc9btb2e0.apps.googleusercontent.com"
+        />
 
         <!-- API Key de Google Maps (si es necesario) -->
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI"
+        />
     </application>
 
     <!-- Permissions -->

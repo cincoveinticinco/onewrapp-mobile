@@ -1,8 +1,9 @@
 import React from 'react';
 import { ShootingSceneStatusEnum } from '../../../../Ennums/ennums';
 import { mergedSceneShoot } from '../../../../pages/ShootingDetail/ShootingDetail';
-import GeneralTable, { Column } from '../../../Shared/GeneralTable/GeneralTable';
+import { Column } from '../../../Shared/GeneralTable/GeneralTable';
 import OutlinePrimaryButton from '../../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import GeneralCards from '../../../Shared/GeneralCards/GeneralCards';
 
 interface ScriptReportViewProps {
   mergedScenesShoot: mergedSceneShoot[];
@@ -35,17 +36,19 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 
   const tableColumns: Column[] = [
     {
-      key: 'sceneNumber',
+      key: 'sceneHeader',
       title: 'Scene',
       sticky: true,
       textAlign: 'center',
       backgroundColor: 'backgroundColor',
+      header: true
     },
     {
       key: 'estimatedSeconds',
-      title: 'Est. Time(mm:ss)',
+      title: 'Est. Time',
       type: 'seconds',
       textAlign: 'center',
+      notShowWhenEdit: true,
     },
     {
       key: 'rehersalStart',
@@ -76,16 +79,16 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       editable: !disableEditions,
     },
     {
-      key: 'setups',
-      title: 'Setups',
-      type: 'number',
+      key: 'producedSeconds',
+      title: 'Produced Time',
+      type: 'seconds',
       textAlign: 'center',
       editable: !disableEditions,
     },
     {
-      key: 'producedSeconds',
-      title: 'Produced Time (mm:ss)',
-      type: 'seconds',
+      key: 'setups',
+      title: 'Setups',
+      type: 'number',
       textAlign: 'center',
       editable: !disableEditions,
     },
@@ -99,14 +102,17 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
     {
       key: 'comment',
       title: 'Comment',
-      textAlign: 'center',
+      textAlign: 'left',
       editable: !disableEditions,
       minWidth: 200,
+      colSpan: 16,
+      placeHolder: 'Add a comment',
+      emptyText: 'No comment added',
     },
     {
       key: 'status',
       title: 'Status',
-      textAlign: 'center',
+      textAlign: 'left',
       type: 'switch',
       editable: !disableEditions,
       switchValues: {
@@ -121,11 +127,12 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
   return (
     <>
       {mergedScenesShoot.length > 0 ? (
-        <GeneralTable
+        <GeneralCards
           columns={tableColumns}
           data={mergedScenesShoot}
           editMode={editMode}
           editFunction={editFunction}
+          numberOfColumns={16}
         />
       ) : (
         <div className="center-absolute">

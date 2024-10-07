@@ -105,9 +105,10 @@ const SceneScript: React.FC<{
 
   useEffect(() => {
     const printParagraphs = async () => {
+      const frontScene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       const paragraphs = await oneWrapDb?.paragraphs.find({
         selector: {
-          sceneId: selectedSceneId || sceneId,
+          sceneId: frontScene?._data?.id,
         },
       }).exec();
       paragraphs && setParagraphs(paragraphs);

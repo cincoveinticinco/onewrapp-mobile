@@ -45,6 +45,8 @@ import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
+import getSceneHeader from '../../utils/getSceneHeader';
+import SceneHeader from '../SceneDetails/SceneHeader';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -535,6 +537,7 @@ const ShootingDetail: React.FC<{
         cardType: 'scene',
         backgroundColor: getSceneBackgroundColor(sceneShootingData),
         frontId: scene._data.id,
+        sceneHeader: getSceneHeader(scene._data),
         ...scene._data,
         ...sceneShootingData,
       };
@@ -616,14 +619,19 @@ const ShootingDetail: React.FC<{
       shootingCopy.scenes = shootingData.mergedScenesShootData;
 
       await oneWrappDb?.shootings.upsert(shootingCopy);
-      setTimeout(() => {
-        fetchData();
-      }, 200);
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
     } finally {
       successToast('Script report saved successfully');
+      // calculate backgrond color
+      const mergedScenesShootData = shootingData.mergedScenesShootData.map((scene: any) => {
+        return {
+          ...scene,
+          backgroundColor: getSceneBackgroundColor(scene),
+        };
+      })
+      setMergedScenesShootData(mergedScenesShootData);
     }
   };
 

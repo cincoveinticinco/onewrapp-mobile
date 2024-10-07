@@ -24,7 +24,7 @@ const serviceMatricesSchema = {
       type: ['string', 'null'],
     },
     quantityProjected: {
-      type: 'number',
+      type: ['number', 'null'],
     },
     activated: {
       type: 'boolean',
