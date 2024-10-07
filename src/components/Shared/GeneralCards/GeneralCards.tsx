@@ -254,7 +254,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
                 <IonCardTitle 
                   className="card-header"
                   style={{
-                    color: colorIsDark(row?.backgroundColor) ? 'var(--ion-color-light)' : 'var(--ion-color-light)',
+                    color: !editMode && colorIsDark(row?.backgroundColor) ? 'var(--ion-color-light)' : editMode && row?.backgroundColor !== 'var(--ion-color-dark)' ? row?.backgroundColor : 'var(--ion-color-light)',
                   }}
                 >
                   {renderField(row, headerColumn, rowIndex)}
@@ -289,7 +289,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
               >
                 <div 
                   className="field-label"
-                  style={{ textAlign: column?.textAlign || 'center' }}
+                  style={{ textAlign: 'left' }}
                 >
                   {column.title}
                 </div>
@@ -299,7 +299,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
                     color: column.type === 'boolean' 
                       ? (row[column.key] ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') 
                       : 'var(--ion-color-light)',
-                    justifyContent:  column?.textAlign || 'center',
+                    justifyContent:  'left',
                   }}
                 >
                   {renderField(row, column, rowIndex)}
