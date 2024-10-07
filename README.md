@@ -147,7 +147,7 @@ const config = {
 export default config;
 ```
 
-### TestFlight
+# 🚀 TestFlight <a name="testflight"></a>
 
 #### Prerequisites
 
