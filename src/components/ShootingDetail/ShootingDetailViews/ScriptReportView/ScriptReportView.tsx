@@ -79,16 +79,16 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       editable: !disableEditions,
     },
     {
-      key: 'setups',
-      title: 'Setups',
-      type: 'number',
+      key: 'producedSeconds',
+      title: 'Produced Time',
+      type: 'seconds',
       textAlign: 'center',
       editable: !disableEditions,
     },
     {
-      key: 'producedSeconds',
-      title: 'Produced Time',
-      type: 'seconds',
+      key: 'setups',
+      title: 'Setups',
+      type: 'number',
       textAlign: 'center',
       editable: !disableEditions,
     },
@@ -105,7 +105,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       textAlign: 'left',
       editable: !disableEditions,
       minWidth: 200,
-      colSpan: 12,
+      colSpan: 16,
       placeHolder: 'Add a comment',
       emptyText: 'No comment added',
     },
@@ -132,6 +132,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
           data={mergedScenesShoot}
           editMode={editMode}
           editFunction={editFunction}
+          numberOfColumns={16}
         />
       ) : (
         <div className="center-absolute">

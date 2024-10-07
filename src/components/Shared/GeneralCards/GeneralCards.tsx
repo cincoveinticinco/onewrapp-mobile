@@ -254,7 +254,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
                 <IonCardTitle 
                   className="card-header"
                   style={{
-                    color: !editMode && colorIsDark(row?.backgroundColor) ? 'var(--ion-color-light)' : editMode && row?.backgroundColor !== 'var(--ion-color-dark)' ? row?.backgroundColor : 'var(--ion-color-light)',
+                    color: !editMode && colorIsDark(row?.backgroundColor) ? 'var(--ion-color-light)' : editMode && row?.backgroundColor !== 'var(--ion-color-tertiary-dark)' ? row?.backgroundColor : 'var(--ion-color-light)',
                   }}
                 >
                   {renderField(row, headerColumn, rowIndex)}
