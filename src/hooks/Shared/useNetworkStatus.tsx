@@ -4,6 +4,12 @@ import { Network } from '@capacitor/network';
 const useNetworkStatus = () => {
   const [isOnline, setIsOnline] = useState(true);
 
+  useEffect(() => {
+    if (!isOnline) {
+      console.log('Conexión perdida');
+    }
+  }, [isOnline]);
+
   const getOnlineStatus = async () => {
     try {
       const status = await Network.getStatus();
