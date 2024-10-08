@@ -5,7 +5,7 @@ import {
   useIonViewDidEnter,
   useIonViewWillEnter,
 } from '@ionic/react';
-import { addDays, startOfDay, startOfWeek } from 'date-fns';
+import { addDays, startOfDay } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
@@ -34,10 +34,9 @@ const Calendar: React.FC = () => {
   });
 
   const {
-    oneWrapDb, projectId, setProjectId, initializeShootingReplication,
+    oneWrapDb, projectId, isOnline
   } = useContext<DatabaseContextProps>(DatabaseContext);
-  const [isLoading, setIsLoading] = useState(true);
-  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
@@ -159,25 +158,6 @@ const Calendar: React.FC = () => {
     },
   ];
 
-  useIonViewWillEnter(() => {
-    setProjectId(id);
-    {
-      const initializeReplication = async () => {
-        try {
-          setIsLoading(true);
-        } catch (error) {
-          throw error;
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      if (navigator.onLine) {
-        initializeReplication();
-      }
-    }
-  });
-
   const initializeReplication = async () => {
     try {
       setIsLoading(true);
@@ -190,8 +170,11 @@ const Calendar: React.FC = () => {
   };
 
   useIonViewDidEnter(() => {
-    if (navigator.onLine) {
+    if (navigator.onLine || isOnline) {
       initializeReplication();
+      console.log('online');
+    } else {
+      setIsLoading(false);
     }
   });
 
