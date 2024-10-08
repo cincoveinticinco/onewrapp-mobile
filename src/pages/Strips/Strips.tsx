@@ -208,7 +208,7 @@ const Strips: React.FC<{
         add
         filter
         sort
-        title="LVE STRIPS"
+        title="SCENES"
         sortTrigger="sort-scenes-modal-trigger"
         isLoading={scenesAreLoading}
         permissionType={permissionType}
