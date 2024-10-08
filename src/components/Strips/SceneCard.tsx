@@ -232,7 +232,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
               <IonCol className={`scene-card-col-3 center-flex-row ${shootingCardSceneClass}`}>
                 {
                     !isShooting ? (
-                      <p className="assignament-date"> NOT ASSIGNED </p>
+                      <p className="assignament-date"></p>
                     ) : (
                       <p className={isProduced ? 'produced assignament-date' : 'not-produced assignament-date'}> </p>
                     )
