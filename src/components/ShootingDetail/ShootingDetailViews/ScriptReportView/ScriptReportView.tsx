@@ -22,6 +22,14 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 }) => {
   const editFunction = (rowIndex: number, rowKey: keyof mergedSceneShoot, rowValue: any) => {
     const copy: mergedSceneShoot[] = [...mergedScenesShoot];
+
+    if (rowKey === 'partiality') {
+      if (rowValue) {
+        copy[rowIndex].status = ShootingSceneStatusEnum.Shoot;
+      } else {
+        copy[rowIndex].status = ShootingSceneStatusEnum.Assigned;
+      }
+    }
     const copyMergedScenesInShoot = copy.map((item, index) => {
       if (index === rowIndex) {
         return { ...item, [rowKey]: rowValue };
