@@ -64,7 +64,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       <EditionModal
         modalRef={editionModalRef}
         modalTrigger={`open-edit-time-modal-${field}`}
-        title={`Edit ${field}`}
+        title={`Edit ${field === 'estimatedSeconds' ? 'Estimated Time' : field === 'shootStart' ? 'Shoot Start' : field === 'shootEnd' ? 'Shoot End' : field === 'rehersalStart' ? 'Rehearsal Start' : field === 'rehersalEnd' ? 'Rehearsal End' : field === 'generalCall' ? 'General Call' : field === 'onSet' ? 'Ready to Shoot' : field === 'estimatedWrap' ? 'Estimated Wrap' : field === 'wrap' ? 'Wrap' : 'Last Out'}`}
         formInputs={editionInputs}
         handleEdition={handleEdition}
         defaultFormValues={{

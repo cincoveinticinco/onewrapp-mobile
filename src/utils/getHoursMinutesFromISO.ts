@@ -1,6 +1,5 @@
 const getHourMinutesFomISO = (iso: string, withampm: boolean = false): string => {
   const date = new Date(iso);
-  console.log(iso)
 
   if (Number.isNaN(date.getTime()) || iso === '0000-00-00T00:00:00.000Z' || !iso) {
     return '--:--';
