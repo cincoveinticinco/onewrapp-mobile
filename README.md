@@ -20,7 +20,7 @@
     - [Usage](#usage)
     - [Run tests](#run-tests)
     - [Deployment](#deployment)
-    - [TestFlight](#testflight)
+  - [🚀 TestFlight](#testflight)
   - [📝 License](#license)
 
 # 📖 OneWrapp Offline <a name="about-project"></a>
