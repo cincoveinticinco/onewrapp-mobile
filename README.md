@@ -20,7 +20,7 @@
     - [Usage](#usage)
     - [Run tests](#run-tests)
     - [Deployment](#deployment)
-    - [TestFlight](#testflight)
+  - [🚀 TestFlight](#testflight)
   - [📝 License](#license)
 
 # 📖 OneWrapp Offline <a name="about-project"></a>
@@ -166,10 +166,9 @@ export default config;
     ```sh
     nvm use stable
     ```
-3. Verofica que esta versión tenga ionic y capacitor instalados:
+3. Verofica que esta versión tenga ionic instalado:
     ```sh
     ionic -v
-    capacitor -v
     ```
   
 4. Sincroniza la app para iOS:
