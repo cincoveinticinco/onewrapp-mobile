@@ -92,7 +92,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
   const {
-    checkSession, setLoadingAuth, getToken, logout,
+    checkSession, setLoadingAuth, getToken, logout, checkOffline
   } = useContext(AuthContext);
 
   const resyncScenes: any = useRef(null);
@@ -233,20 +233,38 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
-    if (isOnline) {
-      checkSession().finally(() => setLoadingAuth(false));
-    } else {
-      const user: User = oneWrapRXdatabase?.user.findOne().exec();
-      if (user) {
-        const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
-        const now = new Date().getTime();
-        if (now > sessionEndsAt) {
-          logout();
-          setLoadingAuth(false);
+    const getUser = async () => {
+      if(oneWrapRXdatabase) {
+        const user = await oneWrapRXdatabase.user.findOne().exec();
+        if(user) {
+          return user._data;
         }
       }
+      return null;
     }
-  }, [checkSession, isOnline]);
+
+    const fetchUser = async () => {
+      const user = await getUser();
+      if ((isOnline || navigator.onLine)) {
+        checkSession().finally(() => setLoadingAuth(false));
+      } else {
+        if (user) {
+          const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
+          const now = new Date().getTime();
+
+          if (now > sessionEndsAt) {
+            logout();
+            setLoadingAuth(false);
+          } else {
+            setLoadingAuth(false);
+            checkOffline(true);
+          }
+        }
+      }
+    };
+
+    oneWrapRXdatabase && fetchUser();
+  }, [checkSession, isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
     if(projectId) {
