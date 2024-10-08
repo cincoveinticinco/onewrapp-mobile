@@ -12,6 +12,7 @@ interface AuthContextType {
   loading: boolean;
   getToken: () => Promise<string>;
   setLoadingAuth: (loading: boolean) => void;
+  checkOffline: (isLogedOffline: boolean) => void;
 }
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -23,6 +24,7 @@ export const AuthContext = React.createContext<AuthContextType>({
   loading: true,
   getToken: () => new Promise(() => {}),
   setLoadingAuth: () => {},
+  checkOffline: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkSession = useCallback(async () => {
     const token = localStorage.getItem('token');
+    console.log('EXECUTING CHECK SESSION')
     if (token) {
       try {
         const response = await fetch(`${environment.URL_PATH}/verify_session`, {
@@ -88,6 +91,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkToken();
   }), []);
 
+  const checkOffline = (isLogedOffline: boolean) => {
+    if(isLogedOffline){
+      setLoggedIn(true);
+    }
+  }
+
   const value = {
     loggedIn,
     user,
@@ -97,6 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     getToken,
     setLoadingAuth: setLoading,
+    checkOffline,
   };
 
   return (
