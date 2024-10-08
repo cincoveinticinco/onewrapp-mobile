@@ -264,7 +264,7 @@ const AppTabs: React.FC = () => {
         </IonTabButton>
         <IonTabButton tab="strips" className={defineButtonClassAccess(SecurePages.SCENES)} href={`${url}/strips`}>
           <IonIcon icon={listSharp} className="tab-bar-icons" />
-          <IonLabel>STRIPS</IonLabel>
+          <IonLabel>SCENES</IonLabel>
         </IonTabButton>
         <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
