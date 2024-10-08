@@ -47,6 +47,7 @@ import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
 import getSceneHeader from '../../utils/getSceneHeader';
 import SceneHeader from '../SceneDetails/SceneHeader';
+import Legend from '../../components/Shared/Legend/Legend';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -120,6 +121,11 @@ const ShootingDetail: React.FC<{
     { value: '#000', name: 'black' },
     { value: '#f3fb8c', name: 'yellow' },
     { value: '#fdc6f7', name: 'light pink' },
+  ];
+
+  const legendItems = [
+    { color: 'var(--ion-color-danger)', label: 'NOT SHOOT' },
+    { color: 'var(--ion-color-success)', label: 'SHOOT' },
   ];
 
   const bannersSelectOptions = availableColors.map((color) => ({
@@ -1403,6 +1409,7 @@ const ShootingDetail: React.FC<{
         view === 'script-report'
         && (
         <IonContent color="tertiary" fullscreen>
+          <Legend items={legendItems} />
           <ScriptReportView
             mergedScenesShoot={shootingData.mergedScenesShootData}
             editMode={scriptReportEditMode}
