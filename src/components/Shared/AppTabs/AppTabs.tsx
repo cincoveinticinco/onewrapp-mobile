@@ -70,8 +70,12 @@ const AppTabs: React.FC = () => {
   const getSecurePageAccess = useCallback((pageId: number) => {
     if (currentCompany && user) {
       const company = user.companies.find((company: any) => company.id == currentCompany);
-      const page = company?.securePages.find((page: any) => page.id == pageId);
-      return page?.access;
+      if(company?.userTypeId == 1) {
+        const page = company?.securePages.find((page: any) => page.id == pageId);
+       return page?.access;
+      } else if (company?.userTypeId == 2) {
+        return 1
+      }
     }
     return null;
   }, [currentCompany, user]);
