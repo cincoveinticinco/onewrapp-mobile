@@ -7,7 +7,7 @@
   .tab-bar-buttons {
     @include tab-bar-buttons;
 
-    font-size: 10px !important;
+    font-size: 10px;
   }
 
   .tab-bar-buttons.tablet {
@@ -22,4 +22,13 @@
 .disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+
+@media (max-width: 500px) {
+  .tab-bar-buttons {
+    @include tab-bar-buttons;
+
+    font-size: 6px !important;
+  }
 }
