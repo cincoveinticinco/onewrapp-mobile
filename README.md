@@ -175,14 +175,19 @@ export default config;
 
 Si es para producción:
 
-    ```sh
-    ionic cap sync
-    ```
-Si es para staging:
-  
-    ```sh
-    npm run build:staging
-    ionic cap sync --no-build
+  ```sh
+  ionic cap sync
+  ```
+
+Si es para staging y que el archivo .env esté apuntando a staging:
+
+  ```sh
+  npm run build:staging
+  ionic cap sync --no-build
+  ```
+
+> **Nota importante:** Si en el root del repositorio existe un archivo `.env.local`, es importante borrarlo o hacer que la ruta apunte a staging. De lo contrario, Vite compilará el archivo apuntando a la ruta local.
+
     ```
 5. Abre el proyecto en Xcode:
     ```sh
