@@ -52,6 +52,9 @@ const shootingSchema = {
     createdAt: {
       type: 'string',
     },
+    createdAtBack: {
+      type: ['string', 'null'],
+    },
     updatedAt: {
       type: 'string',
     },

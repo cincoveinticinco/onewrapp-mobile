@@ -20,7 +20,7 @@
     - [Usage](#usage)
     - [Run tests](#run-tests)
     - [Deployment](#deployment)
-    - [TestFlight](#testflight)
+  - [🚀 TestFlight](#testflight)
   - [📝 License](#license)
 
 # 📖 OneWrapp Offline <a name="about-project"></a>
@@ -147,30 +147,39 @@ const config = {
 export default config;
 ```
 
-### TestFlight
+# 🚀 TestFlight <a name="testflight"></a>
 
 #### Prerequisites
 
-1. Apple Developer Account: Ask for an invitation to the Apple Developer Account and 525 team.
-2. Generate and configure necessary certificates and provisioning profiles in the Apple Developer Center to sign your app.
-3. Collect Apple IDs from individuals who will be testing your app.
-4. Install the latest version of Xcode, Apple's integrated development environment (IDE).
+1. Cuenta de Desarrollador de Apple: Solicita una invitación a la Cuenta de Desarrollador de Apple y al equipo de 525.
+2. Genera y configura los certificados y perfiles de aprovisionamiento necesarios en el Centro de Desarrolladores de Apple para firmar tu aplicación.
+3. Recopila los Apple IDs de las personas que probarán tu aplicación.
+4. Instala la última versión de Xcode, el entorno de desarrollo integrado (IDE) de Apple.
 
 #### Deployment
 
-1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados
-  ```sh
-  git pull
-  ```
-2. Sincroniza la app para iOS:
+1. Abre un terminal y navega hasta el directorio raíz del proyecto. Haz pull para verificar que los cambios han sido correctamente instaurados en la master:
+    ```sh
+    git pull
+    ```
+2. Ejecuta nvm use stable para asegurarte de que estás utilizando la versión estable de Node.js:
+    ```sh
+    nvm use stable
+    ```
+3. Verofica que esta versión tenga ionic instalado:
+    ```sh
+    ionic -v
+    ```
+  
+4. Sincroniza la app para iOS:
     ```sh
     ionic cap sync
     ```
-3. Abre el proyecto en Xcode:
+5. Abre el proyecto en Xcode:
     ```sh
     ionic cap open ios
     ```
-4. Sigue paso a paso la guía de [Step-by-Step Guide to Uploading Apps to TestFlight](https://www.qed42.com/insights/a-comprehensive-guide-to-deploying-apps-to-testflight-for-seamless-testing) para subir la aplicación a TestFlight aumentando la versión para que se actualice en la App Store.
+6. Sigue paso a paso la guía de [Step-by-Step Guide to Uploading Apps to TestFlight](https://www.qed42.com/insights/a-comprehensive-guide-to-deploying-apps-to-testflight-for-seamless-testing) para subir la aplicación a TestFlight aumentando la versión para que se actualice en la App Store.
 
 # 📝 License <a name="license"></a>
 

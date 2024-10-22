@@ -17,6 +17,9 @@ const sceneParagraphSchema = {
     createdAt: {
       type: 'string',
     },
+    createdAtBack: {
+      type: 'string',
+    },
     updatedAt: {
       type: 'string',
     },
@@ -50,7 +53,7 @@ const sceneParagraphSchema = {
   },
   required: [
     'sceneNumber',
-    'createdAt',
+    'createdAtBack',
     'updatedAt',
     'epNumber',
     'projectId',

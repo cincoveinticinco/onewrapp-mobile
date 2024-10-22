@@ -46,6 +46,12 @@ const talentSchema = {
     updatedAt: {
       type: 'string',
     },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: ['string', 'null'],
+    },
   },
   required: ['id', 'name', 'lastName', 'castCategoryId', 'castCategory', 'projectId'],
 };

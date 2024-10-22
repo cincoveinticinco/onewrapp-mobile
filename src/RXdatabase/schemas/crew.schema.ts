@@ -40,6 +40,13 @@ const crewSchema = {
       type: ['string', 'null'],
       format: 'date-time',
     },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: ['string', 'null'],
+      format: 'date-time',
+    },
     unitNumber: {
       type: ['integer', 'null'],
     },

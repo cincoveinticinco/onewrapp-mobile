@@ -123,6 +123,12 @@ const sceneSchema = {
     updatedAt: {
       type: 'string',
     },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: 'string',
+    }
   },
   required: ['episodeNumber', 'sceneNumber', 'sceneType', 'setName', 'projectId'],
 };

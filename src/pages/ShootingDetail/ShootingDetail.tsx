@@ -47,6 +47,7 @@ import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
 import getSceneHeader from '../../utils/getSceneHeader';
 import SceneHeader from '../SceneDetails/SceneHeader';
+import Legend from '../../components/Shared/Legend/Legend';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
 type cardType = {
@@ -120,6 +121,11 @@ const ShootingDetail: React.FC<{
     { value: '#000', name: 'black' },
     { value: '#f3fb8c', name: 'yellow' },
     { value: '#fdc6f7', name: 'light pink' },
+  ];
+
+  const legendItems = [
+    { color: 'var(--ion-color-danger)', label: 'NOT SHOOT' },
+    { color: 'var(--ion-color-success)', label: 'SHOOT' },
   ];
 
   const bannersSelectOptions = availableColors.map((color) => ({
@@ -282,38 +288,41 @@ const ShootingDetail: React.FC<{
     return false;
   };
 
-  const checkboxScenesToggle = (scene: Scene) => {
-    const shootingScene: ShootingScene = {
-      projectId: parseInt(id),
-      shootingId: parseInt(shootingId),
-      sceneId: scene.sceneId.toString(),
-      status: ShootingSceneStatusEnum.NotShoot,
-      position: shootingData.mergedSceneBanners.length,
-      rehersalStart: null,
-      rehersalEnd: null,
-      comment: '',
-      partiality: false,
-      startShooting: null,
-      endShooting: null,
-      producedSeconds: 0,
-      setups: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    setShootingData((prev: any) => {
-      const updatedScenes = [...prev.mergedSceneBanners, { cardType: 'scene', ...shootingScene, ...scene }];
-      const updatedInfo = calculateUpdatedInfo(updatedScenes);
-      return {
-        ...prev,
-        mergedSceneBanners: updatedScenes,
-        shotingInfo: {
-          ...prev.shotingInfo,
-          ...updatedInfo,
-        },
+  const addNewScene = async (scene: Scene) => {
+    try {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      if (!shooting) throw new Error('Shooting not found');
+  
+      const shootingScene: ShootingScene = {
+        projectId: parseInt(id),
+        shootingId: parseInt(shootingId),
+        sceneId: scene.sceneId.toString(),
+        status: ShootingSceneStatusEnum.Assigned,
+        position: shootingData.mergedSceneBanners.length,
+        rehersalStart: null,
+        rehersalEnd: null,
+        comment: '',
+        partiality: false,
+        startShooting: null,
+        endShooting: null,
+        producedSeconds: 0,
+        setups: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
-    });
-    setSelectedScenes([...selectedScenes, scene]);
+  
+      const shootingCopy = { 
+        ...shooting._data,
+        scenes: [...(shooting._data.scenes || []), shootingScene] // Creamos un nuevo array
+      };
+  
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('Scene added successfully');
+    } catch (error) {
+      errorToast('Error adding new scene');
+      throw error;
+    }
   };
 
   const clearSelectedScenes = () => {
@@ -339,40 +348,46 @@ const ShootingDetail: React.FC<{
     updatedAt: scene.updatedAt,
   });
 
-  const shootingDeleteScene = (scene: ShootingScene & Scene) => {
-    const updatedScenes = shootingData.mergedSceneBanners.filter((s: any) => {
-      if (s.cardType === 'scene') {
-        if (s.id === null) {
-          // Para escenas recién creadas, comparamos por posición
-          return s.position !== scene.position;
-        }
-        // Para escenas existentes, comparamos por sceneId
-        return s.sceneId !== scene.sceneId;
-      }
-      return true;
-    });
-    setShootingData({ ...shootingData, mergedSceneBanners: updatedScenes });
-    successToast('Scene deleted successfully');
+  const shootingDeleteScene = async (scene: ShootingScene & Scene) => {
+    try {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      if (!shooting) throw new Error('Shooting not found');
+  
+      const shootingCopy = { 
+        ...shooting._data,
+        scenes: [...(shooting._data.scenes || [])].filter(
+          (s: any) => s.sceneId !== scene.sceneId
+        )
+      };
+  
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('Scene deleted successfully');
+    } catch (error) {
+      errorToast('Error deleting scene');
+      throw error;
+    }
   };
 
-  const shootingDeleteBanner = (banner: mergedSceneBanner) => {
-    const updatedScenes = shootingData.mergedSceneBanners.filter((item: any) => {
-      if (item.cardType === 'banner') {
-        if (item.id === null) {
-          // Para banners recién creados, comparamos por posición
-          return item.position !== banner.position;
-        }
-        // Para banners existentes, comparamos por id
-        return item.id !== banner.id;
-      }
-      return true;
-    });
-
-    setShootingData((prev: any) => ({
-      ...prev,
-      scenes: updatedScenes,
-    }));
-    successToast('Banner deleted successfully');
+  const shootingDeleteBanner = async (banner: mergedSceneBanner) => {
+    try {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      if (!shooting) throw new Error('Shooting not found');
+  
+      const shootingCopy = { 
+        ...shooting._data,
+        banners: [...(shooting._data.banners || [])].filter(
+          (b: any) => b.id !== banner.id
+        )
+      };
+  
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('Banner deleted successfully');
+    } catch (error) {
+      errorToast('Error deleting banner');
+      return;
+    }
   };
 
   const getSceneBackgroundColor = (scene: mergedSceneShoot) => {
@@ -566,16 +581,20 @@ const ShootingDetail: React.FC<{
     };
 
     const formatShootingDate = (dateString: string, unitNumber: number) => {
-      const date = new Date(dateString);
+      const date = new Date(dateString + 'T00:00:00');
+      
       const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-
       const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      
+      // Obtenemos los valores en la zona horaria local
       const dayOfWeek = weekdays[date.getDay()];
-
       const dayNumber = date.getDay() === 0 ? 7 : date.getDay();
-
-      const formattedDate = `${dayOfWeek}. DAY #${dayNumber}. ${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}. UNIT ${unitNumber}`;
-
+      const month = monthNames[date.getMonth()];
+      const day = date.getDate();
+      const year = date.getFullYear();
+    
+      const formattedDate = `${dayOfWeek}. DAY #${dayNumber}. ${month} ${day}, ${year}. UNIT ${unitNumber}`;
+    
       return formattedDate;
     };
 
@@ -623,15 +642,8 @@ const ShootingDetail: React.FC<{
       errorToast(`Error saving script report: ${error}`);
       throw error;
     } finally {
+      await fetchData();
       successToast('Script report saved successfully');
-      // calculate backgrond color
-      const mergedScenesShootData = shootingData.mergedScenesShootData.map((scene: any) => {
-        return {
-          ...scene,
-          backgroundColor: getSceneBackgroundColor(scene),
-        };
-      })
-      setMergedScenesShootData(mergedScenesShootData);
     }
   };
 
@@ -651,8 +663,8 @@ const ShootingDetail: React.FC<{
           shootingCopy[field] = newTimeISO;
 
           await oneWrappDb.shootings.upsert(shootingCopy);
-
-          fetchData();
+          await fetchData();
+          successToast('Time updated successfully');
         }
       } catch (error) {
         errorToast(`Error updating time: ${error}`);
@@ -689,6 +701,9 @@ const ShootingDetail: React.FC<{
       } catch (error) {
         errorToast('Error deleting meal');
         throw error;
+      } finally {
+        await fetchData();
+        successToast('Meal deleted successfully');
       }
     }
   };
@@ -717,6 +732,9 @@ const ShootingDetail: React.FC<{
       } catch (error) {
         errorToast('Error deleting advance call');
         throw error;
+      } finally {
+        await fetchData();
+        successToast('Advance call deleted successfully');
       }
     }
   };
@@ -744,6 +762,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error adding location: ${error}`);
       return;
     } finally {
+      await fetchData();
       successToast('Location added successfully');
     }
   };
@@ -770,6 +789,7 @@ const ShootingDetail: React.FC<{
       errorToast('Error adding hospital');
       throw error;
     } finally {
+      await fetchData();
       successToast('Hospital added successfully');
     }
   };
@@ -796,6 +816,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error updating location: ${error}`);
       throw error;
     } finally {
+      await fetchData();
       successToast('Location updated successfully');
     }
   };
@@ -822,6 +843,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error updating hospital: ${error}`);
       throw error;
     } finally {
+      await fetchData();
       successToast('Hospital updated successfully');
     }
   };
@@ -839,6 +861,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error removing location: ${error}`);
       throw error;
     } finally {
+      await fetchData();
       successToast('Location removed successfully');
     }
   };
@@ -856,25 +879,37 @@ const ShootingDetail: React.FC<{
       errorToast(`Error removing hospital: ${error}`);
       throw error;
     } finally {
+      await fetchData();
       successToast('Hospital removed successfully');
     }
   };
 
-  const addNewBanner = (banner: any) => {
-    const bannerCopy = { ...banner };
-    bannerCopy.position = shootingData.mergedSceneBanners.length;
-    bannerCopy.id = null;
-    bannerCopy.fontSize = parseInt(bannerCopy.fontSize);
-    bannerCopy.shootingId = parseInt(shootingId);
-    bannerCopy.createdAt = new Date().toISOString();
-    bannerCopy.updatedAt = new Date().toISOString();
-
-    setShootingData((prev: ShootingDataProps) => ({
-      ...prev,
-      mergedSceneBanners: [...prev.mergedSceneBanners, { cardType: 'banner', ...bannerCopy }],
-    }));
+  const addNewBanner = async (banner: any) => {
+    try {
+      const bannerCopy = { ...banner };
+      bannerCopy.position = shootingData.mergedSceneBanners.length;
+      // Generamos un ID temporal único
+      bannerCopy.id = null;
+      bannerCopy.fontSize = parseInt(bannerCopy.fontSize);
+      bannerCopy.shootingId = parseInt(shootingId);
+      bannerCopy.createdAt = new Date().toISOString();
+      bannerCopy.updatedAt = new Date().toISOString();
+  
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingCopy = { 
+        ...shooting._data,
+        banners: [...shooting._data.banners, bannerCopy]
+      }
+  
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('Banner added successfully'); 
+    } catch {
+      errorToast('Error adding banner');
+      return;
+    }
   };
-
+  
   const addNewAdvanceCall = async (advanceCall: any) => {
     const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
 
@@ -897,6 +932,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error adding advance call: ${error}`);
       return;
     } finally {
+      await fetchData();
       successToast('Advance call added successfully');
     }
   };
@@ -923,6 +959,7 @@ const ShootingDetail: React.FC<{
       errorToast(`Error adding meal: ${error}`);
       return;
     } finally {
+      await fetchData();
       successToast('Meal added successfully');
     }
   };
@@ -956,6 +993,9 @@ const ShootingDetail: React.FC<{
       } catch (error) {
         errorToast(`Error updating meal: ${error}`);
         throw error;
+      } finally {
+        await fetchData();
+        successToast('Meal updated successfully');
       }
     }
   };
@@ -986,6 +1026,7 @@ const ShootingDetail: React.FC<{
       } catch (error) {
         errorToast(`Error updating advance call: ${error}`);
       } finally {
+        await fetchData();
         successToast('Advance call updated successfully');
       }
     }
@@ -1012,36 +1053,11 @@ const ShootingDetail: React.FC<{
       shootingCopy.scenes = updatedItems.filter((item: any) => item.cardType === 'scene').map((scene: any) => formatSceneAsShootingScene(scene));
       // eslint-disable-next-line
       shootingCopy.banners = updatedItems.filter((item: any) => item.cardType === 'banner').map(({ cardType, ...banner } : mergedSceneBanner) => banner);
-
+      event.detail.complete();
       await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
       errorToast(`Error reordering scenes: ${error}`);
       throw error;
-    } finally {
-      event.detail.complete();
-    }
-  };
-
-  const saveShooting = async () => {
-    if (oneWrappDb && shootingId && !isLoading) {
-      try {
-        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-        const updatedScenes = shootingData.mergedSceneBanners
-          .filter((item: any) => item.cardType === 'scene')
-          .map((scene: any) => formatSceneAsShootingScene(scene));
-        const updatedBanners = shootingData.mergedSceneBanners.filter((item: mergedSceneBanner) => item.cardType === 'banner')
-        // eslint-disable-next-line
-          .map(({ cardType, ...banner } : mergedSceneBanner) => banner);
-
-        const shootingCopy = { ...shooting._data };
-        shootingCopy.scenes = updatedScenes;
-        shootingCopy.banners = updatedBanners;
-
-        await oneWrappDb.shootings.upsert(shootingCopy);
-      } catch (error) {
-        errorToast('Error saving shooting');
-        throw error;
-      }
     }
   };
 
@@ -1054,7 +1070,6 @@ const ShootingDetail: React.FC<{
 
   useEffect(() => {
     if (!isLoading) {
-      saveShooting();
       setShootingData((prev: ShootingDataProps) => {
         const updatedInfo = calculateUpdatedInfo(prev.mergedSceneBanners);
         return {
@@ -1115,7 +1130,7 @@ const ShootingDetail: React.FC<{
     <InputModalScene
       sceneName="Add New Scene"
       listOfScenes={shootingData.notIncludedScenes}
-      handleCheckboxToggle={checkboxScenesToggle}
+      handleCheckboxToggle={addNewScene}
       selectedScenes={selectedScenes}
       setSelectedScenes={setSelectedScenes}
       clearSelections={clearSelectedScenes}
@@ -1210,7 +1225,11 @@ const ShootingDetail: React.FC<{
   };
 
   if (isLoading) {
-    return (<IonContent color="tertiary" fullscreen>{ AppLoader()}</IonContent>);
+    return (
+      <IonPage>
+        <IonContent color="tertiary" fullscreen>{ AppLoader()}</IonContent>
+      </IonPage>
+    );
   }
 
   const renderSearchBar = () => (
@@ -1365,6 +1384,7 @@ const ShootingDetail: React.FC<{
         view === 'script-report'
         && (
         <IonContent color="tertiary" fullscreen>
+          <Legend items={legendItems} />
           <ScriptReportView
             mergedScenesShoot={shootingData.mergedScenesShootData}
             editMode={scriptReportEditMode}

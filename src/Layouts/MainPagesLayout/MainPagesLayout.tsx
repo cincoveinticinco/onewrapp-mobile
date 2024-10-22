@@ -1,6 +1,7 @@
 import { IonHeader, IonPage } from '@ionic/react';
 import React from 'react';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import { useHistory } from 'react-router';
 
 interface MainPagesLayoutProps {
   children: React.ReactNode
@@ -20,9 +21,11 @@ interface MainPagesLayoutProps {
 }
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, handleBack, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [], permissionType,
+  children, searchText, setSearchText, search = false, add = false, filter = false, elipse = false, sort = false, title, sortTrigger, isLoading = false, customButtons = [], permissionType,
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
+  const history = useHistory();
+  const handleBack = () => history.push('/my/projects');
 
   return (
     <IonPage>

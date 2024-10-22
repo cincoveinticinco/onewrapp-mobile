@@ -65,6 +65,12 @@ const serviceMatricesSchema = {
     updatedAt: {
       type: 'string',
     },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: 'string',
+    },
     prServiceTypeId: {
       type: ['number', 'null'],
     },

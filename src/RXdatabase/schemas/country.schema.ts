@@ -28,6 +28,12 @@ const countrySchema = {
     updatedAt: {
       type: 'string',
     },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: 'string',
+    }
   },
   required: ['id', 'nameEng', 'nameEsp', 'code', 'prefix', 'updatedAt'],
 };

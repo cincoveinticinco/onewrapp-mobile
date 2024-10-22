@@ -40,7 +40,7 @@ export default class AppDataBase {
       const dbInstance = await createRxDatabase({
         name: this.dbName,
         storage,
-        multiInstance: false,
+        multiInstance: false
       });
 
       await this.setCollections(dbInstance);

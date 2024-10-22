@@ -775,7 +775,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
               <ShootingInfoLabels
                 isEditable={false}
                 title="ready to shoot"
-                info={getHourMinutesFomISO(thisShooting?.shootDate || '', true)}
+                info={getHourMinutesFomISO(thisShooting?.onSet || '', true)}
               />
             </div>
           </div>

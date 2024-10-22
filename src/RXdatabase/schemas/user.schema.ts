@@ -62,10 +62,10 @@ const userSchema = {
                   items: {
                     type: 'object',
                     properties: {
-                      access: { type: 'number' },
+                      access: { type: ['number', 'null' ]},
                       id: { type: 'number' },
-                      page: { type: 'string' },
-                      parentId: { type: 'number' },
+                      page: { type: ['string', 'null'] },
+                      parentId: { type: ['number', 'null'] },
                     },
                   },
                 },
