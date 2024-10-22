@@ -114,6 +114,12 @@
   }
 }
 
+.logout-icon:hover, .logout-icon:active, .logout-icon:focus {
+  * {
+    color: var(--ion-color-danger) !important;
+  }
+}
+
 @media (min-width: 500px) {
   #main-pages-toolbar {
     .toolbar-search-wrapper.search {

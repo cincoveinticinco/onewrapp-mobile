@@ -2,6 +2,7 @@ import React, {
   useContext, useState, useCallback,
 } from 'react';
 import environment from '../../environment';
+import { useHistory } from 'react-router';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -34,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string>('');
+  const history = useHistory();
 
   const checkSession = useCallback(async () => {
     const token = localStorage.getItem('token');
@@ -77,6 +79,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('token');
     setUser(null);
     setLoggedIn(false);
+    window.location.href = '/';
+    console.log('LOGOUT')
   }
 
   const getToken = useCallback(() => new Promise<string>((resolve) => {

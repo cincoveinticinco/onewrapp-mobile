@@ -2,6 +2,8 @@ import {
   IonContent,
   IonHeader,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   useIonViewDidEnter
 } from '@ionic/react';
 import { addDays, startOfDay } from 'date-fns';
@@ -341,6 +343,9 @@ const Calendar: React.FC = () => {
         )}
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
+        <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
+          <IonRefresherContent />
+        </IonRefresher>
         <Legend items={legendItems} />
         {isLoading || isFetchingUnits ? (
           AppLoader()

@@ -16,14 +16,15 @@ import {
 import React, {
   memo, useContext, useEffect, useRef, useState,
 } from 'react';
-import { CiEdit } from 'react-icons/ci';
+import { CiEdit, CiLogout } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { RiDownload2Line } from 'react-icons/ri';
+import { RiDownload2Line, RiLogoutBoxLine } from 'react-icons/ri';
 import { useParams } from 'react-router';
 import DatabaseContext from '../../../context/Database.context';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import template from '../../../templates/MinimalTemplate';
 import './Toolbar.scss';
+import AuthContext from '../../../context/Auth.context';
 
 export interface ToolbarButton {
   name: string;
@@ -92,6 +93,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const isMobile = useIsMobile();
 
   const { offlineScenes } = useContext(DatabaseContext);
+  const { logout } = useContext(AuthContext);
 
   const [sceneToPrint, setSceneToPrint] = useState<any>({});
   const [inputs, setInputs] = useState<any>([]);
@@ -228,12 +230,17 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           addShoBanSc()
         )
       }
-      {
+      {/* {
         download && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => generatePdf(template, inputs)}>
             <RiDownload2Line className="toolbar-icon download-icon" />
           </IonButton>
         )
+      } */}
+      {
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button logout-icon" onClick={logout}>
+          <RiLogoutBoxLine className="toolbar-icon" />
+        </IonButton>
       }
       {
         isLoading && (
