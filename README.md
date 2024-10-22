@@ -172,8 +172,17 @@ export default config;
     ```
   
 4. Sincroniza la app para iOS:
+
+Si es para producción:
+
     ```sh
     ionic cap sync
+    ```
+Si es para staging:
+  
+    ```sh
+    npm run build:staging
+    ionic cap sync --no-build
     ```
 5. Abre el proyecto en Xcode:
     ```sh
