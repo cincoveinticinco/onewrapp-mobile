@@ -5,7 +5,7 @@ import React, {
 
 // React component and utility imports
 import { IonContent } from '@ionic/react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import CastCard from '../../components/Cast/CastCard';
@@ -14,7 +14,6 @@ import DropDownCast from '../../components/Cast/DropDownCast';
 // Custom contexts and hooks imports
 import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes.context';
-import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import useProcessedCast from '../../hooks/Cast/useProcessedCast';
 // Utility and configuration imports
@@ -57,7 +56,8 @@ const Cast: React.FC<{
   const thisPath = useLocation();
   useScrollToTop(contentRef, thisPath);
   const { processedCast, processedExtras, isLoading } = useProcessedCast();
-  const handleBack = useHandleBack();
+  const history = useHistory()
+  const handleBack = () => history.push('/my/projects');
 
   // Utility Functions
 

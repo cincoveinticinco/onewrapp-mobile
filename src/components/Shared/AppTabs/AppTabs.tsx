@@ -21,6 +21,7 @@ import React, {
 } from 'react';
 import {
   Redirect, Route,
+  useParams,
   useRouteMatch,
 } from 'react-router-dom';
 import DatabaseContext from '../../../context/Database.context';
@@ -70,11 +71,13 @@ const AppTabs: React.FC = () => {
   const getSecurePageAccess = useCallback((pageId: number) => {
     if (currentCompany && user) {
       const company = user.companies.find((company: any) => company.id == currentCompany);
-      if(company?.userTypeId == 1) {
+      if(company?.userTypeId === 1) {
         const page = company?.securePages.find((page: any) => page.id == pageId);
-       return page?.access;
-      } else if (company?.userTypeId == 2) {
-        return 1
+        return page?.access;
+      } else if (company?.userTypeId === 2) {
+        const project = company?.projects?.find((project: any) => project.id == projectId);
+        const page = project?.securePages.find((page: any) => page.id == pageId);
+        return page?.access;
       }
     }
     return null;
@@ -270,10 +273,10 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={listSharp} className="tab-bar-icons" />
           <IonLabel>SCENES</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
+        {/* <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
           <IonIcon icon={calendar} className="tab-bar-icons" />
           <IonLabel>STRIPBOARD</IonLabel>
-        </IonTabButton>
+        </IonTabButton> */}
         <IonTabButton tab="cast" className={defineButtonClassAccess(SecurePages.CAST)} href={`${url}/cast`}>
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
@@ -290,10 +293,10 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={business} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/reports`}>
+        {/* <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/reports`}>
           <IonIcon icon={reader} className="tab-bar-icons" />
           <IonLabel>REPORTS</IonLabel>
-        </IonTabButton>
+        </IonTabButton> */}
         <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />
           <IonLabel>SETTINGS</IonLabel>

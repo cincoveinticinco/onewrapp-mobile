@@ -171,7 +171,15 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const deleteScene = async () => {
     try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { id: scene.sceneId } }).exec();
+      // Find scene by project id, episode number and scene number
+      const sceneToDelete = await oneWrapDb?.scenes.findOne(
+        { selector: 
+          { 
+            episodeNumber: scene.episodeNumber, 
+            sceneNumber: scene.sceneNumber, 
+            projectId: scene.projectId
+          } 
+        }).exec();
       await sceneToDelete?.remove();
       successMessageSceneToast('Scene deleted successfully');
     } catch (error) {

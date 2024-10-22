@@ -23,7 +23,7 @@ interface FormInputsProps {
 
 interface SelectionModalProps {
   optionName: string;
-  listOfOptions: (SelectOptionsInterface)[];
+  listOfOptions: (any)[];
   modalTrigger: string;
   handleCheckboxToggle: (option: any) => void;
   selectedOptions: any[];

@@ -12,8 +12,10 @@ import useIsMobile from '../../hooks/Shared/useIsMobile';
 import removeNumberAndDot from '../../utils/removeNumberAndDot';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './InputModal.scss';
+import { set } from 'lodash';
 
 interface FormInputsProps {
+  modalRef?: React.RefObject<HTMLIonModalElement>;
   label: string;
   placeholder: string;
   fieldKeyName: string;
@@ -22,9 +24,9 @@ interface FormInputsProps {
 }
 
 interface InputModalProps {
+  modalRef?: React.RefObject<HTMLIonModalElement>;
   optionName: string;
   listOfOptions: (string)[];
-  modalTrigger: string;
   handleCheckboxToggle: (option: string) => void;
   selectedOptions: string[];
   setSelectedOptions?: any;
@@ -35,12 +37,16 @@ interface InputModalProps {
   optionCategory?: string;
   formInputs?: FormInputsProps[];
   existentOptions?: any[];
+  isOpen?: boolean;
+  setIsOpen?: (value: boolean) => void;
+  modalId?: string;
+  modalTrigger?: any;
 }
 
 const InputModal: React.FC<InputModalProps> = ({
+  modalRef = useRef<HTMLIonModalElement>(null),
   optionName,
   listOfOptions,
-  modalTrigger,
   handleCheckboxToggle,
   selectedOptions,
   setSelectedOptions,
@@ -50,11 +56,13 @@ const InputModal: React.FC<InputModalProps> = ({
   optionCategory,
   formInputs,
   existentOptions,
+  isOpen = false,
+  setIsOpen,
+  modalId,
+  modalTrigger,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [createNewMode, setCreateNewMode] = useState(false);
-
-  const modalRef = useRef<HTMLIonModalElement>(null);
 
   const isMobile = useIsMobile();
 
@@ -63,10 +71,14 @@ const InputModal: React.FC<InputModalProps> = ({
   };
 
   const closeModal = () => {
+    console.log('closeModal()')
     if (modalRef.current) {
       modalRef.current.dismiss();
+      setShowError(false);
+      if (setIsOpen) {
+        setIsOpen(false);
+      }
     }
-    setSearchText('');
   };
 
   const uncheckedOptions = listOfOptions.filter((option: string) => !selectedOptions.includes(removeNumberAndDot(option)));
@@ -151,13 +163,16 @@ const InputModal: React.FC<InputModalProps> = ({
     });
     setShowError(false);
     setSearchText('');
+    closeModal();
   };
 
   return (
     <IonModal
-      ref={modalRef}
-      trigger={modalTrigger}
       className="general-modal-styles"
+      isOpen={isOpen}
+      id={modalTrigger || modalId}
+      ref={modalRef}
+      onDidDismiss={() => setIsOpen && setIsOpen(false)}
     >
       <IonHeader>
         <ModalToolbar

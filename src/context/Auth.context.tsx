@@ -73,11 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoggedIn(true);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
     setLoggedIn(false);
-  }, []);
+  }
 
   const getToken = useCallback(() => new Promise<string>((resolve) => {
     const checkToken = () => {

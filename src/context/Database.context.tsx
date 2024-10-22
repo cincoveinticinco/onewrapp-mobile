@@ -19,7 +19,8 @@ import CountriesSchema from '../RXdatabase/schemas/country.schema';
 import ServiceMatricesSchema from '../RXdatabase/schemas/serviceMatrices.schema';
 import UserSchema from '../RXdatabase/schemas/user.schema';
 import useNetworkStatus from '../hooks/Shared/useNetworkStatus';
-import { User } from '../interfaces/user.types';
+import environment from '../../environment';
+import { useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
   offlineScenes: any[];
@@ -34,11 +35,11 @@ export interface DatabaseContextProps {
   setScenesAreLoading: (scenesAreLoading: boolean) => void;
   projectsAreLoading: boolean;
   setProjectsAreLoading: (projectsAreLoading: boolean) => void;
-  initializeShootingReplication: () => Promise<boolean>;
-  initializeSceneReplication: () => Promise<boolean>;
-  initializeParagraphReplication: () => Promise<boolean>;
-  initializeUnitReplication: () => Promise<boolean>;
-  initializeTalentsReplication: () => Promise<boolean>;
+  initializeShootingReplication: () => Promise<void>;
+  initializeSceneReplication: () => Promise<void>;
+  initializeParagraphReplication: () => Promise<void>;
+  initializeUnitReplication: () => Promise<void>;
+  initializeTalentsReplication: () => Promise<void>;
   isDatabaseReady: boolean;
   initialProjectReplication: () => Promise<void>;
   replicationPercentage: number;
@@ -174,55 +175,239 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         .exec()
         .then((data: any) => (data[0] ? data[0] : null));
 
+      console.log('lastItem', lastItem, collection.getSchemaName());
+
       if (!resyncRef.current) {
         const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
         if (isOnline) {
-          await replicator.startReplication(true, canPush); // Only PULL for others, PUSH and PULL for scenes and shootings
+          await replicator.startReplication(true, canPush); 
           resyncRef.current = replicator;
         }
       } else {
         isOnline && resyncRef.current.resyncReplication();
       }
 
+      await sleep(500);
+
       return true;
     } catch (error) {
       throw error;
     }
   };
-
-  const initializeProjectsUserReplication = () => initializeReplication(projectCollection, {}, resyncProjectsUser);
-
-  const initializeSceneReplication = () => initializeReplication(sceneCollection, { projectId: parseInt(projectId, 10) }, resyncScenes, parseInt(projectId, 10));
-
-  const initializeServiceMatricesReplication = () => initializeReplication(serviceMatricesCollection, { projectId: parseInt(projectId, 10) }, resyncServiceMatrices, parseInt(projectId, 10));
-
-  const initializeParagraphReplication = () => initializeReplication(paragraphCollection, { projectId: parseInt(projectId, 10) }, resyncParagraphs, parseInt(projectId, 10));
-
-  const initializeTalentsReplication = () => initializeReplication(talentsCollection, { projectId: parseInt(projectId, 10) }, resyncTalents, parseInt(projectId, 10));
-
-  const initializeUnitReplication = () => initializeReplication(unitsCollection, { projectId: parseInt(projectId, 10) }, resyncUnits, parseInt(projectId, 10));
-
-  const initializeShootingReplication = () => initializeReplication(shootingsCollection, { projectId: parseInt(projectId, 10) }, resyncShootings, parseInt(projectId, 10));
-
-  const initializeCrewReplication = () => initializeReplication(crewCollection, { projectId: parseInt(projectId, 10) }, resyncCrew, parseInt(projectId, 10));
-
-  const initializeCountriesReplication = () => initializeReplication(countriesCollection, {}, resyncCountries);
-
-  useEffect(() => {
-    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
-      const initializeAllReplications = async () => {
-        await initializeProjectsUserReplication();
-        await initializeSceneReplication();
-        await initializeServiceMatricesReplication();
-        await initializeParagraphReplication();
-        await initializeTalentsReplication();
-        await initializeUnitReplication();
-        await initializeShootingReplication();
-        await initializeCrewReplication();
-        await initializeCountriesReplication();
-      };
   
-      debounce(initializeAllReplications, 1000)();
+  const handleDeletedRecords = async (collectionName: string, apiEndpoint: string, projectId: string) => {
+    
+    // El problema actual es el siguiente. Supongamos que tengo un shooting que fue borrado desde la aplicación web. El shooting era de la unidad 1 con id = 63 y se creó para el día 21 de octubre del 2024 a las 5 de la tarde, por lo tanto, el id del shootin en local sería 2024-10-21_63. Al eliminarse el shooting, la tabla de auditoria en el backend guarda el shooting borrado, que servira de consulta para la aplicación offline. Cuando el usuario de la aplicación offline se conecte, se hara una consulta a la tabla de auditoria, que enviara a la aplicación todos los shootings que fueron borrados en los últimos 3 días, en este caso, envía un array con el id [2023-10-21_63] y desde la aplicación offline, se eliminan en local todos los shooting que tengan este id. Que pasa si ese mismo día, despues de haber borrado ese shooting, lo vuelvo a crear para añadir otra configuración? La aplicación offline, al sincronizarse traera de nuevo el shooting 2024-10-21_63, pero como la consulta a la tabla de auditoria sigue retornando [2023-10-21_63], lo borrara durante los 3 días siguientes. 
+
+    // OPCION 1:  Se me ocurrio usar el createdAt como referencia, para decirle a la aplicación local que el shooting solo se podrá borrar siempre y cuando coincidan el id y el created_at, el problema, es que RXDB escribe automaticamente un createdAt pero basado en el momento en el que se creo el registro en la base de datos local.
+
+    // SOLUCIÓN: Crear un parametro llamado createdAtBack, que es una referencia exacta del momento en el que se creó el shooting en el backend. De esta forma, se va a eliminar el shooting en local si y solo si, el shooting que traiga la tabla de registros coincida tanto en id como en created_at. para este proposito, la consulta ya no me va a arrojar un array de ids, si no más bien, un array de objetos con las llaves id y createdAt
+
+    // COMO TESTEAR?:
+    // 1. Crear un shooting en la aplicación local
+    // 2. Borrar el shooting en la aplicación web
+    // 3. Sincronizar la aplicación local
+    // 4. Verificar que el shooting fue eliminado
+    // 5. Crear el shooting en la aplicación web o en la aplicación local
+    // 6. Sincronizar la aplicación local
+    // 7. Verificar que el shooting no fue eliminado
+    
+    try {
+      // Obtener el último registro actualizado
+      const lastData = await oneWrapRXdatabase[collectionName]
+        .find({
+          selector: {
+            projectId: parseInt(projectId, 10)
+          }
+        })
+        .sort({
+          updatedAt: 'desc'
+        })
+        .limit(1)
+        .exec();
+  
+      const last_updated_at = lastData[0]?.updatedAt ? new Date(lastData[0]?.updatedAt).toISOString() : '1970-01-01T00:00:00.000Z';
+      
+      // Configurar los parámetros de la URL
+      const params = new URLSearchParams({
+        project_id: projectId.toString(),
+        last_item_updated_at: last_updated_at
+      });
+  
+      const url = `${environment.URL_PATH}/${apiEndpoint}?${params.toString()}`;
+  
+      // Llamada a la API
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Owsession': `${await getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      // Si hay registros eliminados, procesarlos
+      if (data[collectionName] && data[collectionName].length > 0) {
+        const deletedItems = data[collectionName];
+        
+        // Procesar las eliminaciones usando una transacción de RxDB
+        await oneWrapRXdatabase[collectionName].database.waitForLeadership();
+        
+        for (const deletedItem of deletedItems) {
+          if(deletedItem) {
+            const query = deletedItem && oneWrapRXdatabase[collectionName].find({
+              selector: {
+                id: deletedItem.id,
+                createdAtBack: deletedItem.createdAt
+              }
+            });
+    
+            const localItems = await query.exec();
+            console.log('localItems', localItems);
+            if (localItems.length > 0) {
+              await Promise.all(
+                localItems.map(async (item: any) => {
+                  await item.remove();
+                })
+              );
+            }
+          }
+        }
+      }
+  
+      return true;
+    } catch (error) {
+      console.error(`Error in handling deleted records for ${collectionName}:`, error);
+      throw error;
+    }
+  };
+
+  const initializeProjectsUserReplication = async () => await initializeReplication(projectCollection, {}, resyncProjectsUser);
+
+  const initializeSceneReplication = async () => {
+    await initializeReplication(
+      sceneCollection,
+      { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true }  },
+      resyncScenes,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('scenes', 'get_deleted_scenes', projectId);
+  };
+  
+  const initializeServiceMatricesReplication = async () => {
+    await initializeReplication(
+      serviceMatricesCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncServiceMatrices,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('service_matrices', 'get_deleted_service_matrices', projectId);
+  };
+  
+  const initializeParagraphReplication = async () => {
+    await initializeReplication(
+      paragraphCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncParagraphs,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('paragraphs', 'get_deleted_paragraphs', projectId);
+  };
+  
+  const initializeTalentsReplication = async () => {
+    await initializeReplication(
+      talentsCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncTalents,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('talents', 'get_deleted_talents', projectId);
+  };
+  
+  const initializeUnitReplication = async () => {
+    await initializeReplication(
+      unitsCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncUnits,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('units', 'get_deleted_units', projectId);
+  };
+  
+  const initializeShootingReplication = async () => {
+    await initializeReplication(
+      shootingsCollection,
+      { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true } },
+      resyncShootings,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('shootings', 'get_deleted_shootings', projectId);
+  };
+
+  const initializeCrewReplication = async () => {
+    await initializeReplication(
+      crewCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncCrew,
+      parseInt(projectId, 10)
+    );
+  
+    await handleDeletedRecords('crew', 'get_deleted_crew', projectId);
+  }
+
+  const initializeCountriesReplication = async () => {
+    await initializeReplication(
+      countriesCollection,
+      {},
+      resyncCountries
+    );
+  }
+
+  const initializeAllReplications = async () => {
+    await initializeProjectsUserReplication();
+    await initializeSceneReplication();
+    await initializeServiceMatricesReplication();
+    await initializeParagraphReplication();
+    await initializeTalentsReplication();
+    await initializeUnitReplication();
+    await initializeShootingReplication();
+    await initializeCrewReplication();
+    await initializeCountriesReplication();
+  };
+
+  useIonViewDidEnter(() => {
+    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+      initializeAllReplications();
+    }
+  });
+  
+  useEffect(() => {
+    const replicatePeriodically = async () => {
+      if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+        await initializeAllReplications();
+      }
+    };
+  
+    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+
+      replicatePeriodically();
+  
+      const intervalId = setInterval(() => {
+        replicatePeriodically();
+      }, 300000);
+
+      return () => clearInterval(intervalId);
     }
   }, [oneWrapRXdatabase, isOnline, projectId, initialReplicationFinished]);
 

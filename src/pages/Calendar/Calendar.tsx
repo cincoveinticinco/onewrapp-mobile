@@ -2,12 +2,10 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  useIonViewDidEnter,
-  useIonViewWillEnter,
+  useIonViewDidEnter
 } from '@ionic/react';
 import { addDays, startOfDay } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
 import MonthView from '../../components/Calendar/MonthView/MonthView';
 import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
@@ -34,7 +32,7 @@ const Calendar: React.FC = () => {
   });
 
   const {
-    oneWrapDb, projectId, isOnline
+    oneWrapDb, projectId, isOnline, initializeShootingReplication
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(false);
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
@@ -63,9 +61,11 @@ const Calendar: React.FC = () => {
     (collection) => collection.find().sort({ unitNumber: 'asc' }),
   );
 
-  const validateShootingExistence = (shootDate: string, unitId: string) => calendarState.shootings.some((shooting) => (
-    shooting.shootDate === shootDate && shooting.unitId === parseInt(unitId)
-  ));
+  const validateShootingExistence = (shootDate: string, unitId: string) => calendarState.shootings.some((shooting) => {
+      console.log(shooting, shootDate, unitId);
+      return shooting.shootDate === shootDate && shooting.unitId === parseInt(unitId);
+    }
+  );
 
   const createShooting = async (form: {
     shootDate: string;
@@ -115,14 +115,14 @@ const Calendar: React.FC = () => {
       };
 
       await oneWrapDb.shootings.insert(newShooting);
+      await initializeShootingReplication();
       await getShootings();
+      successToast('Shooting created successfully');
 
       setOpenAddShootingModal(false);
     } catch (error) {
       errorToast('Error creating new shooting');
       throw error;
-    } finally {
-      successToast('Shooting created successfully');
     }
   };
 
@@ -185,7 +185,7 @@ const Calendar: React.FC = () => {
           selector: {
             projectId,
           },
-          sort: [{ createdAt: 'asc' }],
+          sort: [{ createdAtBack: 'asc' }],
         })
         .$.subscribe({
           next: (shootings) => {
@@ -217,7 +217,7 @@ const Calendar: React.FC = () => {
         selector: {
           projectId,
         },
-        sort: [{ createdAt: 'asc' }],
+        sort: [{ createdAtBack: 'asc' }],
       }).exec();
 
       const shootingsData = shootings.map((shooting: any) => shooting._data);

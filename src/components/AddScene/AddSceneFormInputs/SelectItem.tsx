@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
 import { Controller, FieldValues, ValidateResult } from 'react-hook-form';
 import InputModal from '../../../Layouts/InputModal/InputModal';
+import SelectionModal from '../../../Layouts/SelectionModal/SelectionModal';
 
 interface SelectItemProps {
   label: string;
@@ -35,6 +36,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
   detailsEditMode,
 }) => {
   const [showError, setShowError] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
+  const modalRef = React.useRef<HTMLIonModalElement>(null);
 
   useEffect(() => {
     setShowError(displayError);
@@ -50,7 +53,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
     }
   };
 
-  const defineTrigger = () => {
+  const getId = () => {
     if (editMode) {
       return `edit-${inputName}`;
     }
@@ -61,7 +64,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   };
 
   return (
-    <IonItem color="tertiary" id={defineTrigger()}>
+    <IonItem color="tertiary" id={getId()} onClick={() => setShowModal(true)}>
       <Controller
         control={control}
         name={fieldKeyName}
@@ -87,15 +90,18 @@ const SelectItem: React.FC<SelectItemProps> = ({
         )}
       />
       <InputModal
+        modalRef={modalRef}
         optionName={label}
         listOfOptions={options}
-        modalTrigger={defineTrigger()}
         handleCheckboxToggle={handleSelectCheckbox}
         selectedOptions={[watchValue(fieldKeyName)]}
         clearSelections={() => setValue(fieldKeyName, null)}
         multipleSelections={false}
         canCreateNew={canCreateNew}
         editMode={editMode}
+        isOpen={showModal}
+        setIsOpen={setShowModal}
+        modalId={getId()}
       />
     </IonItem>
   );

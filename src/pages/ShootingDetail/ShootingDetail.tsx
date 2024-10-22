@@ -889,7 +889,7 @@ const ShootingDetail: React.FC<{
       const bannerCopy = { ...banner };
       bannerCopy.position = shootingData.mergedSceneBanners.length;
       // Generamos un ID temporal único
-      bannerCopy.id = `temp-banner-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      bannerCopy.id = null;
       bannerCopy.fontSize = parseInt(bannerCopy.fontSize);
       bannerCopy.shootingId = parseInt(shootingId);
       bannerCopy.createdAt = new Date().toISOString();
@@ -1053,36 +1053,11 @@ const ShootingDetail: React.FC<{
       shootingCopy.scenes = updatedItems.filter((item: any) => item.cardType === 'scene').map((scene: any) => formatSceneAsShootingScene(scene));
       // eslint-disable-next-line
       shootingCopy.banners = updatedItems.filter((item: any) => item.cardType === 'banner').map(({ cardType, ...banner } : mergedSceneBanner) => banner);
-
+      event.detail.complete();
       await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
       errorToast(`Error reordering scenes: ${error}`);
       throw error;
-    } finally {
-      event.detail.complete();
-    }
-  };
-
-  const saveShooting = async () => {
-    if (oneWrappDb && shootingId && !isLoading) {
-      try {
-        const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-        const updatedScenes = shootingData.mergedSceneBanners
-          .filter((item: any) => item.cardType === 'scene')
-          .map((scene: any) => formatSceneAsShootingScene(scene));
-        const updatedBanners = shootingData.mergedSceneBanners.filter((item: mergedSceneBanner) => item.cardType === 'banner')
-        // eslint-disable-next-line
-          .map(({ cardType, ...banner } : mergedSceneBanner) => banner);
-
-        const shootingCopy = { ...shooting._data };
-        shootingCopy.scenes = updatedScenes;
-        shootingCopy.banners = updatedBanners;
-
-        await oneWrappDb.shootings.upsert(shootingCopy);
-      } catch (error) {
-        errorToast('Error saving shooting');
-        throw error;
-      }
     }
   };
 

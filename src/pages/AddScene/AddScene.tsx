@@ -21,7 +21,7 @@ const AddScene: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb, offlineScenes, initializeSceneReplication } = useContext<DatabaseContextProps>(DatabaseContext);
 
   const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
 
@@ -102,6 +102,7 @@ const AddScene: React.FC = () => {
       }
 
       await oneWrapDb?.scenes.insert(formData);
+      await initializeSceneReplication();
       successMessageToast('Scene created successfully!');
 
       reset();

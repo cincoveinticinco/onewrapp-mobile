@@ -178,8 +178,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       {backString && (
-        <IonButton fill="clear" color="light" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
-          Back
+        <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
+          <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" />
         </IonButton>
       )}
       {filter && (
