@@ -63,8 +63,8 @@ const InputItem: React.FC<InputItemProps> = ({
   };
 
   return (
-    <div style={style}>
-      <IonItem color="tertiary" id={inputName}>
+    <div style={style} id={inputName}>
+      <IonItem color="tertiary">
         <Controller
           control={control}
           name={fieldKeyName}
