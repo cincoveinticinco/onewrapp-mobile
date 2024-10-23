@@ -426,14 +426,14 @@ const ShootingDetail: React.FC<{
         throw new Error('Invalid minutes');
       }
   
-      // Crear la fecha usando UTC para evitar problemas con zonas horarias
-      const newDate = new Date(Date.UTC(
-        shootingDay.getUTCFullYear(),
-        shootingDay.getUTCMonth(),
-        shootingDay.getUTCDate(),
+      // Crear la fecha usando la zona horaria local
+      const newDate = new Date(
+        shootingDay.getFullYear(),
+        shootingDay.getMonth(),
+        shootingDay.getDate(),
         hours,
         minutes
-      ));
+      );
   
       // Verificar que la fecha resultante es válida
       if (isNaN(newDate.getTime())) {
