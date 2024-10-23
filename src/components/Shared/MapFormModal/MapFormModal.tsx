@@ -35,6 +35,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [marker, setMarker] = useState<string | null>(null);
@@ -46,6 +47,15 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   const [locationTypeId, setLocationTypeId] = useState<number | null>(hospital ? 3 : null);
   const [locationAddress, setLocationAddress] = useState('');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  // Limpiar el estado cuando se cierra el modal
+  useEffect(() => {
+    if (!isOpen) {
+      setMapError(null);
+      setMapInitialized(false);
+      setMap(null);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (selectedLocation) {
@@ -59,21 +69,35 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   }, [selectedLocation]);
 
   useEffect(() => {
-    if (isOpen && !mapInitialized) {
-      setTimeout(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (isOpen && !mapInitialized && mapRef.current) {
+      timeoutId = setTimeout(() => {
         createMap();
-      }, 300);
-    } else if (map && lat && lng) {
-      updateMarker(lat, lng);
+      }, 500); // Aumentado el tiempo de espera
     }
-  }, [isOpen, mapInitialized, map, lat, lng]);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isOpen, mapInitialized, mapRef.current]);
 
   const createMap = async () => {
-    if (!mapRef.current) return;
+    if (!mapRef.current) {
+      console.error('Map reference not found');
+      setMapError('Map reference not found');
+      return;
+    }
 
     try {
+      console.log('Creating map...');
+      console.log('API Key:', environment.MAPS_KEY);
+      console.log('Map element:', mapRef.current);
+
       const newMap = await GoogleMap.create({
-        id: 'my-cool-map',
+        id: 'location-map',
         element: mapRef.current,
         apiKey: environment.MAPS_KEY,
         config: {
@@ -82,11 +106,22 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
             lng: selectedLocation ? parseFloat(selectedLocation.lng) : -117.9,
           },
           zoom: selectedLocation ? 15 : 8,
+          styles: [], // Estilo por defecto
         },
+        forceCreate: true,
       });
+
+      console.log('Map created successfully:', newMap);
+
+      if (!newMap) {
+        throw new Error('Failed to create map instance');
+      }
+
       setMap(newMap);
       setMapInitialized(true);
+      setMapError(null);
 
+      // Configurar listeners después de asegurarnos que el mapa existe
       await newMap.setOnMapClickListener((event) => {
         updateMarker(event.latitude, event.longitude);
       });
@@ -95,12 +130,20 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
       }
     } catch (error) {
-      throw error;
+      console.error('Error creating map:', error);
+      setMapError(error instanceof Error ? error.message : 'Failed to create map');
+      setMapInitialized(false);
+      setMap(null);
     }
   };
 
   const updateMarker = async (latitude: number, longitude: number) => {
-    if (map) {
+    if (!map) {
+      console.error('Map not initialized');
+      return;
+    }
+
+    try {
       if (marker) {
         await map.removeMarker(marker);
       }
@@ -121,49 +164,60 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         updateMarker(event.latitude, event.longitude);
       });
 
-      updateAddress(latitude, longitude);
-    }
-  };
-
-  const updateAddress = async (lat: number, lng: number) => {
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK && results) {
-        if (results[0]) {
-          const address = results[0].formatted_address;
+      // Geocoding
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${environment.MAPS_KEY}`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.status === 'OK' && data.results && data.results[0]) {
+          const address = data.results[0].formatted_address;
           setCurrentAddress(address);
           setSearchTerm(address);
           setLocationAddress(address);
 
-          const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
-          if (postalCode) {
-            setLocationPostalCode(postalCode.long_name);
+          const postalComponent = data.results[0].address_components.find(
+            (component: any) => component.types.includes('postal_code')
+          );
+          if (postalComponent) {
+            setLocationPostalCode(postalComponent.long_name);
           }
         } else {
-          setCurrentAddress('Dirección no encontrada');
-          setSearchTerm('');
-          setLocationAddress('');
-          setLocationPostalCode('');
+          throw new Error(data.status || 'Geocoding failed');
         }
-      } else {
-        setCurrentAddress('Error al obtener la dirección');
+      } catch (error) {
+        console.error('Error getting address:', error);
+        setCurrentAddress('Error getting address');
         setSearchTerm('');
         setLocationAddress('');
         setLocationPostalCode('');
       }
-    });
+    } catch (error) {
+      console.error('Error updating marker:', error);
+    }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
+    try {
+      if (map) {
+        await map.destroy();
+      }
+    } catch (error) {
+      console.error('Error destroying map:', error);
+    }
     setMapInitialized(false);
-    closeModal();
+    setMap(null);
     setCurrentAddress('');
     setSuggestions([]);
     setSearchTerm('');
     setMarker(null);
-    setMap(null);
+    closeModal();
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -185,32 +239,39 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   };
 
   const geocodeAddress = async (address: string) => {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
-        setSuggestions(results || []);
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${environment.MAPS_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.status === 'OK') {
+        setSuggestions(data.results || []);
       } else {
         setSuggestions([]);
       }
-    });
+    } catch (error) {
+      console.error('Error geocoding address:', error);
+      setSuggestions([]);
+    }
   };
 
   const debouncedGeocodeAddress = useCallback(debounce(geocodeAddress, 300), []);
 
   const handleSuggestionClick = async (suggestion: any) => {
     if (map) {
-      const { location } = suggestion.geometry;
+      const location = suggestion.geometry.location;
       await map.setCamera({
         coordinate: {
-          lat: location.lat(),
-          lng: location.lng(),
+          lat: location.lat,
+          lng: location.lng,
         },
         zoom: 15,
         animate: true,
       });
       setSearchTerm(suggestion.formatted_address);
       setSuggestions([]);
-      updateMarker(location.lat(), location.lng());
+      updateMarker(location.lat, location.lng);
     }
   };
 
@@ -258,21 +319,13 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         lng: lng!.toString(),
       };
       await onSubmit(formData);
-      // ... (reset form fields)
-      closeModal();
+      handleCloseModal();
     }
   };
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
-      <IonHeader>
-        {/* <IonToolbar color="tertiary">
-          <IonTitle>Map</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={handleCloseModal}>Close</IonButton>
-          </IonButtons>
-        </IonToolbar> */}
-      </IonHeader>
+      <IonHeader />
       <IonContent color="tertiary">
         <div style={{
           minHeight: '400px',
@@ -283,7 +336,21 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
           position: 'relative',
         }}
         >
-          {!map && AppLoader()}
+          {!mapInitialized && AppLoader()}
+          {mapError && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: 'rgba(255, 0, 0, 0.1)',
+              padding: '1rem',
+              borderRadius: '4px',
+              zIndex: 1000,
+            }}>
+              Error loading map: {mapError}
+            </div>
+          )}
           <capacitor-google-map
             ref={mapRef}
             style={{
@@ -293,7 +360,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
             }}
           />
         </div>
-
+        
         <h1 style={{ width: '100%', textAlign: 'center' }}>{hospital ? 'NEAREST HOSPITAL' : 'NEW LOCATION'}</h1>
         <IonGrid style={{ width: '400px' }}>
           <IonRow>
