@@ -21,7 +21,7 @@ const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlert
 }, ref) => (
   <IonAlert
     ref={ref}
-    color="dark"
+    color="tertiary"
     trigger={trigger}
     header={header}
     className="input-alert"
