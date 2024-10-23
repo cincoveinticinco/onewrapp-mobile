@@ -8,7 +8,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
-import { chevronBackOutline, chevronForwardOutline, calendarOutline } from 'ionicons/icons';
+import { chevronBackOutline, chevronForwardOutline, calendarOutline, addOutline } from 'ionicons/icons';
 import { useState } from 'react';
 import { LiaDotCircle } from 'react-icons/lia';
 import { useHistory } from 'react-router-dom';
@@ -73,6 +73,9 @@ const WeekViewToolbar: React.FC<WeekViewToolbarProps> = ({
           <IonButton onClick={onNext}>
             <IonIcon icon={chevronForwardOutline} />
           </IonButton>
+          <IonButton onClick={setOpenAddShootingModal}>
+            <IonIcon icon={addOutline} style={{ fontSize: '30px' }} />
+          </IonButton>
           <IonButton onClick={toggleDateTime}>
             <IonIcon icon={calendarOutline} />
           </IonButton>
@@ -86,6 +89,7 @@ const WeekViewToolbar: React.FC<WeekViewToolbarProps> = ({
           presentation="date"
           value={currentDate.toISOString()}
           onIonChange={handleDateChange}
+          color='tertiary'
         />
       )}
     </>

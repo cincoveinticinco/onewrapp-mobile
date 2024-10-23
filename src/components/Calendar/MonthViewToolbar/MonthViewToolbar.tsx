@@ -79,6 +79,7 @@ const MonthViewToolbar: React.FC<MonthViewToolbarProps> = ({
             itemID="month-date-picker"
             value={currentDate.toISOString()}
             onIonChange={handleDateChange}
+            color='tertiary'
           />
         )
       }
