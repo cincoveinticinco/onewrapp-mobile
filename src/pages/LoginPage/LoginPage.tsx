@@ -7,6 +7,7 @@ import {
 // import { useGoogleLogin } from '@react-oauth/google';
 import {
   logoGoogle,
+  save,
 } from 'ionicons/icons';
 import ReactPlayer from 'react-player';
 import { useHistory } from 'react-router';
@@ -18,13 +19,21 @@ import useErrorToast from '../../hooks/Shared/useErrorToast';
 import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import AppLoader from '../../hooks/Shared/AppLoader';
+import useNavigatorOnLine from '../../hooks/Shared/useNavigatorOnline';
+import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
+import DatabaseContext from '../../context/Database.context';
 
 const LoginPage: React.FC = () => {
   const { saveLogin } = useAuth();
   const errorToast = useErrorToast();
   const history = useHistory();
+  const isOnline = useNetworkStatus();
+
+  const { oneWrapDb } = useContext(DatabaseContext)
+
+
 
   const [ isLoading, setIsLoading ] = useState(false)
   
@@ -37,6 +46,30 @@ const LoginPage: React.FC = () => {
   })
 
   const handleGoogleLoginMobile = async () => {
+    if(isOnline) {
+
+    } else {
+      const getUser = async () => {
+        if(oneWrapDb) {
+          const user = await oneWrapDb.user.findOne().exec();
+          if(user) {
+            return user._data;
+          }
+        }
+        return null;
+      }
+
+      const user = await getUser();
+
+      if (user) {
+        const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
+        const now = new Date().getTime();
+
+        if (now < sessionEndsAt) {
+          saveLogin(user.sessionToken, user);
+        }
+      }
+    }
     try {
       const googleUser = await GoogleAuth.signIn();
       const accessToken = googleUser.authentication.accessToken;
