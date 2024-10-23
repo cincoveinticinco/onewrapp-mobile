@@ -1,5 +1,4 @@
-import { GoogleMap } from '@capacitor/google-maps';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import environment from '../../../../environment';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import AppLoader from '../../../hooks/Shared/AppLoader';
@@ -13,84 +12,73 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   lat,
   lng,
 }) => {
-  const mapRef = useRef<HTMLElement | null>(null);
-  const [map, setMap] = useState<GoogleMap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [mapInitialized, setMapInitialized] = useState(false);
-  const [marker, setMarker] = useState<string | null>(null);
+  const [currentAddress, setCurrentAddress] = useState('');
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (!mapInitialized) {
-      // Pequeño delay para asegurar que el elemento DOM esté listo
-      setTimeout(() => {
-        createMap();
-      }, 300);
-    } else if (map && lat && lng) {
-      updateMarker(lat, lng);
+    if (lat && lng) {
+      getAddressFromCoordinates(lat, lng);
     }
-  }, [mapInitialized, map, lat, lng]);
+  }, [lat, lng]);
 
-  const updateMarker = async (latitude: number, longitude: number) => {
-    if (map) {
-      if (marker) {
-        await map.removeMarker(marker);
-      }
-
-      const newMarker = await map.addMarker({
-        coordinate: {
-          lat: latitude,
-          lng: longitude,
-        },
-        draggable: false,
-      });
-
-      setMarker(newMarker);
-    }
-  };
-
-  const createMap = async () => {
-    if (!mapRef.current) return;
-
+  const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
     try {
-      const newMap = await GoogleMap.create({
-        id: 'google-map',
-        element: mapRef.current,
-        apiKey: environment.MAPS_KEY,
-        config: {
-          center: {
-            lat,
-            lng,
-          },
-          zoom: 14,
-        },
-      });
-      setMap(newMap);
-      setMapInitialized(true);
-      setIsLoading(false);
-
-      await updateMarker(lat, lng);
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${environment.MAPS_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.status === 'OK' && data.results && data.results[0]) {
+        const address = data.results[0].formatted_address;
+        setCurrentAddress(address);
+      } else {
+        setCurrentAddress('Address not found');
+      }
     } catch (error) {
-      console.error('Error creating map:', error);
+      console.error('Error getting address:', error);
+      setCurrentAddress('Error getting address');
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const destroyMap = async () => {
-    if (map) {
-      await map.destroy();
-      setMap(null);
-      setMapInitialized(false);
-      setMarker(null);
+  // Si necesitas buscar una dirección específica
+  const geocodeAddress = async (address: string) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${environment.MAPS_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.status === 'OK' && data.results && data.results[0]) {
+        const location = data.results[0].geometry.location;
+        return {
+          lat: location.lat,
+          lng: location.lng,
+          address: data.results[0].formatted_address
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error geocoding address:', error);
+      return null;
     }
   };
 
-  // Cleanup al desmontar el componente
-  useEffect(() => {
-    return () => {
-      destroyMap();
+  // Si necesitas el debounce para búsquedas
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
     };
-  }, []);
+  };
+
+  const debouncedGeocodeAddress = useCallback(
+    debounce(geocodeAddress, 300),
+    []
+  );
 
   return (
     <div style={{
@@ -98,17 +86,28 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       width: '100%', 
       height: isMobile ? '300px' : '400px', 
       background: 'var(--ion-color-tertiary-dark)',
-    }}
-    >
-      {isLoading && AppLoader()}
-      <capacitor-google-map
-        ref={mapRef}
-        style={{
-          display: isLoading ? 'none' : 'inline-block',
-          width: '100%',
-          height: '100%',
-        }}
-      />
+    }}>
+      {isLoading ? (
+        AppLoader()
+      ) : (
+        <div>
+          {currentAddress && (
+            <div style={{ padding: '10px' }}>
+              {currentAddress}
+            </div>
+          )}
+          {/* Aquí puedes agregar el iframe del mapa estático de Google si lo necesitas */}
+          <iframe
+            title="Google Maps"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            style={{ border: 0 }}
+            src={`https://www.google.com/maps/embed/v1/place?key=${environment.MAPS_KEY}&q=${lat},${lng}`}
+            allowFullScreen
+          />
+        </div>
+      )}
     </div>
   );
 };

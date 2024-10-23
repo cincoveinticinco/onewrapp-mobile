@@ -164,6 +164,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
     setSearchTerm('');
     setMarker(null);
     setMap(null);
+    destroyMap();
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -268,6 +269,11 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       handleCloseModal();
     }
   };
+
+  const destroyMap = async () => {
+    if (map) {
+      await map.destroy();
+  }}
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
