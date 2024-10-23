@@ -256,9 +256,9 @@ const ShootingDetail: React.FC<{
 
   const validateAdvanceCallExistence = (callTime: string) => {
     const { advanceCalls: shootingCalls } = shootingData.shotingInfo;
-    const callExists = shootingCalls.some((call: any) => call.dep_name_eng.toLowerCase() === callTime.toLowerCase() || call.dep_name_esp.toLowerCase() === callTime.toLowerCase());
+    const callExists = shootingCalls.some((call: any) => call.dep_name_eng?.toLowerCase() === callTime?.toLowerCase() || call.dep_name_esp?.toLowerCase() === callTime?.toLowerCase());
     if (callExists) {
-      return 'department already exists in shooting';
+      return 'department call already exists in shooting';
     }
 
     return false;
@@ -408,21 +408,44 @@ const ShootingDetail: React.FC<{
   };
 
   const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
-    const shootingDay = new Date(shootingDate);
-
-    // Crear una nueva fecha con la zona horaria local
-    const newDate = new Date(
-      shootingDay.getFullYear(),
-      shootingDay.getMonth(),
-      shootingDay.getDate(),
-      parseInt(time.hours, 10),
-      parseInt(time.minutes, 10),
-    );
-
-    const offset = newDate.getTimezoneOffset();
-    const localISOTime = new Date(newDate.getTime() - (offset * 60 * 1000)).toISOString().slice(0, -1);
-
-    return localISOTime;
+    try {
+      // Asegurarse de que la fecha es válida
+      const shootingDay = new Date(shootingDate);
+      if (isNaN(shootingDay.getTime())) {
+        throw new Error('Invalid shooting date');
+      }
+  
+      // Validar horas y minutos
+      const hours = parseInt(time.hours, 10);
+      const minutes = parseInt(time.minutes, 10);
+  
+      if (isNaN(hours) || hours < 0 || hours > 23) {
+        throw new Error('Invalid hours');
+      }
+      if (isNaN(minutes) || minutes < 0 || minutes > 59) {
+        throw new Error('Invalid minutes');
+      }
+  
+      // Crear la fecha usando UTC para evitar problemas con zonas horarias
+      const newDate = new Date(Date.UTC(
+        shootingDay.getUTCFullYear(),
+        shootingDay.getUTCMonth(),
+        shootingDay.getUTCDate(),
+        hours,
+        minutes
+      ));
+  
+      // Verificar que la fecha resultante es válida
+      if (isNaN(newDate.getTime())) {
+        throw new Error('Generated invalid date');
+      }
+  
+      return newDate.toISOString();
+    } catch (error) {
+      console.error('Error in timeToISOString:', error);
+      console.error('Input values:', { shootingDate, time });
+      throw error;
+    }
   };
 
   const setMergedScenesShootData = (scenes: any) => {
@@ -634,16 +657,21 @@ const ShootingDetail: React.FC<{
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
-      console.log(shootingCopy);
       shootingCopy.scenes = shootingData.mergedScenesShootData;
-
       await oneWrappDb?.shootings.upsert(shootingCopy);
+      successToast('Script report saved successfully');
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
     } finally {
       await fetchData();
-      successToast('Script report saved successfully');
+      const mergedScenesShootData = shootingData.mergedScenesShootData.map((scene: any) => {
+        return {
+          ...scene,
+          backgroundColor: getSceneBackgroundColor(scene),
+        };
+      })
+      setMergedScenesShootData(mergedScenesShootData);
     }
   };
 
@@ -920,10 +948,9 @@ const ShootingDetail: React.FC<{
     advanceCallCopy.createdAt = new Date().toISOString();
     advanceCallCopy.updatedAt = new Date().toISOString();
     const formatedTime = advanceCallCopy.adv_call_time.split(':');
-    advanceCallCopy.adv_call_time = { hours: formatedTime[0], minutes: formatedTime[1] };
     advanceCallCopy.dep_name_esp = advanceCallCopy.dep_name_eng;
     const shootingCopy = { ...shooting._data };
-    advanceCallCopy.adv_call_time = timeToISOString(advanceCallCopy.adv_call_time, shootingCopy.shootDate);
+    advanceCallCopy.adv_call_time = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCallCopy];
 
     try {
@@ -938,29 +965,28 @@ const ShootingDetail: React.FC<{
   };
 
   const addNewMeal = async (meal: any) => {
-    const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-    const mealCopy = { ...meal };
-    mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
-    mealCopy.shootingId = parseInt(shootingId);
-    mealCopy.createdAt = new Date().toISOString();
-    mealCopy.updatedAt = new Date().toISOString();
-    const formatedTimeStart = mealCopy.ready_at.split(':');
-    const formatedTimeEnd = mealCopy.end_time.split(':');
-    mealCopy.ready_at = { hours: formatedTimeStart[0], minutes: formatedTimeStart[1] };
-    mealCopy.end_time = { hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] };
-    const shootingCopy = { ...shooting._data };
-    mealCopy.ready_at = timeToISOString(meal.ready_at, shootingCopy.shootDate);
-    mealCopy.end_time = timeToISOString(meal.end_time, shootingCopy.shootDate);
-
-    shootingCopy.meals = [...shootingCopy.meals, mealCopy];
     try {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const mealCopy = { ...meal };
+      mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
+      mealCopy.shootingId = parseInt(shootingId);
+      mealCopy.createdAt = new Date().toISOString();
+      mealCopy.updatedAt = new Date().toISOString();
+      const formatedTimeStart = mealCopy.ready_at.split(':');
+      const formatedTimeEnd = mealCopy.end_time.split(':');
+      const shootingCopy = { ...shooting._data };
+      mealCopy.ready_at = timeToISOString({ hours: formatedTimeStart[0], minutes: formatedTimeStart[1] }, shootingCopy.shootDate);
+      mealCopy.end_time = timeToISOString({ hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] }, shootingCopy.shootDate);
+  
+      shootingCopy.meals = [...shootingCopy.meals, mealCopy];
       await oneWrappDb?.shootings.upsert(shootingCopy);
+      successToast('Meal added successfully');
     } catch (error) {
       errorToast(`Error adding meal: ${error}`);
+      console.error(error)
       return;
     } finally {
       await fetchData();
-      successToast('Meal added successfully');
     }
   };
 
