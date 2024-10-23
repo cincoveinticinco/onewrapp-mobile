@@ -286,6 +286,7 @@ const FilterScenes = () => {
                 <OutlinePrimaryButton
                   buttonName="SAVE"
                   onClick={handleBack}
+                  className='filter-save-button'
                 />
               </IonCol>
             </IonRow>

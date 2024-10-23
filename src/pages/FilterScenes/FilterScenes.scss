@@ -11,13 +11,16 @@
   margin-bottom: 5% !important;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 400px) {
   .filter-item-container {
     margin: 0;
   }
 
   .filter-button-row {
     margin-top: 20%;
-    margin-bottom: 50px;
+  }
+
+  .filter-save-button {
+    width: calc(100% - 32px) !important;
   }
 }
