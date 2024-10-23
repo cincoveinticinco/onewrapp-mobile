@@ -338,6 +338,7 @@ const Calendar: React.FC = () => {
             goToCurrentDay={goToCurrentDay}
             onDateChange={handleDateChange}
             isLoading={isLoading}
+            setOpenAddShootingModal={() => setOpenAddShootingModal(!openAddShootingModal)}
           />
         
         )}
