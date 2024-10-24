@@ -128,6 +128,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
   const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
   const editionModalRef = useRef<HTMLIonModalElement>(null);
+  const mapRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (shootingInfo.locations.length > 0) {
@@ -167,12 +168,12 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         <IonCol sizeSm="10" sizeXs='12'>
           {
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
-              <div>
-                <GoogleMapComponent
-                  lat={firstLocationLat}
-                  lng={firstLocationLng}
-                />
-              </div>
+              <GoogleMapComponent
+                lat={firstLocationLat}
+                lng={firstLocationLng}
+                onMapReady={() => shootingInfo ? true : false}
+                parentRef={mapRef}
+              />
             ) : (
               <div className="map-container ion-flex ion-justify-content-center ion-align-items-center">
                 <p> PLEASE ADD LOCATION TO LOAD MAP</p>
