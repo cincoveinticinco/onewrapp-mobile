@@ -1,113 +1,148 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { GoogleMap } from '@capacitor/google-maps';
+import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import AppLoader from '../../../hooks/Shared/AppLoader';
+import { useIonViewDidEnter } from '@ionic/react';
 
 interface GoogleMapComponentProps {
   lat: number;
   lng: number;
+  zoom?: number;
+  onMapReady?: () => void;
+  onError?: (error: any) => void;
+  parentRef?:any
 }
 
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   lat,
   lng,
+  zoom = 14,
+  onMapReady,
+  onError,
+  parentRef
 }) => {
+  const mapRef = useRef<HTMLElement | null>(null);
+  const [map, setMap] = useState<GoogleMap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentAddress, setCurrentAddress] = useState('');
   const isMobile = useIsMobile();
+  const markerRef = parentRef || useRef<string | null>(null);
+  const initializedRef = useRef(false);
 
-  useEffect(() => {
-    if (lat && lng) {
-      getAddressFromCoordinates(lat, lng);
-    }
-  }, [lat, lng]);
+  const createMap = async () => {
+    if (!mapRef.current || initializedRef.current) return;
 
-  const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
     try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${environment.MAPS_KEY}`
-      );
-      const data = await response.json();
-      
-      if (data.status === 'OK' && data.results && data.results[0]) {
-        const address = data.results[0].formatted_address;
-        setCurrentAddress(address);
-      } else {
-        setCurrentAddress('Address not found');
-      }
+      const newMap = await GoogleMap.create({
+        id: `google-map-${Date.now()}`,
+        element: mapRef.current,
+        apiKey: environment.MAPS_KEY,
+        config: {
+          center: {
+            lat,
+            lng,
+          },
+          zoom,
+          disableDefaultUI: false,
+          gestureHandling: 'cooperative',
+        },
+      });
+
+      const newMarker = await newMap.addMarker({
+        coordinate: { lat, lng },
+        draggable: false,
+      });
+
+      markerRef.current = newMarker;
+      setMap(newMap);
+      initializedRef.current = true;
+      onMapReady?.();
     } catch (error) {
-      console.error('Error getting address:', error);
-      setCurrentAddress('Error getting address');
+      console.error('Error creating map:', error);
+      onError?.(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Si necesitas buscar una dirección específica
-  const geocodeAddress = async (address: string) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${environment.MAPS_KEY}`
-      );
-      const data = await response.json();
-      
-      if (data.status === 'OK' && data.results && data.results[0]) {
-        const location = data.results[0].geometry.location;
-        return {
-          lat: location.lat,
-          lng: location.lng,
-          address: data.results[0].formatted_address
-        };
+  // Inicializar mapa cuando el componente se monta
+  useEffect(() => {
+    createMap();
+    
+    // Cleanup function
+    return () => {
+      if (map) {
+        map.destroy();
+        initializedRef.current = false;
+        markerRef.current = null;
+        setMap(null);
       }
-      return null;
-    } catch (error) {
-      console.error('Error geocoding address:', error);
-      return null;
-    }
-  };
-
-  // Si necesitas el debounce para búsquedas
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
     };
-  };
+  }, []); // Solo se ejecuta al montar el componente
 
-  const debouncedGeocodeAddress = useCallback(
-    debounce(geocodeAddress, 300),
-    []
-  );
+  // Manejar cambios en las props
+  useEffect(() => {
+    const updateMapPosition = async () => {
+      if (!map || !initializedRef.current) return;
+
+      try {
+        await map.setCamera({
+          coordinate: {
+            lat,
+            lng,
+          },
+          zoom,
+          animate: true,
+        });
+
+        // Remover marcador anterior si existe
+        if (markerRef.current) {
+          await map.removeMarker(markerRef.current);
+        }
+
+        // Añadir nuevo marcador
+        const newMarker = await map.addMarker({
+          coordinate: { lat, lng },
+          draggable: false,
+        });
+
+        markerRef.current = newMarker;
+      } catch (error) {
+        console.error('Error updating map position:', error);
+        onError?.(error);
+      }
+    };
+
+    if(map) {
+      updateMapPosition();
+    }
+  }, [lat, lng, zoom, map]); // Dependencias actualizadas
+
+  // Manejar cuando la vista Ionic se vuelve activa
+  useIonViewDidEnter(() => {
+    if (!map && mapRef.current) {
+      createMap();
+    }
+  });
 
   return (
-    <div style={{
-      position: 'relative', 
-      width: '100%', 
-      height: isMobile ? '300px' : '400px', 
-      background: 'var(--ion-color-tertiary-dark)',
-    }}>
-      {isLoading ? (
-        AppLoader()
-      ) : (
-        <div>
-          {currentAddress && (
-            <div style={{ padding: '10px' }}>
-              {currentAddress}
-            </div>
-          )}
-          {/* Aquí puedes agregar el iframe del mapa estático de Google si lo necesitas */}
-          <iframe
-            title="Google Maps"
-            width="100%"
-            height="100%"
-            frameBorder="0"
-            style={{ border: 0 }}
-            src={`https://www.google.com/maps/embed/v1/place?key=${environment.MAPS_KEY}&q=${lat},${lng}`}
-            allowFullScreen
-          />
-        </div>
-      )}
+    <div 
+      className="relative w-full bg-tertiary-dark"
+      style={{
+        minHeight: isMobile ? '300px' : '400px',
+        height: '100%',
+      }}
+    >
+      {isLoading && <AppLoader />}
+      <capacitor-google-map
+        ref={mapRef}
+        style={{
+          display: 'inline-block',
+          width: '100%',
+          height: '400px',
+          visibility: isLoading ? 'hidden' : 'visible',
+        }}
+      />
     </div>
   );
 };
