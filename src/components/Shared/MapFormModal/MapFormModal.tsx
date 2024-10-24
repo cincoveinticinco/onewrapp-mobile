@@ -265,8 +265,10 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         lat: lat!.toString(),
         lng: lng!.toString(),
       };
-      await onSubmit(formData);
-      handleCloseModal();
+      onSubmit(formData);
+      setTimeout(() => {
+        handleCloseModal();
+      }, 500);
     }
   };
 
