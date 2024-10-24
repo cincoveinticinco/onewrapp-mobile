@@ -12,11 +12,11 @@ interface LegendProps {
 
 const Legend: React.FC<LegendProps> = ({ items }) => (
   <div style={{
-    display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px',
+    display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px', flexWrap: 'wrap',
   }}
   >
     {items.map((item, index) => (
-      <IonChip key={index} style={{ backgroundColor: 'transparent' }}>
+      <IonChip key={index} style={{ backgroundColor: 'transparent', flex: '1' }}>
         <div
           style={{
             width: '16px',
@@ -24,6 +24,7 @@ const Legend: React.FC<LegendProps> = ({ items }) => (
             borderRadius: '50%',
             backgroundColor: item.color,
             marginRight: '12px',
+            flexShrink: 0
           }}
         />
         <IonLabel style={{
