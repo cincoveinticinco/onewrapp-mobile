@@ -21,12 +21,11 @@ import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
 import AppLoader from '../../hooks/Shared/AppLoader';
-import useNavigatorOnLine from '../../hooks/Shared/useNavigatorOnline';
 import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
 import DatabaseContext from '../../context/Database.context';
 
 const LoginPage: React.FC = () => {
-  const { saveLogin } = useAuth();
+  const { saveLogin, loggedIn } = useAuth();
   const errorToast = useErrorToast();
   const history = useHistory();
   const isOnline = useNetworkStatus();
@@ -45,57 +44,71 @@ const LoginPage: React.FC = () => {
     })
   })
 
+  useIonViewDidEnter(() => {
+    if (loggedIn) {
+      const localPath = localStorage.getItem('lastAppRoute');
+      console.log(localPath, 'localPath');
+      history.push(localPath || '/my/projects');
+    }
+  });
+
   const handleGoogleLoginMobile = async () => {
     if(isOnline) {
-
+      try {
+        const googleUser = await GoogleAuth.signIn();
+        const accessToken = googleUser.authentication.accessToken;
+        setIsLoading(true);
+        const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ access_token: accessToken }),
+        });
+        const data = await response.json();
+  
+        if (data.token) {
+          saveLogin(data.token, data.user);
+          history.push('/my/projects');
+        } else {
+          history.push('/user-not-found');
+          errorToast(data.error);
+        }
+      } catch (error) {
+        errorToast('Error during Google Sign In (Mobile)');
+        console.error(error)
+      } finally {
+        setIsLoading(false);
+      }
     } else {
-      const getUser = async () => {
-        if(oneWrapDb) {
-          const user = await oneWrapDb.user.findOne().exec();
-          if(user) {
-            return user._data;
+       try {
+        const getUser = async () => {
+          if(oneWrapDb) {
+            const user = await oneWrapDb.user.findOne().exec();
+            if(user) {
+              return user._data;
+            }
           }
+  
+          return null;
         }
-        return null;
-      }
-
-      const user = await getUser();
-
-      if (user) {
-        const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
-        const now = new Date().getTime();
-
-        if (now < sessionEndsAt) {
-          saveLogin(user.sessionToken, user);
-        }
+  
+        const user = await getUser();
+  
+        if (user) {
+          const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
+          const now = new Date().getTime();
+  
+          if (now < sessionEndsAt) {
+            console.log('User is logged in');
+            saveLogin(user.sessionToken, user);
+          }
+       }
+      } catch (error) {
+        console.error(error);
       }
     }
-    try {
-      const googleUser = await GoogleAuth.signIn();
-      const accessToken = googleUser.authentication.accessToken;
-      setIsLoading(true);
-      const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ access_token: accessToken }),
-      });
-      const data = await response.json();
-
-      if (data.token) {
-        saveLogin(data.token, data.user);
-        history.push('/my/projects');
-      } else {
-        history.push('/user-not-found');
-        errorToast(data.error);
-      }
-    } catch (error) {
-      errorToast('Error during Google Sign In');
-      console.error(error)
-    } finally {
-      setIsLoading(false);
-    }
+    
   };
 
   // Función para el login en web usando @react-oauth/google
@@ -123,12 +136,51 @@ const LoginPage: React.FC = () => {
     onError: (errorResponse:any) => errorToast(errorResponse.error_description || 'Error during Google Sign In'),
   });
 
+  const handleOfflineLoginWeb = async () => {
+    try {
+      const getUser = async () => {
+        if(oneWrapDb) {
+          const user = await oneWrapDb.user.findOne().exec();
+          if(user) {
+            return user._data;
+          }
+        }
+        return null;
+      }
+
+      const user = await getUser();
+
+      if (user) {
+        const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
+        const now = new Date().getTime();
+
+        if (now < sessionEndsAt) {
+          console.log('User is logged in');
+          saveLogin(user.sessionToken, user);
+          history.push('/my/projects');
+        } else {
+          errorToast('Session expired. Please log in again.');
+        }
+      } else {
+        errorToast('No user found. Please log in.');
+      }
+    } catch (error) {
+      console.error(error);
+      errorToast('Error during offline login');
+    }
+  };
+
   // Detectar la plataforma y ejecutar el código correspondiente
   const login = () => {
-    if (isPlatform('capacitor')) {
+    if (isPlatform('capacitor') || isPlatform('cordova') || isPlatform('android') || isPlatform('ios')) {
       handleGoogleLoginMobile();
     } else {
-      handleGoogleLoginWeb();
+      
+      if(isOnline || navigator.onLine) {
+        handleGoogleLoginWeb();
+      } else {
+        handleOfflineLoginWeb();
+      }
     }
   };
 
