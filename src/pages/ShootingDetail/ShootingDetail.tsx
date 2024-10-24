@@ -640,7 +640,12 @@ const ShootingDetail: React.FC<{
       const scenesData = await getShootingData();
       setShootingData({
         mergedSceneBanners: scenesData.mergedSceneBanners,
-        mergedScenesShootData: scenesData.mergedScenesShootData,
+        mergedScenesShootData: scenesData.mergedScenesShootData.map((scene: any) => {
+          return {
+            ...scene,
+            backgroundColor: getSceneBackgroundColor(scene),
+          };
+        }),
         notIncludedScenes: scenesData.scenesNotIncluded,
         shotingInfo: scenesData.shootingInfo,
         shootingFormattedDate: scenesData.formattedDate,
@@ -665,13 +670,6 @@ const ShootingDetail: React.FC<{
       throw error;
     } finally {
       await fetchData();
-      const mergedScenesShootData = shootingData.mergedScenesShootData.map((scene: any) => {
-        return {
-          ...scene,
-          backgroundColor: getSceneBackgroundColor(scene),
-        };
-      })
-      setMergedScenesShootData(mergedScenesShootData);
     }
   };
 
