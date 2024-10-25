@@ -387,12 +387,6 @@ const CallSheet: React.FC<CallSheetProps> = ({
     }
   };
 
-  useIonViewDidEnter(() => {
-    setTimeout(() => {
-      tabsController.hideTabs();
-    }, 500);
-  });
-
   const renderContent = () => {
     switch (view) {
       case 'cast':
@@ -708,8 +702,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
   if (!isSection) {
     return (
-      <IonPage>
-        <IonHeader>
+      <>
+        {/* <IonHeader>
           <IonToolbar color="tertiary">
             <IonButton
               routerLink={`/my/projects/${id}/shooting/${shootingId}`}
@@ -755,8 +749,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
               )
             }
           </IonToolbar>
-        </IonHeader>
-        <IonContent color="tertiary" fullscreen>
+        </IonHeader> */}
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <div className="ion-flex">
             <div
               style={!useIsMobile() ? { width: '150px' } : {}}
@@ -782,7 +776,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           {renderContent()}
         </IonContent>
         <CallSheetTabs view={view} setView={setView} handleBack={useHandleBack()} />
-      </IonPage>
+      </>
     );
   }
   const [open, setOpen] = useState(true);
