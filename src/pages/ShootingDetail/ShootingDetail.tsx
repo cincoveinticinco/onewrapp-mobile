@@ -1,6 +1,7 @@
 import {
   IonButton, IonContent, IonHeader,
   IonItem, IonPage, IonReorderGroup,
+  IonTabs,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
@@ -48,8 +49,9 @@ import './ShootingDetail.css';
 import getSceneHeader from '../../utils/getSceneHeader';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import Legend from '../../components/Shared/Legend/Legend';
+import CallSheet from '../CallSheet/CallSheet';
 
-export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
+export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {
   cardType: string;
 };
@@ -1281,8 +1283,13 @@ const ShootingDetail: React.FC<{
           </IonButton>
         </div>
       )}
+      {
+        view === 'call-sheet' && (
+          <CallSheet />
+        )
+      }
       {view === 'scenes' && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <div className="shooting-scenes-info">
             {/* PRINT GENERAL CALL, READY TO SHOOT, PROTECTIONS, PAGES, MINUTES */}
             <div className={`shooting-scenes-info-item ion-flex ion-padding ion-justify-content-between${isMobile ? ' mobile-shooting-scenes-info' : ''}`}>
@@ -1407,7 +1414,7 @@ const ShootingDetail: React.FC<{
       {
         view === 'script-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <Legend items={legendItems} />
           <ScriptReportView
             mergedScenesShoot={shootingData.mergedScenesShootData}
@@ -1422,7 +1429,7 @@ const ShootingDetail: React.FC<{
       {
         view === 'wrap-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <WrapReportView
             shootingData={shootingData}
             updateShootingTime={updateShootingTime}
@@ -1467,7 +1474,7 @@ const ShootingDetail: React.FC<{
       {
         view === 'production-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <ProductionReportView searchText={searchText} />
         </IonContent>
         )
