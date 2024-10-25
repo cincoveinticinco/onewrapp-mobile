@@ -1,146 +1,124 @@
 import { GoogleMap } from '@capacitor/google-maps';
 import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
-import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import { useIonViewDidEnter } from '@ionic/react';
 
 interface GoogleMapComponentProps {
-  lat: number;
-  lng: number;
-  zoom?: number;
-  onMapReady?: () => void;
-  onError?: (error: any) => void;
-  parentRef?:any
+  locations: Array<{lat: string; lng: string}>;
+  mapRef: React.RefObject<HTMLElement>;
 }
 
-const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
-  lat,
-  lng,
-  zoom = 14,
-  onMapReady,
-  onError,
-  parentRef
-}) => {
-  const mapRef = useRef<HTMLElement | null>(null);
+const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapRef }) => {
   const [map, setMap] = useState<GoogleMap | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const isMobile = useIsMobile();
-  const markerRef = parentRef || useRef<string | null>(null);
-  const initializedRef = useRef(false);
+  const [marker, setMarker] = useState<string | null>(null);
+  const [mapInitialized, setMapInitialized] = useState(false);
 
-  const createMap = async () => {
-    if (!mapRef.current || initializedRef.current) return;
+  const createMap = async (lat: number, lng: number) => {
+    if (!mapRef.current) return;
 
     try {
+      if (map) {
+        await map.destroy();
+      }
+
       const newMap = await GoogleMap.create({
-        id: `google-map-${Date.now()}`,
+        id: 'shooting-basic-info-map',
         element: mapRef.current,
         apiKey: environment.MAPS_KEY,
         config: {
-          center: {
-            lat,
-            lng,
-          },
-          zoom,
-          disableDefaultUI: false,
-          gestureHandling: 'cooperative',
+          center: { lat, lng },
+          zoom: 15,
         },
+        forceCreate: true
       });
 
       const newMarker = await newMap.addMarker({
         coordinate: { lat, lng },
-        draggable: false,
+        draggable: true,
       });
 
-      markerRef.current = newMarker;
       setMap(newMap);
-      initializedRef.current = true;
-      onMapReady?.();
+      setMarker(newMarker);
+      setMapInitialized(true);
+
+      await newMap.setOnMapClickListener((event) => {
+        updateMarker(event.latitude, event.longitude);
+      });
     } catch (error) {
       console.error('Error creating map:', error);
-      onError?.(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // Inicializar mapa cuando el componente se monta
+  const updateMarker = async (latitude: number, longitude: number) => {
+    if (!map) return;
+
+    try {
+      if (marker) {
+        await map.removeMarker(marker);
+      }
+
+      const newMarker = await map.addMarker({
+        coordinate: { lat: latitude, lng: longitude },
+        draggable: true,
+      });
+
+      setMarker(newMarker);
+
+      await map.setOnMarkerDragEndListener(async (event) => {
+        updateMarker(event.latitude, event.longitude);
+      });
+    } catch (error) {
+      console.error('Error updating marker:', error);
+    }
+  };
+
+  const initMap = async () => {
+    if (locations.length > 0 && mapRef.current && !mapInitialized) {
+      const lat = parseFloat(locations[0].lat);
+      const lng = parseFloat(locations[0].lng);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        await createMap(lat, lng);
+      }
+    }
+  };
+
   useEffect(() => {
-    createMap();
-    
-    // Cleanup function
+    const timer = setTimeout(() => {
+      initMap();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       if (map) {
         map.destroy();
-        initializedRef.current = false;
-        markerRef.current = null;
-        setMap(null);
       }
     };
-  }, []); // Solo se ejecuta al montar el componente
+  }, [locations, mapRef.current]);
 
-  // Manejar cambios en las props
-  useEffect(() => {
-    const updateMapPosition = async () => {
-      if (!map || !initializedRef.current) return;
-
-      try {
-        await map.setCamera({
-          coordinate: {
-            lat,
-            lng,
-          },
-          zoom,
-          animate: true,
-        });
-
-        // Remover marcador anterior si existe
-        if (markerRef.current) {
-          await map.removeMarker(markerRef.current);
-        }
-
-        // Añadir nuevo marcador
-        const newMarker = await map.addMarker({
-          coordinate: { lat, lng },
-          draggable: false,
-        });
-
-        markerRef.current = newMarker;
-      } catch (error) {
-        console.error('Error updating map position:', error);
-        onError?.(error);
-      }
-    };
-
-    if(map) {
-      updateMapPosition();
-    }
-  }, [lat, lng, zoom, map]); // Dependencias actualizadas
-
-  // Manejar cuando la vista Ionic se vuelve activa
   useIonViewDidEnter(() => {
-    if (!map && mapRef.current) {
-      createMap();
-    }
+    initMap();
   });
 
   return (
-    <div 
-      className="relative w-full bg-tertiary-dark"
-      style={{
-        minHeight: isMobile ? '300px' : '400px',
-        height: '100%',
-      }}
-    >
-      {isLoading && <AppLoader />}
+    <div style={{
+      minHeight: '400px',
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'relative',
+    }}>
+      {!mapInitialized && AppLoader()}
       <capacitor-google-map
         ref={mapRef}
         style={{
           display: 'inline-block',
           width: '100%',
           height: '400px',
-          visibility: isLoading ? 'hidden' : 'visible',
+          opacity: mapInitialized ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out'
         }}
       />
     </div>
