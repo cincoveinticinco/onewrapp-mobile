@@ -43,7 +43,7 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
       tab: 'shootingScenes', label: 'SCENES', icon: serverOutline, onClick: () => setView('scenes'), view: 'scenes',
     },
     {
-      tab: 'shootingCallTime', label: 'CALL TIME', icon: documentTextOutline, onClick: goToCallSheet,
+      tab: 'shootingCallTime', label: 'CALL TIME', icon: documentTextOutline, onClick: () => setView('call-sheet'), view: 'call-sheet',
     },
     {
       tab: 'shootingOthers', label: 'SCRIPT REPORT', icon: documentTextOutline, onClick: () => setView('script-report'), view: 'script-report',
