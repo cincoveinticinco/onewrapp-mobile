@@ -441,3 +441,19 @@ ion-toast.error-toast {
 .ion-no-padding {
   padding: 0px !important;
 }
+
+// Create a animation to transition between diferent pages
+
+@keyframes identifier {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: identifier 0.5s ease-in-out;
+}
+
