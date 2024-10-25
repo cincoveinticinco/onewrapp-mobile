@@ -8,6 +8,7 @@ import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/H
 import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/LocationsSections';
 import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
 import './InfoView.css';
+import React from 'react';
 
 interface InfoViewProps {
   shootingData: any;
@@ -77,81 +78,87 @@ const InfoView: React.FC<InfoViewProps> = ({
   openEditModal,
   openEditHospitalModal,
   removeHospital,
-}) => (
-  <IonContent color="tertiary" fullscreen>
-    <ShootingBasicInfo
-      shootingInfo={shootingData.shotingInfo}
-      updateShootingTime={updateShootingTime}
-      permissionType={permissionType}
-    />
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr',
-    }}
-    >
-      <div className="section-wrapper">
-        <div>
-          <LocationsSection
-            locations={shootingData.shotingInfo.locations}
-            open={openLocations}
-            setOpen={setOpenLocations}
-            editMode
-            setEditMode={setLocationsEditMode}
-            onAddClick={openMapModal}
-            removeLocation={removeLocation}
-            permissionType={permissionType}
-            openEditModal={openEditModal}
-          />
-        </div>
-      </div>
-      <div className="section-wrapper">
-        <div>
-          <HospitalsSection
-            hospitals={shootingData.shotingInfo.hospitals}
-            open={openHospitals}
-            setOpen={setOpenHospitals}
-            editMode
-            onAddClick={openHospitalsMapModal}
-            permissionType={permissionType}
-            openEditModal={openEditHospitalModal}
-            removeHospital={removeHospital}
-            setEditMode={() => true}
-          />
-        </div>
-      </div>
-      <div className="section-wrapper">
-        <AdvanceCallsSection
-          advanceCalls={shootingData.shotingInfo.advanceCalls}
-          open={openadvanceCalls}
-          setOpen={setOpenAdvanceCalls}
-          editMode
-          setEditMode={() => true}
-          onAddClick={openAdvanceCallModal}
-          getHourMinutesFomISO={getHourMinutesFomISO}
-          deleteAdvanceCall={deleteAdvanceCall}
-          advanceCallInputs={advanceCallInputs}
-          handleEditAdvanceCall={handleEditAdvanceCall}
+}) => {
+  const mapRef = React.useRef(null);
+  return (
+    (
+      <IonContent color="tertiary" fullscreen className='fade-in'>
+        <ShootingBasicInfo
+          shootingInfo={shootingData.shotingInfo}
+          updateShootingTime={updateShootingTime}
           permissionType={permissionType}
+          mapRef={mapRef}
         />
-      </div>
-      <div className="section-wrapper">
-        <MealsSection
-          meals={shootingData.shotingInfo.meals}
-          open={openMeals}
-          setOpen={setOpenMeals}
-          editMode={mealsEditMode}
-          setEditMode={setMealsEditMode}
-          onAddClick={openMealModal}
-          getHourMinutesFomISO={getHourMinutesFomISO}
-          deleteMeal={deleteMeal}
-          mealInputs={mealInputs}
-          handleEditMeal={handleEditMeal}
-          permissionType={permissionType}
-        />
-      </div>
-    </div>
-
-  </IonContent>
-);
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr',
+        }}
+        >
+          <div className="section-wrapper">
+            <div>
+              <LocationsSection
+                locations={shootingData.shotingInfo.locations}
+                open={openLocations}
+                setOpen={setOpenLocations}
+                editMode
+                setEditMode={setLocationsEditMode}
+                onAddClick={openMapModal}
+                removeLocation={removeLocation}
+                permissionType={permissionType}
+                openEditModal={openEditModal}
+              />
+            </div>
+          </div>
+          <div className="section-wrapper">
+            <div>
+              <HospitalsSection
+                hospitals={shootingData.shotingInfo.hospitals}
+                open={openHospitals}
+                setOpen={setOpenHospitals}
+                editMode
+                onAddClick={openHospitalsMapModal}
+                permissionType={permissionType}
+                openEditModal={openEditHospitalModal}
+                removeHospital={removeHospital}
+                setEditMode={() => true}
+              />
+            </div>
+          </div>
+          <div className="section-wrapper">
+            <AdvanceCallsSection
+              advanceCalls={shootingData.shotingInfo.advanceCalls}
+              open={openadvanceCalls}
+              setOpen={setOpenAdvanceCalls}
+              editMode
+              setEditMode={() => true}
+              onAddClick={openAdvanceCallModal}
+              getHourMinutesFomISO={getHourMinutesFomISO}
+              deleteAdvanceCall={deleteAdvanceCall}
+              advanceCallInputs={advanceCallInputs}
+              handleEditAdvanceCall={handleEditAdvanceCall}
+              permissionType={permissionType}
+            />
+          </div>
+          <div className="section-wrapper">
+            <MealsSection
+              meals={shootingData.shotingInfo.meals}
+              open={openMeals}
+              setOpen={setOpenMeals}
+              editMode={mealsEditMode}
+              setEditMode={setMealsEditMode}
+              onAddClick={openMealModal}
+              getHourMinutesFomISO={getHourMinutesFomISO}
+              deleteMeal={deleteMeal}
+              mealInputs={mealInputs}
+              handleEditMeal={handleEditMeal}
+              permissionType={permissionType}
+            />
+          </div>
+        </div>
+    
+      </IonContent>
+    )
+  )
+}
 
 export default InfoView;
