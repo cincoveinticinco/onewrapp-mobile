@@ -92,6 +92,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
 }) => {
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
+  const mapRef = React.useRef(null);
   return (
     <div className="wrap-report-view" style={{ gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr' }}>
       <div className="section-wrapper scenes-table">
@@ -100,6 +101,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             shootingInfo={shootingData.shotingInfo}
             updateShootingTime={updateShootingTime}
             permissionType={permissionType}
+            mapRef={mapRef}
           />
         </div>
       </div>
