@@ -1,104 +1,65 @@
 import {
-  IonIcon, IonLabel, IonTabBar, IonTabButton,
+  IonIcon, IonFab, IonFabButton, IonFabList, IonLabel,
 } from '@ionic/react';
 import {
-  albumsOutline, briefcaseOutline,
-  carOutline,
-  home,
-  peopleOutline, personOutline,
+  albumsOutline, arrowUp, briefcaseOutline,
+  carOutline, chevronUp, home, peopleOutline, personOutline,
 } from 'ionicons/icons';
 import React from 'react';
 
+import './CallSheetTabs.scss';
+
 type ProductionView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
-interface CallSheetTabsProps {
+interface CallSheetFabProps {
   setView: (view: ProductionView) => void;
   view: ProductionView;
   handleBack: () => void;
 }
 
-const CallSheetTabs: React.FC<CallSheetTabsProps> = ({ setView, view, handleBack }) => (
-  <IonTabBar slot="bottom" color="dark" mode="md">
-    <IonTabButton
-      tab="cast"
-      className="tab-bar-buttons"
-      onClick={() => handleBack()}
-    >
-      <IonIcon icon={home} />
-      <IonLabel>
-        SHOOTING
-      </IonLabel>
-    </IonTabButton>
-    <IonTabButton
-      tab="cast"
-      className="tab-bar-buttons"
-      onClick={() => setView('cast')}
-    >
-      <IonIcon icon={peopleOutline} color={view === 'cast' ? 'primary' : 'light'} />
-      <IonLabel style={{
-        color: view === 'cast' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-      }}
-      >
-        CAST
-      </IonLabel>
-    </IonTabButton>
+const CallSheetFab: React.FC<CallSheetFabProps> = ({ setView, view, handleBack }) => (
+  <IonFab vertical="bottom" horizontal="end" class='tabs' slot="fixed">
+    <IonFabButton color="dark">
+      <IonIcon icon={chevronUp} />
+    </IonFabButton>
+    
+    <IonFabList side="top">
+      <IonFabButton onClick={() => setView('cast')} color={view === 'cast' ? 'primary' : 'dark'}>
+      <div className='fabButton'>
+        <IonIcon icon={peopleOutline} />
+        <IonLabel>CAST</IonLabel>
+      </div>
+      </IonFabButton>
 
-    <IonTabButton
-      tab="extras"
-      className="tab-bar-buttons"
-      onClick={() => setView('extras')}
-    >
-      <IonIcon icon={personOutline} color={view === 'extras' ? 'primary' : 'light'} />
-      <IonLabel style={{
-        color: view === 'extras' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-      }}
-      >
-        EXTRAS
-      </IonLabel>
-    </IonTabButton>
+      <IonFabButton onClick={() => setView('extras')} color={view === 'extras' ? 'primary' : 'dark'}>
+      <div className='fabButton'>
+        <IonIcon icon={personOutline} />
+        <IonLabel>EXTRAS</IonLabel>
+      </div>
+      </IonFabButton>
 
-    <IonTabButton
-      tab="pictureCars"
-      className="tab-bar-buttons"
-      onClick={() => setView('pictureCars')}
-    >
-      <IonIcon icon={carOutline} color={view === 'pictureCars' ? 'primary' : 'light'} />
-      <IonLabel style={{
-        color: view === 'pictureCars' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-      }}
-      >
-        PICTURE CARS
-      </IonLabel>
-    </IonTabButton>
+      <IonFabButton onClick={() => setView('pictureCars')} color={view === 'pictureCars' ? 'primary' : 'dark'}>
+      <div className='fabButton'>
+        <IonIcon icon={carOutline} />
+        <IonLabel>CARS</IonLabel>
+      </div>
+      </IonFabButton>
 
-    <IonTabButton
-      tab="others"
-      className="tab-bar-buttons"
-      onClick={() => setView('others')}
-    >
-      <IonIcon icon={albumsOutline} color={view === 'others' ? 'primary' : 'light'} />
-      <IonLabel style={{
-        color: view === 'others' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-      }}
-      >
-        OTHERS
-      </IonLabel>
-    </IonTabButton>
+      <IonFabButton onClick={() => setView('others')} color={view === 'others' ? 'primary' : 'dark'}>
+      <div className='fabButton'>
+        <IonIcon icon={albumsOutline} />
+        <IonLabel>OTHERS</IonLabel>
+      </div>
+      </IonFabButton>
 
-    <IonTabButton
-      tab="crew"
-      className="tab-bar-buttons"
-      onClick={() => setView('crew')}
-    >
-      <IonIcon icon={briefcaseOutline} color={view === 'crew' ? 'primary' : 'light'} />
-      <IonLabel style={{
-        color: view === 'crew' ? 'var(--ion-color-primary)' : 'var(--ion-color-light)',
-      }}
-      >
-        CREW
-      </IonLabel>
-    </IonTabButton>
-  </IonTabBar>
+      <IonFabButton onClick={() => setView('crew')} color={view === 'crew' ? 'primary' : 'dark'}>
+      <div className='fabButton'>
+        <IonIcon icon={briefcaseOutline} />
+        <IonLabel>CREW</IonLabel>
+      </div>
+      </IonFabButton>
+    </IonFabList>
+  </IonFab>
 );
 
-export default CallSheetTabs;
+export default CallSheetFab;
