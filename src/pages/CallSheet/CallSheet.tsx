@@ -717,16 +717,16 @@ const CallSheet: React.FC<CallSheetProps> = ({
                   {
                     !editMode ? (
                       <>
-                        <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                        <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={false}>
                           <VscEdit />
                         </IonButton>
                       </>
                     ) : (
                       <>
-                        <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={permissionType !== 1}>
+                        <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={false}>
                           SAVE
                         </IonButton>
-                        <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()} disabled={permissionType !== 1}>
+                        <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()}>
                           CANCEL
                         </IonButton>
                       </>
@@ -734,7 +734,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
                   }
                   {
                     !editMode && (
-                      <AddButton onClick={() => openAddNewModal()} disabled={permissionType !== 1} />
+                      <AddButton onClick={() => openAddNewModal()} disabled={false} />
                     )
                   }
                 </div>
