@@ -9,3 +9,9 @@
 .active {
   color: var(--ion-color-primary);
 }
+
+.header-toolbar {
+  border: 0px I !important;
+  box-shadow: none !important;
+  --border-color: transparent !important;
+}

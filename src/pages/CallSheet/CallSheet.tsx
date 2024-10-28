@@ -703,16 +703,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
   if (!isSection) {
     return (
       <>
-        {/* <IonHeader>
-          <IonToolbar color="tertiary">
-            <IonButton
-              routerLink={`/my/projects/${id}/shooting/${shootingId}`}
-              color="light"
-              slot="start"
-              fill="clear"
-            >
-              <IonIcon slot="icon-only" icon={chevronBackOutline} />
-            </IonButton>
+        <IonHeader>
+          <IonToolbar color="tertiary" className='header-toolbar'>
             <IonTitle>
               {view.toUpperCase()}
               {' '}
@@ -749,7 +741,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
               )
             }
           </IonToolbar>
-        </IonHeader> */}
+        </IonHeader>
         <IonContent color="tertiary" fullscreen className='fade-in'>
           <div className="ion-flex">
             <div

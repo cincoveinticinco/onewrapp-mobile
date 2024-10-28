@@ -293,6 +293,12 @@ const shootingSchema = {
           dropOff: {
             type: ['string', 'null'],
           },
+          onProsthetic: {
+            type: ['string', 'null']
+          },
+          outProsthetic: {
+            type: ['string', 'null']
+          },
           mealIn: {
             type: ['string', 'null'],
           },
