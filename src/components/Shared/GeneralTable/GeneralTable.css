@@ -45,6 +45,8 @@
 
 .custom-table td {
   font-size: 12px;
+  width: auto;
+  text-wrap: nowrap;
 }
 
 .custom-table th {

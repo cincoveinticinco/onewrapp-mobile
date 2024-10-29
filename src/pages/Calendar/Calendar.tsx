@@ -129,7 +129,7 @@ const Calendar: React.FC = () => {
   };
 
   const getUnitOptions = (units: Unit[]): SelectOptionsInterface[] => units.map((unit) => ({
-    label: unit.unitName || 'No name',
+    label: `UNIT-${unit?.unitNumber}-${unit?.unitName.toUpperCase() || unit?.unitNumber}`,
     value: unit.id,
   }));
 

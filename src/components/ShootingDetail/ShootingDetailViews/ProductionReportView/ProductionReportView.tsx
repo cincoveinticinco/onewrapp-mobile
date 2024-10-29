@@ -84,6 +84,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
     const service = shooting?.services?.find((service: any) => service.description === matrix.serviceDescription);
     const totalCost = parseInt(service?.unitCost ?? '', 10) * parseInt(service?.quantity ?? '', 10);
     const totalCostAsCurrency = totalCost && totalCost.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+    console.log(matrix)
 
     return {
       id: matrix.id,
@@ -186,6 +187,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
           }
         } else {
           if (service.quantity !== null && service.unitCost !== null) {
+            console.log(service)
             return {
               description: service.serviceDescription,
               providerName: service.providerName,
