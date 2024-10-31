@@ -1,7 +1,7 @@
 import {
+  IonAlert,
   IonButton, IonContent, IonHeader,
   IonItem, IonPage, IonReorderGroup,
-  IonTabs,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
@@ -50,6 +50,8 @@ import getSceneHeader from '../../utils/getSceneHeader';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import Legend from '../../components/Shared/Legend/Legend';
 import CallSheet from '../CallSheet/CallSheet';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import { set } from 'lodash';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {
@@ -222,6 +224,9 @@ const ShootingDetail: React.FC<{
   const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
   const [searchText, setSearchText] = useState('');
   const [searchMode, setSearchMode] = useState(false);
+  const [generalCallDiffHours, setGeneralCallDiffHours ] = useState<number>(0)
+  const [moveDiffHoursAlertOpen, setMoveDiffHoursAlertOpen] = useState(false);
+  const [isReset, setIsReset] = useState(false);
 
   // *************************** STATES ************************************//
 
@@ -254,6 +259,13 @@ const ShootingDetail: React.FC<{
     }
 
     return false;
+  };
+
+  const resetComponent = () => {
+    setIsLoading(true);
+    setIsReset(true);
+    // Opcional: volver a false después de un breve tiempo
+    setTimeout(() => {setIsReset(false);     setIsLoading(false)}, 500);
   };
 
   const validateAdvanceCallExistence = (callTime: string) => {
@@ -668,6 +680,7 @@ const ShootingDetail: React.FC<{
       shootingCopy.scenes = shootingData.mergedScenesShootData;
       await oneWrappDb?.shootings.upsert(shootingCopy);
       successToast('Script report saved successfully');
+      resetComponent();
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
@@ -680,24 +693,53 @@ const ShootingDetail: React.FC<{
     if (oneWrappDb && shootingId) {
       try {
         const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-
+        
         if (shooting) {
           const shootingCopy = { ...shooting._data };
 
           const formattedTime = convertTo24Hour(time);
-
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shootingCopy.shootDate);
 
-          shootingCopy[field] = newTimeISO;
 
+            if(shootingCopy.generalCall && field === 'generalCall') {
+            // Normalize the time to ensure they are in the same time zone and format
+            const previousGeneralCallDate = new Date(shootingCopy.generalCall);
+            const newGeneralCallDate = new Date(newTimeISO);
+
+            console.log('previousGeneralCallDate', previousGeneralCallDate);
+            console.log('newGeneralCallDate', newGeneralCallDate);
+
+            // Convert both times to military hours
+            const previousGeneralCallHours = previousGeneralCallDate.getHours();
+            const newGeneralCallHours = newGeneralCallDate.getHours();
+
+            const diff = newGeneralCallHours - previousGeneralCallHours;
+            setGeneralCallDiffHours(diff);
+            }
+
+          shootingCopy[field] = newTimeISO;
+          setIsLoading(false);
           await oneWrappDb.shootings.upsert(shootingCopy);
           await fetchData();
+          setShootingData((prev: any) => ({
+            ...prev,
+            shotingInfo: {
+              ...prev.shotingInfo,
+              [field]: time,
+            },
+          }));
+
+          if(field === 'generalCall') {
+            setMoveDiffHoursAlertOpen(true)
+          }
           successToast('Time updated successfully');
         }
       } catch (error) {
         errorToast(`Error updating time: ${error}`);
         throw error;
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -1189,6 +1231,107 @@ const ShootingDetail: React.FC<{
     }
   };
 
+  const updateShootingAllTimes = async () => {
+    try {
+      // Move the advance calls, the meals, the crewCalls, the castCalls, the pictureCars and the otherCalls with the difference in the hours using generalCallDiffHours
+
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingCopy = { ...shooting._data };
+
+      // Advance Calls
+      shootingCopy.advanceCalls = shootingCopy.advanceCalls.map((call: AdvanceCall) => {
+        if (call.adv_call_time) {
+          const callTime = new Date(call.adv_call_time);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            adv_call_time: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Meals
+      shootingCopy.meals = shootingCopy.meals.map((meal: Meal) => {
+        if (meal.ready_at && meal.end_time) {
+          const readyAt = new Date(meal.ready_at);
+          readyAt.setHours(readyAt.getHours() + generalCallDiffHours);
+          const endTime = new Date(meal.end_time);
+          endTime.setHours(endTime.getHours() + generalCallDiffHours);
+          return {
+            ...meal,
+            ready_at: readyAt.toISOString(),
+            end_time: endTime.toISOString(),
+          };
+        }
+        return meal;
+      });
+
+      // Crew Calls
+      shootingCopy.crewCalls = shootingCopy.crewCalls.map((call: any) => {
+        if (call.call) {
+          const callTime = new Date(call.call);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            call: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Cast Calls
+      shootingCopy.castCalls = shootingCopy.castCalls.map((call: any) => {
+        if (call.callTime) {
+          const callTime = new Date(call.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Picture Cars
+      shootingCopy.pictureCars = shootingCopy.pictureCars.map((car: any) => {
+        if (car.callTime) {
+          const callTime = new Date(car.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...car,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return car;
+      });
+
+      // Other Calls
+      shootingCopy.otherCalls = shootingCopy.otherCalls.map((call: any) => {
+        if (call.callTime) {
+          const callTime = new Date(call.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Update the shooting
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('All times updated successfully');
+      setMoveDiffHoursAlertOpen(false);
+    } catch (error: any) {
+      errorToast(`Error updating all times: ${error.message}`);
+      console.error(error);
+    } finally {
+      resetComponent();
+    }
+  }
+
   const editScriptReportButton: any = () => {
     if (view === 'script-report') {
       if (!scriptReportEditMode) {
@@ -1268,6 +1411,20 @@ const ShootingDetail: React.FC<{
       searchText,
     }
   );
+
+  const moveDiffHoursAlert = () => {
+    if (generalCallDiffHours !== 0) {
+      return (
+        <InputAlert
+          header="Move all times"
+          message={`You are about to move all times ${generalCallDiffHours > 0 ? 'forward' : 'backwards'} ${Math.abs(generalCallDiffHours)} hours. Are you sure you want to continue?`}
+          inputs={[]}
+          handleOk={updateShootingAllTimes}
+          handleCancel={() => setMoveDiffHoursAlertOpen(false)}
+          isOpen={moveDiffHoursAlertOpen}
+        />  
+      )};
+  }
 
   return (
     <IonPage>
@@ -1409,6 +1566,7 @@ const ShootingDetail: React.FC<{
           openEditModal={openEditionModal}
           openEditHospitalModal={openHospitalEditionModal}
           removeHospital={removeHospital}
+          updateShootingAllTimes={updateShootingAllTimes}
         />
         )
       }
@@ -1485,6 +1643,7 @@ const ShootingDetail: React.FC<{
       <AddNewScenes />
       <AddNewAdvanceCallModal />
       <AddNewMeal />
+      {moveDiffHoursAlert()}
       <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={selectedLocation ? updateExistingLocation : addNewLocation} selectedLocation={selectedLocation} />
       <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={selectedHospital ? updateExistingHospital : addNewHospital} hospital selectedLocation={selectedHospital} />
     </IonPage>
