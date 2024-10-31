@@ -93,14 +93,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
     <Autocomplete
       options={options}
       getOptionLabel={(option: string | SelectOption) => typeof option === 'string' ? option : option.label}
-      renderOption={(props, option: SelectOption) => (
+      renderOption={(props, option: string | SelectOption) => (
         <li
           {...props}
           style={{
-            color: option.value,
+            color: typeof option === 'string' ? 'inherit' : option.value,
           }}
         >
-          {option.label.toUpperCase()}
+          {typeof option === 'string' ? option : option.label.toUpperCase()}
         </li>
       )}
       renderInput={(params) => (
