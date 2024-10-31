@@ -5,12 +5,13 @@ import {
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
+  useCallback,
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { VscEdit } from 'react-icons/vsc';
 import { useHistory, useParams } from 'react-router';
-import { useRxDB } from 'rxdb-hooks';
+import { useRxData, useRxDB } from 'rxdb-hooks';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -52,6 +53,7 @@ import Legend from '../../components/Shared/Legend/Legend';
 import CallSheet from '../CallSheet/CallSheet';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { set } from 'lodash';
+import { Crew } from '../../interfaces/crew.types';
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {
@@ -91,6 +93,7 @@ const ShootingDetail: React.FC<{
   permissionType,
 }) => {
   // *************************** CONSTANTS ************************************//
+  const { id } = useParams<{ id: string }>();
 
   const shootingDataInitial: ShootingDataProps = {
     mergedSceneBanners: [],
@@ -169,15 +172,42 @@ const ShootingDetail: React.FC<{
     },
   ];
 
-  const advanceCallInputs = [
+
+  //* ***************************** RXDB HOOKS *****************************/
+
+  const oneWrappDb: any = useRxDB();
+
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
+
+  //* ***************************** RXDB HOOKS *****************************/
+
+  const [departments, setDepartments] = useState<SelectOptionsInterface[]>([]);
+
+  const getCrewDepartments = () => {
+    const departments = crew.map((c: Crew) => c.depNameEng);
+    const uniqueDepartments = Array.from(new Set(departments));
+    return uniqueDepartments.map((dep: string) => ({ value: dep, label: dep }));
+  }
+
+  useEffect(() => {
+    console.log(crew)
+    if(crew && !isFetchingCrew ) {
+      setDepartments(getCrewDepartments());
+      console.log(departments)
+    }
+  }, [crew, isFetchingCrew]);
+
+
+
+  const advanceCallInputs: FormInput[]  = [
     {
-      label: 'Department', type: 'text', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6',
+      label: 'Department', type: 'select', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6', selectOptions: departments, search: true
     },
     {
       label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '6',
     },
     {
-      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12',
+      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12'
     },
   ];
 
@@ -202,10 +232,8 @@ const ShootingDetail: React.FC<{
 
   const [isDisabled, unused_] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
-  const oneWrappDb: any = useRxDB();
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
-  const { id } = useParams<{ id: string }>();
   const [view, setView] = useState<ShootingViews>('info');
   const [openLocations, setOpenLocations] = useState(true);
   const [openHospitals, setOpenHospitals] = useState(true);
