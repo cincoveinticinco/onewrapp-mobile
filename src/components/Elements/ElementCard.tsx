@@ -301,7 +301,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     <>
       <IonItemSliding onClick={onClick}>
         <IonItem mode="md" className="element-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-          <div className={`${'element-card-wrapper' + ' '}${section}`}>
+          <div className={`${'element-card-wrapper' + ' '}${section}${section === 'category' && ' background-tertiary-dark'}`}>
             <div color="dark" className="element-card-header">
               <IonTitle className="element-card-header-title">
                 <HighlightedText
