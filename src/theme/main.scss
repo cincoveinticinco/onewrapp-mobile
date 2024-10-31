@@ -9,6 +9,7 @@ $colors: (
   success: var(--ion-color-success),
   tertiary: var(--ion-color-tertiary),
   warning: var(--ion-color-warning),
+  tertiary-dark: var(--ion-color-tertiary-dark),
 );
 
 // CUSTOM COLOR STYLES
@@ -121,6 +122,10 @@ $colors: (
     @media (min-width: 500px) {
       max-width: 250px;
     }
+  }
+
+  .background-#{$color} {
+    background-color: #{$value} !important;
   }
 }
 
