@@ -280,6 +280,7 @@ const CastView: React.FC<CastViewProps> = ({
         stickyColumnCount={1}
         editMode={editMode}
         editFunction={editCastCall}
+        groupBy='category'
       />
     </>
   );
