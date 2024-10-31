@@ -299,6 +299,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls }
       data={formattedData}
       stickyColumnCount={1}
       editMode={editMode}
+      groupBy='departmentEng'
     />
   );
 };
