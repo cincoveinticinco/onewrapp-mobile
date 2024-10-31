@@ -319,7 +319,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   return (
     <IonItemSliding onClick={() => getOnclick()}>
       <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-        <div className={set ? 'location-set-card-wrapper set' : 'location-set-card-wrapper location'}>
+        <div className={set ? 'location-set-card-wrapper set' : 'location-set-card-wrapper location background-tertiary-dark'}>
           <div className="location-set-card-header">
             <IonTitle className="location-set-card-header-title">
               <HighlightedText text={set ? set.setName : location ? (`${location?.locationName} (${setsQuantity})`) : 'NO LOCATION'} searchTerm={searchText} />
