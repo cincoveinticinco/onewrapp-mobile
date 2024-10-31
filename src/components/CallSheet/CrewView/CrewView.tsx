@@ -42,9 +42,10 @@ interface CrewViewProps {
   crewCalls: CrewCall[];
   editMode: boolean;
   setCrewCalls: any
+  searchText: string;
 }
 
-const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls }) => {
+const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, searchText }) => {
   const columns: Column[] = [
     {
       key: 'name', title: 'Name', type: 'text', textAlign: 'left',
@@ -300,6 +301,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls }
       stickyColumnCount={1}
       editMode={editMode}
       groupBy='departmentEng'
+      searchText={searchText}
     />
   );
 };
