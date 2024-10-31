@@ -14,6 +14,7 @@ interface CastViewProps {
   castOptions: { value: any; label: string }[];
   editCastCall: (index: number, key: any, newValue: any, type: string) => void
   permissionType?: number | null
+  searchText?: string
 }
 
 const CastView: React.FC<CastViewProps> = ({
@@ -25,6 +26,7 @@ const CastView: React.FC<CastViewProps> = ({
   castOptions,
   editCastCall,
   permissionType,
+  searchText
 }) => {
   const columns: Column[] = [
     {
@@ -281,6 +283,7 @@ const CastView: React.FC<CastViewProps> = ({
         editMode={editMode}
         editFunction={editCastCall}
         groupBy='category'
+        searchText={searchText}
       />
     </>
   );
