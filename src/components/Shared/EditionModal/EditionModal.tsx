@@ -76,6 +76,10 @@ const EditionModal: React.FC<EditionModalProps> = ({
     });
   }, []);
 
+  useEffect(() => {
+    resetFormValues();
+  }, [defaultFormValues]);
+
   const resetFormValues = () => {
     if (defaultFormValues) {
       formInputs.forEach((input: any) => {
