@@ -12,9 +12,14 @@ import {
 import {
   business,
   calendar,
+  calendarClear,
+  construct,
+  cube,
+  film,
   listSharp,
   people,
   reader, settings,
+  videocam,
 } from 'ionicons/icons';
 import React, {
   useCallback, useContext, useEffect, useState,
@@ -266,37 +271,29 @@ const AppTabs: React.FC = () => {
         style={{ display: viewTabs ? '' : 'none' }}
       >
         <IonTabButton tab="calendar" className={defineButtonClassAccess(SecurePages.CALENDAR)} href={`${url}/calendar`}>
-          <IonIcon icon={calendar} className="tab-bar-icons" />
+          <IonIcon icon={calendarClear} className="tab-bar-icons" />
           <IonLabel>CALENDAR</IonLabel>
         </IonTabButton>
         <IonTabButton tab="strips" className={defineButtonClassAccess(SecurePages.SCENES)} href={`${url}/strips`}>
-          <IonIcon icon={listSharp} className="tab-bar-icons" />
+          <IonIcon icon={videocam} className="tab-bar-icons" />
           <IonLabel>SCENES</IonLabel>
         </IonTabButton>
-        {/* <IonTabButton tab="stripboard" className="tab-bar-buttons" href={`${url}/stripboard`}>
-          <IonIcon icon={calendar} className="tab-bar-icons" />
-          <IonLabel>STRIPBOARD</IonLabel>
-        </IonTabButton> */}
         <IonTabButton tab="cast" className={defineButtonClassAccess(SecurePages.CAST)} href={`${url}/cast`}>
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
         <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
-          <IonIcon icon={people} className="tab-bar-icons" />
+          <IonIcon icon={construct} className="tab-bar-icons" />
           <IonLabel>CREW</IonLabel>
         </IonTabButton>
         <IonTabButton tab="sets" className={defineButtonClassAccess(SecurePages.SETS)} href={`${url}/sets`}>
-          <IonIcon icon={business} className="tab-bar-icons" />
+          <IonIcon icon={film} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
         </IonTabButton>
         <IonTabButton tab="elements" className={defineButtonClassAccess(SecurePages.ELEMENTS)} href={`${url}/elements`}>
-          <IonIcon icon={business} className="tab-bar-icons" />
+          <IonIcon icon={cube} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        {/* <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/reports`}>
-          <IonIcon icon={reader} className="tab-bar-icons" />
-          <IonLabel>REPORTS</IonLabel>
-        </IonTabButton> */}
         <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />
           <IonLabel>SETTINGS</IonLabel>
