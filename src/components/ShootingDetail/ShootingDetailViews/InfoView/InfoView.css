@@ -16,7 +16,6 @@
 
 .children-wrapper {
   min-height: 250px;
-  height: 250px;
   overflow-y: auto;
   background-color: var(--ion-color-tertiary-dark);
   padding: 6px;
