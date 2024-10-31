@@ -119,14 +119,16 @@ interface ShootingBasicInfoProps {
     pages: string;
     min: string;
     locations: LocationInfo[];
+    hospitals: LocationInfo[];
     protectedScenes: number;
   };
   mapRef: React.RefObject<HTMLDivElement>;
   permissionType?: number | null;
+  updateShootingAllTimes: (numberOfHours: number) => any;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
 }
 
-const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType, mapRef }) => {
+const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType, mapRef, updateShootingAllTimes }) => {
   const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds' | null>(null);
   const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
   const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
@@ -232,7 +234,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
               <div className="map-container">
                 <GoogleMapComponent
-                  locations={shootingInfo.locations}
+                  locations={[...shootingInfo.locations, ...shootingInfo.hospitals]}
                   mapRef={mapRef}
                 />
               </div>

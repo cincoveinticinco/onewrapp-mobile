@@ -62,6 +62,8 @@ interface ToolbarProps {
   isLoading?: boolean;
   customButtons?: CustomButton[];
   permissionType?: number | null;
+  logoutIcon?: boolean;
+  customHandleSearch?: (e: any) => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -89,6 +91,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   isLoading = false,
   customButtons = [],
   permissionType,
+  logoutIcon = true,
+  customHandleSearch
 }) => {
   const isMobile = useIsMobile();
 
@@ -111,7 +115,12 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   }, [offlineScenes, sceneToPrint]);
 
   const handleSearchInput = (e: any) => {
-    setSearchText(e.detail.value);
+    if(customHandleSearch) {
+      customHandleSearch(e);
+      setSearchText(e.detail.value!);
+    } else {
+      setSearchText(e.detail.value!);
+    }
   };
 
   const searchRef = useRef<HTMLIonInputElement>(null);
@@ -135,7 +144,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   
 
   return (
-    <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar">
+    <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar" style={{
+      paddingLeft: back || backString ? '0px' : '16px',
+    }}>
       {menu && (
         <IonButton slot="start" fill="clear" className="toolbar-button ion-no-padding">
           <IonIcon icon={menuOutline} className="toolbar-icon" />
@@ -144,6 +155,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       <div className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
         <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">{name}</IonTitle>
       </div>
+      <>
       {back && (
         <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
           <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" />
@@ -237,7 +249,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           </IonButton>
         )
       } */}
-      {
+      { logoutIcon &&
         <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button logout-icon" onClick={logout}>
           <RiLogoutBoxLine className="toolbar-icon" />
         </IonButton>
@@ -247,6 +259,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           <IonProgressBar type="indeterminate" />
         )
       }
+      </>
     </IonToolbar>
   );
 });

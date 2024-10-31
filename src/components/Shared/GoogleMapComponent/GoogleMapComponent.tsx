@@ -4,14 +4,29 @@ import environment from '../../../../environment';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import { useIonViewDidEnter } from '@ionic/react';
 
+interface LocationInfo {
+  locationTypeId: number;
+  locationName: string;
+  locationAddress: string;
+  locationPostalCode: string;
+  lat: string;
+  lng: string;
+}
+
 interface GoogleMapComponentProps {
-  locations: Array<{lat: string; lng: string}>;
+  locations: Array<LocationInfo>;
   mapRef: React.RefObject<HTMLElement>;
 }
 
+const colorMap: { [key: number]: string } = {
+  1: 'blue',    // Ubicación
+  2: 'purple',  // Campamento base
+  3: 'red',     // Hospital
+  4: 'yellow'   // Pick up
+};
+
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapRef }) => {
   const [map, setMap] = useState<GoogleMap | null>(null);
-  const [marker, setMarker] = useState<string | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
 
   const createMap = async (lat: number, lng: number) => {
@@ -28,56 +43,43 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapR
         apiKey: environment.MAPS_KEY,
         config: {
           center: { lat, lng },
-          zoom: 15,
+          zoom: 13,
         },
         forceCreate: true
       });
 
-      const newMarker = await newMap.addMarker({
-        coordinate: { lat, lng },
-        draggable: true,
-      });
-
       setMap(newMap);
-      setMarker(newMarker);
       setMapInitialized(true);
 
-      await newMap.setOnMapClickListener((event) => {
-        updateMarker(event.latitude, event.longitude);
-      });
+      // Agregar todos los marcadores después de crear el mapa
+      await addMarkers(newMap, locations);
+      
     } catch (error) {
       console.error('Error creating map:', error);
     }
   };
 
-  const updateMarker = async (latitude: number, longitude: number) => {
-    if (!map) return;
-
-    try {
-      if (marker) {
-        await map.removeMarker(marker);
-      }
-
-      const newMarker = await map.addMarker({
-        coordinate: { lat: latitude, lng: longitude },
-        draggable: true,
-      });
-
-      setMarker(newMarker);
-
-      await map.setOnMarkerDragEndListener(async (event) => {
-        updateMarker(event.latitude, event.longitude);
-      });
-    } catch (error) {
-      console.error('Error updating marker:', error);
+  const addMarkers = async (mapInstance: GoogleMap, locations: Array<LocationInfo>) => {
+    for (const location of locations) {
+      await addMarker(mapInstance, location);
     }
+  };
+
+  const addMarker = async (mapInstance: GoogleMap, location: LocationInfo) => {
+    const color = colorMap[location.locationTypeId] || 'gray';
+
+    await mapInstance.addMarker({
+      coordinate: { lat: parseFloat(location.lat), lng: parseFloat(location.lng) },
+      draggable: true,
+      iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`
+    });
   };
 
   const initMap = async () => {
     if (locations.length > 0 && mapRef.current && !mapInitialized) {
       const lat = parseFloat(locations[0].lat);
       const lng = parseFloat(locations[0].lng);
-      
+
       if (!isNaN(lat) && !isNaN(lng)) {
         await createMap(lat, lng);
       }
