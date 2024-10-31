@@ -138,17 +138,18 @@ export interface ExtraCall {
 }
 
 export interface CrewCall {
-  crewName: string;
-  id: string;
+  id: string | null;
   visible: boolean | null;
-  unit: string | null;
+  unit: number | null;
   name: string | null;
-  department: string | null;
+  departmentEsp: string | null;
+  departmentEng: string | null;
   position: string | null;
   call: string | null;
   callPlace: string | null;
   wrap: string | null;
   onCall: boolean | null;
+  projCrewId: number | null;
 }
 
 export interface PictureCar {

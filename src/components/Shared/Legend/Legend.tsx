@@ -28,6 +28,7 @@ const Legend: React.FC<LegendProps> = ({ items }) => (
           }}
         />
         <IonLabel style={{
+          fontSize: '14px',
           color: 'var(--ion-color-light)',
         }}
         >

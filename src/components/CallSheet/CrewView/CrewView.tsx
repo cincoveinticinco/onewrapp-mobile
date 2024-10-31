@@ -12,46 +12,46 @@ import {
   IonSelect,
   IonSelectOption,
   IonDatetime,
+  IonCheckbox,
 } from '@ionic/react';
 import OutlinePrimaryButton from '../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import './ CrewView.scss'
 import { ShootingStatusEnum } from '../../../Ennums/ennums';
 import { Shooting } from '../../../interfaces/shooting.types';
-import { copy } from 'ionicons/icons';
 import useErrorToast from '../../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../../hooks/Shared/useSuccessToast';
+import { Crew } from '../../../interfaces/crew.types';
 
 interface CrewCall {
-  id: string;
+  id: string | null;
   visible: boolean | null;
-  unit: string | null;
+  unit: number | null;
   name: string | null;
-  department: string | null;
+  departmentEsp: string | null;
+  departmentEng: string | null;
   position: string | null;
   call: string | null;
   callPlace: string | null;
   wrap: string | null;
   onCall: boolean | null;
+  projCrewId: number | null;
 }
 
 interface CrewViewProps {
   crewCalls: CrewCall[];
   editMode: boolean;
+  setCrewCalls: any
 }
 
-const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
+const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls }) => {
   const columns: Column[] = [
     {
       key: 'name', title: 'Name', type: 'text', textAlign: 'left',
     },
-    { key: 'visible', title: 'Visible', type: 'text' },
-    { key: 'unit', title: 'Unit', type: 'text' },
-    { key: 'departmentEng', title: 'Department', type: 'text' },
     { key: 'position', title: 'Position', type: 'text' },
     { key: 'call', title: 'Call', type: 'hour' },
     { key: 'callPlace', title: 'Call Place', type: 'text' },
-    { key: 'wrap', title: 'Wrap', type: 'hour' },
     { key: 'onCall', title: 'On Call', type: 'text' },
   ];
 
@@ -62,12 +62,12 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
   const { shootingId } = useParams<{ shootingId: string }>();
   const oneWrappDb: any = useRxDB();
 
-  const [ thisShooting, setThisShooting ] = useState<Shooting | null>(null);
-  const [ shootingsWithCrewCalls, setShootingsWithCrewCalls ] = useState<any>(null);
+  const [ thisShooting, setThisShooting ] = useState<Shooting | any>(null);
   const [ availableDates, setAvailableDates ] = useState<{
     date: string;
     status: number;
   }[]>([]);
+  const [ copyCrewFromMaster, setCopyCrewFromMaster ] = useState<boolean>(false);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const [ selectedDate, setSelectedDate ] = useState<string>(availableDates[0]?.date || formattedDate);
@@ -77,6 +77,8 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
     isFetching: boolean;
   } = useRxData('shootings', (collection) => collection.find());
   const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
+
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
 
   const [ openCopyCrewModal, setOpenCopyCrewModal ] = useState<boolean>(false);
   const [ selectedUnitId, setSelectedUnitId ] = useState<string>('');
@@ -121,50 +123,69 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
   };
 
   const copyCrewCalls = async () => {
-    // find a shooting with the selected date and the selected unit
-    const shooting = shootings.find((shooting: Shooting) => shooting.shootDate === selectedDate);
-    const shootingCopy = {...shooting};
-    if (!shootingCopy) return;
-    // format the crew calls for selected shooting
-    if (shootingCopy.crewCalls) {
-      if (thisShooting?.generalCall) {
-        shootingCopy.crewCalls = shootingCopy.crewCalls.map((call: any) => {
-          if (call.onCall) {
-            return {
-              ...call,
-              call: null
-            }
-          } else {
-            return {
-              ...call,
-              call: thisShooting?.generalCall,
-            }
-          }
-        })
-      } else {
-        shootingCopy.crewCalls = shootingCopy.crewCalls.map((call: any) => {
-          return {
-            ...call,
-            call: null,
-          }
-        })
-      }
-    }
-
-    const thisShootingCopy = {...thisShooting};
-    if (thisShootingCopy.crewCalls) {
-      thisShootingCopy.crewCalls = shootingCopy.crewCalls
-    }
-
     try {
-      await oneWrappDb.collection('shootings').upsert(thisShootingCopy);
+      // Validate required data
+      if (!selectedDate || (!selectedUnitId  && !copyCrewFromMaster)|| !thisShooting) {
+        errorToast('Missing required data to copy crew calls');
+        return;
+      }
+  
+      let newCrewCalls: CrewCall[];
+  
+      if (!copyCrewFromMaster) {
+        // Find source shooting with the selected date and unit
+        const sourceShootingDoc = shootings.find(
+          (shooting: Shooting) => 
+            shooting.shootDate === selectedDate && 
+            shooting.unitId === parseInt(selectedUnitId)
+        );
+  
+        if (!sourceShootingDoc || !sourceShootingDoc.crewCalls?.length) {
+          errorToast('No crew calls found for selected date and unit');
+          return;
+        }
+  
+        // Create new crew calls array based on source shooting
+        newCrewCalls = sourceShootingDoc.crewCalls.map((call: any) => ({
+          ...call,
+          call: call.onCall ? null : thisShooting.generalCall || null,
+          wrap: null
+        }));
+      } else {
+        // Create custom crewCalls array based on the existing crew
+        newCrewCalls = (crew as Crew[])?.map((crewMember: Crew) => ({
+          id: `${crewMember.id}-${selectedDate}`,
+          visible: crewMember.visibleOnCall,
+          unit: crewMember.unitNumber ? crewMember.unitNumber : null,
+          name: crewMember.fullName,
+          departmentEsp: crewMember.depNameEsp,
+          departmentEng: crewMember.depNameEng,
+          position: crewMember.positionEng,
+          call: crewMember.onCall ? null : thisShooting.generalCall || null,
+          callPlace: null,
+          wrap: null,
+          onCall: crewMember.onCall,
+          projCrewId: parseInt(crewMember.id)
+        }));
+      }
+  
+      // Prepare shooting document update
+      const shootingUpdate = {
+        ...thisShooting._data,
+        crewCalls: newCrewCalls,
+      };
+  
+      // Update shooting document in database
+      await oneWrappDb?.shootings.upsert(shootingUpdate);
+      setCrewCalls(newCrewCalls);
       successToast('Crew calls copied successfully');
       closeModal();
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error copying crew calls:', error?.validationErrors || error);
       errorToast('Error copying crew calls');
-      console.error(error);
     }
-  }
+  };
+
   // Formatear las fechas para highlightedDates
   const highlightedDates = availableDates.map(shoot => {
     if(shoot.status === ShootingStatusEnum.Called) { 
@@ -198,44 +219,58 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode }) => {
             BACK
           </IonButton>
           <IonGrid className="edit-inputs-wrapper" fixed style={{ maxWidth: '600px' }}>
-            <IonRow>
-              <IonSelect
-                color='tertiary'
-                interface='popover'
-                placeholder="SELECT A UNIT"
-                value={selectedUnitId}
-                onIonChange={e => { 
-                  setSelectedUnitId(e.detail.value); 
-                  getAvailableShootingDays(e.detail.value); 
-                }}
-                className="ion-margin-top"
-                labelPlacement="stacked"
-                label='UNIT'
-                mode="ios"
-              >
-                {units.map((unit: any) => (
-                  <IonSelectOption key={unit.id} value={unit.id}>
-                    {`UNIT-${unit?.unitNumber}-${unit?.unitName.toUpperCase() || unit?.unitNumber}`}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonRow>   
-            <IonRow className='margin-top'>
-              <IonDatetime
-                preferWheel={false}
-                presentation="date"
-                value={selectedDate}
-                onIonChange={(e) => {
-                  const newDate = e.detail.value;
-                  if (typeof newDate === "string" && isDateEnabled(newDate)) {
-                    setSelectedDate(newDate);
-                  }
-                }}
-                highlightedDates={highlightedDates}
-                isDateEnabled={isDateEnabled}
-                className="ion-margin-top custom-datetime"  // Clase personalizada para CS
+            <IonRow className='ion-flex ion-align-items-center ion-justify-content-center'>
+              <IonCheckbox
+                checked={copyCrewFromMaster}
+                onIonChange={(e) => setCopyCrewFromMaster(e.detail.checked)}
+                className='ion-flex ion-align-items-icenter'
               />
+              <p className="ion-padding-start">COPY FROM MASTER</p>
             </IonRow>
+            {
+              !copyCrewFromMaster && (
+                <>
+                  <IonRow>
+                    <IonSelect
+                      color='tertiary'
+                      interface='popover'
+                      placeholder="SELECT A UNIT"
+                      value={selectedUnitId}
+                      onIonChange={e => { 
+                        setSelectedUnitId(e.detail.value); 
+                        getAvailableShootingDays(e.detail.value); 
+                      }}
+                      className="ion-margin-top"
+                      labelPlacement="stacked"
+                      label='UNIT'
+                      mode="ios"
+                    >
+                      {units.map((unit: any) => (
+                        <IonSelectOption key={unit.id} value={unit.id}>
+                          {`UNIT-${unit?.unitNumber}-${unit?.unitName.toUpperCase() || unit?.unitNumber}`}
+                        </IonSelectOption>
+                      ))}
+                    </IonSelect>
+                  </IonRow>   
+                  <IonRow className='margin-top'>
+                    <IonDatetime
+                      preferWheel={false}
+                      presentation="date"
+                      value={selectedDate}
+                      onIonChange={(e) => {
+                        const newDate = e.detail.value;
+                        if (typeof newDate === "string" && isDateEnabled(newDate)) {
+                          setSelectedDate(newDate);
+                        }
+                      }}
+                      highlightedDates={highlightedDates}
+                      isDateEnabled={isDateEnabled}
+                      className="ion-margin-top custom-datetime"  // Clase personalizada para CS
+                    />
+                  </IonRow>
+                </>
+              )
+            }
           </IonGrid>
           <div className="edit-new-option-buttons-container ion-flex-column">
             <OutlinePrimaryButton

@@ -2,13 +2,9 @@ import {
   IonButton,
   IonContent,
   IonHeader,
-  IonIcon,
-  IonPage,
   IonTitle,
   IonToolbar,
-  useIonViewDidEnter,
 } from '@ionic/react';
-import { chevronBackOutline, save } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
 import { useParams } from 'react-router';
@@ -439,7 +435,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           />
         );
       case 'crew':
-        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} />;
+        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} setCrewCalls={setCrewCalls} />;
       default:
         return <ExploreContainer name="Default Content" />;
     }
