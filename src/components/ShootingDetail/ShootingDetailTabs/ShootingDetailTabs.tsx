@@ -2,7 +2,7 @@ import {
   IonIcon, IonLabel, IonTabBar, IonTabButton,
 } from '@ionic/react';
 import {
-  documentTextOutline, home, informationCircleOutline, serverOutline,
+  calendarOutline, informationCircleOutline, filmOutline, timeOutline, documentTextOutline, checkmarkDoneOutline, constructOutline,
 } from 'ionicons/icons';
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -34,25 +34,25 @@ const ShootingDetailTabs: React.FC<ShootingDetailTabsProps> = ({ setView, view, 
 
   const tabs: TabConfig[] = [
     {
-      tab: 'shootingScenes', label: 'CALENDAR', icon: home, onClick: handleBack,
+      tab: 'shootingScenes', label: 'CALENDAR', icon: calendarOutline, onClick: handleBack,
     },
     {
       tab: 'shootingInfo', label: 'SHOOTING INFO', icon: informationCircleOutline, onClick: () => setView('info'), view: 'info',
     },
     {
-      tab: 'shootingScenes', label: 'SCENES', icon: serverOutline, onClick: () => setView('scenes'), view: 'scenes',
+      tab: 'shootingScenes', label: 'SCENES', icon: filmOutline, onClick: () => setView('scenes'), view: 'scenes',
     },
     {
-      tab: 'shootingCallTime', label: 'CALL TIME', icon: documentTextOutline, onClick: () => setView('call-sheet'), view: 'call-sheet',
+      tab: 'shootingCallTime', label: 'CALL TIME', icon: timeOutline, onClick: () => setView('call-sheet'), view: 'call-sheet',
     },
     {
       tab: 'shootingOthers', label: 'SCRIPT REPORT', icon: documentTextOutline, onClick: () => setView('script-report'), view: 'script-report',
     },
     {
-      tab: 'shootingOthers', label: 'WRAP REPORT', icon: documentTextOutline, onClick: () => setView('wrap-report'), view: 'wrap-report',
+      tab: 'shootingOthers', label: 'WRAP REPORT', icon: checkmarkDoneOutline, onClick: () => setView('wrap-report'), view: 'wrap-report',
     },
     {
-      tab: 'shootingOthers', label: 'SERVICES', icon: documentTextOutline, onClick: () => setView('production-report'), view: 'production-report',
+      tab: 'shootingOthers', label: 'SERVICES', icon: constructOutline, onClick: () => setView('production-report'), view: 'production-report',
     },
   ];
 
