@@ -43,6 +43,7 @@ interface InfoViewProps {
   openEditModal: (index: number) => void;
   removeHospital: (hospital: LocationInfo, hospitalIndex: number) => void;
   openEditHospitalModal: (index: number) => void;
+  updateShootingAllTimes: (hours: number) => any;
 }
 
 const InfoView: React.FC<InfoViewProps> = ({
@@ -61,6 +62,7 @@ const InfoView: React.FC<InfoViewProps> = ({
   openadvanceCalls,
   setAdvanceCallsEditMode,
   advanceCallsEditMode,
+  updateShootingAllTimes,
   openAdvanceCallModal,
   getHourMinutesFomISO,
   deleteAdvanceCall,
@@ -88,6 +90,7 @@ const InfoView: React.FC<InfoViewProps> = ({
           updateShootingTime={updateShootingTime}
           permissionType={permissionType}
           mapRef={mapRef}
+          updateShootingAllTimes={updateShootingAllTimes}
         />
         <div style={{
           display: 'grid',
