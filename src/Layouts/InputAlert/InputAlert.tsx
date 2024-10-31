@@ -24,7 +24,7 @@ const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlert
     trigger={trigger}
     header={header}
     className="input-alert"
-    mode="ios"
+    mode="md"
     buttons={[
       {
         text: 'confirm',

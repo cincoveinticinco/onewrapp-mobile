@@ -484,6 +484,7 @@ const ShootingDetail: React.FC<{
 
   const closeHospitalsMapModal = () => {
     setShowHospitalsMapModal(false);
+    setSelectedHospital(null);
   };
 
   const openHospitalsMapModal = () => {

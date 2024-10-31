@@ -10,6 +10,7 @@ import {
   IonList,
   IonModal,
   IonRow,
+  useIonViewWillLeave,
 } from '@ionic/react';
 import {
   useCallback,
@@ -55,6 +56,13 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       setLat(parseFloat(selectedLocation.lat));
       setLng(parseFloat(selectedLocation.lng));
       setSearchTerm(selectedLocation.locationAddress);
+    } else {
+      setLocationName('');
+      setLocationTypeId(hospital ? 3 : null);
+      setLocationAddress('');
+      setLat(null);
+      setLng(null);
+      setSearchTerm('');
     }
   }, [selectedLocation]);
 
@@ -158,13 +166,18 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
 
   const handleCloseModal = () => {
     setMapInitialized(false);
-    closeModal();
     setCurrentAddress('');
     setSuggestions([]);
     setSearchTerm('');
     setMarker(null);
     setMap(null);
+    setLocationName('');
+    setLocationTypeId(hospital ? 3 : null);
+    setLocationAddress('');
+    setLat(null);
+    setLng(null);
     destroyMap();
+    closeModal();
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -310,7 +323,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                 onIonInput={(e) => setLocationName((e.target as any).value)}
                 className={`${errors.locationName ? 'ion-invalid' : ''}`}
                 labelPlacement="floating"
-                label={errors.locationName ? 'REQUIRED LOCATION *' : 'Location Name'}
+                label={errors.locationName ? 'REQUIRED *' : hospital ? 'NAME' : 'LOCATION NAME'}
                 placeholder={errors.locationName ? 'Location Name' : ''}
                 required
               />
