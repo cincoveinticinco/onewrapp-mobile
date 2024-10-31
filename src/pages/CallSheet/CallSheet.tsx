@@ -34,6 +34,7 @@ import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
 import './CallSheet.css';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
+import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -78,6 +79,8 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
@@ -359,6 +362,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
                 readyToShoot: talentCallInfo?.readyToShoot || '--',
                 notes: talentCallInfo?.notes || '',
                 castName: character.characterName || '',
+                category: talent?.castCategory || '',
               });
             }
           });
@@ -396,6 +400,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             castOptions={castOptions}
             editCastCall={editCastCall}
             permissionType={permissionType}
+            searchText={searchText}
           />
         );
       case 'extras':
@@ -408,6 +413,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             addNewExtraCall={createNewExtraCall}
             editExtraCall={editExtraCall}
             permissionType={permissionType}
+            searchText={searchText}
           />
         );
       case 'pictureCars':
@@ -420,6 +426,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
             editMode={editMode && view === 'pictureCars'}
             editPictureCar={editPictureCar}
             permissionType={permissionType}
+            searchText={searchText}
           />
         );
       case 'others':
@@ -432,10 +439,11 @@ const CallSheet: React.FC<CallSheetProps> = ({
             editMode={editMode && view === 'others'}
             editOtherCall={editOtherCall}
             permissionType={permissionType}
+            searchText={searchText}
           />
         );
       case 'crew':
-        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} setCrewCalls={setCrewCalls} />;
+        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} setCrewCalls={setCrewCalls} searchText={searchText}/>;
       default:
         return <ExploreContainer name="Default Content" />;
     }
@@ -696,47 +704,53 @@ const CallSheet: React.FC<CallSheetProps> = ({
     }
   };
 
+  const editButton = () => {
+    return (
+      thisShooting && thisShooting.status !== ShootingStatusEnum.Closed && (
+        <div slot="end">
+          {
+            !editMode && (
+              <AddButton onClick={() => openAddNewModal()} disabled={false} />
+            )
+          }
+          {
+            !editMode ? (
+              <>
+                <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={false} className='ion-no-padding toolbar-button'>
+                  <VscEdit className="toolbar-icon"/>
+                </IonButton>
+              </>
+            ) : (
+              <>
+                <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={false}>
+                  SAVE
+                </IonButton>
+                <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()}>
+                  CANCEL
+                </IonButton>
+              </>
+            )
+          }
+        </div>
+      )
+    );
+  }
+
+
   if (!isSection) {
     return (
       <>
         <IonHeader>
-          <IonToolbar color="tertiary" className='header-toolbar'>
-            <IonTitle>
-              {view.toUpperCase()}
-              {' '}
-              CALL TIME
-            </IonTitle>
-            {
-              thisShooting
-              && thisShooting.status !== ShootingStatusEnum.Closed && (
-                <div slot="end">
-                  {
-                    !editMode ? (
-                      <>
-                        <IonButton fill="clear" color={!editMode ? 'light' : 'success'} onClick={() => toggleEditMode()} disabled={false}>
-                          <VscEdit />
-                        </IonButton>
-                      </>
-                    ) : (
-                      <>
-                        <IonButton className="outline-success-button-small" onClick={() => saveEdition()} disabled={false}>
-                          SAVE
-                        </IonButton>
-                        <IonButton className="outline-danger-button-small" onClick={() => toggleEditMode()}>
-                          CANCEL
-                        </IonButton>
-                      </>
-                    )
-                  }
-                  {
-                    !editMode && (
-                      <AddButton onClick={() => openAddNewModal()} disabled={false} />
-                    )
-                  }
-                </div>
-              )
-            }
-          </IonToolbar>
+          <Toolbar
+            name={`${view.toUpperCase()} CALL TIME`}
+            logoutIcon={false}
+            search={true}
+            searchMode={searchMode}
+            setSearchMode={setSearchMode}
+            searchText={searchText}
+            setSearchText={setSearchText}
+            customButtons={[editButton as any]}
+          />
         </IonHeader>
         <IonContent color="tertiary" fullscreen className='fade-in'>
           <div className="ion-flex">
