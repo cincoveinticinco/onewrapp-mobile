@@ -13,6 +13,7 @@ interface OtherCallsProps {
   editMode: boolean
   editOtherCall: (index: number, key: any, newValue: any, type: string) => void
   permissionType?: number | null
+  searchText?: string
 }
 
 const OtherCalls: React.FC<OtherCallsProps> = ({
@@ -23,6 +24,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   editMode,
   editOtherCall,
   permissionType,
+  searchText
 }) => {
   // I need three columns for this, car name (key pictureCarName), quantity(quantity) and call time (key callTime)
   const otherCallsColumns: Column[] = [
@@ -97,6 +99,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
         stickyColumnCount={1}
         editMode={editMode}
         editFunction={editOtherCall}
+        searchText={searchText}
       />
     </>
   );

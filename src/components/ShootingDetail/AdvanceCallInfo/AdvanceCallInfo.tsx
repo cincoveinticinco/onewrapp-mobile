@@ -56,6 +56,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
           <b>{departmentName}</b>
         </h5>
         <div className="location-address">
+          <p>{ call.description?.toUpperCase() }</p>
           <p>{getHourMinutesFomISO(call.adv_call_time, true)}</p>
         </div>
         {editMode && (

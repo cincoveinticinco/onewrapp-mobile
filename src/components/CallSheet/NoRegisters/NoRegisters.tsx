@@ -4,14 +4,15 @@ import OutlinePrimaryButton from '../../Shared/OutlinePrimaryButton/OutlinePrima
 interface NoRegistersProps {
   addNew: () => void;
   disabled?: boolean;
+  name?: string;
 }
 
-const NoRegisters: FC<NoRegistersProps> = ({ addNew }, disabled) => (
+const NoRegisters: FC<NoRegistersProps> = ({ addNew, name = "Add New" }, disabled) => (
   <div
     className="empty-table"
   >
     <OutlinePrimaryButton
-      buttonName="Add New"
+      buttonName={name}
       onClick={() => addNew()}
       className="center-absolute"
     />

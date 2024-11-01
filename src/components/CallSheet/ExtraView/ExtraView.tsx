@@ -13,6 +13,7 @@ interface ExtraViewProps {
   addNewExtraCall: (extraCall: ExtraCall) => void;
   editExtraCall: (index: number, key: any, newValue: any, type: string) => void;
   permissionType?: number | null;
+  searchText?: string;
 }
 
 const columns: Column[] = [
@@ -43,7 +44,7 @@ const columns: Column[] = [
 ];
 
 const ExtraView: React.FC<ExtraViewProps> = ({
-  extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen, addNewExtraCall, editExtraCall, permissionType,
+  extraViewData, editMode, addNewModalIsOpen, setAddNewModalIsOpen, addNewExtraCall, editExtraCall, permissionType, searchText
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
@@ -152,7 +153,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
   }
 
   return (
-    <GeneralTable columns={columns} data={extraViewData} editMode={editMode} editFunction={editExtraCall} />
+    <GeneralTable columns={columns} data={extraViewData} editMode={editMode} editFunction={editExtraCall} searchText={searchText} />
   );
 };
 

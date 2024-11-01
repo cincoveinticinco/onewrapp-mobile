@@ -1,0 +1,15 @@
+.fabButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+ion-label {
+  font-size: 6px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+.tabs {
+  bottom: 100px !important;
+  right: 16px;
+}

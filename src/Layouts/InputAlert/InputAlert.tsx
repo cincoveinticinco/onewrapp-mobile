@@ -9,23 +9,27 @@ interface InputAlertProps {
   header: string;
   subHeader?: string;
   message?: string;
+  isOpen?: boolean;
+  handleCancel?: () => void;
 }
 
 const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlertProps> = ({
   handleOk,
+  handleCancel,
   inputs,
   trigger,
   header,
   subHeader,
   message,
+  isOpen = false
 }, ref) => (
   <IonAlert
     ref={ref}
-    color="dark"
     trigger={trigger}
     header={header}
     className="input-alert"
-    mode="ios"
+    mode="md"
+    isOpen={isOpen}
     buttons={[
       {
         text: 'confirm',
@@ -36,6 +40,7 @@ const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlert
         text: 'cancel',
         role: 'cancel',
         cssClass: 'secondary',
+        handler: handleCancel
       },
     ]}
     inputs={inputs}

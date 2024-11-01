@@ -76,6 +76,10 @@ const EditionModal: React.FC<EditionModalProps> = ({
     });
   }, []);
 
+  useEffect(() => {
+    resetFormValues();
+  }, [defaultFormValues]);
+
   const resetFormValues = () => {
     if (defaultFormValues) {
       formInputs.forEach((input: any) => {
@@ -178,7 +182,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
           <IonGrid className="edit-inputs-wrapper" fixed style={{ maxWidth: '600px' }}>
             <IonRow>
               {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} offset={input.offset || 0} sizeSm={input.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center">
+                <IonCol key={i} offset={input?.offset || 0} sizeSm={input?.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center ion-align-items-end">
                   {input.type === 'select' ? (
                     input.search ? (
                       <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />

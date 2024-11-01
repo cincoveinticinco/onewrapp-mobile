@@ -1,0 +1,14 @@
+.custom-datetime {
+  color: #000 !important;
+  --background: var(--ion-color-light);
+  --border-color: var(--ion-color-light);
+  border-radius: 16px;
+  box-shadow: rgba(var(--ion-color-primary-rgb), 0.3) 0px 10px 15px -3px;
+  margin: 16px auto !important;
+  
+  text-transform: uppercase !important;
+}
+
+.margin-top {
+  margin-top: 16px;
+}

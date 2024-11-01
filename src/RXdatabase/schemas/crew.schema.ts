@@ -48,7 +48,7 @@ const crewSchema = {
       format: 'date-time',
     },
     unitNumber: {
-      type: ['integer', 'null'],
+      type: ['string', 'null'],
     },
     order: {
       type: ['integer', 'null'],
@@ -71,7 +71,7 @@ const crewSchema = {
     unitName: {
       type: ['string', 'null'],
     },
-    unitId: {
+    unitIds: {
       type: ['string', 'null'],
     },
     countryId: {

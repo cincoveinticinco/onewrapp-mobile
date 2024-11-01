@@ -12,10 +12,11 @@ interface PictureCarsProps {
   editMode: boolean;
   editPictureCar: (pictureCarIndex: number, key: any, newValue: any, type: any) => void;
   permissionType?: number | null;
+  searchText?: string;
 }
 
 const PictureCars: React.FC<PictureCarsProps> = ({
-  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar, permissionType,
+  pictureCars, isOpen, setIsOpen, addNewPictureCar, editMode, editPictureCar, permissionType, searchText
 }) => {
   const modalRef = React.useRef<HTMLIonModalElement>(null);
 
@@ -92,7 +93,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
 
   return (
     <>
-      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={editMode} editFunction={editPictureCar} />
+      <GeneralTable columns={pictureCarsColumns} data={pictureCars} editMode={editMode} editFunction={editPictureCar} searchText={searchText}/>
     </>
   );
 };

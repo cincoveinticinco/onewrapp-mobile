@@ -44,7 +44,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
       } else {
         setFilteredData(data);
       }
-    }, 300);
+    }, 0);
 
     return () => clearTimeout(debounceTimeout);
   }, [searchText, data]);
@@ -159,7 +159,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
             snaps
             className={`switch ${rangeValue === -1 ? 'negative' : rangeValue === 1 ? 'positive' : 'neutral'}`}
             value={rangeValue}
-            onIonChange={(e) => handleChange(e.detail.value)}
+            onIonInput={(e) => handleChange(e.detail.value)}
           />
         );
       case 'hour':
@@ -167,7 +167,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
           <IonInput
             type="time"
             value={getHourMinutesFomISO(value)}
-            onIonChange={(e) => handleChange(e.detail.value)}
+            onIonInput={(e) => handleChange(e.detail.value)}
             placeholder='00:00'
           />
         );
@@ -177,7 +177,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
           <IonInput
             type="number"
             value={value || 0}
-            onIonChange={(e) => handleChange(e.detail.value)}
+            onIonInput={(e) => handleChange(e.detail.value)}
             placeholder="0"
           />
         );
@@ -188,14 +188,14 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
             <IonInput
               type="number"
               value={minutes}
-              onIonChange={(e) => handleChange(`${e.detail.value}:${seconds}`)}
+              onIonInput={(e) => handleChange(`${e.detail.value}:${seconds}`)}
               placeholder="00"
             />
             <span>:</span>
             <IonInput
               type="number"
               value={seconds}
-              onIonChange={(e) => handleChange(`${minutes}:${e.detail.value}`)}
+              onIonInput={(e) => handleChange(`${minutes}:${e.detail.value}`)}
               placeholder="00"
             />
           </div>
@@ -205,7 +205,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
           <IonInput
             type="text"
             value={value}
-            onIonChange={(e) => handleChange(e.detail.value)}
+            onIonInput={(e) => handleChange(e.detail.value)}
             placeholder={placeHolder}
           />
         );

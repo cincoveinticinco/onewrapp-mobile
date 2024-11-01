@@ -293,6 +293,12 @@ const shootingSchema = {
           dropOff: {
             type: ['string', 'null'],
           },
+          onProsthetic: {
+            type: ['string', 'null']
+          },
+          outProsthetic: {
+            type: ['string', 'null']
+          },
           mealIn: {
             type: ['string', 'null'],
           },
@@ -391,7 +397,7 @@ const shootingSchema = {
         type: 'object',
         properties: {
           id: {
-            type: 'string',
+            type: ['string', 'null'],
           },
           visible: {
             type: ['boolean', 'null'],
@@ -423,7 +429,12 @@ const shootingSchema = {
           onCall: {
             type: ['boolean', 'null'],
           },
+          projCrewId: {
+            type: ['number', 'null'],
+          }
         },
+        required: [], // No required fields since all can be null
+        additionalProperties: false
       },
     },
     pictureCars: {

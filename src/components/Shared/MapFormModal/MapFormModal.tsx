@@ -10,6 +10,7 @@ import {
   IonList,
   IonModal,
   IonRow,
+  useIonViewWillLeave,
 } from '@ionic/react';
 import {
   useCallback,
@@ -55,6 +56,13 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       setLat(parseFloat(selectedLocation.lat));
       setLng(parseFloat(selectedLocation.lng));
       setSearchTerm(selectedLocation.locationAddress);
+    } else {
+      setLocationName('');
+      setLocationTypeId(hospital ? 3 : null);
+      setLocationAddress('');
+      setLat(null);
+      setLng(null);
+      setSearchTerm('');
     }
   }, [selectedLocation]);
 
@@ -121,49 +129,55 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         updateMarker(event.latitude, event.longitude);
       });
 
-      updateAddress(latitude, longitude);
-    }
-  };
-
-  const updateAddress = async (lat: number, lng: number) => {
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK && results) {
-        if (results[0]) {
-          const address = results[0].formatted_address;
+      // Use Capacitor's Geocoding API instead of Google Maps JavaScript API
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${environment.MAPS_KEY}`
+        );
+        const data = await response.json();
+        
+        if (data.status === 'OK' && data.results && data.results[0]) {
+          const address = data.results[0].formatted_address;
           setCurrentAddress(address);
           setSearchTerm(address);
           setLocationAddress(address);
 
-          const postalCode = results[0].address_components.find((component: any) => component.types.includes('postal_code'));
-          if (postalCode) {
-            setLocationPostalCode(postalCode.long_name);
+          const postalComponent = data.results[0].address_components.find(
+            (component: any) => component.types.includes('postal_code')
+          );
+          if (postalComponent) {
+            setLocationPostalCode(postalComponent.long_name);
           }
         } else {
-          setCurrentAddress('Dirección no encontrada');
+          setCurrentAddress('Address not found');
           setSearchTerm('');
           setLocationAddress('');
           setLocationPostalCode('');
         }
-      } else {
-        setCurrentAddress('Error al obtener la dirección');
+      } catch (error) {
+        console.error('Error getting address:', error);
+        setCurrentAddress('Error getting address');
         setSearchTerm('');
         setLocationAddress('');
         setLocationPostalCode('');
       }
-    });
+    }
   };
 
   const handleCloseModal = () => {
     setMapInitialized(false);
-    closeModal();
     setCurrentAddress('');
     setSuggestions([]);
     setSearchTerm('');
     setMarker(null);
     setMap(null);
+    setLocationName('');
+    setLocationTypeId(hospital ? 3 : null);
+    setLocationAddress('');
+    setLat(null);
+    setLng(null);
+    destroyMap();
+    closeModal();
   };
 
   const debounce = (func: Function, wait: number) => {
@@ -185,32 +199,39 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   };
 
   const geocodeAddress = async (address: string) => {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
-        setSuggestions(results || []);
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${environment.MAPS_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.status === 'OK') {
+        setSuggestions(data.results || []);
       } else {
         setSuggestions([]);
       }
-    });
+    } catch (error) {
+      console.error('Error geocoding address:', error);
+      setSuggestions([]);
+    }
   };
 
   const debouncedGeocodeAddress = useCallback(debounce(geocodeAddress, 300), []);
 
   const handleSuggestionClick = async (suggestion: any) => {
     if (map) {
-      const { location } = suggestion.geometry;
+      const location = suggestion.geometry.location;
       await map.setCamera({
         coordinate: {
-          lat: location.lat(),
-          lng: location.lng(),
+          lat: location.lat,
+          lng: location.lng,
         },
         zoom: 15,
         animate: true,
       });
       setSearchTerm(suggestion.formatted_address);
       setSuggestions([]);
-      updateMarker(location.lat(), location.lng());
+      updateMarker(location.lat, location.lng);
     }
   };
 
@@ -257,22 +278,21 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         lat: lat!.toString(),
         lng: lng!.toString(),
       };
-      await onSubmit(formData);
-      // ... (reset form fields)
-      closeModal();
+      onSubmit(formData);
+      setTimeout(() => {
+        handleCloseModal();
+      }, 500);
     }
   };
 
+  const destroyMap = async () => {
+    if (map) {
+      await map.destroy();
+  }}
+
   return (
     <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
-      <IonHeader>
-        {/* <IonToolbar color="tertiary">
-          <IonTitle>Map</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={handleCloseModal}>Close</IonButton>
-          </IonButtons>
-        </IonToolbar> */}
-      </IonHeader>
+      <IonHeader />
       <IonContent color="tertiary">
         <div style={{
           minHeight: '400px',
@@ -303,7 +323,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
                 onIonInput={(e) => setLocationName((e.target as any).value)}
                 className={`${errors.locationName ? 'ion-invalid' : ''}`}
                 labelPlacement="floating"
-                label={errors.locationName ? 'REQUIRED LOCATION *' : 'Location Name'}
+                label={errors.locationName ? 'REQUIRED *' : hospital ? 'NAME' : 'LOCATION NAME'}
                 placeholder={errors.locationName ? 'Location Name' : ''}
                 required
               />

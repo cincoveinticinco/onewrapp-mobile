@@ -14,8 +14,8 @@ interface DropDownCastProps {
 const DropDownCast: React.FC<DropDownCastProps> = ({
   category, isOpen, onToggle, count, children, searchTerm,
 }) => (
-  <div key={`cast-dropdown-${category}`}>
-    <div className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start" onClick={onToggle}>
+  <div key={`cast-dropdown-${category} background-tertiary-dark`}>
+    <div className="cast-dropdown category-item-title ion-flex ion-justify-content-between ion-padding-start background-tertiary-dark" onClick={onToggle}>
       <p className="ion-flex ion-align-items-center">
         <HighlightedText text={`${category} (${count})`} searchTerm={searchTerm || ''} />
       </p>

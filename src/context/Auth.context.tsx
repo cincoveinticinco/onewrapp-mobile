@@ -1,19 +1,22 @@
 import React, {
   useContext, useState, useCallback,
+  useEffect,
 } from 'react';
 import environment from '../../environment';
 import { useHistory } from 'react-router';
+import useErrorToast from '../hooks/Shared/useErrorToast';
+import DatabaseContext from './Database.context';
 
 interface AuthContextType {
   loggedIn: boolean;
   user: any | null;
   checkSession: () => Promise<boolean>;
   saveLogin: (token: string, userData: any) => void;
-  logout: () => void;
+  logout: any;
   loading: boolean;
   getToken: () => Promise<string>;
   setLoadingAuth: (loading: boolean) => void;
-  checkOffline: (isLogedOffline: boolean) => void;
+  setLoggedIn: (loggedIn: boolean) => void;
 }
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -25,48 +28,28 @@ export const AuthContext = React.createContext<AuthContextType>({
   loading: true,
   getToken: () => new Promise(() => {}),
   setLoadingAuth: () => {},
-  checkOffline: () => {},
+  setLoggedIn: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(localStorage.getItem('loggedIn') === 'true' || false);
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string>('');
-  const history = useHistory();
+  const { oneWrapDb } = useContext(DatabaseContext);
+  
 
   const checkSession = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    console.log('EXECUTING CHECK SESSION')
-    if (token) {
-      try {
-        const response = await fetch(`${environment.URL_PATH}/verify_session`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-          setLoggedIn(true);
-          return true;
-        }
-        localStorage.removeItem('token');
-        setUser(null);
-        setLoggedIn(false);
-        return false;
-      } catch (error) {
-        localStorage.removeItem('token');
-        setUser(null);
-        setLoggedIn(false);
-      }
-    }
-    setLoggedIn(false);
-    return false;
+   
+    return true;
   }, []);
+
+    // save loggedin in localstorage
+  useEffect(() => {
+    localStorage.setItem('loggedIn', loggedIn.toString());
+  }, [loggedIn]);
 
   const saveLogin = useCallback((token: string, userData: any) => {
     localStorage.setItem('token', token);
@@ -75,12 +58,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoggedIn(true);
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('loggedIn');
     setUser(null);
     setLoggedIn(false);
     window.location.href = '/';
     console.log('LOGOUT')
+    // Remove user fron local data
+    const user = await oneWrapDb?.user.findOne().exec();
+    if (user) {
+     await user.remove()
+    }
   }
 
   const getToken = useCallback(() => new Promise<string>((resolve) => {
@@ -95,11 +84,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkToken();
   }), []);
 
-  const checkOffline = (isLogedOffline: boolean) => {
-    if(isLogedOffline){
-      setLoggedIn(true);
-    }
-  }
 
   const value = {
     loggedIn,
@@ -110,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     getToken,
     setLoadingAuth: setLoading,
-    checkOffline,
+    setLoggedIn
   };
 
   return (

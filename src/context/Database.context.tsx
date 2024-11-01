@@ -48,6 +48,7 @@ export interface DatabaseContextProps {
   projectsInfoIsOffline: {[key: string]: boolean};
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
   initializeProjectsUserReplication: () => Promise<boolean>;
+  initializeAllReplications: () => Promise<void>;
 }
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
@@ -77,6 +78,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   projectsInfoIsOffline: {},
   setProjectsInfoIsOffline: () => {},
   initializeProjectsUserReplication: () => new Promise(() => false),
+  initializeAllReplications: () => new Promise(() => false),
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -93,7 +95,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
   const {
-    checkSession, setLoadingAuth, getToken, logout, checkOffline
+   getToken
   } = useContext(AuthContext);
 
   const resyncScenes: any = useRef(null);
@@ -418,40 +420,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
-    const getUser = async () => {
-      if(oneWrapRXdatabase) {
-        const user = await oneWrapRXdatabase.user.findOne().exec();
-        if(user) {
-          return user._data;
-        }
-      }
-      return null;
-    }
-
-    const fetchUser = async () => {
-      const user = await getUser();
-      if ((isOnline || navigator.onLine)) {
-        checkSession().finally(() => setLoadingAuth(false));
-      } else {
-        if (user) {
-          const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
-          const now = new Date().getTime();
-
-          if (now > sessionEndsAt) {
-            logout();
-            setLoadingAuth(false);
-          } else {
-            setLoadingAuth(false);
-            checkOffline(true);
-          }
-        }
-      }
-    };
-
-    oneWrapRXdatabase && fetchUser();
-  }, [checkSession, isOnline, oneWrapRXdatabase]);
-
-  useEffect(() => {
     if(projectId) {
       localStorage.setItem('projectId', projectId);
       resyncScenes.current = null;
@@ -670,6 +638,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           projectsInfoIsOffline,
           setProjectsInfoIsOffline,
           initializeProjectsUserReplication,
+          initializeAllReplications,
         }}
       >
         {children}

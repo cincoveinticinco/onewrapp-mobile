@@ -1,15 +1,17 @@
 import {
+  IonAlert,
   IonButton, IonContent, IonHeader,
   IonItem, IonPage, IonReorderGroup,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
+  useCallback,
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { VscEdit } from 'react-icons/vsc';
 import { useHistory, useParams } from 'react-router';
-import { useRxDB } from 'rxdb-hooks';
+import { useRxData, useRxDB } from 'rxdb-hooks';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import MapFormModal from '../../components/Shared/MapFormModal/MapFormModal';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
@@ -48,8 +50,12 @@ import './ShootingDetail.css';
 import getSceneHeader from '../../utils/getSceneHeader';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import Legend from '../../components/Shared/Legend/Legend';
+import CallSheet from '../CallSheet/CallSheet';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import { set } from 'lodash';
+import { Crew } from '../../interfaces/crew.types';
 
-export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report'
+export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {
   cardType: string;
 };
@@ -87,6 +93,7 @@ const ShootingDetail: React.FC<{
   permissionType,
 }) => {
   // *************************** CONSTANTS ************************************//
+  const { id } = useParams<{ id: string }>();
 
   const shootingDataInitial: ShootingDataProps = {
     mergedSceneBanners: [],
@@ -165,15 +172,42 @@ const ShootingDetail: React.FC<{
     },
   ];
 
-  const advanceCallInputs = [
+
+  //* ***************************** RXDB HOOKS *****************************/
+
+  const oneWrappDb: any = useRxDB();
+
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
+
+  //* ***************************** RXDB HOOKS *****************************/
+
+  const [departments, setDepartments] = useState<SelectOptionsInterface[]>([]);
+
+  const getCrewDepartments = () => {
+    const departments = crew.map((c: Crew) => c.depNameEng);
+    const uniqueDepartments = Array.from(new Set(departments));
+    return uniqueDepartments.map((dep: string) => ({ value: dep, label: dep }));
+  }
+
+  useEffect(() => {
+    console.log(crew)
+    if(crew && !isFetchingCrew ) {
+      setDepartments(getCrewDepartments());
+      console.log(departments)
+    }
+  }, [crew, isFetchingCrew]);
+
+
+
+  const advanceCallInputs: FormInput[]  = [
     {
-      label: 'Department', type: 'text', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6',
+      label: 'Department', type: 'select', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6', selectOptions: departments, search: true
     },
     {
       label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '6',
     },
     {
-      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12',
+      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12'
     },
   ];
 
@@ -198,10 +232,8 @@ const ShootingDetail: React.FC<{
 
   const [isDisabled, unused_] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
-  const oneWrappDb: any = useRxDB();
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
-  const { id } = useParams<{ id: string }>();
   const [view, setView] = useState<ShootingViews>('info');
   const [openLocations, setOpenLocations] = useState(true);
   const [openHospitals, setOpenHospitals] = useState(true);
@@ -220,6 +252,9 @@ const ShootingDetail: React.FC<{
   const [shootingData, setShootingData] = useState<ShootingDataProps>(shootingDataInitial);
   const [searchText, setSearchText] = useState('');
   const [searchMode, setSearchMode] = useState(false);
+  const [generalCallDiffHours, setGeneralCallDiffHours ] = useState<number>(0)
+  const [moveDiffHoursAlertOpen, setMoveDiffHoursAlertOpen] = useState(false);
+  const [isReset, setIsReset] = useState(false);
 
   // *************************** STATES ************************************//
 
@@ -254,11 +289,18 @@ const ShootingDetail: React.FC<{
     return false;
   };
 
+  const resetComponent = () => {
+    setIsLoading(true);
+    setIsReset(true);
+    // Opcional: volver a false después de un breve tiempo
+    setTimeout(() => {setIsReset(false);     setIsLoading(false)}, 500);
+  };
+
   const validateAdvanceCallExistence = (callTime: string) => {
     const { advanceCalls: shootingCalls } = shootingData.shotingInfo;
-    const callExists = shootingCalls.some((call: any) => call.dep_name_eng.toLowerCase() === callTime.toLowerCase() || call.dep_name_esp.toLowerCase() === callTime.toLowerCase());
+    const callExists = shootingCalls.some((call: any) => call.dep_name_eng?.toLowerCase() === callTime?.toLowerCase() || call.dep_name_esp?.toLowerCase() === callTime?.toLowerCase());
     if (callExists) {
-      return 'department already exists in shooting';
+      return 'department call already exists in shooting';
     }
 
     return false;
@@ -408,21 +450,44 @@ const ShootingDetail: React.FC<{
   };
 
   const timeToISOString = (time: { hours: string, minutes: string }, shootingDate: string) => {
-    const shootingDay = new Date(shootingDate);
-
-    // Crear una nueva fecha con la zona horaria local
-    const newDate = new Date(
-      shootingDay.getFullYear(),
-      shootingDay.getMonth(),
-      shootingDay.getDate(),
-      parseInt(time.hours, 10),
-      parseInt(time.minutes, 10),
-    );
-
-    const offset = newDate.getTimezoneOffset();
-    const localISOTime = new Date(newDate.getTime() - (offset * 60 * 1000)).toISOString().slice(0, -1);
-
-    return localISOTime;
+    try {
+      // Asegurarse de que la fecha es válida
+      const shootingDay = new Date(shootingDate);
+      if (isNaN(shootingDay.getTime())) {
+        throw new Error('Invalid shooting date');
+      }
+  
+      // Validar horas y minutos
+      const hours = parseInt(time.hours, 10);
+      const minutes = parseInt(time.minutes, 10);
+  
+      if (isNaN(hours) || hours < 0 || hours > 23) {
+        throw new Error('Invalid hours');
+      }
+      if (isNaN(minutes) || minutes < 0 || minutes > 59) {
+        throw new Error('Invalid minutes');
+      }
+  
+      // Crear la fecha usando la zona horaria local
+      const newDate = new Date(
+        shootingDay.getFullYear(),
+        shootingDay.getMonth(),
+        shootingDay.getDate(),
+        hours,
+        minutes
+      );
+  
+      // Verificar que la fecha resultante es válida
+      if (isNaN(newDate.getTime())) {
+        throw new Error('Generated invalid date');
+      }
+  
+      return newDate.toISOString();
+    } catch (error) {
+      console.error('Error in timeToISOString:', error);
+      console.error('Input values:', { shootingDate, time });
+      throw error;
+    }
   };
 
   const setMergedScenesShootData = (scenes: any) => {
@@ -459,6 +524,7 @@ const ShootingDetail: React.FC<{
 
   const closeHospitalsMapModal = () => {
     setShowHospitalsMapModal(false);
+    setSelectedHospital(null);
   };
 
   const openHospitalsMapModal = () => {
@@ -617,7 +683,12 @@ const ShootingDetail: React.FC<{
       const scenesData = await getShootingData();
       setShootingData({
         mergedSceneBanners: scenesData.mergedSceneBanners,
-        mergedScenesShootData: scenesData.mergedScenesShootData,
+        mergedScenesShootData: scenesData.mergedScenesShootData.map((scene: any) => {
+          return {
+            ...scene,
+            backgroundColor: getSceneBackgroundColor(scene),
+          };
+        }),
         notIncludedScenes: scenesData.scenesNotIncluded,
         shotingInfo: scenesData.shootingInfo,
         shootingFormattedDate: scenesData.formattedDate,
@@ -634,16 +705,15 @@ const ShootingDetail: React.FC<{
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const shootingCopy = { ...shooting._data };
-      console.log(shootingCopy);
       shootingCopy.scenes = shootingData.mergedScenesShootData;
-
       await oneWrappDb?.shootings.upsert(shootingCopy);
+      successToast('Script report saved successfully');
+      resetComponent();
     } catch (error) {
       errorToast(`Error saving script report: ${error}`);
       throw error;
     } finally {
       await fetchData();
-      successToast('Script report saved successfully');
     }
   };
 
@@ -651,24 +721,53 @@ const ShootingDetail: React.FC<{
     if (oneWrappDb && shootingId) {
       try {
         const shooting = await oneWrappDb.shootings.findOne({ selector: { id: shootingId } }).exec();
-
+        
         if (shooting) {
           const shootingCopy = { ...shooting._data };
 
           const formattedTime = convertTo24Hour(time);
-
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shootingCopy.shootDate);
 
-          shootingCopy[field] = newTimeISO;
 
+            if(shootingCopy.generalCall && field === 'generalCall') {
+            // Normalize the time to ensure they are in the same time zone and format
+            const previousGeneralCallDate = new Date(shootingCopy.generalCall);
+            const newGeneralCallDate = new Date(newTimeISO);
+
+            console.log('previousGeneralCallDate', previousGeneralCallDate);
+            console.log('newGeneralCallDate', newGeneralCallDate);
+
+            // Convert both times to military hours
+            const previousGeneralCallHours = previousGeneralCallDate.getHours();
+            const newGeneralCallHours = newGeneralCallDate.getHours();
+
+            const diff = newGeneralCallHours - previousGeneralCallHours;
+            setGeneralCallDiffHours(diff);
+            }
+
+          shootingCopy[field] = newTimeISO;
+          setIsLoading(false);
           await oneWrappDb.shootings.upsert(shootingCopy);
           await fetchData();
+          setShootingData((prev: any) => ({
+            ...prev,
+            shotingInfo: {
+              ...prev.shotingInfo,
+              [field]: time,
+            },
+          }));
+
+          if(field === 'generalCall') {
+            setMoveDiffHoursAlertOpen(true)
+          }
           successToast('Time updated successfully');
         }
       } catch (error) {
         errorToast(`Error updating time: ${error}`);
         throw error;
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -920,10 +1019,9 @@ const ShootingDetail: React.FC<{
     advanceCallCopy.createdAt = new Date().toISOString();
     advanceCallCopy.updatedAt = new Date().toISOString();
     const formatedTime = advanceCallCopy.adv_call_time.split(':');
-    advanceCallCopy.adv_call_time = { hours: formatedTime[0], minutes: formatedTime[1] };
     advanceCallCopy.dep_name_esp = advanceCallCopy.dep_name_eng;
     const shootingCopy = { ...shooting._data };
-    advanceCallCopy.adv_call_time = timeToISOString(advanceCallCopy.adv_call_time, shootingCopy.shootDate);
+    advanceCallCopy.adv_call_time = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCallCopy];
 
     try {
@@ -938,29 +1036,28 @@ const ShootingDetail: React.FC<{
   };
 
   const addNewMeal = async (meal: any) => {
-    const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-    const mealCopy = { ...meal };
-    mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
-    mealCopy.shootingId = parseInt(shootingId);
-    mealCopy.createdAt = new Date().toISOString();
-    mealCopy.updatedAt = new Date().toISOString();
-    const formatedTimeStart = mealCopy.ready_at.split(':');
-    const formatedTimeEnd = mealCopy.end_time.split(':');
-    mealCopy.ready_at = { hours: formatedTimeStart[0], minutes: formatedTimeStart[1] };
-    mealCopy.end_time = { hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] };
-    const shootingCopy = { ...shooting._data };
-    mealCopy.ready_at = timeToISOString(meal.ready_at, shootingCopy.shootDate);
-    mealCopy.end_time = timeToISOString(meal.end_time, shootingCopy.shootDate);
-
-    shootingCopy.meals = [...shootingCopy.meals, mealCopy];
     try {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const mealCopy = { ...meal };
+      mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
+      mealCopy.shootingId = parseInt(shootingId);
+      mealCopy.createdAt = new Date().toISOString();
+      mealCopy.updatedAt = new Date().toISOString();
+      const formatedTimeStart = mealCopy.ready_at.split(':');
+      const formatedTimeEnd = mealCopy.end_time.split(':');
+      const shootingCopy = { ...shooting._data };
+      mealCopy.ready_at = timeToISOString({ hours: formatedTimeStart[0], minutes: formatedTimeStart[1] }, shootingCopy.shootDate);
+      mealCopy.end_time = timeToISOString({ hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] }, shootingCopy.shootDate);
+  
+      shootingCopy.meals = [...shootingCopy.meals, mealCopy];
       await oneWrappDb?.shootings.upsert(shootingCopy);
+      successToast('Meal added successfully');
     } catch (error) {
       errorToast(`Error adding meal: ${error}`);
+      console.error(error)
       return;
     } finally {
       await fetchData();
-      successToast('Meal added successfully');
     }
   };
 
@@ -1162,6 +1259,107 @@ const ShootingDetail: React.FC<{
     }
   };
 
+  const updateShootingAllTimes = async () => {
+    try {
+      // Move the advance calls, the meals, the crewCalls, the castCalls, the pictureCars and the otherCalls with the difference in the hours using generalCallDiffHours
+
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const shootingCopy = { ...shooting._data };
+
+      // Advance Calls
+      shootingCopy.advanceCalls = shootingCopy.advanceCalls.map((call: AdvanceCall) => {
+        if (call.adv_call_time) {
+          const callTime = new Date(call.adv_call_time);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            adv_call_time: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Meals
+      shootingCopy.meals = shootingCopy.meals.map((meal: Meal) => {
+        if (meal.ready_at && meal.end_time) {
+          const readyAt = new Date(meal.ready_at);
+          readyAt.setHours(readyAt.getHours() + generalCallDiffHours);
+          const endTime = new Date(meal.end_time);
+          endTime.setHours(endTime.getHours() + generalCallDiffHours);
+          return {
+            ...meal,
+            ready_at: readyAt.toISOString(),
+            end_time: endTime.toISOString(),
+          };
+        }
+        return meal;
+      });
+
+      // Crew Calls
+      shootingCopy.crewCalls = shootingCopy.crewCalls.map((call: any) => {
+        if (call.call) {
+          const callTime = new Date(call.call);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            call: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Cast Calls
+      shootingCopy.castCalls = shootingCopy.castCalls.map((call: any) => {
+        if (call.callTime) {
+          const callTime = new Date(call.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Picture Cars
+      shootingCopy.pictureCars = shootingCopy.pictureCars.map((car: any) => {
+        if (car.callTime) {
+          const callTime = new Date(car.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...car,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return car;
+      });
+
+      // Other Calls
+      shootingCopy.otherCalls = shootingCopy.otherCalls.map((call: any) => {
+        if (call.callTime) {
+          const callTime = new Date(call.callTime);
+          callTime.setHours(callTime.getHours() + generalCallDiffHours);
+          return {
+            ...call,
+            callTime: callTime.toISOString(),
+          };
+        }
+        return call;
+      });
+
+      // Update the shooting
+      await oneWrappDb?.shootings.upsert(shootingCopy);
+      await fetchData();
+      successToast('All times updated successfully');
+      setMoveDiffHoursAlertOpen(false);
+    } catch (error: any) {
+      errorToast(`Error updating all times: ${error.message}`);
+      console.error(error);
+    } finally {
+      resetComponent();
+    }
+  }
+
   const editScriptReportButton: any = () => {
     if (view === 'script-report') {
       if (!scriptReportEditMode) {
@@ -1242,6 +1440,20 @@ const ShootingDetail: React.FC<{
     }
   );
 
+  const moveDiffHoursAlert = () => {
+    if (generalCallDiffHours !== 0) {
+      return (
+        <InputAlert
+          header="Move all times"
+          message={`You are about to move all times ${generalCallDiffHours > 0 ? 'forward' : 'backwards'} ${Math.abs(generalCallDiffHours)} hours. Are you sure you want to continue?`}
+          inputs={[]}
+          handleOk={updateShootingAllTimes}
+          handleCancel={() => setMoveDiffHoursAlertOpen(false)}
+          isOpen={moveDiffHoursAlertOpen}
+        />  
+      )};
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -1257,8 +1469,13 @@ const ShootingDetail: React.FC<{
           </IonButton>
         </div>
       )}
+      {
+        view === 'call-sheet' && (
+          <CallSheet />
+        )
+      }
       {view === 'scenes' && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <div className="shooting-scenes-info">
             {/* PRINT GENERAL CALL, READY TO SHOOT, PROTECTIONS, PAGES, MINUTES */}
             <div className={`shooting-scenes-info-item ion-flex ion-padding ion-justify-content-between${isMobile ? ' mobile-shooting-scenes-info' : ''}`}>
@@ -1377,13 +1594,14 @@ const ShootingDetail: React.FC<{
           openEditModal={openEditionModal}
           openEditHospitalModal={openHospitalEditionModal}
           removeHospital={removeHospital}
+          updateShootingAllTimes={updateShootingAllTimes}
         />
         )
       }
       {
         view === 'script-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <Legend items={legendItems} />
           <ScriptReportView
             mergedScenesShoot={shootingData.mergedScenesShootData}
@@ -1398,7 +1616,7 @@ const ShootingDetail: React.FC<{
       {
         view === 'wrap-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <WrapReportView
             shootingData={shootingData}
             updateShootingTime={updateShootingTime}
@@ -1436,6 +1654,7 @@ const ShootingDetail: React.FC<{
             openEditLocationModal={openEditionModal}
             openEditHospitalModal={openHospitalEditionModal}
             removeHospital={removeHospital}
+            updateShootingAllTimes={updateShootingAllTimes}
           />
         </IonContent>
         )
@@ -1443,7 +1662,7 @@ const ShootingDetail: React.FC<{
       {
         view === 'production-report'
         && (
-        <IonContent color="tertiary" fullscreen>
+        <IonContent color="tertiary" fullscreen className='fade-in'>
           <ProductionReportView searchText={searchText} />
         </IonContent>
         )
@@ -1453,6 +1672,7 @@ const ShootingDetail: React.FC<{
       <AddNewScenes />
       <AddNewAdvanceCallModal />
       <AddNewMeal />
+      {moveDiffHoursAlert()}
       <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={selectedLocation ? updateExistingLocation : addNewLocation} selectedLocation={selectedLocation} />
       <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={selectedHospital ? updateExistingHospital : addNewHospital} hospital selectedLocation={selectedHospital} />
     </IonPage>

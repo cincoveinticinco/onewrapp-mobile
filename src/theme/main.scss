@@ -9,6 +9,7 @@ $colors: (
   success: var(--ion-color-success),
   tertiary: var(--ion-color-tertiary),
   warning: var(--ion-color-warning),
+  tertiary-dark: var(--ion-color-tertiary-dark),
 );
 
 // CUSTOM COLOR STYLES
@@ -121,6 +122,10 @@ $colors: (
     @media (min-width: 500px) {
       max-width: 250px;
     }
+  }
+
+  .background-#{$color} {
+    background-color: #{$value} !important;
   }
 }
 
@@ -437,3 +442,23 @@ ion-toast.error-toast {
 .common-title {
   font-size: var(--525-common-title-size);
 }
+
+.ion-no-padding {
+  padding: 0px !important;
+}
+
+// Create a animation to transition between diferent pages
+
+@keyframes identifier {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: identifier 0.5s ease-in-out;
+}
+

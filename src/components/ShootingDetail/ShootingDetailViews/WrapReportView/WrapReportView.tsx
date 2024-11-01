@@ -50,6 +50,7 @@ interface WrapReportViewProps {
   openEditLocationModal: (index: number) => void
   openEditHospitalModal: (index: number) => void
   removeHospital: (hospital: LocationInfo, hospitalIndex: number) => void
+  updateShootingAllTimes: any
 }
 
 const WrapReportView: React.FC<WrapReportViewProps> = ({
@@ -89,9 +90,11 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   openEditLocationModal,
   openEditHospitalModal,
   removeHospital,
+  updateShootingAllTimes
 }) => {
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
+  const mapRef = React.useRef(null);
   return (
     <div className="wrap-report-view" style={{ gridTemplateColumns: useIsMobile() ? '1fr' : '1fr 1fr' }}>
       <div className="section-wrapper scenes-table">
@@ -100,6 +103,8 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             shootingInfo={shootingData.shotingInfo}
             updateShootingTime={updateShootingTime}
             permissionType={permissionType}
+            mapRef={mapRef}
+            updateShootingAllTimes={updateShootingAllTimes}
           />
         </div>
       </div>

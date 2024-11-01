@@ -10,6 +10,8 @@ import separateTimeOrPages from '../../../utils/SeparateTimeOrPages';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
 import GoogleMapComponent from '../../Shared/GoogleMapComponent/GoogleMapComponent';
 import './ShootingBasicInfo.scss';
+import { GoogleMap } from '@capacitor/google-maps';
+import environment from '../../../../environment';
 
 interface EditableFieldProps {
   field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';
@@ -117,17 +119,80 @@ interface ShootingBasicInfoProps {
     pages: string;
     min: string;
     locations: LocationInfo[];
+    hospitals: LocationInfo[];
     protectedScenes: number;
   };
+  mapRef: React.RefObject<HTMLDivElement>;
   permissionType?: number | null;
+  updateShootingAllTimes: (numberOfHours: number) => any;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
 }
 
-const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType }) => {
+const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType, mapRef, updateShootingAllTimes }) => {
   const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds' | null>(null);
   const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
   const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
   const editionModalRef = useRef<HTMLIonModalElement>(null);
+
+  const [map, setMap] = useState<GoogleMap | null>(null);
+  const [marker, setMarker] = useState<string | null>(null);
+  const [mapInitialized, setMapInitialized] = useState(false);
+
+  useEffect(() => {
+    if (shootingInfo.locations.length > 0 && mapRef.current) {
+      const lat = parseFloat(shootingInfo.locations[0].lat);
+      const lng = parseFloat(shootingInfo.locations[0].lng);
+
+      if (!mapInitialized) {
+        createMap(lat, lng);
+      } else if (map) {
+        updateMarker(lat, lng);
+      }
+    }
+  }, [shootingInfo, mapInitialized, mapRef.current]);
+
+  const createMap = async (lat: number, lng: number) => {
+    if (!mapRef.current) return;
+
+    try {
+      const newMap = await GoogleMap.create({
+        id: 'shooting-basic-info-map',
+        element: mapRef.current,
+        apiKey: environment.MAPS_KEY,
+        config: {
+          center: { lat, lng },
+          zoom: 15,
+        },
+      });
+      setMap(newMap);
+      setMapInitialized(true);
+
+      await newMap.setOnMapClickListener((event) => {
+        updateMarker(event.latitude, event.longitude);
+      });
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  };
+
+  const updateMarker = async (latitude: number, longitude: number) => {
+    if (map) {
+      if (marker) {
+        await map.removeMarker(marker);
+      }
+
+      const newMarker = await map.addMarker({
+        coordinate: { lat: latitude, lng: longitude },
+        draggable: true,
+      });
+
+      setMarker(newMarker);
+
+      await map.setOnMarkerDragEndListener(async (event) => {
+        updateMarker(event.latitude, event.longitude);
+      });
+    }
+  };
 
   useEffect(() => {
     if (shootingInfo.locations.length > 0) {
@@ -167,10 +232,10 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         <IonCol sizeSm="10" sizeXs='12'>
           {
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
-              <div>
+              <div className="map-container">
                 <GoogleMapComponent
-                  lat={firstLocationLat}
-                  lng={firstLocationLng}
+                  locations={[...shootingInfo.locations, ...shootingInfo.hospitals]}
+                  mapRef={mapRef}
                 />
               </div>
             ) : (
@@ -213,12 +278,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               />
             </IonCol>
             <IonCol sizeSm="12" sizeXs="12" className="ion-padding ion-flex ion-justify-content-center ion-align-items-center">
-              <p style={{
-                textAlign: 'center',
-              }}
-              >
-                <b>NO WEATHER AVAILABLE</b>
-              </p>
+              <p style={{ textAlign: 'center' }}><b>NO WEATHER AVAILABLE</b></p>
             </IonCol>
           </IonRow>
         </IonCol>
@@ -231,18 +291,10 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               <ShootingInfoLabels info={shootingInfo.protectedScenes.toString()} title="Protections" />
             </IonCol>
             <IonCol size="auto">
-              <ShootingInfoLabels
-                info={separateTimeOrPages(shootingInfo.pages).main}
-                symbol={separateTimeOrPages(shootingInfo.pages).symbol}
-                title="Pages"
-              />
+              <ShootingInfoLabels info={separateTimeOrPages(shootingInfo.pages).main} symbol={separateTimeOrPages(shootingInfo.pages).symbol} title="Pages" />
             </IonCol>
             <IonCol size="auto">
-              <ShootingInfoLabels
-                info={separateTimeOrPages(shootingInfo.min).main}
-                symbol={separateTimeOrPages(shootingInfo.min).symbol}
-                title="Minutes"
-              />
+              <ShootingInfoLabels info={separateTimeOrPages(shootingInfo.min).main} symbol={separateTimeOrPages(shootingInfo.min).symbol} title="Minutes" />
             </IonCol>
             <IonCol size="auto">
               <ShootingInfoLabels info={shootingInfo.locations.length.toString()} title="Locations" />

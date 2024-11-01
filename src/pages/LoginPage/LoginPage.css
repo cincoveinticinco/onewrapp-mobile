@@ -15,6 +15,22 @@
   }
 }
 
+.login-form {
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .login-buttons-wrapper {
+    margin-top: 50px;
+  }
+
+  ion-input {
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+}
+
 .main-logo-wrapper {
   position: absolute;
   left: 50%;
@@ -109,3 +125,5 @@
     bottom: 24px;
   }
 }
+
+

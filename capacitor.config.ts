@@ -6,6 +6,10 @@ const config: CapacitorConfig = {
   appName: 'one-wrapp-mobile',
   webDir: 'dist',
   bundledWebRuntime: false,
+  // server: {
+  //   url: 'http://192.168.1.23:8100',
+  //   cleartext: true
+  // },
   plugins: {
     GoogleMaps: {
       AndroidApiKey: "AIzaSyA9rz3ykn0BboO4tjO2_fSKE82_CiIZmJI"
@@ -19,7 +23,8 @@ const config: CapacitorConfig = {
       clientId: "195018623531-mm7krht1hr7tj3501el59mug4rj62u5u.apps.googleusercontent.com",
       iosClientId: "195018623531-s2ik3l0j2lmktn4caqebhc0ebs67ftq3.apps.googleusercontent.com"
     }
-  }
+  },
+
 };
 
 export default config;
