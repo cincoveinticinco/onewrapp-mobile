@@ -27,6 +27,7 @@ export interface Column {
   colSpan?: number;
   placeHolder?: string;
   emptyText?: string;
+  minWidth?: number;
 }
 
 interface GeneralTableProps {

@@ -443,7 +443,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
           />
         );
       case 'crew':
-        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} setCrewCalls={setCrewCalls} searchText={searchText}/>;
+        return <CrewView crewCalls={crewCalls} editMode={editMode && view === 'crew'} setCrewCalls={setCrewCalls} searchText={searchText} openCopyCrewModal={addNewCrewCallModalIsOpen} setOpenCopyCrewModal={(ev: boolean) => setAddNewCrewCallModalIsOpen(ev)} />;
       default:
         return <ExploreContainer name="Default Content" />;
     }

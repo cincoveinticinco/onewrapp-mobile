@@ -43,9 +43,11 @@ interface CrewViewProps {
   editMode: boolean;
   setCrewCalls: any
   searchText: string;
+  openCopyCrewModal: boolean;
+  setOpenCopyCrewModal: any;
 }
 
-const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, searchText }) => {
+const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, searchText, openCopyCrewModal, setOpenCopyCrewModal }) => {
   const columns: Column[] = [
     {
       key: 'name', title: 'Name', type: 'text', textAlign: 'left',
@@ -80,8 +82,6 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
 
   const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
-
-  const [ openCopyCrewModal, setOpenCopyCrewModal ] = useState<boolean>(false);
   const [ selectedUnitId, setSelectedUnitId ] = useState<string>('');
 
   const formattedData = crewCalls.map((crew) => ({
@@ -292,7 +292,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     )
   }
 
-  if (!crewCalls.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} />;
+  if (!crewCalls.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} name='Copy Crew' />;
 
   return (
     <GeneralTable
