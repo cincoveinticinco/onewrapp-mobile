@@ -71,7 +71,7 @@ const crewSchema = {
     unitName: {
       type: ['string', 'null'],
     },
-    unitId: {
+    unitIds: {
       type: ['string', 'null'],
     },
     countryId: {
