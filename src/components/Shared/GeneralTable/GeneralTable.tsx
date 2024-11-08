@@ -49,13 +49,15 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     const debounceTimeout = setTimeout(() => {
       if (searchText && searchText !== '') {
         const lowerCaseSearchText = searchText.toLowerCase();
-        const newFilteredData = data.filter((row) => {
-          const rowValues = Object.values(row);
-          return rowValues.some((value) => typeof value === 'string' && value.toLowerCase().includes(lowerCaseSearchText));
-        });
+        const newFilteredData = data
+          .map((row, index) => ({ ...row, originalIndex: index }))
+          .filter((row) => {
+            const rowValues = Object.values(row);
+            return rowValues.some((value) => typeof value === 'string' && value.toLowerCase().includes(lowerCaseSearchText));
+          });
         setFilteredData(newFilteredData);
       } else {
-        setFilteredData(data);
+        setFilteredData(data.map((row, index) => ({ ...row, originalIndex: index })));
       }
     }, 300);
     return () => clearTimeout(debounceTimeout);
@@ -69,7 +71,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   }).format(value);
 
   const groupedData = groupBy ? filteredData.reduce((groups: { [key: string]: any[] }, item) => {
-    const groupKey = item[groupBy] || 'Sin grupo';
+    const groupKey = item[groupBy] || 'No group';
     if (!groups[groupKey]) {
       groups[groupKey] = [];
     }
@@ -111,11 +113,11 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
 
   const handleEdit = (rowIndex: number, rowKey: string, newValue: any, type: string) => {
     const updatedData = [...filteredData];
-    const dataIndex = data.findIndex((item) => item === filteredData[rowIndex]);
+    const dataIndex = updatedData[rowIndex].originalIndex; // Use originalIndex to locate in original data
     if (dataIndex !== -1) {
       updatedData[rowIndex] = { ...updatedData[rowIndex], [rowKey]: newValue };
       setFilteredData(updatedData);
-      if (editFunction) editFunction(dataIndex, rowKey, newValue, type);
+      if (editFunction) editFunction(dataIndex, rowKey, newValue, type); // Pass original index to editFunction
     }
   };
 
@@ -182,9 +184,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   );
 
   return (
-    <div className={
-      `table-container ${editMode ? 'edit-mode' : ''}`
-    }>
+    <div className={`table-container ${editMode ? 'edit-mode' : ''}`}>
       {Object.keys(groupedData).map((groupKey) => (
         <div key={groupKey}>
           {groupBy && renderCategoryDropdown(groupKey, groupedData[groupKey].length)}
@@ -201,11 +201,11 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {groupedData[groupKey].map((row: any, rowIndex: number) => (
-                    <tr key={rowIndex}>
+                  {groupedData[groupKey].map((row: any) => (
+                    <tr key={row.originalIndex}>
                       {columns.map((column, colIndex) => (
-                        <td key={`${rowIndex}-${column.key}`} className={colIndex < stickyColumnCount ? 'sticky-column' : ''} style={{ left: `${colIndex * 150}px`, textAlign: column.textAlign || 'center', backgroundColor: row[column.backgroundColor as any] }}>
-                          {getColumnValue(row, column, editMode, rowIndex)}
+                        <td key={`${row.originalIndex}-${column.key}`} className={colIndex < stickyColumnCount ? 'sticky-column' : ''} style={{ left: `${colIndex * 150}px`, textAlign: column.textAlign || 'center', backgroundColor: row[column.backgroundColor as any] }}>
+                          {getColumnValue(row, column, editMode, row.originalIndex )}
                         </td>
                       ))}
                     </tr>
