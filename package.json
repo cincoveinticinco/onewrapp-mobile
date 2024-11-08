@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "homepage": "./",
   "scripts": {
     "dev": "vite",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && vite build",
@@ -80,6 +81,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^13.5.0",
     "dotenv": "^16.3.1",
+    "electron": "^33.0.2",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.29.1",
@@ -94,6 +96,7 @@
     "terser": "^5.4.0",
     "typescript": "^5.1.6",
     "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.20.5",
     "vitest": "^0.34.6"
   },
   "description": "An Ionic project"

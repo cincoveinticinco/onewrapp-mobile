@@ -1654,6 +1654,7 @@ const ShootingDetail: React.FC<{
             openEditLocationModal={openEditionModal}
             openEditHospitalModal={openHospitalEditionModal}
             removeHospital={removeHospital}
+            updateShootingAllTimes={updateShootingAllTimes}
           />
         </IonContent>
         )

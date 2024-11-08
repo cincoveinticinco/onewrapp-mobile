@@ -201,7 +201,7 @@ const LoginPage: React.FC = () => {
 
   // Detectar la plataforma y ejecutar el código correspondiente
   const login = () => {
-    if (isPlatform('capacitor') || isPlatform('cordova') || isPlatform('android') || isPlatform('ios')) {
+    if (isPlatform('capacitor') || isPlatform('cordova') || isPlatform('android') || isPlatform('ios') || isPlatform('electron')) {
       handleGoogleLoginMobile();
     } else {
       

@@ -50,6 +50,7 @@ interface WrapReportViewProps {
   openEditLocationModal: (index: number) => void
   openEditHospitalModal: (index: number) => void
   removeHospital: (hospital: LocationInfo, hospitalIndex: number) => void
+  updateShootingAllTimes: any
 }
 
 const WrapReportView: React.FC<WrapReportViewProps> = ({
@@ -89,6 +90,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   openEditLocationModal,
   openEditHospitalModal,
   removeHospital,
+  updateShootingAllTimes
 }) => {
   const [openScenes, setOpenScenes] = React.useState(true);
   const [scriptReportEditMode, setScriptReportEditMode] = React.useState(false);
@@ -102,6 +104,7 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             updateShootingTime={updateShootingTime}
             permissionType={permissionType}
             mapRef={mapRef}
+            updateShootingAllTimes={updateShootingAllTimes}
           />
         </div>
       </div>
