@@ -4,7 +4,7 @@ import { caretDown, caretUp } from 'ionicons/icons';
 import React, { useMemo, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { useHistory, useParams } from 'react-router';
-import { useRxData, useRxDB } from 'rxdb-hooks';
+import { useRxData } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import EditionModal, { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
@@ -92,7 +92,6 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
   const getDefaultValuesById = (id: string | null): Partial<FormStructureInterface> => {
     if (!id) return {};
     const crewMember = crew.find((member) => member.id === id);
-    console.log(crewMember);
     if (!crewMember) return {};
     return {
       fullName: crewMember.fullName,

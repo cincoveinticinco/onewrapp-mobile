@@ -15,7 +15,7 @@ import DropDownCast from '../../components/Cast/DropDownCast';
 import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
 import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
-import useProcessedCast from '../../hooks/Cast/useProcessedCast';
+import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
@@ -78,8 +78,6 @@ const Cast: React.FC<{
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
-  // Efects
-
   useEffect(() => {
     const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
@@ -87,7 +85,7 @@ const Cast: React.FC<{
     }) : processedCast;
 
     setCast(filteredCast);
-  }, [processedCast, castSearchText]); // Filter Cast by search text
+  }, [processedCast, castSearchText]);
 
   useEffect(() => {
     const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
@@ -214,7 +212,7 @@ const Cast: React.FC<{
                 </ScrollInfiniteContext>
               </DropDownCast>
             ))
-}
+          }
           {
             !isLoading
             && extras.length > 0 && (
@@ -239,7 +237,7 @@ const Cast: React.FC<{
               </ScrollInfiniteContext>
             </DropDownCast>
             )
-}
+          }
         </IonContent>
       </MainPagesLayout>
       <InputSortModal

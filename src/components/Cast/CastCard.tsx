@@ -1,20 +1,13 @@
 import React, { useContext } from 'react';
 import {
-  IonItemSliding,
-  IonItemOptions,
-  IonButton,
-  IonIcon,
-  IonItem,
-  IonTitle,
-  useIonToast,
-} from '@ionic/react';
+  IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,} from '@ionic/react';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import './CastCard.scss';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import floatToFraction from '../../utils/floatToFraction';
-import { banOutline, checkmarkCircle, pencilOutline } from 'ionicons/icons';
+import { checkmarkCircle } from 'ionicons/icons';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';

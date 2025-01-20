@@ -38,13 +38,35 @@ interface GeneralTableProps {
   editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
   searchText?: string;
   groupBy?: string;
+  numbered?: boolean; // Nueva propiedad para controlar la numeración
 }
 
 const GeneralTable: React.FC<GeneralTableProps> = ({
-  columns, data, stickyColumnCount = 1, editMode = false, editFunction, searchText, groupBy,
+  columns,
+  data,
+  stickyColumnCount = 1,
+  editMode = false,
+  editFunction,
+  searchText,
+  groupBy,
+  numbered = false, // Valor por defecto false
 }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [openCategories, setOpenCategories] = useState<{[key: string]: boolean}>({});
+
+  // Crear la columna de numeración
+  const numberColumn: Column = {
+    key: 'tableNumber',
+    title: '#',
+    sticky: true,
+    textAlign: 'center',
+    editable: false,
+    minWidth: 50
+  };
+
+  // Ajustar las columnas basado en si numbered es true
+  const adjustedColumns = numbered ? [numberColumn, ...columns] : columns;
+  const adjustedStickyColumnCount = numbered ? stickyColumnCount + 1 : stickyColumnCount;
 
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
@@ -91,7 +113,12 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     );
   };
 
-  const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number) => {
+  const getColumnValue = (row: any, column: Column, editMode: boolean, rowIndex: number, globalIndex: number) => {
+    // Si es la columna de numeración, retornar el número
+    if (numbered && column.key === 'tableNumber') {
+      return globalIndex + 1;
+    }
+    
     const value = row[column.key];
     if (column.type === 'double-data') return renderDoubleData(row, column);
     if (!editMode && column.type) return formatValue(value, column.type, column.switchValues);
@@ -194,19 +221,35 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
               <table className="custom-table">
                 <thead>
                   <tr>
-                    {columns.map((column, index) => (
-                      <th key={column.key} className={index < stickyColumnCount ? 'sticky-column' : ''} style={{ left: `${index * 150}px` }}>
+                    {adjustedColumns.map((column, index) => (
+                      <th 
+                        key={column.key + index} 
+                        className={index < adjustedStickyColumnCount ? 'sticky-column' : ''} 
+                        style={{ 
+                          left: `${index * (column.key === 'tableNumber' ? 50 : 150)}px`,
+                          minWidth: column.key === 'tableNumber' ? '50px' : undefined
+                        }}
+                      >
                         {column.title.toUpperCase()}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {groupedData[groupKey].map((row: any) => (
+                  {groupedData[groupKey].map((row: any, index: number) => (
                     <tr key={row.originalIndex}>
-                      {columns.map((column, colIndex) => (
-                        <td key={`${row.originalIndex}-${column.key}`} className={colIndex < stickyColumnCount ? 'sticky-column' : ''} style={{ left: `${colIndex * 150}px`, textAlign: column.textAlign || 'center', backgroundColor: row[column.backgroundColor as any] }}>
-                          {getColumnValue(row, column, editMode, row.originalIndex )}
+                      {adjustedColumns.map((column, colIndex) => (
+                        <td 
+                          key={`${row.originalIndex}-${column.key}`} 
+                          className={colIndex < adjustedStickyColumnCount ? 'sticky-column' : ''} 
+                          style={{ 
+                            left: `${colIndex * (column.key === 'tableNumber' ? 50 : 150)}px`, 
+                            textAlign: column.textAlign || 'center', 
+                            backgroundColor: row[column.backgroundColor as any],
+                            minWidth: column.key === 'tableNumber' ? '50px' : undefined
+                          }}
+                        >
+                          {getColumnValue(row, column, editMode, row.originalIndex, index)}
                         </td>
                       ))}
                     </tr>
