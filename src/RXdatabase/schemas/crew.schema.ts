@@ -47,9 +47,6 @@ const crewSchema = {
       type: ['string', 'null'],
       format: 'date-time',
     },
-    unitNumber: {
-      type: ['string', 'null'],
-    },
     order: {
       type: ['integer', 'null'],
     },
@@ -68,9 +65,6 @@ const crewSchema = {
     emergencyContact: {
       type: 'boolean',
     },
-    unitName: {
-      type: ['string', 'null'],
-    },
     unitIds: {
       type: ['string', 'null'],
     },
@@ -78,7 +72,7 @@ const crewSchema = {
       type: ['string', 'null'],
     },
   },
-  required: ['id', 'depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt', 'unitNumber'],
+  required: ['depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt'],
 };
 
 const crewSchemaInput = {
@@ -97,9 +91,14 @@ export default class CrewSchema extends DatabaseSchema {
   static schemaName = 'crew'
 
   static endpointPullName = environment.CREW_ENDPOINT_PULL;
+  static endpointPushName = environment.CREW_ENDPOINT_PUSH;
 
   getEndpointPullName() {
     return CrewSchema.endpointPullName;
+  }
+
+  getEndpointPushName() {
+    return CrewSchema.endpointPushName;
   }
 
   getSchemaName() {

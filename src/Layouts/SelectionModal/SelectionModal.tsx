@@ -12,6 +12,7 @@ import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/O
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './SelectionModal.scss';
+import { flatten } from 'lodash';
 
 interface FormInputsProps {
   label: string;
@@ -94,7 +95,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   const isOptionChecked = (label: string) => {
     const option = listOfOptions.find((o: any) => o.label === label);
     if (typeof option?.value === 'string' || typeof option?.value === 'number') {
-      return selectedOptions.includes(option?.value);
+     return flatten(selectedOptions).includes(option?.value);
     }
     return selectedOptions[0]?.id === option?.value?.id;
   };

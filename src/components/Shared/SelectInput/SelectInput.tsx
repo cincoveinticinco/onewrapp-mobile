@@ -14,11 +14,12 @@ interface SelectItemProps {
   disabled?: boolean;
   setValue: any;
   validate?: any;
-  watchValue: any;
   canCreateNew?: boolean;
   editMode?: boolean;
   detailsEditMode?: boolean;
   style?: any;
+  multipleSelections?: boolean;
+  currentFieldValue: any;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -31,11 +32,12 @@ const SelectItem: React.FC<SelectItemProps> = ({
   disabled = false,
   setValue,
   validate = () => true,
-  watchValue,
   canCreateNew,
   editMode,
   detailsEditMode,
   style = {},
+  multipleSelections,
+  currentFieldValue
 }) => {
   const [showError, setShowError] = React.useState(false);
 
@@ -43,16 +45,28 @@ const SelectItem: React.FC<SelectItemProps> = ({
     setShowError(displayError);
   }, [displayError]);
 
-  const currentFieldValue = watchValue(fieldKeyName);
-
   const mapValueToString = (value: any): string => {
-    if (typeof value === 'object' && value !== null) {
+    if (Array.isArray(value)) {
+      return value.map(v => {
+        if (typeof v === 'object' && v !== null && Object.keys(v).length) {
+          return v.getValue || v.id || JSON.stringify(v);
+        }
+        return String(v);
+      }).join(', ');
+    }
+    if (typeof value === 'object' && value !== null && Object.keys(value).length) {
       return value.getValue || value.id || JSON.stringify(value);
     }
     return String(value);
   };
 
-  const mapStringToValue = (str: string): any => {
+  const mapStringToValue = (str: string | string[]): any => {
+    if (multipleSelections && Array.isArray(str)) {
+      return str.map(s => {
+        const option = options.find((o) => mapValueToString(o.value) === s);
+        return option ? option.value : s;
+      });
+    }
     const option = options.find((o) => mapValueToString(o.value) === str);
     return option ? option.value : str;
   };
@@ -64,15 +78,30 @@ const SelectItem: React.FC<SelectItemProps> = ({
   [options]);
 
   const handleSelectCheckbox = (label: string) => {
-    const option = options.find((o) => o.label === label);
-    if (mapValueToString(currentFieldValue) === mapValueToString(option?.value)) {
-      setValue(fieldKeyName, null);
-    } else {
-      setValue(fieldKeyName, option?.value);
-    }
+    if (!multipleSelections) {
+      const option = options.find((o) => o.label === label);
+      if (mapValueToString(currentFieldValue) === mapValueToString(option?.value)) {
+        setValue(fieldKeyName, null);
+      } else {
+        setValue(fieldKeyName, option?.value);
+      }
 
-    if (validate(currentFieldValue)) {
-      setShowError(false);
+      if (validate(currentFieldValue)) {
+        setShowError(false);
+      }
+    } else {
+      const option = options.find((o) => o.label === label);
+      const value = [option?.value];
+
+      if (!currentFieldValue) {
+        setValue(fieldKeyName, value);
+      } else {
+        if (currentFieldValue.includes(option?.value)) {
+          setValue(fieldKeyName, currentFieldValue.filter((v: any) => v !== option?.value));
+        } else {
+          setValue(fieldKeyName, [...currentFieldValue, option?.value]);
+        }
+      }
     }
   };
 
@@ -100,8 +129,14 @@ const SelectItem: React.FC<SelectItemProps> = ({
             label={showError && validate && (validate(field.value)) ? (validate(field.value)) : label.toLocaleUpperCase()}
             labelPlacement="floating"
             interface="alert"
-            value={mapValueToString(watchValue(fieldKeyName))}
-            onIonChange={(e) => { setValue(fieldKeyName, mapStringToValue(e.detail.value)); }}
+            value={multipleSelections 
+              ? (currentFieldValue || []).map((v: any) => mapValueToString(v))
+              : mapValueToString(currentFieldValue)
+            }
+            multiple={multipleSelections}
+            onIonChange={(e) => { 
+              setValue(fieldKeyName, mapStringToValue(e.detail.value));
+            }}
             className={(showError ? 'error' : '')}
             mode="ios"
             disabled={disabled}
@@ -123,9 +158,9 @@ const SelectItem: React.FC<SelectItemProps> = ({
         listOfOptions={options}
         modalTrigger={defineTrigger()}
         handleCheckboxToggle={handleSelectCheckbox}
-        selectedOptions={[watchValue(fieldKeyName)]}
+        selectedOptions={[currentFieldValue]}
         clearSelections={() => setValue(fieldKeyName, null)}
-        multipleSelections={false}
+        multipleSelections={multipleSelections}
         canCreateNew={canCreateNew}
         editMode={editMode}
       />

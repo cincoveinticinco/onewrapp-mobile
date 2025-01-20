@@ -21,6 +21,7 @@ export interface FormInput {
   required?: boolean;
   selectOptions?: SelectOptionsInterface[];
   search?: boolean;
+  multiple?: boolean;
   offset?: string;
 }
 
@@ -119,6 +120,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
   });
 
   const setNewOptionValue = (fieldKeyName: string, value: string) => {
+    console.log(value, '????')
     if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       return setValue(fieldKeyName, null);
     }
@@ -196,10 +198,11 @@ const EditionModal: React.FC<EditionModalProps> = ({
                         canCreateNew={false}
                         setValue={setNewOptionValue}
                         validate={() => true}
-                        watchValue={watch}
                         editMode={false}
                         detailsEditMode={false}
                         style={{ width: '100%' }}
+                        multipleSelections={input.multiple}
+                        currentFieldValue={watch(input.fieldKeyName)}
                       />
                     )
                   ) : input.type === 'checkbox' ? (

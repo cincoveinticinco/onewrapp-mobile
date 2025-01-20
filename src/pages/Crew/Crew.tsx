@@ -7,45 +7,25 @@ import { useHistory, useParams } from 'react-router';
 import { useRxData, useRxDB } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
-import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
+import EditionModal, { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import { Country } from '../../interfaces/country.types';
 import { Crew as CrewInterface } from '../../interfaces/crew.types';
 import { Unit } from '../../interfaces/unitTypes.types';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './Crew.scss';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
+import { crewFormInputs } from './inputs/crewForm.inputs';
+import useCrewOperations from './hooks/useCrewOperations';
+import { FormStructureInterface } from './types/crew.interfaces';
 
-interface FormStructureInterface {
-  fullName: string;
-  position: string;
-  email: string;
-  countryId: string;
-  phone: string;
-  unitId: string;
-  order: string;
-  visibleOnCall: boolean;
-  visibleOnHeader: boolean;
-  onCall: boolean;
-  dailyReportSignature: boolean;
-  emergencyContact: boolean;
-  department: string;
-}
-
-const Crew: React.FC<{
-  permissionType?: number | null;
-}> = ({ permissionType }) => {
+const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
   const [searchText, setSearchText] = useState('');
   const [addNewModalIsOpen, setAddNewModalIsOpen] = useState(false);
   const [selectedCrewId, setSelectedCrewId] = useState<string | null>(null);
-  const { id } = useParams<{ id: string }>();
-  const oneWrappDb: any = useRxDB();
+  const projectId = useParams<{ id: string }>().id;
+  const {handleDeleteCrew, handleUpsert} = useCrewOperations({selectedCrewId, setSelectedCrewId, setAddNewModalIsOpen, id: projectId});
   const history = useHistory();
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
 
-  // Fetch crew data using useRxData
   const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
     'crew',
     (collection) => collection.find(),
@@ -60,54 +40,6 @@ const Crew: React.FC<{
     'countries',
     (collection) => collection.find(),
   );
-
-  // Create or update crew member
-  const handleUpsert = async (data: FormStructureInterface) => {
-    const unit = units.find((unit) => unit.id === data.unitId);
-    const formattedData: CrewInterface = {
-      id: selectedCrewId || `${Date.now()}`,
-      fullName: data.fullName,
-      positionEsp: data.position,
-      positionEng: data.position,
-      email: data.email,
-      countryId: data.countryId,
-      phone: data.phone,
-      unitId: data.unitId,
-      unitName: unit?.unitName || '',
-      unitNumber: unit?.unitNumber || 0,
-      order: parseInt(data.order),
-      visibleOnCall: data.visibleOnCall,
-      visibleOnHeader: data.visibleOnHeader,
-      onCall: data.onCall,
-      dailyReportSignature: data.dailyReportSignature,
-      emergencyContact: data.emergencyContact,
-      depNameEng: data.department.toUpperCase(),
-      depNameEsp: data.department.toUpperCase(),
-      projectId: parseInt(id),
-      updatedAt: new Date().toISOString(),
-    };
-
-    try {
-      await oneWrappDb.crew.upsert(formattedData);
-      successToast(`Crew member ${selectedCrewId ? 'updated' : 'added'} successfully`);
-      setAddNewModalIsOpen(false);
-      setSelectedCrewId(null);
-    } catch (error) {
-      errorToast(`Error ${selectedCrewId ? 'updating' : 'adding'} crew member`);
-      console.error(`Error ${selectedCrewId ? 'updating' : 'adding'} crew member:`, error);
-    }
-  };
-
-  const handleDeleteCrew = async (id: string) => {
-    try {
-      await oneWrappDb.crew.findOne({ selector: { id } }).remove();
-      successToast('Crew member deleted successfully');
-      // Optionally, you might want to update the local state or refetch the crew data
-    } catch (error) {
-      errorToast('Error deleting crew member');
-      console.error('Error deleting crew member:', error);
-    }
-  };
 
   // Group crew members by department
   const crewByDepartment = useMemo(() => {
@@ -157,111 +89,6 @@ const Crew: React.FC<{
     label: department,
   }));
 
-  const crewFormInputs: FormInput[] = [
-    {
-      fieldKeyName: 'department',
-      label: 'Department',
-      type: 'text',
-      required: true,
-      placeholder: 'Enter department',
-      selectOptions: departmentsOptions,
-      col: '12',
-    },
-    {
-      fieldKeyName: 'fullName',
-      label: 'Full Name',
-      type: 'text',
-      required: true,
-      placeholder: 'Enter full name',
-      col: '12',
-    },
-    {
-      fieldKeyName: 'position',
-      label: 'Job Title',
-      type: 'text',
-      required: true,
-      placeholder: 'Enter position',
-      col: '6',
-    },
-    {
-      fieldKeyName: 'email',
-      label: 'Email',
-      type: 'email',
-      required: true,
-      placeholder: 'Enter email',
-      col: '6',
-    },
-    {
-      fieldKeyName: 'countryId',
-      label: 'Country',
-      type: 'select',
-      required: true,
-      selectOptions: countryOptions,
-      placeholder: 'Select country',
-      col: '3',
-    },
-    {
-      fieldKeyName: 'phone',
-      label: 'Phone',
-      type: 'tel',
-      required: true,
-      placeholder: 'Enter phone',
-      col: '9',
-    },
-    {
-      fieldKeyName: 'unitId',
-      label: 'Unit',
-      type: 'select',
-      required: true,
-      selectOptions: unitsOptions,
-      placeholder: 'Select unit',
-      col: '6',
-    },
-    {
-      fieldKeyName: 'order',
-      label: 'Order',
-      type: 'number',
-      required: true,
-      placeholder: 'Enter order',
-      col: '6',
-    },
-    {
-      fieldKeyName: 'visibleOnCall',
-      label: 'VISIBLE ON CALL',
-      type: 'checkbox',
-      required: false,
-      placeholder: 'VISIBLE ON CALL',
-    },
-    {
-      fieldKeyName: 'visibleOnHeader',
-      label: 'CALL SHEET HEADER',
-      type: 'checkbox',
-      required: false,
-      placeholder: 'CALL SHEET HEADER',
-    },
-    {
-      fieldKeyName: 'onCall',
-      label: 'ALWAYS ON CALL',
-      type: 'checkbox',
-      required: false,
-      placeholder: 'ALWAYS ON CALL',
-    },
-    {
-      fieldKeyName: 'dailyReportSignature',
-      label: 'REPORT SIGNATURE',
-      type: 'checkbox',
-      required: false,
-      placeholder: 'REPORT SIGNATURE',
-    },
-    {
-      fieldKeyName: 'emergencyContact',
-      label: 'EMERGENCY CONTACT',
-      type: 'checkbox',
-      required: false,
-      placeholder: 'EMERGENCY CONTACT',
-    },
-  ];
-
   const getDefaultValuesById = (id: string | null): Partial<FormStructureInterface> => {
     if (!id) return {};
     const crewMember = crew.find((member) => member.id === id);
@@ -273,7 +100,7 @@ const Crew: React.FC<{
       email: crewMember.email,
       countryId: crewMember.countryId,
       phone: crewMember.phone,
-      unitId: crewMember.unitId,
+      unitIds: crewMember.unitIds.split(','),
       order: crewMember.order.toString(),
       visibleOnCall: crewMember.visibleOnCall,
       visibleOnHeader: crewMember.visibleOnHeader,
@@ -288,7 +115,7 @@ const Crew: React.FC<{
     <EditionModal
       isOpen={addNewModalIsOpen}
       title={selectedCrewId ? 'Edit Crew Member' : 'Add Crew Member'}
-      formInputs={crewFormInputs}
+      formInputs={crewFormInputs(departmentsOptions, countryOptions, unitsOptions)}
       handleEdition={handleUpsert}
       defaultFormValues={getDefaultValuesById(selectedCrewId)}
       setIsOpen={setAddNewModalIsOpen}

@@ -9,14 +9,12 @@ export interface Crew {
   email: string;
   phone: string;
   updatedAt: string;
-  unitNumber: number;
   order: number;
   visibleOnCall: boolean;
   visibleOnHeader: boolean;
   onCall: boolean;
   dailyReportSignature: boolean;
   emergencyContact: boolean;
-  unitName: string;
-  unitId: string;
+  unitIds: string;
   countryId: string;
 }

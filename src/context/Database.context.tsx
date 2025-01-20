@@ -270,7 +270,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
             });
     
             const localItems = await query.exec();
-            console.log('localItems', localItems);
             if (localItems.length > 0) {
               await Promise.all(
                 localItems.map(async (item: any) => {
