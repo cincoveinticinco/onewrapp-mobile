@@ -215,18 +215,20 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
 
   return (
     <div className={`table-container ${editMode ? 'edit-mode' : ''}`}>
-      {Object.keys(groupedData).map((groupKey) => (
-        <div key={groupKey}>
-          {groupBy && renderCategoryDropdown(groupKey, groupedData[groupKey].length)}
+      {Object.entries(groupedData).map(([groupKey, groupData]) => (
+        // Use groupKey alone as it should already be unique
+        <div key={groupKey} className="category-item">
+          {groupBy && renderCategoryDropdown(groupKey, groupData.length)}
           {(!groupBy || !openCategories[groupKey]) && (
             <div className="table-wrapper">
               <table className="custom-table">
                 <thead>
                   <tr>
-                    {adjustedColumns.map((column, index) => (
+                    {adjustedColumns.map((column) => (
+                      // Use column.key as it should be unique within the columns array
                       <th 
-                        key={column.key + index} 
-                        className={index < adjustedStickyColumnCount ? 'sticky-column' : ''} 
+                        key={column.key} 
+                        className={column.sticky ? 'sticky-column' : ''} 
                         style={{ 
                           minWidth: column.key === 'tableNumber' ? '50px' : undefined,
                           maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
@@ -238,21 +240,23 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {groupedData[groupKey].map((row: any, index: number) => (
-                    <tr key={row.originalIndex}>
-                      {adjustedColumns.map((column, colIndex) => (
+                  {groupData.map((row, index) => (
+                    // Use row.originalIndex as the unique identifier for the row
+                    <tr key={`row-${row.originalIndex || index }`}>
+                      {adjustedColumns.map((column) => (
+                        // Combine row and column identifiers for a unique cell key
                         <td 
-                          key={`${row.originalIndex}-${column.key}-${colIndex}`} 
-                          className={colIndex < adjustedStickyColumnCount ? 'sticky-column' : ''} 
+                          key={`cell-${row.originalIndex}-${column.key}`} 
+                          className={column.sticky ? 'sticky-column' : ''} 
                           style={{ 
-                            left: `${colIndex * (column.key === 'tableNumber' ? 50 : 50)}px`, 
+                            left: `${column.key === 'tableNumber' ? 50 : 50}px`, 
                             textAlign: column.textAlign || 'center', 
-                            backgroundColor: row[column.backgroundColor as any],
+                            backgroundColor: row[column.backgroundColor as keyof typeof row],
                             minWidth: column.key === 'tableNumber' ? '50px' : undefined,
-                            maxWidth: column.maxWidth ? `${column.maxWidth}px !important` : undefined,
+                            maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                           }}
                         >
-                          {getColumnValue(row, column, editMode, row.originalIndex, index)}
+                          {getColumnValue(row, column, editMode, row.originalIndex, groupData.indexOf(row))}
                         </td>
                       ))}
                     </tr>
