@@ -234,7 +234,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       }
       {
         customButtons.map((renderFunction: any, index) => (
-          renderFunction()
+          <React.Fragment key={index}>
+            {renderFunction()}
+          </React.Fragment>
         ))
       }
       {

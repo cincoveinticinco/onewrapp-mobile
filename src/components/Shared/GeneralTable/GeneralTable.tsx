@@ -229,8 +229,9 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                       <th 
                         key={column.key} 
                         className={column.sticky ? 'sticky-column' : ''} 
-                        style={{ 
-                          minWidth: column.key === 'tableNumber' ? '50px' : undefined,
+                        style={{
+                          left: '0px',
+                          minWidth: column.minWidth ? `${column.minWidth}px` : undefined,
                           maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                         }}
                       >
@@ -242,17 +243,17 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                 <tbody>
                   {groupData.map((row, index) => (
                     // Use row.originalIndex as the unique identifier for the row
-                    <tr key={`row-${row.originalIndex || index }`}>
+                    <tr key={`row-${row.originalIndex || index }-${groupKey}`} className={editMode ? 'edit-mode' : ''}>
                       {adjustedColumns.map((column) => (
                         // Combine row and column identifiers for a unique cell key
                         <td 
                           key={`cell-${row.originalIndex}-${column.key}`} 
                           className={column.sticky ? 'sticky-column' : ''} 
                           style={{ 
-                            left: `${column.key === 'tableNumber' ? 50 : 50}px`, 
+                            left: '0px', 
                             textAlign: column.textAlign || 'center', 
                             backgroundColor: row[column.backgroundColor as keyof typeof row],
-                            minWidth: column.key === 'tableNumber' ? '50px' : undefined,
+                            minWidth: column.minWidth ? `${column.minWidth}px` : undefined,
                             maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                           }}
                         >

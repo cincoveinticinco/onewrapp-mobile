@@ -2,7 +2,7 @@ import { normalizeString } from 'rxdb';
 import GeneralTable from '../../../Shared/GeneralTable/GeneralTable';
 import NoRegisters from '../../NoRegisters/NoRegisters';
 import { castColumns } from './tables/cast.columns';
-import { sortCast } from './utils/sortCast.util';
+import { sortCast } from './utils/Cast.utils';
 import AddCastCallModal from './modals/AddCastCallModal';
 import { CastViewProps } from './types/Cast.types';
 

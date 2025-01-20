@@ -2,7 +2,7 @@ import { Column } from "../../../../Shared/GeneralTable/GeneralTable";
 
 export   const castColumns: Column[] = [
     {
-      key: 'cast', title: 'CAST', type: 'double-data', textAlign: 'left', secondaryKey: 'name',
+      key: 'cast', title: 'CAST', type: 'double-data', textAlign: 'left', secondaryKey: 'name', minWidth: 250, maxWidth: 250, sticky: true
     },
     {
       key: 'tScn', title: 'SCN.', type: 'text', notShowWhenEdit: true,
