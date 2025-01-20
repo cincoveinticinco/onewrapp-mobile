@@ -26,7 +26,6 @@ import { Crew } from '../../../interfaces/crew.types';
 interface CrewCall {
   id: string | null;
   visible: boolean | null;
-  unit: number | null;
   name: string | null;
   departmentEsp: string | null;
   departmentEng: string | null;
@@ -52,7 +51,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     {
       key: 'name', title: 'Name', type: 'text', textAlign: 'left',
     },
-    { key: 'position', title: 'Position', type: 'text' },
+    { key: 'position', title: 'Position', type: 'text', textAlign: 'left' },
     { key: 'call', title: 'Call', type: 'hour' },
     { key: 'callPlace', title: 'Call Place', type: 'text' },
     { key: 'onCall', title: 'On Call', type: 'text' },
@@ -184,7 +183,6 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
         newCrewCalls = (crew as Crew[])?.map((crewMember: Crew) => ({
           id: `${crewMember.id}-${selectedDate}`,
           visible: crewMember.visibleOnCall,
-          unit: crewMember.unitNumber ? crewMember.unitNumber : null,
           name: crewMember.fullName,
           departmentEsp: crewMember.depNameEsp,
           departmentEng: crewMember.depNameEng,
@@ -329,6 +327,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
       editMode={editMode}
       groupBy='departmentEng'
       searchText={searchText}
+      numbered={true}
       // editOptions={editOptions}
     />
   );

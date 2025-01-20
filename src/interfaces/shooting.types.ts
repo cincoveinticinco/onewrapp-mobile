@@ -140,7 +140,6 @@ export interface ExtraCall {
 export interface CrewCall {
   id: string | null;
   visible: boolean | null;
-  unit: number | null;
   name: string | null;
   departmentEsp: string | null;
   departmentEng: string | null;

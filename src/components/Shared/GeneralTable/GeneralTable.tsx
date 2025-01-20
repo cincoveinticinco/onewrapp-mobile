@@ -28,6 +28,7 @@ export interface Column {
   placeHolder?: string;
   emptyText?: string;
   minWidth?: number;
+  maxWidth?: number;
 }
 
 interface GeneralTableProps {
@@ -61,7 +62,8 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     sticky: true,
     textAlign: 'center',
     editable: false,
-    minWidth: 50
+    minWidth: 50,
+    maxWidth: 50,
   };
 
   // Ajustar las columnas basado en si numbered es true
@@ -226,8 +228,8 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                         key={column.key + index} 
                         className={index < adjustedStickyColumnCount ? 'sticky-column' : ''} 
                         style={{ 
-                          left: `${index * (column.key === 'tableNumber' ? 50 : 150)}px`,
-                          minWidth: column.key === 'tableNumber' ? '50px' : undefined
+                          minWidth: column.key === 'tableNumber' ? '50px' : undefined,
+                          maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                         }}
                       >
                         {column.title.toUpperCase()}
@@ -240,13 +242,14 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                     <tr key={row.originalIndex}>
                       {adjustedColumns.map((column, colIndex) => (
                         <td 
-                          key={`${row.originalIndex}-${column.key}`} 
+                          key={`${row.originalIndex}-${column.key}-${colIndex}`} 
                           className={colIndex < adjustedStickyColumnCount ? 'sticky-column' : ''} 
                           style={{ 
-                            left: `${colIndex * (column.key === 'tableNumber' ? 50 : 150)}px`, 
+                            left: `${colIndex * (column.key === 'tableNumber' ? 50 : 50)}px`, 
                             textAlign: column.textAlign || 'center', 
                             backgroundColor: row[column.backgroundColor as any],
-                            minWidth: column.key === 'tableNumber' ? '50px' : undefined
+                            minWidth: column.key === 'tableNumber' ? '50px' : undefined,
+                            maxWidth: column.maxWidth ? `${column.maxWidth}px !important` : undefined,
                           }}
                         >
                           {getColumnValue(row, column, editMode, row.originalIndex, index)}

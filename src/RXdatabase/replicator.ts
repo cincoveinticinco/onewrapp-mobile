@@ -23,13 +23,6 @@ export default class HttpReplicator {
     this.getToken = getToken;
   }
 
-  // Unificar el inicio de replicación tanto de PUSH como PULL
-  public async startReplication(pull: boolean = true, push: boolean = true) {
-    const { collections } = this;
-    const promises = collections.map((collection: any) => this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push));
-    await Promise.all(promises);
-  }
-
   public stopReplication() {
     this.replicationStates.forEach((replicationState) => {
       if (replicationState) {
@@ -53,46 +46,42 @@ export default class HttpReplicator {
       if (pull) {
         replicationConfig.pull = {
           async handler(checkpointOrNull: any, batchSize: number) {
-            try {
-              const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
-              const token = await getToken();
-              const id = checkpointOrNull ? checkpointOrNull.id : 0;
-              const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : 0;
-              const collectionName = collection.getSchemaName();
+            const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
+            const token = await getToken();
+            const id = checkpointOrNull ? checkpointOrNull.id : 0;
+            const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : 0;
+            const collectionName = collection.getSchemaName();
 
-              const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);
-              url.searchParams.append('updated_at', updatedAt);
-              url.searchParams.append('id', id.toString());
-              url.searchParams.append('batch_size', batchSize.toString());
-              if (collection.SchemaName() !== 'projects') {
-                url.searchParams.append('last_project_id', lastProjectId.toString());
-              }
-              if (projectId) {
-                url.searchParams.append('project_id', projectId.toString());
-              }
-              if (lastItem) {
-                url.searchParams.append('last_item_id', lastItem.id.toString());
-                url.searchParams.append('last_item_updated_at', lastItem.updatedAt);
-              }
-
-              const response = await fetch(url.toString(), {
-                headers: {
-                  owsession: token,
-                },
-              });
-
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-
-              const data = await response.json();
-              return {
-                documents: data[collectionName],
-                checkpoint: data.checkpoint,
-              };
-            } catch (error) {
-              throw error;
+            const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);
+            url.searchParams.append('updated_at', updatedAt);
+            url.searchParams.append('id', id.toString());
+            url.searchParams.append('batch_size', batchSize.toString());
+            if (collection.SchemaName() !== 'projects') {
+              url.searchParams.append('last_project_id', lastProjectId.toString());
             }
+            if (projectId) {
+              url.searchParams.append('project_id', projectId.toString());
+            }
+            if (lastItem) {
+              url.searchParams.append('last_item_id', lastItem.id.toString());
+              url.searchParams.append('last_item_updated_at', lastItem.updatedAt);
+            }
+
+            const response = await fetch(url.toString(), {
+              headers: {
+                owsession: token,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error in ${collection.SchemaName()} pull! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return {
+              documents: data[collectionName],
+              checkpoint: data.checkpoint,
+            };
           },
         };
       }
@@ -101,47 +90,71 @@ export default class HttpReplicator {
       if (push) {
         replicationConfig.push = {
           async handler(changeRows: any): Promise<any> {
-            try {
-              const token = await getToken();
-              const rawResponse = await fetch(`${environment.URL_PATH}/${collection.getEndpointPushName()}`, {
-                method: 'POST',
-                headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-                  owsession: token,
-                },
-                body: JSON.stringify({ changeRows }),
-              });
+            const token = await getToken();
+            const rawResponse = await fetch(`${environment.URL_PATH}/${collection.getEndpointPushName()}`, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                owsession: token,
+              },
+              body: JSON.stringify({ changeRows }),
+            });
 
-              if (!rawResponse.ok) {
-                throw new Error(`HTTP error! status: ${rawResponse.status}`);
-              }
-
-              const conflictsArray = await rawResponse.json();
-              return conflictsArray;
-            } catch (error) {
-              throw error;
+            if (!rawResponse.ok) {
+              throw new Error(`HTTP error in ${collection.SchemaName()} push! status: ${rawResponse.status}`);
             }
+
+            const conflictsArray = await rawResponse.json();
+            return conflictsArray;
           },
         };
       }
 
       const replicationState = replicateRxCollection(replicationConfig);
 
-      replicationState.error$.subscribe((err) => {
-        throw err;
+      // Crear una promesa que se rechazará si hay un error en la replicación
+      const errorPromise = new Promise((_, reject) => {
+        replicationState.error$.subscribe((err) => {
+          reject(new Error(`Replication error in ${collection.SchemaName()}: ${err.message}`));
+        });
       });
 
-      await this.monitorReplicationStatus(replicationState);
+      // Esperar tanto la replicación inicial como posibles errores
+      await Promise.race([
+        this.monitorReplicationStatus(replicationState),
+        errorPromise
+      ]);
 
       this.replicationStates.push(replicationState);
-    } catch (error) {
-      throw error;
+      return replicationState;
+
+    } catch (error: any) {
+      // Cancelar la replicación si existe y hubo un error
+      this.stopReplication();
+      throw new Error(`Replication failed for ${collection.SchemaName()}: ${error.message}`);
     }
   }
 
-  public monitorReplicationStatus(replicationState: any) {
-    return replicationState.awaitInitialReplication().then(() => true);
+  public async startReplication(pull: boolean = true, push: boolean = true) {
+    try {
+      const promises = this.collections.map((collection: any) => 
+        this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push)
+      );
+      await Promise.all(promises);
+    } catch (error) {
+      this.stopReplication(); // Asegurar que todas las replicaciones se detengan si hay un error
+      throw error; // Propagar el error
+    }
+  }
+
+  public async monitorReplicationStatus(replicationState: any) {
+    try {
+      await replicationState.awaitInitialReplication();
+      return true;
+    } catch (error: any) {
+      throw new Error(`Initial replication failed: ${error.message}`);
+    }
   }
 
   public resyncReplication() {

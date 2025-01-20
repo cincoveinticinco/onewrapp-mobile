@@ -35,6 +35,7 @@ const ReplicationPage: React.FC = () => {
   const [isReplicating, setIsReplicating] = useState(false);
   const [dots, setDots] = useState('');
   const [messageIndex, setMessageIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const messages = [
     'Please wait, replication can take some minutes to finish',
@@ -57,9 +58,12 @@ const ReplicationPage: React.FC = () => {
   useEffect(() => {
     if (isOnline && !projectsInfoIsOffline[`project_${id}`]) {
       setIsReplicating(true);
-      initialProjectReplication().finally(() => {
+      initialProjectReplication().then(() => {
         setIsReplicating(false);
         history.push(`/my/projects/${id}/strips`);
+      }).catch(() => {
+        setIsReplicating(false);
+        setError('There was an error replicating the data. Please try again or contact support.');
       });
     }
   }, [isOnline, id]);
@@ -78,6 +82,46 @@ const ReplicationPage: React.FC = () => {
       clearInterval(messageInterval);
     };
   }, []);
+
+  const retryButton = () => {
+    return (
+      <IonButton
+        expand="block"
+        onClick={handleRetry}
+        disabled={!isOnline || isReplicating || !error}
+        className="retry-button"
+        style={{
+          '--background': 'var(--ion-color-yellow)',
+        }}
+      >
+        <IonIcon icon={refresh} slot="start" />
+        Retry Replication
+      </IonButton>
+    );
+  }
+
+  if(error) {
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar color="tertiary">
+            <IonTitle>Data Replication</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="replication-page-content" color="tertiary">
+          <IonCard className="replication-card" color="tertiary">
+            <IonCardContent>
+              <IonText color="danger">
+                <h2>Error while replicating</h2>
+                <p>{error}</p>
+                {retryButton()}
+              </IonText>
+            </IonCardContent>
+          </IonCard>
+        </IonContent>
+      </IonPage>
+    );
+  }
 
   return (
     <IonPage>
@@ -121,18 +165,7 @@ const ReplicationPage: React.FC = () => {
           </IonText>
         )}
 
-        <IonButton
-          expand="block"
-          onClick={handleRetry}
-          disabled={!isOnline || isReplicating}
-          className="retry-button"
-          style={{
-            '--background': 'var(--ion-color-yellow)',
-          }}
-        >
-          <IonIcon icon={refresh} slot="start" />
-          Retry Replication
-        </IonButton>
+        {retryButton()}
         <IonSpinner name="crescent" color="primary" />
       </IonContent>
     </IonPage>

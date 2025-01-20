@@ -402,9 +402,6 @@ const shootingSchema = {
           visible: {
             type: ['boolean', 'null'],
           },
-          unit: {
-            type: ['number', 'null'],
-          },
           name: {
             type: ['string', 'null'],
           },

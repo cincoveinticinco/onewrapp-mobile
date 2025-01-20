@@ -47,7 +47,7 @@ export interface DatabaseContextProps {
   initialReplicationFinished: boolean;
   projectsInfoIsOffline: {[key: string]: boolean};
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
-  initializeProjectsUserReplication: () => Promise<boolean>;
+  initializeProjectsUserReplication: () => Promise<void>;
   initializeAllReplications: () => Promise<void>;
 }
 
@@ -114,7 +114,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [startReplication, setStartReplication] = useState(false);
   const [projectId, setProjectId] = useState<any>(localStorage.getItem('projectId') || null);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const [initialReplicationFinished, setInitialReplicationFinished] = useState(true);
+  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
   const [replicationStatus, setReplicationStatus] = useState<string>('');
   const isOnline =  useNetworkStatus();
   const [replicationPercentage, setReplicationPercentage] = useState(0);
@@ -166,36 +166,30 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
-    if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) return false;
-
-    const canPush = ['scenes', 'shootings', 'crew'].includes(collection.getSchemaName().toLowerCase());
-
-    try {
-      const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })
-        .sort({ updatedAt: 'desc' })
-        .limit(1)
-        .exec()
-        .then((data: any) => (data[0] ? data[0] : null));
-
-      console.log('lastItem', lastItem, collection.getSchemaName());
-
-      if (!resyncRef.current) {
-        const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
-        if (isOnline) {
-          await replicator.startReplication(true, canPush); 
-          resyncRef.current = replicator;
-        }
-      } else {
-        isOnline && resyncRef.current.resyncReplication();
-      }
-
-      await sleep(500);
-
-      return true;
-    } catch (error) {
-      throw error;
+    if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) {
+      throw new Error('Invalid initialization parameters');
     }
-  };
+  
+    const canPush = ['scenes', 'shootings', 'crew'].includes(collection.getSchemaName().toLowerCase());
+  
+    const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })
+      .sort({ updatedAt: 'desc' })
+      .limit(1)
+      .exec()
+      .then((data: any) => (data[0] ? data[0] : null));
+  
+    if (!resyncRef.current) {
+      const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
+      if (isOnline) {
+        await replicator.startReplication(true, canPush);
+        resyncRef.current = replicator;
+      }
+    } else {
+      isOnline && resyncRef.current.resyncReplication();
+    }
+  
+    return true;
+  }
   
   const handleDeletedRecords = async (collectionName: string, apiEndpoint: string, projectId: string) => {
     
@@ -288,16 +282,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   };
 
-  const initializeProjectsUserReplication = async () => await initializeReplication(projectCollection, {}, resyncProjectsUser);
-
+  const initializeProjectsUserReplication = async () => {
+    await initializeReplication(projectCollection, {}, resyncProjectsUser);
+  };
+  
   const initializeSceneReplication = async () => {
     await initializeReplication(
       sceneCollection,
-      { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true }  },
+      { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true } },
       resyncScenes,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('scenes', 'get_deleted_scenes', projectId);
   };
   
@@ -308,7 +303,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncServiceMatrices,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('service_matrices', 'get_deleted_service_matrices', projectId);
   };
   
@@ -319,7 +313,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncParagraphs,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('paragraphs', 'get_deleted_paragraphs', projectId);
   };
   
@@ -330,7 +323,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncTalents,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('talents', 'get_deleted_talents', projectId);
   };
   
@@ -341,7 +333,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncUnits,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('units', 'get_deleted_units', projectId);
   };
   
@@ -352,10 +343,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncShootings,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('shootings', 'get_deleted_shootings', projectId);
   };
-
+  
   const initializeCrewReplication = async () => {
     await initializeReplication(
       crewCollection,
@@ -363,28 +353,28 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncCrew,
       parseInt(projectId, 10)
     );
-  
     await handleDeletedRecords('crew', 'get_deleted_crew', projectId);
-  }
-
+  };
+  
   const initializeCountriesReplication = async () => {
     await initializeReplication(
       countriesCollection,
       {},
       resyncCountries
     );
-  }
+  };
 
   const initializeAllReplications = async () => {
-    await initializeProjectsUserReplication();
-    await initializeSceneReplication();
-    await initializeServiceMatricesReplication();
-    await initializeParagraphReplication();
-    await initializeTalentsReplication();
-    await initializeUnitReplication();
-    await initializeShootingReplication();
-    await initializeCrewReplication();
-    await initializeCountriesReplication();
+    const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication];
+    
+    try {
+      for (const replication of replicationsArray) {
+        await replication();
+      }
+    } catch (error) {
+      console.error('Error in initializeAllReplications:', error);
+      throw error;
+    }
   };
 
   useIonViewDidEnter(() => {
@@ -519,14 +509,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     };
   };
 
-  const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
-
   const initialProjectReplication = async () => {
+    let currentStep: string = '';
+    
     try {
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
-
+  
       const steps = [
         {
           name: 'Countries',
@@ -577,33 +567,31 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           function: initializeCrewReplication,
         },
       ];
-
+  
       for (const step of steps) {
+        currentStep = step.name;
         setReplicationStatus(`Starting ${step.name} replication...`);
         incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
-        await step.function().then((result) => {
-
-        }).catch((error) => {
-          setReplicationStatus(`Error during ${step.name} replication`);
-        });
+        
+        await step.function();
+     
         incrementPercentage(step.startPercentage + 5, step.endPercentage, 10000);
-
-        await sleep(1000);
       }
-
+  
       setReplicationStatus('Replication finished');
       setReplicationPercentage(100);
-    } catch (error) {
-      setReplicationStatus('Error during initial replication');
-      setReplicationPercentage(0);
-      throw error;
-    } finally {
       setInitialReplicationFinished(true);
       setProjectsInfoIsOffline({
         ...projectsInfoIsOffline,
         [projectId]: true,
       });
       setReplicationPercentage(0);
+      
+    } catch (error: any) {
+      setReplicationStatus(`Error during ${currentStep} replication: ${error.message}`);
+      setReplicationPercentage(0);
+      setInitialReplicationFinished(false);
+      throw error;
     }
   };
 
