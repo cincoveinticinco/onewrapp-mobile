@@ -12,7 +12,7 @@ import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
 import EditionModal from '../../components/Shared/EditionModal/EditionModal';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import { EditableField, ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
 import ScenesContext from '../../context/Scenes.context';
 import {

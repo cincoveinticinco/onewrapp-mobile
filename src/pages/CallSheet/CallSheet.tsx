@@ -28,7 +28,7 @@ import {
 import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import timeToISOString from '../../utils/timeToIsoString';
 
-import { ShootingInfoLabels } from '../../components/ShootingDetail/ShootingBasicInfo/ShootingBasicInfo';
+import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
