@@ -67,7 +67,7 @@ const sceneParagraphSchemaLiteral = {
     'version',
     'type',
   ],
-};
+} as const;
 
 export const sceneParagraphSchemaTyped = toTypedRxJsonSchema(sceneParagraphSchemaLiteral);
 

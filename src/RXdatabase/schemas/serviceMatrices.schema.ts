@@ -1,7 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { ServiceMatricesDocType } from '../../interfaces/serviceMatrices.types';
 
-const serviceMatricesSchema = {
+const serviceMatricesSchemaLiteral = {
   title: 'service matrices schema',
   version: 0,
   type: 'object',
@@ -90,7 +92,11 @@ const serviceMatricesSchema = {
     },
   },
   required: ['id', 'projectId'],
-};
+} as const;
+
+export const serviceMatricesSchemaTyped = toTypedRxJsonSchema(serviceMatricesSchemaLiteral);
+
+export const serviceMatricesSchema: RxJsonSchema<ServiceMatricesDocType> = serviceMatricesSchemaLiteral;
 
 const serviceMatricesSchemaInput = {
   service_matrices: {

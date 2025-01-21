@@ -122,21 +122,21 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     return availableDates.map(date => date.date).includes(dateString.split('T')[0]);
   };
 
-  const deleteCrewCall = async (index: number) => {
-    try {
-      const newCrewCalls = crewCalls.filter((call, i) => i !== index);
-      const shootingUpdate = {
-        ...thisShooting._data,
-        crewCalls: newCrewCalls,
-      };
-      await oneWrappDb?.shootings.upsert(shootingUpdate);
-      setCrewCalls(newCrewCalls);
-      successToast('Crew call deleted successfully');
-    } catch (error: any) {
-      console.error('Error deleting crew call:', error?.validationErrors || error);
-      errorToast('Error deleting crew call');
-    }
-  }
+  // const deleteCrewCall = async (index: number) => {
+  //   try {
+  //     const newCrewCalls = crewCalls.filter((call, i) => i !== index);
+  //     const shootingUpdate = {
+  //       ...thisShooting._data,
+  //       crewCalls: newCrewCalls,
+  //     };
+  //     await oneWrappDb?.shootings.upsert(shootingUpdate);
+  //     setCrewCalls(newCrewCalls);
+  //     successToast('Crew call deleted successfully');
+  //   } catch (error: any) {
+  //     console.error('Error deleting crew call:', error?.validationErrors || error);
+  //     errorToast('Error deleting crew call');
+  //   }
+  // }
 
   // const editOptions: editOptionType[] = [
   //   {
