@@ -139,6 +139,7 @@
 .primary-data,
 .secondary-data {
   text-transform: uppercase;
+  text-wrap: wrap;
 }
 
 .primary-data {

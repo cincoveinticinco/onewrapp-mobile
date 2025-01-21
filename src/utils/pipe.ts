@@ -1,6 +1,6 @@
 type Fn = (arg: any) => any;
 
-const pipe = (...fns: Fn[]) => (x: any) => fns.reduce((v, f) => f(v), x);
+export const pipe = (...fns: Fn[]) => (x: any) => fns.reduce((v, f) => f(v), x);
 
 // use case example
 const add = (x: number) => x + 1;

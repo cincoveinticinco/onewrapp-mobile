@@ -5,6 +5,8 @@ import { castColumns } from './tables/cast.columns';
 import { sortCast } from './utils/Cast.utils';
 import AddCastCallModal from './modals/AddCastCallModal';
 import { CastViewProps } from './types/Cast.types';
+import { useEffect } from 'react';
+import { pipe } from 'rxjs';
 
 const CastView: React.FC<CastViewProps> = ({
   castData,
@@ -17,6 +19,29 @@ const CastView: React.FC<CastViewProps> = ({
   permissionType,
   searchText
 }) => {
+
+  const groupCastByTalent = (cast: any[]) => {
+
+    const deepCopy = JSON.parse(JSON.stringify(cast));
+
+    interface CastItem {
+      name: string;
+      cast: string;
+    }
+
+    const castGrouped = deepCopy.reduce((acc: CastItem[], castItem: CastItem) => {
+      const talentName = castItem.name;
+      const talentIndex = acc.findIndex((talent: CastItem) => talent.name === talentName);
+      if (talentIndex === -1) {
+      acc.push(castItem);
+      } else {
+      acc[talentIndex].cast = `${acc[talentIndex].cast}, ${castItem.cast}`;
+      }
+      return acc;
+    }, [] as CastItem[])
+
+    return castGrouped;
+  }
 
   const validateCastExists:  (talentName: string, fieldKeyName: any) => boolean | string = (talentName: string, fieldKeyName: any) => {
     const talentExists = castData.some((talent) => normalizeString(talent.name) === normalizeString(talentName));
@@ -42,7 +67,10 @@ const CastView: React.FC<CastViewProps> = ({
     <>
       <GeneralTable
         columns={castColumns}
-        data={sortCast(castData)}
+        data={pipe(
+          sortCast,
+          groupCastByTalent
+        )(castData)}
         stickyColumnCount={1}
         editMode={editMode}
         editFunction={editCastCall}

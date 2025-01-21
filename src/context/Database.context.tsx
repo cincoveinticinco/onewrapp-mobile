@@ -385,12 +385,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   
   useEffect(() => {
     const replicatePeriodically = async () => {
-      if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+      if (oneWrapRXdatabase && isOnline && projectId) {
         await initializeAllReplications();
       }
     };
   
-    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+    if (oneWrapRXdatabase && isOnline && projectId) {
 
       replicatePeriodically();
   
