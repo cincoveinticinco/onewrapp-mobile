@@ -27,26 +27,30 @@ interface SelectOption {
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, enableSearch = false }) => {
-  const [options, setOptions] = useState<SelectOption[]>(input.selectOptions);
+  // Eliminamos el estado local de options y usamos directamente input.selectOptions
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(null);
 
-  // Initialize selected option when component mounts or input.value changes
+  // Este efecto se ejecuta cuando cambian las opciones o el valor
   useEffect(() => {
-    const currentOption = options.find((opt) => opt.value === input.value);
-    console.log(options)
-    setSelectedOption(currentOption || null);
-    if (currentOption) {
-      setInputValue(currentOption.label);
+    if (input.value) {
+      const currentOption = input.selectOptions.find((opt) => opt.value === input.value);
+      setSelectedOption(currentOption || null);
+      if (currentOption) {
+        setInputValue(currentOption.label);
+      }
+    } else {
+      // Si no hay valor seleccionado, reseteamos el estado
+      setSelectedOption(null);
+      setInputValue('');
     }
-  }, [input.value, options]);
+  }, [input.selectOptions, input.value]);
 
-  // Memorized change handler
   const handleChange = useCallback((newValue: any) => {
+    console.log('executing handleChange with value:', newValue);
     setNewOptionValue(input.fieldKeyName, newValue);
   }, [input.fieldKeyName, setNewOptionValue]);
 
-  // Regular select without search
   if (!enableSearch) {
     return (
       <FormControl fullWidth variant="standard">
@@ -62,13 +66,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
             disableScrollLock: true,
           }}
         >
-          {options.map((option: SelectOption) => (
+          {input.selectOptions.map((option: SelectOption) => (
             <MenuItem
               key={`${input.fieldKeyName}-${option.value}`}
               value={option.value}
-              style={{
-                color: option.value,
-              }}
             >
               {option.label.toUpperCase()}
             </MenuItem>
@@ -78,32 +79,23 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
     );
   }
 
-  // Function to handle creating a new option
-  const handleCreateOption = (inputValue: string) => {
-    const newOption: SelectOption = {
-      value: inputValue,
-      label: inputValue,
-    };
-    setOptions((prev) => [...prev, newOption]);
-    setSelectedOption(newOption);
-    handleChange(newOption.value);
-    setInputValue(newOption.label);
-  };
-
   return (
     <Autocomplete
-      options={options}
-      getOptionLabel={(option: string | SelectOption) => typeof option === 'string' ? option : option.label}
-      renderOption={(props, option: string | SelectOption) => (
-        <li
-          {...props}
-          style={{
-            color: typeof option === 'string' ? 'inherit' : option.value,
-          }}
-        >
-          {typeof option === 'string' ? option : option.label.toUpperCase()}
-        </li>
-      )}
+      options={input.selectOptions}
+      getOptionLabel={(option: string | SelectOption) => 
+        typeof option === 'string' ? option : option.label
+      }
+      renderOption={(props, option: string | SelectOption) => {
+        const { key, ...otherProps } = props;
+        return (
+          <li
+            key={key}
+            {...otherProps}
+          >
+            {typeof option === 'string' ? option : option.label.toUpperCase()}
+          </li>
+        );
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -114,7 +106,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
         />
       )}
       value={selectedOption}
-      onChange={(event: React.SyntheticEvent<Element, Event>, value: string | SelectOption | null, reason: any) => {
+      onChange={(_, value: string | SelectOption | null) => {
+        console.log('Autocomplete onChange:', value);
         if (typeof value === 'string') {
           setSelectedOption(null);
           handleChange(null);
@@ -131,58 +124,22 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
         }
       }}
       inputValue={inputValue}
-      onInputChange={(event, newInputValue, reason) => {
+      onInputChange={(_, newInputValue, reason) => {
+        console.log('onInputChange:', newInputValue, reason);
         setInputValue(newInputValue);
-        // Only clear selected option if the user is actively typing
         if (reason === 'input') {
           setSelectedOption(null);
         }
       }}
       selectOnFocus
-      clearOnBlur={false}  // Changed to false to maintain value
+      clearOnBlur={false}
       handleHomeEndKeys
-      onKeyDown={(event) => {
-        if (
-          event.key === 'Enter' && 
-          inputValue && 
-          !options.some(option => 
-            option.label.toLowerCase() === inputValue.toLowerCase()
-          )
-        ) {
-          handleCreateOption(inputValue);
-          event.preventDefault();
-        }
-      }}
-      onBlur={() => {
-        // If there's input value but no selection, create new option
-        if (
-          inputValue && 
-          !selectedOption && 
-          !options.some(option => 
-            option.label.toLowerCase() === inputValue.toLowerCase()
-          )
-        ) {
-          handleCreateOption(inputValue);
-        } else if (!inputValue && selectedOption) {
-          // If input is cleared but there was a selection, restore the selection
-          setInputValue(selectedOption.label);
-        }
-      }}
       fullWidth
       disablePortal
-      componentsProps={{
-        popper: {
-          modifiers: [{
-            name: 'preventOverflow',
-            enabled: true,
-            options: {
-              altAxis: true,
-              altBoundary: true,
-              tether: false,
-              rootBoundary: 'document',
-            },
-          }],
-        },
+      isOptionEqualToValue={(option, value) => {
+        // Implementación personalizada de comparación de opciones
+        if (!option || !value) return false;
+        return typeof option !== 'string' && typeof value !== 'string' && option.value === value.value;
       }}
     />
   );

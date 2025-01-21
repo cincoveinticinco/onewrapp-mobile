@@ -4,7 +4,7 @@ import {
   IonModal,
   IonRow,
 } from '@ionic/react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
 import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
@@ -46,13 +46,57 @@ const InputModalScene: React.FC<InputModalProps> = ({
     if (modalRef.current) {
       modalRef.current.dismiss();
     }
+    // Limpiar estados al cerrar
     setSelectedEpisode('');
+    setSelectedOption(null);
   };
 
+  const handleEpisodeChange = useCallback((fieldKeyName: string, value: string) => {
+    console.log('Episode selected:', value);
+    setSelectedEpisode(value);
+    // Resetear la escena seleccionada cuando cambia el episodio
+    setSelectedOption(null);
+  }, []);
+
+  const handleSceneChange = useCallback((fieldKeyName: string, value: Scene | null) => {
+    console.log('Scene selected:', value);
+    setSelectedOption(value);
+  }, []);
+
   const filteredScenes = useMemo(() => {
+    console.log('Filtering scenes for episode:', selectedEpisode);
     if (!selectedEpisode) return [];
-    return listOfScenes.filter((scene: Scene) => scene.episodeNumber === selectedEpisode);
+    const filtered = listOfScenes.filter((scene: Scene) => scene.episodeNumber === selectedEpisode);
+    console.log('Filtered scenes:', filtered);
+    return filtered;
   }, [listOfScenes, selectedEpisode]);
+
+  const getUniqueEpisodes = useCallback(() => {
+    const episodes = new Set(listOfScenes.map((scene) => scene.episodeNumber)
+      .filter((episode) => episode !== null && episode !== undefined));
+    return Array.from(episodes)
+      .map((episode: any) => ({ value: episode, label: episode }))
+      .sort((a, b) => parseInt(a.value) - parseInt(b.value));
+  }, [listOfScenes]);
+
+  const episodeInput = useMemo(() => ({
+    fieldKeyName: 'episode',
+    label: 'Select episode',
+    placeholder: 'Select episode',
+    selectOptions: getUniqueEpisodes(),
+    value: selectedEpisode
+  }), [getUniqueEpisodes, selectedEpisode]);
+
+  const sceneInput = useMemo(() => ({
+    fieldKeyName: 'scene',
+    label: 'Select scene',
+    placeholder: 'Select scene',
+    selectOptions: filteredScenes.map((scene) => ({
+      value: scene,
+      label: getSceneHeader(scene),
+    })),
+    value: selectedOption
+  }), [filteredScenes, selectedOption]);
 
   function getSceneHeader(scene: Scene) {
     const episodeNumber = scene.episodeNumber || '';
@@ -69,30 +113,6 @@ const InputModalScene: React.FC<InputModalProps> = ({
 
     return sceneHeader.toUpperCase();
   }
-
-  const getUniqueEpisodes = () => {
-    const episodes = new Set(listOfScenes.map((scene) => scene.episodeNumber).filter((episode) => episode !== null && episode !== undefined));
-    console.log(episodes)
-    console.log(Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value)))
-    return Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
-  };
-
-  const episodeInput = {
-    fieldKeyName: 'episode',
-    label: 'Select episode',
-    placeholder: 'Select episode',
-    selectOptions: getUniqueEpisodes(),
-  };
-
-  const sceneInput = {
-    fieldKeyName: 'scene',
-    label: 'Select a scene',
-    placeholder: 'Select a scene',
-    selectOptions: filteredScenes.map((scene: Scene) => ({
-      value: scene,
-      label: getSceneHeader(scene),
-    })),
-  };
 
   const saveOption = () => {
     if (selectedOption) {
@@ -117,24 +137,18 @@ const InputModalScene: React.FC<InputModalProps> = ({
           <IonGrid className="inputs-grid">
             <IonRow>
               <IonCol size="6">
-                <IonItem color="tertiary">
-                  <CustomSelect
-                    input={episodeInput}
-                    setNewOptionValue={(fieldKeyName, value) => { setSelectedEpisode(value); console.log(episodeInput, '______-'); }}
-                    enableSearch
-                  />
-                </IonItem>
+                <CustomSelect
+                  input={episodeInput}
+                  setNewOptionValue={handleEpisodeChange}
+                  enableSearch
+                />
               </IonCol>
               <IonCol size="6">
-                <IonItem color="tertiary">
-                  <CustomSelect
-                    input={sceneInput}
-                    setNewOptionValue={(fieldKeyName, value: Scene) => {
-                      setSelectedOption(value || null);
-                    }}
-                    enableSearch
-                  />
-                </IonItem>
+                <CustomSelect
+                  input={sceneInput}
+                  setNewOptionValue={handleSceneChange}
+                  enableSearch
+                />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -146,7 +160,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
           {isMobile && (
             <OutlineLightButton
               buttonName="CANCEL"
-              onClick={saveOption}
+              onClick={closeModal}
               className="ion-margin cancel-input-modal-button cancel-button"
             />
           )}
