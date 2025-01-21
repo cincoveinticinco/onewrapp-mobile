@@ -212,7 +212,7 @@ const ShootingDetail: React.FC<{
         shootingId: parseInt(shootingId),
         sceneId: scene.sceneId.toString(),
         status: ShootingSceneStatusEnum.Assigned,
-        position: shootingData.mergedSceneBanners.length,
+        position: shootingData.mergedSceneBanners.length + 1,
         rehersalStart: null,
         rehersalEnd: null,
         comment: '',
@@ -227,8 +227,12 @@ const ShootingDetail: React.FC<{
   
       const shootingCopy = { 
         ...shooting._data,
-        scenes: [...(shooting._data.scenes || []), shootingScene] // Creamos un nuevo array
+        scenes: [...(shooting._data.scenes || [])] // Creamos un nuevo array
       };
+
+      shootingCopy.scenes.push(shootingScene);
+
+      console.log('shootingCopy', shootingCopy);
   
       await oneWrappDb?.shootings.upsert(shootingCopy);
       await fetchData();
