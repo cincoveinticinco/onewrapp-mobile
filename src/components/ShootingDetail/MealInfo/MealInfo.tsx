@@ -5,13 +5,13 @@ import { Meal } from '../../../interfaces/shooting.types';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import { getAmOrPm } from '../../../utils/getHoursMinutesFromISO';
 import EditionModal from '../../Shared/EditionModal/EditionModal';
+import { mealInputs } from '../../../pages/ShootingDetail/Inputs/meal.inputs';
 
 interface MealInfoProps {
   meal: Meal;
   editMode: boolean;
   getHourMinutesFomISO: (iso: string, withAmPm?: boolean) => string;
   deleteMeal: (meal: Meal) => void;
-  editionInputs: any;
   handleEdition: any;
 }
 
@@ -20,7 +20,6 @@ const MealInfo: React.FC<MealInfoProps> = ({
   editMode,
   getHourMinutesFomISO,
   deleteMeal,
-  editionInputs,
   handleEdition,
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
@@ -81,7 +80,7 @@ const MealInfo: React.FC<MealInfoProps> = ({
         modalRef={editionModalRef}
         modalTrigger={`open-edit-meal-modal-${meal.id}`}
         title="Edit Meal"
-        formInputs={editionInputs}
+        formInputs={mealInputs}
         handleEdition={handleEdition}
         defaultFormValues={formatDefaultValues(meal)}
         modalId={`edit-meal-modal-${meal.id}`}

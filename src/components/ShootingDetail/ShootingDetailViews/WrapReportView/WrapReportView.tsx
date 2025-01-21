@@ -2,7 +2,6 @@ import React from 'react';
 import useIsMobile from '../../../../hooks/Shared/useIsMobile';
 import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
 import CallSheet from '../../../../pages/CallSheet/CallSheet';
-import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/ShootingDetail';
 import { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import { Section } from '../../../Shared/Section/Section';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
@@ -12,6 +11,7 @@ import { LocationsSection } from '../../ShootingDetailSections/LocationsSection/
 import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSection';
 import ScriptReportView from '../ScriptReportView/ScriptReportView';
 import './WrapReportView.css';
+import { mergedSceneShoot, ShootingDataProps } from '../../../../pages/ShootingDetail/types/ShootingDetail.types';
 
 interface WrapReportViewProps {
   shootingData: ShootingDataProps;
@@ -59,7 +59,6 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   setOpenLocations,
   openLocations,
   setLocationsEditMode,
-  locationsEditMode,
   openMapModal,
   removeLocation,
   setOpenHospitals,
@@ -80,10 +79,8 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
   mealsEditMode,
   openMealModal,
   deleteMeal,
-  mealInputs,
   handleEditMeal,
   mergedScenesShoot,
-  editMode,
   setMergedScenesShoot,
   saveScriptReport,
   permissionType,
@@ -166,7 +163,6 @@ const WrapReportView: React.FC<WrapReportViewProps> = ({
             onAddClick={openMealModal}
             getHourMinutesFomISO={getHourMinutesFomISO}
             deleteMeal={deleteMeal}
-            mealInputs={mealInputs}
             handleEditMeal={handleEditMeal}
             permissionType={permissionType}
           />

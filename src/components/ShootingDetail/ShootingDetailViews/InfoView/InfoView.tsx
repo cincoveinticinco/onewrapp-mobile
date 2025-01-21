@@ -1,7 +1,6 @@
 import { IonContent } from '@ionic/react';
 import useIsMobile from '../../../../hooks/Shared/useIsMobile';
 import { LocationInfo, Meal } from '../../../../interfaces/shooting.types';
-import { FormInput } from '../../../Shared/EditionModal/EditionModal';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
@@ -37,7 +36,6 @@ interface InfoViewProps {
   mealsEditMode: boolean;
   openMealModal: (e: React.MouseEvent) => void;
   deleteMeal: (meal: Meal) => void;
-  mealInputs: FormInput[];
   handleEditMeal: (meal: Meal) => void;
   permissionType?: number | null;
   openEditModal: (index: number) => void;
@@ -52,7 +50,6 @@ const InfoView: React.FC<InfoViewProps> = ({
   setOpenLocations,
   openLocations,
   setLocationsEditMode,
-  locationsEditMode,
   openMapModal,
   removeLocation,
   setOpenHospitals,
@@ -60,8 +57,6 @@ const InfoView: React.FC<InfoViewProps> = ({
   openHospitalsMapModal,
   setOpenAdvanceCalls,
   openadvanceCalls,
-  setAdvanceCallsEditMode,
-  advanceCallsEditMode,
   updateShootingAllTimes,
   openAdvanceCallModal,
   getHourMinutesFomISO,
@@ -74,7 +69,6 @@ const InfoView: React.FC<InfoViewProps> = ({
   mealsEditMode,
   openMealModal,
   deleteMeal,
-  mealInputs,
   handleEditMeal,
   permissionType,
   openEditModal,
@@ -152,7 +146,6 @@ const InfoView: React.FC<InfoViewProps> = ({
               onAddClick={openMealModal}
               getHourMinutesFomISO={getHourMinutesFomISO}
               deleteMeal={deleteMeal}
-              mealInputs={mealInputs}
               handleEditMeal={handleEditMeal}
               permissionType={permissionType}
             />

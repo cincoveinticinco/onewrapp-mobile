@@ -6,7 +6,7 @@ import {
 } from 'ionicons/icons';
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
-import { ShootingViews } from '../../../pages/ShootingDetail/ShootingDetail';
+import { ShootingViews } from '../../../pages/ShootingDetail/types/ShootingDetail.types';
 import './ShootingDetailTabs.css';
 
 interface ShootingDetailTabsProps {

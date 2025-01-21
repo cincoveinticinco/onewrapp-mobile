@@ -72,6 +72,8 @@ const InputModalScene: React.FC<InputModalProps> = ({
 
   const getUniqueEpisodes = () => {
     const episodes = new Set(listOfScenes.map((scene) => scene.episodeNumber).filter((episode) => episode !== null && episode !== undefined));
+    console.log(episodes)
+    console.log(Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value)))
     return Array.from(episodes).map((episode: any) => ({ value: episode, label: episode })).sort((a, b) => parseInt(a.value) - parseInt(b.value));
   };
 
@@ -118,7 +120,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
                 <IonItem color="tertiary">
                   <CustomSelect
                     input={episodeInput}
-                    setNewOptionValue={(fieldKeyName, value) => setSelectedEpisode(value)}
+                    setNewOptionValue={(fieldKeyName, value) => { setSelectedEpisode(value); console.log(episodeInput, '______-'); }}
                     enableSearch
                   />
                 </IonItem>

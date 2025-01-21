@@ -1,11 +1,9 @@
 import {
-  IonAlert,
   IonButton, IonContent, IonHeader,
   IonItem, IonPage, IonReorderGroup,
   ItemReorderEventDetail, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
-  useCallback,
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { IoMdAdd } from 'react-icons/io';
@@ -31,16 +29,8 @@ import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { Scene } from '../../interfaces/scenes.types';
-import {
-  AdvanceCall,
-  AdvanceCalls,
-  LocationInfo,
-  Meal,
-  ShootingBanner as ShootingBannerType,
-  ShootingScene,
-} from '../../interfaces/shooting.types';
+import { AdvanceCall,LocationInfo, Meal, ShootingScene } from '../../interfaces/shooting.types';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
-import colorIsDark from '../../utils/colorIsDark';
 import convertTo24Hour from '../../utils/convertTo24hours';
 import floatToFraction from '../../utils/floatToFraction';
 import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
@@ -48,44 +38,14 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import separateTimeOrPages from '../../utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
 import getSceneHeader from '../../utils/getSceneHeader';
-import SceneHeader from '../SceneDetails/SceneHeader';
 import Legend from '../../components/Shared/Legend/Legend';
 import CallSheet from '../CallSheet/CallSheet';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { set } from 'lodash';
 import { Crew } from '../../interfaces/crew.types';
-
-export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
-type cardType = {
-  cardType: string;
-};
-
-export type mergedSceneBanner = (Scene & ShootingScene & cardType) | (ShootingBannerType & cardType)
-export type mergedSceneShoot = (Scene & ShootingScene & cardType)
-interface ShootingInfo {
-  generalCall: string;
-  onSet: string;
-  estimatedWrap: string;
-  wrap: string;
-  lastOut: string;
-  sets: number;
-  scenes: number;
-  protectedScenes: number;
-  pages: string;
-  min: string;
-  locations: LocationInfo[];
-  hospitals: LocationInfo[];
-  advanceCalls: AdvanceCalls[]
-  meals: Meal[];
-}
-
-export interface ShootingDataProps {
-  mergedSceneBanners: mergedSceneBanner[];
-  notIncludedScenes: Scene[];
-  shotingInfo: ShootingInfo;
-  shootingFormattedDate: string;
-  mergedScenesShootData: mergedSceneShoot[];
-}
+import { mealInputs } from './Inputs/meal.inputs';
+import { bannerInputs } from './Inputs/baner.inputs';
+import { mergedSceneBanner, mergedSceneShoot, ShootingDataProps, ShootingInfo, ShootingViews } from './types/ShootingDetail.types';
+import { advanceCallInputs } from './Inputs/AdvanceCall.inputs';
 
 const ShootingDetail: React.FC<{
   permissionType?: number | null;
@@ -118,60 +78,11 @@ const ShootingDetail: React.FC<{
     mergedScenesShootData: [],
   };
 
-  const availableColors = [
-    { value: '#3dc2ff', name: 'light blue' },
-    { value: '#282f3a', name: 'dark gray' },
-    { value: '#04feaa', name: 'green' },
-    { value: '#ffb203', name: 'orange' },
-    { value: '#ff4a8f', name: 'pink' },
-    { value: '#707070', name: 'gray' },
-    { value: '#000', name: 'black' },
-    { value: '#f3fb8c', name: 'yellow' },
-    { value: '#fdc6f7', name: 'light pink' },
-  ];
 
   const legendItems = [
     { color: 'var(--ion-color-danger)', label: 'NOT SHOOT' },
     { color: 'var(--ion-color-success)', label: 'SHOOT' },
   ];
-
-  const bannersSelectOptions = availableColors.map((color) => ({
-    value: color.value,
-    label: color.name,
-    style: {
-      backgroundColor: color.value,
-      color: colorIsDark(color.value) ? 'white' : 'black',
-      border: '1px solid var(--ion-color-tertiary-dark)',
-    },
-  }));
-
-  const fontSizeOptions: SelectOptionsInterface[] = [
-    { value: 12, label: '12 px' },
-    { value: 14, label: '14 px' },
-    { value: 16, label: '16 px' },
-    { value: 18, label: '18 px' },
-    { value: 20, label: '20 px' },
-  ];
-
-  const bannerInputs: FormInput[] = [
-    {
-      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: true, inputName: 'add-banner-description-input', col: '4',
-    },
-    {
-      label: 'Font Size', type: 'select', fieldKeyName: 'fontSize', placeholder: 'INSERT', required: false, inputName: 'add-character-name-input', col: '4', selectOptions: fontSizeOptions,
-    },
-    {
-      label: 'Color',
-      type: 'select',
-      fieldKeyName: 'backgroundColor',
-      placeholder: 'SELECT COLOR',
-      required: false,
-      inputName: 'add-background-color-input',
-      selectOptions: bannersSelectOptions,
-      col: '4',
-    },
-  ];
-
 
   //* ***************************** RXDB HOOKS *****************************/
 
@@ -196,35 +107,6 @@ const ShootingDetail: React.FC<{
       console.log(departments)
     }
   }, [crew, isFetchingCrew]);
-
-
-
-  const advanceCallInputs: FormInput[]  = [
-    {
-      label: 'Department', type: 'select', fieldKeyName: 'dep_name_eng', placeholder: 'INSERT', required: true, inputName: 'add-department-input', col: '6', selectOptions: departments, search: true
-    },
-    {
-      label: 'Call', type: 'time', fieldKeyName: 'adv_call_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-call-input', col: '6',
-    },
-    {
-      label: 'Description', type: 'text', fieldKeyName: 'description', placeholder: 'INSERT', required: false, inputName: 'add-description-input', col: '12'
-    },
-  ];
-
-  const mealInputs:FormInput[] = [
-    {
-      label: 'Meal', type: 'text', fieldKeyName: 'meal', placeholder: 'INSERT', required: true, inputName: 'add-meal-input', col: '9',
-    },
-    {
-      label: 'Quantity', type: 'number', fieldKeyName: 'quantity', placeholder: 'INSERT', required: true, inputName: 'add-quantity-input', col: '3',
-    },
-    {
-      label: 'From Time', type: 'time', fieldKeyName: 'ready_at', placeholder: 'SELECT TIME', required: true, inputName: 'add-from-time-input', col: '6',
-    },
-    {
-      label: 'End Time', type: 'time', fieldKeyName: 'end_time', placeholder: 'SELECT TIME', required: true, inputName: 'add-end-time-input', col: '6',
-    },
-  ];
 
   // *************************** CONSTANTS ************************************//
 
@@ -1202,7 +1084,7 @@ const ShootingDetail: React.FC<{
       modalRef={advanceCallModalRef}
       modalTrigger={`open-add-new-advance-call-modal-${shootingId}`}
       title="Add New Department Call"
-      formInputs={advanceCallInputs}
+      formInputs={advanceCallInputs(departments)}
       handleEdition={addNewAdvanceCall}
       defaultFormValues={{}}
       modalId={`add-new-advance-call-modal-${shootingId}`}
@@ -1588,7 +1470,6 @@ const ShootingDetail: React.FC<{
           mealsEditMode={mealsEditMode}
           openMealModal={openMealModal}
           deleteMeal={deleteMeal}
-          mealInputs={mealInputs}
           handleEditMeal={handleEditMeal}
           permissionType={permissionType}
           openEditModal={openEditionModal}

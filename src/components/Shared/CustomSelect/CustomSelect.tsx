@@ -34,6 +34,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
   // Initialize selected option when component mounts or input.value changes
   useEffect(() => {
     const currentOption = options.find((opt) => opt.value === input.value);
+    console.log(options)
     setSelectedOption(currentOption || null);
     if (currentOption) {
       setInputValue(currentOption.label);
@@ -137,7 +138,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ input, setNewOptionValue, e
           setSelectedOption(null);
         }
       }}
-      freeSolo
       selectOnFocus
       clearOnBlur={false}  // Changed to false to maintain value
       handleHomeEndKeys

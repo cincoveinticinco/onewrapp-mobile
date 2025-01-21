@@ -13,7 +13,6 @@ interface MealsSectionProps {
   onAddClick: any;
   getHourMinutesFomISO: (isoString: string) => string;
   deleteMeal: (meal: Meal) => void;
-  mealInputs: FormInput[];
   handleEditMeal: (meal: Meal) => void;
   permissionType?: number | null;
 }
@@ -22,12 +21,9 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
   meals,
   open,
   setOpen,
-  editMode,
-  setEditMode,
   onAddClick,
   getHourMinutesFomISO,
   deleteMeal,
-  mealInputs,
   handleEditMeal,
   permissionType,
 }) => (
@@ -47,7 +43,6 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
             editMode
             getHourMinutesFomISO={getHourMinutesFomISO}
             deleteMeal={deleteMeal}
-            editionInputs={mealInputs}
             handleEdition={handleEditMeal}
           />
         ))
