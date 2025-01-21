@@ -14,7 +14,7 @@ import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthVi
 import WeekView from '../../components/Calendar/WeekView/WeekView';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import Legend from '../../components/Shared/Legend/Legend';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
@@ -23,6 +23,7 @@ import { Unit } from '../../interfaces/unitTypes.types';
 import './Calendar.css';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import WeekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';

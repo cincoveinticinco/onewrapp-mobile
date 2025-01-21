@@ -8,13 +8,14 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
 import AddScenesForm from '../../components/AddScene/AddSceneForm';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import './AddScene.css';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 const AddScene: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement>(null);

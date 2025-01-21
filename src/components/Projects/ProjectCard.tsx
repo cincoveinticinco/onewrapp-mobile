@@ -6,7 +6,7 @@ import { cloudOfflineSharp } from 'ionicons/icons';
 import React from 'react';
 import { ProjectStatusEnum } from '../../Ennums/ennums';
 import { Project } from '../../RXdatabase/schemas/projects.schema';
-import DatabaseContext from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import './ProjectCard.css';
 
 interface ProjectCardProps {

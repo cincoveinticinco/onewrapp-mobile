@@ -12,8 +12,8 @@ import CastCard from '../../components/Cast/CastCard';
 import DropDownCast from '../../components/Cast/DropDownCast';
 
 // Custom contexts and hooks imports
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
-import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
+import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports

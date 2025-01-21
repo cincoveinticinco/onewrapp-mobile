@@ -6,7 +6,7 @@ import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
 import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { PiNotePencil } from 'react-icons/pi';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import useFormTypeLogic from '../../hooks/SceneScript/useFormTypeLogic';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import AppLoader from '../../hooks/Shared/AppLoader';
@@ -25,6 +25,7 @@ import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
 import SceneParagraph from './SceneParagraph/SceneParagraph';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 interface ScriptPageProps {
   zoomLevel: number;

@@ -9,8 +9,8 @@ import React, {
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes.context';
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 
 import LocationSetCard from '../../components/Sets/LocationSetCard';

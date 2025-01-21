@@ -20,7 +20,7 @@ import { CiEdit, CiLogout } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { RiDownload2Line, RiLogoutBoxLine } from 'react-icons/ri';
 import { useParams } from 'react-router';
-import DatabaseContext from '../../../context/Database.context';
+import DatabaseContext from '../../../context/Database/Database.context';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import template from '../../../templates/MinimalTemplate';
 import './Toolbar.scss';

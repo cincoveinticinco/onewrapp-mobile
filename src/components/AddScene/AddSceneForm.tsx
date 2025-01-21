@@ -14,7 +14,7 @@ import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 import InputItem from './AddSceneFormInputs/InputItem';
 import SelectItem from './AddSceneFormInputs/SelectItem';
 
-import DatabaseContext from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
 } from '../../Ennums/ennums';

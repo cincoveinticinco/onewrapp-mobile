@@ -13,8 +13,8 @@ import EditionModal from '../../components/Shared/EditionModal/EditionModal';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
 import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import ScenesContext from '../../context/Scenes.context';
+import DatabaseContext from '../../context/Database/Database.context';
+import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
@@ -31,6 +31,7 @@ import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import timeToISOString from '../../utils/timeToIsoString';
 import './SceneDetails.scss';
 import SceneHeader from './SceneHeader';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 export const EditableTimeField: React.FC<{
   value: number | null;

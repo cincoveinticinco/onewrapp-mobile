@@ -9,7 +9,7 @@ import capitalizeString from '../../../utils/capitalizeString';
 import InputAlert from '../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../Shared/DropDownButton/DropDownButton';
 import { Extra } from '../../../interfaces/scenes.types';
-import DatabaseContext from '../../../context/Database.context';
+import DatabaseContext from '../../../context/Database/Database.context';
 
 interface AddExtraFormProps {
   handleSceneChange: (value: any, field: string) => void;

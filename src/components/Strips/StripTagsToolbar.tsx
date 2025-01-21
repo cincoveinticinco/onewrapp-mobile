@@ -1,6 +1,6 @@
 import { IonList } from '@ionic/react';
 import { useContext } from 'react';
-import ScenesContext from '../../context/Scenes.context';
+import ScenesContext from '../../context/Scenes/Scenes.context';
 import StripTag from './StripTag';
 import './StripTagsToolbar.scss';
 

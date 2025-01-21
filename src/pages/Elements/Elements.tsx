@@ -10,9 +10,9 @@ import React, {
 import { useLocation } from 'react-router';
 import ElementCard from '../../components/Elements/ElementCard';
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import DatabaseContext from '../../context/Database.context';
-import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes.context';
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import DatabaseContext from '../../context/Database/Database.context';
+import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import { SceneTypeEnum } from '../../Ennums/ennums';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';

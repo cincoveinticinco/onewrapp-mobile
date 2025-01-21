@@ -8,7 +8,7 @@ import {
 import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';

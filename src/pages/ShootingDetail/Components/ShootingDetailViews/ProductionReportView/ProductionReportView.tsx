@@ -9,7 +9,7 @@ import { VscEdit, VscSave } from 'react-icons/vsc';
 import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
-import DatabaseContext from '../../../../../context/Database.context';
+import DatabaseContext from '../../../../../context/Database/Database.context';
 import useErrorToast from '../../../../../hooks/Shared/useErrorToast';
 import AppLoader from '../../../../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../../../../hooks/Shared/useSuccessToast';

@@ -17,8 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
 import ScriptPage from '../../components/SceneScript/ScriptPage';
 import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import ScenesContext from '../../context/Scenes.context';
+import DatabaseContext from '../../context/Database/Database.context';
+import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
@@ -31,6 +31,7 @@ import { ShootingScene } from '../../interfaces/shooting.types';
 import applyFilters from '../../utils/applyFilters';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import './SceneScript.scss';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT

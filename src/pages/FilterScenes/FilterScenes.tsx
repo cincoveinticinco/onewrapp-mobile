@@ -12,8 +12,8 @@ import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScene
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import DatabaseContext from '../../context/Database.context';
-import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes.context';
+import DatabaseContext from '../../context/Database/Database.context';
+import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes/Scenes.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import AppLoader from '../../hooks/Shared/AppLoader';

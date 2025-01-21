@@ -21,9 +21,9 @@ import {
 import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
 import SceneCard from '../../components/Strips/SceneCard';
 import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
-import ScenesContext, { defaultSortOptions } from '../../context/Scenes.context';
-import ScrollInfiniteContext from '../../context/ScrollInfinite.context';
+import DatabaseContext from '../../context/Database/Database.context';
+import ScenesContext, { defaultSortOptions } from '../../context/Scenes/Scenes.context';
+import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import { Scene } from '../../interfaces/scenes.types';
@@ -32,6 +32,7 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import applyFilters from '../../utils/applyFilters';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 import './Strips.scss';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 const Strips: React.FC<{
   permissionType: SecurePages | null;

@@ -11,8 +11,8 @@ import { IonReactRouter } from '@ionic/react-router';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
 import AppTabs from './components/Shared/AppTabs/AppTabs';
-import { ScenesContextProvider } from './context/Scenes.context';
-import DatabaseContext from './context/Database.context';
+import { ScenesContextProvider } from './context/Scenes/Scenes.context';
+import DatabaseContext from './context/Database/Database.context';
 import AuthContext from './context/Auth.context';
 
   import { useLocation } from 'react-router-dom';

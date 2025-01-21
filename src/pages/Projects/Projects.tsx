@@ -10,7 +10,7 @@ import React, { useContext } from 'react';
 import { useRxData } from 'rxdb-hooks';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Toolbar from '../../components/Shared/Toolbar/Toolbar';
-import DatabaseContext from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import AppLoader from '../../hooks/Shared/AppLoader';
 
 const Projects: React.FC = () => {

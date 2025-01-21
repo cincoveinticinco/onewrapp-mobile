@@ -23,7 +23,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
-import DatabaseContext from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 
 const LoginPage: React.FC = () => {
   const { saveLogin, loggedIn } = useAuth();

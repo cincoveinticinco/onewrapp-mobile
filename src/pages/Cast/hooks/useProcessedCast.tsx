@@ -2,8 +2,8 @@ import {
   useContext, useEffect,
   useState,
 } from 'react';
-import DatabaseContext from '../../../context/Database.context';
-import ScenesContext from '../../../context/Scenes.context';
+import DatabaseContext from '../../../context/Database/Database.context';
+import ScenesContext from '../../../context/Scenes/Scenes.context';
 import { SceneTypeEnum } from '../../../Ennums/ennums';
 import getUniqueValuesByKey from '../../../utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';

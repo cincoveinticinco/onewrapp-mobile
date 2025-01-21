@@ -4,52 +4,25 @@ import React, {
 } from 'react';
 import { RxDatabase, RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
-import AppDataBase from '../RXdatabase/database';
-import HttpReplicator from '../RXdatabase/replicator';
-import CrewSchema from '../RXdatabase/schemas/crew.schema';
-import SceneParagraphsSchema from '../RXdatabase/schemas/paragraphs.schema';
-import ProjectsSchema, { Project } from '../RXdatabase/schemas/projects.schema';
-import ScenesSchema from '../RXdatabase/schemas/scenes.schema';
-import ShootingsSchema from '../RXdatabase/schemas/shootings.schema';
-import TalentsSchema from '../RXdatabase/schemas/talents.schema';
-import UnitsSchema from '../RXdatabase/schemas/units.schema';
-import AuthContext from './Auth.context';
-
-import CountriesSchema from '../RXdatabase/schemas/country.schema';
-import ServiceMatricesSchema from '../RXdatabase/schemas/serviceMatrices.schema';
-import UserSchema from '../RXdatabase/schemas/user.schema';
-import useNetworkStatus from '../hooks/Shared/useNetworkStatus';
-import environment from '../../environment';
+import AppDataBase from '../../RXdatabase/database';
+import HttpReplicator from '../../RXdatabase/replicator';
+import CrewSchema from '../../RXdatabase/schemas/crew.schema';
+import SceneParagraphsSchema from '../../RXdatabase/schemas/paragraphs.schema';
+import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects.schema';
+import ScenesSchema from '../../RXdatabase/schemas/scenes.schema';
+import ShootingsSchema from '../../RXdatabase/schemas/shootings.schema';
+import TalentsSchema from '../../RXdatabase/schemas/talents.schema';
+import UnitsSchema from '../../RXdatabase/schemas/units.schema';
+import AuthContext from '../Auth/Auth.context';
+import CountriesSchema from '../../RXdatabase/schemas/country.schema';
+import ServiceMatricesSchema from '../../RXdatabase/schemas/serviceMatrices.schema';
+import UserSchema from '../../RXdatabase/schemas/user.schema';
+import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
+import environment from '../../../environment';
 import { useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
-export interface DatabaseContextProps {
-  oneWrapDb: RxDatabase | null;
-  offlineScenes: any[];
-  setStartReplication: (startReplication: boolean) => void;
-  projectId: number | null;
-  setProjectId: (projectId: any) => void;
-  startReplication: boolean;
-  isOnline: boolean;
-  scenesAreLoading: boolean;
-  viewTabs: boolean;
-  setViewTabs: (viewTabs: boolean) => void;
-  setScenesAreLoading: (scenesAreLoading: boolean) => void;
-  projectsAreLoading: boolean;
-  setProjectsAreLoading: (projectsAreLoading: boolean) => void;
-  initializeShootingReplication: () => Promise<void>;
-  initializeSceneReplication: () => Promise<void>;
-  initializeParagraphReplication: () => Promise<void>;
-  initializeUnitReplication: () => Promise<void>;
-  initializeTalentsReplication: () => Promise<void>;
-  isDatabaseReady: boolean;
-  initialProjectReplication: () => Promise<void>;
-  replicationPercentage: number;
-  replicationStatus: string;
-  initialReplicationFinished: boolean;
-  projectsInfoIsOffline: {[key: string]: boolean};
-  setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
-  initializeProjectsUserReplication: () => Promise<void>;
-  initializeAllReplications: () => Promise<void>;
-}
+import useReplicationStore from '../../stores/useReplicationStore';
+import useAppStore from '../../stores/useAppStore';
+import { DatabaseContextProps } from './types/Database.types';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
@@ -82,6 +55,18 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
+
+  const { initialReplicationFinished, setInitialReplicationFinished } = useReplicationStore();
+  
+  const { 
+    projectId, setProjectId, 
+    scenesAreLoading, setScenesAreLoading,
+    replicationStatus, setReplicationStatus,
+    replicationPercentage, setReplicationPercentage,
+    projectsAreOffline, setProjectsAreOffline,
+    projectsInfoIsOffline, setProjectsInfoIsOffline,
+  } = useAppStore();
+
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(null);
   const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
   const [paragraphCollection, setParagraphCollection] = useState<SceneParagraphsSchema | null>(null);
@@ -94,9 +79,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [userCollection, setUserCollection] = useState<UserSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
-  const {
-   getToken
-  } = useContext(AuthContext);
+  const { getToken } = useContext(AuthContext);
 
   const resyncScenes: any = useRef(null);
   const resyncShootings: any = useRef(null);
@@ -112,19 +95,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
-  const [projectId, setProjectId] = useState<any>(localStorage.getItem('projectId') || null);
-  const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const [initialReplicationFinished, setInitialReplicationFinished] = useState(false);
-  const [replicationStatus, setReplicationStatus] = useState<string>('');
   const isOnline =  useNetworkStatus();
-  const [replicationPercentage, setReplicationPercentage] = useState(0);
-  const [projectsAreOffline, setProjectsAreOffline] = useState<boolean>(
-    localStorage.getItem('projectsAreOffline') ? JSON.parse(localStorage.getItem('projectsAreOffline') as string) : false,
-  );
-  const [projectsInfoIsOffline, setProjectsInfoIsOffline] = useState<{[key: string]: boolean}>(
-    localStorage.getItem('projectsInfoIsOffline') ? JSON.parse(localStorage.getItem('projectsInfoIsOffline') as string) : {},
-  );
-
   const initializeDatabase = async () => {
     try {
       const sceneColl = new ScenesSchema();
@@ -287,6 +258,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeSceneReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
+
     await initializeReplication(
       sceneCollection,
       { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true } },
@@ -297,6 +272,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeServiceMatricesReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
+
     await initializeReplication(
       serviceMatricesCollection,
       { projectId: parseInt(projectId, 10) },
@@ -307,6 +286,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeParagraphReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
+    
     await initializeReplication(
       paragraphCollection,
       { projectId: parseInt(projectId, 10) },
@@ -317,6 +300,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeTalentsReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
     await initializeReplication(
       talentsCollection,
       { projectId: parseInt(projectId, 10) },
@@ -327,6 +313,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeUnitReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
     await initializeReplication(
       unitsCollection,
       { projectId: parseInt(projectId, 10) },
@@ -337,6 +326,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeShootingReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
     await initializeReplication(
       shootingsCollection,
       { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true } },
@@ -347,6 +339,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
   
   const initializeCrewReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
     await initializeReplication(
       crewCollection,
       { projectId: parseInt(projectId, 10) },
@@ -385,12 +380,10 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   
   useEffect(() => {
     const replicatePeriodically = async () => {
-      if (oneWrapRXdatabase && isOnline && projectId) {
-        await initializeAllReplications();
-      }
+      await initializeAllReplications();
     };
   
-    if (oneWrapRXdatabase && isOnline && projectId) {
+    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
 
       replicatePeriodically();
   
@@ -513,6 +506,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     let currentStep: string = '';
     
     try {
+      if (!projectId) {
+        throw new Error('Project Id not found');
+      }
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
@@ -602,7 +598,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           oneWrapDb: oneWrapRXdatabase,
           offlineScenes,
           setStartReplication,
-          projectId: parseInt(projectId),
+          projectId: projectId ? parseInt(projectId) : null,
           setProjectId,
           startReplication,
           isOnline,

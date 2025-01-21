@@ -19,7 +19,7 @@ import {
   ShootingSceneStatusEnum,
 } from '../../Ennums/ennums';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext, { DatabaseContextProps } from '../../context/Database/Database.context';
 import { Scene } from '../../interfaces/scenes.types';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';

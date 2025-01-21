@@ -5,7 +5,6 @@ import { castColumns } from './tables/cast.columns';
 import { sortCast } from './utils/Cast.utils';
 import AddCastCallModal from './modals/AddCastCallModal';
 import { CastViewProps } from './types/Cast.types';
-import { useEffect } from 'react';
 import { pipe } from 'rxjs';
 
 const CastView: React.FC<CastViewProps> = ({

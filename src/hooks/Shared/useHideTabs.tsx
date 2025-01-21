@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import DatabaseContext from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 
 const useHideTabs = () => {
   const { viewTabs, setViewTabs } = useContext(DatabaseContext);

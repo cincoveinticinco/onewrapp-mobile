@@ -29,7 +29,7 @@ import {
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
-import DatabaseContext from '../../../context/Database.context';
+import DatabaseContext from '../../../context/Database/Database.context';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import { SecurePages } from '../../../interfaces/securePages.types';
 import { User } from '../../../interfaces/user.types';

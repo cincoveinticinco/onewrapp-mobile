@@ -6,7 +6,7 @@ import {
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 import React, { useContext } from 'react';
-import DatabaseContext from '../../../context/Database.context';
+import DatabaseContext from '../../../context/Database/Database.context';
 import InputModal from '../../../Layouts/InputModal/InputModal';
 import applyFilters from '../../../utils/applyFilters';
 import getOptionsArray from '../../../utils/getOptionsArray';

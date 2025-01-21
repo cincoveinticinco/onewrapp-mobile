@@ -16,9 +16,10 @@ import {
 } from '@ionic/react';
 import { refresh } from 'ionicons/icons';
 import { useHistory, useParams } from 'react-router';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import './ReplicationPage.scss';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 const ReplicationPage: React.FC = () => {
   const {
