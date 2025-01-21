@@ -1,4 +1,4 @@
-import { Scene } from "../../../interfaces/scenes.types";
+import { SceneDocType } from "../../../interfaces/scenes.types";
 import { ShootingScene,  ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, Meal, } from "../../../interfaces/shooting.types";
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
@@ -6,8 +6,8 @@ type cardType = {
   cardType: string;
 };
 
-export type mergedSceneBanner = (Scene & ShootingScene & cardType) | (ShootingBannerType & cardType)
-export type mergedSceneShoot = (Scene & ShootingScene & cardType)
+export type mergedSceneBanner = (SceneDocType & ShootingScene & cardType) | (ShootingBannerType & cardType)
+export type mergedSceneShoot = (SceneDocType & ShootingScene & cardType)
 
 export interface ShootingInfo {
   generalCall: string;
@@ -28,7 +28,7 @@ export interface ShootingInfo {
 
 export interface ShootingDataProps {
   mergedSceneBanners: mergedSceneBanner[];
-  notIncludedScenes: Scene[];
+  notIncludedScenes: SceneDocType[];
   shotingInfo: ShootingInfo;
   shootingFormattedDate: string;
   mergedScenesShootData: mergedSceneShoot[];

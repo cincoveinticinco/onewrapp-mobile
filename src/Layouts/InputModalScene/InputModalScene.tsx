@@ -10,15 +10,15 @@ import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
 import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import './InputModalScene.scss';
 
 interface InputModalProps {
   sceneName: string;
-  listOfScenes: Scene[];
+  listOfScenes: SceneDocType[];
   modalTrigger?: string;
-  handleCheckboxToggle: (scene: Scene) => void;
-  selectedScenes: Scene[];
+  handleCheckboxToggle: (scene: SceneDocType) => void;
+  selectedScenes: SceneDocType[];
   setSelectedScenes?: any;
   clearSelections: () => void;
   multipleSelections?: boolean;
@@ -37,7 +37,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
   clearSelections,
   modalRef,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<Scene | null>(null);
+  const [selectedOption, setSelectedOption] = useState<SceneDocType | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
 
   const isMobile = useIsMobile();
@@ -58,15 +58,15 @@ const InputModalScene: React.FC<InputModalProps> = ({
     setSelectedOption(null);
   }, []);
 
-  const handleSceneChange = useCallback((fieldKeyName: string, value: Scene | null) => {
-    console.log('Scene selected:', value);
+  const handleSceneChange = useCallback((fieldKeyName: string, value: SceneDocType | null) => {
+    console.log('SceneDocType selected:', value);
     setSelectedOption(value);
   }, []);
 
   const filteredScenes = useMemo(() => {
     console.log('Filtering scenes for episode:', selectedEpisode);
     if (!selectedEpisode) return [];
-    const filtered = listOfScenes.filter((scene: Scene) => scene.episodeNumber === selectedEpisode);
+    const filtered = listOfScenes.filter((scene: SceneDocType) => scene.episodeNumber === selectedEpisode);
     console.log('Filtered scenes:', filtered);
     return filtered;
   }, [listOfScenes, selectedEpisode]);
@@ -98,7 +98,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
     value: selectedOption
   }), [filteredScenes, selectedOption]);
 
-  function getSceneHeader(scene: Scene) {
+  function getSceneHeader(scene: SceneDocType) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
     const intOrExt = scene.intOrExtOption || '';

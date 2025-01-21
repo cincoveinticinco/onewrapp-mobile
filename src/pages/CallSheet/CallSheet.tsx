@@ -21,7 +21,7 @@ import DatabaseContext from '../../context/Database/Database.context';
 import { ShootingStatusEnum } from '../../ennums/ennums';
 import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
-import { Character, Scene } from '../../interfaces/scenes.types';
+import { Character, SceneDocType } from '../../interfaces/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
 } from '../../interfaces/shooting.types';
@@ -329,7 +329,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
         return characters.some((character: any) => normalizeString(character.characterName) === normalizeString(castName));
       }).length.toString() || '--';
 
-      const characterNames = [...new Set(scenes.flatMap((scene: { _data: Scene; }) => (scene._data.characters || []).map((character: Character) => normalizeString(character.characterName.toLowerCase()))))];
+      const characterNames = [...new Set(scenes.flatMap((scene: { _data: SceneDocType; }) => (scene._data.characters || []).map((character: Character) => character.characterName && normalizeString(character.characterName.toLowerCase()))))];
 
       const talents = await oneWrapDb?.talents.find({}).exec() || [];
       const castTalents = talents.filter((talent: Talent) => characterNames.includes(normalizeString(talent.castName)));
@@ -344,17 +344,17 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       setScenesInShoot(scenes);
 
-      scenes.forEach((scene: { _data: Scene }) => {
+      scenes.forEach((scene: { _data: SceneDocType }) => {
         if (scene._data.characters) {
           scene._data.characters.forEach((character: Character) => {
-            const key = character.characterName.toLowerCase();
+            const key = character.characterName ? character.characterName.toLowerCase() : '';
             if (!uniqueCastCalls.has(key)) {
-              const talentCallInfo = getCallInfo(character.characterName);
+              const talentCallInfo = character.characterName ? getCallInfo(character.characterName) : undefined;
               const talent = castTalents.find((talent: any) => talent.castName.toLowerCase() === key);
               uniqueCastCalls.set(key, {
                 cast: `${character.characterNum ? (`${character.characterNum}.`) : ''} ${character.characterName}`,
                 name: `${talent?.name || ''} ${talent?.lastName || ''}`,
-                tScn: getNumberScenesByCast(character.characterName),
+                tScn: character.characterName ? getNumberScenesByCast(character.characterName) : '--',
                 pickUp: talentCallInfo?.pickUp || '--',
                 callTime: talentCallInfo?.callTime || '--',
                 onMakeUp: talentCallInfo?.onMakeUp || '--',
@@ -654,7 +654,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
 
       const { cast } = formData;
 
-      const character: Character = scenesInShoot.flatMap((scene: any) => scene._data.characters).find((character: any) => normalizeString(character.characterName) === normalizeString(cast.castName));
+      const character: Character = scenesInShoot.flatMap((scene: any) => scene._data.characters).find((character: any) => character.characterName && normalizeString(character.characterName) === normalizeString(cast.castName));
 
       const characterNum = character?.characterNum;
 

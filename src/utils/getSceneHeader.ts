@@ -1,6 +1,6 @@
-import { Scene } from "../interfaces/scenes.types";
+import { SceneDocType } from "../interfaces/scenes.types";
 
-function getSceneHeader(scene: Scene) {
+function getSceneHeader(scene: SceneDocType) {
   const episodeNumber = scene.episodeNumber || '';
   const sceneNumber = scene.sceneNumber || '';
   const intOrExt = scene.intOrExtOption || '';

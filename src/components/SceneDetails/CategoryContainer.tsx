@@ -1,10 +1,10 @@
 import { IonCardContent, IonCardHeader } from '@ionic/react';
-import { Note, Scene } from '../../interfaces/scenes.types';
+import { Note, SceneDocType } from '../../interfaces/scenes.types';
 
 const CategoryContainer = ({
   categoryName, scene, characters, extras, elements, notes,
 }: any) => {
-  const getCharactersByCategory = (categoryName: string, scene: Scene) => {
+  const getCharactersByCategory = (categoryName: string, scene: SceneDocType) => {
     const characters = scene.characters ? scene.characters.filter((character: any) => {
       if (categoryName === 'NO CATEGORY') return character.categoryName === null;
       return character.categoryName === categoryName;
@@ -12,7 +12,7 @@ const CategoryContainer = ({
     return characters;
   };
 
-  const getExtrasByCategory = (categoryName: string, scene: Scene) => {
+  const getExtrasByCategory = (categoryName: string, scene: SceneDocType) => {
     const extras = scene.extras ? scene.extras.filter((extra: any) => {
       if (categoryName === 'NO CATEGORY') return extra.categoryName === null;
       return extra.categoryName === categoryName;
@@ -20,7 +20,7 @@ const CategoryContainer = ({
     return extras;
   };
 
-  const getElementsByCategory = (categoryName: string, scene: Scene) => {
+  const getElementsByCategory = (categoryName: string, scene: SceneDocType) => {
     const elements = scene.elements ? scene.elements.filter((element: any) => {
       if (categoryName === 'NO CATEGORY') return element.categoryName === null;
       return element.categoryName === categoryName;
@@ -28,12 +28,12 @@ const CategoryContainer = ({
     return elements;
   };
 
-  const getNotes = (scene: Scene) => {
+  const getNotes = (scene: SceneDocType) => {
     const notes = scene.notes ? scene.notes.filter((note: Note) => note.note !== null) : [];
     return notes;
   };
 
-  const getValuesByCategory = (categoryName: string, scene: Scene) => {
+  const getValuesByCategory = (categoryName: string, scene: SceneDocType) => {
     if (characters) {
       return getCharactersByCategory(categoryName, scene);
     } if (extras) {

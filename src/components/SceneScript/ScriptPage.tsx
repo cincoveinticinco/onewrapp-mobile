@@ -125,8 +125,8 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
   }, [selectedText]);
 
-  const elementsUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName);
-  const charactersUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: Character) => category.categoryName);
+  const elementsUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName).filter((categoryName) => categoryName !== undefined);
+  const charactersUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: Character) => category.categoryName).filter((categoryName) => categoryName !== undefined);
 
   const handleFormTypeChange = (newFormType: 'character' | 'element' | 'extra' | 'note') => {
     setFormType(newFormType);
@@ -170,17 +170,17 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   const getSearchTermsArray = (text: string) => {
     const words = text.split(' ');
     const searchTermsArray: SearchTerm[] = [];
-    const normalizeCharactersArray = charactersArray.map((character: Character) => normalizeWord(character.characterName));
-    const normalizeElementsArray = elementsArray.map((element: Element) => normalizeWord(element.elementName));
-    const normalizeExtrasArray = extrasArray.map((extra: Extra) => normalizeWord(extra.extraName));
-    const normalizeNotesArray = notesArray.map((note: Note) => normalizeWord(note.note));
+    const normalizeCharactersArray = charactersArray.map((character: Character) => character.characterName && normalizeWord(character.characterName));
+    const normalizeElementsArray = elementsArray.map((element: Element) => element.elementName && normalizeWord(element.elementName));
+    const normalizeExtrasArray = extrasArray.map((extra: Extra) => extra.extraName && normalizeWord(extra.extraName));
+    const normalizeNotesArray = notesArray.map((note: Note) => note.note && normalizeWord(note.note));
 
     words.forEach((word) => {
       const normalizedWord = normalizeWord(word);
       if (normalizeCharactersArray.includes(normalizedWord)) {
         const searchTerm = {
           searchTerm: normalizeWord(word),
-          categoryName: charactersArray.find((character: Character) => normalizeWord(character.characterName) === normalizeWord(word))?.categoryName || null,
+          categoryName: charactersArray.find((character: Character) => character.characterName && normalizeWord(character.characterName) === normalizeWord(word))?.categoryName || null,
           type: 'character',
           highlightColor: 'var(--ion-color-primary)',
         };
@@ -188,7 +188,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
       } else if (normalizeElementsArray.includes(normalizeWord(word))) {
         const searchTerm = {
           searchTerm: normalizeWord(word),
-          categoryName: elementsArray.find((element: Element) => normalizeWord(element.elementName) === normalizeWord(word))?.categoryName || null,
+          categoryName: elementsArray.find((element: Element) => element.elementName && normalizeWord(element.elementName) === normalizeWord(word))?.categoryName || null,
           type: 'element',
           highlightColor: 'var(--ion-color-yellow)',
         };
@@ -196,7 +196,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
       } else if (normalizeExtrasArray.includes(normalizedWord)) {
         const searchTerm = {
           searchTerm: normalizeWord(word),
-          categoryName: extrasArray.find((extra: Extra) => normalizeWord(extra.extraName) === normalizeWord(word))?.categoryName || null,
+          categoryName: extrasArray.find((extra: Extra) => extra.extraName && normalizeWord(extra.extraName) === normalizeWord(word))?.categoryName || null,
           type: 'extra',
           highlightColor: 'var(--ion-color-success)',
         };

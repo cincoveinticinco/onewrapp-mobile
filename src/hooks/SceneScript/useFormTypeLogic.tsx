@@ -39,7 +39,7 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
   const [note, setNote] = useState<Note>({
     email: null,
     note: '',
-    createdAt: null,
+    updatedAt: null,
   });
 
   useEffect(() => {
@@ -48,9 +48,9 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
     const uniqueExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
     const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
 
-    const foundCharacter = uniqueCharacters.find((character: Character) => removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText);
-    const foundElement = uniqueElements.find((element: Element) => removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText);
-    const foundExtra = uniqueExtras.find((extra: Extra) => removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText);
+    const foundCharacter = uniqueCharacters.find((character: Character) => character.characterName && removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText);
+    const foundElement = uniqueElements.find((element: Element) => element.elementName && removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText);
+    const foundExtra = uniqueExtras.find((extra: Extra) => extra.extraName && removeAccents(extra.extraName).toLowerCase().trim() === normalizedSelectedText);
 
     if (foundCharacter) {
       setFormType('character');

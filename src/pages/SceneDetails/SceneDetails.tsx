@@ -22,7 +22,7 @@ import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import { ShootingScene } from '../../interfaces/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../utils/applyFilters';
@@ -109,10 +109,10 @@ const SceneDetails: React.FC<{
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
-  const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
+  const [filteredScenes, setFilteredScenes] = useState<SceneDocType[]>([]);
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
-  const [previousScene, setPreviousScene] = useState<Scene | null>(null);
-  const [nextScene, setNextScene] = useState<Scene | null>(null);
+  const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
+  const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const [sceneColor, setSceneColor] = useState<any>('light');
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
 
@@ -151,7 +151,7 @@ const SceneDetails: React.FC<{
           setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO });
         }
 
-        successMessageSceneToast('Scene updated successfully');
+        successMessageSceneToast('SceneDocType updated successfully');
       } catch (error) {
         errorToast('Error updating scene');
         throw error;
@@ -159,7 +159,7 @@ const SceneDetails: React.FC<{
     }
   };
 
-  const getSceneColor = async (scene: Scene) => {
+  const getSceneColor = async (scene: SceneDocType) => {
     if (isShooting) {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
       const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
@@ -284,7 +284,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, status: newStatus });
         }
-        successMessageSceneToast('Scene status updated successfully');
+        successMessageSceneToast('SceneDocType status updated successfully');
       } catch (error) {
         errorToast('Error updating scene status');
         throw error;
@@ -326,7 +326,7 @@ const SceneDetails: React.FC<{
   useEffect(() => {
     const filterScenes = async () => {
       setSceneIsLoading(true);
-      let filtered: Scene[];
+      let filtered: SceneDocType[];
       if (!isShooting) {
         filtered = selectedFilterOptions
           ? applyFilters(offlineScenes, selectedFilterOptions)
@@ -426,7 +426,7 @@ const SceneDetails: React.FC<{
       const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       await sceneToDelete?.remove();
       history.push(`/my/projects/${id}/strips`);
-      successMessageSceneToast('Scene deleted successfully');
+      successMessageSceneToast('SceneDocType deleted successfully');
     } catch (error) {
       errorToast('Error deleting scene');
     }
@@ -575,7 +575,7 @@ const SceneDetails: React.FC<{
         currentRoute="scenedetails"
       />
       <InputAlert
-        header="Delete Scene"
+        header="Delete SceneDocType"
         message={`Are you sure you want to delete scene ${sceneHeader}?`}
         handleOk={deleteScene}
         inputs={[]}

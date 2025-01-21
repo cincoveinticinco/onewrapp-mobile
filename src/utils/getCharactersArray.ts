@@ -1,11 +1,13 @@
 import { Character } from '../interfaces/scenes.types';
 
-const getCharactersArray = (uniqueValuesArray: any[]) => {
+const getCharactersArray = (uniqueValuesArray: Character[]) => {
   const charactersArray: string[] = [];
 
   if (Array.isArray(uniqueValuesArray)) {
-    uniqueValuesArray.forEach((character: Character) => {
-      const characterName = character.characterNum ? `${character.characterNum}. ${character.characterName}` : character.characterName;
+    uniqueValuesArray.forEach((character) => {
+      const characterName = character?.characterNum ? 
+        `${character?.characterNum}. ${character?.characterName}` : 
+        character?.characterName || '';
       charactersArray.push(characterName);
     });
   }
@@ -14,5 +16,3 @@ const getCharactersArray = (uniqueValuesArray: any[]) => {
 };
 
 export default getCharactersArray;
-
-// receive

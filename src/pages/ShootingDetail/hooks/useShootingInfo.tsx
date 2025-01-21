@@ -6,7 +6,7 @@ import { getSceneBackgroundColor } from "../utils/getSceneBackgroundColor.util";
 import getSceneHeader from "../../../utils/getSceneHeader";
 import floatToFraction from "../../../utils/floatToFraction";
 import secondsToMinSec from "../../../utils/secondsToMinSec";
-import { Scene } from "../../../interfaces/scenes.types";
+import { SceneDocType } from "../../../interfaces/scenes.types";
 import useSuccessToast from "../../../hooks/Shared/useSuccessToast";
 import useErrorToast from "../../../hooks/Shared/useErrorToast";
 import convertTo24Hour from "../../../utils/convertTo24hours";
@@ -112,7 +112,7 @@ export const useShootingInfo = () => {
       hospitals: shootings[0]._data.hospitals,
       advanceCalls: shootings[0]._data.advanceCalls,
       meals: shootings[0]._data.meals,
-      protectedScenes: scenesData?.filter((scene: Scene) => scene.protectionType).length || 0,
+      protectedScenes: scenesData?.filter((scene: SceneDocType) => scene.protectionType).length || 0,
     };
 
     const shootingFormattedDate = formatShootingDate(shootings[0]._data.shootDate, shootings[0]._data.unitNumber);

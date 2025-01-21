@@ -6,8 +6,10 @@ import {
   SceneTypeEnum,
 } from '../../ennums/ennums';
 import environment from '../../../environment';
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
+import { SceneDocType } from '../../interfaces/scenes.types';
 
-const sceneSchema = {
+const sceneSchemaLiteral = {
   title: 'scene schema',
   version: 0,
   type: 'object',
@@ -131,7 +133,11 @@ const sceneSchema = {
     }
   },
   required: ['episodeNumber', 'sceneNumber', 'sceneType', 'setName', 'projectId'],
-};
+} as const;
+
+export const scenesShcemaTyped = toTypedRxJsonSchema(sceneSchemaLiteral);
+
+const sceneSchema: RxJsonSchema<SceneDocType> = sceneSchemaLiteral;
 
 /// SI ES PELICULA EL NUMERO DE EPISODIOS ES 0
 

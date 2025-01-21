@@ -26,7 +26,7 @@ import ScenesContext, { defaultSortOptions } from '../../context/Scenes/Scenes.c
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import { SecurePages } from '../../interfaces/securePages.types';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import applyFilters from '../../utils/applyFilters';
@@ -83,7 +83,7 @@ const Strips: React.FC<{
 
   const [renderScenes, setRenderScenes] = useState<boolean>(false);
   const [replicatorCreated, setReplicatorCreated] = useState<boolean>(false);
-  const [displayedScenes, setDisplayedScenes] = useState<Scene[]>([]);
+  const [displayedScenes, setDisplayedScenes] = useState<SceneDocType[]>([]);
   const [sortPosibilities, setSortPosibilities] = useState<any[]>(() => {
     const savedOrder = localStorage.getItem('sortPosibilitiesOrder');
     if (savedOrder) {

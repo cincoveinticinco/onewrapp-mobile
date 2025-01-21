@@ -1,11 +1,11 @@
 import { IonCol, IonGrid, IonRow } from '@ionic/react';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import SceneInfoLabels from './SceneInfoLabels';
 
 interface SceneBasicInfoProps {
-  scene: Scene;
+  scene: SceneDocType;
 }
 
 const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
@@ -43,7 +43,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ scene }) => {
           <SceneInfoLabels info={scene?.episodeNumber ? scene?.episodeNumber : '-'} title="Episode" />
         </IonCol>
         <IonCol size-xs="3" size-sm="1.5">
-          <SceneInfoLabels info={scene?.sceneNumber ? scene?.sceneNumber : '-'} title="Scene" />
+          <SceneInfoLabels info={scene?.sceneNumber ? scene?.sceneNumber : '-'} title="SceneDocType" />
         </IonCol>
         <IonCol size-xs="3" size-sm="1.5">
           <SceneInfoLabels info={scene?.scriptDay ? scene?.scriptDay : '-'} title="Script Day" />

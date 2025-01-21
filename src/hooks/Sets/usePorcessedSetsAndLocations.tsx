@@ -4,12 +4,12 @@ import {
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import { SceneTypeEnum } from '../../ennums/ennums';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
 
 interface SceneDataProps {
-  _data: Scene;
+  _data: SceneDocType;
 }
 
 interface SetInformation {

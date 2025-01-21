@@ -1,8 +1,8 @@
-import { Scene } from '../interfaces/scenes.types';
+import { SceneDocType } from '../interfaces/scenes.types';
 
-interface SceneWithIndexSignature extends Scene {
+type SceneWithIndexSignature = SceneDocType & {
   [key: string]: any;
-}
+};
 
 function getUniqueValuesByKey(array: SceneWithIndexSignature[], key: keyof SceneWithIndexSignature) {
   const uniqueValues = new Set<SceneWithIndexSignature[keyof SceneWithIndexSignature]>();

@@ -20,7 +20,7 @@ import {
 } from '../../ennums/ennums';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import DatabaseContext from '../../context/Database/Database.context';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
@@ -29,7 +29,7 @@ import { DatabaseContextProps } from '../../context/Database/types/Database.type
 import getSceneHeader from '../../utils/getSceneHeader';
 
 interface SceneCardProps {
-  scene: Scene & { frontId: string };
+  scene: SceneDocType & { frontId: string };
   searchText?: string;
   isShooting?: boolean;
   isProduced?: ShootingSceneStatusEnum;
@@ -84,13 +84,15 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const day = DayOrNightOptionEnum.DAY;
   const night = DayOrNightOptionEnum.NIGHT;
 
-  const getCharacters = (scene: Scene) => {
+  const getCharacters = (scene: SceneDocType) => {
     const { characters } = scene;
     let charactersString = '';
 
     if (characters) {
       characters.forEach((character) => {
-        charactersString += `${character.characterName.toUpperCase()}, `;
+        if (character.characterName) {
+          charactersString += `${character.characterName.toUpperCase()}, `;
+        }
       });
 
       return charactersString;
@@ -99,7 +101,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     return '';
   };
 
-  const defineSceneColor = (scene: Scene) => {
+  const defineSceneColor = (scene: SceneDocType) => {
     const intOrExt: any = [exterior, intExt, extInt];
 
     if (scene.sceneType === protectionType) {
@@ -121,7 +123,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     return 'light';
   };
 
-  const defineHighlightColor = (scene: Scene) => {
+  const defineHighlightColor = (scene: SceneDocType) => {
     const sceneColor = defineSceneColor(scene);
 
     if (sceneColor === 'success' || sceneColor === 'primary') {
@@ -129,13 +131,15 @@ const SceneCard: React.FC<SceneCardProps> = ({
     }
   };
 
-  const getExtras = (scene: Scene) => {
+  const getExtras = (scene: SceneDocType) => {
     const { extras } = scene;
     let extrasString = '';
 
     if (extras && extras.length > 0) {
       extras.forEach((extra) => {
-        extrasString += `${extra.extraName.toUpperCase()}, `;
+        if (extra.extraName) {
+          extrasString += `${extra.extraName.toUpperCase()}, `;
+        }
       });
 
       return extrasString;
@@ -144,7 +148,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     return 'NO EXTRAS PLAYING';
   };
 
-  const getPageNumber = (scene: Scene) => {
+  const getPageNumber = (scene: SceneDocType) => {
     const pageFloat = scene.pages;
     let pageFraction;
 
@@ -167,7 +171,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
           } 
         }).exec();
       await sceneToDelete?.remove();
-      successMessageSceneToast('Scene deleted successfully');
+      successMessageSceneToast('SceneDocType deleted successfully');
     } catch (error) {
       throw error;
     }
@@ -269,7 +273,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </IonItemOptions>
       </IonItemSliding>
       <InputAlert
-        header="Delete Scene"
+        header="Delete SceneDocType"
         message={`Are you sure you want to delete scene ${getSceneHeader(scene)}?`}
         handleOk={() => deleteScene()}
         inputs={[]}
@@ -278,7 +282,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
       {
         shootingDeleteScene && (
           <InputAlert
-            header="Unassign Scene"
+            header="Unassign SceneDocType"
             message={`Are you sure you want to unassign scene ${getSceneHeader(scene)}?`}
             handleOk={() => shootingDeleteScene()}
             inputs={[]}

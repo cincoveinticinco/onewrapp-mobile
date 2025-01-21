@@ -25,7 +25,7 @@ import {
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import {
-  Character, Element, Extra, Note, Scene,
+  Character, Element, Extra, Note, SceneDocType,
 } from '../../interfaces/scenes.types';
 import { ShootingScene } from '../../interfaces/shooting.types';
 import applyFilters from '../../utils/applyFilters';
@@ -42,7 +42,7 @@ const SceneScript: React.FC<{
 }> = ({ isShooting = false }) => {
   const { hideTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
-  const [thisScene, setThisScene] = useState<Scene | null>(null);
+  const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
@@ -62,10 +62,10 @@ const SceneScript: React.FC<{
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
-  const [filteredScenes, setFilteredScenes] = useState<Scene[]>([]);
+  const [filteredScenes, setFilteredScenes] = useState<SceneDocType[]>([]);
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
-  const [previousScene, setPreviousScene] = useState<Scene | null>(null);
-  const [nextScene, setNextScene] = useState<Scene | null>(null);
+  const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
+  const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const errorToast = useErrorToast();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const SceneScript: React.FC<{
 
   useEffect(() => {
     const filterScenes = async () => {
-      let filtered: Scene[];
+      let filtered: SceneDocType[];
 
       if (!isShooting) {
         filtered = selectedFilterOptions ? applyFilters(offlineScenes, selectedFilterOptions) : offlineScenes;
@@ -293,12 +293,16 @@ const SceneScript: React.FC<{
       }
       if (type === 'elements') {
         thisScene?.elements?.filter((element: Element) => element.categoryName === category).forEach((element: Element) => {
-          list.add(element.elementName);
+          if (element.elementName) {
+            list.add(element.elementName);
+          }
         });
       }
       if (type === 'extras') {
         thisScene?.extras?.forEach((extra: Extra) => {
-          list.add(extra.extraName);
+          if (extra.extraName) {
+            list.add(extra.extraName);
+          }
         });
       }
     }
@@ -365,7 +369,7 @@ const SceneScript: React.FC<{
 
   const [sceneColor, setSceneColor] = useState<string>('light');
 
-  const getSceneColor = async (scene: Scene) => {
+  const getSceneColor = async (scene: SceneDocType) => {
     if (isShooting) {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
       const sceneInShooting = shooting?.[0]?.scenes.find(

@@ -1,46 +1,9 @@
-export interface Character {
-  categoryName: (string | null);
-  characterName: string;
-  characterNum: (string | null);
-}
+import { ExtractDocumentTypeFromTypedRxJsonSchema } from "rxdb";
+import { scenesShcemaTyped } from "../RXdatabase/schemas/scenes.schema";
 
-export interface Extra {
-  categoryName: string | null;
-  extraName: string;
-}
+export type SceneDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof scenesShcemaTyped>;
 
-export interface Element {
-  categoryName: (string | null);
-  elementName: string;
-}
-
-export interface Note {
-  email: string | null;
-  note: string | null;
-  createdAt: string | null;
-}
-
-export interface Scene {
-  id?: string | null;
-  sceneId: number;
-  projectId?: number | null;
-  episodeNumber?: string | null;
-  sceneNumber?: string | null;
-  sceneType?: string | null;
-  protectionType?: string| null;
-  intOrExtOption?: string | null;
-  dayOrNightOption?: string | null;
-  locationName?: string | null;
-  setName?: string | null;
-  scriptDay?: string | null;
-  year?: string | null;
-  synopsis?: string | null;
-  page?: number | null;
-  pages?: number | null;
-  estimatedSeconds?: number | null;
-  characters?: Character[];
-  extras?: Extra[];
-  elements?: Element[];
-  notes?: Note[];
-  updatedAt?: string | null;
-}
+export type Character = NonNullable<SceneDocType['characters']>[number];
+export type Extra = NonNullable<SceneDocType['extras']>[number];
+export type Element = NonNullable<SceneDocType['elements']>[number];
+export type Note = NonNullable<SceneDocType['notes']>[number];

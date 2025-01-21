@@ -2,18 +2,18 @@ import { IonCheckbox, IonList } from '@ionic/react';
 import React from 'react';
 import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import './ScenesCheckboxList.scss';
 
 interface ScenesCheckboxListProps {
-  listOfScenes: Scene[];
-  selectedScenes: Scene[];
-  handleCheckboxToggle: (scene: Scene) => void;
-  isSceneChecked: (scene: Scene) => boolean;
+  listOfScenes: SceneDocType[];
+  selectedScenes: SceneDocType[];
+  handleCheckboxToggle: (scene: SceneDocType) => void;
+  isSceneChecked: (scene: SceneDocType) => boolean;
   multipleSelections: boolean;
   searchText: string;
-  uncheckedFilteredScenes: Scene[];
-  checkedSelectedScenes: Scene[];
+  uncheckedFilteredScenes: SceneDocType[];
+  checkedSelectedScenes: SceneDocType[];
 }
 
 const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
@@ -27,7 +27,7 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  function getSceneHeader(scene: Scene) {
+  function getSceneHeader(scene: SceneDocType) {
     const episodeNumber = scene.episodeNumber || '';
     const sceneNumber = scene.sceneNumber || '';
     const intOrExt = scene.intOrExtOption || '';
@@ -61,7 +61,7 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
 
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin scenes-list" style={getListStyles()}>
-      {uncheckedFilteredScenes.map((scene: Scene, i: number) => (
+      {uncheckedFilteredScenes.map((scene: SceneDocType, i: number) => (
         <div
           color="tertiary"
           key={`filter-item-${i}`}

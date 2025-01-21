@@ -28,7 +28,7 @@ import AppLoader from '../../hooks/Shared/AppLoader';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import { Scene } from '../../interfaces/scenes.types';
+import { SceneDocType } from '../../interfaces/scenes.types';
 import { AdvanceCall, Meal, ShootingScene } from '../../interfaces/shooting.types';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
 import floatToFraction from '../../utils/floatToFraction';
@@ -202,15 +202,17 @@ const ShootingDetail: React.FC<{
     return false;
   };
 
-  const addNewScene = async (scene: Scene) => {
+  const addNewScene = async (scene: SceneDocType) => {
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       if (!shooting) throw new Error('Shooting not found');
+
+      if(!scene.sceneId) throw new Error('SceneId is required');
   
       const shootingScene: ShootingScene = {
         projectId: parseInt(id),
         shootingId: parseInt(shootingId),
-        sceneId: scene.sceneId.toString(),
+        sceneId: scene.sceneId?.toString(),
         status: ShootingSceneStatusEnum.Assigned,
         position: shootingData.mergedSceneBanners.length + 1,
         rehersalStart: null,
@@ -236,7 +238,7 @@ const ShootingDetail: React.FC<{
   
       await oneWrappDb?.shootings.upsert(shootingCopy);
       await fetchData();
-      successToast('Scene added successfully');
+      successToast('SceneDocType added successfully');
     } catch (error) {
       errorToast('Error adding new scene');
       throw error;
@@ -247,7 +249,7 @@ const ShootingDetail: React.FC<{
     setSelectedScenes([]);
   };
   
-  const shootingDeleteScene = async (scene: ShootingScene & Scene) => {
+  const shootingDeleteScene = async (scene: ShootingScene & SceneDocType) => {
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       if (!shooting) throw new Error('Shooting not found');
@@ -261,7 +263,7 @@ const ShootingDetail: React.FC<{
   
       await oneWrappDb?.shootings.upsert(shootingCopy);
       await fetchData();
-      successToast('Scene deleted successfully');
+      successToast('SceneDocType deleted successfully');
     } catch (error) {
       errorToast('Error deleting scene');
       throw error;
@@ -467,7 +469,7 @@ const ShootingDetail: React.FC<{
 
   const AddNewScenes = () => (
     <InputModalScene
-      sceneName="Add New Scene"
+      sceneName="Add New SceneDocType"
       listOfScenes={shootingData.notIncludedScenes}
       handleCheckboxToggle={addNewScene}
       selectedScenes={selectedScenes}

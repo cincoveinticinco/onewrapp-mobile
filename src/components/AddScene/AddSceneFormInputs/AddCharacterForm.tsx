@@ -6,7 +6,6 @@ import {
   IonCardHeader,
   AlertInput,
 } from '@ionic/react';
-import { get } from 'lodash';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
 import { Character } from '../../../interfaces/scenes.types';
@@ -55,7 +54,9 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
     const defineCharactersCategories = () => {
       uniqueCategoryValuesArray.forEach((character: Character) => {
         const { categoryName } = character;
-        characterCategoriesArray.push(categoryName);
+        if (categoryName !== undefined) {
+          characterCategoriesArray.push(categoryName);
+        }
       });
 
       return characterCategoriesArray.sort();
