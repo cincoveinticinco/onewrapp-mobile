@@ -1,8 +1,4 @@
-export interface Country {
-  id: string;
-  nameEng: string;
-  nameEsp: string;
-  code: string;
-  prefix: string;
-  updatedAt: string;
-}
+import { ExtractDocumentTypeFromTypedRxJsonSchema } from "rxdb";
+import { countrySchemaTyped } from "../RXdatabase/schemas/country.schema";
+
+export type CountryDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof countrySchemaTyped>;

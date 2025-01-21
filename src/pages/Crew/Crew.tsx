@@ -8,8 +8,8 @@ import { useRxData } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import EditionModal, { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import { Country } from '../../interfaces/country.types';
-import { Crew as CrewInterface } from '../../interfaces/crew.types';
+import { CountryDocType } from '../../interfaces/country.types';
+import { CrewDocType } from '../../interfaces/crew.types';
 import { Unit } from '../../interfaces/unitTypes.types';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './Crew.scss';
@@ -26,7 +26,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
   const {handleDeleteCrew, handleUpsert} = useCrewOperations({selectedCrewId, setSelectedCrewId, setAddNewModalIsOpen, id: projectId});
   const history = useHistory();
 
-  const { result: crew = [], isFetching }: {result: CrewInterface[], isFetching: boolean} = useRxData(
+  const { result: crew = [], isFetching }: {result: CrewDocType[], isFetching: boolean} = useRxData(
     'crew',
     (collection) => collection.find(),
   );
@@ -36,14 +36,14 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
     (collection) => collection.find(),
   );
 
-  const { result: countries = [] }: {result: Country[]} = useRxData(
+  const { result: countries = [] }: {result: CountryDocType[]} = useRxData(
     'countries',
     (collection) => collection.find(),
   );
 
   // Group crew members by department
   const crewByDepartment = useMemo(() => {
-    const departments: { [key: string]: CrewInterface[] } = {};
+    const departments: { [key: string]: CrewDocType[] } = {};
     crew.forEach((member: any) => {
       const department = member.depNameEng || 'No Department';
       if (!departments[department]) {
@@ -68,7 +68,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
 
   // Filtered departments based on searchText
   const filteredDepartments = sortedDepartments.filter((department) => (
-    crewByDepartment[department].some((member) => member.fullName.toLowerCase().includes(searchText.toLowerCase()))
+    crewByDepartment[department].some((member) => member.fullName?.toLowerCase().includes(searchText.toLowerCase()))
       || department.toLowerCase().includes(searchText.toLowerCase())
   ));
 
@@ -94,19 +94,19 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
     const crewMember = crew.find((member) => member.id === id);
     if (!crewMember) return {};
     return {
-      fullName: crewMember.fullName,
-      position: crewMember.positionEng || crewMember.positionEsp,
-      email: crewMember.email,
-      countryId: crewMember.countryId,
-      phone: crewMember.phone,
-      unitIds: crewMember.unitIds.split(','),
-      order: crewMember.order.toString(),
+      fullName: crewMember.fullName || '',
+      position: crewMember.positionEng || crewMember.positionEsp || '',
+      email: crewMember.email || '',
+      countryId: crewMember.countryId || '',
+      phone: crewMember.phone || '',
+      unitIds: crewMember.unitIds ? crewMember.unitIds.split(',') : [],
+      order: crewMember.order?.toString() || '',
       visibleOnCall: crewMember.visibleOnCall,
       visibleOnHeader: crewMember.visibleOnHeader,
       onCall: crewMember.onCall,
       dailyReportSignature: crewMember.dailyReportSignature,
       emergencyContact: crewMember.emergencyContact,
-      department: crewMember.depNameEng || crewMember.depNameEsp,
+      department: crewMember.depNameEng || crewMember.depNameEsp || '',
     };
   };
 
@@ -171,7 +171,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
           </p>
         ) : (
           filteredDepartments.map((department) => {
-            const departmentMembers = crewByDepartment[department].filter((member) => member.fullName.toLowerCase().includes(searchText.toLowerCase())
+            const departmentMembers = crewByDepartment[department].filter((member) => member.fullName?.toLowerCase().includes(searchText.toLowerCase())
               || department.toLowerCase().includes(searchText.toLowerCase()));
 
             if (departmentMembers.length === 0) return null;

@@ -1,7 +1,9 @@
+import { toTypedRxJsonSchema, RxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { CrewDocType } from '../../interfaces/crew.types';
 
-const crewSchema = {
+const crewSchemaLiteral = {
   title: 'crew schema',
   version: 0,
   type: 'object',
@@ -73,7 +75,11 @@ const crewSchema = {
     },
   },
   required: ['depNameEng', 'depNameEsp', 'positionEsp', 'positionEng', 'projectId', 'fullName', 'email', 'phone', 'updatedAt'],
-};
+} as const;
+
+export const crewSchemaTyped = toTypedRxJsonSchema(crewSchemaLiteral);
+
+export const crewSchema: RxJsonSchema<CrewDocType> = crewSchemaLiteral
 
 const crewSchemaInput = {
   crew: {

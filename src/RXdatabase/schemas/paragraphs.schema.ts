@@ -1,7 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { SceneParagraphDocType } from '../../interfaces/paragraph.types';
 
-const sceneParagraphSchema = {
+const sceneParagraphSchemaLiteral = {
   title: 'scene paragraph schema',
   version: 0,
   type: 'object',
@@ -67,6 +69,9 @@ const sceneParagraphSchema = {
   ],
 };
 
+export const sceneParagraphSchemaTyped = toTypedRxJsonSchema(sceneParagraphSchemaLiteral);
+
+const sceneParagraphSchema: RxJsonSchema<SceneParagraphDocType> = sceneParagraphSchemaTyped;
 const sceneParagraphSchemaInput = {
   paragraphs: {
     schema: sceneParagraphSchema,
@@ -101,5 +106,3 @@ export default class SceneParagraphSchema extends DatabaseSchema {
     super(schemaName, schemaInput);
   }
 }
-
-// scene_id . position

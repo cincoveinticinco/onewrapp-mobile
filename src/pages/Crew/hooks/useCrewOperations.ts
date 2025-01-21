@@ -2,7 +2,7 @@ import { useRxDB } from "rxdb-hooks";
 import useErrorToast from "../../../hooks/Shared/useErrorToast";
 import useSuccessToast from "../../../hooks/Shared/useSuccessToast";
 import { FormStructureInterface } from "../types/crew.interfaces";
-import { Crew as CrewInterface } from "../../../interfaces/crew.types"; 
+import { CrewDocType } from "../../../interfaces/crew.types";
 
 interface CrewOperationsInterface {
   selectedCrewId?: string | null;
@@ -22,7 +22,7 @@ const useCrewOperations = ({
   const oneWrappDb: any = useRxDB();
 
     const handleUpsert = async (data: FormStructureInterface) => {
-      const formattedData: CrewInterface = {
+      const formattedData: CrewDocType = {
         id: selectedCrewId || data?.phone,
         fullName: data.fullName,
         positionEsp: data.position,

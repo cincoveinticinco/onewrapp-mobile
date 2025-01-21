@@ -39,7 +39,7 @@ import './ShootingDetail.css';
 import Legend from '../../components/Shared/Legend/Legend';
 import CallSheet from '../CallSheet/CallSheet';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import { Crew } from '../../interfaces/crew.types';
+import { CrewDocType } from '../../interfaces/crew.types';
 import { mealInputs } from './Inputs/meal.inputs';
 import { bannerInputs } from './Inputs/baner.inputs';
 import { mergedSceneBanner, ShootingDataProps, ShootingViews } from './types/ShootingDetail.types';
@@ -94,15 +94,15 @@ const ShootingDetail: React.FC<{
 
   //* ***************************** RXDB HOOKS *****************************/
 
-  const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find());
 
   //* ***************************** RXDB HOOKS *****************************/
 
   const [departments, setDepartments] = useState<SelectOptionsInterface[]>([]);
 
   const getCrewDepartments = () => {
-    const departments = crew.map((c: Crew) => c.depNameEng);
-    const uniqueDepartments = Array.from(new Set(departments));
+    const departments = crew.map((c: CrewDocType) => c.depNameEng);
+    const uniqueDepartments = Array.from(new Set(departments)).filter((dep): dep is string => dep !== null);
     return uniqueDepartments.map((dep: string) => ({ value: dep, label: dep }));
   }
 

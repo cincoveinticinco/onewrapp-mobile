@@ -1,7 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { CountryDocType } from '../../interfaces/country.types';
 
-const countrySchema = {
+const countrySchemaLiteral = {
   title: 'country schema',
   version: 0,
   type: 'object',
@@ -36,7 +38,11 @@ const countrySchema = {
     }
   },
   required: ['id', 'nameEng', 'nameEsp', 'code', 'prefix', 'updatedAt'],
-};
+} as const;
+
+export const countrySchemaTyped = toTypedRxJsonSchema(countrySchemaLiteral);
+
+export const countrySchema: RxJsonSchema<CountryDocType> = countrySchemaTyped;
 
 const countrySchemaInput = {
   countries: {

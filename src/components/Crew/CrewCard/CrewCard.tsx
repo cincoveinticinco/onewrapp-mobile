@@ -10,11 +10,11 @@ import {
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiTrashSimpleLight } from 'react-icons/pi';
-import { Crew } from '../../../interfaces/crew.types';
+import { CrewDocType } from '../../../interfaces/crew.types';
 import './CrewCard.scss';
 
 interface CrewCardProps {
-  crew: Crew;
+  crew: CrewDocType;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   permissionType?: number | null;
@@ -52,10 +52,10 @@ const CrewCard: React.FC<CrewCardProps> = ({
       </IonItem>
       <IonItemOptions className="crew-card-item-options">
         <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={() => onEdit(crew.id)} disabled={disableEditions}>
+          <IonButton fill="clear" onClick={() => onEdit(crew.id || '')} disabled={disableEditions}>
             <CiEdit className="button-icon edit" />
           </IonButton>
-          <IonButton fill="clear" onClick={() => onDelete(crew.id)} disabled={disableEditions}>
+          <IonButton fill="clear" onClick={() => onDelete(crew.id || '')} disabled={disableEditions}>
             <PiTrashSimpleLight className="button-icon trash" />
           </IonButton>
         </div>

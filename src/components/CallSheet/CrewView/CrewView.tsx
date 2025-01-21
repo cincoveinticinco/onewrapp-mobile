@@ -21,7 +21,7 @@ import { ShootingStatusEnum } from '../../../ennums/ennums';
 import { Shooting } from '../../../interfaces/shooting.types';
 import useErrorToast from '../../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../../hooks/Shared/useSuccessToast';
-import { Crew } from '../../../interfaces/crew.types';
+import { CrewDocType } from '../../../interfaces/crew.types';
 
 interface CrewCall {
   id: string | null;
@@ -80,7 +80,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   } = useRxData('shootings', (collection) => collection.find());
   const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
 
-  const { result: crew, isFetching: isFetchingCrew } = useRxData<Crew>('crew', (collection) => collection.find());
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find());
   const [ selectedUnitId, setSelectedUnitId ] = useState<string>('');
 
   const formattedData = crewCalls.map((crew) => ({
@@ -180,9 +180,9 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
         }));
       } else {
         // Create custom crewCalls array based on the existing crew
-        newCrewCalls = (crew as Crew[])?.map((crewMember: Crew) => ({
+        newCrewCalls = (crew as CrewDocType[])?.map((crewMember: CrewDocType) => ({
           id: `${crewMember.id}-${selectedDate}`,
-          visible: crewMember.visibleOnCall,
+          visible: crewMember.visibleOnCall ?? null,
           name: crewMember.fullName,
           departmentEsp: crewMember.depNameEsp,
           departmentEng: crewMember.depNameEng,
@@ -190,8 +190,8 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
           call: crewMember.onCall ? null : thisShooting.generalCall || null,
           callPlace: null,
           wrap: null,
-          onCall: crewMember.onCall,
-          projCrewId: parseInt(crewMember.id)
+          onCall: crewMember.onCall ?? null,
+          projCrewId: parseInt(crewMember.id || '0')
         }));
       }
   
