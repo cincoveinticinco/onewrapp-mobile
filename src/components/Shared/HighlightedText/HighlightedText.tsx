@@ -8,49 +8,47 @@ interface HighlightedTextProps {
   highlightColor?: string;
 }
 
+const escapeRegExp = (string: string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa todos los caracteres especiales
+};
+
 const HighlightedText: React.FC<HighlightedTextProps> = ({
   text,
   searchTerm,
   highlightColor = 'var(--ion-color-primary)',
 }) => {
-  // If text is empty or undefined, return null
   if (!text) return null;
 
-  // If searchTerm is undefined or empty, just return the uppercase text
   if (!searchTerm) {
-    return (
-      <span className="highlighted-text">
-        {
-      text.toString().toUpperCase()
-    }
-      </span>
-    );
+    return <>{text.toString().toUpperCase()}</>;
   }
 
   const normalizedSearchText = removeAccents(searchTerm).toLowerCase();
+  const escapedSearchText = escapeRegExp(normalizedSearchText);
   const normalizedText = removeAccents(text).toLowerCase();
-  const parts = normalizedText.split(new RegExp(`(${normalizedSearchText})`, 'gi'));
+  const parts = normalizedText.split(new RegExp(`(${escapedSearchText})`, 'gi'));
 
-  const getOriginalPart = (part: string, startIndex: number): string => text.substr(startIndex, part.length);
+  const getOriginalPart = (part: string, startIndex: number): string =>
+    text.substr(startIndex, part.length);
 
   let currentIndex = 0;
 
   return (
-    <span className="highlighted-text">
+    <>
       {parts.map((part, index) => {
         const originalPart = getOriginalPart(part, currentIndex);
         currentIndex += part.length;
 
         if (removeAccents(part.toLowerCase()) === normalizedSearchText) {
           return (
-            <mark style={{ color: highlightColor }} key={index}>
+            <span key={index} style={{ backgroundColor: highlightColor }}>
               {originalPart.toUpperCase()}
-            </mark>
+            </span>
           );
         }
         return originalPart.toUpperCase();
       })}
-    </span>
+    </>
   );
 };
 

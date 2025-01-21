@@ -16,15 +16,17 @@ import {
 import React, {
   memo, useContext, useEffect, useRef, useState,
 } from 'react';
-import { CiEdit, CiLogout } from 'react-icons/ci';
+import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { RiDownload2Line, RiLogoutBoxLine } from 'react-icons/ri';
+import { RiLogoutBoxLine } from 'react-icons/ri';
 import { useParams } from 'react-router';
 import DatabaseContext from '../../../context/Database/Database.context';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import template from '../../../templates/MinimalTemplate';
 import './Toolbar.scss';
 import AuthContext from '../../../context/Auth/Auth.context';
+import { useRxData } from 'rxdb-hooks';
+import { ProjectDocType } from '../../../RXdatabase/schemas/projects.schema';
+import { RxDocument } from 'rxdb';
 
 export interface ToolbarButton {
   name: string;
@@ -99,10 +101,21 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const { offlineScenes } = useContext(DatabaseContext);
   const { logout } = useContext(AuthContext);
 
+
   const [sceneToPrint, setSceneToPrint] = useState<any>({});
   const [inputs, setInputs] = useState<any>([]);
 
   const { id } = useParams<{ id: string }>();
+
+  const { result: currentProject, isFetching } = useRxData<ProjectDocType>(
+    'projects',
+    (collection: any) => collection.findOne({
+      selector: {
+        id: id,
+      }
+    })
+  );
+  
 
   const disableEditions = permissionType !== 1;
 
@@ -153,7 +166,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       )}
       <div className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-        <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">{name}</IonTitle>
+      <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">
+        {currentProject && currentProject.length > 0 ? `${currentProject[0].projAbreviation?.toUpperCase()} - ${name}` : ''}
+      </IonTitle>
       </div>
       <>
       {back && (
@@ -257,7 +272,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </IonButton>
       }
       {
-        isLoading && (
+        isLoading || isFetching && (
           <IonProgressBar type="indeterminate" />
         )
       }

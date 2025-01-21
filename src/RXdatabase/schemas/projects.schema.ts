@@ -1,19 +1,9 @@
+import { ExtractDocumentTypeFromTypedRxJsonSchema, toTypedRxJsonSchema,  RxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import { ProjectStatusEnumArray, ProjectTypeEnumArray } from '../../ennums/ennums';
 import DatabaseSchema from '../database_schema';
 
-export interface Project {
-  id: string;
-  projName: string;
-  season: number | null;
-  projStatus: string;
-  projType: string;
-  episodes: number;
-  year: number;
-  updatedAt: string;
-}
-
-const projectSchema = {
+export const projectSchemaLiteral = {
   title: 'project schema',
   version: 0,
   type: 'object',
@@ -46,12 +36,20 @@ const projectSchema = {
     companyId: {
       type: 'number',
     },
+    projAbreviation: {
+      type: 'string',
+    },
     updatedAt: {
       type: 'string',
     },
   },
   required: ['id', 'projName', 'projStatus', 'projType', 'episodes', 'year'],
-};
+} as const;
+
+const projectSchemaTyped = toTypedRxJsonSchema(projectSchemaLiteral);
+
+export type ProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof projectSchemaTyped>;
+export const projectSchema: RxJsonSchema<ProjectDocType> = projectSchemaLiteral
 
 const projectSchemaInput = {
   projects: {

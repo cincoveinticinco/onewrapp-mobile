@@ -5,12 +5,12 @@ import {
 import { cloudOfflineSharp } from 'ionicons/icons';
 import React from 'react';
 import { ProjectStatusEnum } from '../../ennums/ennums';
-import { Project } from '../../RXdatabase/schemas/projects.schema';
+import { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
 import DatabaseContext from '../../context/Database/Database.context';
 import './ProjectCard.css';
 
 interface ProjectCardProps {
-  project: Project;
+  project: ProjectDocType;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
@@ -44,13 +44,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     }
   };
 
-  const getProjectAbreviation = (name: string) => {
-    if (name.length > 3 && name) {
-      return name.substring(0, 3).toUpperCase();
-    }
-    return name;
-  };
-
   const getProjectLink = (id: string) => (projectsInfoIsOffline[`${id}`] ? `/my/projects/${id}/strips` : `/my/projects/${id}/replication`);
 
   return (
@@ -62,7 +55,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           color: defineTextColor(defineBgColor(project.projStatus)),
         }}
       >
-        {getProjectAbreviation(project.projName)}
+        {project.projAbreviation?.toLocaleUpperCase()}
       </IonCardTitle>
       <IonCardHeader class="ion-no-padding">
         <IonCardSubtitle class="project-card-subtitle">

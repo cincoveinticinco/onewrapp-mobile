@@ -26,6 +26,7 @@ import secondsToMinSec from '../../utils/secondsToMinSec';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import './SceneCard.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import getSceneHeader from '../../utils/getSceneHeader';
 
 interface SceneCardProps {
   scene: Scene & { frontId: string };
@@ -82,22 +83,6 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const sceneType = SceneTypeEnum.SCENE;
   const day = DayOrNightOptionEnum.DAY;
   const night = DayOrNightOptionEnum.NIGHT;
-
-  function getSceneHeader(scene: Scene) {
-    const episodeNumber = scene.episodeNumber || '';
-    const sceneNumber = scene.sceneNumber || '';
-    const intOrExt = scene.intOrExtOption || '';
-    const locationName = scene.locationName || '';
-    const setName = scene.setName || '';
-    const dayOrNight = scene.dayOrNightOption || '';
-    const scriptDay = scene.scriptDay || '';
-    const year = scene.year || '';
-
-    const sceneHeader = `${parseInt(episodeNumber, 10) > 0 ? (`${episodeNumber}.`) : ''}${sceneNumber} ${intOrExt ? (`${intOrExt}.`) : ''} ${locationName ? (`${locationName}.`) : ''} ${setName}-${dayOrNight}${scriptDay} ${year ? `(${
-      year})` : ''}`;
-
-    return sceneHeader.toUpperCase();
-  }
 
   const getCharacters = (scene: Scene) => {
     const { characters } = scene;
@@ -263,7 +248,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
                 !isShooting
                 && (
                 <>
-                  <IonButton fill="clear" disabled={disableEditions}>
+                  <IonButton fill="clear" disabled={disableEditions} onClick={() => console.log(scene)}>
                     <PiProhibitLight className="button-icon ban" />
                   </IonButton>
                   <IonButton fill="clear" onClick={openDeleteAlert} disabled={disableEditions}>

@@ -1,14 +1,13 @@
-import { debounce } from 'lodash';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { RxDatabase, RxLocalDocumentData } from 'rxdb';
+import { RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
 import AppDataBase from '../../RXdatabase/database';
 import HttpReplicator from '../../RXdatabase/replicator';
 import CrewSchema from '../../RXdatabase/schemas/crew.schema';
 import SceneParagraphsSchema from '../../RXdatabase/schemas/paragraphs.schema';
-import ProjectsSchema, { Project } from '../../RXdatabase/schemas/projects.schema';
+import ProjectsSchema, { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
 import ScenesSchema from '../../RXdatabase/schemas/scenes.schema';
 import ShootingsSchema from '../../RXdatabase/schemas/shootings.schema';
 import TalentsSchema from '../../RXdatabase/schemas/talents.schema';
@@ -414,7 +413,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     setProjectsAreLoading(true);
     if (oneWrapRXdatabase) {
       const subscription = oneWrapRXdatabase.projects.find().sort({ updatedAt: 'asc' }).$.subscribe({
-        next: (data: Project[]) => {
+        next: (data: ProjectDocType[]) => {
           setProjectsAreOffline(true);
           const projects = data.map((project: any) => project._data);
           try {
