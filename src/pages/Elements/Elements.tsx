@@ -13,7 +13,7 @@ import InputSortModal from '../../components/Shared/InputSortModal/InputSortModa
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import { SceneTypeEnum } from '../../Ennums/ennums';
+import { SceneTypeEnum } from '../../ennums/ennums';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useScrollToTop from '../../hooks/Shared/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';

@@ -3,8 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './theme/main.scss';
 import { DatabaseContextProvider } from './context/Database/Database.context';
-import { AuthProvider } from './context/Auth.context';
-import { isPlatform } from '@ionic/react';
+import { AuthProvider } from './context/Auth/Auth.context';
 import environment from '../environment';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 

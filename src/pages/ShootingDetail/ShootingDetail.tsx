@@ -23,7 +23,7 @@ import ScriptReportView from './Components/ShootingDetailViews/ScriptReportView/
 import WrapReportView from './Components/ShootingDetailViews/WrapReportView/WrapReportView';
 import SceneCard from '../../components/Strips/SceneCard';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingSceneStatusEnum } from '../../Ennums/ennums';
+import { ShootingSceneStatusEnum } from '../../ennums/ennums';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';

@@ -3,7 +3,7 @@ import {
 } from '@ionic/react';
 import { useHistory } from 'react-router';
 import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import { useAuth } from '../../context/Auth.context';
+import { useAuth } from '../../context/Auth/Auth.context';
 
 const Settings: React.FC = () => {
   const { logout } = useAuth();

@@ -24,7 +24,7 @@ import DatabaseContext from '../../../context/Database/Database.context';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import template from '../../../templates/MinimalTemplate';
 import './Toolbar.scss';
-import AuthContext from '../../../context/Auth.context';
+import AuthContext from '../../../context/Auth/Auth.context';
 
 export interface ToolbarButton {
   name: string;

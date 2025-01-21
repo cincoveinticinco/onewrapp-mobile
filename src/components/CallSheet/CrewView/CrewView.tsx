@@ -17,7 +17,7 @@ import {
 import OutlinePrimaryButton from '../../Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import './ CrewView.scss'
-import { ShootingStatusEnum } from '../../../Ennums/ennums';
+import { ShootingStatusEnum } from '../../../ennums/ennums';
 import { Shooting } from '../../../interfaces/shooting.types';
 import useErrorToast from '../../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../../hooks/Shared/useSuccessToast';

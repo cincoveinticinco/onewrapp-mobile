@@ -15,7 +15,7 @@ import { useHistory } from 'react-router';
 import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
-import { useAuth } from '../../context/Auth.context';
+import { useAuth } from '../../context/Auth/Auth.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';

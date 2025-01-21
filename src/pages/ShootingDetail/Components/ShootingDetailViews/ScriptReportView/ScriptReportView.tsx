@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShootingSceneStatusEnum } from '../../../../../Ennums/ennums';
+import { ShootingSceneStatusEnum } from '../../../../../ennums/ennums';
 import { Column } from '../../../../../components/Shared/GeneralTable/GeneralTable';
 import OutlinePrimaryButton from '../../../../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
 import GeneralCards from '../../../../../components/Shared/GeneralCards/GeneralCards';

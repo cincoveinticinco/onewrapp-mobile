@@ -17,14 +17,15 @@ import { useHistory, useParams, useRouteMatch } from 'react-router';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum,
   ShootingSceneStatusEnum,
-} from '../../Ennums/ennums';
+} from '../../ennums/ennums';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import { Scene } from '../../interfaces/scenes.types';
 import floatToFraction from '../../utils/floatToFraction';
 import secondsToMinSec from '../../utils/secondsToMinSec';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import './SceneCard.scss';
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 interface SceneCardProps {
   scene: Scene & { frontId: string };

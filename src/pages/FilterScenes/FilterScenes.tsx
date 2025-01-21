@@ -6,7 +6,7 @@ import React, {
   useCallback, useContext, useEffect, useMemo,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import { ProtectionTypeEnumArray } from '../../Ennums/ennums';
+import { ProtectionTypeEnumArray } from '../../ennums/ennums';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
 import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';

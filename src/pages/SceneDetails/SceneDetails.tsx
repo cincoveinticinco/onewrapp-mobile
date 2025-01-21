@@ -17,7 +17,7 @@ import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
-} from '../../Ennums/ennums';
+} from '../../ennums/ennums';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import AppLoader from '../../hooks/Shared/AppLoader';

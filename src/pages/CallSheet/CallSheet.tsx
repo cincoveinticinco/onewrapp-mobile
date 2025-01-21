@@ -18,7 +18,7 @@ import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
 import AddButton from '../../components/Shared/AddButton/AddButton';
 import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingStatusEnum } from '../../Ennums/ennums';
+import { ShootingStatusEnum } from '../../ennums/ennums';
 import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import { Character, Scene } from '../../interfaces/scenes.types';

@@ -4,7 +4,7 @@ import {
   IntOrExtOptionEnumArray,
   DayOrNightOptionEnumArray,
   SceneTypeEnum,
-} from '../../Ennums/ennums';
+} from '../../ennums/ennums';
 import environment from '../../../environment';
 
 const sceneSchema = {

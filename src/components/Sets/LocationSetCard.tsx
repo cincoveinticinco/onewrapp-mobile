@@ -8,7 +8,7 @@ import {
 import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import DatabaseContext, { DatabaseContextProps } from '../../context/Database/Database.context';
+import DatabaseContext from '../../context/Database/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
@@ -20,6 +20,7 @@ import DropDownButton from '../Shared/DropDownButton/DropDownButton';
 import EditionModal from '../Shared/EditionModal/EditionModal';
 import HighlightedText from '../Shared/HighlightedText/HighlightedText';
 import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
+import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 interface Set {
   setName: string;

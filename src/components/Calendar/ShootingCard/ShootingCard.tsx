@@ -2,7 +2,7 @@ import {
   IonCard, IonCardContent,
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
-import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../Ennums/ennums';
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../ennums/ennums';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
 import { Shooting } from '../../../interfaces/shooting.types';
 

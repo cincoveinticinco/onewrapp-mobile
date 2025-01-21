@@ -17,7 +17,7 @@ import SelectItem from './AddSceneFormInputs/SelectItem';
 import DatabaseContext from '../../context/Database/Database.context';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
-} from '../../Ennums/ennums';
+} from '../../ennums/ennums';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;

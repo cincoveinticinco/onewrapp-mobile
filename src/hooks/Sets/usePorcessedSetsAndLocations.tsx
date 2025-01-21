@@ -3,7 +3,7 @@ import {
 } from 'react';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
-import { SceneTypeEnum } from '../../Ennums/ennums';
+import { SceneTypeEnum } from '../../ennums/ennums';
 import { Scene } from '../../interfaces/scenes.types';
 import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
 import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';

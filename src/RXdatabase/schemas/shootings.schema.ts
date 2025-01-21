@@ -1,5 +1,5 @@
 import environment from '../../../environment';
-import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Ennums/ennums';
+import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../ennums/ennums';
 import DatabaseSchema from '../database_schema';
 
 const shootingSchema = {

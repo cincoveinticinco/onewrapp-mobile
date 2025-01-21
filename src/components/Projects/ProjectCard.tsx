@@ -4,7 +4,7 @@ import {
 } from '@ionic/react';
 import { cloudOfflineSharp } from 'ionicons/icons';
 import React from 'react';
-import { ProjectStatusEnum } from '../../Ennums/ennums';
+import { ProjectStatusEnum } from '../../ennums/ennums';
 import { Project } from '../../RXdatabase/schemas/projects.schema';
 import DatabaseContext from '../../context/Database/Database.context';
 import './ProjectCard.css';

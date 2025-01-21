@@ -2,10 +2,7 @@ import React, {
   useContext, useState, useCallback,
   useEffect,
 } from 'react';
-import environment from '../../environment';
-import { useHistory } from 'react-router';
-import useErrorToast from '../hooks/Shared/useErrorToast';
-import DatabaseContext from './Database.context';
+import DatabaseContext from '../Database/Database.context';
 
 interface AuthContextType {
   loggedIn: boolean;

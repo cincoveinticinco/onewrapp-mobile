@@ -1,5 +1,5 @@
 import environment from '../../../environment';
-import { ProjectStatusEnumArray, ProjectTypeEnumArray } from '../../Ennums/ennums';
+import { ProjectStatusEnumArray, ProjectTypeEnumArray } from '../../ennums/ennums';
 import DatabaseSchema from '../database_schema';
 
 export interface Project {
