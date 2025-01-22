@@ -8,7 +8,6 @@ import {
 import {
   keyOutline,
   logoGoogle,
-  save,
 } from 'ionicons/icons';
 import ReactPlayer from 'react-player';
 import { useHistory } from 'react-router';
@@ -26,16 +25,13 @@ import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
 import DatabaseContext from '../../context/Database/Database.context';
 
 const LoginPage: React.FC = () => {
-  const { saveLogin, loggedIn } = useAuth();
+  const { saveLogin, loggedIn, loading, setLoadingAuth } = useAuth();
   const errorToast = useErrorToast();
   const history = useHistory();
   const isOnline = useNetworkStatus();
 
   const { oneWrapDb } = useContext(DatabaseContext)
 
-
-
-  const [ isLoading, setIsLoading ] = useState(false)
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ showAppLogin, setShowAppLogin ] = useState(false)
@@ -84,9 +80,9 @@ const LoginPage: React.FC = () => {
   const handleGoogleLoginMobile = async () => {
     if(isOnline) {
       try {
+        setLoadingAuth(true);
         const googleUser = await GoogleAuth.signIn();
         const accessToken = googleUser.authentication.accessToken;
-        setIsLoading(true);
         const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
           method: 'POST',
           headers: {
@@ -105,9 +101,8 @@ const LoginPage: React.FC = () => {
         }
       } catch (error) {
         errorToast('Error during Google Sign In (Mobile)');
-        console.error(error)
       } finally {
-        setIsLoading(false);
+        setLoadingAuth(false);
       }
     } else {
        try {
@@ -258,14 +253,14 @@ const LoginPage: React.FC = () => {
                     muted
                     playing
                     playsinline
-                    onReady={() => setIsLoading(false)}
+                    onReady={() => setLoadingAuth(false)}
                   />
                 </div>
                 {renderLoginForm()}
               </>
             )
             : (
-              isLoading ? (
+              loading ? (
                 <>
                   <AppLoader />
                 </>
@@ -281,7 +276,7 @@ const LoginPage: React.FC = () => {
                       muted
                       playing
                       playsinline
-                      onReady={() => setIsLoading(false)}
+                      onReady={() => setLoadingAuth(false)}
                     />
                   </div>
                   <div className="main-logo-wrapper">

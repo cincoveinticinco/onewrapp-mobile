@@ -195,10 +195,10 @@ const shootingSchemaLiteral= {
             type: 'number',
           },
           readyAt: {
-            type: 'string',
+            type: ['string', 'null'],
           },
           endTime: {
-            type: 'string',
+            type: ['string', 'null'],
           },
           mealId: {
             type: 'number',

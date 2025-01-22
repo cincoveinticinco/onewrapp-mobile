@@ -586,6 +586,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setReplicationStatus(`Error during ${currentStep} replication: ${error.message}`);
       setReplicationPercentage(0);
       setInitialReplicationFinished(false);
+      console.log(error)
       throw error;
     }
   };

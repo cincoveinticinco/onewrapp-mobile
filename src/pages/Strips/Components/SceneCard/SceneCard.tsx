@@ -26,6 +26,7 @@ import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import getSceneHeader from '../../../../Shared/Utils/getSceneHeader';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
+import './SceneCard.scss';
 
 interface SceneCardProps {
   scene: SceneDocType & { frontId: string };

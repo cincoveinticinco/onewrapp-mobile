@@ -1,4 +1,4 @@
-@import "../../theme/mixins";
+@import '../../theme/mixins.scss';
 
 .general-modal-styles {
   @include modal-styling;

@@ -14,7 +14,7 @@ import {
   useIonViewDidEnter,
   IonSpinner,
 } from '@ionic/react';
-import { refresh } from 'ionicons/icons';
+import { refresh, reload } from 'ionicons/icons';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/Database/Database.context';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
@@ -49,12 +49,6 @@ const ReplicationPage: React.FC = () => {
     toggleTabs.hideTabs();
   });
 
-  const handleRetry = () => {
-    if (isOnline) {
-      setIsReplicating(true);
-      initialProjectReplication();
-    }
-  };
 
   useEffect(() => {
     if (isOnline && !projectsInfoIsOffline[`project_${id}`]) {
@@ -89,7 +83,7 @@ const ReplicationPage: React.FC = () => {
       <IonButton
         expand="block"
         onClick={handleRetry}
-        disabled={!isOnline || isReplicating || !error}
+        disabled={!isOnline || (isReplicating && !error)}
         className="retry-button"
         style={{
           '--background': 'var(--ion-color-yellow)',
@@ -100,6 +94,24 @@ const ReplicationPage: React.FC = () => {
       </IonButton>
     );
   }
+
+  const retryReplication = () => {
+    setError(null);
+    setIsReplicating(true);
+    initialProjectReplication().then(() => {
+      setIsReplicating(false);
+      history.push(`/my/projects/${id}/strips`);
+    }).catch(() => {
+      setIsReplicating(false);
+      setError('There was an error replicating the data. Please try again or contact support.');
+    });
+  }
+
+  const handleRetry = () => {
+    if (isOnline) {
+      retryReplication();
+    }
+  };
 
   if(error) {
     return (

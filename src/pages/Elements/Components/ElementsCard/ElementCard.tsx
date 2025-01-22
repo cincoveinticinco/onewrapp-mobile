@@ -21,6 +21,7 @@ import HighlightedText from '../../../../Shared/Components/HighlightedText/Highl
 import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
 import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
+import './ElementCard.scss';
 
 interface Element {
   elementName: string;
