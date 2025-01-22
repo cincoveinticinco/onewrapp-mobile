@@ -19,7 +19,7 @@ import useErrorToast from '../../hooks/Shared/useErrorToast';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
 import { ShootingDocType } from '../../interfaces/shooting.types';
-import { Unit } from '../../interfaces/unitTypes.types';
+import { UnitDocType } from '../../interfaces/unitTypes.types';
 import './Calendar.css';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
 import WeekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
@@ -85,7 +85,7 @@ const Calendar: React.FC = () => {
 
     try {
       const { unitId } = form;
-      const unit = units.map((u: any) => u._data).find((u: Unit) => u.id === unitId);
+      const unit = units.map((u: any) => u._data).find((u: UnitDocType) => u.id === unitId);
       if (!unit) {
         errorToast('Unit not found');
         return;
@@ -129,8 +129,8 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const getUnitOptions = (units: Unit[]): SelectOptionsInterface[] => units.map((unit) => ({
-    label: `UNIT-${unit?.unitNumber}-${unit?.unitName.toUpperCase() || unit?.unitNumber}`,
+  const getUnitOptions = (units: UnitDocType[]): SelectOptionsInterface[] => units.map((unit) => ({
+    label: `UNIT-${unit?.unitNumber}-${(unit?.unitName?.toUpperCase() || unit?.unitNumber)}`,
     value: unit.id,
   }));
 

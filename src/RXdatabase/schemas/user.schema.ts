@@ -1,7 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { UserDocType } from '../../interfaces/user.types';
 
-const userSchema = {
+const userSchemaLiteral = {
   title: 'userSchema',
   description: 'Schema for user collection',
   version: 0,
@@ -77,7 +79,10 @@ const userSchema = {
     },
   },
   required: ['id', 'sessionEndsAt', 'sessionToken', 'companies'],
-};
+} as const;
+
+export const userSchemaTyped = toTypedRxJsonSchema(userSchemaLiteral);
+const userSchema: RxJsonSchema<UserDocType> = userSchemaTyped;
 
 const userSchemaInput = {
   user: {

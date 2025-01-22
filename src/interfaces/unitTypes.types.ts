@@ -1,8 +1,4 @@
-export interface Unit {
-  id: string;
-  projectId: number;
-  unitNumber: number;
-  unitName: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ExtractDocumentTypeFromTypedRxJsonSchema } from "rxdb";
+import { unitSchemaTyped } from "../RXdatabase/schemas/units.schema";
+
+export type UnitDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof unitSchemaTyped>;

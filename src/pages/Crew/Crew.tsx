@@ -10,7 +10,7 @@ import CrewCard from '../../components/Crew/CrewCard/CrewCard';
 import EditionModal, { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
 import { CountryDocType } from '../../interfaces/country.types';
 import { CrewDocType } from '../../interfaces/crew.types';
-import { Unit } from '../../interfaces/unitTypes.types';
+import { UnitDocType } from '../../interfaces/unitTypes.types';
 import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
 import './Crew.scss';
 import { crewFormInputs } from './inputs/crewForm.inputs';
@@ -31,7 +31,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
     (collection) => collection.find(),
   );
 
-  const { result: units = [] }: {result: Unit[]} = useRxData(
+  const { result: units = [] }: {result: UnitDocType[]} = useRxData(
     'units',
     (collection) => collection.find(),
   );

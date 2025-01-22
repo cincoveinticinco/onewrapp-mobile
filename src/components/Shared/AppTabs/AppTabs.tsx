@@ -32,7 +32,7 @@ import {
 import DatabaseContext from '../../../context/Database/Database.context';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import { SecurePages } from '../../../interfaces/securePages.types';
-import { User } from '../../../interfaces/user.types';
+import { UserDocType } from '../../../interfaces/user.types';
 import AddScene from '../../../pages/AddScene/AddScene';
 import Calendar from '../../../pages/Calendar/Calendar';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
@@ -58,7 +58,7 @@ setupIonicReact();
 
 const AppTabs: React.FC = () => {
   const { viewTabs, oneWrapDb, projectId } = useContext(DatabaseContext);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserDocType | null>(null);
   const [currentCompany, setCurrentCompany] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -75,13 +75,13 @@ const AppTabs: React.FC = () => {
 
   const getSecurePageAccess = useCallback((pageId: number) => {
     if (currentCompany && user) {
-      const company = user.companies.find((company: any) => company.id == currentCompany);
+      const company = user?.companies?.find((company: any) => company.id == currentCompany);
       if(company?.userTypeId === 1) {
-        const page = company?.securePages.find((page: any) => page.id == pageId);
+        const page = company?.securePages?.find((page: any) => page.id == pageId);
         return page?.access;
       } else if (company?.userTypeId === 2) {
         const project = company?.projects?.find((project: any) => project.id == projectId);
-        const page = project?.securePages.find((page: any) => page.id == pageId);
+        const page = project?.securePages?.find((page: any) => page.id == pageId);
         return page?.access;
       }
     }

@@ -1,18 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { TalentDocType } from '../../interfaces/talent.types';
 
-export interface Talent {
-  id: string;
-  projectId: number;
-  artisticName: string;
-  name: string;
-  lastName: string;
-  castName: string;
-  castCategoryId: number;
-  castCategory: string;
-}
-
-const talentSchema = {
+const talentSchemaLiteral = {
   title: 'talent schema',
   version: 0,
   type: 'object',
@@ -54,7 +45,10 @@ const talentSchema = {
     },
   },
   required: ['id', 'name', 'lastName', 'castCategoryId', 'castCategory', 'projectId'],
-};
+} as const;
+
+export const talentSchemaTyped = toTypedRxJsonSchema(talentSchemaLiteral);
+const talentSchema: RxJsonSchema<TalentDocType> = talentSchemaTyped;
 
 const talentSchemaInput = {
   talents: {

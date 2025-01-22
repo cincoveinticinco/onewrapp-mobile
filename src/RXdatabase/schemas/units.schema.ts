@@ -1,7 +1,9 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
+import { UnitDocType } from '../../interfaces/unitTypes.types';
 
-const unitsSchema = {
+const unitsSchemaLiteral = {
   title: 'unitsSchema',
   description: 'Schema for units collection',
   version: 0,
@@ -33,7 +35,11 @@ const unitsSchema = {
     },
   },
   required: ['projectId'],
-};
+} as const;
+
+export const unitSchemaTyped = toTypedRxJsonSchema(unitsSchemaLiteral);
+
+const unitsSchema: RxJsonSchema<UnitDocType> = unitsSchemaLiteral;
 
 const unitSchemaInput = {
   units: {

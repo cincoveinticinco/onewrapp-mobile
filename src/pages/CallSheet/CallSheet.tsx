@@ -25,7 +25,7 @@ import { Character, SceneDocType } from '../../interfaces/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, ShootingDocType
 } from '../../interfaces/shooting.types';
-import { Talent } from '../../RXdatabase/schemas/talents.schema';
+import { TalentDocType } from '../../interfaces/talent.types';
 import timeToISOString from '../../utils/timeToIsoString';
 
 import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
@@ -85,7 +85,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const errorToast = useErrorToast();
 
   const getTalentCastOptions = async () => {
-    const talents = await oneWrapDb?.talents.find({}).exec() || [];
+    const talents: TalentDocType[] = await oneWrapDb?.talents.find({}).exec() || [];
     const castOptions = talents.map((talent: any) => ({ value: talent._data, label: talent.castName })).sort((a, b) => a.label.localeCompare(b.label));
     setCastOptions(castOptions);
   };
@@ -332,7 +332,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const characterNames = [...new Set(scenes.flatMap((scene: { _data: SceneDocType; }) => (scene._data.characters || []).map((character: Character) => character.characterName && normalizeString(character.characterName.toLowerCase()))))];
 
       const talents = await oneWrapDb?.talents.find({}).exec() || [];
-      const castTalents = talents.filter((talent: Talent) => characterNames.includes(normalizeString(talent.castName)));
+      const castTalents = talents.filter((talent: TalentDocType) => talent.castName && characterNames.includes(normalizeString(talent.castName)));
 
       const getCallInfo = (castName: string) => {
         const shootingCalls = shootings[0]._data.castCalls;

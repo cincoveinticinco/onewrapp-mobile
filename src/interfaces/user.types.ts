@@ -1,32 +1,10 @@
-export interface User {
-  id: string;
-  sessionEndsAt: string;
-  sessionToken: string;
-  userName: string;
-  userEmail: string;
-  updatedAt: string;
-  companies: Company[];
-}
+import { ExtractDocumentTypeFromTypedRxJsonSchema } from "rxdb";
+import { userSchemaTyped } from "../RXdatabase/schemas/user.schema";
 
-export interface Company {
-  id: number;
-  roleId: number;
-  userTypeId: number;
-  liteView: boolean;
-  companyName: string;
-  securePages: SecurePage[];
-  projects?: Project[];
-}
+export type UserDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof userSchemaTyped>;
 
-interface SecurePage {
-  access: number;
-  id: number;
-  page?: string;
-  parentId?: number;
-}
+export type Company = NonNullable<NonNullable<UserDocType['companies']>[0]>;
 
-interface Project {
-  id: number;
-  roleId: number;
-  securePages: SecurePage[];
-}
+export type SecurePage = NonNullable<NonNullable<Company['securePages']>[0]>;
+
+export type Project = NonNullable<NonNullable<Company['projects']>[0]>;
