@@ -18,7 +18,7 @@ import DatabaseContext from '../../context/Database/Database.context';
 import useErrorToast from '../../hooks/Shared/useErrorToast';
 import AppLoader from '../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import { Shooting } from '../../interfaces/shooting.types';
+import { ShootingDocType } from '../../interfaces/shooting.types';
 import { Unit } from '../../interfaces/unitTypes.types';
 import './Calendar.css';
 import useIsMobile from '../../hooks/Shared/useIsMobile';
@@ -31,7 +31,7 @@ const Calendar: React.FC = () => {
   const [calendarState, setCalendarState] = useState({
     currentDate: localStorageDate ? new Date(localStorageDate) : new Date(),
     viewMode: 'month' as 'month' | 'week',
-    shootings: [] as Shooting[],
+    shootings: [] as ShootingDocType[],
   });
 
   const {
@@ -93,7 +93,7 @@ const Calendar: React.FC = () => {
 
       const tempId = `${form.shootDate}_${unit.id}`;
 
-      const newShooting: Partial<Shooting> = {
+      const newShooting: Partial<ShootingDocType> = {
         id: tempId,
         projectId: projectId || undefined,
         unitId: parseInt(unit.id),
@@ -195,7 +195,7 @@ const Calendar: React.FC = () => {
             const shootingsData = shootings.map((shooting: any) => shooting._data);
             setCalendarState((prevState) => ({
               ...prevState,
-              shootings: shootingsData as Shooting[],
+              shootings: shootingsData as ShootingDocType[],
               currentDate: shootingsData.length > 0
                 ? startOfDay(new Date(shootingsData[0].shootDate as string))
                 : prevState.currentDate,
@@ -227,7 +227,7 @@ const Calendar: React.FC = () => {
 
       setCalendarState((prevState) => ({
         ...prevState,
-        shootings: shootingsData as Shooting[],
+        shootings: shootingsData as ShootingDocType[],
         currentDate: shootingsData.length > 0
           ? startOfDay(new Date(shootingsData[0].shootDate as string))
           : prevState.currentDate,

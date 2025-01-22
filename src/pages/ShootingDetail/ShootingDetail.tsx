@@ -194,7 +194,7 @@ const ShootingDetail: React.FC<{
 
   const validateMealExistence = (meal: string) => {
     const { meals: shootingMeals } = shootingData.shotingInfo;
-    const mealExists = shootingMeals.some((m: Meal) => m.meal.toLowerCase() === meal.toLowerCase());
+    const mealExists = shootingMeals.some((m: Meal) => m.meal && m.meal.toLowerCase() === meal.toLowerCase());
     if (mealExists) {
       return 'meal already exists';
     }
@@ -215,8 +215,8 @@ const ShootingDetail: React.FC<{
         sceneId: scene.sceneId?.toString(),
         status: ShootingSceneStatusEnum.Assigned,
         position: shootingData.mergedSceneBanners.length + 1,
-        rehersalStart: null,
-        rehersalEnd: null,
+        rehearsalStart: null,
+        rehearsalEnd: null,
         comment: '',
         partiality: false,
         startShooting: null,
@@ -512,12 +512,12 @@ const ShootingDetail: React.FC<{
 
       // Advance Calls
       shootingCopy.advanceCalls = shootingCopy.advanceCalls.map((call: AdvanceCall) => {
-        if (call.adv_call_time) {
-          const callTime = new Date(call.adv_call_time);
+        if (call.advCallTime) {
+          const callTime = new Date(call.advCallTime);
           callTime.setHours(callTime.getHours() + generalCallDiffHours);
           return {
             ...call,
-            adv_call_time: callTime.toISOString(),
+            advCallTime: callTime.toISOString(),
           };
         }
         return call;
@@ -525,15 +525,15 @@ const ShootingDetail: React.FC<{
 
       // Meals
       shootingCopy.meals = shootingCopy.meals.map((meal: Meal) => {
-        if (meal.ready_at && meal.end_time) {
-          const readyAt = new Date(meal.ready_at);
+        if (meal.readyAt && meal.endTime) {
+          const readyAt = new Date(meal.readyAt);
           readyAt.setHours(readyAt.getHours() + generalCallDiffHours);
-          const endTime = new Date(meal.end_time);
+          const endTime = new Date(meal.endTime);
           endTime.setHours(endTime.getHours() + generalCallDiffHours);
           return {
             ...meal,
-            ready_at: readyAt.toISOString(),
-            end_time: endTime.toISOString(),
+            readyAt: readyAt.toISOString(),
+            endTime: endTime.toISOString(),
           };
         }
         return meal;

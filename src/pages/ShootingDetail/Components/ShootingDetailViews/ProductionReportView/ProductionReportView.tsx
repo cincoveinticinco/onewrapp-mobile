@@ -14,7 +14,7 @@ import useErrorToast from '../../../../../hooks/Shared/useErrorToast';
 import AppLoader from '../../../../../hooks/Shared/AppLoader';
 import useSuccessToast from '../../../../../hooks/Shared/useSuccessToast';
 import { ServiceMatricesDocType } from '../../../../../interfaces/serviceMatrices.types';
-import { Shooting } from '../../../../../interfaces/shooting.types';
+import { ShootingDocType } from '../../../../../interfaces/shooting.types';
 import DropDownButton from '../../../../../components/Shared/DropDownButton/DropDownButton';
 import GeneralTable, { Column } from '../../../../../components/Shared/GeneralTable/GeneralTable';
 
@@ -58,7 +58,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
   );
 
   const { result: [shooting], isFetching: isShootingFetching }: {
-    result: RxDocument<Shooting>[];
+    result: RxDocument<ShootingDocType>[];
     isFetching: boolean;
   } = useRxData(
     'shootings',

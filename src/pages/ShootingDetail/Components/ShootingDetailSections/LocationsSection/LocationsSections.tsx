@@ -48,24 +48,24 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
     >
       {locations.length > 0 ? (
         locations.map((location, locationIndex) => (
-          <div key={location.lat + location.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
+          <div key={`${location.lat ?? ''}${location.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert
               handleOk={() => removeLocation(location, locationIndex)}
               header="Delete Location"
-              message={`Are you sure you want to delete ${location.locationName}?`}
+              message={`Are you sure you want to delete ${location.locationName ?? ''}?`}
               ref={alertRef}
               inputs={[]}
             />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>
-                {truncateString(location.locationName.toUpperCase(), 50)}
+                {truncateString(location.locationName?.toUpperCase() ?? '', 50)}
               </b>
             </h5>
             <div className="location-address">
               <p>
-                {truncateString(location.locationAddress.toUpperCase(), 50)}
+                {truncateString(location.locationAddress?.toUpperCase() ?? '', 50)}
                 <br />
-                <a href={generateLocationLink(location.lat, location.lng)} target="_blank" rel="noreferrer">
+                <a href={generateLocationLink(location.lat ?? '', location.lng ?? '')} target="_blank" rel="noreferrer">
                   <b> GOOGLE MAP LINK</b>
                 </a>
               </p>

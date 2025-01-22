@@ -59,14 +59,14 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
       notShowWhenEdit: true,
     },
     {
-      key: 'rehersalStart',
+      key: 'rehearsalStart',
       title: 'Rehearsal Start',
       type: 'hour',
       textAlign: 'center',
       editable: !disableEditions,
     },
     {
-      key: 'rehersalEnd',
+      key: 'rehearsalEnd',
       title: 'Rehearsal End',
       type: 'hour',
       textAlign: 'center',

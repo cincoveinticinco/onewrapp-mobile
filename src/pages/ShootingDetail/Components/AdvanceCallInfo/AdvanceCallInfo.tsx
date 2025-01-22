@@ -27,7 +27,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
 
   const formatDefaultValues = (call: AdvanceCall) => ({
     ...call,
-    adv_call_time: getHourMinutesFomISO(call.adv_call_time),
+    advCallTime: call.advCallTime ? getHourMinutesFomISO(call.advCallTime) : '',
   });
 
   const openEditModal = () => {
@@ -57,7 +57,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
         </h5>
         <div className="location-address">
           <p>{ call.description?.toUpperCase() }</p>
-          <p>{getHourMinutesFomISO(call.adv_call_time, true)}</p>
+          <p>{call.advCallTime ? getHourMinutesFomISO(call.advCallTime, true) : ''}</p>
         </div>
         {editMode && (
           <div className="ion-flex-column location-buttons">

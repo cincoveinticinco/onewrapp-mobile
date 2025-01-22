@@ -1,5 +1,5 @@
 import { SceneDocType } from "../../../interfaces/scenes.types";
-import { ShootingScene,  ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCalls, Meal, } from "../../../interfaces/shooting.types";
+import { ShootingScene,  ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCall, Meal, } from "../../../interfaces/shooting.types";
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {
@@ -22,7 +22,7 @@ export interface ShootingInfo {
   min: string;
   locations: LocationInfo[];
   hospitals: LocationInfo[];
-  advanceCalls: AdvanceCalls[]
+  advanceCalls: AdvanceCall[]
   meals: Meal[];
 }
 

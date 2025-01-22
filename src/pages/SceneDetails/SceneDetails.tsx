@@ -500,16 +500,16 @@ const SceneDetails: React.FC<{
               !openShootDropDown && (
                 <div className="info">
                   <EditableField
-                    field="rehersalStart"
-                    value={thisSceneShooting?.rehersalStart || ''}
+                    field="rehearsalStart"
+                    value={thisSceneShooting?.rehearsalStart || ''}
                     title="Rehersal Start"
                     withSymbol={false}
                     permissionType={1}
                     updateShootingTime={updateShootingTime}
                   />
                   <EditableField
-                    field="rehersalEnd"
-                    value={thisSceneShooting?.rehersalEnd || ''}
+                    field="rehearsalEnd"
+                    value={thisSceneShooting?.rehearsalEnd || ''}
                     title="Rehersal End"
                     withSymbol={false}
                     permissionType={1}

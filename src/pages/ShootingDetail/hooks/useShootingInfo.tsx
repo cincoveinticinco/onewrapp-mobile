@@ -236,8 +236,8 @@ export const useShootingInfo = () => {
             shootingCopy.meals = shootingCopy.meals.filter((meal: Meal) => meal.id !== mealToDelete.id);
           } else {
             const indexToDelete = shootingCopy.meals.findIndex((meal: Meal) => meal.meal === mealToDelete.meal
-              && meal.ready_at === mealToDelete.ready_at
-              && meal.end_time === mealToDelete.end_time);
+              && meal.readyAt === mealToDelete.readyAt
+              && meal.endTime === mealToDelete.endTime);
             if (indexToDelete !== -1) {
               shootingCopy.meals.splice(indexToDelete, 1);
             }
@@ -269,7 +269,7 @@ export const useShootingInfo = () => {
             shootingCopy.advanceCalls = shootingCopy.advanceCalls.filter((call: AdvanceCall) => call.id !== callToDelete.id);
           } else {
             const indexToDelete = shootingCopy.advanceCalls.findIndex((call: AdvanceCall) => call.dep_name_eng === callToDelete.dep_name_eng
-              && call.adv_call_time === callToDelete.adv_call_time
+              && call.advCallTime === callToDelete.advCallTime
               && call.description === callToDelete.description);
             if (indexToDelete !== -1) {
               shootingCopy.advanceCalls.splice(indexToDelete, 1);
@@ -468,10 +468,10 @@ export const useShootingInfo = () => {
     advanceCallCopy.shootingId = parseInt(shootingId);
     advanceCallCopy.createdAt = new Date().toISOString();
     advanceCallCopy.updatedAt = new Date().toISOString();
-    const formatedTime = advanceCallCopy.adv_call_time.split(':');
+    const formatedTime = advanceCallCopy.advCallTime.split(':');
     advanceCallCopy.dep_name_esp = advanceCallCopy.dep_name_eng;
     const shootingCopy = { ...shooting._data };
-    advanceCallCopy.adv_call_time = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
+    advanceCallCopy.advCallTime = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCallCopy];
 
     try {
@@ -493,11 +493,11 @@ export const useShootingInfo = () => {
       mealCopy.shootingId = parseInt(shootingId);
       mealCopy.createdAt = new Date().toISOString();
       mealCopy.updatedAt = new Date().toISOString();
-      const formatedTimeStart = mealCopy.ready_at.split(':');
-      const formatedTimeEnd = mealCopy.end_time.split(':');
+      const formatedTimeStart = mealCopy.readyAt.split(':');
+      const formatedTimeEnd = mealCopy.endTime.split(':');
       const shootingCopy = { ...shooting._data };
-      mealCopy.ready_at = timeToISOString({ hours: formatedTimeStart[0], minutes: formatedTimeStart[1] }, shootingCopy.shootDate);
-      mealCopy.end_time = timeToISOString({ hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] }, shootingCopy.shootDate);
+      mealCopy.readyAt = timeToISOString({ hours: formatedTimeStart[0], minutes: formatedTimeStart[1] }, shootingCopy.shootDate);
+      mealCopy.endTime = timeToISOString({ hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] }, shootingCopy.shootDate);
   
       shootingCopy.meals = [...shootingCopy.meals, mealCopy];
       await oneWrappDb?.shootings.upsert(shootingCopy);
@@ -523,13 +523,17 @@ export const useShootingInfo = () => {
           if (index !== -1) {
             const updatedMeals = [...shootingCopy.meals];
 
+            if (!meal.readyAt || !meal.endTime) {
+              throw new Error('Invalid time');
+            }
+
             // Convertir los tiempos a formato ISO
             updatedMeals[index] = {
               ...meal,
-              ready_at: timeToISOString({ hours: meal.ready_at.split(':')[0], minutes: meal.ready_at.split(':')[1] }, shootingCopy.shootDate),
-              end_time: timeToISOString({ hours: meal.end_time.split(':')[0], minutes: meal.end_time.split(':')[1] }, shootingCopy.shootDate),
+              readyAt: timeToISOString({ hours: meal.readyAt.split(':')[0], minutes: meal.readyAt.split(':')[1] }, shootingCopy.shootDate),
+              endTime: timeToISOString({ hours: meal.endTime.split(':')[0], minutes: meal.endTime.split(':')[1] }, shootingCopy.shootDate),
             };
-
+     
             shootingCopy.meals = updatedMeals;
 
             await oneWrappDb.shootings.upsert(shootingCopy);
@@ -559,10 +563,14 @@ export const useShootingInfo = () => {
           if (index !== -1) {
             const updatedAdvanceCalls = [...shootingCopy.advanceCalls];
 
+            if (!advanceCall.advCallTime) {
+              throw new Error('Invalid time');
+            }
+
             // Convertir el tiempo a formato ISO
             updatedAdvanceCalls[index] = {
               ...advanceCall,
-              adv_call_time: timeToISOString({ hours: advanceCall.adv_call_time.split(':')[0], minutes: advanceCall.adv_call_time.split(':')[1] }, shootingCopy.shootDate),
+              advCallTime: timeToISOString({ hours: advanceCall.advCallTime.split(':')[0], minutes: advanceCall.advCallTime.split(':')[1] }, shootingCopy.shootDate),
             };
 
             shootingCopy.advanceCalls = updatedAdvanceCalls;
@@ -615,8 +623,8 @@ export const useShootingInfo = () => {
     sceneId: scene.sceneId.toString(),
     status: scene.status,
     position: scene.position,
-    rehersalStart: scene.rehersalStart,
-    rehersalEnd: scene.rehersalEnd,
+    rehearsalStart: scene.rehearsalStart,
+    rehearsalEnd: scene.rehearsalEnd,
     startShooting: scene.startShooting,
     endShooting: scene.endShooting,
     producedSeconds: scene.producedSeconds,

@@ -9,7 +9,7 @@ import { ShootingBanner as ShootingBannerInterface } from '../../../../interface
 import './ShootingBanner.scss';
 
 interface ShootingBannerProps {
-  banner: ShootingBannerInterface;
+  banner: ShootingBannerInterface & {backgroundColor: string} & {fontSize: number};
   shootingDeleteBanner: () => void;
 }
 
@@ -51,7 +51,7 @@ const ShootingBanner: React.FC<ShootingBannerProps> = ({ banner, shootingDeleteB
             fontSize: `${banner.fontSize ?? 16}px`,
           }}
         >
-          {banner.description.toUpperCase()}
+          {(banner.description ?? '').toUpperCase()}
         </p>
       </IonItem>
       <IonItemOptions side="end" className="banner-card-options">

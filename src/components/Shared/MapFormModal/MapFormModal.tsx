@@ -50,12 +50,12 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
 
   useEffect(() => {
     if (selectedLocation) {
-      setLocationName(selectedLocation.locationName);
-      setLocationTypeId(selectedLocation.locationTypeId);
-      setLocationAddress(selectedLocation.locationAddress);
-      setLat(parseFloat(selectedLocation.lat));
-      setLng(parseFloat(selectedLocation.lng));
-      setSearchTerm(selectedLocation.locationAddress);
+      setLocationName(selectedLocation.locationName || '');
+      setLocationTypeId(selectedLocation.locationTypeId ?? (hospital ? 3 : null));
+      setLocationAddress(selectedLocation.locationAddress || '');
+      setLat(parseFloat(selectedLocation.lat || '0'));
+      setLng(parseFloat(selectedLocation.lng || '0'));
+      setSearchTerm(selectedLocation.locationAddress || '');
     } else {
       setLocationName('');
       setLocationTypeId(hospital ? 3 : null);
@@ -86,8 +86,8 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         apiKey: environment.MAPS_KEY,
         config: {
           center: {
-            lat: selectedLocation ? parseFloat(selectedLocation.lat) : 33.6,
-            lng: selectedLocation ? parseFloat(selectedLocation.lng) : -117.9,
+            lat: selectedLocation && selectedLocation.lat ? parseFloat(selectedLocation.lat) : 33.6,
+            lng: selectedLocation && selectedLocation.lng ? parseFloat(selectedLocation.lng) : -117.9,
           },
           zoom: selectedLocation ? 15 : 8,
         },
@@ -100,7 +100,9 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
       });
 
       if (selectedLocation) {
-        updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
+        if (selectedLocation.lat && selectedLocation.lng) {
+          updateMarker(parseFloat(selectedLocation.lat), parseFloat(selectedLocation.lng));
+        }
       }
     } catch (error) {
       throw error;

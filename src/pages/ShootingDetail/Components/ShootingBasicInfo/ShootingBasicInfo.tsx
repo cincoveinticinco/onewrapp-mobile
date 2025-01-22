@@ -14,12 +14,12 @@ import { GoogleMap } from '@capacitor/google-maps';
 import environment from '../../../../../environment';
 
 interface EditableFieldProps {
-  field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';
+  field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';
   value: string;
   title: string;
   withSymbol: boolean;
   permissionType?: number | null;
-  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
+  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
 }
 
 export const EditableField: React.FC<EditableFieldProps> = ({
@@ -66,7 +66,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       <EditionModal
         modalRef={editionModalRef}
         modalTrigger={`open-edit-time-modal-${field}`}
-        title={`Edit ${field === 'estimatedSeconds' ? 'Estimated Time' : field === 'shootStart' ? 'Shoot Start' : field === 'shootEnd' ? 'Shoot End' : field === 'rehersalStart' ? 'Rehearsal Start' : field === 'rehersalEnd' ? 'Rehearsal End' : field === 'generalCall' ? 'General Call' : field === 'onSet' ? 'Ready to Shoot' : field === 'estimatedWrap' ? 'Estimated Wrap' : field === 'wrap' ? 'Wrap' : 'Last Out'}`}
+        title={`Edit ${field === 'estimatedSeconds' ? 'Estimated Time' : field === 'shootStart' ? 'Shoot Start' : field === 'shootEnd' ? 'Shoot End' : field === 'rehearsalStart' ? 'Rehearsal Start' : field === 'rehearsalEnd' ? 'Rehearsal End' : field === 'generalCall' ? 'General Call' : field === 'onSet' ? 'Ready to Shoot' : field === 'estimatedWrap' ? 'Estimated Wrap' : field === 'wrap' ? 'Wrap' : 'Last Out'}`}
         formInputs={editionInputs}
         handleEdition={handleEdition}
         defaultFormValues={{
@@ -125,11 +125,11 @@ interface ShootingBasicInfoProps {
   mapRef: React.RefObject<HTMLDivElement>;
   permissionType?: number | null;
   updateShootingAllTimes: (numberOfHours: number) => any;
-  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
+  updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
 }
 
 const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, updateShootingTime, permissionType, mapRef, updateShootingAllTimes }) => {
-  const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehersalStart' | 'rehersalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds' | null>(null);
+  const [editingField, setEditingField] = useState<'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds' | null>(null);
   const [firstLocationLat, setFirstLocationLat] = useState<number | undefined>(undefined);
   const [firstLocationLng, setFirstLocationLng] = useState<number | undefined>(undefined);
   const editionModalRef = useRef<HTMLIonModalElement>(null);
@@ -140,8 +140,8 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 
   useEffect(() => {
     if (shootingInfo.locations.length > 0 && mapRef.current) {
-      const lat = parseFloat(shootingInfo.locations[0].lat);
-      const lng = parseFloat(shootingInfo.locations[0].lng);
+      const lat = shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0;
+      const lng = shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0;
 
       if (!mapInitialized) {
         createMap(lat, lng);
@@ -196,8 +196,8 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
 
   useEffect(() => {
     if (shootingInfo.locations.length > 0) {
-      setFirstLocationLat(parseFloat(shootingInfo.locations[0].lat));
-      setFirstLocationLng(parseFloat(shootingInfo.locations[0].lng));
+      setFirstLocationLat(shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0);
+      setFirstLocationLng(shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0);
     }
   }, [shootingInfo.locations]);
 
@@ -234,7 +234,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
             shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
               <div className="map-container">
                 <GoogleMapComponent
-                  locations={[...shootingInfo.locations, ...shootingInfo.hospitals]}
+                  locations={[...shootingInfo.locations.map(loc => ({ ...loc, locationTypeId: loc.locationTypeId ?? 0, locationName: loc.locationName ?? '' })), ...shootingInfo.hospitals.map(hosp => ({ ...hosp, locationTypeId: hosp.locationTypeId ?? 0, locationName: hosp.locationName ?? '' }))]}
                   mapRef={mapRef}
                 />
               </div>

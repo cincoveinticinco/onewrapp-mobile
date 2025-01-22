@@ -1,7 +1,6 @@
 // import { Scene } from './interfaces/scenesTypes';
 
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from './ennums/ennums';
-import { Shooting } from './interfaces/shooting.types';
 
 const projects = [
   {
@@ -262,8 +261,8 @@ export const fakeShootings: any[] = [
         sceneId: '1A',
         status: ShootingSceneStatusEnum.Assigned,
         position: 1,
-        rehersalStart: '10:00',
-        rehersalEnd: '10:30',
+        rehearsalStart: '10:00',
+        rehearsalEnd: '10:30',
         startShooting: '11:00',
         endShooting: '14:00',
         producedSeconds: 7200,
@@ -278,8 +277,8 @@ export const fakeShootings: any[] = [
         sceneId: '2B',
         status: ShootingSceneStatusEnum.Assigned,
         position: 2,
-        rehersalStart: '14:30',
-        rehersalEnd: '15:00',
+        rehearsalStart: '14:30',
+        rehearsalEnd: '15:00',
         startShooting: '15:30',
         endShooting: null,
         producedSeconds: null,

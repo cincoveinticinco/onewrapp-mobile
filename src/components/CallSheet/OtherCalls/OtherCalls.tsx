@@ -38,7 +38,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
   ];
 
   const valiateOtherCallExists = (value: string) => {
-    const otherCallExists = otherCalls.some((otherCall: OtherCall) => normalizeString(otherCall.otherCallName) === normalizeString(value));
+    const otherCallExists = otherCalls.some((otherCall: OtherCall) => normalizeString(otherCall.otherCallName || '') === normalizeString(value));
     if (otherCallExists) return 'This other call already exists';
     return false;
   };

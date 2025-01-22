@@ -3,14 +3,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import { useIonViewDidEnter } from '@ionic/react';
+import useErrorToast from '../../../hooks/Shared/useErrorToast';
 
 interface LocationInfo {
   locationTypeId: number;
   locationName: string;
-  locationAddress: string;
-  locationPostalCode: string;
-  lat: string;
-  lng: string;
+  locationAddress?: string;
+  locationPostalCode?: string | null;
+  lat?: string | null;
+  lng?: string | null;
 }
 
 interface GoogleMapComponentProps {
@@ -28,6 +29,8 @@ const colorMap: { [key: number]: string } = {
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapRef }) => {
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
+  const errorToast = useErrorToast();
+  const successToast = useErrorToast();
 
   const createMap = async (lat: number, lng: number) => {
     if (!mapRef.current) return;
@@ -68,17 +71,32 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapR
   const addMarker = async (mapInstance: GoogleMap, location: LocationInfo) => {
     const color = colorMap[location.locationTypeId] || 'gray';
 
-    await mapInstance.addMarker({
-      coordinate: { lat: parseFloat(location.lat), lng: parseFloat(location.lng) },
-      draggable: true,
-      iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`
-    });
+    try {
+      if(!location.lat || !location.lng) {
+        const missedParameter = !location.lat ? 'lat' : 'lng';
+        throw new Error(`Location is missing ${missedParameter}`);
+      }
+      await mapInstance.addMarker({
+        coordinate: { lat: parseFloat(location.lat), lng: parseFloat(location.lng) },
+        draggable: true,
+        iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`
+      });
+    } catch(error: any) {
+      errorToast(error.message || 'Error adding marker');
+    }
   };
 
   const initMap = async () => {
     if (locations.length > 0 && mapRef.current && !mapInitialized) {
-      const lat = parseFloat(locations[0].lat);
-      const lng = parseFloat(locations[0].lng);
+      if (!locations[0]?.lat) {
+        throw new Error('Location is missing lat');
+      }
+
+      if (!locations[0]?.lng) {
+        throw new Error('Location is missing lng');
+      }
+      const lat = parseFloat(locations[0].lat!);
+      const lng = parseFloat(locations[0].lng!);
 
       if (!isNaN(lat) && !isNaN(lng)) {
         await createMap(lat, lng);

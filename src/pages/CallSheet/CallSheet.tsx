@@ -23,7 +23,7 @@ import useHandleBack from '../../hooks/Shared/useHandleBack';
 import useHideTabs from '../../hooks/Shared/useHideTabs';
 import { Character, SceneDocType } from '../../interfaces/scenes.types';
 import {
-  CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, Shooting,
+  CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, ShootingDocType
 } from '../../interfaces/shooting.types';
 import { Talent } from '../../RXdatabase/schemas/talents.schema';
 import timeToISOString from '../../utils/timeToIsoString';
@@ -75,7 +75,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [addNewOtherCallModalIsOpen, setAddNewOtherCallModalIsOpen] = useState(false);
   const [addNewPictureCarModalIsOpen, setAddNewPictureCarModalIsOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [thisShooting, setThisShooting] = useState<Shooting>();
+  const [thisShooting, setThisShooting] = useState<ShootingDocType>();
   const [castOptions, setCastOptions] = useState<any>([]);
   const [scenesInShoot, setScenesInShoot] = useState<any>([]);
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
@@ -222,7 +222,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
     try {
       const shootingCopy = { ...thisShooting };
       shootingCopy.extraCalls = extraCalls;
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
       await oneWrapDb?.shootings.upsert(shootingCopy);
       successToast('Extra Calls saved');
     } catch (error) {
@@ -253,7 +253,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
     try {
       const shootingCopy = { ...thisShooting };
       shootingCopy.otherCalls = otherCalls;
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
       await oneWrapDb?.shootings.upsert(shootingCopy);
       successToast('Other Calls saved');
     } catch (error) {
@@ -288,7 +288,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const shootingCopy = { ...thisShooting };
       shootingCopy.pictureCars = pictureCars;
 
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       successToast('Picture Cars saved');
@@ -513,7 +513,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const shootingCopy = { ...thisShooting };
       shootingCopy.extraCalls = [...(shootingCopy.extraCalls || []), newExtraCall];
 
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setExtraCalls([...extraCalls, newExtraCall]);
@@ -545,7 +545,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const shootingCopy = { ...thisShooting };
       shootingCopy.pictureCars = [...(shootingCopy.pictureCars || []), newPictureCar];
 
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setPictureCars([...pictureCars, newPictureCar]);
@@ -577,7 +577,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const shootingCopy = { ...thisShooting };
       shootingCopy.otherCalls = [...(shootingCopy.otherCalls || []), newOtherCall];
 
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       setOtherCalls([...otherCalls, newOtherCall]);
@@ -688,7 +688,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const shootingCopy = { ...thisShooting };
       shootingCopy.castCalls = [...(shootingCopy.castCalls || []), newCastCall];
 
-      setThisShooting(shootingCopy as Shooting);
+      setThisShooting(shootingCopy as ShootingDocType);
 
       await oneWrapDb?.shootings.upsert(shootingCopy);
       const formattedCastCall = {

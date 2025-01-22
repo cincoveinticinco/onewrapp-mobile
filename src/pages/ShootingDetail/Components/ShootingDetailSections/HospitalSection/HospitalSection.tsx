@@ -48,22 +48,22 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
     >
       {hospitals.length > 0 ? (
         hospitals.map((hospital, hospitalIndex) => (
-          <div key={hospital.lat + hospital.lng} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
+          <div key={`${hospital.lat ?? ''}${hospital.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert
               handleOk={() => removeHospital(hospital, hospitalIndex)}
               header="Delete Hospital"
-              message={`Are you sure you want to delete ${hospital.locationName}?`}
+              message={`Are you sure you want to delete ${hospital.locationName ?? ''}?`}
               ref={alertRef}
               inputs={[]}
             />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
-              <b>{truncateString(hospital.locationName.toUpperCase(), 50)}</b>
+              <b>{truncateString(hospital.locationName?.toUpperCase() ?? '', 50)}</b>
             </h5>
             <div className="location-address">
               <p>
-                {truncateString(hospital.locationAddress.toUpperCase(), 50)}
+                {truncateString(hospital.locationAddress?.toUpperCase() ?? '', 50)}
                 <br />
-                <a href={generateLocationLink(hospital.lat, hospital.lng)} target="_blank" rel="noreferrer">
+                <a href={generateLocationLink(hospital.lat ?? '', hospital.lng ?? '')} target="_blank" rel="noreferrer">
                   <b> GOOGLE MAP LINK</b>
                 </a>
               </p>

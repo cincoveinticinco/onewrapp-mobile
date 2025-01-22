@@ -1,8 +1,10 @@
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../ennums/ennums';
 import DatabaseSchema from '../database_schema';
+import { ShootingDocType } from '../../interfaces/shooting.types';
 
-const shootingSchema = {
+const shootingSchemaLiteral= {
   title: 'shooting schema',
   version: 0,
   type: 'object',
@@ -176,7 +178,36 @@ const shootingSchema = {
     },
     meals: {
       type: 'array',
-      additionalProperties: true,
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 250,
+          },
+          shootingId: {
+            type: 'number',
+          },
+          projMealId: {
+            type: 'number',
+          },
+          quantity: {
+            type: 'number',
+          },
+          readyAt: {
+            type: 'string',
+          },
+          endTime: {
+            type: 'string',
+          },
+          mealId: {
+            type: 'number',
+          },
+          meal: {
+            type: 'string',
+          }
+        }
+      }
     },
     services: {
       type: 'array',
@@ -238,7 +269,7 @@ const shootingSchema = {
           shooting_id: { type: 'number' },
           department_id: { type: 'number' },
           adv_pick_up: { type: ['string', 'null'] },
-          adv_call_time: { type: ['string', 'null'] },
+          advCallTime: { type: ['string', 'null'] },
           adv_wrap: { type: ['string', 'null'] },
           description: { type: ['string', 'null'] },
           created_at: { type: ['string', 'null'] },
@@ -484,7 +515,10 @@ const shootingSchema = {
     },
   },
   required: ['projectId', 'unitId', 'scenes'],
-};
+} as const;
+
+export const shootingSchemaTyped = toTypedRxJsonSchema(shootingSchemaLiteral);
+export const shootingSchema: RxJsonSchema<ShootingDocType> = shootingSchemaLiteral;
 
 const shootingSchemaInput = {
   shootings: {

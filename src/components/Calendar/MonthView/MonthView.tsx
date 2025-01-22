@@ -3,10 +3,10 @@ import {
   addDays, endOfMonth, endOfWeek, format, isSameMonth, startOfMonth, startOfWeek,
 } from 'date-fns';
 import React, { useEffect, useState } from 'react';
-import { Shooting } from '../../../interfaces/shooting.types';
+import { ShootingDocType } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 
-const MonthView: React.FC<{ currentDate: Date; shootings: Shooting[] }> = ({ currentDate, shootings }) => {
+const MonthView: React.FC<{ currentDate: Date; shootings: ShootingDocType[] }> = ({ currentDate, shootings }) => {
   const [dayWithShootingCount, setDayWithShootingCount] = useState<{ [key: string]: number }>({});
 
   const monthStart = startOfMonth(currentDate);

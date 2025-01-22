@@ -5,12 +5,12 @@ import {
   addDays, endOfWeek, format, startOfWeek,
 } from 'date-fns';
 import { useCallback, useMemo } from 'react';
-import { Shooting } from '../../../interfaces/shooting.types';
+import { ShootingDocType } from '../../../interfaces/shooting.types';
 import ShootingCard from '../ShootingCard/ShootingCard';
 
 interface WeekViewProps {
   currentDate: Date;
-  shootings: Shooting[];
+  shootings: ShootingDocType[];
 }
 
 const WeekView: React.FC<WeekViewProps> = ({ currentDate, shootings }) => {

@@ -18,24 +18,10 @@ import OutlinePrimaryButton from '../../Shared/OutlinePrimaryButton/OutlinePrima
 import AppLoader from '../../../hooks/Shared/AppLoader';
 import './ CrewView.scss'
 import { ShootingStatusEnum } from '../../../ennums/ennums';
-import { Shooting } from '../../../interfaces/shooting.types';
+import { CrewCall, ShootingDocType } from '../../../interfaces/shooting.types';
 import useErrorToast from '../../../hooks/Shared/useErrorToast';
 import useSuccessToast from '../../../hooks/Shared/useSuccessToast';
 import { CrewDocType } from '../../../interfaces/crew.types';
-
-interface CrewCall {
-  id: string | null;
-  visible: boolean | null;
-  name: string | null;
-  departmentEsp: string | null;
-  departmentEng: string | null;
-  position: string | null;
-  call: string | null;
-  callPlace: string | null;
-  wrap: string | null;
-  onCall: boolean | null;
-  projCrewId: number | null;
-}
 
 interface CrewViewProps {
   crewCalls: CrewCall[];
@@ -52,8 +38,8 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
       key: 'name', title: 'Name', type: 'text', textAlign: 'left',
     },
     { key: 'position', title: 'Position', type: 'text', textAlign: 'left' },
-    { key: 'call', title: 'Call', type: 'hour' },
-    { key: 'callPlace', title: 'Call Place', type: 'text' },
+    { key: 'call', title: 'Call', type: 'hour',  editable: true},
+    { key: 'callPlace', title: 'Call Place', type: 'text',  editable: true },
     { key: 'onCall', title: 'On Call', type: 'text' },
   ];
 
@@ -64,7 +50,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   const { shootingId } = useParams<{ shootingId: string }>();
   const oneWrappDb: any = useRxDB();
 
-  const [ thisShooting, setThisShooting ] = useState<Shooting | any>(null);
+  const [ thisShooting, setThisShooting ] = useState<ShootingDocType | any>(null);
   const [ availableDates, setAvailableDates ] = useState<{
     date: string;
     status: number;
@@ -75,7 +61,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   const [ selectedDate, setSelectedDate ] = useState<string>(availableDates[0]?.date || formattedDate);
 
   const { result: shootings, isFetching }: {
-    result: Shooting[];
+    result: ShootingDocType[];
     isFetching: boolean;
   } = useRxData('shootings', (collection) => collection.find());
   const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
@@ -162,7 +148,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
       if (!copyCrewFromMaster) {
         // Find source shooting with the selected date and unit
         const sourceShootingDoc = shootings.find(
-          (shooting: Shooting) => 
+          (shooting: ShootingDocType) => 
             shooting.shootDate === selectedDate && 
             shooting.unitId === parseInt(selectedUnitId)
         );

@@ -4,9 +4,9 @@ import {
 import { useHistory, useParams } from 'react-router';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../ennums/ennums';
 import useIsMobile from '../../../hooks/Shared/useIsMobile';
-import { Shooting } from '../../../interfaces/shooting.types';
+import { ShootingDocType } from '../../../interfaces/shooting.types';
 
-const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ className, shooting }) => {
+const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> = ({ className, shooting }) => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
 
@@ -29,7 +29,7 @@ const ShootingCard: React.FC<{ className?: string, shooting: Shooting }> = ({ cl
   return (
     <IonCard
       className={className}
-      onClick={() => goToDetail(shooting.id)}
+      onClick={() => shooting.id && goToDetail(shooting.id)}
       style={{
         backgroundColor: getShootingColor(),
         width: '100%',

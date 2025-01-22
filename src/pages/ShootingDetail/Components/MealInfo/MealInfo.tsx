@@ -28,8 +28,8 @@ const MealInfo: React.FC<MealInfoProps> = ({
   const formatDefaultValues = (meal: Meal) => {
     const formattedMealValues = {
       ...meal,
-      ready_at: getHourMinutesFomISO(meal.ready_at, false),
-      end_time: getHourMinutesFomISO(meal.end_time, false),
+      readyAt: meal.readyAt ? getHourMinutesFomISO(meal.readyAt, false) : '',
+      endTime: meal.endTime ? getHourMinutesFomISO(meal.endTime, false) : '',
     };
 
     return formattedMealValues;
@@ -51,22 +51,22 @@ const MealInfo: React.FC<MealInfoProps> = ({
         <InputAlert
           handleOk={() => deleteMeal(meal)}
           header="Delete Meal"
-          message={`Are you sure you want to delete the ${meal.meal.toUpperCase()} meal?`}
+          message={`Are you sure you want to delete the ${meal.meal ? meal.meal.toUpperCase() : ''} meal?`}
           ref={alertRef}
           inputs={[]}
         />
         <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
-          <b>{meal.meal.toUpperCase()}</b>
+          <b>{meal.meal ? meal.meal.toUpperCase() : ''}</b>
         </h5>
         <div className="location-address">
           <p>
             FROM:
             {' '}
-            {getHourMinutesFomISO(meal.ready_at) + getAmOrPm(meal.ready_at)}
+            {meal.readyAt ? getHourMinutesFomISO(meal.readyAt) + getAmOrPm(meal.readyAt) : 'N/A'}
             {' '}
             TO:
             {' '}
-            {getHourMinutesFomISO(meal.end_time) + getAmOrPm(meal.end_time)}
+            {meal.endTime ? getHourMinutesFomISO(meal.endTime) + getAmOrPm(meal.endTime) : 'N/A'}
           </p>
         </div>
         {editMode && (
