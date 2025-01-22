@@ -1,5 +1,5 @@
-import { SceneDocType } from "../../../interfaces/scenes.types";
-import { ShootingScene,  ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCall, Meal, } from "../../../interfaces/shooting.types";
+import { SceneDocType } from "../../../Shared/types/scenes.types";
+import { ShootingScene,  ShootingBanner as ShootingBannerType, LocationInfo, AdvanceCall, Meal, } from "../../../Shared/types/shooting.types";
 
 export type ShootingViews = 'scenes' | 'info' | 'script-report' | 'wrap-report' | 'production-report' | 'call-sheet';
 type cardType = {

@@ -1,4 +1,4 @@
-import { FormInput } from "../../../components/Shared/EditionModal/EditionModal";
+import { FormInput } from "../../../Shared/Components/EditionModal/EditionModal";
 
   export const crewFormInputs: (departmentsOptions: { label: string, value: string }[], countryOptions: { label: string, value: string }[], unitsOptions: { label: string, value: string }[]) => FormInput[] = (departmentsOptions, countryOptions, unitsOptions) => [
     {

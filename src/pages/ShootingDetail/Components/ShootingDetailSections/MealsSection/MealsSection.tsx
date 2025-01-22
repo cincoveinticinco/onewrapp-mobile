@@ -1,7 +1,7 @@
-import { Meal } from '../../../../../interfaces/shooting.types';
-import { FormInput } from '../../../../../components/Shared/EditionModal/EditionModal';
-import OutlinePrimaryButton from '../../../../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import { Section } from '../../../../../components/Shared/Section/Section';
+import { Meal } from '../../../../../Shared/types/shooting.types';
+import { FormInput } from '../../../../../Shared/Components/EditionModal/EditionModal';
+import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../../../Shared/Components/Section/Section';
 import MealInfo from '../../MealInfo/MealInfo';
 
 interface MealsSectionProps {

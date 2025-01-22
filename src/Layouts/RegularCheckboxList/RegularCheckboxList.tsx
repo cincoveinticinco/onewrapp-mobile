@@ -1,9 +1,9 @@
 import { IonCheckbox, IonList } from '@ionic/react';
 import React from 'react';
-import { SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import HighlightedText from '../../components/Shared/HighlightedText/HighlightedText';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import truncateString from '../../utils/truncateString';
+import { SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
+import HighlightedText from '../../Shared/Components/HighlightedText/HighlightedText';
+import useIsMobile from '../../Shared/hooks/useIsMobile';
+import truncateString from '../../Shared/Utils/truncateString';
 import './RegularCheckboxList.scss';
 
 interface RegularListProps {

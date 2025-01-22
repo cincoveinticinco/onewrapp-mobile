@@ -8,20 +8,20 @@ import React, {
   useState,
 } from 'react';
 import { useLocation } from 'react-router';
-import ElementCard from '../../components/Elements/ElementCard';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import ElementCard from './Components/ElementsCard/ElementCard';
+import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import { SceneTypeEnum } from '../../ennums/ennums';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
+import { SceneTypeEnum } from '../../Shared/ennums/ennums';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import removeAccents from '../../utils/removeAccents';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
+import removeAccents from '../../Shared/Utils/removeAccents';
+import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
+import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import './Elements.scss';
 
 const Elements: React.FC<{

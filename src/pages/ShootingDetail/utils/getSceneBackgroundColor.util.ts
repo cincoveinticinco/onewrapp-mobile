@@ -1,4 +1,4 @@
-import { ShootingSceneStatusEnum } from "../../../ennums/ennums";
+import { ShootingSceneStatusEnum } from "../../../Shared/ennums/ennums";
 import { mergedSceneShoot } from "../types/ShootingDetail.types";
 
 export const getSceneBackgroundColor = (scene: mergedSceneShoot) => {

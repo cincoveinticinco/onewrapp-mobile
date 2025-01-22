@@ -1,7 +1,7 @@
 import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import ExploreContainer from '../../Shared/Components/ExploreContainer/ExploreContainer';
 
 const StripBoard: React.FC = () => (
   <IonPage>

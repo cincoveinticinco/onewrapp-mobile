@@ -1,6 +1,6 @@
 import { IonHeader, IonPage } from '@ionic/react';
 import React from 'react';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import { useHistory } from 'react-router';
 
 interface MainPagesLayoutProps {

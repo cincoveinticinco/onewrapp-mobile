@@ -1,7 +1,7 @@
 import { IonHeader, IonPage } from '@ionic/react';
 import React from 'react';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import capitalizeString from '../../utils/capitalizeString';
+import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
+import capitalizeString from '../../Shared/Utils/capitalizeString';
 
 interface SecondaryPagesLayoutProps {
   children: React.ReactNode

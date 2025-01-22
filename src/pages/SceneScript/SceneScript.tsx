@@ -14,21 +14,21 @@ import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
 import { useHistory, useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-import ScriptPage from '../../components/SceneScript/ScriptPage';
-import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import ScriptPage from './Components/ScriptPage';
+import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
+import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
-} from '../../ennums/ennums';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
+} from '../../Shared/ennums/ennums';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
 import {
   Character, Element, Extra, Note, SceneDocType,
-} from '../../interfaces/scenes.types';
-import { ShootingScene } from '../../interfaces/shooting.types';
-import applyFilters from '../../utils/applyFilters';
+} from '../../Shared/types/scenes.types';
+import { ShootingScene } from '../../Shared/types/shooting.types';
+import applyFilters from '../../Shared/Utils/applyFilters';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import './SceneScript.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';

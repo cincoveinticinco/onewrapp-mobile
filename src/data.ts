@@ -1,6 +1,6 @@
 // import { Scene } from './interfaces/scenesTypes';
 
-import { ShootingSceneStatusEnum, ShootingStatusEnum } from './ennums/ennums';
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from './Shared/ennums/ennums';
 
 const projects = [
   {

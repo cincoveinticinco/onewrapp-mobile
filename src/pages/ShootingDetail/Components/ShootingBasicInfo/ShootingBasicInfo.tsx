@@ -3,12 +3,12 @@ import {
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
-import useIsMobile from '../../../../hooks/Shared/useIsMobile';
-import { LocationInfo } from '../../../../interfaces/shooting.types';
-import getHourMinutesFomISO from '../../../../utils/getHoursMinutesFromISO';
-import separateTimeOrPages from '../../../../utils/SeparateTimeOrPages';
-import EditionModal from '../../../../components/Shared/EditionModal/EditionModal';
-import GoogleMapComponent from '../../../../components/Shared/GoogleMapComponent/GoogleMapComponent';
+import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import { LocationInfo } from '../../../../Shared/types/shooting.types';
+import getHourMinutesFomISO from '../../../../Shared/Utils/getHoursMinutesFromISO';
+import separateTimeOrPages from '../../../../Shared/Utils/SeparateTimeOrPages';
+import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
+import GoogleMapComponent from '../../../../Shared/Components/GoogleMapComponent/GoogleMapComponent';
 import './ShootingBasicInfo.scss';
 import { GoogleMap } from '@capacitor/google-maps';
 import environment from '../../../../../environment';

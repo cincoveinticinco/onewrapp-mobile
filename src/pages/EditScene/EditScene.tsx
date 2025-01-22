@@ -6,12 +6,12 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
-import AddScenesForm from '../../components/AddScene/AddSceneForm';
+import AddScenesForm from '../AddScene/Components/AddSceneForm';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 

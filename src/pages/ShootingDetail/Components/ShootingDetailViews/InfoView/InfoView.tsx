@@ -1,6 +1,6 @@
 import { IonContent } from '@ionic/react';
-import useIsMobile from '../../../../../hooks/Shared/useIsMobile';
-import { LocationInfo, Meal } from '../../../../../interfaces/shooting.types';
+import useIsMobile from '../../../../../Shared/hooks/useIsMobile';
+import { LocationInfo, Meal } from '../../../../../Shared/types/shooting.types';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';

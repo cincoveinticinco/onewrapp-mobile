@@ -1,5 +1,5 @@
-import { FormInput, SelectOptionsInterface } from "../../../components/Shared/EditionModal/EditionModal";
-import colorIsDark from "../../../utils/colorIsDark";
+import { FormInput, SelectOptionsInterface } from "../../../Shared/Components/EditionModal/EditionModal";
+import colorIsDark from "../../../Shared/Utils/colorIsDark";
 
 const availableColors = [
   { value: '#3dc2ff', name: 'light blue' },

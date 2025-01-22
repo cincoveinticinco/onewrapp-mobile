@@ -1,9 +1,9 @@
 import React from 'react';
-import useIsMobile from '../../../../../hooks/Shared/useIsMobile';
-import { LocationInfo, Meal } from '../../../../../interfaces/shooting.types';
+import useIsMobile from '../../../../../Shared/hooks/useIsMobile';
+import { LocationInfo, Meal } from '../../../../../Shared/types/shooting.types';
 import CallSheet from '../../../../CallSheet/CallSheet';
-import { FormInput } from '../../../../../components/Shared/EditionModal/EditionModal';
-import { Section } from '../../../../../components/Shared/Section/Section';
+import { FormInput } from '../../../../../Shared/Components/EditionModal/EditionModal';
+import { Section } from '../../../../../Shared/Components/Section/Section';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';

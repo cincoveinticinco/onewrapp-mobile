@@ -1,7 +1,7 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
-import { TalentDocType } from '../../interfaces/talent.types';
+import { TalentDocType } from '../../Shared/types/talent.types';
 
 const talentSchemaLiteral = {
   title: 'talent schema',

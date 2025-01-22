@@ -1,7 +1,7 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
-import { UserDocType } from '../../interfaces/user.types';
+import { UserDocType } from '../../Shared/types/user.types';
 
 const userSchemaLiteral = {
   title: 'userSchema',

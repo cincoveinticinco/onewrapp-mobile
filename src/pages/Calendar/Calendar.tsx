@@ -9,20 +9,20 @@ import {
 import { addDays, startOfDay } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRxData } from 'rxdb-hooks';
-import MonthView from '../../components/Calendar/MonthView/MonthView';
-import MonthViewToolbar from '../../components/Calendar/MonthViewToolbar/MonthViewToolbar';
-import WeekView from '../../components/Calendar/WeekView/WeekView';
-import EditionModal, { FormInput, SelectOptionsInterface } from '../../components/Shared/EditionModal/EditionModal';
-import Legend from '../../components/Shared/Legend/Legend';
+import MonthView from './Components/MonthView/MonthView';
+import MonthViewToolbar from './Components/MonthViewToolbar/MonthViewToolbar';
+import WeekView from './Components/WeekView/WeekView';
+import EditionModal, { FormInput, SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
+import Legend from '../../Shared/Components/Legend/Legend';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import { ShootingDocType } from '../../interfaces/shooting.types';
-import { UnitDocType } from '../../interfaces/unitTypes.types';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import { ShootingDocType } from '../../Shared/types/shooting.types';
+import { UnitDocType } from '../../Shared/types/unitTypes.types';
 import './Calendar.css';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import WeekViewToolbar from '../../components/Calendar/WeekViewToolbar/WeekViewToolbar';
+import useIsMobile from '../../Shared/hooks/useIsMobile';
+import WeekViewToolbar from './Components/WeekViewToolbar/WeekViewToolbar';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
 const Calendar: React.FC = () => {

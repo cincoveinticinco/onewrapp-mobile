@@ -16,13 +16,13 @@ import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import { useAuth } from '../../context/Auth/Auth.context';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
 import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
 import DatabaseContext from '../../context/Database/Database.context';
 
 const LoginPage: React.FC = () => {

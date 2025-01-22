@@ -8,16 +8,16 @@ import React, {
 } from 'react';
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
+import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 
-import LocationSetCard from '../../components/Sets/LocationSetCard';
+import LocationSetCard from './Components/LocationSetCard/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import removeAccents from '../../utils/removeAccents';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
+import removeAccents from '../../Shared/Utils/removeAccents';
 import './Sets.scss';
 
 const Sets: React.FC<{

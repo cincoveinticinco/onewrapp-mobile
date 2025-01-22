@@ -1,7 +1,7 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
-import { CountryDocType } from '../../interfaces/country.types';
+import { CountryDocType } from '../../Shared/types/country.types';
 
 const countrySchemaLiteral = {
   title: 'country schema',

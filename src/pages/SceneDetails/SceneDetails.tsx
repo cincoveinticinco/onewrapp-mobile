@@ -7,28 +7,28 @@ import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import DropDownInfo from '../../components/SceneDetails/DropDownInfo';
-import SceneBasicInfo from '../../components/SceneDetails/SceneBasicInfo';
-import EditionModal from '../../components/Shared/EditionModal/EditionModal';
-import SceneDetailsTabs from '../../components/Shared/SeceneDetailsTabs/SceneDetailsTabs';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import DropDownInfo from './Components/DropDownInfo/DropDownInfo';
+import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
+import EditionModal from '../../Shared/Components/EditionModal/EditionModal';
+import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
+import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
-} from '../../ennums/ennums';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import { SceneDocType } from '../../interfaces/scenes.types';
-import { ShootingScene } from '../../interfaces/shooting.types';
+} from '../../Shared/ennums/ennums';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import { SceneDocType } from '../../Shared/types/scenes.types';
+import { ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import applyFilters from '../../utils/applyFilters';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
-import timeToISOString from '../../utils/timeToIsoString';
+import applyFilters from '../../Shared/Utils/applyFilters';
+import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
+import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
+import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
 import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';

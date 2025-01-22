@@ -9,32 +9,32 @@ import React, { useEffect, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
 import { useParams } from 'react-router';
 import { normalizeString } from 'rxdb';
-import CallSheetTabs from '../../components/CallSheet/CallSheetTabs/CallSheetTabs';
-import CastView from '../../components/CallSheet/CastView/CastView/CastView';
-import CrewView from '../../components/CallSheet/CrewView/CrewView';
-import ExtraView from '../../components/CallSheet/ExtraView/ExtraView';
-import OtherCalls from '../../components/CallSheet/OtherCalls/OtherCalls';
-import PictureCars from '../../components/CallSheet/PictureCars/PictureCars';
-import AddButton from '../../components/Shared/AddButton/AddButton';
-import ExploreContainer from '../../components/Shared/ExploreContainer/ExploreContainer';
+import CallSheetTabs from './Components/CallSheetTabs/CallSheetTabs';
+import CastView from './Components/CastView/CastView/CastView';
+import CrewView from './Components/CrewView/CrewView';
+import ExtraView from './Components/ExtraView/ExtraView';
+import OtherCalls from './Components/OtherCalls/OtherCalls';
+import PictureCars from './Components/PictureCars/PictureCars';
+import AddButton from '../../Shared/Components/AddButton/AddButton';
+import ExploreContainer from '../../Shared/Components/ExploreContainer/ExploreContainer';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingStatusEnum } from '../../ennums/ennums';
-import useHandleBack from '../../hooks/Shared/useHandleBack';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import { Character, SceneDocType } from '../../interfaces/scenes.types';
+import { ShootingStatusEnum } from '../../Shared/ennums/ennums';
+import useHandleBack from '../../Shared/hooks/useHandleBack';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
+import { Character, SceneDocType } from '../../Shared/types/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, ShootingDocType
-} from '../../interfaces/shooting.types';
-import { TalentDocType } from '../../interfaces/talent.types';
-import timeToISOString from '../../utils/timeToIsoString';
+} from '../../Shared/types/shooting.types';
+import { TalentDocType } from '../../Shared/types/talent.types';
+import timeToISOString from '../../Shared/Utils/timeToIsoString';
 
 import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
-import useErrorToast from '../../hooks/Shared/useErrorToast';
-import useSuccessToast from '../../hooks/Shared/useSuccessToast';
-import getHourMinutesFomISO from '../../utils/getHoursMinutesFromISO';
+import useErrorToast from '../../Shared/hooks/useErrorToast';
+import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import getHourMinutesFomISO from '../../Shared/Utils/getHoursMinutesFromISO';
 import './CallSheet.css';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import useIsMobile from '../../Shared/hooks/useIsMobile';
+import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 

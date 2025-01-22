@@ -7,19 +7,19 @@ import React, {
 import { IonContent } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import CastCard from '../../components/Cast/CastCard';
-import DropDownCast from '../../components/Cast/DropDownCast';
+import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import CastCard from './Components/CastCard/CastCard';
+import DropDownCast from './Components/DropDownCast/DropDownCast';
 
 // Custom contexts and hooks imports
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes/Scenes.context';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
+import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import defaultSortPosibilitiesOrder from '../../utils/Cast/SortOptions';
-import AppLoader from '../../hooks/Shared/AppLoader';
+import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
+import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
+import AppLoader from '../../Shared/hooks/AppLoader';
 
 const Cast: React.FC<{
   permissionType?: number | null;

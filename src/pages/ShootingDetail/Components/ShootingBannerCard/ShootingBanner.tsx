@@ -5,7 +5,7 @@ import {
 import React from 'react';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
 import { LuGripHorizontal } from 'react-icons/lu';
-import { ShootingBanner as ShootingBannerInterface } from '../../../../interfaces/shooting.types';
+import { ShootingBanner as ShootingBannerInterface } from '../../../../Shared/types/shooting.types';
 import './ShootingBanner.scss';
 
 interface ShootingBannerProps {

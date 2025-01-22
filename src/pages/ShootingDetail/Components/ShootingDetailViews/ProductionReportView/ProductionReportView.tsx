@@ -10,13 +10,13 @@ import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../../context/Database/Database.context';
-import useErrorToast from '../../../../../hooks/Shared/useErrorToast';
-import AppLoader from '../../../../../hooks/Shared/AppLoader';
-import useSuccessToast from '../../../../../hooks/Shared/useSuccessToast';
-import { ServiceMatricesDocType } from '../../../../../interfaces/serviceMatrices.types';
-import { ShootingDocType } from '../../../../../interfaces/shooting.types';
-import DropDownButton from '../../../../../components/Shared/DropDownButton/DropDownButton';
-import GeneralTable, { Column } from '../../../../../components/Shared/GeneralTable/GeneralTable';
+import useErrorToast from '../../../../../Shared/hooks/useErrorToast';
+import AppLoader from '../../../../../Shared/hooks/AppLoader';
+import useSuccessToast from '../../../../../Shared/hooks/useSuccessToast';
+import { ServiceMatricesDocType } from '../../../../../Shared/types/serviceMatrices.types';
+import { ShootingDocType } from '../../../../../Shared/types/shooting.types';
+import DropDownButton from '../../../../../Shared/Components/DropDownButton/DropDownButton';
+import GeneralTable, { Column } from '../../../../../Shared/Components/GeneralTable/GeneralTable';
 
 interface ServiceDraft {
   id: string;

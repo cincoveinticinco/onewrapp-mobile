@@ -1,7 +1,7 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
-import { SceneParagraphDocType } from '../../interfaces/paragraph.types';
+import { SceneParagraphDocType } from '../../Shared/types/paragraph.types';
 
 const sceneParagraphSchemaLiteral = {
   title: 'scene paragraph schema',

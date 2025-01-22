@@ -6,25 +6,25 @@ import React, {
   useCallback, useContext, useEffect, useMemo,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import { ProtectionTypeEnumArray } from '../../ennums/ennums';
+import { ProtectionTypeEnumArray } from '../../Shared/ennums/ennums';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
-import FilterScenesButtonsSelect from '../../components/FilterScenes/FilterScenesButtonsSelect';
-import FilterScenesModalSelect from '../../components/FilterScenes/FilterScenesModalSelect';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
+import FilterScenesButtonsSelect from './Components/FilterScenesButtonsSelect/FilterScenesButtonsSelect';
+import FilterScenesModalSelect from './Components/FilterScenesModalSelect/FilterScenesModalSelect';
+import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes/Scenes.context';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import AppLoader from '../../hooks/Shared/AppLoader';
-import toggleFilterOption from '../../utils/FilterScenesUtils/toggleFIlterOption';
-import toggleNestedFilterOption from '../../utils/FilterScenesUtils/toggleNestedFilterOption';
-import customArraySort from '../../utils/customArraySort';
-import getCharactersArray from '../../utils/getCharactersArray';
-import getOptionsArray from '../../utils/getOptionsArray';
-import getUniqueValuesByKey from '../../utils/getUniqueValuesByKey';
-import getUniqueValuesFromNestedArray from '../../utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../utils/sortArrayAlphabeticaly';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
+import useIsMobile from '../../Shared/hooks/useIsMobile';
+import AppLoader from '../../Shared/hooks/AppLoader';
+import toggleFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleFIlterOption';
+import toggleNestedFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleNestedFilterOption';
+import customArraySort from '../../Shared/Utils/customArraySort';
+import getCharactersArray from '../../Shared/Utils/getCharactersArray';
+import getOptionsArray from '../../Shared/Utils/getOptionsArray';
+import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
+import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import './FilterScenes.scss';
 
 const FilterScenes = () => {

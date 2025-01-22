@@ -10,7 +10,7 @@ import { Redirect, Route, useHistory } from 'react-router-dom';
 import { IonReactRouter } from '@ionic/react-router';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
-import AppTabs from './components/Shared/AppTabs/AppTabs';
+import AppTabs from './Shared/Components/AppTabs/AppTabs';
 import { ScenesContextProvider } from './context/Scenes/Scenes.context';
 import DatabaseContext from './context/Database/Database.context';
 import AuthContext from './context/Auth/Auth.context';
@@ -25,7 +25,7 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
-import AppLoader from './hooks/Shared/AppLoader';
+import AppLoader from './Shared/hooks/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
 

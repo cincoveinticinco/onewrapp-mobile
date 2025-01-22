@@ -1,7 +1,7 @@
 import { toTypedRxJsonSchema, RxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
 import DatabaseSchema from '../database_schema';
-import { CrewDocType } from '../../interfaces/crew.types';
+import { CrewDocType } from '../../Shared/types/crew.types';
 
 const crewSchemaLiteral = {
   title: 'crew schema',

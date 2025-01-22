@@ -18,19 +18,19 @@ import React, {
 import {
   useHistory, useLocation, useParams,
 } from 'react-router';
-import InputSortModal from '../../components/Shared/InputSortModal/InputSortModal';
-import SceneCard from '../../components/Strips/SceneCard';
-import StripTagsToolbar from '../../components/Strips/StripTagsToolbar';
+import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import SceneCard from './Components/SceneCard/SceneCard';
+import StripTagsToolbar from './Components/StripTagsToolbar/StripTagsToolbar';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { defaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import useHideTabs from '../../hooks/Shared/useHideTabs';
-import useScrollToTop from '../../hooks/Shared/useScrollToTop';
-import { SceneDocType } from '../../interfaces/scenes.types';
-import { SecurePages } from '../../interfaces/securePages.types';
+import useHideTabs from '../../Shared/hooks/useHideTabs';
+import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import { SceneDocType } from '../../Shared/types/scenes.types';
+import { SecurePages } from '../../Shared/types/securePages.types';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import applyFilters from '../../utils/applyFilters';
-import sortByCriterias from '../../utils/SortScenesUtils/sortByCriterias';
+import applyFilters from '../../Shared/Utils/applyFilters';
+import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import './Strips.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 

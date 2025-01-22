@@ -1,0 +1,25 @@
+@import '../../../../theme/mixins';
+
+.filters-items-rows {
+  border-bottom: 1px solid var(--ion-color-dark);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.cancel-filter-scenes-modal {
+  margin-bottom: 5% !important;
+}
+
+.filter-items-modal {
+  @include modal-styling;
+
+  .filters-options-list {
+    outline: 1px solid black;
+    border: 1px solid black;
+    box-shadow: none;
+  }
+}
+
+.filter-scene-item-title {
+  font-size: var(--525-common-title-size);
+}

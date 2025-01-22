@@ -4,10 +4,10 @@ import {
 } from 'react';
 import DatabaseContext from '../../../context/Database/Database.context';
 import ScenesContext from '../../../context/Scenes/Scenes.context';
-import { SceneTypeEnum } from '../../../ennums/ennums';
-import getUniqueValuesByKey from '../../../utils/getUniqueValuesByKey';
-import getUniqueValuesFromNestedArray from '../../../utils/getUniqueValuesFromNestedArray';
-import sortByCriterias from '../../../utils/SortScenesUtils/sortByCriterias';
+import { SceneTypeEnum } from '../../../Shared/ennums/ennums';
+import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
+import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
+import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
 
 const useProcessedCast = () => {
   const { offlineScenes } = useContext(DatabaseContext);

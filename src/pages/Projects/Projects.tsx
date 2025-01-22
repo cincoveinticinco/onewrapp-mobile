@@ -8,10 +8,10 @@ import {
 } from '@ionic/react';
 import React, { useContext } from 'react';
 import { useRxData } from 'rxdb-hooks';
-import ProjectCard from '../../components/Projects/ProjectCard';
-import Toolbar from '../../components/Shared/Toolbar/Toolbar';
+import ProjectCard from './Components/ProjectCard/ProjectCard';
+import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
-import AppLoader from '../../hooks/Shared/AppLoader';
+import AppLoader from '../../Shared/hooks/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);

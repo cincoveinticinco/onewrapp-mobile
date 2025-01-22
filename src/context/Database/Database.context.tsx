@@ -16,7 +16,7 @@ import AuthContext from '../Auth/Auth.context';
 import CountriesSchema from '../../RXdatabase/schemas/country.schema';
 import ServiceMatricesSchema from '../../RXdatabase/schemas/serviceMatrices.schema';
 import UserSchema from '../../RXdatabase/schemas/user.schema';
-import useNetworkStatus from '../../hooks/Shared/useNetworkStatus';
+import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
 import environment from '../../../environment';
 import { useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import useReplicationStore from '../../stores/useReplicationStore';

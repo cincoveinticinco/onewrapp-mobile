@@ -1,6 +1,6 @@
 import { ExtractDocumentTypeFromTypedRxJsonSchema, toTypedRxJsonSchema,  RxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
-import { ProjectStatusEnumArray, ProjectTypeEnumArray } from '../../ennums/ennums';
+import { ProjectStatusEnumArray, ProjectTypeEnumArray } from '../../Shared/ennums/ennums';
 import DatabaseSchema from '../database_schema';
 
 export const projectSchemaLiteral = {

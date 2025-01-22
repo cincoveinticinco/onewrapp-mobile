@@ -1,8 +1,8 @@
 import { useRxDB } from "rxdb-hooks";
-import useErrorToast from "../../../hooks/Shared/useErrorToast";
-import useSuccessToast from "../../../hooks/Shared/useSuccessToast";
+import useErrorToast from "../../../Shared/hooks/useErrorToast";
+import useSuccessToast from "../../../Shared/hooks/useSuccessToast";
 import { FormStructureInterface } from "../types/crew.interfaces";
-import { CrewDocType } from "../../../interfaces/crew.types";
+import { CrewDocType } from "../../../Shared/types/crew.types";
 
 interface CrewOperationsInterface {
   selectedCrewId?: string | null;

@@ -5,12 +5,12 @@ import {
   IonRow,
 } from '@ionic/react';
 import React, { useMemo, useState, useCallback } from 'react';
-import CustomSelect from '../../components/Shared/CustomSelect/CustomSelect';
-import ModalToolbar from '../../components/Shared/ModalToolbar/ModalToolbar';
-import OutlineLightButton from '../../components/Shared/OutlineLightButton/OutlineLightButton';
-import OutlinePrimaryButton from '../../components/Shared/OutlinePrimaryButton/OutlinePrimaryButton';
-import useIsMobile from '../../hooks/Shared/useIsMobile';
-import { SceneDocType } from '../../interfaces/scenes.types';
+import CustomSelect from '../../Shared/Components/CustomSelect/CustomSelect';
+import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../Shared/hooks/useIsMobile';
+import { SceneDocType } from '../../Shared/types/scenes.types';
 import './InputModalScene.scss';
 
 interface InputModalProps {
