@@ -514,22 +514,22 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   
       const steps = [
         {
-          name: 'Countries',
+          name: 'Scene',
           startPercentage: 0,
-          endPercentage: 5,
+          endPercentage: 10,
+          function: initializeSceneReplication,
+        },
+        {
+          name: 'Countries',
+          startPercentage: 10,
+          endPercentage: 15,
           function: initializeCountriesReplication,
         },
         {
           name: 'Service Matrices',
-          startPercentage: 5,
-          endPercentage: 10,
-          function: initializeServiceMatricesReplication,
-        },
-        {
-          name: 'Scene',
-          startPercentage: 10,
+          startPercentage: 15,
           endPercentage: 20,
-          function: initializeSceneReplication,
+          function: initializeServiceMatricesReplication,
         },
         {
           name: 'Paragraph',

@@ -49,7 +49,7 @@ export default class HttpReplicator {
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
             const token = await getToken();
             const id = checkpointOrNull ? checkpointOrNull.id : 0;
-            const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : 0;
+            const lastProjectId = checkpointOrNull?.lastProjectId ? checkpointOrNull?.lastProjectId : null;
             const collectionName = collection.getSchemaName();
 
             const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);
@@ -57,7 +57,7 @@ export default class HttpReplicator {
             url.searchParams.append('id', id.toString());
             url.searchParams.append('batch_size', batchSize.toString());
             if (collection.SchemaName() !== 'projects') {
-              url.searchParams.append('last_project_id', lastProjectId.toString());
+              url.searchParams.append('last_project_id', (lastProjectId ? lastProjectId.toString() :  projectId));
             }
             if (projectId) {
               url.searchParams.append('project_id', projectId.toString());
@@ -65,6 +65,9 @@ export default class HttpReplicator {
             if (lastItem) {
               url.searchParams.append('last_item_id', lastItem.id.toString());
               url.searchParams.append('last_item_updated_at', lastItem.updatedAt);
+            } else {
+              url.searchParams.append('last_item_id', '0');
+              url.searchParams.append('last_item_updated_at', updatedAt);
             }
 
             const response = await fetch(url.toString(), {

@@ -239,6 +239,19 @@ const LoginPage: React.FC = () => {
       <IonPage>
         <IonHeader />
         <IonContent className="ion-padding" fullscreen color="tertiary">
+          <div className="login-video-wrapper">
+            <ReactPlayer
+              className="react-player fixed-bottom"
+              url="videos/backgroundLogin.mp4"
+              width="100%"
+              height="100%"
+              controls={false}
+              muted
+              playing
+              playsinline
+              onReady={() => setLoadingAuth(false)}
+            />
+          </div>
           {
             showAppLogin ? 
             (
@@ -259,58 +272,44 @@ const LoginPage: React.FC = () => {
                 {renderLoginForm()}
               </>
             )
-            : (
-              loading ? (
-                <>
-                  <AppLoader />
-                </>
-              ) : (
-                <>
-                  <div className="login-video-wrapper">
-                    <ReactPlayer
-                      className="react-player fixed-bottom"
-                      url="videos/backgroundLogin.mp4"
-                      width="100%"
-                      height="100%"
-                      controls={false}
-                      muted
-                      playing
-                      playsinline
-                      onReady={() => setLoadingAuth(false)}
-                    />
-                  </div>
-                  <div className="main-logo-wrapper">
-                    <img src={logo} alt="logo" className="login-logo" />
-                  </div>
-                  <div className="login-buttons-container">
-                    {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage as any} /> */}
-                    <IonButton expand="block" onClick={() => login()} className="login-button ion-no-padding">
-                      <IonIcon slot="start" icon={logoGoogle} color="dark" />
-                      <span className="button-text">SIGN IN WITH GOOGLE</span>
-                    </IonButton>
-                    <IonButton expand="block" onClick={() => setShowAppLogin(true)} className="login-button ion-no-padding">
-                      <IonIcon slot="start" icon={keyOutline} color="dark" />
-                      <span className="button-text">SIGN IN WITH PASSWORD</span>
-                    </IonButton>
-                    {/* <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
-                      <IonIcon slot="start" icon={logoWindows} color="dark" />
-                      <span className="button-text">SIGN IN WITH MICROSOFT</span>
-                    </IonButton>
-                    <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
-                      <IonIcon slot="start" icon={logoApple} color="dark" />
-                      <span className="button-text">SIGN IN WITH APPLE</span>
-                    </IonButton>
-                    <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
-                      <IonIcon slot="start" icon={mail} color="dark" />
-                      <span className="button-text">SIGN IN WITH APPLE</span>
-                    </IonButton> */}
-                  </div>
-                  <div className="footer-login">
-                    <span className="footer-text">ALL RIGHTS RESERVED ©2023.</span>
-                    <img src={footerLogo} alt="logo" className="footer-logo" />
-                  </div>
-                </>
-              )
+            : 
+            (
+              <>
+                <div className="main-logo-wrapper">
+                  <img src={logo} alt="logo" className="login-logo" />
+                </div>
+                {loading ? 
+                (<>
+                    <AppLoader />
+                </> ) : 
+                (<div className="login-buttons-container">
+                  {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage as any} /> */}
+                  <IonButton expand="block" onClick={() => login()} className="login-button ion-no-padding">
+                    <IonIcon slot="start" icon={logoGoogle} color="dark" />
+                    <span className="button-text">SIGN IN WITH GOOGLE</span>
+                  </IonButton>
+                  <IonButton expand="block" onClick={() => setShowAppLogin(true)} className="login-button ion-no-padding">
+                    <IonIcon slot="start" icon={keyOutline} color="dark" />
+                    <span className="button-text">SIGN IN WITH PASSWORD</span>
+                  </IonButton>
+                  {/* <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+                    <IonIcon slot="start" icon={logoWindows} color="dark" />
+                    <span className="button-text">SIGN IN WITH MICROSOFT</span>
+                  </IonButton>
+                  <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+                    <IonIcon slot="start" icon={logoApple} color="dark" />
+                    <span className="button-text">SIGN IN WITH APPLE</span>
+                  </IonButton>
+                  <IonButton expand="block" onClick={onLogin} className="login-button ion-no-padding">
+                    <IonIcon slot="start" icon={mail} color="dark" />
+                    <span className="button-text">SIGN IN WITH APPLE</span>
+                  </IonButton> */}
+                </div>)}
+                <div className="footer-login">
+                  <span className="footer-text">ALL RIGHTS RESERVED ©2023.</span>
+                  <img src={footerLogo} alt="logo" className="footer-logo" />
+                </div>
+              </>
             )
           }
         </IonContent>

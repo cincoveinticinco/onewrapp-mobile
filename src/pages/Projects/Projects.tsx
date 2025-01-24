@@ -6,7 +6,7 @@ import {
   IonRow,
   useIonViewWillEnter,
 } from '@ionic/react';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useRxData } from 'rxdb-hooks';
 import ProjectCard from './Components/ProjectCard/ProjectCard';
 import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
@@ -15,6 +15,7 @@ import AppLoader from '../../Shared/hooks/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const isOnline = navigator.onLine;
   const currentPath = window.location.pathname;
@@ -23,6 +24,10 @@ const Projects: React.FC = () => {
     'projects',
     (collection) => collection.find().sort({ projName: 'asc' }),
   );
+
+  useEffect(() => {
+    setIsLoading(isFetching);
+  }, [isFetching]);
 
   useIonViewWillEnter(() => {
     if (isOnline && currentPath === '/projects') {
@@ -36,7 +41,7 @@ const Projects: React.FC = () => {
         <Toolbar name="PROJECTS" search menu />
       </IonHeader>
       <IonContent className="ion-padding" color="tertiary">
-        {isFetching ? (
+        {isLoading ? (
           AppLoader()
         ) : (
           <IonGrid>
