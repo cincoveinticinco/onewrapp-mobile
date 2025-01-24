@@ -47,7 +47,6 @@ const LoginPage: React.FC = () => {
   useIonViewDidEnter(() => {
     if (loggedIn) {
       const localPath = localStorage.getItem('lastAppRoute');
-      console.log(localPath, 'localPath');
       history.push(localPath || '/my/projects');
     }
   });
@@ -242,7 +241,7 @@ const LoginPage: React.FC = () => {
           <div className="login-video-wrapper">
             <ReactPlayer
               className="react-player fixed-bottom"
-              url="videos/backgroundLogin.mp4"
+              url="videos/backgroundLogin2.mp4"
               width="100%"
               height="100%"
               controls={false}
