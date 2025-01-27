@@ -485,16 +485,14 @@ export const useShootingInfo = () => {
     }
   };
 
-  const addNewMeal = async (meal: any) => {
+  const addNewMeal = async (meal: Meal) => {
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const mealCopy = { ...meal };
-      mealCopy.id = `meal-${shootingData.shotingInfo.meals.length + 1}`;
+      mealCopy.id = undefined;
       mealCopy.shootingId = parseInt(shootingId);
-      mealCopy.createdAt = new Date().toISOString();
-      mealCopy.updatedAt = new Date().toISOString();
-      const formatedTimeStart = mealCopy.readyAt.split(':');
-      const formatedTimeEnd = mealCopy.endTime.split(':');
+      const formatedTimeStart = mealCopy.readyAt?.split(':') || ["00", "00"];
+      const formatedTimeEnd = mealCopy.endTime?.split(':') || ["00", "00"];
       const shootingCopy = { ...shooting._data };
       mealCopy.readyAt = timeToISOString({ hours: formatedTimeStart[0], minutes: formatedTimeStart[1] }, shootingCopy.shootDate);
       mealCopy.endTime = timeToISOString({ hours: formatedTimeEnd[0], minutes: formatedTimeEnd[1] }, shootingCopy.shootDate);

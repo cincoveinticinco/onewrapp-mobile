@@ -238,7 +238,7 @@ const LoginPage: React.FC = () => {
       <IonPage>
         <IonHeader />
         <IonContent className="ion-padding" fullscreen color="tertiary">
-          <div className="login-video-wrapper">
+            <div className="login-video-wrapper">
             <ReactPlayer
               className="react-player fixed-bottom"
               url="videos/backgroundLogin2.mp4"
@@ -247,10 +247,11 @@ const LoginPage: React.FC = () => {
               controls={false}
               muted
               playing
+              loop
               playsinline
               onReady={() => setLoadingAuth(false)}
             />
-          </div>
+            </div>
           {
             showAppLogin ? 
             (
