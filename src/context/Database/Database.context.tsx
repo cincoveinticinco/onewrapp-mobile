@@ -58,7 +58,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const { initialReplicationFinished, setInitialReplicationFinished } = useReplicationStore();
   
   const { 
-    projectId, setProjectId, 
     scenesAreLoading, setScenesAreLoading,
     replicationStatus, setReplicationStatus,
     replicationPercentage, setReplicationPercentage,
@@ -66,6 +65,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     projectsInfoIsOffline, setProjectsInfoIsOffline,
   } = useAppStore();
 
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [initialProjectReplicationInCourse, setInitialProjectReplicationInCourse] = useState(false);
+  const [allReplicationsInCourse, setAllReplicationsInCourse] = useState(false);
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(null);
   const [sceneCollection, setSceneCollection] = useState<ScenesSchema | null>(null);
   const [paragraphCollection, setParagraphCollection] = useState<SceneParagraphsSchema | null>(null);
@@ -137,7 +139,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
     if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) {
-      throw new Error('Invalid initialization parameters');
+      const failedData = !projectId ? 'Project Id not found' : !oneWrapRXdatabase ? 'Database not initialized' : !collection ? 'Collection not found' : 'Invalid initialization parameters';
+      throw new Error('Invalid initialization parameters ' + failedData);
     }
   
     const canPush = ['scenes', 'shootings', 'crew'].includes(collection.getSchemaName().toLowerCase());
@@ -275,12 +278,15 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       throw new Error('Project Id not found');
     }
 
+    console.log('initializeServiceMatricesReplication', projectId);
+
     await initializeReplication(
       serviceMatricesCollection,
-      { projectId: parseInt(projectId, 10) },
+      { projectId: parseInt(projectId, 10), createdAtBack: { $exists: true } },
       resyncServiceMatrices,
       parseInt(projectId, 10)
     );
+
     await handleDeletedRecords('service_matrices', 'get_deleted_service_matrices', projectId);
   };
   
@@ -359,15 +365,22 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initializeAllReplications = async () => {
+    if(initialProjectReplicationInCourse || allReplicationsInCourse) {
+      return
+    }
+
     const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication];
     
     try {
+      setAllReplicationsInCourse(true)
       for (const replication of replicationsArray) {
         await replication();
       }
     } catch (error) {
       console.error('Error in initializeAllReplications:', error);
       throw error;
+    } finally {
+      setAllReplicationsInCourse(false);
     }
   };
 
@@ -406,6 +419,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncScenes.current = null;
       resyncShootings.current = null;
       resyncProjectsUser.current = null;
+      resyncParagraphs.current = null;
+      resyncServiceMatrices.current = null;
+      resyncUnits.current = null;
+      resyncTalents.current = null;
+      resyncCrew.current = null;
+      resyncCountries.current = null;
     }
   }, [projectId]);
 
@@ -502,12 +521,18 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initialProjectReplication = async () => {
+    if(allReplicationsInCourse || initialProjectReplicationInCourse) {
+      return
+    }
+
     let currentStep: string = '';
     
     try {
       if (!projectId) {
         throw new Error('Project Id not found');
       }
+
+      setInitialProjectReplicationInCourse(true);
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
@@ -588,6 +613,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setInitialReplicationFinished(false);
       console.log(error)
       throw error;
+    } finally {
+      setInitialProjectReplicationInCourse(false);
     }
   };
 

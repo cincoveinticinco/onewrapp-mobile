@@ -489,7 +489,7 @@ export const useShootingInfo = () => {
     try {
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const mealCopy = { ...meal };
-      mealCopy.id = undefined;
+      mealCopy.id = meal.meal; // this is a temporary id, in the backend the logic is (meal.meal == id, so it means that meal is new and should be created)
       mealCopy.shootingId = parseInt(shootingId);
       const formatedTimeStart = mealCopy.readyAt?.split(':') || ["00", "00"];
       const formatedTimeEnd = mealCopy.endTime?.split(':') || ["00", "00"];

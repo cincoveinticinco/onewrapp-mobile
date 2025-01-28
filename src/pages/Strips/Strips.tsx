@@ -42,7 +42,6 @@ const Strips: React.FC<{
   const {
     offlineScenes,
     projectId,
-    setProjectId,
     initialReplicationFinished,
     scenesAreLoading,
   } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -94,7 +93,6 @@ const Strips: React.FC<{
 
   useEffect(() => {
     setRenderScenes(initialReplicationFinished);
-    setProjectId(id);
   }, [initialReplicationFinished]);
 
   useIonViewDidEnter(() => {

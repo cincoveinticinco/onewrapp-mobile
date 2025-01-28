@@ -247,6 +247,34 @@ const Elements: React.FC<{
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
   };
 
+  if(displayedElements.length === 0 || displayedCategories.length === 0) {
+    return (
+      <MainPagesLayout
+        search
+        sort
+        searchText={searchText}
+        setSearchText={setSearchText}
+        title="ELEMENTS"
+        sortTrigger="elements-sort-options"
+      >
+        <IonContent color="tertiary" fullscreen>
+            <p className="ion-padding-start ion-padding-end"
+              style={
+                {
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }
+              }
+            >
+              NO ELEMENTS FOUND
+            </p>
+        </IonContent>
+      </MainPagesLayout>
+    );
+  }
+
   return (
     <>
       <MainPagesLayout

@@ -526,7 +526,7 @@ const shootingSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
-      'lastProjectId',
+      'previousProjectId',
     ],
     deletedField: 'deleted',
   },

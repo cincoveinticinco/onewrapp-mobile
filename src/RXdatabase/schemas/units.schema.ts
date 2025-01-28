@@ -47,7 +47,7 @@ const unitSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
-      'lastProjectId',
+      'previousProjectId',
     ],
     deletedField: 'deleted',
   },

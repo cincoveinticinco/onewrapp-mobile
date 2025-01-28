@@ -90,3 +90,6 @@ const MealInfo: React.FC<MealInfoProps> = ({
 };
 
 export default MealInfo;
+
+
+// Mi problema es el siguiente. Si creo una meal con id null, es por que estoy esperando que el backend me responda con un id para poder setearlo. Pero existe la posibilidad de que esta comida no tenga id por un buen tiempo mientras la aplicación funciona offline. Por lo cuando quiera editar esa comida, no voy a poder encontrarla por el id. Tampoco por el nombre de la comida por que puedo cambiarlo durante la edicion

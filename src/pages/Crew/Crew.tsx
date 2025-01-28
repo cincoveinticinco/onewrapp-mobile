@@ -16,6 +16,7 @@ import './Crew.scss';
 import { crewFormInputs } from './inputs/crewForm.inputs';
 import useCrewOperations from './hooks/useCrewOperations';
 import { FormStructureInterface } from './types/crew.interfaces';
+import AppLoader from '../../Shared/hooks/AppLoader';
 
 const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});
@@ -28,7 +29,14 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
 
   const { result: crew = [], isFetching }: {result: CrewDocType[], isFetching: boolean} = useRxData(
     'crew',
-    (collection) => collection.find(),
+    (collection) => collection.find(
+    {
+      selector: {
+        projectId: Number(projectId),
+      },
+      sort: [{ order: 'asc' }],
+    }
+    ),
   );
 
   const { result: units = [] }: {result: UnitDocType[]} = useRxData(
@@ -155,61 +163,67 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
       handleBack={handleBack}
     >
       <IonContent color="tertiary">
-        {filteredDepartments.length === 0 && !isFetching ? (
-          <p style={
-            {
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              color: 'white',
-              fontSize: '1.2rem',
+      {isFetching ? (
+        <AppLoader />
+      ) : (
+        <>
+          {filteredDepartments.length === 0 && !isFetching ? (
+            <p style={
+              {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: 'white',
+                fontSize: '1.2rem',
+              }
             }
-          }
-          >
-            NO CREW MEMBERS FOUND
-          </p>
-        ) : (
-          filteredDepartments.map((department) => {
-            const departmentMembers = crewByDepartment[department].filter((member) => member.fullName?.toLowerCase().includes(searchText.toLowerCase())
-              || department.toLowerCase().includes(searchText.toLowerCase()));
+            >
+              NO CREW MEMBERS FOUND
+            </p>
+          ) : (
+            filteredDepartments.map((department) => {
+              const departmentMembers = crewByDepartment[department].filter((member) => member.fullName?.toLowerCase().includes(searchText.toLowerCase())
+                || department.toLowerCase().includes(searchText.toLowerCase()));
 
-            if (departmentMembers.length === 0) return null;
+              if (departmentMembers.length === 0) return null;
 
-            return (
-              <div key={department}>
-                <h3
-                  onClick={() => setIsDropDownOpen((prev) => ({
-                    ...prev,
-                    [department]: !prev[department],
-                  }))}
-                  className="department-dropdown"
-                >
-                  {department}
-                  {' '}
-                  (
-                  {departmentMembers.length}
-                  )
-                  <IonIcon
-                    color={isDropDownOpen[department] ? 'primary' : 'light'}
-                    icon={isDropDownOpen[department] ? caretUp : caretDown}
-                  />
-                </h3>
-                {isDropDownOpen[department] && departmentMembers.map((member) => (
-                  <CrewCard
-                    key={member.id}
-                    crew={member}
-                    onEdit={openModal}
-                    onDelete={handleDeleteCrew}
-                    permissionType={permissionType}
-                  />
-                ))}
-              </div>
-            );
-          })
-        )}
+              return (
+                <div key={department}>
+                  <h3
+                    onClick={() => setIsDropDownOpen((prev) => ({
+                      ...prev,
+                      [department]: !prev[department],
+                    }))}
+                    className="department-dropdown"
+                  >
+                    {department}
+                    {' '}
+                    (
+                    {departmentMembers.length}
+                    )
+                    <IonIcon
+                      color={isDropDownOpen[department] ? 'primary' : 'light'}
+                      icon={isDropDownOpen[department] ? caretUp : caretDown}
+                    />
+                  </h3>
+                  {isDropDownOpen[department] && departmentMembers.map((member) => (
+                    <CrewCard
+                      key={member.id}
+                      crew={member}
+                      onEdit={openModal}
+                      onDelete={handleDeleteCrew}
+                      permissionType={permissionType}
+                    />
+                  ))}
+                </div>
+              );
+            })
+          )}
+          <AddEditCrewModal />
+        </>
+      )}
       </IonContent>
-      <AddEditCrewModal />
     </MainPagesLayout>
   );
 };
