@@ -10,6 +10,8 @@ import minSecToSeconds from '../../Utils/minSecToSeconds';
 import HighlightedText from '../HighlightedText/HighlightedText';
 import DropDownButton from '../DropDownButton/DropDownButton';
 
+export type EditFunction = (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
+
 export interface Column {
   key: string;
   title: string;
@@ -36,7 +38,7 @@ interface GeneralTableProps {
   data: any[];
   stickyColumnCount?: number;
   editMode?: boolean;
-  editFunction?: (rowIndex: any, rowKey: any, rowValue: any, type: any) => void;
+  editFunction?: EditFunction;
   searchText?: string;
   groupBy?: string;
   numbered?: boolean; // Nueva propiedad para controlar la numeración

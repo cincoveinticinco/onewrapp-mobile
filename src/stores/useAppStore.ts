@@ -15,6 +15,8 @@ const localStorageAdapter = {
 };
 
 interface AppState {
+  projectId: string | null;
+  setProjectId: (value: string | null) => void;
   scenesAreLoading: boolean;
   setScenesAreLoading: (value: boolean) => void;
   replicationStatus: string;
@@ -30,6 +32,8 @@ interface AppState {
 const useAppStore = create<AppState>()(
   persist(
     (set) => ({
+      projectId: localStorage.getItem('projectId') || null,
+      setProjectId: (value) => set({ projectId: value }),
       scenesAreLoading: true,
       setScenesAreLoading: (value) => set({ scenesAreLoading: value }),
       replicationStatus: '',

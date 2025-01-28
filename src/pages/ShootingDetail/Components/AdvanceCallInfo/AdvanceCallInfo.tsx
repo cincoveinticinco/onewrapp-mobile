@@ -24,10 +24,12 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
 }) => {
   const editionModalRef = React.useRef<HTMLIonModalElement>(null);
   const alertRef = React.useRef<any>(null);
+  const [openEdition, setOpenEdition] = React.useState(false);
 
   const formatDefaultValues = (call: AdvanceCall) => ({
     ...call,
-    advCallTime: call.advCallTime ? getHourMinutesFomISO(call.advCallTime) : '',
+    dep_name_eng: call.dep_name_eng || call.dep_name_esp || '',
+    adv_call_time: call.adv_call_time ? getHourMinutesFomISO(call.adv_call_time) : '',
   });
 
   const openEditModal = () => {
@@ -57,7 +59,7 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
         </h5>
         <div className="location-address">
           <p>{ call.description?.toUpperCase() }</p>
-          <p>{call.advCallTime ? getHourMinutesFomISO(call.advCallTime, true) : ''}</p>
+          <p>{call.adv_call_time ? getHourMinutesFomISO(call.adv_call_time, true) : ''}</p>
         </div>
         {editMode && (
           <div className="ion-flex-column location-buttons">
@@ -68,7 +70,8 @@ const AdvanceCallInfo: React.FC<AdvanceCallInfoProps> = ({
       </div>
       <EditionModal
         modalRef={editionModalRef}
-        modalTrigger={`open-edit-advance-call-modal-${call.id}`}
+        isOpen={openEdition}
+        setIsOpen={setOpenEdition}
         title="Edit Advance Call"
         formInputs={editionInputs}
         handleEdition={handleEdition}

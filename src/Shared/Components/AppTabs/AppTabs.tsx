@@ -50,14 +50,16 @@ import StripBoard from '../../../pages/StripBoard/StripBoard';
 import Strips from '../../../pages/Strips/Strips';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';
+import { useRxDB } from 'rxdb-hooks';
 
 setupIonicReact();
 
 const AppTabs: React.FC = () => {
-  const { viewTabs, oneWrapDb, projectId } = useContext(DatabaseContext);
+  const { viewTabs, projectId } = useContext(DatabaseContext);
   const [user, setUser] = useState<UserDocType | null>(null);
   const [currentCompany, setCurrentCompany] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const oneWrapDb: any = useRxDB();
 
   const fetchUser = async () => {
     const userInstance = await oneWrapDb?.user.findOne().exec();
@@ -65,6 +67,7 @@ const AppTabs: React.FC = () => {
   };
 
   const fetchCurrentProject = async () => {
+    console.log(!!oneWrapDb)
     const projects = await oneWrapDb?.projects.find().exec();
     const cProject = projects?.find((project: any) => project._data.id == projectId);
     setCurrentCompany(cProject.companyId);
@@ -92,7 +95,9 @@ const AppTabs: React.FC = () => {
       await fetchCurrentProject();
       setIsLoading(false);
     };
-    loadData();
+    if(oneWrapDb) {
+      loadData();
+    }
   }, [oneWrapDb]);
 
   const urlString = '/my/projects/:id' as any;

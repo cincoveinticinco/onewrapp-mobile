@@ -269,7 +269,7 @@ export const useShootingInfo = () => {
             shootingCopy.advanceCalls = shootingCopy.advanceCalls.filter((call: AdvanceCall) => call.id !== callToDelete.id);
           } else {
             const indexToDelete = shootingCopy.advanceCalls.findIndex((call: AdvanceCall) => call.dep_name_eng === callToDelete.dep_name_eng
-              && call.advCallTime === callToDelete.advCallTime
+              && call.adv_call_time === callToDelete.adv_call_time
               && call.description === callToDelete.description);
             if (indexToDelete !== -1) {
               shootingCopy.advanceCalls.splice(indexToDelete, 1);
@@ -468,10 +468,10 @@ export const useShootingInfo = () => {
     advanceCallCopy.shootingId = parseInt(shootingId);
     advanceCallCopy.createdAt = new Date().toISOString();
     advanceCallCopy.updatedAt = new Date().toISOString();
-    const formatedTime = advanceCallCopy.advCallTime.split(':');
+    const formatedTime = advanceCallCopy.adv_call_time.split(':');
     advanceCallCopy.dep_name_esp = advanceCallCopy.dep_name_eng;
     const shootingCopy = { ...shooting._data };
-    advanceCallCopy.advCallTime = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
+    advanceCallCopy.adv_call_time = timeToISOString({ hours: formatedTime[0], minutes: formatedTime[1] }, shootingCopy.shootDate);
     shootingCopy.advanceCalls = [...shootingCopy.advanceCalls, advanceCallCopy];
 
     try {
@@ -528,6 +528,7 @@ export const useShootingInfo = () => {
             // Convertir los tiempos a formato ISO
             updatedMeals[index] = {
               ...meal,
+              quantity: Number(meal.quantity),
               readyAt: timeToISOString({ hours: meal.readyAt.split(':')[0], minutes: meal.readyAt.split(':')[1] }, shootingCopy.shootDate),
               endTime: timeToISOString({ hours: meal.endTime.split(':')[0], minutes: meal.endTime.split(':')[1] }, shootingCopy.shootDate),
             };
@@ -561,14 +562,15 @@ export const useShootingInfo = () => {
           if (index !== -1) {
             const updatedAdvanceCalls = [...shootingCopy.advanceCalls];
 
-            if (!advanceCall.advCallTime) {
+            if (!advanceCall.adv_call_time) {
               throw new Error('Invalid time');
             }
 
             // Convertir el tiempo a formato ISO
             updatedAdvanceCalls[index] = {
               ...advanceCall,
-              advCallTime: timeToISOString({ hours: advanceCall.advCallTime.split(':')[0], minutes: advanceCall.advCallTime.split(':')[1] }, shootingCopy.shootDate),
+              dep_name_esp: advanceCall.dep_name_eng,
+              adv_call_time: timeToISOString({ hours: advanceCall.adv_call_time.split(':')[0], minutes: advanceCall.adv_call_time.split(':')[1] }, shootingCopy.shootDate),
             };
 
             shootingCopy.advanceCalls = updatedAdvanceCalls;

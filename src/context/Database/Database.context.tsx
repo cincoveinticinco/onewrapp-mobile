@@ -63,9 +63,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     replicationPercentage, setReplicationPercentage,
     projectsAreOffline, setProjectsAreOffline,
     projectsInfoIsOffline, setProjectsInfoIsOffline,
+    projectId, setProjectId
   } = useAppStore();
 
-  const [projectId, setProjectId] = useState<string | null>(null);
   const [initialProjectReplicationInCourse, setInitialProjectReplicationInCourse] = useState(false);
   const [allReplicationsInCourse, setAllReplicationsInCourse] = useState(false);
   const [oneWrapRXdatabase, setOneWrapRXdatabase] = useState<any>(null);

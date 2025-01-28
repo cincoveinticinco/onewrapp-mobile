@@ -45,6 +45,7 @@ import { bannerInputs } from './Inputs/baner.inputs';
 import { mergedSceneBanner, ShootingDataProps, ShootingViews } from './types/ShootingDetail.types';
 import { advanceCallInputs } from './Inputs/AdvanceCall.inputs';
 import { useShootingInfo } from './hooks/useShootingInfo';
+import { normalizeString } from 'rxdb';
 
 const ShootingDetail: React.FC<{
   permissionType?: number | null;
@@ -134,6 +135,11 @@ const ShootingDetail: React.FC<{
   const [scriptReportEditMode, setScriptReportEditMode] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchMode, setSearchMode] = useState(false);
+  const [formattedAdvancedCallInputs, setFormattedAdvancedCallInputs] = useState<any>([]);
+
+  useEffect(() => {
+    setFormattedAdvancedCallInputs(advanceCallInputs(departments));
+  }, [departments])
 
   // *************************** STATES ************************************//
 
@@ -446,7 +452,7 @@ const ShootingDetail: React.FC<{
       modalRef={advanceCallModalRef}
       modalTrigger={`open-add-new-advance-call-modal-${shootingId}`}
       title="Add New Department Call"
-      formInputs={advanceCallInputs(departments)}
+      formInputs={formattedAdvancedCallInputs}
       handleEdition={addNewAdvanceCall}
       defaultFormValues={{}}
       modalId={`add-new-advance-call-modal-${shootingId}`}
@@ -512,12 +518,12 @@ const ShootingDetail: React.FC<{
 
       // Advance Calls
       shootingCopy.advanceCalls = shootingCopy.advanceCalls.map((call: AdvanceCall) => {
-        if (call.advCallTime) {
-          const callTime = new Date(call.advCallTime);
+        if (call.adv_call_time) {
+          const callTime = new Date(call.adv_call_time);
           callTime.setHours(callTime.getHours() + generalCallDiffHours);
           return {
             ...call,
-            advCallTime: callTime.toISOString(),
+            adv_call_time: callTime.toISOString(),
           };
         }
         return call;
@@ -822,7 +828,7 @@ const ShootingDetail: React.FC<{
           openAdvanceCallModal={openAdvanceCallModal}
           getHourMinutesFomISO={getHourMinutesFomISO}
           deleteAdvanceCall={deleteAdvanceCall}
-          advanceCallInputs={advanceCallInputs(departments)}
+          advanceCallInputs={formattedAdvancedCallInputs}
           handleEditAdvanceCall={handleEditAdvanceCall}
           setOpenMeals={setOpenMeals}
           openMeals={openMeals}

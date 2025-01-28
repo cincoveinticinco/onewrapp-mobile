@@ -269,7 +269,7 @@ const shootingSchemaLiteral= {
           shooting_id: { type: 'number' },
           department_id: { type: 'number' },
           adv_pick_up: { type: ['string', 'null'] },
-          advCallTime: { type: ['string', 'null'] },
+          adv_call_time: { type: ['string', 'null'] },
           adv_wrap: { type: ['string', 'null'] },
           description: { type: ['string', 'null'] },
           created_at: { type: ['string', 'null'] },

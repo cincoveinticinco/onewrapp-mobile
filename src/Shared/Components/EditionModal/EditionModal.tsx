@@ -2,6 +2,7 @@ import {
   IonButton,
   IonCheckbox,
   IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonModal, IonRow,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,6 +11,7 @@ import CustomSelect from '../CustomSelect/CustomSelect';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import SelectItem from '../SelectInput/SelectInput';
 import './EditionModal.scss';
+import { options } from 'ionicons/icons';
 
 export interface FormInput {
   fieldKeyName: string;
@@ -78,20 +80,29 @@ const EditionModal: React.FC<EditionModalProps> = ({
   }, []);
 
   useEffect(() => {
-    resetFormValues();
+    initializeFormValues();
   }, [defaultFormValues]);
 
-  const resetFormValues = () => {
-    if (defaultFormValues) {
-      formInputs.forEach((input: any) => {
+  const initializeFormValues = () => {
+    resetFormValues();
+    if (typeof defaultFormValues === 'object' && Object.keys(defaultFormValues).length > 0) {
+      console.log(defaultFormValues, '????')
+      formInputs.forEach((input: FormInput) => {
+        console.log(input.selectOptions)
         setValue(input.fieldKeyName, defaultFormValues[input.fieldKeyName]);
-      });
-    } else {
-      formInputs.forEach((input: any) => {
-        resetField(input.fieldKeyName);
+        if(input.fieldKeyName == 'dep_name_eng') {
+          console.log(defaultFormValues[input.fieldKeyName])
+          console.log(watch(input.fieldKeyName))
+        }
       });
     }
   };
+
+  const resetFormValues = () => {
+    formInputs.forEach((input: FormInput) => {
+      resetField(input.fieldKeyName);
+    });
+  }
 
   const closeModal = () => {
     if (modalRef.current) {
@@ -103,10 +114,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
       }
     }
   };
-
-  useEffect(() => {
-    resetFormValues();
-  }, [modalTrigger]);
 
   const {
     control,
@@ -120,7 +127,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
   });
 
   const setNewOptionValue = (fieldKeyName: string, value: string) => {
-    console.log(value, '????')
     if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       return setValue(fieldKeyName, null);
     }
@@ -185,10 +191,8 @@ const EditionModal: React.FC<EditionModalProps> = ({
             <IonRow>
               {formInputs.map((input: any, i: number) => (
                 <IonCol key={i} offset={input?.offset || 0} sizeSm={input?.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center ion-align-items-end">
-                  {input.type === 'select' ? (
-                    input.search ? (
-                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
-                    ) : (
+                  {input.type === 'select' ? 
+                    (
                       <SelectItem
                         control={control}
                         fieldKeyName={input.fieldKeyName}
@@ -205,7 +209,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                         currentFieldValue={watch(input.fieldKeyName)}
                       />
                     )
-                  ) : input.type === 'checkbox' ? (
+                   : input.type === 'checkbox' ? (
                     <IonItem
                       color="tertiary"
                       lines="none"

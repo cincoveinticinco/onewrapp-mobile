@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GeneralTable, { Column } from '../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable, { Column, EditFunction } from '../../../../Shared/Components/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import { useParams } from 'react-router';
 import { useRxData, useRxDB } from 'rxdb-hooks';
@@ -134,6 +134,10 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   //     onClick: (index: number) => deleteCrewCall(index),
   //   }
   // ]
+
+  const editCrew: EditFunction = async (index: number, key: string, value: any) => {
+    console.log('Edit crew', index, key, value);
+  }
 
   const copyCrewCalls = async () => {
     try {
@@ -314,6 +318,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
       groupBy='departmentEng'
       searchText={searchText}
       numbered={true}
+      editFunction={editCrew}
       // editOptions={editOptions}
     />
   );
