@@ -23,13 +23,14 @@ import removeAccents from '../../Shared/Utils/removeAccents';
 import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import './Elements.scss';
+import { useRxData } from 'rxdb-hooks';
+import { SceneDocType } from '../../Shared/types/scenes.types';
 
 const Elements: React.FC<{
   permissionType?: number | null;
 }> = ({
   permissionType,
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
   const [displayedElements, setDisplayedElements] = useState<any>({});
   const [displayedCategories, setDisplayedCategories] = useState<any[]>([]);
   const [filteredElements, setFilteredElements] = useState<any[]>([]);
@@ -38,7 +39,8 @@ const Elements: React.FC<{
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
-  const [dataIsLoading, setDataIsLoading] = useState<boolean>(true);
+
+  const { result: offlineScenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find());
 
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions,
@@ -73,6 +75,10 @@ const Elements: React.FC<{
   useEffect(() => {
     localStorage.setItem('elementsSortPosibilities', JSON.stringify(elementsSortPosibilities));
   }, [elementsSortPosibilities]);
+
+  useEffect(() => {
+    console.log('offlineScenes', offlineScenes.slice(0, 10));
+  }, [offlineScenes]);
 
   const clearSelectedElementsSortOptions = () => {
     localStorage.removeItem('elementsSelectedSortOptions');
@@ -125,8 +131,6 @@ const Elements: React.FC<{
         participation: ((elementScenes.length / offlineScenes.length) * 100).toFixed(2),
       };
     });
-
-    setDataIsLoading(false);
 
     return sortByCriterias(newElementsData, elementsSelectedSortOptions);
   }, [offlineScenes, elementsSelectedSortOptions]);
@@ -247,7 +251,7 @@ const Elements: React.FC<{
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
   };
 
-  if(displayedElements.length === 0 || displayedCategories.length === 0) {
+  if(displayedElements.length === 0 && displayedCategories.length === 0) {
     return (
       <MainPagesLayout
         search
@@ -287,11 +291,11 @@ const Elements: React.FC<{
       >
         <IonContent color="tertiary" fullscreen>
           {
-            dataIsLoading
+            isFetching
             && AppLoader()
           }
           {
-            !dataIsLoading
+            !isFetching
             && (
             <>
               <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
