@@ -40,6 +40,7 @@ export default class HttpReplicator {
       const replicationConfig: any = {
         collection: this.database[collection.SchemaName() as keyof AppDataBase],
         replicationIdentifier: `my-http-replication-${collection.SchemaName()}`,
+        retryTime: 1000 * 30,
       };
 
       // Configuración del PULL
@@ -48,7 +49,7 @@ export default class HttpReplicator {
           async handler(checkpointOrNull: any, batchSize: number) {
             if(projectId) {
               const collectionName = collection.getSchemaName();
-              console.error(`projectId is ${projectId} used for ${collectionName} pull!`);
+              console.warn(`projectId is ${projectId} used for ${collectionName} pull!`);
             }
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
             const token = await getToken();
