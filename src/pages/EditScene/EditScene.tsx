@@ -103,6 +103,7 @@ const EditScene: React.FC = () => {
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error updating scene');
+      console.error(error);
       scrollToTop();
     }
 

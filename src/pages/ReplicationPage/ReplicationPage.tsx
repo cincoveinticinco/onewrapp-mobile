@@ -25,6 +25,7 @@ const ReplicationPage: React.FC = () => {
   const {
     replicationPercentage,
     replicationStatus,
+    hardResync, 
     initialProjectReplication,
     isOnline,
     projectsInfoIsOffline,
@@ -98,7 +99,7 @@ const ReplicationPage: React.FC = () => {
   const retryReplication = () => {
     setError(null);
     setIsReplicating(true);
-    initialProjectReplication().then(() => {
+    hardResync().then(() => {
       setIsReplicating(false);
       history.push(`/my/projects/${id}/strips`);
     }).catch(() => {
