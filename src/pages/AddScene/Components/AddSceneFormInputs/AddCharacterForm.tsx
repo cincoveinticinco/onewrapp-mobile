@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback, useRef } from 'react';
 import {
   IonGrid,
   IonCard,
@@ -15,66 +15,97 @@ import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 
-interface AddCategoryFormProps {
+interface AddCharacterFormProps {
   handleSceneChange: (value: any, field: string) => void;
   observedCharacters: Character[];
   editMode?: boolean;
   detailsEditMode?: boolean;
 }
 
-const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
-  handleSceneChange, observedCharacters, editMode, detailsEditMode,
+const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
+  handleSceneChange,
+  observedCharacters,
+  editMode,
+  detailsEditMode,
 }) => {
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const { offlineScenes } = useContext(DatabaseContext);
-  const [charactersFetched, setCharactersFetched] = useState(false);
+  const alertRef = useRef<HTMLIonAlertElement>(null);
 
+  // State
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
+  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>(observedCharacters || []);
+  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
+  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
+
+  // Fetch initial categories from offline scenes
+  const defineCharactersCategories = useCallback(() => {
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
+    return uniqueCategoryValues
+      .map(character => character.categoryName)
+      .filter((categoryName): categoryName is string | null => categoryName !== undefined)
+      .sort();
+  }, [offlineScenes]);
+
+  // Initialize categories on mount
   useEffect(() => {
-    if (!observedCharacters) {
+    setCharacterCategories(defineCharactersCategories());
+  }, [defineCharactersCategories]);
+
+  // Handle dropdown visibility when there are no characters
+  useEffect(() => {
+    if (!observedCharacters?.length) {
       setDropDownIsOpen(true);
     }
   }, [observedCharacters]);
 
+  // Sync observedCharacters with selectedCharacters when they change
   useEffect(() => {
-    if (observedCharacters && selectedCharacters.length === 0 && !charactersFetched) {
+    if (observedCharacters && JSON.stringify(observedCharacters) !== JSON.stringify(selectedCharacters)) {
       setSelectedCharacters(observedCharacters);
-      setCharactersFetched(true);
     }
-  }, [observedCharacters, charactersFetched]);
+  }, [observedCharacters]);
+
+  // Update parent component when selected characters change
+  const handleSelectedCharactersChange = useCallback((newCharacters: Character[]) => {
+    setSelectedCharacters(newCharacters);
+  }, [handleSceneChange]);
 
   useEffect(() => {
     handleSceneChange(selectedCharacters, 'characters');
   }, [selectedCharacters]);
 
-  const characterCategoriesArray: (string | null)[] = [];
-  const uniqueCategoryValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
-
-  useEffect(() => {
-    const defineCharactersCategories = () => {
-      uniqueCategoryValuesArray.forEach((character: Character) => {
-        const { categoryName } = character;
-        if (categoryName !== undefined) {
-          characterCategoriesArray.push(categoryName);
-        }
-      });
-
-      return characterCategoriesArray.sort();
-    };
-
-    setCharacterCategories(defineCharactersCategories());
-  }, [offlineScenes]);
-
-  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
-
-  const handleOk = (inputData: { categoryName: string; }) => {
-    const inputElement = document.getElementById('add-category-input');
+  // Handlers
+  const handleOk = (inputData: { [key: string]: any }) => {
     if (inputData.categoryName) {
-      setCharacterCategories([...characterCategories, inputData.categoryName]);
+      setCharacterCategories(prev => {
+        const newCategories = [...prev, inputData.categoryName];
+        return newCategories.sort();
+      });
     }
-    if (inputElement) {
-      (inputElement as HTMLInputElement).value = '';
-    }
+  };
+
+  const handleDropDown = () => {
+    setDropDownIsOpen(!dropDownIsOpen);
+  };
+
+  const toggleModal = (category: string) => {
+    setModalStates(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
+  // Helper functions
+  const getAlertTrigger = () => {
+    if (editMode) return 'characters-categories-alert-edit';
+    if (detailsEditMode) return 'characters-categories-alert-details-edit';
+    return 'characters-categories-alert';
+  };
+
+  const getModalTrigger = () => {
+    if (editMode) return 'open-characters-options-modal-edit';
+    if (detailsEditMode) return 'open-characters-options-modal-details-edit';
+    return 'open-characters-options-modal';
   };
 
   const alertInputs: AlertInput[] = [
@@ -86,34 +117,6 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
     },
   ];
 
-  const handleDropDown = () => {
-    setDropDownIsOpen(!dropDownIsOpen);
-  };
-
-  const getAlertTrigger = () => {
-    if (editMode) {
-      return 'characters-categories-alert-edit';
-    }
-
-    if (detailsEditMode) {
-      return 'characters-categories-alert-details-edit';
-    }
-
-    return 'characters-categories-alert';
-  };
-
-  const getModalTrigger = () => {
-    if (editMode) {
-      return 'open-characters-options-modal-edit';
-    }
-
-    if (detailsEditMode) {
-      return 'open-characters-options-modal-details-edit';
-    }
-
-    return 'open-characters-options-modal';
-  };
-
   return (
     <>
       <div
@@ -121,14 +124,9 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
         onClick={handleDropDown}
         style={{ backgroundColor: 'var(--ion-color-tertiary-shade)' }}
       >
-        <p className="ion-flex ion-align-items-center">
-          Characters
-        </p>
+        <p className="ion-flex ion-align-items-center">Characters</p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-          <AddButton
-            id={getAlertTrigger()}
-            slot="end"
-          />
+          <AddButton id={getAlertTrigger()} slot="end"  onClick={(e) => { e.stopPropagation(); }}/>
           <DropDownButton open={dropDownIsOpen} />
         </div>
       </div>
@@ -138,12 +136,11 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
         inputs={alertInputs}
         trigger={getAlertTrigger()}
         header="Add Category"
-        message="Please enter the name of the category you want to add"
+        message="PLEASE ENTER THE NAME OF THE CATEGORY YOU WANT TO ADD"
+        ref={alertRef}
       />
 
-      {
-        characterCategories.length === 0
-        && (
+      {characterCategories.length === 0 && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
             <IonCardSubtitle className="no-items-card-title">
@@ -151,12 +148,11 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
-        )
-      }
+      )}
 
       {characterCategories.length > 0 && dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
-          {[...characterCategories, 'NO CATEGORY'].map((category, index) => (
+          {[...characterCategories, 'NO CATEGORY'].map((category, index) => 
             category && (
               <IonCard
                 key={`category-item-${index}-category-${category}`}
@@ -166,11 +162,12 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
                 <IonCardHeader className="ion-flex">
                   <div className="ion-flex ion-justify-content-between">
                     <p className="ion-flex ion-align-items-center">
-                      {category && capitalizeString(category)}
+                      {capitalizeString(category)}
                     </p>
                     <div className="category-buttons-wrapper">
                       <AddButton
-                        id={getModalTrigger() + category}
+                        id={`${getModalTrigger()}${category}`}
+                        onClick={(e) => { toggleModal(category); e.stopPropagation(); }}
                       />
                     </div>
                   </div>
@@ -178,12 +175,13 @@ const AddCharacterForm: React.FC<AddCategoryFormProps> = ({
                 <AddCharacterInput
                   categoryName={category}
                   selectedCharacters={selectedCharacters}
-                  setSelectedCharacters={setSelectedCharacters}
-                  modalTrigger={getModalTrigger() + category}
+                  setSelectedCharacters={handleSelectedCharactersChange}
+                  openModal={modalStates[category] || false}
+                  setOpenModal={(isOpen: boolean) => toggleModal(category)}
                 />
               </IonCard>
             )
-          ))}
+          )}
         </IonGrid>
       )}
     </>

@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback, useRef } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
-import { get } from 'lodash';
 import AddElementInput from './AddElementInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
@@ -10,6 +9,10 @@ import capitalizeString from '../../../../Shared/Utils/capitalizeString';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
+
+interface Element {
+  categoryName: string;
+}
 
 interface AddElementFormProps {
   handleSceneChange: (value: any, field: string) => void;
@@ -19,64 +22,64 @@ interface AddElementFormProps {
 }
 
 const AddElementForm: React.FC<AddElementFormProps> = ({
-  handleSceneChange, observedElements, editMode, detailsEditMode,
+  handleSceneChange,
+  observedElements,
+  editMode,
+  detailsEditMode,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [selectedElements, setSelectedElements] = useState<Element[]>([]);
-  const [elementsFetched, setElementsFetched] = useState(false);
+  const alertRef = useRef<HTMLIonAlertElement>(null);
 
+  // State
+  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
+  const [selectedElements, setSelectedElements] = useState<Element[]>(observedElements || []);
+  const [elementsCategories, setElementsCategories] = useState<(string | null)[]>([]);
+  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
+
+  // Fetch initial categories from offline scenes
+  const defineElementsCategories = useCallback(() => {
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
+    return uniqueCategoryValues
+      .map(element => element.categoryName)
+      .filter((categoryName): categoryName is string | null => categoryName !== undefined)
+      .sort();
+  }, [offlineScenes]);
+
+  // Initialize categories on mount
   useEffect(() => {
-    if (!observedElements) {
+    setElementsCategories(defineElementsCategories());
+  }, [defineElementsCategories]);
+
+  // Handle dropdown visibility when there are no elements
+  useEffect(() => {
+    if (!observedElements?.length) {
       setDropDownIsOpen(true);
     }
   }, [observedElements]);
 
+  // Sync observedElements with selectedElements when they change
   useEffect(() => {
-    if (observedElements && selectedElements.length === 0 && !elementsFetched) {
+    if (observedElements && JSON.stringify(observedElements) !== JSON.stringify(selectedElements)) {
       setSelectedElements(observedElements);
-      setElementsFetched(true);
     }
-  }, [observedElements, elementsFetched]);
+  }, [observedElements]);
+
+  // Update parent component when selected elements change
+  const handleSelectedElementsChange = useCallback((newElements: Element[]) => {
+    setSelectedElements(newElements);
+  }, [handleSceneChange]);
 
   useEffect(() => {
     handleSceneChange(selectedElements, 'elements');
   }, [selectedElements]);
 
-  const defineElementsCategories = () => {
-    const categoriesArray: string[] = [];
-    const uniqueValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
-
-    uniqueValuesArray.forEach((element) => {
-      const { categoryName } = element;
-      categoriesArray.push(categoryName);
-    });
-
-    return categoriesArray;
-  };
-
-  useEffect(() => {
-    const sortedCategories = defineElementsCategories().sort();
-    setElementsCategories([...sortedCategories, 'NO CATEGORY']);
-  }, [offlineScenes]);
-
-  const [elementsCategories, setElementsCategories] = useState<string[]>([]);
-
-  const alertInputs: AlertInput[] = [
-    {
-      name: 'categoryName',
-      type: 'text',
-      placeholder: 'Category Name',
-    },
-  ];
-
-  const handleOk = (inputData: { categoryName: string }) => {
-    const inputElement = document.getElementById('add-element-category-input');
+  // Handlers
+  const handleOk = (inputData: { [key: string]: any }) => {
     if (inputData.categoryName) {
-      setElementsCategories([...elementsCategories, inputData.categoryName]);
-    }
-    if (inputElement) {
-      (inputElement as HTMLInputElement).value = '';
+      setElementsCategories(prev => {
+        const newCategories = [...prev, inputData.categoryName];
+        return newCategories.sort();
+      });
     }
   };
 
@@ -84,25 +87,34 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
     setDropDownIsOpen(!dropDownIsOpen);
   };
 
-  const getAlertTrigger = () => {
-    if (editMode) {
-      return 'open-element-options-modal-edit';
-    }
-    if (detailsEditMode) {
-      return 'open-element-options-modal-details-edit';
-    }
-    return 'open-element-options-modal';
+  const toggleModal = (category: string) => {
+    setModalStates(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
   };
 
-  const getModalTrigger = (category: string) => {
-    if (editMode) {
-      return `open-elements-options-modal-edit-${category}`;
-    }
-    if (detailsEditMode) {
-      return `open-elements-options-modal-details-edit-${category}`;
-    }
-    return `open-elements-options-modal-${category}`;
+  // Helper functions
+  const getAlertTrigger = () => {
+    if (editMode) return 'elements-categories-alert-edit';
+    if (detailsEditMode) return 'elements-categories-alert-details-edit';
+    return 'elements-categories-alert';
   };
+
+  const getModalTrigger = () => {
+    if (editMode) return 'open-elements-options-modal-edit';
+    if (detailsEditMode) return 'open-elements-options-modal-details-edit';
+    return 'open-elements-options-modal';
+  };
+
+  const alertInputs: AlertInput[] = [
+    {
+      name: 'categoryName',
+      type: 'text',
+      placeholder: 'Category Name',
+      id: 'add-element-category-input',
+    },
+  ];
 
   return (
     <>
@@ -111,14 +123,9 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
         onClick={handleDropDown}
         style={{ backgroundColor: 'var(--ion-color-tertiary-shade)' }}
       >
-        <p className="ion-flex ion-align-items-center">
-          Elements
-        </p>
+        <p className="ion-flex ion-align-items-center">Elements</p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-          <AddButton
-            id={getAlertTrigger()}
-            slot="end"
-          />
+          <AddButton id={getAlertTrigger()} slot="end" onClick={(e) => { e.stopPropagation(); }}/>
           <DropDownButton open={dropDownIsOpen} />
         </div>
       </div>
@@ -128,12 +135,11 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
         inputs={alertInputs}
         trigger={getAlertTrigger()}
         header="Add Category"
-        message="Please enter the name of the category you want to add"
+        message="PLEASE ENTER THE NAME OF THE CATEGORY YOU WANT TO ADD"
+        ref={alertRef}
       />
 
-      {
-        elementsCategories.length === 0
-        && (
+      {elementsCategories.length === 0 && (
         <IonCard color="tertiary" className="no-items-card">
           <IonCardHeader>
             <IonCardSubtitle className="no-items-card-title">
@@ -141,16 +147,14 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
-        )
-      }
+      )}
 
-      {elementsCategories.length > 0 && dropDownIsOpen
-        && (
+      {elementsCategories.length > 0 && dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
-          {elementsCategories.map((category, index) => (
+          {[...elementsCategories, 'NO CATEGORY'].map((category, index) => 
             category && (
               <IonCard
-                key={index}
+                key={`category-item-${index}-category-${category}`}
                 color="tertiary"
                 className="add-scene-items-card ion-no-border"
               >
@@ -159,26 +163,26 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
                     <p className="ion-flex ion-align-items-center">
                       {capitalizeString(category)}
                     </p>
-
                     <div className="category-buttons-wrapper">
                       <AddButton
-                        id={getModalTrigger(category)}
+                        id={`${getModalTrigger()}${category}`}
+                        onClick={(e) => { toggleModal(category); e.stopPropagation(); }}
                       />
                     </div>
-
                   </div>
                 </IonCardHeader>
                 <AddElementInput
                   categoryName={category}
                   selectedElements={selectedElements}
-                  setSelectedElements={setSelectedElements}
-                  modalTrigger={getModalTrigger(category)}
+                  setSelectedElements={handleSelectedElementsChange}
+                  openModal={modalStates[category] || false}
+                  setOpenModal={(isOpen: boolean) => toggleModal(category)}
                 />
               </IonCard>
             )
-          ))}
+          )}
         </IonGrid>
-        )}
+      )}
     </>
   );
 };

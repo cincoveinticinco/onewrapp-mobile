@@ -1,10 +1,7 @@
 import {
-  IonButton,
   IonCardContent,
-  IonIcon,
   IonItem,
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
 import React, { useContext } from 'react';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModal from '../../../../Layouts/InputModal/InputModal';
@@ -13,16 +10,18 @@ import getOptionsArray from '../../../../Shared/Utils/getOptionsArray';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../../../Shared/Utils/sortArrayAlphabeticaly';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
+import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 
 interface AddExtraInputProps {
   categoryName: string;
   selectedExtras: any;
   setSelectedExtras: (value: any) => void;
-  modalTrigger: string;
+  openModal: boolean;
+  setOpenModal: (value: boolean) => void;
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, selectedExtras, setSelectedExtras, modalTrigger,
+  categoryName, selectedExtras, setSelectedExtras, openModal, setOpenModal,
 }) => {
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
   const { offlineScenes } = useContext(DatabaseContext);
@@ -90,9 +89,10 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
             className="ion-no-margin category-items"
           >
             {extra.extraName.toUpperCase()}
-            <IonButton color="danger" fill="clear" slot="end" onClick={() => deleteExtra(index)}>
-              <IonIcon icon={trash} />
-            </IonButton>
+            <DeleteButton
+              onClick={() => deleteExtra(index)}
+              slot="end"
+            />
           </IonItem>
         ))
       ) : (
@@ -101,7 +101,8 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
       <InputModal
         optionName={`Extras (  ${categoryName}  )`}
         listOfOptions={getSortedExtrasNames}
-        modalTrigger={modalTrigger}
+        isOpen={openModal}
+        setIsOpen={setOpenModal}
         handleCheckboxToggle={toggleExtra}
         selectedOptions={selectedExtras.map((extra: any) => extra.extraName)}
         clearSelections={clearSelections}

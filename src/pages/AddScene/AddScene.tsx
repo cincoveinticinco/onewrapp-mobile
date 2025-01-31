@@ -85,6 +85,7 @@ const AddScene: React.FC = () => {
   };
 
   const insertScene = async (formData: any) => {
+    console.log('inserting scene')
     try {
       formData.id = `${watch('projectId')}.${watch('episodeNumber')}.${watch('sceneNumber')}`;
 
@@ -109,6 +110,7 @@ const AddScene: React.FC = () => {
       reset();
       handleBack();
     } catch (error: any) {
+      console.error(error);
       errorToast(error ? error.message : 'Error inserting scene');
       scrollToTop();
     }

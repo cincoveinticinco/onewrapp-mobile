@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import useIsMobile from '../../../Shared/hooks/useIsMobile';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
@@ -70,6 +70,10 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    console.log('formData', formData);
+  }, [formData])
+
   const getDisabled = () => (watch('sceneType') !== SceneTypeEnum.PROTECTION);
 
   const sceneTypeValidation = (value: any) => (value !== null ? true : 'SCENE TYPE IS REQUIRED *');
@@ -89,6 +93,12 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
 
     return setValue(field, value);
   };
+
+  useEffect(() => {
+    if (watch('sceneType') === SceneTypeEnum.SCENE) {
+      setValue('protectionType', null);
+    }
+  }, [watch('sceneType'), setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form" id={sceneFormId}>

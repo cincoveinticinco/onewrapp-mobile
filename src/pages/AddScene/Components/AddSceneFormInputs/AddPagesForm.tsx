@@ -8,17 +8,37 @@ interface AddPagesFormProps {
 }
 
 const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField }) => {
-  const [pageInteger, setPageInteger] = React.useState(0);
-  const [pageFraction, setPageFraction] = React.useState(0);
+  // Inicializar los estados con los valores calculados
+  const initialInteger = observedField ? Math.floor(observedField) : 0;
+  const initialFraction = observedField ? 
+    Math.round((observedField - Math.floor(observedField)) * 8) : 0;
 
-  useEffect(() => {
-    setPageInteger(Math.floor(observedField || 0));
-    setPageFraction(Math.round((observedField || 0) % (1 * 8)));
-  }, []);
+  const [pageInteger, setPageInteger] = React.useState(initialInteger);
+  const [pageFraction, setPageFraction] = React.useState(initialFraction);
 
+  // Solo actualizar cuando observedField cambia externamente
   useEffect(() => {
-    handleChange(fractionToFloat(pageInteger, pageFraction), 'pages');
-  }, [pageInteger, pageFraction]);
+    if (observedField !== null) {
+      const integerPart = Math.floor(observedField);
+      const fraction = observedField - integerPart;
+      const fractionPart = Math.round(fraction * 8);
+      
+      setPageInteger(integerPart);
+      setPageFraction(fractionPart);
+    }
+  }, [observedField]);
+
+  const handleIntegerChange = (value: number) => {
+    setPageInteger(value);
+    const newValue = fractionToFloat(value, pageFraction);
+    handleChange(newValue, 'pages');
+  };
+
+  const handleFractionChange = (value: number) => {
+    setPageFraction(value);
+    const newValue = fractionToFloat(pageInteger, value);
+    handleChange(newValue, 'pages');
+  };
 
   return (
     <>
@@ -29,7 +49,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           name="integerPart"
           label="PAGES"
           placeholder="0"
-          onIonChange={(e) => setPageInteger(Number(e.detail.value))}
+          onIonChange={(e) => handleIntegerChange(Number(e.detail.value))}
           labelPlacement="floating"
         />
       </IonItem>
@@ -40,7 +60,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           name="fractionPart"
           label="PAGES"
           placeholder="0"
-          onIonChange={(e) => setPageFraction(Number(e.detail.value))}
+          onIonChange={(e) => handleFractionChange(Number(e.detail.value))}
           labelPlacement="floating"
         />
       </IonItem>

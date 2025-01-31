@@ -19,14 +19,16 @@ interface AddCharacterInputProps {
   categoryName: string | null;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
-  modalTrigger: string;
+  openModal: boolean;
+  setOpenModal: (value: boolean) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   selectedCharacters,
   setSelectedCharacters,
-  modalTrigger,
+  openModal,
+  setOpenModal
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
@@ -144,7 +146,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       <InputModal
         optionName={`Characters (  ${categoryName}  )`}
         listOfOptions={getSortedCharacterNames}
-        modalTrigger={modalTrigger}
         handleCheckboxToggle={toggleCharacters}
         selectedOptions={selectedCharacters.map(
           (character: any) => character.characterName,
@@ -155,6 +156,8 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
         optionCategory={categoryName || 'NO CATEGORY'}
         formInputs={formInputs}
         existentOptions={uniqueCharacterValuesArray}
+        isOpen={openModal}
+        setIsOpen={setOpenModal}
       />
     </IonCardContent>
   );
