@@ -1,5 +1,5 @@
 import { IonCheckbox, IonList } from '@ionic/react';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
 import HighlightedText from '../../Shared/Components/HighlightedText/HighlightedText';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
@@ -29,6 +29,7 @@ const RegularList: React.FC<RegularListProps> = ({
   optionsWithStyles,
 }) => {
   const isMobile = useIsMobile();
+  const memoizedIsOptionChecked = useCallback((option: string) => isOptionChecked(option), [isOptionChecked]);
 
   const getListStyles = () => {
     if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
@@ -69,7 +70,7 @@ const RegularList: React.FC<RegularListProps> = ({
             slot="start"
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
-            checked={isOptionChecked(option)}
+            checked={memoizedIsOptionChecked(option)}
           >
             <HighlightedText text={truncateString(option.toUpperCase(), (isMobile ? 30 : 140))} searchTerm={searchText} />
           </IonCheckbox>
@@ -87,7 +88,7 @@ const RegularList: React.FC<RegularListProps> = ({
             slot="start"
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
-            checked={isOptionChecked(option)}
+            checked={memoizedIsOptionChecked(option)}
             disabled={!multipleSelections && checkedSelectedOptions.length > 0}
           >
             <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
