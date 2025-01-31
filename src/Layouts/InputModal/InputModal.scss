@@ -5,8 +5,7 @@
 
   .add-new-option-description {
     text-align: center;
-    margin: 5% 16px 5% 16px;
-    font-size: var(--525-common-title-size);
+    margin: 0px;
   }
 
   ion-input {
@@ -24,44 +23,25 @@
   .cancel-input-modal-button {
     margin-bottom: 5%;
   }
-
-  .add-new-option-buttons-container {
-    margin: 16px;
-    margin-top: 5%;
-
-    .modal-confirm-button {
-      margin: 0;
-      width: 100%;
-    }
-
-    .cancel-input-modal-button {
-      margin-bottom: 0;
-      width: 100%;
-    }
+  
+  .add-new-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 25% !important;
+    position: relative;
+    margin: 100px auto;
   }
 }
 
-@media (min-width: 500px) {
+@media (min-width: 400px) {
   .general-modal-styles {
     .modal-confirm-button {
       margin: 20% auto 10% auto;
-    }
-
-    .add-new-option-buttons-container {
-      display: flex;
-      justify-content: space-between;
-      width: 40%;
-      margin: 10% auto;
-
-      .modal-confirm-button {
-        margin: 0;
-        width: 20%;
-      }
-
-      .cancel-input-modal-button {
-        margin: 0;
-        width: 20%;
-      }
     }
   }
 }
