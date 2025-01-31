@@ -13,6 +13,7 @@ interface ModalToolbarProps {
   showReset?: boolean
   handleSaveName?: string
   handleBack: () => void
+  customButtons?: (() => JSX.Element)[]
 }
 
 const ModalToolbar: React.FC<ModalToolbarProps> = (
@@ -23,6 +24,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     showReset = false,
     handleSaveName,
     handleBack,
+    customButtons = [],
   },
 ) => {
   const isMobile = useIsMobile();
@@ -55,6 +57,13 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
           {showReset ? 'RESET' : 'CANCEL'}
         </IonButton>
         )
+      }
+       {
+        customButtons && customButtons.map((button, index) => (
+          <>
+            {button()}
+          </>
+        ))
       }
       {
         handleSave
