@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent, IonHeader, IonModal,
 } from '@ionic/react';
 import React, { useRef, useState } from 'react';
@@ -6,13 +7,12 @@ import { useForm } from 'react-hook-form';
 import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
 import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
-import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
 import removeNumberAndDot from '../../Shared/Utils/removeNumberAndDot';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './InputModal.scss';
-import { set } from 'lodash';
+import { IoMdAdd } from 'react-icons/io';
 
 interface FormInputsProps {
   modalRef?: React.RefObject<HTMLIonModalElement>;
@@ -68,10 +68,12 @@ const InputModal: React.FC<InputModalProps> = ({
 
   const clearSearchTextModal = () => {
     setSearchText('');
+    if(listOfOptions.length == 0) {
+      closeModal();
+    }
   };
 
   const closeModal = () => {
-    console.log('closeModal()')
     if (modalRef.current) {
       modalRef.current.dismiss();
       setShowError(false);
@@ -166,123 +168,150 @@ const InputModal: React.FC<InputModalProps> = ({
     closeModal();
   };
 
-  return (
-    <IonModal
-      className="general-modal-styles"
-      isOpen={isOpen}
-      id={modalTrigger || modalId}
-      ref={modalRef}
-      onDidDismiss={() => setIsOpen && setIsOpen(false)}
-    >
-      <IonHeader>
-        <ModalToolbar
-          handleSave={closeModal}
-          toolbarTitle={optionName}
-          handleReset={clearSelections}
-          handleBack={closeModal}
-          showReset={false}
-        />
-      </IonHeader>
-      {canCreateNew && createNewMode ? (
-        <IonContent color="tertiary">
-          <IonHeader className="add-new-option-description" mode="ios">
-            Please, fill the form to create a new option
-          </IonHeader>
-          {
-              formInputs
-              && formInputs.map((input: any, i: any) => (
-                <InputItem
-                  key={i}
-                  label={input.label}
-                  placeholder={input.placeholder}
-                  control={control}
-                  fieldKeyName={input.fieldKeyName}
-                  inputName={input.inputName}
-                  displayError={input.fieldKeyName !== 'characterNum' ? showError : false}
-                  setValue={setNewOptionValue}
-                  validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName)}
-                  type={input.type}
-                  errorMessage={errorMessage}
-                />
-              ))
-            }
-          <div className="add-new-option-buttons-container">
-            <OutlinePrimaryButton
-              buttonName="SAVE"
-              onClick={handleSubmit(handleSaveNewOption)}
-              className="ion-margin modal-confirm-button"
-            />
+  const createNewButton = () => {
+    return  (
+      <IonButton
+        fill="clear"
+        color="light"
+        slot="end"
+        onClick={() => setCreateNewMode(true)}
+      >
+        <IoMdAdd className="toolbar-icon" />
+      </IonButton>
+    )
+  }
 
-            <OutlineLightButton
-              buttonName="CANCEL"
-              onClick={cancelForm}
-              className="ion-margin cancel-input-modal-button cancel-button"
-            />
-          </div>
-        </IonContent>
-      ) : (
-        <IonContent color="tertiary">
-          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10} />
-          {
-            searchText.length > 0
-            && filteredOptions.length === 0
-            && (
-            <p className="no-items-message">
-              There are no coincidences. Do you want to
-              <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}>reset </span>
-              ?
+  if(isOpen) {
+    return (
+      <IonModal
+        className="general-modal-styles"
+        isOpen={isOpen}
+        id={modalTrigger || modalId}
+        ref={modalRef}
+        onDidDismiss={() => setIsOpen && setIsOpen(false)}
+      >
+        <IonHeader>
+          <ModalToolbar
+            handleSave={closeModal}
+            toolbarTitle={optionName}
+            handleReset={clearSelections}
+            customButtons={canCreateNew ? [createNewButton] : []}
+            handleBack={closeModal}
+            showReset={false}
+          />
+        </IonHeader>
+        {canCreateNew && createNewMode ? (
+          <IonContent color="tertiary">
+            <p className="add-new-option-description no-items-message">
+              Please, fill the form to create a new option
             </p>
-            )
-          }
-          <>
-            <RegularList
-              listOfOptions={listOfOptions}
-              selectedOptions={selectedOptions}
-              handleCheckboxToggle={handleCheckboxToggle}
-              isOptionChecked={isOptionChecked}
-              multipleSelections={multipleSelections}
-              searchText={searchText}
-              checkedSelectedOptions={checkedSelectedOptions}
-              uncheckedFilteredOptions={uncheckedFilteredOptions}
-            />
-            {
-              filteredOptions.length === 0 && canCreateNew
-                && (
-                <p className="no-items-message">
-                  There are no coincidences. Do you want to create a new one ?
-                  <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
-                    <OutlinePrimaryButton buttonName="CREATE NEW" className="ion-margin no-items-confirm" onClick={() => setCreateNewMode(true)} />
-                    <OutlineLightButton buttonName="CANCEL" className="ion-margin cancel-button no-items-cancel" onClick={clearSearchTextModal} />
-                  </span>
-                </p>
-                )
-              }
-            {
-              filteredOptions.length > 0
-              && (
+            <div className='add-new-form-container'>
+              {
+                formInputs
+                && formInputs.map((input: any, i: any) => (
+                  <InputItem
+                      key={i}
+                      label={input.label}
+                      placeholder={input.placeholder}
+                      control={control}
+                      fieldKeyName={input.fieldKeyName}
+                      inputName={input.inputName}
+                      displayError={input.fieldKeyName !== 'characterNum' ? showError : false}
+                      setValue={setNewOptionValue}
+                      validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName)}
+                      type={input.type}
+                      errorMessage={errorMessage}
+                    />
+                  ))
+                }
+              </div>
+            <div className="buttons-wrapper">
+              <OutlinePrimaryButton
+                buttonName="CANCEL"
+                onClick={() => setCreateNewMode(false)}
+                className="ion-margin"
+                color='danger'
+              />
               <OutlinePrimaryButton
                 buttonName="SAVE"
-                onClick={closeModal}
-                className="ion-margin modal-confirm-button"
+                onClick={handleSubmit(handleSaveNewOption)}
+                color='success'
               />
-              )
-            }
+            </div>
+          </IonContent>
+        ) : (
+          <IonContent color="tertiary">
+            <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfOptions.length > 10} />
             {
-              isMobile
-              && filteredOptions.length > 0
+              searchText.length > 0
+              && filteredOptions.length === 0
               && (
-              <OutlineLightButton
-                buttonName="CANCEL"
-                onClick={closeModal}
-                className="ion-margin cancel-input-modal-button cancel-button"
-              />
+              <p className="no-items-message">
+                There are no coincidences. Do you want to
+                <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}>reset </span>
+                ?
+              </p>
               )
             }
-          </>
-        </IonContent>
-      )}
-    </IonModal>
-  );
+            <>
+              <RegularList
+                listOfOptions={listOfOptions}
+                selectedOptions={selectedOptions}
+                handleCheckboxToggle={handleCheckboxToggle}
+                isOptionChecked={isOptionChecked}
+                multipleSelections={multipleSelections}
+                searchText={searchText}
+                checkedSelectedOptions={checkedSelectedOptions}
+                uncheckedFilteredOptions={uncheckedFilteredOptions}
+              />
+              {
+                filteredOptions.length === 0 && canCreateNew
+                  && (
+                  <div>
+                    <p  className="no-items-message ion-margin">
+                      There are no coincidences. Do you want to create a new one ?
+                    </p>
+                    <span className="no-items-buttons-container ion-flex ion-justify-content-center ion-align-items-center">
+                      <OutlinePrimaryButton buttonName="CREATE" onClick={() => setCreateNewMode(true)} />
+                      {
+                        listOfOptions.length > 0 && <OutlinePrimaryButton buttonName="CANCEL" color='danger' onClick={clearSearchTextModal} />
+                      }
+                    </span>
+                  </div>
+                  )
+                }
+              <div className='buttons-wrapper'>
+                {
+                  filteredOptions.length > 0
+                  && (
+                  <OutlinePrimaryButton
+                    buttonName="SAVE"
+                    onClick={closeModal}
+                    className="ion-margin"
+                    color='success'
+                  />
+                  )
+                }
+                {
+                  filteredOptions.length > 0
+                  && (
+                  <OutlinePrimaryButton
+                    buttonName="CANCEL"
+                    onClick={closeModal}
+                    className="ion-margin"
+                    color='danger'
+                  />
+                  )
+                }
+              </div>
+            </>
+          </IonContent>
+        )}
+      </IonModal>
+    );
+  } else {
+    return <></>
+  }
 };
 
 export default InputModal;
