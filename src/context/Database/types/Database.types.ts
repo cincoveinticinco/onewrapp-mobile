@@ -28,4 +28,6 @@ export interface DatabaseContextProps {
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
   initializeProjectsUserReplication: () => Promise<void>;
   initializeAllReplications: () => Promise<void>;
+  hardAppReset: () => void;
+  hardResync: () => Promise<void>;
 }
