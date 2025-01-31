@@ -187,7 +187,6 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
           }
         } else {
           if (service.quantity !== null && service.unitCost !== null) {
-            console.log(service)
             return {
               description: service.serviceDescription,
               providerName: service.providerName,

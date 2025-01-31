@@ -127,7 +127,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     const sceneColor = defineSceneColor(scene);
 
     if (sceneColor === 'success' || sceneColor === 'primary') {
-      return 'black';
+      return 'white';
     }
   };
 
