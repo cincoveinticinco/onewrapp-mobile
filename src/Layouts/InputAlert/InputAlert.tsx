@@ -1,9 +1,9 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { AlertInput, IonAlert } from '@ionic/react';
 import './InputAlert.scss';
 
 interface InputAlertProps {
-  handleOk: (inputData: any) => void;
+  handleOk: (inputData: { [key: string]: any }) => void;
   inputs: AlertInput[];
   trigger?: string;
   header: string;
@@ -22,31 +22,40 @@ const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlert
   subHeader,
   message,
   isOpen = false
-}, ref) => (
-  <IonAlert
-    ref={ref}
-    trigger={trigger}
-    header={header}
-    className="input-alert"
-    mode="md"
-    isOpen={isOpen}
-    buttons={[
-      {
-        text: 'confirm',
-        handler: handleOk,
-        cssClass: 'primary',
-      },
-      {
-        text: 'cancel',
-        role: 'cancel',
-        cssClass: 'secondary',
-        handler: handleCancel
-      },
-    ]}
-    inputs={inputs}
-    subHeader={subHeader}
-    message={message}
-  />
-);
+}, ref) => {
+  const [alertInputs, setAlertInputs] = useState(inputs);
+
+  const handleDismiss = () => {
+    setAlertInputs(inputs.map(input => ({ ...input, value: '' })));
+  };
+
+  return (
+    <IonAlert
+      ref={ref}
+      trigger={trigger}
+      header={header}
+      className="input-alert"
+      mode="md"
+      isOpen={isOpen}
+      buttons={[
+        {
+          text: 'confirm',
+          handler: handleOk,
+          cssClass: 'primary',
+        },
+        {
+          text: 'cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: handleCancel
+        },
+      ]}
+      inputs={alertInputs}
+      subHeader={subHeader}
+      message={message}
+      onDidDismiss={handleDismiss}
+    />
+  );
+};
 
 export default forwardRef(InputAlert);
