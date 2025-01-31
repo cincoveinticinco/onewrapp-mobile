@@ -105,16 +105,16 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
-  Capacitor: ebfc16cdb8116d04c101686b080342872da42d43
-  CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
+  Capacitor: 543dcc8159d8e4bdbd0e6923df919f056990836e
+  CapacitorApp: 3bef09d0bbb9698fd1766398499f306647156bbf
   CapacitorCordova: 931b48fcdbc9bc985fc2f16cec9f77c794a27729
-  CapacitorGeolocation: 0572212732f7ee65828d069a9663a274be89b9fc
-  CapacitorGoogleMaps: 7764613bb8eab28f290c1ca76b6ff4ee32d3c50f
-  CapacitorHaptics: 1fffc1217c7e64a472d7845be50fb0c2f7d4204c
-  CapacitorKeyboard: ce5e01064cf57a2c05b32565310713b7fe6cc6f9
-  CapacitorNetwork: eac95b6a8eb5be7ad1ee8faa2e26a577acd5d625
-  CapacitorStatusBar: 565c0a1ebd79bb40d797606a8992b4a105885309
-  CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
+  CapacitorGeolocation: 6beed87d5d2b80745f03a84db4ab2269bc872c9c
+  CapacitorGoogleMaps: cdfff83cfb370efb657810e281a888556a048013
+  CapacitorHaptics: c56885bd07919be808b38db507507919ce4d1b09
+  CapacitorKeyboard: 7998987a2d8719967f0fec2508ea13244b7630b7
+  CapacitorNetwork: b76949446d62b4832ecd5b652ef95b5294c25f00
+  CapacitorStatusBar: f7e05ad7e5fb1a1cdacd2f0b55d488550ca07c41
+  CodetrixStudioCapacitorGoogleAuth: 9dcfabfb7dd804ad6231a1513bc6e81e620cbec6
   Google-Maps-iOS-Utils: f77eab4c4326d7e6a277f8e23a0232402731913a
   GoogleMaps: 032f676450ba0779bd8ce16840690915f84e57ac
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
@@ -123,4 +123,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 01f8ac9dbe5e5e5c052ffeabac934a941662ec9f
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

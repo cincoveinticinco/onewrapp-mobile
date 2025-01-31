@@ -28,19 +28,14 @@ $colors: (
     --background-activated-opacity: 1;
 
     transition: all 0.3s ease-in-out;
-    min-width: 180px;
-    margin: 6px auto;
-    width: 180px;
+    margin: 6px;
+    min-width: 100px !important;
     min-height: 40px;
     text-transform: uppercase;
     font-size: 14px !important;
 
     &:active {
       background-color: #{$value};
-    }
-
-    @media (min-width: 500px) {
-      max-width: 250px;
     }
   }
 
@@ -137,10 +132,6 @@ ion-content {
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-ion-input {
-  text-transform: uppercase;
 }
 
 main {
@@ -250,12 +241,13 @@ ion-toolbar {
   cursor: pointer;
 
   .checkbox-option {
-    background-color: transparent;
+    background-color: var(--ion-color-white) !important;
   }
 
   ion-checkbox {
     --size: 12px;
     --checkbox-background-checked: radial-gradient(circle, yellow 35%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 1) 48%, yellow 50%, rgba(255, 255, 255, 1) 58%);
+    --checkbox-background: white !important;
   }
 
   ion-checkbox::part(container) {
@@ -462,3 +454,7 @@ ion-toast.error-toast {
   animation: identifier 0.5s ease-in-out;
 }
 
+.no-items-message {
+  text-transform: uppercase;
+  font-size: var(--525-medium-title-size);
+}
