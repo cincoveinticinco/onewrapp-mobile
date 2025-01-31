@@ -51,6 +51,8 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   setProjectsInfoIsOffline: () => {},
   initializeProjectsUserReplication: () => new Promise(() => false),
   initializeAllReplications: () => new Promise(() => false),
+  hardResync: () => new Promise(() => false),
+  hardAppReset: () => new Promise(() => false),
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -128,9 +130,13 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setIsDatabaseReady(true);
 
       if (isOnline) {
-        const projectsReplicator = new HttpReplicator(dbInstance, [projectColl, userCollection], null, null, getToken);
-        await projectsReplicator.startReplication(true, false); // Solo PULL para proyectos y usuarios
+        const projectsReplicator = new HttpReplicator(dbInstance, [projectColl], null, null, getToken);
+        await projectsReplicator.startReplication(true, false); // Solo PULL para proyectos
         resyncProjectsUser.current = projectsReplicator;
+
+        const usersReplicator = new HttpReplicator(dbInstance, [userCollection], null, null, getToken);
+        await usersReplicator.startReplication(true, false); // Solo PULL para usuarios
+        resyncProjectsUser.current = usersReplicator;
       }
     } catch (error) {
       throw error;
@@ -163,6 +169,37 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   
     return true;
   }
+
+  const hardAppReset = async () => {
+    await oneWrapRXdatabase.remove();
+    localStorage.clear();
+    window.location.reload();
+  }
+
+  const hardResync = async () => {
+    const collectionsToNoDelete = ['projects', 'users'];
+    const collections = oneWrapRXdatabase.collections;
+    const collectionsNames = Object.keys(collections);
+    for (const collectionName of collectionsNames) {
+      if (!collectionsToNoDelete.includes(collectionName)) {
+        await collections[collectionName].find().remove();
+      }
+    }
+    // Delete all refs
+    resyncScenes.current = null;
+    resyncShootings.current = null;
+    resyncProjectsUser.current = null;
+    resyncParagraphs.current = null;
+    resyncUnits.current = null;
+    resyncTalents.current = null;
+    resyncCrew.current = null;
+    resyncCountries.current = null;
+    resyncServiceMatrices.current = null;
+
+    // delete replicators instances
+
+    await initialProjectReplication();
+  }
   
   const handleDeletedRecords = async (collectionName: string, apiEndpoint: string, projectId: string) => {
     
@@ -184,70 +221,70 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     try {
       // Obtener el último registro actualizado
       const lastData = await oneWrapRXdatabase[collectionName]
-        .find({
-          selector: {
-            projectId: parseInt(projectId, 10)
-          }
-        })
-        .sort({
-          updatedAt: 'desc'
-        })
-        .limit(1)
-        .exec();
-  
+      .find({
+        selector: {
+        projectId: parseInt(projectId, 10)
+        }
+      })
+      .sort({
+        updatedAt: 'desc'
+      })
+      .limit(1)
+      .exec();
+    
       const last_updated_at = lastData[0]?.updatedAt ? new Date(lastData[0]?.updatedAt).toISOString() : '1970-01-01T00:00:00.000Z';
       
       // Configurar los parámetros de la URL
       const params = new URLSearchParams({
-        project_id: projectId.toString(),
-        last_item_updated_at: last_updated_at
+      project_id: projectId.toString(),
+      last_item_updated_at: last_updated_at
       });
-  
+    
       const url = `${environment.URL_PATH}/${apiEndpoint}?${params.toString()}`;
-  
+    
       // Llamada a la API
       const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Owsession': `${await getToken()}`,
-          'Content-Type': 'application/json'
-        }
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      method: 'GET',
+      headers: {
+        'Owsession': `${await getToken()}`,
+        'Content-Type': 'application/json'
       }
-  
+      });
+    
+      if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    
       const data = await response.json();
-  
+    
       // Si hay registros eliminados, procesarlos
       if (data[collectionName] && data[collectionName].length > 0) {
-        const deletedItems = data[collectionName];
-        
-        // Procesar las eliminaciones usando una transacción de RxDB
-        await oneWrapRXdatabase[collectionName].database.waitForLeadership();
-        
-        for (const deletedItem of deletedItems) {
-          if(deletedItem) {
-            const query = deletedItem && oneWrapRXdatabase[collectionName].find({
-              selector: {
-                id: deletedItem.id,
-                createdAtBack: deletedItem.createdAt
-              }
-            });
-    
-            const localItems = await query.exec();
-            if (localItems.length > 0) {
-              await Promise.all(
-                localItems.map(async (item: any) => {
-                  await item.remove();
-                })
-              );
-            }
+      const deletedItems = data[collectionName];
+      
+      // Procesar las eliminaciones usando una transacción de RxDB
+      await oneWrapRXdatabase[collectionName].database.waitForLeadership();
+      
+      for (const deletedItem of deletedItems) {
+        if(deletedItem) {
+        const query = deletedItem && oneWrapRXdatabase[collectionName].find({
+          selector: {
+          id: deletedItem.id,
+          createdAtBack: deletedItem.createdAt
           }
+        });
+    
+        const localItems = await query.exec();
+        if (localItems.length > 0) {
+          await Promise.all(
+          localItems.map(async (item: any) => {
+            await item.remove();
+          })
+          );
+        }
         }
       }
-  
+      }
+    
       return true;
     } catch (error) {
       console.error(`Error in handling deleted records for ${collectionName}:`, error);
@@ -257,6 +294,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const initializeProjectsUserReplication = async () => {
     await initializeReplication(projectCollection, {}, resyncProjectsUser);
+    await initializeReplication(userCollection, {}, resyncProjectsUser);
   };
   
   const initializeSceneReplication = async () => {
@@ -366,6 +404,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const initializeAllReplications = async () => {
     if(initialProjectReplicationInCourse || allReplicationsInCourse) {
+      console.warn((initialProjectReplicationInCourse ? 'initialProjectReplicationInCourse' : 'allReplicationsInCourse') + ' is in course');
       return
     }
 
@@ -384,24 +423,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   };
 
-  useIonViewDidEnter(() => {
-    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
-      initializeAllReplications();
-    }
-  });
-  
   useEffect(() => {
     const replicatePeriodically = async () => {
+      console.info('Replicating data...');
       await initializeAllReplications();
     };
-  
+    const warnMessage = !isOnline ? 'project is not onlyne' : !oneWrapRXdatabase ? 'database is not initialized' : !projectId ? 'project id not found' : !initialReplicationFinished ? 'initial replication is not finished' : 'NO ERRORS';
+    console.warn(warnMessage)
     if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
 
       replicatePeriodically();
   
       const intervalId = setInterval(() => {
         replicatePeriodically();
-      }, 300000);
+      }, 30000);
 
       return () => clearInterval(intervalId);
     }
@@ -649,6 +684,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           setProjectsInfoIsOffline,
           initializeProjectsUserReplication,
           initializeAllReplications,
+          hardResync,
+          hardAppReset
         }}
       >
         {children}
