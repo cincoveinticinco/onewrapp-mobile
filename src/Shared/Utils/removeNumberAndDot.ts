@@ -1,7 +1,13 @@
 const removeNumberAndDot = (selectedOption: string) => {
-  const numberAndDotPart = selectedOption.match(/^[0-9]+\./)?.[0] || '';
-  const restPart = selectedOption.replace(numberAndDotPart, '');
-  return numberAndDotPart ? restPart.trim() : selectedOption.trim();
+  const numberPart = selectedOption.split('.')[0];
+  const characterPart = selectedOption.split('.')[1]
+
+  if (numberPart && characterPart) {
+
+    return characterPart.trim()
+  }
+
+  return selectedOption.trim()
 };
 
 export default removeNumberAndDot;
