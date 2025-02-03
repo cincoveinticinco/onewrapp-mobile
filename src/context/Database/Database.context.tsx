@@ -18,7 +18,6 @@ import ServiceMatricesSchema from '../../RXdatabase/schemas/serviceMatrices.sche
 import UserSchema from '../../RXdatabase/schemas/user.schema';
 import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
 import environment from '../../../environment';
-import { useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import useReplicationStore from '../../stores/useReplicationStore';
 import useAppStore from '../../stores/useAppStore';
 import { DatabaseContextProps } from './types/Database.types';
@@ -37,11 +36,6 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   setScenesAreLoading: () => {},
   projectsAreLoading: true,
   setProjectsAreLoading: () => {},
-  initializeShootingReplication: () => new Promise(() => false),
-  initializeSceneReplication: () => new Promise(() => false),
-  initializeParagraphReplication: () => new Promise(() => false),
-  initializeUnitReplication: () => new Promise(() => false),
-  initializeTalentsReplication: () => new Promise(() => false),
   isDatabaseReady: false,
   initialProjectReplication: () => new Promise(() => false),
   replicationPercentage: 0,
@@ -670,11 +664,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           setScenesAreLoading,
           projectsAreLoading,
           setProjectsAreLoading,
-          initializeShootingReplication,
-          initializeSceneReplication,
-          initializeParagraphReplication,
-          initializeUnitReplication,
-          initializeTalentsReplication,
           isDatabaseReady,
           initialProjectReplication,
           replicationPercentage,

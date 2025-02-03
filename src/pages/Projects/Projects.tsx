@@ -22,18 +22,31 @@ const Projects: React.FC = () => {
 
   const { result: projects, isFetching } = useRxData(
     'projects',
-    (collection) => collection.find().sort({ projName: 'asc' }),
+    (collection) => collection.find().sort({ projName: 'asc' })
   );
 
-  useEffect(() => {
-    setIsLoading(isFetching);
-  }, [isFetching]);
-
   useIonViewWillEnter(() => {
-    if (isOnline && currentPath === '/projects') {
-      initializeProjectsUserReplication();
-    }
+    const initialize = async () => {
+      if (isOnline && currentPath === '/projects') {
+        try {
+          await initializeProjectsUserReplication();
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Replication initialization failed', error);
+          setIsLoading(false);
+        }
+      }
+    };
+    initialize();
   });
+
+  useEffect(() => {
+    // Additional fallback to ensure loading state is managed
+    if (!isFetching && projects.length > 0) {
+      setIsLoading(false);
+    }
+  }, [isFetching, projects]);
+
 
   return (
     <IonPage>
@@ -41,7 +54,7 @@ const Projects: React.FC = () => {
         <Toolbar name="PROJECTS" search menu />
       </IonHeader>
       <IonContent className="ion-padding" color="tertiary">
-        {isLoading ? (
+        {(isLoading || isFetching) ? (
           AppLoader()
         ) : (
           <IonGrid>

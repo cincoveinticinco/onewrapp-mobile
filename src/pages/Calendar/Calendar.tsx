@@ -36,7 +36,7 @@ const Calendar: React.FC = () => {
   });
 
   const {
-    oneWrapDb, projectId, isOnline, initializeShootingReplication
+    oneWrapDb, projectId, isOnline
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(false);
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
@@ -45,23 +45,7 @@ const Calendar: React.FC = () => {
   const successToast = useSuccessToast();
   const isMobile = useIsMobile()
 
-
-  const {
-    result: currentProject,
-    isFetching
-  } = useRxData<ProjectDocType>( 'projects', (collection) => {
-    return collection.findOne({
-      selector: {
-        id: projectId?.toString()
-      }
-    })
-  })
-
   // QUE PERMISOS DEBE TENER EL PROYECTO PARA PODER CREAR SHOOTINGS?
-
-  useEffect(() => {
-    console.log(currentProject[0].projStatus)
-  }, [currentProject])
 
   useEffect(() => {
     const storedDate = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -138,7 +122,6 @@ const Calendar: React.FC = () => {
       };
 
       await oneWrapDb.shootings.insert(newShooting);
-      await initializeShootingReplication();
       await getShootings();
       successToast('Shooting created successfully');
 

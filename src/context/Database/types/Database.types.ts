@@ -14,11 +14,6 @@ export interface DatabaseContextProps {
   setScenesAreLoading: (scenesAreLoading: boolean) => void;
   projectsAreLoading: boolean;
   setProjectsAreLoading: (projectsAreLoading: boolean) => void;
-  initializeShootingReplication: () => Promise<void>;
-  initializeSceneReplication: () => Promise<void>;
-  initializeParagraphReplication: () => Promise<void>;
-  initializeUnitReplication: () => Promise<void>;
-  initializeTalentsReplication: () => Promise<void>;
   isDatabaseReady: boolean;
   initialProjectReplication: () => Promise<void>;
   replicationPercentage: number;
