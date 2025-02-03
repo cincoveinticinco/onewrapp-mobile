@@ -103,7 +103,7 @@ const AppContent: React.FC = () => {
                 <AppTabs />
               </Route>
               <Route path="/my/projects/:id/unauthorized">
-                <PageNotExists />
+                <PageNotExists unauthorized />
               </Route>
               <Route exact path="/">
                 <Redirect to="/my/projects" />

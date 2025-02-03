@@ -7,9 +7,23 @@ import { useHistory } from 'react-router';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import './PageNotExists.scss';
+import { useEffect, useState } from 'react';
 
-const PageNotExists = () => {
+interface PageNotExistsProps {
+  unauthorized: boolean;
+}
+
+const PageNotExists = ({
+  unauthorized = false
+}) => {
   const history = useHistory();
+  const [pageText, setPageText] = useState<string>('The page you are looking for does not exist. Go');
+ 
+  useEffect(() => {
+    if (unauthorized) {
+      setPageText('You are not authorized to view this page. Go');
+    }
+  }, [unauthorized]);
 
   const handleGoBack = () => history.push('/my/projects');
   return (
@@ -32,9 +46,9 @@ const PageNotExists = () => {
         </div>
         <div className="text-wrapper">
           <p>
-            The page you are looking for does not exist. Go
+            {pageText}
             {' '}
-            <a onClick={() => handleGoBack()}>back</a>
+            <a onClick={() => handleGoBack()} style={{cursor: 'pointer'}}>back</a>
             .
           </p>
         </div>
