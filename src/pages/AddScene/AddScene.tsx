@@ -85,7 +85,6 @@ const AddScene: React.FC = () => {
   };
 
   const insertScene = async (formData: any) => {
-    console.log('inserting scene')
     try {
       formData.id = `${watch('projectId')}.${watch('episodeNumber')}.${watch('sceneNumber')}`;
 

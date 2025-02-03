@@ -57,15 +57,15 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
           {showReset ? 'RESET' : 'CANCEL'}
         </IonButton>
         )
-      }
-       {
+            }
+            {
         customButtons && customButtons.map((button, index) => (
-          <>
+          <React.Fragment key={index}>
             {button()}
-          </>
+          </React.Fragment>
         ))
-      }
-      {
+            }
+            {
         handleSave
         && (
         <IonButton fill="clear" color="primary" slot="end" onClick={handleSave}>
