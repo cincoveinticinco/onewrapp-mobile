@@ -10,6 +10,8 @@ import CustomSelect from '../CustomSelect/CustomSelect';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';
 import SelectItem from '../SelectInput/SelectInput';
 import './EditionModal.scss';
+import { useRxData } from 'rxdb-hooks';
+import { useParams } from 'react-router';
 
 export interface FormInput {
   fieldKeyName: string;

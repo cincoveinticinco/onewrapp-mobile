@@ -24,6 +24,7 @@ import './Calendar.css';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
 import WeekViewToolbar from './Components/WeekViewToolbar/WeekViewToolbar';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';
@@ -39,9 +40,28 @@ const Calendar: React.FC = () => {
   } = useContext<DatabaseContextProps>(DatabaseContext);
   const [isLoading, setIsLoading] = useState(false);
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
+  const [canCreateShooting, setCanCreateShooting] = useState(false);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const isMobile = useIsMobile()
+
+
+  const {
+    result: currentProject,
+    isFetching
+  } = useRxData<ProjectDocType>( 'projects', (collection) => {
+    return collection.findOne({
+      selector: {
+        id: projectId?.toString()
+      }
+    })
+  })
+
+  // QUE PERMISOS DEBE TENER EL PROYECTO PARA PODER CREAR SHOOTINGS?
+
+  useEffect(() => {
+    console.log(currentProject[0].projStatus)
+  }, [currentProject])
 
   useEffect(() => {
     const storedDate = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -175,7 +195,6 @@ const Calendar: React.FC = () => {
   useIonViewDidEnter(() => {
     if (navigator.onLine || isOnline) {
       initializeReplication();
-      console.log('online');
     } else {
       setIsLoading(false);
     }
@@ -301,6 +320,8 @@ const Calendar: React.FC = () => {
       };
     });
   };
+
+  
 
   return (
     <IonPage>
