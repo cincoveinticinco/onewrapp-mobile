@@ -66,6 +66,7 @@ interface ToolbarProps {
   permissionType?: number | null;
   logoutIcon?: boolean;
   customHandleSearch?: (e: any) => void;
+  editOnClick?: () => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -94,7 +95,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   customButtons = [],
   permissionType,
   logoutIcon = true,
-  customHandleSearch
+  customHandleSearch,
+  editOnClick,
 }) => {
   const isMobile = useIsMobile();
 
@@ -228,7 +230,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       )} */}
       {
         edit && (
-          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editRoute}>
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editOnClick ? undefined : editRoute} onClick={editOnClick}>
             <CiEdit className="toolbar-icon edit-icon" />
           </IonButton>
         )

@@ -18,6 +18,7 @@ import DatabaseContext from '../../../context/Database/Database.context';
 import {
   DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
 } from '../../../Shared/ennums/ennums';
+import { IonButton } from '@ionic/react';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;
@@ -94,6 +95,8 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
     return setValue(field, value);
   };
 
+  const closeModal = () => history.goBack();
+
   useEffect(() => {
     if (watch('sceneType') === SceneTypeEnum.SCENE) {
       setValue('protectionType', null);
@@ -101,206 +104,207 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
   }, [watch('sceneType'), setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form" id={sceneFormId}>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="add-scene-form" id={sceneFormId}>
 
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="SCENE TYPE *"
-        options={sceneTypeOptions}
-        inputName="add-scene-type-input"
-        displayError={!!errors.sceneType}
-        fieldKeyName="sceneType"
-        control={control}
-        setValue={handleSetValue}
-        watchValue={watch}
-        validate={sceneTypeValidation}
-      />
-
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="PROTECTION TYPE"
-        disabled={getDisabled()}
-        options={protectionTypeValues}
-        inputName="add-protection-type-input"
-        fieldKeyName="protectionType"
-        displayError={!!errors.protectionType && !getDisabled()}
-        watchValue={watch}
-        control={control}
-        validate={getDisabled() ? () => true : protectionTypeValidation}
-        setValue={handleSetValue}
-      />
-
-      <InputItem
-        label="EPISODE *"
-        placeholder="EPISODE"
-        control={control}
-        fieldKeyName="episodeNumber"
-        type="number"
-        setValue={handleSetValue}
-        inputName="add-episode-input"
-        displayError={!!errors.episodeNumber}
-        validate={episodeNUmberValidation}
-      />
-
-      <InputItem
-        label="SCENE *"
-        placeholder="INSERT"
-        control={control}
-        fieldKeyName="sceneNumber"
-        setValue={handleSetValue}
-        inputName="add-scene-number-input"
-        displayError={!!errors.sceneNumber}
-        validate={sceneNumberValidation}
-      />
-
-      <InputItem
-        label="SCRIPT DAY"
-        placeholder="INSERT"
-        control={control}
-        fieldKeyName="scriptDay"
-        setValue={handleSetValue}
-        inputName="add-script-day-input"
-      />
-
-      <InputItem
-        label="YEAR"
-        placeholder="INSERT"
-        control={control}
-        fieldKeyName="year"
-        setValue={handleSetValue}
-        inputName="add-year-input"
-      />
-
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="DAY/NIGHT"
-        options={dayNightOptions}
-        inputName="add-day-night-input"
-        fieldKeyName="dayOrNightOption"
-        control={control}
-        watchValue={watch}
-        setValue={handleSetValue}
-      />
-
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="INT/EXT"
-        options={intExtOptions}
-        inputName="add-int-ext-input"
-        fieldKeyName="intOrExtOption"
-        control={control}
-        setValue={handleSetValue}
-        watchValue={watch}
-      />
-
-      <InputItem
-        label="SCRIPT PAGE"
-        placeholder="INSERT"
-        control={control}
-        fieldKeyName="page"
-        type="number"
-        setValue={handleSetValue}
-        inputName="add-page-input"
-      />
-
-      <AddPagesForm
-        handleChange={handleChange}
-        observedField={watch('pages')}
-      />
-
-      <AddSecondsForm
-        handleChange={handleChange}
-        observedField={watch('estimatedSeconds')}
-      />
-
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="LOCATION"
-        control={control}
-        fieldKeyName="locationName"
-        options={locationOptions}
-        inputName="add-location-input"
-        watchValue={watch}
-        setValue={handleSetValue}
-        canCreateNew
-      />
-
-      <SelectItem
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-        label="SET *"
-        control={control}
-        fieldKeyName="setName"
-        options={setOptions}
-        inputName="add-set-input"
-        watchValue={watch}
-        setValue={handleSetValue}
-        canCreateNew
-        displayError={!!errors.setName}
-        validate={setNameValidation}
-      />
-
-      <InputItem
-        label="DESCRIPTION/SYNOPSIS"
-        placeholder="INSERT"
-        control={control}
-        fieldKeyName="synopsis"
-        setValue={handleSetValue}
-        inputName="add-synopsis-input"
-      />
-
-      <AddCharacterForm
-        handleSceneChange={handleChange}
-        observedCharacters={watch('characters')}
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-      />
-
-      <AddElementForm
-        handleSceneChange={handleChange}
-        observedElements={watch('elements')}
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-      />
-
-      <AddExtraForm
-        handleSceneChange={handleChange}
-        observedExtras={watch('extras')}
-        editMode={editMode}
-        detailsEditMode={detailsEditMode}
-      />
-
-      {/* <div color="tertiary">
-        Notes
-        <IonButton slot='end' fill='clear' color="light">
-          <IonIcon icon={add} />
-        </IonButton>
-      </div> */}
-
-      <OutlinePrimaryButton
-        buttonName="SAVE"
-        className="submit-scene-button"
-        type="submit"
-        onClick={() => {
-          scrollToTop();
-        }}
-      />
-      {
-        isMobile
-        && (
-        <OutlineLightButton
-          buttonName="CANCEL"
-          onClick={() => history.goBack()}
-          className="cancel-add-scene-button cancel-button"
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="SCENE TYPE *"
+          options={sceneTypeOptions}
+          inputName="add-scene-type-input"
+          displayError={!!errors.sceneType}
+          fieldKeyName="sceneType"
+          control={control}
+          setValue={handleSetValue}
+          watchValue={watch}
+          validate={sceneTypeValidation}
         />
-        )
-      }
-    </form>
+
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="PROTECTION TYPE"
+          disabled={getDisabled()}
+          options={protectionTypeValues}
+          inputName="add-protection-type-input"
+          fieldKeyName="protectionType"
+          displayError={!!errors.protectionType && !getDisabled()}
+          watchValue={watch}
+          control={control}
+          validate={getDisabled() ? () => true : protectionTypeValidation}
+          setValue={handleSetValue}
+        />
+
+        <InputItem
+          label="EPISODE *"
+          placeholder="EPISODE"
+          control={control}
+          fieldKeyName="episodeNumber"
+          type="number"
+          setValue={handleSetValue}
+          inputName="add-episode-input"
+          displayError={!!errors.episodeNumber}
+          validate={episodeNUmberValidation}
+        />
+
+        <InputItem
+          label="SCENE *"
+          placeholder="INSERT"
+          control={control}
+          fieldKeyName="sceneNumber"
+          setValue={handleSetValue}
+          inputName="add-scene-number-input"
+          displayError={!!errors.sceneNumber}
+          validate={sceneNumberValidation}
+        />
+
+        <InputItem
+          label="SCRIPT DAY"
+          placeholder="INSERT"
+          control={control}
+          fieldKeyName="scriptDay"
+          setValue={handleSetValue}
+          inputName="add-script-day-input"
+        />
+
+        <InputItem
+          label="YEAR"
+          placeholder="INSERT"
+          control={control}
+          fieldKeyName="year"
+          setValue={handleSetValue}
+          inputName="add-year-input"
+        />
+
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="DAY/NIGHT"
+          options={dayNightOptions}
+          inputName="add-day-night-input"
+          fieldKeyName="dayOrNightOption"
+          control={control}
+          watchValue={watch}
+          setValue={handleSetValue}
+        />
+
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="INT/EXT"
+          options={intExtOptions}
+          inputName="add-int-ext-input"
+          fieldKeyName="intOrExtOption"
+          control={control}
+          setValue={handleSetValue}
+          watchValue={watch}
+        />
+
+        <InputItem
+          label="SCRIPT PAGE"
+          placeholder="INSERT"
+          control={control}
+          fieldKeyName="page"
+          type="number"
+          setValue={handleSetValue}
+          inputName="add-page-input"
+        />
+
+        <AddPagesForm
+          handleChange={handleChange}
+          observedField={watch('pages')}
+        />
+
+        <AddSecondsForm
+          handleChange={handleChange}
+          observedField={watch('estimatedSeconds')}
+        />
+
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="LOCATION"
+          control={control}
+          fieldKeyName="locationName"
+          options={locationOptions}
+          inputName="add-location-input"
+          watchValue={watch}
+          setValue={handleSetValue}
+          canCreateNew
+        />
+
+        <SelectItem
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+          label="SET *"
+          control={control}
+          fieldKeyName="setName"
+          options={setOptions}
+          inputName="add-set-input"
+          watchValue={watch}
+          setValue={handleSetValue}
+          canCreateNew
+          displayError={!!errors.setName}
+          validate={setNameValidation}
+        />
+
+        <InputItem
+          label="DESCRIPTION/SYNOPSIS"
+          placeholder="INSERT"
+          control={control}
+          fieldKeyName="synopsis"
+          setValue={handleSetValue}
+          inputName="add-synopsis-input"
+        />
+
+        <AddCharacterForm
+          handleSceneChange={handleChange}
+          observedCharacters={watch('characters')}
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+        />
+
+        <AddElementForm
+          handleSceneChange={handleChange}
+          observedElements={watch('elements')}
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+        />
+
+        <AddExtraForm
+          handleSceneChange={handleChange}
+          observedExtras={watch('extras')}
+          editMode={editMode}
+          detailsEditMode={detailsEditMode}
+        />
+
+        {/* <div color="tertiary">
+          Notes
+          <IonButton slot='end' fill='clear' color="light">
+            <IonIcon icon={add} />
+          </IonButton>
+        </div> */}
+      </form>
+      <div className="add-scene-form-buttons"> 
+        <OutlinePrimaryButton
+          buttonName="SAVE"
+          type="button"
+          onClick={() => {
+            scrollToTop();
+            document.getElementById(sceneFormId)?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }}
+          color='success'
+          className='ion-margin-top save-button'
+        />
+        <IonButton
+          onClick={closeModal}
+          className="modal-cancel-button clear-danger-button ion-margin-bottom"
+        >
+          CANCEL
+        </IonButton>
+      </div>
+    </>
   );
 };
 

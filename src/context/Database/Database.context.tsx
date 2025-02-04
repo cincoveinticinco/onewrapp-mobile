@@ -403,18 +403,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
 
     const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication];
-    
     try {
-      setAllReplicationsInCourse(true)
       for (const replication of replicationsArray) {
         await replication();
       }
     } catch (error) {
       console.error('Error in initializeAllReplications:', error);
       throw error;
-    } finally {
-      setAllReplicationsInCourse(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -422,11 +418,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       console.info('Replicating data...');
       await initializeAllReplications();
     };
-    const warnMessage = !isOnline ? 'project is not onlyne' : !oneWrapRXdatabase ? 'database is not initialized' : !projectId ? 'project id not found' : !initialReplicationFinished ? 'initial replication is not finished' : 'NO ERRORS';
+    const warnMessage = !isOnline ? 'project is not online' : !oneWrapRXdatabase ? 'database is not initialized' : !projectId ? 'project id not found' : !initialReplicationFinished ? 'initial replication is not finished' : 'NO ERRORS';
     console.warn(warnMessage)
     if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
 
-      replicatePeriodically();
+      replicatePeriodically();  
   
       const intervalId = setInterval(() => {
         replicatePeriodically();

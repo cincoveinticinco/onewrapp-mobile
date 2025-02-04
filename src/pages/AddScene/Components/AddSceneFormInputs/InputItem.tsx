@@ -15,7 +15,8 @@ interface InputItemProps {
   type?: any;
   errorMessage?: string;
   style?: any;
-  suggestions?: string[]; // New prop for suggestions
+  className?: string;
+  suggestions?: string[];
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -30,7 +31,8 @@ const InputItem: React.FC<InputItemProps> = ({
   type = 'text',
   errorMessage = 'REQUIRED *',
   style,
-  suggestions = [], // Default to empty array
+  className,
+  suggestions = [],
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
@@ -64,34 +66,32 @@ const InputItem: React.FC<InputItemProps> = ({
 
   return (
     <div style={style} id={inputName}>
-      <IonItem color="tertiary">
-        <Controller
-          control={control}
-          name={fieldKeyName}
-          rules={{
-            validate: (validate || null),
-          }}
-          render={({ field }) => (
-            <IonInput
-              placeholder={showError ? label : placeholder}
-              type={type}
-              label={showError ? errorMessage : label}
-              labelPlacement="floating"
-              value={field.value}
-              onIonInput={(e) => handleInputChange(e.detail.value || '')}
-              onFocus={() => {
-                setIsFocused(true);
-                setShowSuggestions(true);
-              }}
-              onBlur={() => {
-                setIsFocused(false);
-                setTimeout(() => setShowSuggestions(false), 200);
-              }}
-              className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''}`}
-            />
-          )}
-        />
-      </IonItem>
+      <Controller
+        control={control}
+        name={fieldKeyName}
+        rules={{
+          validate: (validate || null),
+        }}
+        render={({ field }) => (
+          <IonInput
+            placeholder={showError ? label : placeholder}
+            type={type}
+            label={showError ? errorMessage : label}
+            labelPlacement="floating"
+            value={field.value}
+            onIonInput={(e) => handleInputChange(e.detail.value || '')}
+            onFocus={() => {
+              setIsFocused(true);
+              setShowSuggestions(true);
+            }}
+            onBlur={() => {
+              setIsFocused(false);
+              setTimeout(() => setShowSuggestions(false), 200);
+            }}
+            className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+          />
+        )}
+      />
       {showSuggestions && filteredSuggestions.length > 0 && (
         <IonList className="suggestions-list">
           {filteredSuggestions.map((suggestion, index) => (

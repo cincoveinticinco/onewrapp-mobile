@@ -123,3 +123,17 @@ export const ShootingSceneStatusEnumArray: number[] = [
   ShootingSceneStatusEnum.Shoot,
   ShootingSceneStatusEnum.NotShoot,
 ];
+
+export enum InfoType {
+  Date = 'date',
+  Year = 'year',
+  Time = 'time',
+  Number = 'number',
+  Text = 'text',
+  Fraction = 'fraction',
+  Integer = 'integer',
+  Hours = 'hours',
+  LongText = 'longText',
+  Pages = 'pages',
+  Minutes = 'minutes',
+}

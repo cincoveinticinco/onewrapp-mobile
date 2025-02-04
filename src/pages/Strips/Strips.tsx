@@ -56,6 +56,8 @@ const Strips: React.FC<{
   const { id } = useParams<any>();
   const toggleTabs = useHideTabs();
 
+  console.log('RENDERING Strips');
+
   const defaultSortPosibilitiesOrder = [
     {
       id: 'EPISODE_NUMBER', label: 'EP NUMBER', optionKey: 'episodeNumber', defaultIndex: 0,

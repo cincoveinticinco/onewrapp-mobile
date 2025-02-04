@@ -32,6 +32,7 @@ import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
 import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import { useForm } from 'react-hook-form';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -105,7 +106,7 @@ const SceneDetails: React.FC<{
   const { selectedFilterOptions } = useContext(ScenesContext);
   const history = useHistory();
 
-  const [thisScene, setThisScene] = useState<any | null>(null);
+  const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
@@ -115,6 +116,24 @@ const SceneDetails: React.FC<{
   const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const [sceneColor, setSceneColor] = useState<any>('light');
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [formData, setFormData] = useState<SceneDocType>();
+
+  const {
+    control,
+    reset,
+    watch,
+  } = useForm<SceneDocType>();
+  
+  useEffect(() => {
+    if (thisScene) {
+      reset(thisScene);
+    }
+  }, [thisScene, reset]);
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  }
 
   const successMessageSceneToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -142,7 +161,7 @@ const SceneDetails: React.FC<{
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, [field]: newTimeISO };
             }
             return scene;
@@ -151,7 +170,7 @@ const SceneDetails: React.FC<{
           setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO });
         }
 
-        successMessageSceneToast('SceneDocType updated successfully');
+        successMessageSceneToast('Scene updated successfully');
       } catch (error) {
         errorToast('Error updating scene');
         throw error;
@@ -162,7 +181,7 @@ const SceneDetails: React.FC<{
   const getSceneColor = async (scene: SceneDocType) => {
     if (isShooting) {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
-      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
+      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => thisScene && parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || ''));
 
       const sceneStatus = sceneInShooting?.status;
       switch (sceneStatus) {
@@ -214,7 +233,7 @@ const SceneDetails: React.FC<{
         if (shooting) {
           const totalSeconds = minutes * 60 + seconds;
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, producedSeconds: totalSeconds };
             }
             return scene;
@@ -236,7 +255,7 @@ const SceneDetails: React.FC<{
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         if (shooting) {
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, partiality: isPartial };
             }
             return scene;
@@ -276,7 +295,7 @@ const SceneDetails: React.FC<{
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         if (shooting) {
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, status: newStatus };
             }
             return scene;
@@ -284,7 +303,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, status: newStatus });
         }
-        successMessageSceneToast('SceneDocType status updated successfully');
+        successMessageSceneToast('Scene status updated successfully');
       } catch (error) {
         errorToast('Error updating scene status');
         throw error;
@@ -362,7 +381,7 @@ const SceneDetails: React.FC<{
 
   useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId) : scene.id === thisScene.id));
+      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '') : scene.id === thisScene.id));
       setCurrentSceneIndex(index);
     }
   }, [filteredScenes, thisScene, isShooting]);
@@ -378,7 +397,7 @@ const SceneDetails: React.FC<{
   const fetchSceneShooting = async () => {
     if (shootingId && oneWrapDb && thisScene) {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId));
+      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId?.toString() || ''));
       setThisSceneShooting(sceneShooting || null);
     }
   };
@@ -426,7 +445,7 @@ const SceneDetails: React.FC<{
       const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       await sceneToDelete?.remove();
       history.push(`/my/projects/${id}/strips`);
-      successMessageSceneToast('SceneDocType deleted successfully');
+      successMessageSceneToast('Scene deleted successfully');
     } catch (error) {
       errorToast('Error deleting scene');
     }
@@ -451,12 +470,13 @@ const SceneDetails: React.FC<{
     <IonPage>
       <IonHeader>
         <Toolbar
-          name=""
+          name={sceneHeader}
           backString
           prohibited
           deleteButton
           edit
-          editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
+          // editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
+          editOnClick={toggleEditMode}
           handleBack={handleBack}
           deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
         />
@@ -467,11 +487,12 @@ const SceneDetails: React.FC<{
           nextScene={nextScene}
           changeToPreviousScene={changeToPreviousScene}
           changeToNextScene={changeToNextScene}
-          status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
+          status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'NOT ASSIGNED'}
+          editMode={editMode}
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? AppLoader() : <SceneBasicInfo scene={thisScene} />}
+        {sceneIsLoading ? AppLoader() : thisScene && <SceneBasicInfo scene={thisScene} control={control} editMode={editMode} watch={watch}/>}
         {
           isShooting && (
             <div className="shoot-info">
@@ -575,7 +596,7 @@ const SceneDetails: React.FC<{
         currentRoute="scenedetails"
       />
       <InputAlert
-        header="Delete SceneDocType"
+        header="Delete Scene"
         message={`Are you sure you want to delete scene ${sceneHeader}?`}
         handleOk={deleteScene}
         inputs={[]}

@@ -21,7 +21,6 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
   open,
   setOpen,
   editMode,
-  setEditMode,
   onAddClick,
   getHourMinutesFomISO,
   deleteAdvanceCall,

@@ -1,0 +1,59 @@
+.input-label-placement-floating.sc-ion-input-md-h, .input-label-placement-stacked.sc-ion-input-md-h {
+  min-height: 0px;
+}
+.input-wrapper {
+  min-height: 0px !important;
+}
+
+.custom-pages-input {
+  display: flex;
+  height: 30px;
+  justify-content: center;
+
+  .estimated-minutes-input {
+    display: flex;
+    align-items: flex-start;
+    padding: 2px;
+    #semicolon-estimated-seconds {
+      height: 100%;
+      margin: 0px !important;
+      padding: 0px !important;
+    }
+  }
+  
+  ion-item {
+    margin: 1px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--ion-color-primary);
+    --min-height: 100% !important;
+    width: 40px !important;
+    overflow: visible;
+    padding: 0px !important;
+
+    ion-input {
+
+      --min-height: 0px !important;
+      width: 40px;
+    }
+  }
+  #add-pages-denominator {
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 0px;
+  }
+}
+
+.custom-input {
+  border-bottom: 1px solid var(--ion-color-primary);
+  width: 100px;
+  margin: auto;
+  font-size: 16px;
+  font-weight: 700;
+  height: 30px;
+
+  input {
+    text-align: center !important;
+    height: 100%;
+  }
+}
