@@ -1,4 +1,9 @@
 .labels-wrapper {
+
+  .error {
+    color: var(--ion-color-danger);
+  }
+  
   .input-label-placement-floating.sc-ion-input-md-h, .input-label-placement-stacked.sc-ion-input-md-h {
     min-height: 0px;
   }
@@ -64,6 +69,10 @@
     font-size: 16px;
     font-weight: 700;
     height: 30px;
+
+    &.error {
+      border-bottom: 1px solid var(--ion-color-danger);
+    }
   
     input {
       text-align: center !important;
@@ -74,6 +83,14 @@
   .custom-select {
     border-bottom: 1px solid var(--ion-color-primary);
     text-align: center;
+
+    &.error {
+      border-bottom: 1px solid var(--ion-color-danger);
+
+      label {
+        color: var(--ion-color-danger)
+      }
+    }
   }
   
   #textarea-input {

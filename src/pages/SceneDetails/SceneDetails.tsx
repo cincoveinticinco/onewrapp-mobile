@@ -33,6 +33,7 @@ import './SceneDetails.scss';
 import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import { useForm } from 'react-hook-form';
+import useSceneDetailForm from './hooks/useSceneDetailForm';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -118,12 +119,13 @@ const SceneDetails: React.FC<{
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  const form = useSceneDetailForm()
   const {
-    control,
     reset,
     watch,
-    setValue
-  } = useForm<SceneDocType>();
+    errors,
+    handleSubmit
+  } = form;
   
   useEffect(() => {
     if (thisScene) {
@@ -132,7 +134,12 @@ const SceneDetails: React.FC<{
   }, [thisScene, reset]);
 
   const toggleEditMode = () => {
-    setEditMode(!editMode);
+    if(editMode && thisScene) {
+      reset(thisScene); 
+      setEditMode(false);
+    } else {
+      setEditMode(true);
+    }
   }
 
   const successMessageSceneToast = useSuccessToast();
@@ -496,8 +503,9 @@ const SceneDetails: React.FC<{
           slot="end"
           color="light"
           className="outline-success-button-small"
-          onClick={() => onSubmitForm(watch())}
           key="custom-edit"
+          type="submit"
+          form="scene-detail-info"
         >
           SAVE
         </IonButton>
@@ -554,7 +562,7 @@ const SceneDetails: React.FC<{
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? AppLoader() : thisScene && <SceneBasicInfo scene={thisScene} control={control} editMode={editMode} watch={watch} setValue={setValue}/>}
+        {sceneIsLoading ? AppLoader() : thisScene && <form onSubmit={handleSubmit(onSubmitForm)} id='scene-detail-info'><SceneBasicInfo editMode={editMode} scene={thisScene} form={form}/></form>}
         {
           isShooting && (
             <div className="shoot-info">

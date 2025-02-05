@@ -73,14 +73,17 @@ const InputItem: React.FC<InputItemProps> = ({
           control={control}
           name={fieldKeyName}
           rules={{
-            validate: (validate || null),
+            validate: (validate || undefined),
           }}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             textArea ? (
               <IonTextarea
                 placeholder={showError ? label : placeholder}
                 value={field.value}
-                onIonInput={(e) => handleInputChange(e.detail.value || '')}
+                onIonInput={(e) => {
+                  const value = e.detail.value || '';
+                  field.onChange(value.trim());
+                }}
                 onFocus={() => {
                   setIsFocused(true);
                   setShowSuggestions(true);
@@ -98,7 +101,10 @@ const InputItem: React.FC<InputItemProps> = ({
                 label={showError ? errorMessage : label}
                 labelPlacement="floating"
                 value={field.value}
-                onIonInput={(e) => handleInputChange(e.detail.value || '')}
+                onIonInput={(e) => {
+                  const value = e.detail.value || '';
+                  field.onChange(value.trim());
+                }}
                 onFocus={() => {
                   setIsFocused(true);
                   setShowSuggestions(true);
@@ -107,7 +113,7 @@ const InputItem: React.FC<InputItemProps> = ({
                   setIsFocused(false);
                   setTimeout(() => setShowSuggestions(false), 200);
                 }}
-                className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+                className={`add-scene-input${(showError || error ) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
               />
             )
           )}

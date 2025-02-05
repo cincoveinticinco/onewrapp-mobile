@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
-import { Controller, FieldValues, ValidateResult } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import InputModal from '../../../../Layouts/InputModal/InputModal';
-import SelectionModal from '../../../../Layouts/SelectionModal/SelectionModal';
 
 interface SelectItemProps {
   label: string;
   options: string[];
   control: any;
   fieldKeyName: string;
-  displayError?: boolean;
   inputName: string;
   disabled?: boolean;
   setValue: any;
   validate?: any;
+  displayError?: boolean;
   watchValue: any;
   canCreateNew?: boolean;
   editMode?: boolean;
@@ -27,11 +26,11 @@ const SelectItem: React.FC<SelectItemProps> = ({
   options,
   control,
   fieldKeyName,
-  displayError = false,
   inputName,
   disabled = false,
   setValue,
   validate = () => true,
+  displayError = false,
   watchValue,
   canCreateNew,
   editMode,
@@ -39,22 +38,13 @@ const SelectItem: React.FC<SelectItemProps> = ({
   showLabel = true,
   className = '',
 }) => {
-  const [showError, setShowError] = React.useState(false);
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
   const modalRef = React.useRef<HTMLIonModalElement>(null);
-
-  useEffect(() => {
-    setShowError(displayError);
-  }, [displayError]);
 
   const currentFieldValue = watchValue(fieldKeyName);
 
   const handleSelectCheckbox = (option: string) => {
     currentFieldValue === option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
-
-    if (validate(currentFieldValue)) {
-      setShowError(false);
-    }
   };
 
   const getId = () => {
@@ -73,39 +63,46 @@ const SelectItem: React.FC<SelectItemProps> = ({
         control={control}
         name={fieldKeyName}
         rules={{
-          validate: (validate || null),
+          validate: validate || undefined,
         }}
-        render={({ field }) => (
-          <IonSelect
-            placeholder="SELECT TYPE"
-            label={showError && validate && (validate(field.value)) ? (validate(field.value)) : (showLabel ? label : '')}
-            labelPlacement="floating"
-            interface="alert"
-            value={watchValue(fieldKeyName)}
-            onIonChange={(e) => { setValue(fieldKeyName, e.detail.value); }}
-            className={(showError ? 'error' : className)}
-            mode="ios"
-            disabled={disabled}
-          >
-            {options.map((option, index) => (
-              <IonSelectOption key={index} value={option}>{option.toUpperCase()}</IonSelectOption>
-            ))}
-          </IonSelect>
+        render={({ field, fieldState: { error } }) => (
+          <>
+            <IonSelect
+              {...field}
+              placeholder="SELECT TYPE"
+              label={error ? (showLabel ? error.message : '') || (showLabel ? label : '') : (showLabel ? label : '')}
+              labelPlacement="floating"
+              interface="alert"
+              value={field.value}
+              className={`${(displayError || error) ? 'error' : ''} ${className}`}
+              mode="ios"
+              disabled={disabled}
+              onIonChange={(e) => {
+                field.onChange(e.detail.value);
+              }}
+            >
+              {options.map((option, index) => (
+                <IonSelectOption key={index} value={option}>
+                  {option.toUpperCase()}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+            <InputModal
+              modalRef={modalRef}
+              optionName={label}
+              listOfOptions={options}
+              handleCheckboxToggle={handleSelectCheckbox}
+              selectedOptions={[watchValue(fieldKeyName)]}
+              clearSelections={() => setValue(fieldKeyName, null)}
+              multipleSelections={false}
+              canCreateNew={canCreateNew}
+              editMode={editMode}
+              isOpen={showModal}
+              setIsOpen={setShowModal}
+              modalId={getId()}
+            />
+          </>
         )}
-      />
-      <InputModal
-        modalRef={modalRef}
-        optionName={label}
-        listOfOptions={options}
-        handleCheckboxToggle={handleSelectCheckbox}
-        selectedOptions={[watchValue(fieldKeyName)]}
-        clearSelections={() => setValue(fieldKeyName, null)}
-        multipleSelections={false}
-        canCreateNew={canCreateNew}
-        editMode={editMode}
-        isOpen={showModal}
-        setIsOpen={setShowModal}
-        modalId={getId()}
       />
     </IonItem>
   );
