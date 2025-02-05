@@ -21,6 +21,7 @@ interface AddCharacterInputProps {
   setSelectedCharacters: (value: any) => void;
   openModal: boolean;
   setOpenModal: (value: boolean) => void;
+  editMode?: boolean;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
@@ -28,7 +29,8 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   selectedCharacters,
   setSelectedCharacters,
   openModal,
-  setOpenModal
+  setOpenModal,
+  editMode
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
@@ -127,17 +129,17 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any, index: number) => (
-            <IonItem
+            <div
               key={`character-item-${index}-category-${categoryName}`}
-              color="tertiary"
-              className="ion-no-margin category-items"
+              style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)'}}
+              className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
             >
               {`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}
-              <DeleteButton
+              {editMode && (<DeleteButton
                 onClick={() => deleteCharacter(character.characterName)}
                 slot="end"
-              />
-            </IonItem>
+              />)}
+            </div>
           ))}
         </IonList>
       ) : (

@@ -34,6 +34,9 @@ import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import { useForm } from 'react-hook-form';
 import useSceneDetailForm from './hooks/useSceneDetailForm';
+import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
+import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
+import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -124,8 +127,18 @@ const SceneDetails: React.FC<{
     reset,
     watch,
     errors,
-    handleSubmit
+    handleSubmit,
+    setValue
   } = form;
+
+  const handleChange = (value: any, field: keyof SceneDocType) => {
+    const formData = watch();
+    if (Array.isArray(formData[field])) {
+      setValue(field, [...value]);
+    } else {
+      setValue(field, value);
+    }
+  };
   
   useEffect(() => {
     if (thisScene) {
@@ -646,13 +659,28 @@ const SceneDetails: React.FC<{
         {!sceneIsLoading && thisScene && (
           <div className="grid-scene-info">
             <div className="section-wrapper characters-info">
-              <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CHARACTERS" characters />
+              <AddCharacterForm
+                handleSceneChange={handleChange}
+                observedCharacters={watch('characters') || []}
+                editMode={editMode}
+              />
             </div>
             <div className="section-wrapper extras-info">
-              <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
+              <AddElementForm
+                handleSceneChange={handleChange}
+                observedElements={(watch('elements') || []).map((element: any) => ({
+                  ...element,
+                  categoryName: element.categoryName || '',
+                }))}
+                editMode={editMode}
+              />
             </div>
             <div className="section-wrapper elements-info">
-              <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
+              <AddExtraForm
+                handleSceneChange={handleChange}
+                observedExtras={watch('extras') || []}
+                editMode={editMode}
+              />
             </div>
             <div className="section-wrapper notes-info">
               <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />

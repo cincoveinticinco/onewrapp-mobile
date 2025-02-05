@@ -18,10 +18,11 @@ interface AddExtraInputProps {
   setSelectedExtras: (value: any) => void;
   openModal: boolean;
   setOpenModal: (value: boolean) => void;
+  editMode?: boolean;
 }
 
 const AddExtraInput: React.FC<AddExtraInputProps> = ({
-  categoryName, selectedExtras, setSelectedExtras, openModal, setOpenModal,
+  categoryName, selectedExtras, setSelectedExtras, openModal, setOpenModal, editMode
 }) => {
   // const extraNameInputRef = useRef<HTMLIonInputElement>(null);
   const { offlineScenes } = useContext(DatabaseContext);
@@ -83,17 +84,17 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     <IonCardContent className={contentStyle}>
       {filterSelectedExtras.length > 0 ? (
         filterSelectedExtras.map((extra: any, index: number) => (
-          <IonItem
-            key={index}
-            color="tertiary"
-            className="ion-no-margin category-items"
+          <div
+            key={`character-item-${index}-category-${categoryName}`}
+            style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)'}}
+            className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
           >
             {extra.extraName.toUpperCase()}
-            <DeleteButton
+            {editMode && (<DeleteButton
               onClick={() => deleteExtra(index)}
               slot="end"
-            />
-          </IonItem>
+            />)}
+          </div>
         ))
       ) : (
         <NoAdded />

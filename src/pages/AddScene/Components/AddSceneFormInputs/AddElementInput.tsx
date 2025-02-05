@@ -19,6 +19,7 @@ interface AddElementInputProps {
   setSelectedElements: (value: any) => void;
   openModal: boolean;
   setOpenModal: (value: boolean) => void;
+  editMode?: boolean;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
@@ -26,7 +27,8 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   selectedElements,
   setSelectedElements,
   openModal,
-  setOpenModal
+  setOpenModal,
+  editMode,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
 
@@ -111,17 +113,17 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       {filterSelectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedElements.map((element: any, index: number) => (
-            <IonItem
-              key={index}
-              color="tertiary"
-              className="ion-no-margin category-items"
+            <div
+              key={`character-item-${index}-category-${categoryName}`}
+              style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)'}}
+              className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
             >
               {element.elementName.toUpperCase()}
-              <DeleteButton
+              {editMode && (<DeleteButton
                 onClick={() => deleteElement(element.elementName)}
                 slot="end"
-              />
-            </IonItem>
+              />)}
+            </div>
           ))}
         </IonList>
       ) : (

@@ -1,18 +1,16 @@
-import React, { useContext, useEffect, useState, useCallback, useRef } from 'react';
+import React, { useContext, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import {
   IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
 } from '@ionic/react';
 import AddExtraInput from './AddExtraInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
-import capitalizeString from '../../../../Shared/Utils/capitalizeString';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
-import { Extra } from '../../../../Shared/types/scenes.types';
+import { Extra, SceneDocType } from '../../../../Shared/types/scenes.types';
 import DatabaseContext from '../../../../context/Database/Database.context';
 
 interface AddExtraFormProps {
-  handleSceneChange: (value: any, field: string) => void;
+  handleSceneChange: (value: any, field: keyof SceneDocType) => void;
   observedExtras: Extra[];
   editMode?: boolean;
   detailsEditMode?: boolean;
@@ -36,6 +34,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   // Fetch initial categories from offline scenes
   const defineExtrasCategories = useCallback(() => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName');
+
     return uniqueCategoryValues
       .map(extra => extra.categoryName)
       .filter((categoryName): categoryName is string | null => categoryName !== undefined)
@@ -46,6 +45,14 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   useEffect(() => {
     setExtrasCategories(defineExtrasCategories());
   }, [defineExtrasCategories]);
+
+  // Filter categories when editMode is false
+  const filteredCategories = useMemo(() => {
+    if (editMode) return extrasCategories;
+    return extrasCategories.filter(category => 
+      selectedExtras.some(extra => extra.categoryName === category)
+    );
+  }, [extrasCategories, selectedExtras, editMode]);
 
   // Handle dropdown visibility when there are no extras
   useEffect(() => {
@@ -62,10 +69,6 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   }, [observedExtras]);
 
   // Update parent component when selected extras change
-  const handleSelectedExtrasChange = useCallback((newExtras: Extra[]) => {
-    setSelectedExtras(newExtras);
-  }, [handleSceneChange]);
-
   useEffect(() => {
     handleSceneChange(selectedExtras, 'extras');
   }, [selectedExtras]);
@@ -111,13 +114,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
     <>
       <div
         className="category-item-title ion-flex ion-justify-content-between"
-        onClick={handleDropDown}
-        style={{ backgroundColor: 'var(--ion-color-tertiary-shade)' }}
+        style={{ backgroundColor: 'var(--ion-color-dark)' }}
       >
-        <p className="ion-flex ion-align-items-center">Extras / Background Actors</p>
+        <p className="ion-flex ion-align-items-center ion-padding-start">EXTRAS</p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-          <AddButton id={getAlertTrigger()} slot="end" onClick={(e) => { e.stopPropagation(); }}/>
-          <DropDownButton open={dropDownIsOpen} />
+          {editMode && (<AddButton id={getAlertTrigger()} slot="end" onClick={(e) => { e.stopPropagation(); }}/>)}
         </div>
       </div>
 
@@ -130,43 +131,47 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
         ref={alertRef}
       />
 
-      {extrasCategories.length === 0 && (
-        <IonCard color="tertiary" className="no-items-card">
+      {/* Show "No Extras Available" when editMode is false and there are no elements */}
+      {filteredCategories.length === 0 && !editMode && (
+        <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>
-            <IonCardSubtitle className="no-items-card-title">
-              NO EXTRAS ADDED TO THIS STRIP
+            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>
+              NO EXTRAS AVAILABLE
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
       )}
 
-      {extrasCategories.length > 0 && dropDownIsOpen && (
+      {filteredCategories.length > 0 && dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
-          {[...extrasCategories, 'NO CATEGORY'].map((category, index) => 
+          {filteredCategories.map((category, index) => 
             category && (
               <IonCard
                 key={`category-item-${index}-category-${category}`}
-                color="tertiary"
+                style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
                 className="add-scene-items-card ion-no-border"
               >
                 <IonCardHeader className="ion-flex">
                   <div className="ion-flex ion-justify-content-between">
                     <p className="ion-flex ion-align-items-center">
-                      {capitalizeString(category)}
+                      {category.toUpperCase()}
                     </p>
                     <div className="category-buttons-wrapper">
-                      <AddButton
-                        onClick={(e) => { toggleModal(category); e.stopPropagation(); }}
-                      />
+                      {editMode && (
+                        <AddButton
+                          onClick={(e) => { toggleModal(category); e.stopPropagation(); }}
+                        />
+                      )}
                     </div>
                   </div>
                 </IonCardHeader>
                 <AddExtraInput
                   categoryName={category}
                   selectedExtras={selectedExtras}
-                  setSelectedExtras={handleSelectedExtrasChange}
+                  setSelectedExtras={setSelectedExtras}
                   openModal={modalStates[category] || false}
                   setOpenModal={(isOpen: boolean) => toggleModal(category)}
+                  editMode={editMode}
                 />
               </IonCard>
             )

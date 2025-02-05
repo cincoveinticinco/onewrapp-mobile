@@ -232,7 +232,7 @@ body {
     --ion-color-step-400: #717171;
     --ion-color-step-450: #7d7d7d;
     --ion-color-step-500: #898989;
-    --ion-color-step-550: #949494;
+    --ion-color-step-550: var(--ion-color-light);
     --ion-color-step-600: #a0a0a0;
     --ion-color-step-650: #acacac;
     --ion-color-step-700: #b8b8b8;
