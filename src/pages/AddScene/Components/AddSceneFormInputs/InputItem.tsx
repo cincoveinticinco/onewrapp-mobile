@@ -1,4 +1,4 @@
-import { IonInput, IonItem, IonList } from '@ionic/react';
+import { IonInput, IonItem, IonList, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import './InputItem.scss';
@@ -17,6 +17,7 @@ interface InputItemProps {
   style?: any;
   className?: string;
   suggestions?: string[];
+  textArea?: boolean;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -33,6 +34,7 @@ const InputItem: React.FC<InputItemProps> = ({
   style,
   className,
   suggestions = [],
+  textArea = false,
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
@@ -66,32 +68,51 @@ const InputItem: React.FC<InputItemProps> = ({
 
   return (
     <div style={style} id={inputName}>
-      <Controller
-        control={control}
-        name={fieldKeyName}
-        rules={{
-          validate: (validate || null),
-        }}
-        render={({ field }) => (
-          <IonInput
-            placeholder={showError ? label : placeholder}
-            type={type}
-            label={showError ? errorMessage : label}
-            labelPlacement="floating"
-            value={field.value}
-            onIonInput={(e) => handleInputChange(e.detail.value || '')}
-            onFocus={() => {
-              setIsFocused(true);
-              setShowSuggestions(true);
-            }}
-            onBlur={() => {
-              setIsFocused(false);
-              setTimeout(() => setShowSuggestions(false), 200);
-            }}
-            className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
-          />
-        )}
-      />
+      <IonItem color="tertiary" className='ion-no-padding'>
+        <Controller
+          control={control}
+          name={fieldKeyName}
+          rules={{
+            validate: (validate || null),
+          }}
+          render={({ field }) => (
+            textArea ? (
+              <IonTextarea
+                placeholder={showError ? label : placeholder}
+                value={field.value}
+                onIonInput={(e) => handleInputChange(e.detail.value || '')}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setShowSuggestions(true);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                className={`${isFocused ? 'input-item' : ''} ${className || ''}`}
+              />
+            ) : (
+              <IonInput
+                placeholder={showError ? label : placeholder}
+                type={type}
+                label={showError ? errorMessage : label}
+                labelPlacement="floating"
+                value={field.value}
+                onIonInput={(e) => handleInputChange(e.detail.value || '')}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setShowSuggestions(true);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+              />
+            )
+          )}
+        />
+      </IonItem>
       {showSuggestions && filteredSuggestions.length > 0 && (
         <IonList className="suggestions-list">
           {filteredSuggestions.map((suggestion, index) => (

@@ -27,7 +27,7 @@ const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedF
 
   return (
     <div className="estimated-minutes-input">
-      { labels && <p>Estimated Time</p> }
+      { labels && <p id="estimated-minutes-label">Estimated Time</p> }
       <IonItem color="tertiary" id="add-scene-minutes-input">
         <IonInput
           value={minutes}

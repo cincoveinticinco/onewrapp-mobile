@@ -1,11 +1,11 @@
-import { textAlign } from "@mui/system";
 import { InfoType } from "../../../../Shared/ennums/ennums";
-import { isNumberValidator } from "../../../../Shared/Utils/validators";
 import InputItem from "../../../AddScene/Components/AddSceneFormInputs/InputItem";
-import { Control, WatchObserver } from "react-hook-form";
+import { Control, UseFormWatch } from "react-hook-form";
 import './SceneInfoLabels.scss'
 import AddPagesForm from "../../../AddScene/Components/AddSceneFormInputs/AddPagesForm";
 import AddSecondsForm from "../../../AddScene/Components/AddSceneFormInputs/AddSecondsForm";
+import SelectItem from "../../../AddScene/Components/AddSceneFormInputs/SelectItem";
+import { SceneDocType } from "../../../../Shared/types/scenes.types";
 interface SceneInfoLabelsProps {
   info: string;
   title: string;
@@ -13,15 +13,20 @@ interface SceneInfoLabelsProps {
   type?: InfoType;
   editMode?: boolean;
   control?: Control<any>;
-  setValue?: () => void;
+  setValue: (field: keyof SceneDocType, value: any) => void;
   validator?: any;
   fieldKeyName?: string;
   isEditable?: boolean;
-  watch?: WatchObserver<any>;
-  handleChange?: (value: string) => void;
+  watch?: UseFormWatch<SceneDocType>;
+  selectOptions?: any[];
+  disabled?: boolean;
 }
 
-const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ info, title, symbol, type, editMode, control, setValue, validator, fieldKeyName, isEditable, handleChange, watch }) => {
+const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ info, title, symbol, type, editMode, control, setValue, validator, fieldKeyName, isEditable,  watch, selectOptions, disabled }) => {
+
+  const handleChange = (value: any, field: any) => {
+    setValue(field, value);
+  }
   const renderInfo = () => {
     return (
       <p className="ion-no-margin" style={{ fontSize: '16px'}}>
@@ -49,8 +54,8 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ info, title, symbol, 
         return (
           <div className="custom-pages-input">
             <AddSecondsForm
-              handleChange={handleChange as (value: any, field: string) => void}
-              observedField={watch(fieldKeyName || '', {}) as unknown as number}
+              handleChange={handleChange}
+              observedField={typeof watch(fieldKeyName as keyof SceneDocType) === 'number' ? watch(fieldKeyName as keyof SceneDocType) as number : 0}
               labels={false}
             />
           </div>
@@ -58,15 +63,45 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ info, title, symbol, 
       } else {
         return (<></>)
       }
+
+      case InfoType.Select:
+        return (
+          <SelectItem
+            detailsEditMode={true}
+            label="INT/EXT"
+            options={selectOptions || []}
+            inputName={`add-${title}-input`}
+            fieldKeyName={fieldKeyName || ''}
+            control={control}
+            setValue={setValue}
+            watchValue={watch}
+            showLabel={false}
+            className="custom-select"
+            disabled={disabled}
+          />
+        )
       case InfoType.LongText:
+        return (
+          <InputItem
+            label={''}
+            control={control}
+            fieldKeyName={fieldKeyName || ''}
+            placeholder="INSERT"
+            setValue={setValue}
+            inputName={`textarea-input`}
+            validate={validator}
+            className="textarea-input"
+            textArea={true}
+          />
+        )
 
       case InfoType.Pages:
 
       return (
         <div className="custom-pages-input">
           <AddPagesForm
-            handleChange={handleChange as (value: any, field: string) => void}
-            observedField={watch ? (watch(fieldKeyName || '', {}) as unknown as number) : null}
+            handleChange={setValue}
+            observedField={watch && fieldKeyName ? Number(watch(fieldKeyName as keyof SceneDocType)) || null : null}
             labels={false}
           />
         </div>
@@ -89,10 +124,9 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ info, title, symbol, 
   }
 
   return (
-    <div className="ion-flex-column" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
+    <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
       <div>{(editMode && isEditable) ? renderInput() : renderInfo()}</div>
-      
-      <p style={{ fontSize: '8px', margin: '6px' }}>{title.toUpperCase()} (MM:SS)</p>
+      <p style={{ fontSize: '8px', margin: '6px' }}>{title.toUpperCase()} {type == InfoType.Minutes &&'(MM:SS)'}</p>
     </div>
   );
 }

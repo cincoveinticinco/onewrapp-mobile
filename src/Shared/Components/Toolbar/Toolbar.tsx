@@ -67,6 +67,7 @@ interface ToolbarProps {
   logoutIcon?: boolean;
   customHandleSearch?: (e: any) => void;
   editOnClick?: () => void;
+  showLogout?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -97,6 +98,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   logoutIcon = true,
   customHandleSearch,
   editOnClick,
+  showLogout = true,
 }) => {
   const isMobile = useIsMobile();
 
@@ -268,7 +270,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           </IonButton>
         )
       } */}
-      { logoutIcon &&
+      { logoutIcon && showLogout &&
         <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button logout-icon" onClick={logout}>
           <RiLogoutBoxLine className="toolbar-icon" />
         </IonButton>

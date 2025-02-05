@@ -18,6 +18,8 @@ interface SelectItemProps {
   canCreateNew?: boolean;
   editMode?: boolean;
   detailsEditMode?: boolean;
+  showLabel?: boolean;
+  className?: string;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -34,6 +36,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
   canCreateNew,
   editMode,
   detailsEditMode,
+  showLabel = true,
+  className = '',
 }) => {
   const [showError, setShowError] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
@@ -74,12 +78,12 @@ const SelectItem: React.FC<SelectItemProps> = ({
         render={({ field }) => (
           <IonSelect
             placeholder="SELECT TYPE"
-            label={showError && validate && (validate(field.value)) ? (validate(field.value)) : label}
+            label={showError && validate && (validate(field.value)) ? (validate(field.value)) : (showLabel ? label : '')}
             labelPlacement="floating"
             interface="alert"
             value={watchValue(fieldKeyName)}
             onIonChange={(e) => { setValue(fieldKeyName, e.detail.value); }}
-            className={(showError ? 'error' : '')}
+            className={(showError ? 'error' : className)}
             mode="ios"
             disabled={disabled}
           >

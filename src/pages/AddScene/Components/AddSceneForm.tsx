@@ -1,9 +1,5 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import useIsMobile from '../../../Shared/hooks/useIsMobile';
-import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
-import sortArrayAlphabeticaly from '../../../Shared/Utils/sortArrayAlphabeticaly';
-import OutlineLightButton from '../../../Shared/Components/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
 import './AddSceneForm.scss';
 import AddCharacterForm from './AddSceneFormInputs/AddCharacterForm';
@@ -13,12 +9,11 @@ import AddPagesForm from './AddSceneFormInputs/AddPagesForm';
 import AddSecondsForm from './AddSceneFormInputs/AddSecondsForm';
 import InputItem from './AddSceneFormInputs/InputItem';
 import SelectItem from './AddSceneFormInputs/SelectItem';
-
-import DatabaseContext from '../../../context/Database/Database.context';
 import {
-  DayOrNightOptionEnumArray, IntOrExtOptionEnumArray, ProtectionTypeEnumArray, SceneTypeEnum, SceneTypeEnumArray,
+  SceneTypeEnum,
 } from '../../../Shared/ennums/ennums';
 import { IonButton } from '@ionic/react';
+import { useSceneFormOptions } from '../../../hooks/useSceneOptions/useSceneOptions';
 
 interface AddScenesFormProps {
   scrollToTop: () => void;
@@ -49,19 +44,16 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
   onSubmit,
   detailsEditMode,
 }) => {
-  const isMobile = useIsMobile();
   const history = useHistory();
-  const { offlineScenes } = useContext(DatabaseContext);
 
-  const getSortedLocationNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName'));
-  const getSortedSetNames = sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName'));
-
-  const sceneTypeOptions = SceneTypeEnumArray;
-  const protectionTypeValues = ProtectionTypeEnumArray;
-  const dayNightOptions = DayOrNightOptionEnumArray;
-  const intExtOptions = IntOrExtOptionEnumArray;
-  const locationOptions = getSortedLocationNames;
-  const setOptions = getSortedSetNames;
+  const {
+    sceneTypeOptions,
+    protectionTypeValues,
+    dayNightOptions,
+    intExtOptions,
+    locationOptions,
+    setOptions
+  } = useSceneFormOptions();
 
   const handleChange = (value: any, field: any) => {
     if (Array.isArray(formData[field])) {

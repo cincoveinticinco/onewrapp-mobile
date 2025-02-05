@@ -136,4 +136,5 @@ export enum InfoType {
   LongText = 'longText',
   Pages = 'pages',
   Minutes = 'minutes',
+  Select = 'select',
 }

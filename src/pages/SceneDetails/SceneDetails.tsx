@@ -117,12 +117,12 @@ const SceneDetails: React.FC<{
   const [sceneColor, setSceneColor] = useState<any>('light');
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [formData, setFormData] = useState<SceneDocType>();
 
   const {
     control,
     reset,
     watch,
+    setValue
   } = useForm<SceneDocType>();
   
   useEffect(() => {
@@ -466,20 +466,82 @@ const SceneDetails: React.FC<{
     }
   };
 
+  const onSubmitForm = async (data: SceneDocType | null) => {
+    try {
+      if(!data) {
+        console.log(data);
+        errorToast('Error updating scene');
+        throw new Error('Error updating scene'); 
+      }
+      const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
+      if (sceneDocument) {
+        await sceneDocument.update({ $set: data });
+        successMessageSceneToast('Scene updated successfully');
+        setThisScene(data);
+        toggleEditMode();
+      } else {
+        errorToast('Error updating scene');
+      }
+    } catch (error) {
+      console.error(error);
+      errorToast('Error updating scene');
+    }
+  }
+
+  const editModeButtons = () => {
+    return (
+      <>
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          className="outline-success-button-small"
+          onClick={() => onSubmitForm(watch())}
+          key="custom-edit"
+        >
+          SAVE
+        </IonButton>
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          className="outline-danger-button-small"
+          onClick={toggleEditMode}
+          key="custom-cancel"
+        >
+          CANCEL
+        </IonButton>
+      </>
+    );
+  }
+
   return (
     <IonPage>
       <IonHeader>
-        <Toolbar
-          name={sceneHeader}
-          backString
-          prohibited
-          deleteButton
-          edit
-          // editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
-          editOnClick={toggleEditMode}
-          handleBack={handleBack}
-          deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
-        />
+        {
+          !editMode ? (
+            <Toolbar
+              name={sceneHeader}
+              backString
+              prohibited
+              deleteButton
+              edit
+              // editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
+              editOnClick={toggleEditMode}
+              handleBack={handleBack}
+              deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
+            />
+          ) : (
+            <Toolbar
+              name={sceneHeader}
+              backString
+              customButtons={[editModeButtons]}
+              handleBack={handleBack}
+              showLogout={false}
+              deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
+            />
+          )
+        }
         <SceneHeader
           sceneColor={sceneColor}
           sceneHeader={sceneHeader}
@@ -492,7 +554,7 @@ const SceneDetails: React.FC<{
         />
       </IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? AppLoader() : thisScene && <SceneBasicInfo scene={thisScene} control={control} editMode={editMode} watch={watch}/>}
+        {sceneIsLoading ? AppLoader() : thisScene && <SceneBasicInfo scene={thisScene} control={control} editMode={editMode} watch={watch} setValue={setValue}/>}
         {
           isShooting && (
             <div className="shoot-info">
