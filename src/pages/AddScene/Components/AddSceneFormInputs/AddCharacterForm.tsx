@@ -55,7 +55,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   const defineCharactersCategories = useCallback((): (string)[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
     return Array.from(new Set(uniqueCategoryValues
-      .map(character => (!character.categoryName || character.categoryName === '' ? null : character.categoryName))
+      .map(character => (!character.categoryName || character.categoryName === '' ? 'NO CATEGORY' : character.categoryName))
       .sort((a, b) => (a && b ? a.localeCompare(b) : 0))));
   }, [offlineScenes]);
 
@@ -126,24 +126,44 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     }
   };
 
-  const setCharacterValue = (value: any) => {
+  const setCharacterValue = useCallback((value: string) => {
     setSelectedCharacters((prev) => {
-      const character = uniqueCharacters.find((char) => char.characterName === value);
-      const characterIsSelected = prev.some((char) => char.characterName === value);
-      if (character && !characterIsSelected) {
-        return [...prev, character];
-      } else {
-        return prev.filter((char) => char.characterName !== value);
+      const existingCharacter = uniqueCharacters.find(
+        (char) => char.characterName.toLowerCase() === value.toLowerCase()
+      );
+      
+      const newCharacter: Character = existingCharacter || {
+        characterName: value,
+        categoryName: null,
+        characterNum: null
+      };
+      
+      const characterIsSelected = prev.some(
+        (char) => char.characterName?.toLowerCase() === value.toLowerCase()
+      );
+      
+      if (!characterIsSelected) {
+        return [...prev, newCharacter];
       }
-    })
-    console.log('selectedCharacters', selectedCharacters);
-  }
+      return prev.filter((char) => 
+        char.characterName?.toLowerCase() !== value.toLowerCase()
+      );
+    });
+  }, [uniqueCharacters]);
+  
+  const handleSave = useCallback(() => {
+    setAddCategoryModalOpen(false);
+  }, [selectedCharacters, setCharacters]);
 
-  const handleSave = () => {
-    setCharacters(selectedCharacters);
-    addCategoryModalOpen && setAddCategoryModalOpen(false);
-    console.log('selectedCharacters', selectedCharacters);
-  }
+  const filterSelectedCharacters = useCallback((categoryName: string | null) => {
+    return selectedCharacters.filter((character: Character) => {
+      if (categoryName === 'NO CATEGORY' || !categoryName) {
+        return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
+      }
+      return character.categoryName === categoryName;
+    });
+  }, [selectedCharacters]);
+
 
   return (
     <>

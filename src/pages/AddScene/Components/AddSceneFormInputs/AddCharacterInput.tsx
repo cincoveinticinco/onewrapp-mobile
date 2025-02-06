@@ -36,8 +36,8 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
-    if (categoryName === 'NO CATEGORY') {
-      return character.categoryName === null;
+    if (categoryName === 'NO CATEGORY' || !categoryName) {
+      return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
     }
     return character.categoryName === categoryName;
   });
