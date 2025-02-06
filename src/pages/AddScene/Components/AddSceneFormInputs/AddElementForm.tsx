@@ -5,9 +5,7 @@ import {
 import AddElementInput from './AddElementInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
-import capitalizeString from '../../../../Shared/Utils/capitalizeString';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 

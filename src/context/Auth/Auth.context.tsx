@@ -3,6 +3,7 @@ import React, {
   useEffect,
 } from 'react';
 import DatabaseContext from '../Database/Database.context';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string>('');
   const { oneWrapDb } = useContext(DatabaseContext);
+  const alertRef = React.useRef<any>(null);
   
 
   const checkSession = useCallback(async () => {
@@ -56,6 +58,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = async () => {
+    await openLogoutAlert();
+  }
+
+  const openLogoutAlert = async () => {
+    if (alertRef.current) {
+      await alertRef.current.present();
+    }
+  };
+
+  const logoutConfirmation = async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('loggedIn');
     setUser(null);
@@ -97,6 +109,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+        <InputAlert
+          header="Unassign SceneDocType"
+          message={`Are you sure you want to logout?`}
+          handleOk={() => logoutConfirmation()}
+          inputs={[]}
+          ref={alertRef}
+        /> 
     </AuthContext.Provider>
   );
 }
