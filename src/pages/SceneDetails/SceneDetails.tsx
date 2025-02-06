@@ -22,7 +22,7 @@ import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import useSuccessToast from '../../Shared/hooks/useSuccessToast';
-import { SceneDocType } from '../../Shared/types/scenes.types';
+import { Character, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
@@ -663,6 +663,7 @@ const SceneDetails: React.FC<{
                 handleSceneChange={handleChange}
                 observedCharacters={watch('characters') || []}
                 editMode={editMode}
+                setCharacters={(value: Character[]) => setValue('characters', value)}
               />
             </div>
             <div className="section-wrapper extras-info">

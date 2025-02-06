@@ -22,6 +22,7 @@ interface AddCharacterInputProps {
   openModal: boolean;
   setOpenModal: (value: boolean) => void;
   editMode?: boolean;
+  toggleCharacters: (character: string) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
@@ -30,7 +31,8 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   setSelectedCharacters,
   openModal,
   setOpenModal,
-  editMode
+  editMode,
+  toggleCharacters,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
@@ -68,36 +70,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   const getSortedCharacterNames = customArraySort(
     getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters] : getFilteredCharacters),
   );
-
-  const toggleCharacters = (character: string) => {
-    const sceneWithCharacter = offlineScenes.find((scene: any) => scene.characters.some(
-      (char: any) => char.characterName.toUpperCase()
-          === removeNumberAndDot(character.toUpperCase()),
-    ));
-
-    const characterObject = sceneWithCharacter?.characters?.find(
-      (char: any) => char.characterName.toUpperCase()
-        === removeNumberAndDot(character.toUpperCase()),
-    );
-
-    if (characterObject) {
-      const selectedCharacterObjectIndex = selectedCharacters.findIndex(
-        (char: any) => char.characterName === characterObject.characterName,
-      );
-      if (selectedCharacterObjectIndex !== -1) {
-        setSelectedCharacters((currentCharacters: any) => currentCharacters.filter(
-          (char: any) => char.characterName !== characterObject.characterName,
-        ));
-      } else if (selectedCharacterObjectIndex === -1) {
-        const newCharacter: any = { ...characterObject };
-
-        setSelectedCharacters((currentCharacters: any) => [
-          ...currentCharacters,
-          newCharacter,
-        ]);
-      }
-    }
-  };
 
   const clearSelections = () => {
     setSelectedCharacters([]);

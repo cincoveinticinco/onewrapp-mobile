@@ -42,6 +42,10 @@
   margin-top: 100px;
 }
 
+.children-wrapper {
+  min-height: 0px !important;
+}
+
 @media (min-width: 400px) {
   .general-modal-styles {
     .modal-confirm-button {

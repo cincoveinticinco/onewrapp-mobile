@@ -255,6 +255,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
           observedCharacters={watch('characters')}
           editMode={editMode}
           detailsEditMode={detailsEditMode}
+          setCharacters={(characters: any) => setValue('characters', characters)}
         />
 
         <AddElementForm
