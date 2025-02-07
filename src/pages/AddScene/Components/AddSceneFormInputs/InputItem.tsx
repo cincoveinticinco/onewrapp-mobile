@@ -65,7 +65,7 @@ const InputItem: React.FC<InputItemProps> = ({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setValue(fieldKeyName, suggestion);
+    setValue(fieldKeyName, suggestion === 'NO CATEGORY' ? 'NO CATEGORY' : suggestion);
     setShowSuggestions(false);
   };
 

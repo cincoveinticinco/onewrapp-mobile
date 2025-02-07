@@ -183,7 +183,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                 <IonCardHeader className="ion-flex">
                   <div className="ion-flex ion-justify-content-between">
                     <p className="ion-flex ion-align-items-center">
-                      {category.toUpperCase()}
+                      {category?.toUpperCase()}
                     </p>
                     <div className="category-buttons-wrapper">
                       {editMode && (
