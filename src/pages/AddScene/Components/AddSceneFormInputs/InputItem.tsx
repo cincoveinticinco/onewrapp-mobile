@@ -46,19 +46,21 @@ const InputItem: React.FC<InputItemProps> = ({
   }, [displayError]);
 
   const handleInputChange = (value: string) => {
-    console.log(suggestions)
-    if (validate && validate(value.trim()) !== true) {
+    if (validate && validate(value) !== true) {
       setShowError(true);
     } else {
       setShowError(false);
     }
-    setValue(fieldKeyName, value.trim());
+
+    setValue(fieldKeyName, value); // No trimming to preserve spaces
 
     // Filter suggestions based on input
     if (suggestions.length > 0) {
-      const filtered = suggestions.filter((suggestion) => suggestion.toLowerCase().includes(value.toLowerCase()));
+      const filtered = suggestions.filter((suggestion) =>
+        suggestion.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredSuggestions(filtered);
-      setShowSuggestions(filtered.length > 0);
+      setShowSuggestions(filtered.length > 0 && isFocused);
     }
   };
 
@@ -74,7 +76,7 @@ const InputItem: React.FC<InputItemProps> = ({
           control={control}
           name={fieldKeyName}
           rules={{
-            validate: (validate || undefined),
+            validate: validate || undefined,
           }}
           render={({ field, fieldState: { error } }) => (
             textArea ? (
@@ -82,15 +84,14 @@ const InputItem: React.FC<InputItemProps> = ({
                 placeholder={showError ? label : placeholder}
                 value={field.value}
                 onIonInput={(e) => {
-                  let value = e.detail.value || '';
-                  if(value) {
-                    value = value.toUpperCase();
-                  }
-                  field.onChange(value.trim());
+                  const value = e.detail.value || '';
+                  handleInputChange(value);
+                  field.onChange(value);
                 }}
                 onFocus={() => {
                   setIsFocused(true);
-                  setShowSuggestions(true);
+                  setFilteredSuggestions(suggestions);
+                  setShowSuggestions(suggestions.length > 0);
                 }}
                 onBlur={() => {
                   setIsFocused(false);
@@ -106,22 +107,20 @@ const InputItem: React.FC<InputItemProps> = ({
                 labelPlacement="floating"
                 value={field.value}
                 onIonInput={(e) => {
-                  let value = e.detail.value || '';
-                  if(value) {
-                    value = value.toUpperCase(); 
-                  }
-                  field.onChange(value.trim());
+                  const value = e.detail.value || '';
+                  handleInputChange(value);
+                  field.onChange(value);
                 }}
-                onIonChange={(e) => handleInputChange(e.detail.value || '')}
                 onFocus={() => {
                   setIsFocused(true);
-                  setShowSuggestions(true);
+                  setFilteredSuggestions(suggestions);
+                  setShowSuggestions(suggestions.length > 0);
                 }}
                 onBlur={() => {
                   setIsFocused(false);
                   setTimeout(() => setShowSuggestions(false), 200);
                 }}
-                className={`add-scene-input${(showError || error ) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+                className={`add-scene-input${(showError || error) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
               />
             )
           )}
@@ -130,7 +129,7 @@ const InputItem: React.FC<InputItemProps> = ({
       {showSuggestions && filteredSuggestions.length > 0 && (
         <IonList className="suggestions-list">
           {filteredSuggestions.map((suggestion, index) => (
-            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)} >
+            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)}>
               {suggestion}
             </IonItem>
           ))}

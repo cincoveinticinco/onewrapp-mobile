@@ -232,6 +232,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 inputName="category-input"
                 suggestions={categorySuggestions}
                 setValue={setValue}
+  
               />
               <div className='buttons-wrapper'>
                 <OutlinePrimaryButton buttonName="YES" onClick={createNew} color='success' className='ion-margin-top save-button' />
