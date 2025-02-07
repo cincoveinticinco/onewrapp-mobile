@@ -7,13 +7,13 @@ import {
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
-import { Character, SceneDocType } from '../../../../Shared/types/scenes.types';
+import { Character } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
+import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 interface AddCharacterFormProps {
-  handleSceneChange: (value: any, field: keyof SceneDocType) => void
   observedCharacters: Character[];
   editMode?: boolean;
   detailsEditMode?: boolean;
@@ -21,104 +21,111 @@ interface AddCharacterFormProps {
 }
 
 const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
-  handleSceneChange,
   observedCharacters,
   editMode,
   setCharacters
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [characterCategories, setCharacterCategories] = useState<(string)[]>([]);
+  const [characterCategories, setCharacterCategories] = useState<string[]>([]);
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
-  const [uniqueCharacters, setUniqueCharacters] = useState<{
-    characterName: string;
-    categoryName: string;
-    characterNum: string;
-  }[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-
-  const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => uniqueCharacters.filter((character: any) => {
-    if(categoryName === 'NO CATEGORY') {
-      return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
+  const handleModalOpen = () => {
+    if(addCategoryModalOpen) {
+      setAddCategoryModalOpen(false);
+      setSelectedCategory(null);
+    } else {
+      setAddCategoryModalOpen(true);
     }
-    return character.categoryName === categoryName;
-  }), [uniqueCharacters]);
+  }
+  
+  const uniqueCharacters = useMemo(() => {
+    const offlineChars = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+    const mergedChars = [...offlineChars];
+    
+    observedCharacters.forEach(char => {
+      if (!mergedChars.some(existing => existing.characterName === char.characterName)) {
+        mergedChars.push(char);
+      }
+    });
+    
+    return mergedChars;
+  }, [offlineScenes, observedCharacters]);
 
-  const defineCharactersCategories = useCallback((): (string)[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
-    return Array.from(new Set(uniqueCategoryValues
-      .map(character => (!character.categoryName || character.categoryName === '' ? 'NO CATEGORY' : character.categoryName))
-      .sort((a, b) => (a && b ? a.localeCompare(b) : 0))));
-  }, [offlineScenes]);
+  const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => 
+    uniqueCharacters.filter((character: any) => {
+      if(categoryName === 'NO CATEGORY') {
+        return !character.categoryName;
+      }
+      return character.categoryName === categoryName;
+    }), [uniqueCharacters]);
 
-  const defineUniqueCharacters = useCallback(() => {
-    const uniqueCharacters = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-    setUniqueCharacters(uniqueCharacters);
-  }, [offlineScenes]);
+  const defineCharactersCategories = useCallback((): string[] => {
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
+    console.log(uniqueCategoryValues);
+    const observedCategories = observedCharacters.map(character => character.categoryName);
+
+    const allCategories = [...uniqueCategoryValues, ...observedCategories]
+
+    const uniqueCategories = Array.from(new Set(allCategories
+      .sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
+
+    return uniqueCategories;
+  }, [offlineScenes, observedCharacters]);
 
   useEffect(() => {
     setCharacterCategories(defineCharactersCategories());
   }, [defineCharactersCategories]);
 
-  useEffect(() => {
-    defineUniqueCharacters();
-  }, [defineUniqueCharacters]);
-
-  useEffect(() => {
-    if (!observedCharacters?.length) {
-      setDropDownIsOpen(true);
-    }
-  }, [observedCharacters]);
-
   const handleSelectedCharactersChange = useCallback((newCharacters: Character[]) => {
     setCharacters(newCharacters);
-  }, [handleSceneChange]);
+  }, [setCharacters]);
 
-  const toggleModal = (category: string) => {
-    setModalStates(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  // Filter categories based on whether they have elements if not in editMode
   const filteredCategories = characterCategories
-  const toggleCharacters = (character: string) => {
-    
-  };
+
 
   const setNewCharacters = (charactersValues: {
     value: string | number;
     category: string;
   }[]) => {
-    const newCharacters: Character[] = charactersValues.map((character: {
-      value: string | number;
-      category: string;
-    }) => {
+    const newCharacters: Character[] = charactersValues.map((character) => {
       const existingCharacter = uniqueCharacters.find(
         (char) => char.characterName.toLowerCase() === String(character.value).toLowerCase()
       );
       
-      const newCharacter: Character = existingCharacter || {
-          characterName: character.value,
-          categoryName: character.category,
-          characterNum: ''
-        } as Character;
-      
-      return newCharacter;
+      return existingCharacter || {
+        characterName: character.value,
+        categoryName: character.category,
+        characterNum: ''
+      } as Character;
     });
     setCharacters(newCharacters);
   };
 
   const getCharactersInCategoryLength = (category: string) => {
+    let filteredCharacters = uniqueCharacters;
     if(category === 'NO CATEGORY') {
-      return uniqueCharacters.filter(character => !character.categoryName ).length;
+      filteredCharacters =  uniqueCharacters.filter(character => !character.categoryName || character.categoryName == '');
+      console.log(filteredCharacters);
+      return filteredCharacters.length
     }
-    return uniqueCharacters.filter(character => character.categoryName === category).length
+    return uniqueCharacters.filter(character => character.categoryName === category).length;
+  };
+
+  const getObservedCharactersInCategoryLength = (category: string) => {
+    if(category === 'NO CATEGORY') { 
+      return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
+    }
+
+    return observedCharacters.filter(character => character.categoryName === category).length;
   }
 
+  const openModalWithCategory = (category: string) => {
+    setSelectedCategory(category);
+    setAddCategoryModalOpen(true);
+  }
 
   return (
     <>
@@ -147,13 +154,14 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
         }))}
         clearSelections={() => {}}
         isOpen={addCategoryModalOpen}
-        setIsOpen={setAddCategoryModalOpen}
+        setIsOpen={handleModalOpen}
         setValues={setNewCharacters}
+        selectedCategory={selectedCategory}
       />
 
-      {filteredCategories.length === 0 && !editMode && (
+      {filteredCategories.every(c => getCharactersInCategoryLength(c) == 0) && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
-          <IonCardHeader>
+          <IonCardHeader>     
             <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>
               NO CHARACTERS AVAILABLE
             </IonCardSubtitle>
@@ -164,7 +172,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       {dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
           {filteredCategories
-            .filter(category => getCharactersInCategoryLength(category) > 0)
+            .filter(category => editMode ?  getCharactersInCategoryLength(category) > 0 : getObservedCharactersInCategoryLength(category) > 0)
             .map((category, index) => (
             (
               <IonCard 
@@ -181,7 +189,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                       {editMode && (
                         <AddButton 
                           onClick={(e) => { 
-                            toggleModal(category); 
+                            openModalWithCategory(category);
                             e.stopPropagation(); 
                           }}
                         />
@@ -193,10 +201,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                   categoryName={category}
                   selectedCharacters={observedCharacters}
                   setSelectedCharacters={handleSelectedCharactersChange}
-                  openModal={modalStates[category] || false}
-                  setOpenModal={(isOpen: boolean) => toggleModal(category)}
                   editMode={editMode}
-                  toggleCharacters={toggleCharacters}
                 />
               </IonCard>
             )

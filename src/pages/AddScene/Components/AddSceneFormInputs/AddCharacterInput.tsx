@@ -1,40 +1,25 @@
 import React, { useContext } from 'react';
 import {
   IonCardContent,
-  IonItem,
   IonList,
 } from '@ionic/react';
 import { Character } from '../../../../Shared/types/scenes.types';
-import InputModal from '../../../../Layouts/InputModal/InputModal';
-import getCharactersArray from '../../../../Shared/Utils/getCharactersArray';
-import customArraySort from '../../../../Shared/Utils/customArraySort';
-import removeNumberAndDot from '../../../../Shared/Utils/removeNumberAndDot';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
-import applyFilters from '../../../../Shared/Utils/applyFilters';
-import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
-import DatabaseContext from '../../../../context/Database/Database.context';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
   editMode?: boolean;
-  toggleCharacters: (character: string) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   selectedCharacters,
   setSelectedCharacters,
-  openModal,
-  setOpenModal,
   editMode,
-  toggleCharacters,
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
     if (categoryName === 'NO CATEGORY' || !categoryName) {
       return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
@@ -50,49 +35,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       setSelectedCharacters(updatedCharacters);
     }
   };
-
-  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(
-    offlineScenes,
-    'characters',
-    'characterName',
-  );
-
-  const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
-
-  const getFilteredCharacters = applyFilters(
-    uniqueCharacterValuesArray,
-    {
-      categoryName: [categoryCriteria],
-    },
-    false,
-  );
-
-  const getSortedCharacterNames = customArraySort(
-    getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters] : getFilteredCharacters),
-  );
-
-  const clearSelections = () => {
-    setSelectedCharacters([]);
-  };
-
-  const formInputs = [
-    {
-      label: 'Character Number',
-      type: 'text',
-      fieldKeyName: 'characterNum',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-character-number-input',
-    },
-    {
-      label: 'Character Name',
-      type: 'text',
-      fieldKeyName: 'characterName',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-character-name-input',
-    },
-  ];
 
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
 
@@ -117,22 +59,6 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       ) : (
         <NoAdded />
       )}
-      <InputModal
-        optionName={`Characters (  ${categoryName}  )`}
-        listOfOptions={getSortedCharacterNames}
-        handleCheckboxToggle={toggleCharacters}
-        selectedOptions={selectedCharacters.map(
-          (character: any) => character.characterName,
-        )}
-        setSelectedOptions={setSelectedCharacters}
-        clearSelections={clearSelections}
-        canCreateNew
-        optionCategory={categoryName || 'NO CATEGORY'}
-        formInputs={formInputs}
-        existentOptions={uniqueCharacterValuesArray}
-        isOpen={openModal}
-        setIsOpen={setOpenModal}
-      />
     </IonCardContent>
   );
 };

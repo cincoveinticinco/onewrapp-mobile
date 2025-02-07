@@ -46,6 +46,7 @@ const InputItem: React.FC<InputItemProps> = ({
   }, [displayError]);
 
   const handleInputChange = (value: string) => {
+    console.log(suggestions)
     if (validate && validate(value.trim()) !== true) {
       setShowError(true);
     } else {
@@ -81,7 +82,10 @@ const InputItem: React.FC<InputItemProps> = ({
                 placeholder={showError ? label : placeholder}
                 value={field.value}
                 onIonInput={(e) => {
-                  const value = e.detail.value || '';
+                  let value = e.detail.value || '';
+                  if(value) {
+                    value = value.toUpperCase();
+                  }
                   field.onChange(value.trim());
                 }}
                 onFocus={() => {
@@ -98,13 +102,17 @@ const InputItem: React.FC<InputItemProps> = ({
               <IonInput
                 placeholder={showError ? label : placeholder}
                 type={type}
-                label={showError ? errorMessage : label}
+                label={showError ? errorMessage : label?.toUpperCase()}
                 labelPlacement="floating"
                 value={field.value}
                 onIonInput={(e) => {
-                  const value = e.detail.value || '';
+                  let value = e.detail.value || '';
+                  if(value) {
+                    value = value.toUpperCase(); 
+                  }
                   field.onChange(value.trim());
                 }}
+                onIonChange={(e) => handleInputChange(e.detail.value || '')}
                 onFocus={() => {
                   setIsFocused(true);
                   setShowSuggestions(true);
@@ -122,7 +130,7 @@ const InputItem: React.FC<InputItemProps> = ({
       {showSuggestions && filteredSuggestions.length > 0 && (
         <IonList className="suggestions-list">
           {filteredSuggestions.map((suggestion, index) => (
-            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)}>
+            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)} >
               {suggestion}
             </IonItem>
           ))}

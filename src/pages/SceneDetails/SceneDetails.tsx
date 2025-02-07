@@ -657,7 +657,6 @@ const SceneDetails: React.FC<{
           <div className="grid-scene-info">
             <div className="section-wrapper characters-info">
               <AddCharacterForm
-                handleSceneChange={handleChange}
                 observedCharacters={watch('characters') || []}
                 editMode={editMode}
                 setCharacters={(value: Character[]) => {

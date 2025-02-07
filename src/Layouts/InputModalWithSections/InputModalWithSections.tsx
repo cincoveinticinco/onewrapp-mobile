@@ -30,6 +30,7 @@ interface InputModalWithSectionsProps {
     value: string | number;
     category: string;
   }[]) => void;
+  selectedCategory?: string | null;
 }
 
 const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
@@ -40,6 +41,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   isOpen = false,
   setIsOpen,
   setValues,
+  selectedCategory,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [showError, setShowError] = useState(false);
@@ -59,7 +61,13 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   const filterOptions = () => {
     let combinedOptions = [...listOfOptions, ...createdOptions];
-
+    // If selectedCategory exists, filter only that category
+    if (selectedCategory) {
+      combinedOptions = combinedOptions.filter(category => 
+        category.category === selectedCategory
+      );
+    }
+  
     if (searchText.trim()) {
       combinedOptions = combinedOptions.map(category => ({
         ...category,
@@ -68,7 +76,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         ),
       }));
     }
-
+  
     if (showOnlySelected) {
       combinedOptions = combinedOptions.map(category => ({
         ...category,
@@ -76,7 +84,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         open: true,
       }));
     }
-
+  
     setFilteredOptions(combinedOptions);
   };
 
@@ -132,7 +140,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         option.value === value ? { ...option, checked: !option.checked } : option
       ),
     }));
-    console.log(updatedOptions);
     setFilteredOptions(updatedOptions);
   };
 
