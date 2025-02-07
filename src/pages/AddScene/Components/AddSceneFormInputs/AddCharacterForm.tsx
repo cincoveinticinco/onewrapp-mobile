@@ -10,7 +10,6 @@ import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueVa
 import { Character, SceneDocType } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
-import removeNumberAndDot from '../../../../Shared/Utils/removeNumberAndDot';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 
 interface AddCharacterFormProps {
@@ -86,26 +85,38 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
   // Filter categories based on whether they have elements if not in editMode
   const filteredCategories = characterCategories
-  
   const toggleCharacters = (character: string) => {
     
   };
 
-  const setNewCharacters = (charactersValues: string[]) => {
-    const newCharacters: any = charactersValues.map((characterName: string) => {
+  const setNewCharacters = (charactersValues: {
+    value: string | number;
+    category: string;
+  }[]) => {
+    const newCharacters: Character[] = charactersValues.map((character: {
+      value: string | number;
+      category: string;
+    }) => {
       const existingCharacter = uniqueCharacters.find(
-        (char) => char.characterName.toLowerCase() === characterName.toLowerCase()
+        (char) => char.characterName.toLowerCase() === String(character.value).toLowerCase()
       );
       
       const newCharacter: Character = existingCharacter || {
-          characterName: characterName,
-          categoryName: '',
+          characterName: character.value,
+          categoryName: character.category,
           characterNum: ''
         } as Character;
       
       return newCharacter;
     });
     setCharacters(newCharacters);
+  };
+
+  const getCharactersInCategoryLength = (category: string) => {
+    if(category === 'NO CATEGORY') {
+      return uniqueCharacters.filter(character => !character.categoryName ).length;
+    }
+    return uniqueCharacters.filter(character => character.categoryName === category).length
   }
 
 
@@ -144,7 +155,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>
             <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>
-              NO EXTRAS AVAILABLE
+              NO CHARACTERS AVAILABLE
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
@@ -152,8 +163,10 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
       {dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
-          {filteredCategories.map((category, index) => (
-            category && (
+          {filteredCategories
+            .filter(category => getCharactersInCategoryLength(category) > 0)
+            .map((category, index) => (
+            (
               <IonCard 
                 key={`category-item-${index}-category-${category}`} 
                 style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} 

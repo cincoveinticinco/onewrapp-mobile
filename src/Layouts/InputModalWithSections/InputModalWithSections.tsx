@@ -1,10 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IonCheckbox, IonContent, IonHeader, IonModal, IonToggle } from '@ionic/react';
 import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import './InputModalWithSections.scss';
 import { Section } from '../../Shared/Components/Section/Section';
 import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
+import { useForm } from 'react-hook-form';
+import { Value } from 'sass';
 
 interface ListOfOptionsItem {
   category: string | null;
@@ -13,6 +16,7 @@ interface ListOfOptionsItem {
     value: string | number;
     checked: boolean;
   }[];
+  open?: boolean;
 }
 
 interface InputModalWithSectionsProps {
@@ -22,7 +26,10 @@ interface InputModalWithSectionsProps {
   clearSelections: () => void;
   isOpen?: boolean;
   setIsOpen?: (value: boolean) => void;
-  setValues: (values: any[]) => void;
+  setValues: (values: {
+    value: string | number;
+    category: string;
+  }[]) => void;
 }
 
 const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
@@ -36,225 +43,218 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 }) => {
   const [searchText, setSearchText] = useState('');
   const [showError, setShowError] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
   const [filteredOptions, setFilteredOptions] = useState<ListOfOptionsItem[]>([]);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [createdOptions, setCreatedOptions] = useState<ListOfOptionsItem[]>([]);
+  const [openSelectedOptions, setOpenSelectedOptions] = useState(true);
+  const { control, setValue, getValues } = useForm<{ categoryName: string }>({
+    defaultValues: { categoryName: '' },
+  });
+
+  const categorySuggestions = listOfOptions.map(item => item.category || 'NO CATEGORY');
 
   useEffect(() => {
-    if (listOfOptions) {
-      const categoriesList = structuredClone(listOfOptions).map(category => category.category || 'NO CATEGORY');
-      setCategories(categoriesList);
+    filterOptions();
+  }, [searchText, showOnlySelected, listOfOptions, createdOptions]);
+
+  const filterOptions = () => {
+    let combinedOptions = [...listOfOptions, ...createdOptions];
+
+    if (searchText.trim()) {
+      combinedOptions = combinedOptions.map(category => ({
+        ...category,
+        options: category.options.filter(option =>
+          option.label.toLowerCase().includes(searchText.toLowerCase())
+        ),
+      }));
     }
-    setFilteredOptions(listOfOptions);
-  }, [listOfOptions]);
 
-  useEffect(() => {
-    const checkedOptions = filteredOptions.map(category => category.options.filter(option => option.checked))
-    const checkedOptionsValues = checkedOptions.map(option => option.map(option => option.value));
-    setSelectedOptions(checkedOptionsValues);
-  }, [filteredOptions]);
-
-  useEffect(() => {
-    if (listOfOptions && searchText !== '') {
-      const filteredOptions = structuredClone(listOfOptions).map(category => {
-        const options = category.options.filter(option => option.label.toLowerCase().includes(searchText.toLowerCase()));
-        return {
-          category: category.category,
-          options,
-        };
-      });
-      setFilteredOptions(filteredOptions);
-    } else {
-      setFilteredOptions(listOfOptions);
-    }
-  }, [searchText]);
-
-  useEffect(() => {
     if (showOnlySelected) {
-      const filteredCheckOptions = filteredOptions.map(category => {
-        const options = category.options.filter(option => option.checked);
-        return {
-          category: category.category,
-          options,
-        };
-      });
-      setFilteredOptions(filteredCheckOptions);
-    } else {
-      setFilteredOptions(filteredOptions);
+      combinedOptions = combinedOptions.map(category => ({
+        ...category,
+        options: category.options.filter(option => option.checked),
+        open: true,
+      }));
     }
-  }, [showOnlySelected]);
+
+    setFilteredOptions(combinedOptions);
+  };
+
+  const toggleOpenSection = (category: string) => {
+    const updatedOptions = filteredOptions.map(option =>
+      option.category === category ? { ...option, open: !option.open } : option
+    );
+    setFilteredOptions(updatedOptions);
+  }
+
 
   const resetStates = () => {
     setSearchText('');
     setShowError(false);
-    setCategories([]);
-    setFilteredOptions(listOfOptions);
     setShowOnlySelected(false);
+    setCreatedOptions([]);
   };
 
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
       resetStates();
-      if (setIsOpen) {
-        setIsOpen(false);
-      }
+      setIsOpen?.(false);
     }
   };
 
-  const onlySelectedToggleButton = () => {
-    return (
-       <IonToggle
-        slot="end"
-        checked={showOnlySelected}
-        onIonChange={showOnlySelectedToggle}
-        style={{ color: 'var(--ion-color-light)', fontSize: '12px' }}
-      >
+  const createNew = () => {
+    const categoryName = getValues('categoryName') || 'NO CATEGORY';
+    const updatedCreatedOptions = [...createdOptions];
+    const categoryIndex = updatedCreatedOptions.findIndex(category => category.category === categoryName);
 
-      </IonToggle>
-    );
-  }
-
-  const showOnlySelectedToggle = () => {
-    setShowOnlySelected(!showOnlySelected);
-  }
-
-  const createNew = useCallback(() => {
-    if (searchText.trim()) {
-      const updatedListOfOptions = listOfOptions.map((category) => {
-        if (category.category === 'NO CATEGORY') {
-          return {
-            ...category,
-            options: [
-              ...category.options,
-              {
-                label: searchText.trim(),
-                value: searchText.trim(),
-                checked: true,
-              },
-            ],
-          };
-        }
-        return category;
+    if (categoryIndex !== -1) {
+      updatedCreatedOptions[categoryIndex].options.push({
+        label: searchText.trim(),
+        value: searchText.trim(),
+        checked: true,
       });
-  
-      setFilteredOptions(updatedListOfOptions);
+    } else {
+      updatedCreatedOptions.push({
+        category: categoryName,
+        options: [{ label: searchText.trim(), value: searchText.trim(), checked: true }],
+      });
     }
-  }, [searchText, listOfOptions]);
-  
-  
+
+    setCreatedOptions(updatedCreatedOptions);
+    setSearchText(''); // Reset search text after creation
+  };
+
   const toggleCheckOptions = (value: string | number) => {
-    const updatedSelectedOptions = structuredClone(filteredOptions).map(category => {
-      const updatedOptions = category.options.map(option => {
-        if (option.value === value) {
-          return {
-            ...option,
-            checked: !option.checked,
-          };
-        }
-        return option;
-      });
-      return {
-        ...category,
-        options: updatedOptions,
-      };
-    })
-    setFilteredOptions(updatedSelectedOptions); 
-  }
+    const updatedOptions = filteredOptions.map(category => ({
+      ...category,
+      options: category.options.map(option =>
+        option.value === value ? { ...option, checked: !option.checked } : option
+      ),
+    }));
+    console.log(updatedOptions);
+    setFilteredOptions(updatedOptions);
+  };
 
   const onSave = () => {
-    if (selectedOptions.length > 0) {
-      setValues(selectedOptions.flat());
+    const selectedValues = filteredOptions.flatMap(category =>
+      category.options.filter(option => option.checked).map(option => {
+        return {
+          value: option.value,
+          category: category.category || 'NO CATEGORY',
+        }
+      })
+    );
+
+    if (selectedValues.length > 0) {
+      setValues(selectedValues);
       closeModal();
     } else {
       setShowError(true);
     }
-  }
+  };
 
-  if (!isOpen) {
-    return null;
-  }
+  const getSelectedOptions = () => {
+    return filteredOptions.flatMap(category =>
+      category.options
+        .filter(option => option.checked)
+        .map(option => ({ label: option.label, category: category.category || 'NO CATEGORY', checked: option.checked, value: option.value }))
+    );
+  };
+
+  if (!isOpen) return null;
 
   return (
     <IonModal
       className="general-modal-styles"
       isOpen={isOpen}
       ref={modalRef}
-      onDidDismiss={() => setIsOpen && setIsOpen(false)}
+      onDidDismiss={() => setIsOpen?.(false)}
     >
       <IonHeader>
         <ModalToolbar
           handleSave={onSave}
           toolbarTitle={optionName}
           handleReset={clearSelections}
-          customButtons={[onlySelectedToggleButton]}
+          customButtons={[]}
           handleBack={closeModal}
           showReset={false}
         />
-        <ModalSearchBar 
-          searchText={searchText} 
-          setSearchText={setSearchText} 
-          showSearchBar={true} 
-        />
+        <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={true} />
       </IonHeader>
-      <IonContent 
-        color="tertiary"
-      >
+      <IonContent color="tertiary">
         <div className='sections-container'>
-            {filteredOptions.every(option => option.options.length == 0)  ? (
-              <div className="no-items-card">
-                <p className="no-items-card-title"><a>{searchText.toUpperCase()}</a> DOES NOT EXISTS. DO YOU WANT TO CREATE?</p>
-                <div className='buttons-wrapper'>
-                  <OutlinePrimaryButton
-                    buttonName="YES"
-                    onClick={createNew}
-                    color='success'
-                    className='ion-margin-top save-button'
-                  />
-
-                  <OutlinePrimaryButton
-                    buttonName="NO"
-                    onClick={closeModal}
-                    color='danger'  
-                    className='ion-margin-top save-button'
-                  />
-                </div>
+          {/* Selected Options Section */}
+          {getSelectedOptions().length > 0 && (
+            <Section title="Selected Options" open={openSelectedOptions} setOpen={setOpenSelectedOptions}>
+              {getSelectedOptions().map((option, i) => (
+              <div key={i} className="checkbox-item-option filter-item ion-no-margin ion-no-padding" onClick={() => toggleCheckOptions(option.value)}>
+                <IonCheckbox
+                slot="start"
+                className="ion-no-margin ion-no-padding checkbox-option"
+                labelPlacement="end"
+                checked={option.checked}
+                onIonChange={() => toggleCheckOptions(option.value)}
+                >
+                {option.label} 
+                <a 
+                  onClick={(e) => { 
+                  e.stopPropagation(); 
+                  e.preventDefault(); 
+                  document.getElementById(option.category);
+                  }}
+                >
+                  {` (${option.category})`}
+                </a>
+                </IonCheckbox>
               </div>
-            ) : (
-              categories.map((category: string, i: number) => (
-                filteredOptions[i]?.options.length > 0 && (
-                    <Section
-                    key={i}
-                    title={category}
-                    open={true}
-                    setOpen={() => { } }
-                    onAddClick={() => { } } >
-                    {filteredOptions[i]?.options
+              ))}
+            </Section>
+          )}
+          {/* Main Options Section */}
+          {filteredOptions.every(category => category.options.length === 0) ? (
+            <div className="no-items-card">
+              <p className="no-items-card-title">
+                <a>{searchText.toUpperCase()}</a> DOES NOT EXIST. DO YOU WANT TO CREATE?
+              </p>
+              <InputItem
+                label="Category"
+                placeholder="Enter category"
+                control={control}
+                fieldKeyName="categoryName"
+                inputName="category-input"
+                suggestions={categorySuggestions}
+                setValue={setValue}
+              />
+              <div className='buttons-wrapper'>
+                <OutlinePrimaryButton buttonName="YES" onClick={createNew} color='success' className='ion-margin-top save-button' />
+                <OutlinePrimaryButton buttonName="NO" onClick={closeModal} color='danger' className='ion-margin-top save-button' />
+              </div>
+            </div>
+          ) : (
+            filteredOptions.map((category, i) => (
+              category.options.length > 0 && (
+                <Section key={i} title={category.category || 'NO CATEGORY'} open={category.open ?? true} setOpen={() => toggleOpenSection(category.category || 'NO CATEGORY')} id={category.category}>
+                  {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
                     .map((option, j) => (
-                    <div
-                      color="tertiary"
-                      key={`filter-item-${i}-${j}`}
-                      className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                    >
-                      <IonCheckbox
-                        slot="start"
-                        className="ion-no-margin ion-no-padding checkbox-option"
-                        labelPlacement="end"
-                        checked={option.checked}
-                        onIonChange={() => toggleCheckOptions(option.value)}
-                        disabled={false}
-                      >
-                        {option.label}
-                      </IonCheckbox>
-                    </div>
+                      <div key={`filter-item-${i}-${j}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
+                        <IonCheckbox
+                          slot="start"
+                          className="ion-no-margin ion-no-padding checkbox-option"
+                          labelPlacement="end"
+                          checked={option.checked}
+                          onIonChange={() => toggleCheckOptions(option.value)}
+                        >
+                          {option.label}
+                        </IonCheckbox>
+                      </div>
                     ))}
-                    </Section>
-                )
-                ))
-            )}
-        </div> 
+                </Section>
+              )
+            ))
+          )}
+        </div>
       </IonContent>
     </IonModal>
   );
