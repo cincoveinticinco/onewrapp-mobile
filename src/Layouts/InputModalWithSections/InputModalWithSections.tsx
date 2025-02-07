@@ -5,8 +5,6 @@ import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import './InputModalWithSections.scss';
 import { Section } from '../../Shared/Components/Section/Section';
 import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
-import { useForm } from 'react-hook-form';
 
 interface ListOfOptionsItem {
   category: string | null;
@@ -24,8 +22,7 @@ interface InputModalWithSectionsProps {
   clearSelections: () => void;
   isOpen?: boolean;
   setIsOpen?: (value: boolean) => void;
-  setValue: (values: any) => void;
-  handleSave?: () => void;
+  setValues: (values: any[]) => void;
 }
 
 const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
@@ -35,40 +32,33 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   clearSelections,
   isOpen = false,
   setIsOpen,
-  setValue,
-  handleSave
+  setValues,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [showError, setShowError] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [filteredOptions, setFilteredOptions] = useState<ListOfOptionsItem[]>([]);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
   useEffect(() => {
     if (listOfOptions) {
-      const categoriesList = listOfOptions.map(category => category.category || 'NO CATEGORY');
+      const categoriesList = structuredClone(listOfOptions).map(category => category.category || 'NO CATEGORY');
       setCategories(categoriesList);
     }
     setFilteredOptions(listOfOptions);
   }, [listOfOptions]);
 
   useEffect(() => {
-    if (listOfOptions) {
-      const filteredOptions = listOfOptions.map(category => {
-        const options = category.options.filter(option => option.label.toLowerCase().includes(searchText.toLowerCase()));
-        return {
-          category: category.category,
-          options,
-        };
-      });
-      setFilteredOptions(filteredOptions);
-    }
-  }, [searchText]);
+    const checkedOptions = filteredOptions.map(category => category.options.filter(option => option.checked))
+    const checkedOptionsValues = checkedOptions.map(option => option.map(option => option.value));
+    setSelectedOptions(checkedOptionsValues);
+  }, [filteredOptions]);
 
   useEffect(() => {
-    if (showOnlySelected) {
-      const filteredOptions = listOfOptions.map(category => {
-        const options = category.options.filter(option => option.checked);
+    if (listOfOptions && searchText !== '') {
+      const filteredOptions = structuredClone(listOfOptions).map(category => {
+        const options = category.options.filter(option => option.label.toLowerCase().includes(searchText.toLowerCase()));
         return {
           category: category.category,
           options,
@@ -77,6 +67,21 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       setFilteredOptions(filteredOptions);
     } else {
       setFilteredOptions(listOfOptions);
+    }
+  }, [searchText]);
+
+  useEffect(() => {
+    if (showOnlySelected) {
+      const filteredCheckOptions = filteredOptions.map(category => {
+        const options = category.options.filter(option => option.checked);
+        return {
+          category: category.category,
+          options,
+        };
+      });
+      setFilteredOptions(filteredCheckOptions);
+    } else {
+      setFilteredOptions(filteredOptions);
     }
   }, [showOnlySelected]);
 
@@ -117,10 +122,55 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   const createNew = useCallback(() => {
     if (searchText.trim()) {
-      setValue(searchText.trim());
-      handleSave?.();
+      const updatedListOfOptions = listOfOptions.map((category) => {
+        if (category.category === 'NO CATEGORY') {
+          return {
+            ...category,
+            options: [
+              ...category.options,
+              {
+                label: searchText.trim(),
+                value: searchText.trim(),
+                checked: true,
+              },
+            ],
+          };
+        }
+        return category;
+      });
+  
+      setFilteredOptions(updatedListOfOptions);
     }
-  }, [searchText, setValue, handleSave]);
+  }, [searchText, listOfOptions]);
+  
+  
+  const toggleCheckOptions = (value: string | number) => {
+    const updatedSelectedOptions = structuredClone(filteredOptions).map(category => {
+      const updatedOptions = category.options.map(option => {
+        if (option.value === value) {
+          return {
+            ...option,
+            checked: !option.checked,
+          };
+        }
+        return option;
+      });
+      return {
+        ...category,
+        options: updatedOptions,
+      };
+    })
+    setFilteredOptions(updatedSelectedOptions); 
+  }
+
+  const onSave = () => {
+    if (selectedOptions.length > 0) {
+      setValues(selectedOptions.flat());
+      closeModal();
+    } else {
+      setShowError(true);
+    }
+  }
 
   if (!isOpen) {
     return null;
@@ -135,7 +185,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleSave={handleSave}
+          handleSave={onSave}
           toolbarTitle={optionName}
           handleReset={clearSelections}
           customButtons={[onlySelectedToggleButton]}
@@ -174,31 +224,33 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
             ) : (
               categories.map((category: string, i: number) => (
                 filteredOptions[i]?.options.length > 0 && (
-                  <Section
-                  key={i}
-                  title={category}
-                  open={true}
-                  setOpen={() => { } }
-                  onAddClick={() => { } } >
-                  {filteredOptions[i]?.options.map((option, j) => (
+                    <Section
+                    key={i}
+                    title={category}
+                    open={true}
+                    setOpen={() => { } }
+                    onAddClick={() => { } } >
+                    {filteredOptions[i]?.options
+                    .sort((a, b) => Number(b.checked) - Number(a.checked))
+                    .map((option, j) => (
                     <div
-                    color="tertiary"
-                    key={`filter-item-${i}-${j}`}
-                    className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
-                    onClick={() => setValue(option.value)}
+                      color="tertiary"
+                      key={`filter-item-${i}-${j}`}
+                      className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
                     >
-                    <IonCheckbox
-                      slot="start"
-                      className="ion-no-margin ion-no-padding checkbox-option"
-                      labelPlacement="end"
-                      checked={option.checked}
-                      disabled={false}
-                    >
-                      {option.label}
-                    </IonCheckbox>
+                      <IonCheckbox
+                        slot="start"
+                        className="ion-no-margin ion-no-padding checkbox-option"
+                        labelPlacement="end"
+                        checked={option.checked}
+                        onIonChange={() => toggleCheckOptions(option.value)}
+                        disabled={false}
+                      >
+                        {option.label}
+                      </IonCheckbox>
                     </div>
-                  ))}
-                  </Section>
+                    ))}
+                    </Section>
                 )
                 ))
             )}

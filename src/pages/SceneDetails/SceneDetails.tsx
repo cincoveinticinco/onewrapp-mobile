@@ -132,12 +132,8 @@ const SceneDetails: React.FC<{
   } = form;
 
   const handleChange = (value: any, field: keyof SceneDocType) => {
-    const formData = watch();
-    if (Array.isArray(formData[field])) {
-      setValue(field, [...value]);
-    } else {
-      setValue(field, value);
-    }
+    console.log(field, value)
+    setValue(field, value);
   };
   
   useEffect(() => {
@@ -487,6 +483,7 @@ const SceneDetails: React.FC<{
   };
 
   const onSubmitForm = async (data: SceneDocType | null) => {
+    console.log(data);
     try {
       if(!data) {
         console.log(data);
@@ -663,7 +660,9 @@ const SceneDetails: React.FC<{
                 handleSceneChange={handleChange}
                 observedCharacters={watch('characters') || []}
                 editMode={editMode}
-                setCharacters={(value: Character[]) => setValue('characters', value)}
+                setCharacters={(value: Character[]) => {
+                  console.log(value);
+                  setValue('characters', value)}}
               />
             </div>
             <div className="section-wrapper extras-info">

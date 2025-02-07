@@ -30,7 +30,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   const { offlineScenes } = useContext(DatabaseContext);
 
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const [characterCategories, setCharacterCategories] = useState<(string)[]>([]);
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
@@ -40,10 +39,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     characterNum: string;
   }[]>([]);
 
-  useEffect(() => {
-    const observedCharactersDeepCopy = JSON.parse(JSON.stringify(observedCharacters));
-    setSelectedCharacters(observedCharactersDeepCopy);
-  }, [observedCharacters]);
 
   const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => uniqueCharacters.filter((character: any) => {
     if(categoryName === 'NO CATEGORY') {
@@ -79,7 +74,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   }, [observedCharacters]);
 
   const handleSelectedCharactersChange = useCallback((newCharacters: Character[]) => {
-    setSelectedCharacters(newCharacters);
+    setCharacters(newCharacters);
   }, [handleSceneChange]);
 
   const toggleModal = (category: string) => {
@@ -90,79 +85,28 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   };
 
   // Filter categories based on whether they have elements if not in editMode
-  const filteredCategories = editMode
-    ? characterCategories
-    : characterCategories.filter(category => 
-        observedCharacters.some(char => char.categoryName === category)
-      );
-
+  const filteredCategories = characterCategories
+  
   const toggleCharacters = (character: string) => {
-    const sceneWithCharacter = offlineScenes.find((scene: any) => scene.characters.some(
-      (char: any) => char.characterName.toUpperCase()
-          === removeNumberAndDot(character.toUpperCase()),
-    ));
-
-    const characterObject = sceneWithCharacter?.characters?.find(
-      (char: any) => char.characterName.toUpperCase()
-        === removeNumberAndDot(character.toUpperCase()),
-    );
-
-    if (characterObject) {
-      const selectedCharacterObjectIndex = selectedCharacters.findIndex(
-        (char: any) => char.characterName === characterObject.characterName,
-      );
-      if (selectedCharacterObjectIndex !== -1) {
-        setSelectedCharacters((currentCharacters: any) => currentCharacters.filter(
-          (char: any) => char.characterName !== characterObject.characterName,
-        ));
-      } else if (selectedCharacterObjectIndex === -1) {
-        const newCharacter: any = { ...characterObject };
-
-        setSelectedCharacters((currentCharacters: any) => [
-          ...currentCharacters,
-          newCharacter,
-        ]);
-      }
-    }
+    
   };
 
-  const setCharacterValue = useCallback((value: string) => {
-    setSelectedCharacters((prev) => {
+  const setNewCharacters = (charactersValues: string[]) => {
+    const newCharacters: any = charactersValues.map((characterName: string) => {
       const existingCharacter = uniqueCharacters.find(
-        (char) => char.characterName.toLowerCase() === value.toLowerCase()
+        (char) => char.characterName.toLowerCase() === characterName.toLowerCase()
       );
       
       const newCharacter: Character = existingCharacter || {
-        characterName: value,
-        categoryName: null,
-        characterNum: null
-      };
+          characterName: characterName,
+          categoryName: '',
+          characterNum: ''
+        } as Character;
       
-      const characterIsSelected = prev.some(
-        (char) => char.characterName?.toLowerCase() === value.toLowerCase()
-      );
-      
-      if (!characterIsSelected) {
-        return [...prev, newCharacter];
-      }
-      return prev.filter((char) => 
-        char.characterName?.toLowerCase() !== value.toLowerCase()
-      );
+      return newCharacter;
     });
-  }, [uniqueCharacters]);
-  
-  const handleSave = useCallback(() => {
-    setAddCategoryModalOpen(false);
-  }, [selectedCharacters, setCharacters]);
-
-  const filterSelectedCharacters = useCallback((categoryName: string | null) => {
-    return selectedCharacters.filter((character: Character) => {
-      if (categoryName === 'NO CATEGORY' || !categoryName) {
-        return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
-      }
-      return character.categoryName === categoryName;
-    });
-  }, [selectedCharacters]);
+    setCharacters(newCharacters);
+  }
 
 
   return (
@@ -187,14 +131,13 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
             .map(character => ({
               label: `${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`,
               value: character.characterName,
-              checked: selectedCharacters.some(char => char.characterName === character.characterName)
+              checked: observedCharacters.some(char => char.characterName === character.characterName)
             }))
         }))}
         clearSelections={() => {}}
         isOpen={addCategoryModalOpen}
         setIsOpen={setAddCategoryModalOpen}
-        setValue={setCharacterValue}
-        handleSave={handleSave}
+        setValues={setNewCharacters}
       />
 
       {filteredCategories.length === 0 && !editMode && (
@@ -235,7 +178,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                 </IonCardHeader>
                 <AddCharacterInput
                   categoryName={category}
-                  selectedCharacters={selectedCharacters}
+                  selectedCharacters={observedCharacters}
                   setSelectedCharacters={handleSelectedCharactersChange}
                   openModal={modalStates[category] || false}
                   setOpenModal={(isOpen: boolean) => toggleModal(category)}
