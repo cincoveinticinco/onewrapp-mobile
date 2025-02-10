@@ -1,5 +1,6 @@
 import {
   IonButton,
+  IonCard,
   IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
 } from '@ionic/react';
@@ -22,7 +23,7 @@ import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import useSuccessToast from '../../Shared/hooks/useSuccessToast';
-import { Character, SceneDocType } from '../../Shared/types/scenes.types';
+import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
@@ -37,6 +38,9 @@ import useSceneDetailForm from './hooks/useSceneDetailForm';
 import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
 import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
+import AddButton from '../../Shared/Components/AddButton/AddButton';
+import { useRxData } from 'rxdb-hooks';
+import { UserDocType } from '../../Shared/types/user.types';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -121,6 +125,7 @@ const SceneDetails: React.FC<{
   const [sceneColor, setSceneColor] = useState<any>('light');
   const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
 
   const form = useSceneDetailForm()
   const {
@@ -131,11 +136,6 @@ const SceneDetails: React.FC<{
     setValue
   } = form;
 
-  const handleChange = (value: any, field: keyof SceneDocType) => {
-    console.log(field, value)
-    setValue(field, value);
-  };
-  
   useEffect(() => {
     if (thisScene) {
       reset(thisScene);
@@ -153,6 +153,8 @@ const SceneDetails: React.FC<{
 
   const successMessageSceneToast = useSuccessToast();
   const errorToast = useErrorToast();
+
+  const {result: user, isFetching} = useRxData<UserDocType>('users', (collection) => collection.find().sort('asc'));
 
   const convertTo24Hour = (time: string): string => {
     const [timeStr, period] = time.split(' ');
@@ -533,6 +535,31 @@ const SceneDetails: React.FC<{
     );
   }
 
+  const addNoteAlert = () => {
+    return (
+      <InputAlert
+        inputs={
+          [
+            {
+              name: 'note',
+              type: 'text',
+              placeholder: 'Enter note',
+              label: 'Note',
+              value: '',
+            },
+          ]
+        }
+       header='Add Note'
+       message='Add a note to this scene'
+       handleOk={(inputData) => setValue('notes', [...(watch('notes') || []), {
+          note: inputData.note,
+          email: user[0]?.userEmail || '',
+       }])}
+       isOpen={addNoteModalOpen}
+      />
+    )
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -682,7 +709,30 @@ const SceneDetails: React.FC<{
               />
             </div>
             <div className="section-wrapper notes-info">
-              <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />
+              <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
+                <p style={{ fontSize: '18px' }}><b>NOTES</b></p>
+               {editMode && ( <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end"/>)}
+              </div>
+                {(watch('notes') || []).length > 0 ? (
+                (watch('notes') || []).map((note: Note, index: number) => (
+                  <IonCard
+                  style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
+                  key={`note-${index}`}
+                  className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
+                  >
+                    <p>{note.note}</p>
+                    <p>{note.email}</p>
+                  </IonCard>
+                ))
+                ) : (
+                <IonCard
+                  style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
+                  className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-center"
+                >
+                  <p>NO NOTES ADDED</p>
+                </IonCard>
+                )}
+              {addNoteAlert()}
             </div>
           </div>
         )}
