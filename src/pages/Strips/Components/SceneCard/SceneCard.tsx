@@ -177,8 +177,11 @@ const SceneCard: React.FC<SceneCardProps> = ({
     }
   };
 
-  const goToSceneDetails = () => {
-    const route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+  const goToSceneDetails = (editMode: boolean = false) => {
+    let route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+    if (editMode) {
+      route += '?edit=true';
+    }
     history.push(route);
     localStorage.setItem('editionBackRoute', route);
   };
@@ -243,7 +246,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
           <div className="buttons-wrapper">
             <IonButton
               fill="clear"
-              routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}
+              onClick={() => goToSceneDetails(true)}
               disabled={disableEditions}
             >
               <CiEdit className="button-icon view" />

@@ -250,8 +250,7 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
           inputName="add-synopsis-input"
         />
 
-        <AddCharacterForm
-          handleSceneChange={handleChange}
+        <AddCharacterForm   
           observedCharacters={watch('characters')}
           editMode={editMode}
           detailsEditMode={detailsEditMode}
@@ -259,17 +258,15 @@ const AddScenesForm: React.FC<AddScenesFormProps> = ({
         />
 
         <AddElementForm
-          handleSceneChange={handleChange}
           observedElements={watch('elements')}
           editMode={editMode}
-          detailsEditMode={detailsEditMode}
+          setElements={(elements: any) => setValue('elements', elements)}
         />
 
-        <AddExtraForm
-          handleSceneChange={handleChange}
+        <AddExtraForm    
           observedExtras={watch('extras')}
           editMode={editMode}
-          detailsEditMode={detailsEditMode}
+          setExtras={(extras: any) => setValue('extras', extras)}
         />
 
         {/* <div color="tertiary">

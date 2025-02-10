@@ -3,6 +3,7 @@ import { close } from 'ionicons/icons';
 import React, { useContext } from 'react';
 import ScenesContext from '../../../../context/Scenes/Scenes.context';
 import './StripTag.scss';
+import zIndex from '@mui/material/styles/zIndex';
 
 interface StripTagProps {
   tagKey: string;
@@ -85,8 +86,8 @@ const StripTag: React.FC<StripTagProps> = ({ tagKey, filterOption }) => {
 
   return (
     <div key={tagKey} className="filter-tag-container">
-      <p className=" ion-no-padding ion-no-margin">{filterOption.toUpperCase()}</p>
-      <IonButton onClick={() => clearOption(filterOption, (selectedFilterOptions as SelectedFilterOptionsInterface))} fill="clear" color="danger" className="ion-no-padding">
+      <p className="ion-no-margin">{filterOption.toUpperCase()}</p>
+      <IonButton onClick={() => clearOption(filterOption, (selectedFilterOptions as SelectedFilterOptionsInterface))} fill="clear" color="danger" className="ion-no-padding" style={{zIndex: 100}}>
         <IonIcon icon={close} />
       </IonButton>
     </div>

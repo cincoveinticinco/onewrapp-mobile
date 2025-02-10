@@ -7,6 +7,8 @@ import AddSecondsForm from "../../../AddScene/Components/AddSceneFormInputs/AddS
 import SelectItem from "../../../AddScene/Components/AddSceneFormInputs/SelectItem";
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import { isRequiredValidator } from "../../../../Shared/Utils/validators";
+import floatToFraction from '../../../../Shared/Utils/floatToFraction';
+import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
 
 export type FormType = {
   control: Control<any>;
@@ -22,12 +24,10 @@ export type LabelType = {
   isEditable: boolean;
   disabled: boolean;
   title: string;
-  symbol?: string;
-  info: string;
+  info: string | number;
 }
 
 export type Input = {
-  type: InfoType;
   selectOptions?: any[];
   validators?: ((value: any) => boolean | string)[];
   required?: boolean;
@@ -36,13 +36,71 @@ export type Input = {
 interface SceneInfoLabelsProps {
   editMode?: boolean;
   label: LabelType;
-  form: FormType;
-  input: Input;
+  form?: FormType;
+  input?: Input;
+  type: InfoType;
 }
 
-const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fieldKeyName, isEditable, disabled, title, symbol, info },
-  form: { control, setValue, watch, errors, setError }, input: { type, selectOptions, validators, required }
- }) => {
+const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ 
+  editMode, 
+  type, 
+  label: { fieldKeyName, isEditable, disabled, title, info },
+  form, 
+  input 
+}) => {
+  const processInfo = () => {
+    let displayInfo = info?.toString().toUpperCase() || '-';
+    let symbol = '';
+
+    switch (type) {
+      case InfoType.Pages:
+        if (typeof info === 'number') {
+          const fraction = floatToFraction(info);
+          const [integerPart, fractionPart] = fraction.split(' ');
+          displayInfo = integerPart;
+          symbol = fractionPart;
+        }
+        break;
+      
+      case InfoType.Minutes:
+        if (typeof info === 'number') {
+          const time = secondsToMinSec(info);
+          const [minutes, seconds] = time.split(':');
+          displayInfo = minutes;
+          symbol = `:${seconds}`;
+        }
+        break;
+    }
+
+    return { displayInfo, symbol };
+  };
+
+  const renderInfo = () => {
+    const { displayInfo, symbol } = processInfo();
+    return (
+      <p className="label-wrapper ion-no-margin">
+        <span className="info-part">{displayInfo}</span>
+        <span className="symbol-part">{symbol}</span>
+      </p>
+    );
+  };
+  
+  if (!form) {
+    return (
+      <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
+        {renderInfo()}
+        <>
+        <p style={{ fontSize: '10px', margin: '6px', fontWeight: '500' }} >
+          {title.toUpperCase()}
+        </p>
+        </>
+      </div>
+    );
+  }
+
+  const { control, setValue, watch, errors, setError } = form;
+  const { selectOptions, validators, required } = input || {};
+
   const generalValidator = (value: any) => {
     const effectiveValidators = required && !validators?.includes(isRequiredValidator) 
       ? [...(validators || []), isRequiredValidator]
@@ -57,49 +115,34 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fi
       }
     }
     return true;
-  }
+  };
 
-  const showError =  typeof generalValidator(watch(fieldKeyName as keyof SceneDocType)) === 'string';
+  const showError = typeof generalValidator(watch(fieldKeyName as keyof SceneDocType)) === 'string';
   const currentValue = watch(fieldKeyName as keyof SceneDocType);
   const handleChange = (value: any, field: any) => {
     setValue(field, value);
-  }
-  const renderInfo = () => {
-    return (
-      <p className="ion-no-margin" style={{ fontSize: '16px'}}>
-        <b>{info.toUpperCase()}</b>
-        <span className="symbol-part" style={{ fontSize: '14px', fontWeight: 'bold' }}>{symbol}</span>
-      </p>
-    )
-  }
+  };
 
   const renderInput = () => {
     switch (type) {
-
       case InfoType.Date:
-
       case InfoType.Time:
-
       case InfoType.Fraction:
-
       case InfoType.Integer:
-
       case InfoType.Hours:
-
       case InfoType.Minutes:
-      if (watch && fieldKeyName) {
-        return (
-          <div className="custom-pages-input">
-            <AddSecondsForm
-              handleChange={handleChange}
-              observedField={typeof watch(fieldKeyName as keyof SceneDocType) === 'number' ? watch(fieldKeyName as keyof SceneDocType) as number : 0}
-              labels={false}
-            />
-          </div>
-        )
-      } else {
-        return (<></>)
-      }
+        if (watch && fieldKeyName) {
+          return (
+            <div className="custom-pages-input">
+              <AddSecondsForm
+                handleChange={handleChange}
+                observedField={typeof watch(fieldKeyName as keyof SceneDocType) === 'number' ? watch(fieldKeyName as keyof SceneDocType) as number : 0}
+                labels={false}
+              />
+            </div>
+          );
+        }
+        return <></>;
 
       case InfoType.Select:
         return (
@@ -119,6 +162,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fi
             displayError={!!errors[fieldKeyName]}
           />
         );
+
       case InfoType.LongText:
         return (
           <InputItem
@@ -132,19 +176,19 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fi
             className="textarea-input"
             textArea={true}
           />
-        )
+        );
 
       case InfoType.Pages:
+        return (
+          <div className="custom-pages-input">
+            <AddPagesForm
+              handleChange={setValue}
+              observedField={fieldKeyName ? Number(watch(fieldKeyName as keyof SceneDocType)) || null : null}
+              labels={false}
+            />
+          </div>
+        );
 
-      return (
-        <div className="custom-pages-input">
-          <AddPagesForm
-            handleChange={setValue}
-            observedField={fieldKeyName ? Number(watch(fieldKeyName as keyof SceneDocType)) || null : null}
-            labels={false}
-          />
-        </div>
-      );
       default:
         return (
           <InputItem
@@ -157,13 +201,13 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fi
             validate={generalValidator}
             className="custom-input"
           />
-        )
+        );
     }
-  }
+  };
 
   return (
     <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
-      <div>{(editMode && isEditable) ? renderInput() : renderInfo()}</div>
+      {(editMode && isEditable) ? renderInput() : renderInfo()}
       <p style={{ fontSize: '10px', margin: '6px', fontWeight: '500' }} className={showError ? 'error' : ''}>
         {!showError ? (
           <>
@@ -173,9 +217,8 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({ editMode, label: { fi
           generalValidator(currentValue)
         )}
       </p>
-
     </div>
   );
-}
+};
 
 export default SceneInfoLabels;

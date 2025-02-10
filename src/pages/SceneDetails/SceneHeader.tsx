@@ -25,7 +25,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
   <IonToolbar
     className={editMode ? `scene-theme-yellow` : `scene-theme-${sceneColor}`}
     mode="ios"
-    style={{ border: '1px solid black' }}
+    style={{ border: '1px solid black', color: editMode ? 'black' : 'white' }}
   >
     {previousScene && (
     <IonIcon

@@ -32,6 +32,7 @@ const FilterScenesButtonsSelect: React.FC<FilterScenesButtonsSelectProps> = ({ s
               expand="block"
               className={`${optionClass} filter-button-select`}
               onClick={handleOption}
+              style={{ width: '100% !important' }}
             >
               {filterName}
             </IonButton>

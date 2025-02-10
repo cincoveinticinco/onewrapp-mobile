@@ -20,6 +20,7 @@ interface EditableFieldProps {
   withSymbol: boolean;
   permissionType?: number | null;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
+  editMode?: boolean;
 }
 
 export const EditableField: React.FC<EditableFieldProps> = ({
@@ -29,6 +30,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   withSymbol,
   permissionType,
   updateShootingTime,
+  editMode = true,
 }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
   const { main, symbol } = separateTimeOrPages(value);
@@ -61,7 +63,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
         symbol={withSymbol ? symbol : ''}
         title={title}
         onEdit={handleEdit}
-        isEditable={permissionType === 1}
+        isEditable={permissionType === 1 && editMode}
       />
       <EditionModal
         modalRef={editionModalRef}

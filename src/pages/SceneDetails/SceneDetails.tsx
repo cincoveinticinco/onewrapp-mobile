@@ -3,12 +3,13 @@ import {
   IonCard,
   IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
+  useIonViewWillEnter,
+  useIonViewWillLeave,
 } from '@ionic/react';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import DropDownInfo from './Components/DropDownInfo/DropDownInfo';
 import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
 import EditionModal from '../../Shared/Components/EditionModal/EditionModal';
 import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
@@ -27,13 +28,10 @@ import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
-import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
 import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
-import { useForm } from 'react-hook-form';
 import useSceneDetailForm from './hooks/useSceneDetailForm';
 import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
@@ -46,7 +44,8 @@ export const EditableTimeField: React.FC<{
   value: number | null;
   title: string;
   updateTime: (minutes: number, seconds: number) => void;
-}> = ({ value, title, updateTime }) => {
+  editMode: boolean;
+}> = ({ value, title, updateTime, editMode }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
   const errorToast = useErrorToast();
 
@@ -87,7 +86,7 @@ export const EditableTimeField: React.FC<{
         info={`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}
         title={title}
         onEdit={handleEdit}
-        isEditable
+        isEditable={editMode}
       />
       <EditionModal
         modalRef={editionModalRef}
@@ -385,6 +384,17 @@ const SceneDetails: React.FC<{
     filterScenes();
   }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
 
+  useIonViewWillEnter(() => {
+    setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const edit = params.get('edit');
+      setEditMode(edit === 'true'); 
+    }, 150);
+  });
+  useIonViewWillLeave(() => {
+    setEditMode(false);
+  });
+
   useEffect(() => {
     const fetchScene = async () => {
       if (sceneId && oneWrapDb) {
@@ -470,10 +480,6 @@ const SceneDetails: React.FC<{
   };
 
   const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
-
-  const sceneCastCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: any) => category.categoryName));
-  const sceneExtrasCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map((category: any) => category.categoryName));
-  const sceneElementsCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: any) => category.categoryName));
 
   const getSceneStatus = (scene: ShootingScene) => {
     switch (scene.status) {
@@ -604,8 +610,8 @@ const SceneDetails: React.FC<{
           isShooting && (
             <div className="shoot-info">
               <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-                <p style={{ fontSize: '18px' }}><b>SCRIPT INFO</b></p>
-                <div className="buttons-wrapper">
+              <p className="ion-flex ion-align-items-center">SCRIPT INFO</p>
+                {editMode && (<div className="buttons-wrapper">
                   <IonButton
                     fill="clear"
                     className={`success${thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : ''}`}
@@ -622,7 +628,7 @@ const SceneDetails: React.FC<{
                   >
                     <b>NOT SHOOT</b>
                   </IonButton>
-                </div>
+                </div>)}
               </div>
               {
               !openShootDropDown && (
@@ -634,6 +640,7 @@ const SceneDetails: React.FC<{
                     withSymbol={false}
                     permissionType={1}
                     updateShootingTime={updateShootingTime}
+                    editMode={editMode}
                   />
                   <EditableField
                     field="rehearsalEnd"
@@ -642,6 +649,7 @@ const SceneDetails: React.FC<{
                     withSymbol={false}
                     permissionType={1}
                     updateShootingTime={updateShootingTime}
+                    editMode={editMode}
                   />
                   <EditableField
                     field="shootStart"
@@ -650,6 +658,7 @@ const SceneDetails: React.FC<{
                     withSymbol={false}
                     permissionType={1}
                     updateShootingTime={updateShootingTime}
+                    editMode={editMode}
                   />
                   <EditableField
                     field="shootEnd"
@@ -658,11 +667,13 @@ const SceneDetails: React.FC<{
                     withSymbol={false}
                     permissionType={1}
                     updateShootingTime={updateShootingTime}
+                    editMode={editMode}
                   />
                   <EditableTimeField
                     value={thisSceneShooting?.producedSeconds || null}
                     title="Shoot Time"
                     updateTime={updateProducedSeconds}
+                    editMode={editMode}
                   />
                   <div>
                     <IonCheckbox
@@ -709,8 +720,8 @@ const SceneDetails: React.FC<{
               />
             </div>
             <div className="section-wrapper notes-info">
-              <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
-                <p style={{ fontSize: '18px' }}><b>NOTES</b></p>
+              <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
+              <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
                {editMode && ( <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end"/>)}
               </div>
                 {(watch('notes') || []).length > 0 ? (

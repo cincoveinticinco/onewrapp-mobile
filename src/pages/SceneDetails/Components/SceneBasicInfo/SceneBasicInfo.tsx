@@ -1,11 +1,8 @@
 import { IonCol, IonGrid, IonRow } from '@ionic/react';
-import SceneInfoLabels, { FormType } from '../SceneInfoLabels/SceneInfoLabels';
+import SceneInfoLabels, { FormType, LabelType, Input } from '../SceneInfoLabels/SceneInfoLabels';
 import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
-import floatToFraction from '../../../../Shared/Utils/floatToFraction';
-import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
-import { isNumberValidator, isRequiredValidator } from '../../../../Shared/Utils/validators';
+import { isNumberValidator } from '../../../../Shared/Utils/validators';
 import { useEffect } from 'react';
-import useSceneDetailForm from '../../hooks/useSceneDetailForm';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 
@@ -36,20 +33,15 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
 
-  const fraction = floatToFraction(scene?.pages || 0);
-  const [integerPart, fractionPart] = fraction.split(' ');
-
-  const minutesSeconds = secondsToMinSec(scene?.estimatedSeconds || 0);
-  const [minutes, seconds] = minutesSeconds.split(':');
-
   return (
     <IonGrid fixed style={{ width: '100%' }}>
       <IonRow>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
-            label={{ title: "Episode", fieldKeyName: "episodeNumber", isEditable: true, disabled: false, info: scene?.episodeNumber || '-'}}
+            label={{ title: "Episode", fieldKeyName: "episodeNumber", isEditable: true, disabled: false, info: scene?.episodeNumber || '-' }}
             form={form}
-            input={{ type: InfoType.Number, validators: [isNumberValidator], required: true }}
+            input={{ validators: [isNumberValidator], required: true }}
+            type={InfoType.Number}
             editMode={editMode}
           />
         </IonCol>
@@ -57,7 +49,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Scene", fieldKeyName: "sceneNumber", isEditable: true, disabled: false, info: scene?.sceneNumber || '-' }}
             form={form}
-            input={{ type: InfoType.Number, validators: [isNumberValidator], required: true }}
+            input={{ validators: [isNumberValidator], required: true }}
+            type={InfoType.Number}
             editMode={editMode}
           />
         </IonCol>
@@ -65,7 +58,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Script Day", fieldKeyName: "scriptDay", isEditable: true, disabled: false, info: scene?.scriptDay || '-' }}
             form={form}
-            input={{ type: InfoType.Text }}
+            type={InfoType.Text}
             editMode={editMode}
           />
         </IonCol>
@@ -73,7 +66,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Year", fieldKeyName: "year", isEditable: true, disabled: false, info: scene?.year || '-' }}
             form={form}
-            input={{ type: InfoType.Number }}
+            type={InfoType.Number}
             editMode={editMode}
           />
         </IonCol>
@@ -81,31 +74,44 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Page", fieldKeyName: "page", isEditable: true, disabled: false, info: scene?.page || '-' }}
             form={form}
-            input={{ type: InfoType.Number }}
+            type={InfoType.Number}
             editMode={editMode}
           />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
-          <SceneInfoLabels
-            label={{ title: "Pages", fieldKeyName: "pages", isEditable: true, disabled: false, symbol: fractionPart, info: integerPart }}
-            form={form}
-            input={{ type: InfoType.Pages }}
-            editMode={editMode}
-          />
+        <SceneInfoLabels
+          label={{ 
+            title: "Pages", 
+            fieldKeyName: "pages", 
+            isEditable: true, 
+            disabled: false, 
+            info: scene?.pages || 0 
+          }}
+          form={form}
+          type={InfoType.Pages}
+          editMode={editMode}
+        />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
-          <SceneInfoLabels
-            label={{ title: "Time", fieldKeyName: "estimatedSeconds", isEditable: true, disabled: false, symbol: `:${seconds}`, info: minutes }}
-            form={form}
-            input={{ type: InfoType.Minutes }}
-            editMode={editMode}
-          />
+        <SceneInfoLabels
+          label={{ 
+            title: "Time", 
+            fieldKeyName: "estimatedSeconds", 
+            isEditable: true, 
+            disabled: false, 
+            info: scene?.estimatedSeconds || 0 
+          }}
+          form={form}
+          type={InfoType.Minutes}
+          editMode={editMode}
+        />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
             label={{ title: "SHOT. TIME", fieldKeyName: "", isEditable: false, disabled: true, info: "-:--" }}
             form={form}
-            input={{ type: InfoType.Text }}
+            type={InfoType.Text}
+            editMode={editMode}
           />
         </IonCol>
       </IonRow>
@@ -114,7 +120,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Type", fieldKeyName: "sceneType", isEditable: true, disabled: false, info: scene?.sceneType || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: sceneTypeOptions, required: true }}
+            input={{ selectOptions: sceneTypeOptions, required: true }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
@@ -122,7 +129,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION }}
+            input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
@@ -130,7 +138,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Int/Ext", fieldKeyName: "intOrExtOption", isEditable: true, disabled: false, info: scene?.intOrExtOption || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: intExtOptions }}
+            input={{ selectOptions: intExtOptions }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
@@ -138,7 +147,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Day/Night", fieldKeyName: "dayOrNightOption", isEditable: true, disabled: false, info: scene?.dayOrNightOption || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: dayNightOptions }}
+            input={{ selectOptions: dayNightOptions }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
@@ -146,15 +156,17 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Location", fieldKeyName: "locationName", isEditable: true, disabled: false, info: scene?.locationName || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: locationOptions }}
+            input={{ selectOptions: locationOptions }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
         <IonCol size-xs="6" size-sm="6" sizeLg="3">
           <SceneInfoLabels
-            label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-'}}
+            label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
             form={form}
-            input={{ type: InfoType.Select, selectOptions: setOptions, required: true  }}
+            input={{ selectOptions: setOptions, required: true }}
+            type={InfoType.Select}
             editMode={editMode}
           />
         </IonCol>
@@ -164,7 +176,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Synopsis", fieldKeyName: "synopsis", isEditable: true, disabled: false, info: scene?.synopsis || '-' }}
             form={form}
-            input={{ type: InfoType.LongText }}
+            type={InfoType.LongText}
             editMode={editMode}
           />
         </IonCol>

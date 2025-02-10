@@ -33,6 +33,7 @@ import applyFilters from '../../Shared/Utils/applyFilters';
 import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import './Strips.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import ScenesTotals from './Components/ScenesTotals/ScenesTotals';
 
 const Strips: React.FC<{
   permissionType: SecurePages | null;
@@ -56,7 +57,9 @@ const Strips: React.FC<{
   const { id } = useParams<any>();
   const toggleTabs = useHideTabs();
 
-  console.log('RENDERING Strips');
+  useEffect(() => {
+    console.log('RENDERING Strips');
+  },[]);
 
   const defaultSortPosibilitiesOrder = [
     {
@@ -218,6 +221,7 @@ const Strips: React.FC<{
           <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
             <IonRefresherContent />
           </IonRefresher>
+          <ScenesTotals scenes={filteredScenes} />
           <StripTagsToolbar />
           <Suspense>
             { renderContent() }
