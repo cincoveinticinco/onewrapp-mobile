@@ -666,7 +666,7 @@ const SceneDetails: React.FC<{
             </div>
             <div className="section-wrapper extras-info">
               <AddElementForm
-                handleSceneChange={handleChange}
+                setElements={(value: any) => setValue('elements', value)}
                 observedElements={(watch('elements') || []).map((element: any) => ({
                   ...element,
                   categoryName: element.categoryName || '',
@@ -676,7 +676,7 @@ const SceneDetails: React.FC<{
             </div>
             <div className="section-wrapper elements-info">
               <AddExtraForm
-                handleSceneChange={handleChange}
+                setExtras={(value: any) => setValue('extras', value)}
                 observedExtras={watch('extras') || []}
                 editMode={editMode}
               />

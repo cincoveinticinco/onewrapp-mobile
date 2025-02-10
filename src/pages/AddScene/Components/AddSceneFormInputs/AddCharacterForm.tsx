@@ -11,7 +11,6 @@ import { Character } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
-import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 interface AddCharacterFormProps {
   observedCharacters: Character[];
@@ -28,7 +27,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   const { offlineScenes } = useContext(DatabaseContext);
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [characterCategories, setCharacterCategories] = useState<string[]>([]);
-  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -108,7 +106,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     let filteredCharacters = uniqueCharacters;
     if(category === 'NO CATEGORY') {
       filteredCharacters =  uniqueCharacters.filter(character => !character.categoryName || character.categoryName == '');
-      console.log(filteredCharacters);
       return filteredCharacters.length
     }
     return uniqueCharacters.filter(character => character.categoryName === category).length;
@@ -159,7 +156,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
         selectedCategory={selectedCategory}
       />
 
-      {filteredCategories.every(c => getCharactersInCategoryLength(c) == 0) && (
+      {filteredCategories.every(c => getObservedCharactersInCategoryLength(c) == 0) && !editMode  && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>     
             <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>

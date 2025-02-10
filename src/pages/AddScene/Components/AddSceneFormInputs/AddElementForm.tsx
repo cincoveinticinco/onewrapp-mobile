@@ -1,131 +1,147 @@
-import React, { useContext, useEffect, useState, useCallback, useRef } from 'react';
-import {
-  IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput,
-} from '@ionic/react';
-import AddElementInput from './AddElementInput';
-import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
+import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
-import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import DatabaseContext from '../../../../context/Database/Database.context';
-import { SceneDocType } from '../../../../Shared/types/scenes.types';
+import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
+import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
+import AddElementInput from './AddElementInput';
 
 interface Element {
-  categoryName: string;
+  elementName: string;
+  categoryName: string | null;
 }
 
 interface AddElementFormProps {
-  handleSceneChange: (value: any, field: keyof SceneDocType) => void;
   observedElements: Element[];
   editMode?: boolean;
-  detailsEditMode?: boolean;
+  setElements: (elements: Element[]) => void;
 }
 
 const AddElementForm: React.FC<AddElementFormProps> = ({
-  handleSceneChange,
   observedElements,
   editMode,
-  detailsEditMode,
+  setElements,
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const alertRef = useRef<HTMLIonAlertElement>(null);
+  const [elementsCategories, setElementsCategories] = useState<string[]>([]);
+  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [selectedElements, setSelectedElements] = useState<Element[]>(observedElements || []);
-  const [elementsCategories, setElementsCategories] = useState<(string | null)[]>([]);
-  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
+  const handleModalOpen = () => {
+    if (addCategoryModalOpen) {
+      setAddCategoryModalOpen(false);
+      setSelectedCategory(null);
+    } else {
+      setAddCategoryModalOpen(true);
+    }
+  };
 
-  const defineElementsCategories = useCallback(() => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
-    return uniqueCategoryValues
-      .map(element => element.categoryName)
-      .filter((categoryName): categoryName is string | null => categoryName !== undefined)
-      .sort();
-  }, [offlineScenes]);
+  const uniqueElements = useMemo(() => {
+    const offlineElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+    const mergedElements = [...offlineElements];
+
+    observedElements.forEach(el => {
+      if (!mergedElements.some(existing => existing.elementName === el.elementName)) {
+        mergedElements.push(el);
+      }
+    });
+
+    return mergedElements;
+  }, [offlineScenes, observedElements]);
+
+  const filterElementsByCategory = useMemo(() => (categoryName: string | null) =>
+    uniqueElements.filter((element: any) => {
+      if (categoryName === 'NO CATEGORY') {
+        return !element.categoryName;
+      }
+      return element.categoryName === categoryName;
+    }), [uniqueElements]);
+
+  const defineElementsCategories = useCallback((): string[] => {
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName')
+      .map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
+
+    const observedCategories = observedElements.map(element => element.categoryName || 'NO CATEGORY');
+
+    const allCategories = [...uniqueCategoryValues, ...observedCategories];
+
+    return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
+  }, [offlineScenes, observedElements]);
 
   useEffect(() => {
     setElementsCategories(defineElementsCategories());
   }, [defineElementsCategories]);
 
-  useEffect(() => {
-    if (!observedElements?.length) {
-      setDropDownIsOpen(true);
-    }
-  }, [observedElements]);
-
-  useEffect(() => {
-    if (observedElements && JSON.stringify(observedElements) !== JSON.stringify(selectedElements)) {
-      setSelectedElements(observedElements);
-    }
-  }, [observedElements]);
-
-  const handleSelectedElementsChange = useCallback((newElements: Element[]) => {
-    setSelectedElements(newElements);
-  }, [handleSceneChange]);
-
-  useEffect(() => {
-    handleSceneChange(selectedElements, 'elements');
-  }, [selectedElements]);
-
-  const handleOk = (inputData: { [key: string]: any }) => {
-    if (inputData.categoryName) {
-      setElementsCategories(prev => {
-        const newCategories = [...prev, inputData.categoryName];
-        return newCategories.sort();
-      });
-    }
-  };
-
-  const handleDropDown = () => {
-    setDropDownIsOpen(!dropDownIsOpen);
-  };
-
-  const toggleModal = (category: string) => {
-    setModalStates(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  const getAlertTrigger = () => (editMode ? 'elements-categories-alert-edit' : detailsEditMode ? 'elements-categories-alert-details-edit' : 'elements-categories-alert');
-
-  const getModalTrigger = () => (editMode ? 'open-elements-options-modal-edit' : detailsEditMode ? 'open-elements-options-modal-details-edit' : 'open-elements-options-modal');
-
-  const alertInputs: AlertInput[] = [
-    {
-      name: 'categoryName',
-      type: 'text',
-      placeholder: 'Category Name',
-      id: 'add-element-category-input',
-    },
-  ];
-
-  // Filter categories to only include those with elements if not in editMode
-  const filteredCategories = editMode
-    ? elementsCategories
-    : elementsCategories.filter(category => 
-        observedElements.some(el => el.categoryName === category)
+  const setNewElements = (elementsValues: {
+    value: string | number;
+    category: string;
+  }[]) => {
+    const newElements: Element[] = elementsValues.map((element) => {
+      const existingElement = uniqueElements.find(
+        (el) => el.elementName.toLowerCase() === String(element.value).toLowerCase()
       );
+
+      return existingElement || {
+        elementName: String(element.value),
+        categoryName: element.category,
+      } as Element;
+    });
+    setElements(newElements);
+  };
+
+  const openModalWithCategory = (category: string) => {
+    setSelectedCategory(category);
+    setAddCategoryModalOpen(true);
+  };
+
+  const getElementsInCategoryLength = (category: string) => {
+    if (category === 'NO CATEGORY') {
+      return uniqueElements.filter(element => !element.categoryName).length;
+    }
+    return uniqueElements.filter(element => element.categoryName === category).length;
+  };
+
+  const getObservedElementsInCategoryLength = (category: string) => {
+    if (category === 'NO CATEGORY') {
+      return observedElements.filter(element => !element.categoryName).length;
+    }
+    return observedElements.filter(element => element.categoryName === category).length;
+  };
+
+  const filteredCategories = elementsCategories;
 
   return (
     <>
       <div className="category-item-title ion-flex ion-justify-content-between" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
         <p className="ion-flex ion-align-items-center ion-padding-start">ELEMENTS</p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-          {editMode && (<AddButton id={getAlertTrigger()} slot="end"  onClick={(e) => { e.stopPropagation(); }}/>)}
+          {editMode && (
+            <AddButton
+              onClick={() => setAddCategoryModalOpen(true)}
+              slot="end"
+            />
+          )}
         </div>
       </div>
 
-      <InputAlert
-        handleOk={handleOk}
-        inputs={alertInputs}
-        trigger={getAlertTrigger()}
-        header="Add Category"
-        message="PLEASE ENTER THE NAME OF THE CATEGORY YOU WANT TO ADD"
-        ref={alertRef}
+      <InputModalWithSections
+        optionName="Categories"
+        listOfOptions={elementsCategories.map(category => ({
+          category: category,
+          options: filterElementsByCategory(category).map(element => ({
+            label: element.elementName.toUpperCase(),
+            value: element.elementName,
+            checked: observedElements.some(el => el.elementName === element.elementName)
+          }))
+        }))}
+        clearSelections={() => {}}
+        isOpen={addCategoryModalOpen}
+        setIsOpen={handleModalOpen}
+        setValues={setNewElements}
+        selectedCategory={selectedCategory}
       />
 
-            {/* Show "No Extras Available" when editMode is false and there are no elements */}
-      {filteredCategories.length === 0 && !editMode && (
+      {filteredCategories.every(c => getObservedElementsInCategoryLength(c) === 0) && !editMode  && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>
             <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>
@@ -136,34 +152,44 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
       )}
 
       {(
-        dropDownIsOpen && (
-          <IonGrid className="add-scene-items-card-grid">
-            {filteredCategories.map((category, index) => (
-              category && (
-                <IonCard key={`category-item-${index}-category-${category}`} style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="add-scene-items-card ion-no-border">
-                  <IonCardHeader className="ion-flex">
-                    <div className="ion-flex ion-justify-content-between">
-                      <p className="ion-flex ion-align-items-center">
-                        {category.toUpperCase()}
-                      </p>
-                      <div className="category-buttons-wrapper">
-                        {editMode && (<AddButton onClick={(e) => { toggleModal(category); e.stopPropagation(); }}/>)}
-                      </div>
+        <IonGrid className="add-scene-items-card-grid">
+          {filteredCategories
+            .filter(category => 
+              editMode ? getElementsInCategoryLength(category) > 0 : getObservedElementsInCategoryLength(category) > 0
+            )
+            .map((category, index) => (
+              <IonCard
+                key={`category-item-${index}-category-${category}`}
+                style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
+                className="add-scene-items-card ion-no-border"
+              >
+                <IonCardHeader className="ion-flex">
+                  <div className="ion-flex ion-justify-content-between">
+                    <p className="ion-flex ion-align-items-center">
+                      {category.toUpperCase()}
+                    </p>
+                    <div className="category-buttons-wrapper">
+                      {editMode && (
+                        <AddButton
+                          onClick={(e) => {
+                            openModalWithCategory(category);
+                            e.stopPropagation();
+                          }}
+                        />
+                      )}
                     </div>
-                  </IonCardHeader>
-                  <AddElementInput
-                    categoryName={category}
-                    selectedElements={selectedElements}
-                    setSelectedElements={handleSelectedElementsChange}
-                    openModal={modalStates[category] || false}
-                    setOpenModal={(isOpen: boolean) => toggleModal(category)}
-                    editMode={editMode}
-                  />
-                </IonCard>
-              )
+                  </div>
+                </IonCardHeader>
+
+                <AddElementInput
+                  categoryName={category}
+                  selectedElements={observedElements}
+                  setSelectedElements={setElements}
+                  editMode={editMode}
+                />
+              </IonCard>
             ))}
-          </IonGrid>
-        )
+        </IonGrid>
       )}
     </>
   );
