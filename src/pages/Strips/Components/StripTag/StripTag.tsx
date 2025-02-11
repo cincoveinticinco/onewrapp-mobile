@@ -3,8 +3,6 @@ import { close } from 'ionicons/icons';
 import React, { useContext } from 'react';
 import ScenesContext from '../../../../context/Scenes/Scenes.context';
 import './StripTag.scss';
-import zIndex from '@mui/material/styles/zIndex';
-
 interface StripTagProps {
   tagKey: string;
   filterOption: string;

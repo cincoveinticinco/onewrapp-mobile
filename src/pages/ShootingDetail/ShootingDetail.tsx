@@ -45,7 +45,6 @@ import { bannerInputs } from './Inputs/baner.inputs';
 import { mergedSceneBanner, ShootingDataProps, ShootingViews } from './types/ShootingDetail.types';
 import { advanceCallInputs } from './Inputs/AdvanceCall.inputs';
 import { useShootingInfo } from './hooks/useShootingInfo';
-import { normalizeString } from 'rxdb';
 
 const ShootingDetail: React.FC<{
   permissionType?: number | null;
@@ -136,6 +135,7 @@ const ShootingDetail: React.FC<{
   const [searchText, setSearchText] = useState('');
   const [searchMode, setSearchMode] = useState(false);
   const [formattedAdvancedCallInputs, setFormattedAdvancedCallInputs] = useState<any>([]);
+  const [modalSceneIsOpen, setModalSceneIsOpen] = useState(false);
 
   useEffect(() => {
     setFormattedAdvancedCallInputs(advanceCallInputs(departments));
@@ -371,6 +371,7 @@ const ShootingDetail: React.FC<{
     setAdditionMenu(false);
     setTimeout(() => {
       sceneModalRef.current?.present();
+      setModalSceneIsOpen(true);
     }, 100);
   };
 
@@ -411,9 +412,9 @@ const ShootingDetail: React.FC<{
   //* ****************************** MODALS **********************************//
 
   //* ***************************** EFFECTS *****************************/
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     fetchData();
-  }, [oneWrappDb]);
+  });
 
   useEffect(() => {
     if (!isLoading) {
@@ -475,7 +476,7 @@ const ShootingDetail: React.FC<{
 
   const AddNewScenes = () => (
     <InputModalScene
-      sceneName="Add New SceneDocType"
+      sceneName="Add New Scene"
       listOfScenes={shootingData.notIncludedScenes}
       handleCheckboxToggle={addNewScene}
       selectedScenes={selectedScenes}
@@ -483,6 +484,8 @@ const ShootingDetail: React.FC<{
       clearSelections={clearSelectedScenes}
       multipleSelections
       modalRef={sceneModalRef}
+      isOpen={modalSceneIsOpen}
+      setIsOpen={setModalSceneIsOpen}
     />
   );
 

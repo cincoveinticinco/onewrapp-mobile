@@ -4,6 +4,7 @@ import {
   IonContent,
   IonPage,
   IonRouterOutlet,
+  isPlatform,
   setupIonicReact,
 } from '@ionic/react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
@@ -28,13 +29,14 @@ import './theme/variables.css';
 import AppLoader from './Shared/hooks/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
+import { loadEnvironment } from '../environment';
 
 setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { isDatabaseReady, oneWrapDb, isOnline } = React.useContext(DatabaseContext);
   const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading } = React.useContext(AuthContext);
-
+  const isIos = isPlatform('ios');
   const history = useHistory();
 
   useEffect(() => {
@@ -84,6 +86,19 @@ const AppContent: React.FC = () => {
 
     oneWrapDb && fetchUser();
   }, [isOnline, oneWrapDb]);
+
+  useEffect(() => {
+    const initEnvironment = async () => {
+      try {
+        await loadEnvironment(isIos);
+        // Aquí puedes realizar acciones adicionales después de cargar el ambiente
+      } catch (error) {
+        console.error('Error al inicializar el ambiente:', error);
+      }
+    };
+
+    initEnvironment();
+  }, []);
 
   if (!loading && isDatabaseReady && loggedIn) {
     return (

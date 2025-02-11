@@ -1,5 +1,6 @@
 import {
   IonCol, IonGrid, IonRow,
+  useIonViewDidEnter,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
@@ -140,7 +141,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   const [marker, setMarker] = useState<string | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     if (shootingInfo.locations.length > 0 && mapRef.current) {
       const lat = shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0;
       const lng = shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0;
@@ -151,7 +152,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         updateMarker(lat, lng);
       }
     }
-  }, [shootingInfo, mapInitialized, mapRef.current]);
+  });
 
   const createMap = async (lat: number, lng: number) => {
     if (!mapRef.current) return;
@@ -183,10 +184,19 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         await map.removeMarker(marker);
       }
 
-      const newMarker = await map.addMarker({
-        coordinate: { lat: latitude, lng: longitude },
-        draggable: true,
-      });
+      let newMarker;
+      try {
+        newMarker = await map.addMarker({
+          coordinate: { lat: latitude, lng: longitude },
+          draggable: true,
+        });
+      } catch (error) {
+        console.error('Error adding marker, retrying:', error);
+        newMarker = await map.addMarker({
+          coordinate: { lat: latitude, lng: longitude },
+          draggable: true,
+        });
+      }
 
       setMarker(newMarker);
 
@@ -202,13 +212,6 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
       setFirstLocationLng(shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0);
     }
   }, [shootingInfo.locations]);
-
-  const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut') => {
-    setEditingField(field);
-    if (editionModalRef.current) {
-      editionModalRef.current.present();
-    }
-  };
 
   const handleEdition = (formData: { time: string }) => {
     if (editingField) {
