@@ -84,7 +84,10 @@ const InputItem: React.FC<InputItemProps> = ({
                 placeholder={showError ? label : placeholder}
                 value={field.value}
                 onIonInput={(e) => {
-                  const value = e.detail.value || '';
+                  let value = e.detail.value || '';
+                  if(value) {
+                    value = value.toUpperCase(); 
+                  }
                   handleInputChange(value);
                   field.onChange(value);
                 }}
@@ -107,8 +110,11 @@ const InputItem: React.FC<InputItemProps> = ({
                 labelPlacement="floating"
                 value={field?.value}
                 onIonInput={(e) => {
-                  const value = e.detail.value || '';
+                  let value = e.detail.value || '';
                   handleInputChange(value);
+                  if(value) {
+                    value = value.toUpperCase(); 
+                  }
                   field.onChange(value);
                 }}
                 onFocus={() => {

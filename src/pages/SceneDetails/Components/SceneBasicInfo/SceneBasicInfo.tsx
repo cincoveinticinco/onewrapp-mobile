@@ -2,7 +2,7 @@ import { IonCol, IonGrid, IonRow } from '@ionic/react';
 import SceneInfoLabels, { FormType, LabelType, Input } from '../SceneInfoLabels/SceneInfoLabels';
 import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
 import { isNumberValidator } from '../../../../Shared/Utils/validators';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 
@@ -23,15 +23,22 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
     setOptions
   } = useSceneFormOptions();
 
+  const [showProtection, setShowProtection] = useState(false);
+
   const sceneType = watch('sceneType');
 
   useEffect(() => {
     if (sceneType === SceneTypeEnum.SCENE) {
       setValue('protectionType', null);
+      setShowProtection(false)
+    } else {
+      setShowProtection(true);
     }
   }, [sceneType, setValue]);
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
+
+  const sizeLg = showProtection ? "3" : "4";
 
   return (
     <IonGrid fixed style={{ width: '100%' }}>
@@ -116,7 +123,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
         </IonCol>
       </IonRow>
       <IonRow>
-        <IonCol size-xs="6" size-sm="3" sizeLg="1.5">
+        <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
           <SceneInfoLabels
             label={{ title: "Type", fieldKeyName: "sceneType", isEditable: true, disabled: false, info: scene?.sceneType || '-' }}
             form={form}
@@ -125,16 +132,20 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             editMode={editMode}
           />
         </IonCol>
-        <IonCol size-xs="6" size-sm="3" sizeLg="1.5">
-          <SceneInfoLabels
-            label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
-            form={form}
-            input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION }}
-            type={InfoType.Select}
-            editMode={editMode}
-          />
-        </IonCol>
-        <IonCol size-xs="6" size-sm="3" sizeLg="1.5">
+         {
+          showProtection && (
+            <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
+              <SceneInfoLabels
+                label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
+                form={form}
+                input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION }}
+                type={InfoType.Select}
+                editMode={editMode}
+              />
+            </IonCol>
+          )
+         }
+        <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
           <SceneInfoLabels
             label={{ title: "Int/Ext", fieldKeyName: "intOrExtOption", isEditable: true, disabled: false, info: scene?.intOrExtOption || '-' }}
             form={form}
@@ -143,7 +154,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             editMode={editMode}
           />
         </IonCol>
-        <IonCol size-xs="6" size-sm="3" sizeLg="1.5">
+        <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
           <SceneInfoLabels
             label={{ title: "Day/Night", fieldKeyName: "dayOrNightOption", isEditable: true, disabled: false, info: scene?.dayOrNightOption || '-' }}
             form={form}
@@ -152,7 +163,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             editMode={editMode}
           />
         </IonCol>
-        <IonCol size-xs="6" size-sm="6" sizeLg="3">
+        <IonCol size-xs="6" size-sm="6" sizeLg="6">
           <SceneInfoLabels
             label={{ title: "Location", fieldKeyName: "locationName", isEditable: true, disabled: false, info: scene?.locationName || '-' }}
             form={form}
@@ -161,7 +172,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             editMode={editMode}
           />
         </IonCol>
-        <IonCol size-xs="6" size-sm="6" sizeLg="3">
+        <IonCol size-xs="6" size-sm="6" sizeLg="6">
           <SceneInfoLabels
             label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
             form={form}

@@ -68,6 +68,7 @@ interface ToolbarProps {
   customHandleSearch?: (e: any) => void;
   editOnClick?: () => void;
   showLogout?: boolean;
+  color?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -99,6 +100,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   customHandleSearch,
   editOnClick,
   showLogout = true,
+  color = 'tertiary',
 }) => {
   const isMobile = useIsMobile();
 
@@ -161,7 +163,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   
 
   return (
-    <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar" style={{
+    <IonToolbar color={color} className="toolbar" id="main-pages-toolbar" style={{
       paddingLeft: back || backString ? '0px' : '16px',
     }}>
       {menu && (

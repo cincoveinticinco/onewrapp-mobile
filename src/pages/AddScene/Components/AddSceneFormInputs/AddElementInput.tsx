@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonCardContent, IonList } from '@ionic/react';
+import { IonCardContent, IonItem, IonList } from '@ionic/react';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
 
@@ -44,10 +44,9 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       {filterSelectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedElements.map((element: Element, index: number) => (
-            <div
-              key={`element-item-${index}-category-${categoryName}`}
-              style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)' }}
-              className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
+            <IonItem
+              key={`character-item-${index}-category-${categoryName}`}
+              color='tertiary-dark'
             >
               {element.elementName.toUpperCase()}
               {editMode && (
@@ -56,7 +55,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
                   slot="end"
                 />
               )}
-            </div>
+            </IonItem>
           ))}
         </IonList>
       ) : (

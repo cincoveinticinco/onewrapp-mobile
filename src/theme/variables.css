@@ -129,7 +129,7 @@ body {
 .ion-color-tertiary-dark {
   --ion-color-base: var(--ion-color-tertiary-dark);
   --ion-color-base-rgb: 20, 24, 31;
-  --ion-coor-contrast: var(--ion-color-light);
+  --ion-color-contrast: var(--ion-color-light);
   --ion-color-contrast-rgb: 255, 255, 255;
   --ion-color-shade: #14181f;
   --ion-color-tint: #2c313b;
@@ -138,7 +138,7 @@ body {
 .ion-color-rose {
   --ion-color-base: var(--ion-color-rose);
   --ion-color-base-rgb: 253, 198, 247;
-  --ion-coor-contrast: var(--ion-color-dark);
+  --ion-color-contrast: var(--ion-color-dark);
   --ion-color-contrast-rgb: 0, 0, 0;
   --ion-color-shade: #dfaed9;
   --ion-color-tint: #fdccf8;
@@ -147,7 +147,7 @@ body {
 .ion-color-yellow {
   --ion-color-base: var(--ion-color-yellow);
   --ion-color-base-rgb: 243, 251, 140;
-  --ion-coor-contrast: var(--ion-color-dark);
+  --ion-color-contrast: var(--ion-color-dark);
   --ion-color-contrast-rgb: 0, 0, 0;
   --ion-color-shade: #d6dd7b;
   --ion-color-tint: #f4fb98;

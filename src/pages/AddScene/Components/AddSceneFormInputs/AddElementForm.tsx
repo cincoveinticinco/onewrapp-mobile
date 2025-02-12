@@ -74,7 +74,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
 
   const setNewElements = (elementsValues: {
     value: string | number;
-    category: string;
+    category: string | null;
   }[]) => {
     const newElements: Element[] = elementsValues.map((element) => {
       const existingElement = uniqueElements.find(
@@ -87,11 +87,6 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
       } as Element;
     });
     setElements(newElements);
-  };
-
-  const openModalWithCategory = (category: string) => {
-    setSelectedCategory(category);
-    setAddCategoryModalOpen(true);
   };
 
   const getElementsInCategoryLength = (category: string) => {
@@ -168,16 +163,6 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
                     <p className="ion-flex ion-align-items-center">
                       {category.toUpperCase()}
                     </p>
-                    <div className="category-buttons-wrapper">
-                      {editMode && (
-                        <AddButton
-                          onClick={(e) => {
-                            openModalWithCategory(category);
-                            e.stopPropagation();
-                          }}
-                        />
-                      )}
-                    </div>
                   </div>
                 </IonCardHeader>
 

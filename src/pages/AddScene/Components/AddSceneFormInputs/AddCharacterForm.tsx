@@ -62,8 +62,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
   const defineCharactersCategories = useCallback((): string[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
-    console.log(uniqueCategoryValues);
-    const observedCategories = observedCharacters.map(character => character.categoryName);
+    const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : 'NO CATEGORY');
 
     const allCategories = [...uniqueCategoryValues, ...observedCategories]
 
@@ -81,12 +80,12 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     setCharacters(newCharacters);
   }, [setCharacters]);
 
-  const filteredCategories = characterCategories
+  const filteredCategories = useMemo(() => characterCategories, [characterCategories]);
 
 
   const setNewCharacters = (charactersValues: {
     value: string | number;
-    category: string;
+    category: string | null;
   }[]) => {
     const newCharacters: Character[] = charactersValues.map((character) => {
       const existingCharacter = uniqueCharacters.find(
@@ -95,10 +94,11 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       
       return existingCharacter || {
         characterName: character.value,
-        categoryName: character.category,
+        categoryName: character.category === 'NO CATEGORY' ? null : character.category,
         characterNum: ''
       } as Character;
     });
+    console.log(newCharacters)
     setCharacters(newCharacters);
   };
 
@@ -112,17 +112,13 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   };
 
   const getObservedCharactersInCategoryLength = (category: string) => {
-    if(category === 'NO CATEGORY') { 
+    if(category === 'NO CATEGORY' || !category) { 
       return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
     }
 
     return observedCharacters.filter(character => character.categoryName === category).length;
   }
 
-  const openModalWithCategory = (category: string) => {
-    setSelectedCategory(category);
-    setAddCategoryModalOpen(true);
-  }
 
   return (
     <>
@@ -182,16 +178,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                     <p className="ion-flex ion-align-items-center">
                       {category?.toUpperCase()}
                     </p>
-                    <div className="category-buttons-wrapper">
-                      {editMode && (
-                        <AddButton 
-                          onClick={(e) => { 
-                            openModalWithCategory(category);
-                            e.stopPropagation(); 
-                          }}
-                        />
-                      )}
-                    </div>
                   </div>
                 </IonCardHeader>
                 <AddCharacterInput

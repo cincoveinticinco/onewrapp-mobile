@@ -74,7 +74,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   // Manejar selección de nuevos extras
   const setNewExtras = (extrasValues: {
     value: string | number;
-    category: string;
+    category: string | null;
   }[]) => {
     const newExtras: Extra[] = extrasValues.map((extra) => {
       const existingExtra = uniqueExtras.find(
@@ -88,12 +88,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
     });
     setExtras(newExtras);
   };
-
-  const openModalWithCategory = (category: string) => {
-    setSelectedCategory(category);
-    setAddCategoryModalOpen(true);
-  };
-
+  
   const getExtrasInCategoryLength = (category: string) => {
     if (category === 'NO CATEGORY') {
       console.log(uniqueExtras.filter(extra => !extra.categoryName).length);
@@ -174,16 +169,6 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
                   <p className="ion-flex ion-align-items-center">
                     {category.toUpperCase()}
                   </p>
-                  <div className="category-buttons-wrapper">
-                    {editMode && (
-                      <AddButton
-                        onClick={(e) => {
-                          openModalWithCategory(category);
-                          e.stopPropagation();
-                        }}
-                      />
-                    )}
-                  </div>
                 </div>
               </IonCardHeader>
 

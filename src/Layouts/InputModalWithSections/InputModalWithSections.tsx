@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonCheckbox, IonContent, IonHeader, IonModal, IonToggle } from '@ionic/react';
+import { IonCheckbox, IonCol, IonContent, IonGrid, IonHeader, IonModal, IonRow, IonToggle } from '@ionic/react';
 import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import './InputModalWithSections.scss';
@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { Value } from 'sass';
 
 interface ListOfOptionsItem {
-  category: string | null;
+  category: string;
   options: {
     label: string;
     value: string | number;
@@ -28,7 +28,7 @@ interface InputModalWithSectionsProps {
   setIsOpen?: (value: boolean) => void;
   setValues: (values: {
     value: string | number;
-    category: string;
+    category: string | null;
   }[]) => void;
   selectedCategory?: string | null;
 }
@@ -50,10 +50,10 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const [createdOptions, setCreatedOptions] = useState<ListOfOptionsItem[]>([]);
   const [openSelectedOptions, setOpenSelectedOptions] = useState(true);
   const { control, setValue, getValues } = useForm<{ categoryName: string }>({
-    defaultValues: { categoryName: '' },
+    defaultValues: { categoryName: 'NO CATEGORY' },
   });
 
-  const categorySuggestions = listOfOptions.map(item => item.category || 'NO CATEGORY');
+  const categorySuggestions = listOfOptions.map(item => item.category);
 
   useEffect(() => {
     filterOptions();
@@ -112,7 +112,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   };
 
   const createNew = () => {
-    const categoryName = getValues('categoryName') || 'NO CATEGORY';
+    const categoryName = getValues('categoryName');
     const updatedCreatedOptions = [...createdOptions];
     const categoryIndex = updatedCreatedOptions.findIndex(category => category.category === categoryName);
 
@@ -148,7 +148,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       category.options.filter(option => option.checked).map(option => {
         return {
           value: option.value,
-          category: category.category || 'NO CATEGORY',
+          category: category?.category 
         }
       })
     );
@@ -165,7 +165,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     return filteredOptions.flatMap(category =>
       category.options
         .filter(option => option.checked)
-        .map(option => ({ label: option.label, category: category.category || 'NO CATEGORY', checked: option.checked, value: option.value }))
+        .map(option => ({ label: option.label, category: category.category, checked: option.checked, value: option.value }))
     );
   };
 
@@ -224,16 +224,22 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               <p className="no-items-card-title">
                 <a>{searchText.toUpperCase()}</a> DOES NOT EXIST. DO YOU WANT TO CREATE?
               </p>
-              <InputItem
-                label="Category"
-                placeholder="Enter category"
-                control={control}
-                fieldKeyName="categoryName"
-                inputName="category-input"
-                suggestions={categorySuggestions}
-                setValue={setValue}
-  
-              />
+              <IonGrid>
+                <IonRow>
+                  <IonCol size='6' offset='3'>
+                  <InputItem
+                    label="Category"
+                    placeholder="Enter category"
+                    control={control}
+                    fieldKeyName="categoryName"
+                    inputName="category-input"
+                    suggestions={categorySuggestions}
+                    setValue={setValue}
+                  />
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
+         
               <div className='buttons-wrapper'>
                 <OutlinePrimaryButton buttonName="YES" onClick={createNew} color='success' className='ion-margin-top save-button' />
                 <OutlinePrimaryButton buttonName="NO" onClick={closeModal} color='danger' className='ion-margin-top save-button' />

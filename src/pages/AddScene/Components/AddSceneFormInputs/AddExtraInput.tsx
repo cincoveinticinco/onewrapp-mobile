@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonCardContent, IonList } from '@ionic/react';
+import { IonCardContent, IonItem, IonList } from '@ionic/react';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
 import { Extra } from '../../../../Shared/types/scenes.types';
@@ -38,10 +38,9 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
       {filterSelectedExtras.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedExtras.map((extra: Extra, index: number) => (
-            <div
-              key={`extra-item-${index}-category-${categoryName}`}
-              style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)' }}
-              className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
+            <IonItem
+              key={`character-item-${index}-category-${categoryName}`}
+              color='tertiary-dark'
             >
               {(extra.extraName ?? '').toUpperCase()}
               {editMode && (
@@ -50,7 +49,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
                   slot="end"
                 />
               )}
-            </div>
+            </IonItem>
           ))}
         </IonList>
       ) : (
