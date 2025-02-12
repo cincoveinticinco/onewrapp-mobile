@@ -174,7 +174,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
             (
               <IonCard 
                 key={`category-item-${index}-category-${category}`} 
-                style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} 
+                color='tertiary-dark'
                 className="add-scene-items-card ion-no-border"
               >
                 <IonCardHeader className="ion-flex">

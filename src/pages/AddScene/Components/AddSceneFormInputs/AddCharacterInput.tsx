@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import {
   IonCardContent,
+  IonItem,
   IonList,
 } from '@ionic/react';
 import { Character } from '../../../../Shared/types/scenes.types';
@@ -39,21 +40,20 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
 
   return (
-    <IonCardContent className={contentStyle}>
+    <IonCardContent className={contentStyle} color='tertiary-dark'>
       {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any, index: number) => (
-            <div
+            <IonItem
               key={`character-item-${index}-category-${categoryName}`}
-              style={{ backgroundColor: 'var(--ion-color-tertiary-dark)', color: 'var(--ion-color-light)'}}
-              className="ion-no-margin category-items ion-flex ion-justify-content-between ion-align-items-center"
+              color='tertiary-dark'
             >
               {`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}
               {editMode && (<DeleteButton
                 onClick={() => deleteCharacter(character.characterName)}
                 slot="end"
               />)}
-            </div>
+            </IonItem>
           ))}
         </IonList>
       ) : (

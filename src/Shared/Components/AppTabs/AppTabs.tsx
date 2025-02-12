@@ -30,7 +30,6 @@ import DatabaseContext from '../../../context/Database/Database.context';
 import AppLoader from '../../hooks/AppLoader';
 import { SecurePages } from '../../types/securePages.types';
 import { UserDocType } from '../../types/user.types';
-import AddScene from '../../../pages/AddScene/AddScene';
 import Calendar from '../../../pages/Calendar/Calendar';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
 import Cast from '../../../pages/Cast/Cast';
@@ -124,6 +123,7 @@ const AppTabs: React.FC = () => {
     );
   }
 
+
   return (
     <IonTabs className="ion-tabs">
       <IonRouterOutlet mode="md">
@@ -135,7 +135,8 @@ const AppTabs: React.FC = () => {
           exact
           path={`${urlString}/addscene`}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
-          component={AddScene}
+          component={SceneDetails}
+          additionalProps={{ creationMode: true }}
           unauthorizedRoute={unauthorizedRoute}
         />
         <ProtectedRoute

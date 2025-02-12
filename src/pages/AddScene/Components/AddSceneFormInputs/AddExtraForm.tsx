@@ -167,6 +167,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
               key={`category-item-${index}-category-${category}`}
               style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
               className="add-scene-items-card ion-no-border"
+              color='tertiary-dark'
             >
               <IonCardHeader className="ion-flex">
                 <div className="ion-flex ion-justify-content-between">

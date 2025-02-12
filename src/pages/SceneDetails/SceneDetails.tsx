@@ -14,7 +14,7 @@ import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
 import EditionModal from '../../Shared/Components/EditionModal/EditionModal';
 import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
 import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
-import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
+import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
@@ -30,7 +30,6 @@ import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
-import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import useSceneDetailForm from './hooks/useSceneDetailForm';
 import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
@@ -47,7 +46,6 @@ export const EditableTimeField: React.FC<{
   editMode: boolean;
 }> = ({ value, title, updateTime, editMode }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
-  const errorToast = useErrorToast();
 
   const handleEdit = () => {
     if (editionModalRef.current) {
@@ -106,7 +104,8 @@ export const EditableTimeField: React.FC<{
 
 const SceneDetails: React.FC<{
   isShooting?: boolean;
-}> = ({ isShooting = false }) => {
+  creationMode?: boolean;
+}> = ({ isShooting = false, creationMode }) => {
   const toggleTabs = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId: string }>();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
@@ -122,7 +121,6 @@ const SceneDetails: React.FC<{
   const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
   const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const [sceneColor, setSceneColor] = useState<any>('light');
-  const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
 
@@ -135,9 +133,28 @@ const SceneDetails: React.FC<{
     setValue
   } = form;
 
+  const emptyScene = {
+    sceneId: 0,
+    episodeNumber: '',
+    sceneNumber: '',
+    sceneName: '',
+    sceneDescription: '',
+    intOrExtOption: '',
+    dayOrNightOption: '',
+    location: '',
+    characters: [],
+    elements: [],
+    extras: [],
+    notes: [],
+  };
+
   useEffect(() => {
-    if (thisScene) {
+    if (thisScene && !creationMode) {
       reset(thisScene);
+    }
+
+    if (creationMode) {
+      reset(emptyScene);
     }
   }, [thisScene, reset]);
 
@@ -451,9 +468,13 @@ const SceneDetails: React.FC<{
   };
 
   const handleBack = () => {
-    const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
-    history.push(backRoute);
-    toggleTabs.showTabs();
+    if(creationMode) {
+      history.push(`/my/projects/${id}/strips`);
+    } else {
+      const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
+      history.push(backRoute);
+      toggleTabs.showTabs();
+    }
   };
 
   useEffect(() => {
@@ -500,7 +521,10 @@ const SceneDetails: React.FC<{
       }
       const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       if (sceneDocument) {
-        await sceneDocument.update({ $set: data });
+        if(creationMode) {
+          data.id = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+        }
+        await oneWrapDb?.scenes.upsert(data);
         successMessageSceneToast('Scene updated successfully');
         setThisScene(data);
         toggleEditMode();
@@ -532,7 +556,7 @@ const SceneDetails: React.FC<{
           slot="end"
           color="light"
           className="outline-danger-button-small"
-          onClick={toggleEditMode}
+          onClick={!creationMode ? toggleEditMode : handleBack}
           key="custom-cancel"
         >
           CANCEL
@@ -566,191 +590,119 @@ const SceneDetails: React.FC<{
     )
   }
 
+  const renderToolbar = () => (
+    <Toolbar
+      name={creationMode ? "CREATE SCENE" : sceneHeader}
+      backString
+      handleBack={handleBack}
+      {...(creationMode || editMode
+        ? { customButtons: [editModeButtons], showLogout: false }
+        : {
+            prohibited: true,
+            deleteButton: true,
+            edit: true,
+            editOnClick: toggleEditMode,
+          })}
+      deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
+    />
+  );
+
+  const renderSceneBasicInfo = () => (
+    <form onSubmit={handleSubmit(onSubmitForm)} id="scene-detail-info">
+      <SceneBasicInfo editMode={editMode || creationMode} scene={thisScene as SceneDocType} form={form} />
+    </form>
+  );
+
+  const renderNotesSection = () => (
+    <div className="section-wrapper notes-info">
+      <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: "var(--ion-color-dark)" }}>
+        <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
+        {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
+      </div>
+      {(watch("notes") || []).length > 0 ? ( 
+        (watch("notes") || []).map((note: Note, index: number) => (
+          <IonCard
+            color='tertiary-dark'
+            key={`note-${index}`}
+            className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
+          >
+            <p>{note.note}</p>
+            <p>{note.email}</p>
+          </IonCard>
+        ))
+      ) : (
+        <IonCard
+          className="ion-flex-column ion-justify-content-center ion-align-items-center"
+          color='tertiary-dark'
+        >
+          <p>NO NOTES ADDED</p>
+        </IonCard>
+      )}
+      {addNoteAlert()}
+    </div>
+  );
+
+  const renderElementsSection = () => (
+    <>
+      <div className="section-wrapper characters-info">
+        <AddCharacterForm
+          observedCharacters={watch("characters") || []}
+          editMode={editMode || creationMode}
+          setCharacters={(value: Character[]) => setValue("characters", value)}
+        />
+      </div>
+      <div className="section-wrapper extras-info">
+        <AddElementForm
+          setElements={(value: any) => setValue("elements", value)}
+          observedElements={(watch("elements") || []).map((element: any) => ({
+            ...element,
+            categoryName: element.categoryName || "",
+          }))}
+          editMode={editMode || creationMode}
+        />
+      </div>
+      <div className="section-wrapper elements-info">
+        <AddExtraForm setExtras={(value: any) => setValue("extras", value)} observedExtras={watch("extras") || []} editMode={editMode || creationMode} />
+      </div>
+    </>
+  );
+
+  const renderSceneContent = () => (
+    <>
+      {sceneIsLoading ? AppLoader() : thisScene && renderSceneBasicInfo()}
+      {!sceneIsLoading && thisScene && (
+        <div className="grid-scene-info">
+          {renderElementsSection()}
+          {renderNotesSection()}
+        </div>
+      )}
+    </>
+  );
+
+  if (creationMode) {
+    return (
+      <IonPage>
+        <IonHeader>{renderToolbar()}</IonHeader>
+        <IonContent color="tertiary" fullscreen>
+          <>
+          {renderSceneBasicInfo()}
+          <div className="grid-scene-info">
+            {renderElementsSection()}
+            {renderNotesSection()}
+          </div>
+          </>
+        </IonContent>   
+      </IonPage>
+    );
+  }
+
   return (
     <IonPage>
-      <IonHeader>
-        {
-          !editMode ? (
-            <Toolbar
-              name={sceneHeader}
-              backString
-              prohibited
-              deleteButton
-              edit
-              // editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
-              editOnClick={toggleEditMode}
-              handleBack={handleBack}
-              deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
-            />
-          ) : (
-            <Toolbar
-              name={sceneHeader}
-              backString
-              customButtons={[editModeButtons]}
-              handleBack={handleBack}
-              showLogout={false}
-              deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
-            />
-          )
-        }
-        <SceneHeader
-          sceneColor={sceneColor}
-          sceneHeader={sceneHeader}
-          previousScene={previousScene}
-          nextScene={nextScene}
-          changeToPreviousScene={changeToPreviousScene}
-          changeToNextScene={changeToNextScene}
-          status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'NOT ASSIGNED'}
-          editMode={editMode}
-        />
-      </IonHeader>
-      <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? AppLoader() : thisScene && <form onSubmit={handleSubmit(onSubmitForm)} id='scene-detail-info'><SceneBasicInfo editMode={editMode} scene={thisScene} form={form}/></form>}
-        {
-          isShooting && (
-            <div className="shoot-info">
-              <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-              <p className="ion-flex ion-align-items-center">SCRIPT INFO</p>
-                {editMode && (<div className="buttons-wrapper">
-                  <IonButton
-                    fill="clear"
-                    className={`success${thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : ''}`}
-                    size="small"
-                    onClick={handleShootClick}
-                  >
-                    <b>SHOOT</b>
-                  </IonButton>
-                  <IonButton
-                    className={`danger${thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : ''}`}
-                    fill="clear"
-                    size="small"
-                    onClick={handleNotShootClick}
-                  >
-                    <b>NOT SHOOT</b>
-                  </IonButton>
-                </div>)}
-              </div>
-              {
-              !openShootDropDown && (
-                <div className="info">
-                  <EditableField
-                    field="rehearsalStart"
-                    value={thisSceneShooting?.rehearsalStart || ''}
-                    title="Rehersal Start"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                    editMode={editMode}
-                  />
-                  <EditableField
-                    field="rehearsalEnd"
-                    value={thisSceneShooting?.rehearsalEnd || ''}
-                    title="Rehersal End"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                    editMode={editMode}
-                  />
-                  <EditableField
-                    field="shootStart"
-                    value={thisSceneShooting?.shootStart || ''}
-                    title="Shoot Start"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                    editMode={editMode}
-                  />
-                  <EditableField
-                    field="shootEnd"
-                    value={thisSceneShooting?.shootEnd || ''}
-                    title="Shoot End"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                    editMode={editMode}
-                  />
-                  <EditableTimeField
-                    value={thisSceneShooting?.producedSeconds || null}
-                    title="Shoot Time"
-                    updateTime={updateProducedSeconds}
-                    editMode={editMode}
-                  />
-                  <div>
-                    <IonCheckbox
-                      checked={thisSceneShooting?.partiality || false}
-                      onIonChange={(e) => updatePartiality(e.detail.checked)}
-                      labelPlacement="end"
-                      className="partiality-checkbox"
-                    >
-                      PARTIALY SHOOT
-                    </IonCheckbox>
-                  </div>
-                </div>
-              )
-            }
-            </div>
-          )
-        }
-        {!sceneIsLoading && thisScene && (
-          <div className="grid-scene-info">
-            <div className="section-wrapper characters-info">
-              <AddCharacterForm
-                observedCharacters={watch('characters') || []}
-                editMode={editMode}
-                setCharacters={(value: Character[]) => {
-                  console.log(value);
-                  setValue('characters', value)}}
-              />
-            </div>
-            <div className="section-wrapper extras-info">
-              <AddElementForm
-                setElements={(value: any) => setValue('elements', value)}
-                observedElements={(watch('elements') || []).map((element: any) => ({
-                  ...element,
-                  categoryName: element.categoryName || '',
-                }))}
-                editMode={editMode}
-              />
-            </div>
-            <div className="section-wrapper elements-info">
-              <AddExtraForm
-                setExtras={(value: any) => setValue('extras', value)}
-                observedExtras={watch('extras') || []}
-                editMode={editMode}
-              />
-            </div>
-            <div className="section-wrapper notes-info">
-              <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
-              <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
-               {editMode && ( <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end"/>)}
-              </div>
-                {(watch('notes') || []).length > 0 ? (
-                (watch('notes') || []).map((note: Note, index: number) => (
-                  <IonCard
-                  style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
-                  key={`note-${index}`}
-                  className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
-                  >
-                    <p>{note.note}</p>
-                    <p>{note.email}</p>
-                  </IonCard>
-                ))
-                ) : (
-                <IonCard
-                  style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}
-                  className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-center"
-                >
-                  <p>NO NOTES ADDED</p>
-                </IonCard>
-                )}
-              {addNoteAlert()}
-            </div>
-          </div>
-        )}
-      </IonContent>
+      <IonHeader>{renderToolbar()}</IonHeader>
+      <IonContent color="tertiary" fullscreen>{renderSceneContent()}</IonContent>
       <SceneDetailsTabs
-        routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
-        routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
+        routeDetails={`${rootRoute}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
+        routeScript={`${rootRouteScript}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
         currentRoute="scenedetails"
       />
       <InputAlert

@@ -105,7 +105,7 @@ const InputItem: React.FC<InputItemProps> = ({
                 type={type}
                 label={showError ? errorMessage : label?.toUpperCase()}
                 labelPlacement="floating"
-                value={field.value}
+                value={field?.value}
                 onIonInput={(e) => {
                   const value = e.detail.value || '';
                   handleInputChange(value);
