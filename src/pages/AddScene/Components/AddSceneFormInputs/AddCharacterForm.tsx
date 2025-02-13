@@ -61,6 +61,10 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       return character.categoryName === categoryName;
     }), [uniqueCharacters]);
 
+  useEffect(() => {
+    console.log(uniqueCharacters)
+  }, [filterCharactersByCategory])
+
   const defineCharactersCategories = useCallback((): string[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
     const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : EmptyEnum.NoCategory);

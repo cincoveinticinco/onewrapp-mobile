@@ -43,10 +43,15 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   setValues,
   selectedCategory,
 }) => {
+  useEffect(() => {
+    if (!isOpen) {
+      setFilteredOptions([]);
+    }
+  }, [isOpen]);
+  
   const [searchText, setSearchText] = useState('');
   const [showError, setShowError] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<ListOfOptionsItem[]>([]);
-  const [showOnlySelected, setShowOnlySelected] = useState(false);
   const [createdOptions, setCreatedOptions] = useState<ListOfOptionsItem[]>([]);
   const [openSelectedOptions, setOpenSelectedOptions] = useState(true);
   const { control, setValue, getValues } = useForm<{ categoryName: string }>({
@@ -57,7 +62,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   useEffect(() => {
     filterOptions();
-  }, [searchText, showOnlySelected, listOfOptions, createdOptions]);
+  }, [searchText, listOfOptions, createdOptions]);
 
   const filterOptions = () => {
     let combinedOptions = [...listOfOptions, ...createdOptions];
@@ -77,14 +82,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       }));
     }
   
-    if (showOnlySelected) {
-      combinedOptions = combinedOptions.map(category => ({
-        ...category,
-        options: category.options.filter(option => option.checked),
-        open: true,
-      }));
-    }
-  
     setFilteredOptions(combinedOptions);
   };
 
@@ -99,7 +96,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const resetStates = () => {
     setSearchText('');
     setShowError(false);
-    setShowOnlySelected(false);
     setCreatedOptions([]);
     setValue('categoryName', EmptyEnum.NoCategory)
   };
@@ -169,6 +165,8 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         .map(option => ({ label: option.label, category: category.category, checked: option.checked, value: option.value }))
     );
   };
+
+  
 
   if (!isOpen) return null;
 
@@ -248,7 +246,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
             </div>
           ) : (
             filteredOptions.map((category, i) => (
-              category.options.length > 0 && (
+              category.options.filter(o => !o.checked).length > 0 && (
                 <Section key={i} title={category.category || EmptyEnum.NoCategory} open={category.open ?? true} setOpen={() => toggleOpenSection(category.category || EmptyEnum.NoCategory)} id={category.category}>
                   {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
