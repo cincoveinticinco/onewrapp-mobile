@@ -4,6 +4,8 @@ import {
   IonCard,
   IonCardSubtitle,
   IonCardHeader,
+  AlertInput,
+  IonButton,
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
@@ -12,6 +14,8 @@ import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { VscEdit } from 'react-icons/vsc';
+import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 
 interface AddCharacterFormProps {
   observedCharacters: Character[];
@@ -30,6 +34,9 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   const [characterCategories, setCharacterCategories] = useState<string[]>([]);
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [editCategoryModal, setEditCategoryModal] = useState(false);
+  const [editCharacterModal, setEditCharacterModal] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   const handleModalOpen = () => {
     if(addCategoryModalOpen) {
@@ -45,8 +52,17 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     const mergedChars = [...offlineChars];
     
     observedCharacters.forEach(char => {
-      if (!mergedChars.some(existing => existing.characterName === char.characterName)) {
+      const existingCharIndex = mergedChars.findIndex(
+        existing => existing.characterName === char.characterName
+      );
+      
+      if (existingCharIndex === -1) {
         mergedChars.push(char);
+      } else {
+        mergedChars[existingCharIndex] = {
+          ...mergedChars[existingCharIndex],
+          categoryName: char.categoryName
+        };
       }
     });
     
@@ -107,15 +123,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     setCharacters(newCharacters);
   };
 
-  const getCharactersInCategoryLength = (category: string) => {
-    let filteredCharacters = uniqueCharacters;
-    if(category === EmptyEnum.NoCategory) {
-      filteredCharacters =  uniqueCharacters.filter(character => !character.categoryName || character.categoryName == '');
-      return filteredCharacters.length
-    }
-    return uniqueCharacters.filter(character => character.categoryName === category).length;
-  };
-
   const getObservedCharactersInCategoryLength = (category: string) => {
     if(category === EmptyEnum.NoCategory || !category) { 
       return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
@@ -124,6 +131,99 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     return observedCharacters.filter(character => character.categoryName === category).length;
   }
 
+  const openCategoryEditor = (category: string) => () => {
+    setSelectedCategory(category);
+    setEditCategoryModal(true);
+  }
+
+  const editCategoryInputs = useMemo((): AlertInput[] => [
+    {
+      name: 'category',
+      type: 'text',
+      placeholder: 'Category Name',
+      value: selectedCategory == EmptyEnum.NoCategory ? '' : selectedCategory,
+    }
+  ], [selectedCategory]);
+
+  const onEditCategory = (inputData: { [key: string]: any }) => {
+    const observedCharactersCopy = structuredClone(observedCharacters);
+    const updatedCharacters = observedCharactersCopy.map(character => {
+      if(selectedCategory === EmptyEnum.NoCategory && !character.categoryName) {
+        character.categoryName = inputData.category;
+      }
+      if(character.categoryName === selectedCategory) {
+        character.categoryName = inputData.category;
+      }
+      return character;
+    });
+    setCharacters(updatedCharacters);
+    setCharacterCategories(defineCharactersCategories());
+    setEditCategoryModal(false);
+  }
+
+  const EditCategoryAlert = () => (
+    <InputAlert
+      isOpen={editCategoryModal}
+      inputs={editCategoryInputs}
+      header="Edit Category"
+      handleOk={onEditCategory}
+      handleCancel={() => setEditCategoryModal(false)}
+    />
+  )
+
+  const openEditCharacterModal = (character: Character) => {
+    console.log('executed')
+    setSelectedCharacter(character);
+    setEditCharacterModal(true);
+  }
+
+  const onEditCharacter = (inputData: { [key: string]: any }) => {
+    const updatedCharacters = observedCharacters.map(character => {
+      if (character.characterName === selectedCharacter?.characterName) {
+        return {
+          ...character,
+          categoryName: inputData.category,
+          characterNum: inputData.characterNum,
+          characterName: inputData.characterName
+        }
+      }
+      return character;
+    });
+    setCharacters(updatedCharacters);
+    setEditCharacterModal(false);
+  }
+    
+
+  const formInputs: AlertInput[] = [
+    {
+      name: 'category',
+      type: 'text',
+      placeholder: 'Category Name',
+      value: selectedCharacter?.categoryName,
+    },
+    {
+      name: 'characterNum',
+      type: 'number',
+      placeholder: 'Character Number',
+      value: selectedCharacter?.characterNum,
+    },
+    {
+      name: 'characterName',
+      type: 'text',
+      placeholder: 'Character Name',
+      value: selectedCharacter?.characterName,
+    }
+  ];
+
+  const EditCharacterModal = () => (
+    <InputAlert
+      isOpen={editCharacterModal}
+      inputs={formInputs}
+      header="Edit Character"
+      handleOk={onEditCharacter}
+      handleCancel={() => { setEditCharacterModal(false); setSelectedCharacter(null); }}
+    />
+  )
 
   return (
     <>
@@ -170,7 +270,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       {dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
           {filteredCategories
-            .filter(category => editMode ?  getCharactersInCategoryLength(category) > 0 : getObservedCharactersInCategoryLength(category) > 0)
+            .filter(category => getObservedCharactersInCategoryLength(category) > 0)
             .map((category, index) => (
             (
               <IonCard 
@@ -183,6 +283,11 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                     <p className="ion-flex ion-align-items-center">
                       {category?.toUpperCase()}
                     </p>
+                    {editMode && (
+                      <IonButton fill="clear" color='primary' onClick={openCategoryEditor(category)} className='ion-no-padding'>
+                        <VscEdit className="label-button" />
+                      </IonButton>
+                    )}
                   </div>
                 </IonCardHeader>
                 <AddCharacterInput
@@ -190,12 +295,15 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                   selectedCharacters={observedCharacters}
                   setSelectedCharacters={handleSelectedCharactersChange}
                   editMode={editMode}
+                  openEditCharacter={openEditCharacterModal}
                 />
               </IonCard>
             )
           ))}
         </IonGrid>
       )}
+      {editCategoryModal && <EditCategoryAlert /> }
+      {editCharacterModal && <EditCharacterModal />}
     </>
   );
 };

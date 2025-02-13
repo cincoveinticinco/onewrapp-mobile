@@ -1,19 +1,25 @@
 import React, { useContext } from 'react';
 import {
+  IonButton,
   IonCardContent,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonList,
 } from '@ionic/react';
 import { Character } from '../../../../Shared/types/scenes.types';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
 import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { VscEdit } from 'react-icons/vsc';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
   editMode?: boolean;
+  openEditCharacter: (character: Character) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
@@ -21,7 +27,9 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   selectedCharacters,
   setSelectedCharacters,
   editMode,
+  openEditCharacter
 }) => {
+
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
     if (categoryName === EmptyEnum.NoCategory || !categoryName) {
       return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
@@ -45,16 +53,28 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any, index: number) => (
-            <IonItem
-              key={`character-item-${index}-category-${categoryName}`}
-              color='tertiary-dark'
-            >
-              {`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}
-              {editMode && (<DeleteButton
-                onClick={() => deleteCharacter(character.characterName)}
-                slot="end"
-              />)}
-            </IonItem>
+            <IonItemSliding key={`character-item-${index}-category-${categoryName}`}>
+              <IonItem color='tertiary-dark'>
+              <p>{`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}</p>
+              </IonItem>
+              {editMode && (
+              <>
+              <IonItemOptions side="end">
+                <IonItemOption color='dark' onClick={() => openEditCharacter(character)}>
+                  <IonButton fill="clear" color='primary' slot="end">
+                      <VscEdit className="label-button" />
+                  </IonButton>
+                </IonItemOption>
+                <IonItemOption color='dark' onClick={() => deleteCharacter(character.characterName)}>
+                  <DeleteButton
+                    onClick={() => {}}
+                    slot="end"
+                  />
+                </IonItemOption>
+              </IonItemOptions>
+              </>
+              )}
+            </IonItemSliding>
           ))}
         </IonList>
       ) : (
