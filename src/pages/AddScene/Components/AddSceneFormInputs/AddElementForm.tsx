@@ -5,6 +5,7 @@ import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddElementInput from './AddElementInput';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface Element {
   elementName: string;
@@ -39,7 +40,6 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
   const uniqueElements = useMemo(() => {
     const offlineElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
     const mergedElements = [...offlineElements];
-
     observedElements.forEach(el => {
       if (!mergedElements.some(existing => existing.elementName === el.elementName)) {
         mergedElements.push(el);
@@ -51,7 +51,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
 
   const filterElementsByCategory = useMemo(() => (categoryName: string | null) =>
     uniqueElements.filter((element: any) => {
-      if (categoryName === 'NO CATEGORY') {
+      if (categoryName === EmptyEnum.NoCategory) {
         return !element.categoryName;
       }
       return element.categoryName === categoryName;
@@ -59,11 +59,11 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
 
   const defineElementsCategories = useCallback((): string[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName')
-      .map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
+      .map(category => category.categoryName);
 
-    const observedCategories = observedElements.map(element => element.categoryName || 'NO CATEGORY');
+    const observedCategories = observedElements.map(element => element.categoryName || EmptyEnum.NoCategory);
 
-    const allCategories = [...uniqueCategoryValues, ...observedCategories];
+    const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
 
     return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
   }, [offlineScenes, observedElements]);
@@ -83,21 +83,21 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
 
       return existingElement || {
         elementName: String(element.value),
-        categoryName: element.category,
+        categoryName: element.category === EmptyEnum.NoCategory ? null : element.category,
       } as Element;
     });
     setElements(newElements);
   };
 
   const getElementsInCategoryLength = (category: string) => {
-    if (category === 'NO CATEGORY') {
+    if (category === EmptyEnum.NoCategory) {
       return uniqueElements.filter(element => !element.categoryName).length;
     }
     return uniqueElements.filter(element => element.categoryName === category).length;
   };
 
   const getObservedElementsInCategoryLength = (category: string) => {
-    if (category === 'NO CATEGORY') {
+    if (category === EmptyEnum.NoCategory) {
       return observedElements.filter(element => !element.categoryName).length;
     }
     return observedElements.filter(element => element.categoryName === category).length;

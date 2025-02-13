@@ -19,6 +19,7 @@ interface SelectItemProps {
   detailsEditMode?: boolean;
   showLabel?: boolean;
   className?: string;
+  setOptions: any;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -37,6 +38,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   detailsEditMode,
   showLabel = true,
   className = '',
+  setOptions
 }) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef = React.useRef<HTMLIonModalElement>(null);
@@ -44,7 +46,11 @@ const SelectItem: React.FC<SelectItemProps> = ({
   const currentFieldValue = watchValue(fieldKeyName);
 
   const handleSelectCheckbox = (option: string) => {
-    currentFieldValue === option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
+    const isNewOption = !options.includes(option);
+    if (isNewOption) {
+      setOptions([...options, option]); // Actualizar la lista de opciones
+    }
+    currentFieldValue == option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
   };
 
   const getId = () => {
@@ -100,6 +106,9 @@ const SelectItem: React.FC<SelectItemProps> = ({
               isOpen={showModal}
               setIsOpen={setShowModal}
               modalId={getId()}
+              onNewOptionCreated={(newOption) => {
+                setOptions([...options, newOption]);
+              }}
             />
           </>
         )}

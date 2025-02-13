@@ -317,7 +317,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
             }
               {/* {section === 'element' && (
               <p className="element-card-header-subtitle">
-                {data.category ? data.category.toUpperCase() : 'NO CATEGORY'}
+                {data.category ? data.category.toUpperCase() : EmptyEnum.NoCategory}
               </p>
             )} */}
             </div>

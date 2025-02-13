@@ -13,6 +13,7 @@ import useIsMobile from '../../Shared/hooks/useIsMobile';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './SelectionModal.scss';
 import { flatten } from 'lodash';
+import { EmptyEnum } from '../../Shared/ennums/ennums';
 
 interface FormInputsProps {
   label: string;
@@ -122,7 +123,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
     formInputs?.forEach((input: any) => {
       resetField(input.fieldKeyName);
     });
-    newOptionArgument.categoryName = optionCategory === 'NO CATEGORY' ? null : optionCategory;
+    newOptionArgument.categoryName = optionCategory === EmptyEnum.NoCategory ? null : optionCategory;
     setCreateNewMode(false);
     setShowError(false);
     setSearchText('');

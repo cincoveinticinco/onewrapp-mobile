@@ -3,6 +3,7 @@ import { IonCardContent, IonItem, IonList } from '@ionic/react';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
 import { Extra } from '../../../../Shared/types/scenes.types';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface AddExtraInputProps {
   categoryName: string | null;
@@ -18,7 +19,7 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
   editMode,
 }) => {
   const filterSelectedExtras = selectedExtras.filter((extra: Extra) => {
-    if (categoryName === 'NO CATEGORY' || !categoryName) {
+    if (categoryName === EmptyEnum.NoCategory || !categoryName) {
       return !extra.categoryName || extra.categoryName === '' || extra.categoryName === undefined;
     }
     return extra.categoryName === categoryName;

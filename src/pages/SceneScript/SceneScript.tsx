@@ -20,7 +20,7 @@ import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
-  DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
+  DayOrNightOptionEnum, EmptyEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Shared/ennums/ennums';
 import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
@@ -264,17 +264,17 @@ const SceneScript: React.FC<{
     if (thisScene) {
       if (type === 'characters') {
         thisScene?.characters?.forEach((character: Character) => {
-          character.categoryName ? list.add(character.categoryName) : list.add('No Category');
+          character.categoryName ? list.add(character.categoryName) : list.add(EmptyEnum.NoCategory);
         });
       }
       if (type === 'elements') {
         thisScene?.elements?.forEach((element: Element) => {
-          element.categoryName ? list.add(element.categoryName) : list.add('No Category');
+          element.categoryName ? list.add(element.categoryName) : list.add(EmptyEnum.NoCategory);
         });
       }
       if (type === 'extras') {
         thisScene?.extras?.forEach((extra: Extra) => {
-          extra.categoryName ? list.add(extra.categoryName) : list.add('No Category');
+          extra.categoryName ? list.add(extra.categoryName) : list.add(EmptyEnum.NoCategory);
         });
       }
     }
@@ -512,7 +512,7 @@ const SceneScript: React.FC<{
                     </p>
                     <div className="popup-list-container">
                       {
-                        getPopupListByCategory(popupType, (category === 'No category' ? null : category)).map((item: string) => (
+                        getPopupListByCategory(popupType, (category === EmptyEnum.NoCategory ? null : category)).map((item: string) => (
                           <p className="total-popup-item ion-no-margin ion-padding-start" key={item + popupType + category}>{item && item.toUpperCase()}</p>
                         ))
                       }

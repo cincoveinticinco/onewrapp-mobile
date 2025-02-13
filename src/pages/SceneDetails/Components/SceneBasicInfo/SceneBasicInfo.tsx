@@ -23,6 +23,14 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
     setOptions
   } = useSceneFormOptions();
 
+  const [locationOptionsCopy, setLocationOptionsCopy] = useState(locationOptions);
+  const [setOptionsCopy, setSetOptionsCopy] = useState(setOptions);
+
+  useEffect(() => {
+    setLocationOptionsCopy(locationOptions);
+    setSetOptionsCopy(setOptions);
+  }, [locationOptions, setOptions]);
+
   const [showProtection, setShowProtection] = useState(false);
 
   const sceneType = watch('sceneType');
@@ -167,7 +175,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Location", fieldKeyName: "locationName", isEditable: true, disabled: false, info: scene?.locationName || '-' }}
             form={form}
-            input={{ selectOptions: locationOptions }}
+            input={{ selectOptions: locationOptionsCopy, canCreateNew: true, setSelectOptions: setLocationOptionsCopy }}
             type={InfoType.Select}
             editMode={editMode}
           />
@@ -176,7 +184,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
             form={form}
-            input={{ selectOptions: setOptions, required: true }}
+            input={{ selectOptions: setOptionsCopy, required: true, canCreateNew: true, setSelectOptions: setSetOptionsCopy }}
             type={InfoType.Select}
             editMode={editMode}
           />

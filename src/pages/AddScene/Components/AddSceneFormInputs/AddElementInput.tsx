@@ -2,6 +2,7 @@ import React from 'react';
 import { IonCardContent, IonItem, IonList } from '@ionic/react';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface Element {
   elementName: string;
@@ -23,7 +24,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
 }) => {
   // Filtrar los elementos según la categoría seleccionada
   const filterSelectedElements = selectedElements.filter((element: Element) => {
-    if (categoryName === 'NO CATEGORY' || !categoryName) {
+    if (categoryName === EmptyEnum.NoCategory || !categoryName) {
       return !element.categoryName || element.categoryName === '' || element.categoryName === undefined;
     }
     return element.categoryName === categoryName;

@@ -4,6 +4,7 @@ import {
 } from '../../Shared/types/scenes.types';
 import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../Shared/Utils/removeAccents';
+import { EmptyEnum } from '../../Shared/ennums/ennums';
 
 interface UseFormTypeLogicReturnValue {
   formType: 'character' | 'element' | 'extra' | 'note' | null;
@@ -58,7 +59,7 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
         ...foundCharacter,
         characterNum: foundCharacter.characterNum || null,
       });
-      setPopupMessage(`${selectedText} exists in characters (${character.categoryName || 'NO CATEGORY'})`);
+      setPopupMessage(`${selectedText} exists in characters (${character.categoryName || EmptyEnum.NoCategory})`);
     } else if (foundElement) {
       setFormType('element');
       setElement(foundElement);

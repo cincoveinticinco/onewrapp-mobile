@@ -11,6 +11,7 @@ import { Character } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface AddCharacterFormProps {
   observedCharacters: Character[];
@@ -54,17 +55,17 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
   const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => 
     uniqueCharacters.filter((character: any) => {
-      if(categoryName === 'NO CATEGORY') {
+      if(categoryName === EmptyEnum.NoCategory) {
         return !character.categoryName;
       }
       return character.categoryName === categoryName;
     }), [uniqueCharacters]);
 
   const defineCharactersCategories = useCallback((): string[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
-    const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : 'NO CATEGORY');
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
+    const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : EmptyEnum.NoCategory);
 
-    const allCategories = [...uniqueCategoryValues, ...observedCategories]
+    const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
 
     const uniqueCategories = Array.from(new Set(allCategories
       .sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
@@ -94,7 +95,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       
       return existingCharacter || {
         characterName: character.value,
-        categoryName: character.category === 'NO CATEGORY' ? null : character.category,
+        categoryName: character.category === EmptyEnum.NoCategory ? null : character.category,
         characterNum: ''
       } as Character;
     });
@@ -104,7 +105,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
   const getCharactersInCategoryLength = (category: string) => {
     let filteredCharacters = uniqueCharacters;
-    if(category === 'NO CATEGORY') {
+    if(category === EmptyEnum.NoCategory) {
       filteredCharacters =  uniqueCharacters.filter(character => !character.categoryName || character.categoryName == '');
       return filteredCharacters.length
     }
@@ -112,7 +113,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   };
 
   const getObservedCharactersInCategoryLength = (category: string) => {
-    if(category === 'NO CATEGORY' || !category) { 
+    if(category === EmptyEnum.NoCategory || !category) { 
       return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
     }
 

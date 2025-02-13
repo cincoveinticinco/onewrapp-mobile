@@ -138,3 +138,7 @@ export enum InfoType {
   Minutes = 'minutes',
   Select = 'select',
 }
+
+export enum EmptyEnum {
+  NoCategory = 'NO CATEGORY',
+}

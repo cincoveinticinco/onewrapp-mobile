@@ -7,7 +7,7 @@ import { Section } from '../../Shared/Components/Section/Section';
 import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
 import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
-import { Value } from 'sass';
+import { EmptyEnum } from '../../Shared/ennums/ennums';
 
 interface ListOfOptionsItem {
   category: string;
@@ -50,7 +50,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const [createdOptions, setCreatedOptions] = useState<ListOfOptionsItem[]>([]);
   const [openSelectedOptions, setOpenSelectedOptions] = useState(true);
   const { control, setValue, getValues } = useForm<{ categoryName: string }>({
-    defaultValues: { categoryName: 'NO CATEGORY' },
+    defaultValues: { categoryName: EmptyEnum.NoCategory },
   });
 
   const categorySuggestions = listOfOptions.map(item => item.category);
@@ -101,6 +101,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     setShowError(false);
     setShowOnlySelected(false);
     setCreatedOptions([]);
+    setValue('categoryName', EmptyEnum.NoCategory)
   };
 
   const closeModal = () => {
@@ -180,7 +181,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleSave={onSave}
+          handleSave={filteredOptions.every(category => category.options.length === 0) ? createNew : onSave}
           toolbarTitle={optionName}
           handleReset={clearSelections}
           customButtons={[]}
@@ -211,7 +212,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                   document.getElementById(option.category);
                   }}
                 >
-                  {` (${option.category})`}
+                  {` (${option.category.toUpperCase()})`}
                 </a>
                 </IonCheckbox>
               </div>
@@ -248,10 +249,11 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           ) : (
             filteredOptions.map((category, i) => (
               category.options.length > 0 && (
-                <Section key={i} title={category.category || 'NO CATEGORY'} open={category.open ?? true} setOpen={() => toggleOpenSection(category.category || 'NO CATEGORY')} id={category.category}>
+                <Section key={i} title={category.category || EmptyEnum.NoCategory} open={category.open ?? true} setOpen={() => toggleOpenSection(category.category || EmptyEnum.NoCategory)} id={category.category}>
                   {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
                     .map((option, j) => (
+                      !option.checked  &&
                       <div key={`filter-item-${i}-${j}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
                         <IonCheckbox
                           slot="start"

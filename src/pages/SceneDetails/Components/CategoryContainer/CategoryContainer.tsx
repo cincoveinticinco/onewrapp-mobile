@@ -1,12 +1,13 @@
 import { IonCardContent, IonCardHeader } from '@ionic/react';
 import { Note, SceneDocType } from '../../../../Shared/types/scenes.types';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 const CategoryContainer = ({
   categoryName, scene, characters, extras, elements, notes,
 }: any) => {
   const getCharactersByCategory = (categoryName: string, scene: SceneDocType) => {
     const characters = scene.characters ? scene.characters.filter((character: any) => {
-      if (categoryName === 'NO CATEGORY') return character.categoryName === null;
+      if (categoryName === EmptyEnum.NoCategory) return character.categoryName === null;
       return character.categoryName === categoryName;
     }) : [];
     return characters;
@@ -14,7 +15,7 @@ const CategoryContainer = ({
 
   const getExtrasByCategory = (categoryName: string, scene: SceneDocType) => {
     const extras = scene.extras ? scene.extras.filter((extra: any) => {
-      if (categoryName === 'NO CATEGORY') return extra.categoryName === null;
+      if (categoryName === EmptyEnum.NoCategory) return extra.categoryName === null;
       return extra.categoryName === categoryName;
     }) : [];
     return extras;
@@ -22,7 +23,7 @@ const CategoryContainer = ({
 
   const getElementsByCategory = (categoryName: string, scene: SceneDocType) => {
     const elements = scene.elements ? scene.elements.filter((element: any) => {
-      if (categoryName === 'NO CATEGORY') return element.categoryName === null;
+      if (categoryName === EmptyEnum.NoCategory) return element.categoryName === null;
       return element.categoryName === categoryName;
     }) : [];
     return elements;

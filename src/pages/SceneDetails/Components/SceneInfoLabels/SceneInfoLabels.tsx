@@ -29,8 +29,10 @@ export type LabelType = {
 
 export type Input = {
   selectOptions?: any[];
+  setSelectOptions?: any;
   validators?: ((value: any) => boolean | string)[];
   required?: boolean;
+  canCreateNew?: boolean;
 }
 
 interface SceneInfoLabelsProps {
@@ -150,6 +152,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             detailsEditMode={true}
             label=""
             options={selectOptions || []}
+            setOptions={input?.setSelectOptions}
             inputName={`add-${title}-input`}
             fieldKeyName={fieldKeyName || 'defaultKey'}
             control={control}
@@ -160,6 +163,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             disabled={disabled}
             validate={generalValidator}
             displayError={!!errors[fieldKeyName]}
+            canCreateNew={input?.canCreateNew}
           />
         );
 

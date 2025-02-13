@@ -6,6 +6,7 @@ import InputModalWithSections from '../../../../Layouts/InputModalWithSections/I
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddExtraInput from './AddExtraInput';
 import { Extra } from '../../../../Shared/types/scenes.types';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface AddExtraFormProps {
   observedExtras: Extra[];
@@ -49,7 +50,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   // Filtrar extras por categoría
   const filterExtrasByCategory = useMemo(() => (categoryName: string | null) =>
     uniqueExtras.filter((extra: any) => {
-      if (categoryName === 'NO CATEGORY') {
+      if (categoryName === EmptyEnum.NoCategory) {
         return !extra.categoryName;
       }
       return extra.categoryName === categoryName;
@@ -58,11 +59,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   // Definir categorías únicas de los extras
   const defineExtrasCategories = useCallback((): string[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName')
-      .map(category => category.categoryName ? category.categoryName : 'NO CATEGORY');
+      .map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
 
-    const observedCategories = observedExtras.map(extra => extra.categoryName || 'NO CATEGORY');
+    const observedCategories = observedExtras.map(extra => extra.categoryName || EmptyEnum.NoCategory);
 
-    const allCategories = [...uniqueCategoryValues, ...observedCategories];
+    const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
 
     return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
   }, [offlineScenes, observedExtras]);
@@ -83,33 +84,28 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
 
       return existingExtra || {
         extraName: String(extra.value),
-        categoryName: extra.category,
+        categoryName: extra.category === EmptyEnum.NoCategory ? null : extra.category,
       } as Extra;
     });
     setExtras(newExtras);
   };
-  
+
   const getExtrasInCategoryLength = (category: string) => {
-    if (category === 'NO CATEGORY') {
-      console.log(uniqueExtras.filter(extra => !extra.categoryName).length);
+    if (category === EmptyEnum.NoCategory) {
       return uniqueExtras.filter(extra => !extra.categoryName).length;
     }
     return uniqueExtras.filter(extra => extra.categoryName === category).length;
   };
 
   const getObservedExtrasInCategoryLength = (category: string) => {
-    if (category === 'NO CATEGORY') {
+    if (category === EmptyEnum.NoCategory) {
       return observedExtras.filter(extra => !extra.categoryName || extra.categoryName == '').length;
     }
     return observedExtras.filter(extra => extra.categoryName === category).length;
   };
 
   const filteredCategories = extrasCategories;
-
-  useEffect(() => {
-    console.log(filteredCategories.every(c => getExtrasInCategoryLength(c) === 0))
-  }, [filteredCategories])
-
+  
   return (
     <>
       <div className="category-item-title ion-flex ion-justify-content-between" style={{ backgroundColor: 'var(--ion-color-dark)' }}>

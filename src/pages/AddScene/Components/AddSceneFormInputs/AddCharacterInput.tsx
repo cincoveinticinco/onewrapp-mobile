@@ -7,6 +7,7 @@ import {
 import { Character } from '../../../../Shared/types/scenes.types';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
@@ -22,7 +23,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   editMode,
 }) => {
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
-    if (categoryName === 'NO CATEGORY' || !categoryName) {
+    if (categoryName === EmptyEnum.NoCategory || !categoryName) {
       return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
     }
     return character.categoryName === categoryName;

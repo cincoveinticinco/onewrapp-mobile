@@ -2,6 +2,7 @@ import { IonInput, IonItem, IonList, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import './InputItem.scss';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface InputItemProps {
   label: string;
@@ -65,7 +66,7 @@ const InputItem: React.FC<InputItemProps> = ({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setValue(fieldKeyName, suggestion === 'NO CATEGORY' ? 'NO CATEGORY' : suggestion);
+    setValue(fieldKeyName, suggestion === EmptyEnum.NoCategory ? EmptyEnum.NoCategory : suggestion);
     setShowSuggestions(false);
   };
 
