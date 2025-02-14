@@ -1,10 +1,11 @@
-import { IonCol, IonGrid, IonRow } from '@ionic/react';
+import { IonCol, IonGrid, IonRow, useIonViewDidEnter } from '@ionic/react';
 import SceneInfoLabels, { FormType, LabelType, Input } from '../SceneInfoLabels/SceneInfoLabels';
 import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
 import { isNumberValidator } from '../../../../Shared/Utils/validators';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
+import { set } from 'lodash';
 
 interface SceneBasicInfoProps {
   editMode?: boolean;
@@ -20,12 +21,15 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
     dayNightOptions,
     intExtOptions,
     locationOptions,
-    setOptions
+    setOptions,
+    setSelectedLocation,
+    selectedLocation
   } = useSceneFormOptions();
 
   const [locationOptionsCopy, setLocationOptionsCopy] = useState(locationOptions);
   const [setOptionsCopy, setSetOptionsCopy] = useState(setOptions);
-
+  const [isInitialized, setIsInitialized] = useState(false);
+  const previousLocationRef = useRef<string | null>(null);
   const protectionInputRef = useRef<any>(null);
 
   useEffect(() => {
@@ -36,22 +40,66 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const [showProtection, setShowProtection] = useState(false);
 
   const sceneType = watch('sceneType');
+  const location = watch('locationName');
+  const currentSet = watch('setName');
 
+  // Efecto para manejar el tipo de escena
   useEffect(() => {
-    
     if (sceneType === SceneTypeEnum.SCENE) {
       setValue('protectionType', null);
       setShowProtection(false);
     } else {
       setShowProtection(true);
     }
-  
   }, [sceneType, setValue]);
 
+  // Efecto para manejar la inicialización y cambios de ubicación
+  useEffect(() => {
+    if (!isInitialized && scene?.locationName) {
+      setSelectedLocation(scene.locationName);
+      previousLocationRef.current = scene.locationName;
+      setIsInitialized(true);
+      return;
+    }
+
+    if (location !== previousLocationRef.current) {
+      setSelectedLocation(location || null);
+      previousLocationRef.current = location || null;
+
+      // Solo limpiar el set si la ubicación cambió explícitamente
+      if (location !== scene?.locationName) {
+        setValue('setName', null);
+      }
+    }
+  }, [location, setSelectedLocation, setValue, scene?.locationName, isInitialized]);
+
+  // Efecto para preservar el set inicial de la escena
+  useEffect(() => {
+    if (!isInitialized && scene?.setName) {
+      setValue('setName', scene.setName);
+    }
+  }, [scene?.setName, setValue, isInitialized]);
+
+  useIonViewDidEnter(() => {
+    if (scene?.locationName) {
+      setSelectedLocation(scene.locationName);
+    }
+  });
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
-
   const sizeLg = showProtection ? "3" : "4";
+
+  const memoizedSetLabel = useMemo(() => {
+    return (
+      <SceneInfoLabels
+        label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
+        form={form}
+        input={{ selectOptions: setOptionsCopy, required: true, canCreateNew: true, setSelectOptions: setSetOptionsCopy, selectedCategory: (selectedLocation || ''), multiple: false, customCategoryLabel: 'Location' }}
+        type={InfoType.CategorizedSelect}
+        editMode={editMode}
+      />
+    )
+  }, [selectedLocation, setOptionsCopy, form, scene, editMode]);
 
   return (
     <IonGrid fixed style={{ width: '100%', marginTop: '12px' }}>
@@ -99,32 +147,32 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
-        <SceneInfoLabels
-          label={{ 
-            title: "Pages", 
-            fieldKeyName: "pages", 
-            isEditable: true, 
-            disabled: false, 
-            info: scene?.pages || 0 
-          }}
-          form={form}
-          type={InfoType.Pages}
-          editMode={editMode}
-        />
+          <SceneInfoLabels
+            label={{ 
+              title: "Pages", 
+              fieldKeyName: "pages", 
+              isEditable: true, 
+              disabled: false, 
+              info: scene?.pages || 0 
+            }}
+            form={form}
+            type={InfoType.Pages}
+            editMode={editMode}
+          />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
-        <SceneInfoLabels
-          label={{ 
-            title: "Time", 
-            fieldKeyName: "estimatedSeconds", 
-            isEditable: true, 
-            disabled: false, 
-            info: scene?.estimatedSeconds || 0 
-          }}
-          form={form}
-          type={InfoType.Minutes}
-          editMode={editMode}
-        />
+          <SceneInfoLabels
+            label={{ 
+              title: "Time", 
+              fieldKeyName: "estimatedSeconds", 
+              isEditable: true, 
+              disabled: false, 
+              info: scene?.estimatedSeconds || 0 
+            }}
+            form={form}
+            type={InfoType.Minutes}
+            editMode={editMode}
+          />
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
@@ -145,19 +193,17 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             editMode={editMode}
           />
         </IonCol>
-         {
-          showProtection && (
-            <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
-              <SceneInfoLabels
-                label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
-                form={form}
-                input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION, ref: protectionInputRef }}
-                type={InfoType.Select}
-                editMode={editMode}
-              />
-            </IonCol>
-          )
-         }
+        {showProtection && (
+          <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
+            <SceneInfoLabels
+              label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
+              form={form}
+              input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION, ref: protectionInputRef }}
+              type={InfoType.Select}
+              editMode={editMode}
+            />
+          </IonCol>
+        )}
         <IonCol size-xs="6" size-sm="3" sizeLg={sizeLg}>
           <SceneInfoLabels
             label={{ title: "Int/Ext", fieldKeyName: "intOrExtOption", isEditable: true, disabled: false, info: scene?.intOrExtOption || '-' }}
@@ -186,13 +232,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           />
         </IonCol>
         <IonCol size-xs="6" size-sm="6" sizeLg="6">
-          <SceneInfoLabels
-            label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
-            form={form}
-            input={{ selectOptions: setOptionsCopy, required: true, canCreateNew: true, setSelectOptions: setSetOptionsCopy }}
-            type={InfoType.Select}
-            editMode={editMode}
-          />
+          {memoizedSetLabel}
         </IonCol>
       </IonRow>
       <IonRow style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }}>

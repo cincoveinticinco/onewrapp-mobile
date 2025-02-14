@@ -7,6 +7,7 @@ import {
   useIonViewWillLeave,
 } from '@ionic/react';
 import React, {
+  useCallback,
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -159,15 +160,14 @@ const SceneDetails: React.FC<{
     }
   }, [thisScene, reset]);
 
-  const toggleEditMode = () => {
-    if(editMode && thisScene) {
-      console.log(thisScene)
-      reset(thisScene); 
+  const toggleEditMode = useCallback(() => {
+    if (editMode && thisScene) {
+      reset(thisScene);
       setEditMode(false);
     } else {
       setEditMode(true);
     }
-  }
+  }, [editMode, thisScene, reset]);
 
   const successMessageSceneToast = useSuccessToast();
   const errorToast = useErrorToast();

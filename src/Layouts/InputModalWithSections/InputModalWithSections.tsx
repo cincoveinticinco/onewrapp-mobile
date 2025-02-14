@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonCheckbox, IonCol, IonContent, IonGrid, IonHeader, IonModal, IonRow, IonToggle } from '@ionic/react';
+import { IonCheckbox, IonCol, IonContent, IonHeader, IonModal, IonRow, IonGrid } from '@ionic/react';
 import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import './InputModalWithSections.scss';
@@ -9,7 +9,7 @@ import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputI
 import { useForm } from 'react-hook-form';
 import { EmptyEnum } from '../../Shared/ennums/ennums';
 
-interface ListOfOptionsItem {
+export interface ListOfOptionsItem {
   category: string;
   options: {
     label: string;
@@ -31,6 +31,8 @@ interface InputModalWithSectionsProps {
     category: string | null;
   }[]) => void;
   selectedCategory?: string | null;
+  multiple?: boolean;
+  customCategoryLabel?: string;
 }
 
 const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
@@ -42,6 +44,8 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   setIsOpen,
   setValues,
   selectedCategory,
+  multiple = true,
+  customCategoryLabel
 }) => {
   useEffect(() => {
     if (!isOpen) {
@@ -61,12 +65,17 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const categorySuggestions = listOfOptions.map(item => item.category);
 
   useEffect(() => {
+    if (selectedCategory) {
+      setValue('categoryName', selectedCategory.toUpperCase());
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
     filterOptions();
   }, [searchText, listOfOptions, createdOptions]);
 
   const filterOptions = () => {
     let combinedOptions = [...listOfOptions, ...createdOptions];
-    // If selectedCategory exists, filter only that category
     if (selectedCategory) {
       combinedOptions = combinedOptions.filter(category => 
         category.category === selectedCategory
@@ -90,14 +99,13 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       option.category === category ? { ...option, open: !option.open } : option
     );
     setFilteredOptions(updatedOptions);
-  }
-
+  };
 
   const resetStates = () => {
     setSearchText('');
     setShowError(false);
     setCreatedOptions([]);
-    setValue('categoryName', EmptyEnum.NoCategory)
+    setValue('categoryName', EmptyEnum.NoCategory);
   };
 
   const closeModal = () => {
@@ -111,6 +119,27 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const createNew = () => {
     const categoryName = getValues('categoryName');
     const updatedCreatedOptions = [...createdOptions];
+
+    // Si no es selección múltiple, desmarca todas las opciones existentes
+    if (!multiple) {
+      updatedCreatedOptions.forEach(category => {
+        category.options.forEach(option => {
+          option.checked = false;
+        });
+      });
+      
+      // También desmarca las opciones en filteredOptions
+      setFilteredOptions(prevOptions => 
+        prevOptions.map(category => ({
+          ...category,
+          options: category.options.map(option => ({
+            ...option,
+            checked: false
+          }))
+        }))
+      );
+    }
+
     const categoryIndex = updatedCreatedOptions.findIndex(category => category.category === categoryName);
 
     if (categoryIndex !== -1) {
@@ -127,46 +156,70 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     }
 
     setCreatedOptions(updatedCreatedOptions);
-    setSearchText(''); // Reset search text after creation
+    setSearchText('');
   };
 
   const toggleCheckOptions = (value: string | number) => {
-    const updatedOptions = filteredOptions.map(category => ({
-      ...category,
-      options: category.options.map(option =>
-        option.value === value ? { ...option, checked: !option.checked } : option
-      ),
-    }));
-    setFilteredOptions(updatedOptions);
+    setFilteredOptions(prevOptions => {
+      const newOptions = prevOptions.map(category => {
+        if (!multiple) {
+          // Para selección única
+          return {
+            ...category,
+            options: category.options.map(option => ({
+              ...option,
+              checked: option.value === value ? !option.checked : false
+            }))
+          };
+        } else {
+          // Para selección múltiple
+          return {
+            ...category,
+            options: category.options.map(option =>
+              option.value === value ? { ...option, checked: !option.checked } : option
+            )
+          };
+        }
+      });
+      return newOptions;
+    });
   };
 
   const onSave = () => {
     const selectedValues = filteredOptions.flatMap(category =>
-      category.options.filter(option => option.checked).map(option => {
-        return {
+      category.options
+        .filter(option => option.checked)
+        .map(option => ({
           value: option.value,
           category: category?.category 
-        }
-      })
+        }))
     );
 
-    if (selectedValues.length > 0) {
+    if (!multiple && selectedValues.length > 1) {
+      // Para selección única, solo tomamos el último valor seleccionado
+      setValues([selectedValues[selectedValues.length - 1]]);
+    } else if (selectedValues.length > 0) {
       setValues(selectedValues);
-      closeModal();
     } else {
       setShowError(true);
+      return;
     }
+    
+    closeModal();
   };
 
   const getSelectedOptions = () => {
     return filteredOptions.flatMap(category =>
       category.options
         .filter(option => option.checked)
-        .map(option => ({ label: option.label, category: category.category, checked: option.checked, value: option.value }))
+        .map(option => ({ 
+          label: option.label, 
+          category: category.category, 
+          checked: option.checked, 
+          value: option.value 
+        }))
     );
   };
-
-  
 
   if (!isOpen) return null;
 
@@ -180,7 +233,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       <IonHeader>
         <ModalToolbar
           handleSave={filteredOptions.every(category => category.options.length === 0) ? createNew : onSave}
-          toolbarTitle={optionName}
+          toolbarTitle={`${optionName} ${!multiple ? '(Single Selection)' : ''}`}
           handleReset={clearSelections}
           customButtons={[]}
           handleBack={closeModal}
@@ -194,29 +247,34 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           {getSelectedOptions().length > 0 && (
             <Section title="Selected Options" open={openSelectedOptions} setOpen={setOpenSelectedOptions}>
               {getSelectedOptions().map((option, i) => (
-              <div key={i} className="checkbox-item-option filter-item ion-no-margin ion-no-padding" onClick={() => toggleCheckOptions(option.value)}>
-                <IonCheckbox
-                slot="start"
-                className="ion-no-margin ion-no-padding checkbox-option"
-                labelPlacement="end"
-                checked={option.checked}
-                onIonChange={() => toggleCheckOptions(option.value)}
+                <div 
+                  key={i} 
+                  className="checkbox-item-option filter-item ion-no-margin ion-no-padding" 
+                  onClick={() => toggleCheckOptions(option.value)}
                 >
-                {option.label} 
-                <a 
-                  onClick={(e) => { 
-                  e.stopPropagation(); 
-                  e.preventDefault(); 
-                  document.getElementById(option.category);
-                  }}
-                >
-                  {` (${option.category.toUpperCase()})`}
-                </a>
-                </IonCheckbox>
-              </div>
+                  <IonCheckbox
+                    slot="start"
+                    className="ion-no-margin ion-no-padding checkbox-option"
+                    labelPlacement="end"
+                    checked={option.checked}
+                    onIonChange={() => toggleCheckOptions(option.value)}
+                  >
+                    {option.label} 
+                    <a 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        e.preventDefault(); 
+                        document.getElementById(option.category);
+                      }}
+                    >
+                      {` (${option.category.toUpperCase()})`}
+                    </a>
+                  </IonCheckbox>
+                </div>
               ))}
             </Section>
           )}
+          
           {/* Main Options Section */}
           {filteredOptions.every(category => category.options.length === 0) ? (
             <div className="no-items-card">
@@ -226,43 +284,64 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               <IonGrid>
                 <IonRow>
                   <IonCol size='6' offset='3'>
-                  <InputItem
-                    label="Category"
-                    placeholder="Enter category"
-                    control={control}
-                    fieldKeyName="categoryName"
-                    inputName="category-input"
-                    suggestions={categorySuggestions}
-                    setValue={setValue}
-                  />
-                  </IonCol>
+                    <InputItem
+                      label={customCategoryLabel  || 'Category'}
+                      placeholder="Enter category"
+                      control={control}
+                      fieldKeyName="categoryName"
+                      inputName="category-input"
+                      suggestions={categorySuggestions}
+                      setValue={setValue}
+                      disabled={selectedCategory !== null}
+                    />
+                  </IonCol> 
                 </IonRow>
               </IonGrid>
-         
+              
               <div className='buttons-wrapper'>
-                <OutlinePrimaryButton buttonName="YES" onClick={createNew} color='success' className='ion-margin-top save-button' />
-                <OutlinePrimaryButton buttonName="NO" onClick={closeModal} color='danger' className='ion-margin-top save-button' />
+                <OutlinePrimaryButton 
+                  buttonName="YES" 
+                  onClick={createNew} 
+                  color='success' 
+                  className='ion-margin-top save-button' 
+                />
+                <OutlinePrimaryButton 
+                  buttonName="NO" 
+                  onClick={closeModal} 
+                  color='danger' 
+                  className='ion-margin-top save-button' 
+                />
               </div>
             </div>
           ) : (
             filteredOptions.map((category, i) => (
               category.options.filter(o => !o.checked).length > 0 && (
-                <Section key={i} title={category.category || EmptyEnum.NoCategory} open={category.open ?? true} setOpen={() => toggleOpenSection(category.category || EmptyEnum.NoCategory)} id={category.category}>
+                <Section 
+                  key={i} 
+                  title={category.category || EmptyEnum.NoCategory} 
+                  open={category.open ?? true} 
+                  setOpen={() => toggleOpenSection(category.category || EmptyEnum.NoCategory)} 
+                  id={category.category}
+                >
                   {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
                     .map((option, j) => (
-                      !option.checked  &&
-                      <div key={`filter-item-${i}-${j}`} className="checkbox-item-option filter-item ion-no-margin ion-no-padding">
-                        <IonCheckbox
-                          slot="start"
-                          className="ion-no-margin ion-no-padding checkbox-option"
-                          labelPlacement="end"
-                          checked={option.checked}
-                          onIonChange={() => toggleCheckOptions(option.value)}
+                      !option.checked && (
+                        <div 
+                          key={`filter-item-${i}-${j}`} 
+                          className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
                         >
-                          {option.label}
-                        </IonCheckbox>
-                      </div>
+                          <IonCheckbox
+                            slot="start"
+                            className="ion-no-margin ion-no-padding checkbox-option"
+                            labelPlacement="end"
+                            checked={option.checked}
+                            onIonChange={() => toggleCheckOptions(option.value)}
+                          >
+                            {option.label}
+                          </IonCheckbox>
+                        </div>
+                      )
                     ))}
                 </Section>
               )

@@ -19,6 +19,7 @@ interface InputItemProps {
   className?: string;
   suggestions?: string[];
   textArea?: boolean;
+  disabled?: boolean;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -36,6 +37,7 @@ const InputItem: React.FC<InputItemProps> = ({
   className,
   suggestions = [],
   textArea = false,
+  disabled = false,
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
@@ -102,6 +104,7 @@ const InputItem: React.FC<InputItemProps> = ({
                   setTimeout(() => setShowSuggestions(false), 200);
                 }}
                 className={`${isFocused ? 'input-item' : ''} ${className || ''}`}
+                disabled={disabled}
               />
             ) : (
               <IonInput
@@ -128,6 +131,7 @@ const InputItem: React.FC<InputItemProps> = ({
                   setTimeout(() => setShowSuggestions(false), 200);
                 }}
                 className={`add-scene-input${(showError || error) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+                disabled={disabled}
               />
             )
           )}

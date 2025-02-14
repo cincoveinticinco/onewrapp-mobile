@@ -137,6 +137,7 @@ export enum InfoType {
   Pages = 'pages',
   Minutes = 'minutes',
   Select = 'select',
+  CategorizedSelect = 'categorizedSelect',
 }
 
 export enum EmptyEnum {

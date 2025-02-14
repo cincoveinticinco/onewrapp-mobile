@@ -9,6 +9,7 @@ import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import { isRequiredValidator } from "../../../../Shared/Utils/validators";
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
+import CategorizedSelect from "../../../../Shared/Components/CategorizedSelect/CategorizedSelect";
 
 export type FormType = {
   control: Control<any>;
@@ -34,6 +35,9 @@ export type Input = {
   required?: boolean;
   canCreateNew?: boolean;
   ref?: React.Ref<any>;
+  selectedCategory?: string;
+  multiple?: boolean;
+  customCategoryLabel?: string;
 }
 
 interface SceneInfoLabelsProps {
@@ -169,6 +173,30 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
           />
         );
 
+      case InfoType.CategorizedSelect:
+        return (
+          <CategorizedSelect
+            detailsEditMode={true}
+            label=""
+            options={selectOptions || []}
+            setOptions={input?.setSelectOptions}
+            inputName={`add-${title}-input`}
+            fieldKeyName={fieldKeyName || 'defaultKey'}
+            control={control}
+            setValue={setValue}
+            watchValue={watch}
+            showLabel={false}
+            className="custom-select"
+            disabled={disabled}
+            validate={generalValidator}
+            displayError={!!errors[fieldKeyName]}
+            canCreateNew={input?.canCreateNew}
+            ref={input?.ref}
+            selectedCategory={input?.selectedCategory}
+            multiple={input?.multiple}
+            customCategoryLabel={input?.customCategoryLabel}
+          />
+        )
       case InfoType.LongText:
         return (
           <InputItem
