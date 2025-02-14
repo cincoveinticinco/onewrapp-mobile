@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/react';
 import { Controller } from 'react-hook-form';
 import InputModal from '../../../../Layouts/InputModal/InputModal';
@@ -48,7 +48,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   const handleSelectCheckbox = (option: string) => {
     const isNewOption = !options.includes(option);
     if (isNewOption) {
-      setOptions([...options, option]); // Actualizar la lista de opciones
+      setOptions([...options, option]);
     }
     currentFieldValue == option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
   };

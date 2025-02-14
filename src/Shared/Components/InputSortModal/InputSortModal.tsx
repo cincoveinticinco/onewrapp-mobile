@@ -83,6 +83,7 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
           handleReset={clearSelections}
           handleBack={closeModal}
           showReset={showReset}
+          handleSaveName='SORT'
         />
       </IonHeader>
       <IonContent color="tertiary">
@@ -121,7 +122,7 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
             ))}
           </div>
         </div>
-        <OutlinePrimaryButton buttonName="SAVE" className="sort-scenes-button" onClick={closeModal} />
+        <OutlinePrimaryButton buttonName="SORT" className="sort-scenes-button" onClick={closeModal} color='success' style={{width: '150px'}}/>
         {useIsMobile()
           && (
           <OutlineLightButton

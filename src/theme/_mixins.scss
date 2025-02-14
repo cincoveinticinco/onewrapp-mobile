@@ -73,6 +73,7 @@
   --color-selected: var(--ion-color-primary) !important;
   --ripple-color: var(--ion-color-primary) !important;
   --ion-color-contrast: var(--ion-color-primary);
+  padding-bottom: 12px;
 
   &:activated {
     --color: var(--ion-color-primary) !important;
