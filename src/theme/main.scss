@@ -144,6 +144,10 @@ $colors: (
   .background-#{$color} {
     background-color: #{$value} !important;
   }
+
+  .border-#{$color} {
+    border: 1px solid #{$value} !important;
+  }
 }
 
 // STYLES
@@ -483,4 +487,12 @@ ion-toast.error-toast {
 
 .full-width {
   width: 100vw;
+}
+
+.select-alert {
+  display: none !important;
+
+  .alert-wrapper {
+    border: 1px solid var(--ion-color-danger);
+  }
 }

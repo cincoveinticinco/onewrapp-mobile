@@ -20,6 +20,7 @@ interface SelectItemProps {
   showLabel?: boolean;
   className?: string;
   setOptions: any;
+  ref?: any
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -38,10 +39,12 @@ const SelectItem: React.FC<SelectItemProps> = ({
   detailsEditMode,
   showLabel = true,
   className = '',
-  setOptions
+  setOptions,
+  ref
 }) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef = React.useRef<HTMLIonModalElement>(null);
+  const inputRef = React.useRef<HTMLIonItemElement>(null);
 
   const currentFieldValue = watchValue(fieldKeyName);
 
@@ -64,7 +67,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   };
 
   return (
-    <IonItem color="tertiary" id={getId()} onClick={() => setShowModal(true)}>
+    <IonItem color="tertiary" id={getId()} onClick={() => setShowModal(true)} ref={ref ? ref : inputRef}>
       <Controller
         control={control}
         name={fieldKeyName}

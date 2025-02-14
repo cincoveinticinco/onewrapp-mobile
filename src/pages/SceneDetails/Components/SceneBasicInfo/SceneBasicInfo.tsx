@@ -2,7 +2,7 @@ import { IonCol, IonGrid, IonRow } from '@ionic/react';
 import SceneInfoLabels, { FormType, LabelType, Input } from '../SceneInfoLabels/SceneInfoLabels';
 import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
 import { isNumberValidator } from '../../../../Shared/Utils/validators';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 
@@ -26,6 +26,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const [locationOptionsCopy, setLocationOptionsCopy] = useState(locationOptions);
   const [setOptionsCopy, setSetOptionsCopy] = useState(setOptions);
 
+  const protectionInputRef = useRef<any>(null);
+
   useEffect(() => {
     setLocationOptionsCopy(locationOptions);
     setSetOptionsCopy(setOptions);
@@ -36,20 +38,23 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const sceneType = watch('sceneType');
 
   useEffect(() => {
+    
     if (sceneType === SceneTypeEnum.SCENE) {
       setValue('protectionType', null);
-      setShowProtection(false)
+      setShowProtection(false);
     } else {
       setShowProtection(true);
     }
+  
   }, [sceneType, setValue]);
+
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
 
   const sizeLg = showProtection ? "3" : "4";
 
   return (
-    <IonGrid fixed style={{ width: '100%' }}>
+    <IonGrid fixed style={{ width: '100%', marginTop: '12px' }}>
       <IonRow>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
@@ -146,7 +151,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
               <SceneInfoLabels
                 label={{ title: "Protection", fieldKeyName: "protectionType", isEditable: true, disabled: getDisabled(), info: scene?.protectionType || '-' }}
                 form={form}
-                input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION }}
+                input={{ selectOptions: protectionTypeValues, required: sceneType === SceneTypeEnum.PROTECTION, ref: protectionInputRef }}
                 type={InfoType.Select}
                 editMode={editMode}
               />

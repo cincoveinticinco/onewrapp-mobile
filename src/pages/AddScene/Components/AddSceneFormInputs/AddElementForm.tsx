@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
-import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput, IonButton } from '@ionic/react';
+import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput, IonButton, IonItemSliding, IonItemOptions, IonItemOption, IonItem } from '@ionic/react';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
@@ -185,10 +185,24 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
         {elementsCategories.filter(category => getObservedElementsInCategoryLength(category) > 0).map((category, index) => (
           <IonCard key={`category-item-${index}-category-${category}`} color='tertiary-dark' className="add-scene-items-card ion-no-border">
             <IonCardHeader className="ion-flex">
-              <div className="ion-flex ion-justify-content-between">
-                <p className="ion-flex ion-align-items-center">{category.toUpperCase()}</p>
-                {editMode && <IonButton fill="clear" color='primary' onClick={openCategoryEditor(category)} className='ion-no-padding'><VscEdit className="label-button" /></IonButton>}
-              </div>
+              <IonItemSliding>
+                <IonItemOptions side="end" color='dark'>
+                  {editMode && (
+                  <IonItemOption onClick={openCategoryEditor(category)} color='dark'>
+                    <IonButton fill="clear" color='primary' slot="end">
+                      <VscEdit className="label-button"/>
+                    </IonButton>
+                  </IonItemOption>
+                  )}
+                </IonItemOptions>
+                <IonItem color='tertiary-dark'>
+                  <div className="ion-flex ion-justify-content-between">
+                  <p className="ion-flex ion-align-items-center">
+                    {category?.toUpperCase()}
+                  </p>
+                  </div>
+                </IonItem>
+              </IonItemSliding>
             </IonCardHeader>
             <AddElementInput categoryName={category} selectedElements={observedElements} setSelectedElements={setElements} editMode={editMode} openEditElement={openEditElementModal} />
           </IonCard>

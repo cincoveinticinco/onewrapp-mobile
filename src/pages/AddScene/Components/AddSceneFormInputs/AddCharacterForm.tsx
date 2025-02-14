@@ -5,6 +5,10 @@ import {
   IonCardSubtitle,
   IonCardHeader,
   AlertInput,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  IonItem,
   IonButton,
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';
@@ -279,16 +283,24 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
                 className="add-scene-items-card ion-no-border"
               >
                 <IonCardHeader className="ion-flex">
-                  <div className="ion-flex ion-justify-content-between">
+                  <IonItemSliding>
+                  <IonItemOptions side="end" color='dark'>
+                    {editMode && (
+                    <IonItemOption onClick={openCategoryEditor(category)} color='dark'>
+                      <IonButton fill="clear" color='primary' slot="end">
+                        <VscEdit className="label-button"/>
+                      </IonButton>
+                    </IonItemOption>
+                    )}
+                  </IonItemOptions>
+                  <IonItem color='tertiary-dark'>
+                    <div className="ion-flex ion-justify-content-between">
                     <p className="ion-flex ion-align-items-center">
                       {category?.toUpperCase()}
                     </p>
-                    {editMode && (
-                      <IonButton fill="clear" color='primary' onClick={openCategoryEditor(category)} className='ion-no-padding'>
-                        <VscEdit className="label-button" />
-                      </IonButton>
-                    )}
-                  </div>
+                    </div>
+                  </IonItem>
+                  </IonItemSliding>
                 </IonCardHeader>
                 <AddCharacterInput
                   categoryName={category}

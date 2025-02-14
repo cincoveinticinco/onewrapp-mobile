@@ -610,7 +610,7 @@ const SceneDetails: React.FC<{
   );
 
   const renderNotesSection = () => (
-    <div className="section-wrapper notes-info">
+    <div className={`section-wrapper notes-info ${editMode ? 'border-primary' : ''}`}>
       <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: "var(--ion-color-dark)" }}>
         <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
         {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
@@ -640,14 +640,14 @@ const SceneDetails: React.FC<{
 
   const renderElementsSection = () => (
     <>
-      <div className="section-wrapper characters-info">
+      <div className={`section-wrapper characters-info ${editMode ? 'border-primary' : ''}`}>
         <AddCharacterForm
           observedCharacters={watch("characters") || []}
           editMode={editMode || creationMode}
           setCharacters={(value: Character[]) => setValue("characters", value)}
         />
       </div>
-      <div className="section-wrapper extras-info">
+      <div className={`section-wrapper elements-info ${editMode ? 'border-primary' : ''}`}>
         <AddElementForm
           setElements={(value: any) => setValue("elements", value)}
           observedElements={(watch("elements") || []).map((element: any) => ({
@@ -657,7 +657,7 @@ const SceneDetails: React.FC<{
           editMode={editMode || creationMode}
         />
       </div>
-      <div className="section-wrapper elements-info">
+      <div className={`section-wrapper extras-info ${editMode ? 'border-primary' : ''}`}>
         <AddExtraForm setExtras={(value: any) => setValue("extras", value)} observedExtras={watch("extras") || []} editMode={editMode || creationMode} />
       </div>
     </>
@@ -802,11 +802,15 @@ const SceneDetails: React.FC<{
       <IonContent color="tertiary" fullscreen>
         {renderSceneContent()}
       </IonContent>
-      <SceneDetailsTabs
-        routeDetails={`${rootRoute}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
-        routeScript={`${rootRouteScript}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
-        currentRoute="scenedetails"
-      />
+      {
+        !editMode && (
+          <SceneDetailsTabs
+            routeDetails={`${rootRoute}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
+            routeScript={`${rootRouteScript}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
+            currentRoute="scenedetails"
+          />
+        )
+      }
       <InputAlert
         header="Delete Scene"
         message={`Are you sure you want to delete scene ${sceneHeader}?`}

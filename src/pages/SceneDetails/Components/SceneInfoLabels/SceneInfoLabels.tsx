@@ -33,6 +33,7 @@ export type Input = {
   validators?: ((value: any) => boolean | string)[];
   required?: boolean;
   canCreateNew?: boolean;
+  ref?: React.Ref<any>;
 }
 
 interface SceneInfoLabelsProps {
@@ -48,7 +49,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
   type, 
   label: { fieldKeyName, isEditable, disabled, title, info },
   form, 
-  input 
+  input
 }) => {
   const processInfo = () => {
     let displayInfo = info?.toString().toUpperCase() || '-';
@@ -164,6 +165,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             validate={generalValidator}
             displayError={!!errors[fieldKeyName]}
             canCreateNew={input?.canCreateNew}
+            ref={input?.ref}
           />
         );
 
