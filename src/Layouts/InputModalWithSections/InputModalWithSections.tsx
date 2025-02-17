@@ -159,30 +159,20 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     setSearchText('');
   };
 
-  const toggleCheckOptions = (value: string | number) => {
-    setFilteredOptions(prevOptions => {
-      const newOptions = prevOptions.map(category => {
-        if (!multiple) {
-          // Para selección única
-          return {
-            ...category,
-            options: category.options.map(option => ({
-              ...option,
-              checked: option.value === value ? !option.checked : false
-            }))
-          };
-        } else {
-          // Para selección múltiple
-          return {
-            ...category,
-            options: category.options.map(option =>
-              option.value === value ? { ...option, checked: !option.checked } : option
-            )
-          };
-        }
-      });
-      return newOptions;
+  const toggleCheckOptions = (value: string | number, category: string) => {
+    const updatedOptions = filteredOptions.map(cat => {
+      console.log(cat.category, category);
+      if (cat.category?.toLowerCase() === category?.toLowerCase()) {
+        return {
+          ...cat,
+          options: cat.options.map(option =>
+        option.value === value ? { ...option, checked: !option.checked } : multiple ? option : { ...option, checked: false }
+          ),
+        };
+      }
+      return cat;
     });
+    setFilteredOptions(updatedOptions);
   };
 
   const onSave = () => {
@@ -250,14 +240,13 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 <div 
                   key={i} 
                   className="checkbox-item-option filter-item ion-no-margin ion-no-padding" 
-                  onClick={() => toggleCheckOptions(option.value)}
+                  onClick={() => toggleCheckOptions(option.value, option.category)}
                 >
                   <IonCheckbox
                     slot="start"
                     className="ion-no-margin ion-no-padding checkbox-option"
                     labelPlacement="end"
                     checked={option.checked}
-                    onIonChange={() => toggleCheckOptions(option.value)}
                   >
                     {option.label} 
                     <a 
@@ -336,7 +325,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                             className="ion-no-margin ion-no-padding checkbox-option"
                             labelPlacement="end"
                             checked={option.checked}
-                            onIonChange={() => toggleCheckOptions(option.value)}
+                            onIonChange={() => toggleCheckOptions(option.value, category.category || EmptyEnum.NoCategory)}
                           >
                             {option.label}
                           </IonCheckbox>

@@ -1,8 +1,8 @@
-import { IonCol, IonGrid, IonRow, useIonViewDidEnter } from '@ionic/react';
-import SceneInfoLabels, { FormType, LabelType, Input } from '../SceneInfoLabels/SceneInfoLabels';
+import { IonCol, IonGrid, IonRow } from '@ionic/react';
+import SceneInfoLabels, { FormType } from '../SceneInfoLabels/SceneInfoLabels';
 import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
 import { isNumberValidator } from '../../../../Shared/Utils/validators';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 import { set } from 'lodash';
@@ -29,6 +29,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const [locationOptionsCopy, setLocationOptionsCopy] = useState(locationOptions);
   const [setOptionsCopy, setSetOptionsCopy] = useState(setOptions);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isAutoSettingLocation, setIsAutoSettingLocation] = useState(false);
+  const [isLocationChange, setIsLocationChange] = useState(false);
   const previousLocationRef = useRef<string | null>(null);
   const protectionInputRef = useRef<any>(null);
 
@@ -43,7 +45,6 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const location = watch('locationName');
   const currentSet = watch('setName');
 
-  // Efecto para manejar el tipo de escena
   useEffect(() => {
     if (sceneType === SceneTypeEnum.SCENE) {
       setValue('protectionType', null);
@@ -53,7 +54,6 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
     }
   }, [sceneType, setValue]);
 
-  // Efecto para manejar la inicialización y cambios de ubicación
   useEffect(() => {
     if (!isInitialized && scene?.locationName) {
       setSelectedLocation(scene.locationName);
@@ -66,25 +66,37 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
       setSelectedLocation(location || null);
       previousLocationRef.current = location || null;
 
-      // Solo limpiar el set si la ubicación cambió explícitamente
-      if (location !== scene?.locationName) {
+      if (location !== scene?.locationName && !isAutoSettingLocation) {
+        setIsLocationChange(true);
         setValue('setName', null);
+        setTimeout(() => {
+          setIsLocationChange(false);
+        }, 100);
       }
     }
-  }, [location, setSelectedLocation, setValue, scene?.locationName, isInitialized]);
+  }, [location, setSelectedLocation, setValue, scene?.locationName, isInitialized, isAutoSettingLocation]);
 
-  // Efecto para preservar el set inicial de la escena
   useEffect(() => {
-    if (!isInitialized && scene?.setName) {
-      setValue('setName', scene.setName);
+    console.log('here')
+    if (!currentSet || isLocationChange) {
+      return;
     }
-  }, [scene?.setName, setValue, isInitialized]);
 
-  useIonViewDidEnter(() => {
-    if (scene?.locationName) {
-      setSelectedLocation(scene.locationName);
+    if (currentSet && (!location || location === '')) {
+      const relatedLocation = setOptions.find(
+        (location) => location.options.some((set) => set.value === currentSet)
+      )?.category;
+
+      if (relatedLocation) {
+        setIsAutoSettingLocation(true);
+        setValue('locationName', relatedLocation);
+        
+        setTimeout(() => {
+          setIsAutoSettingLocation(false);
+        }, 100);
+      }
     }
-  });
+  }, [currentSet, setOptions, setValue, isLocationChange]);
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
   const sizeLg = showProtection ? "3" : "4";
@@ -94,7 +106,15 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
       <SceneInfoLabels
         label={{ title: "Set", fieldKeyName: "setName", isEditable: true, disabled: false, info: scene?.setName || '-' }}
         form={form}
-        input={{ selectOptions: setOptionsCopy, required: true, canCreateNew: true, setSelectOptions: setSetOptionsCopy, selectedCategory: (selectedLocation || ''), multiple: false, customCategoryLabel: 'Location' }}
+        input={{ 
+          selectOptions: setOptionsCopy, 
+          required: true, 
+          canCreateNew: true, 
+          setSelectOptions: setSetOptionsCopy, 
+          selectedCategory: (selectedLocation || ''), 
+          multiple: false, 
+          customCategoryLabel: 'Location' 
+        }}
         type={InfoType.CategorizedSelect}
         editMode={editMode}
       />
@@ -148,13 +168,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
-            label={{ 
-              title: "Pages", 
-              fieldKeyName: "pages", 
-              isEditable: true, 
-              disabled: false, 
-              info: scene?.pages || 0 
-            }}
+            label={{ title: "Pages", fieldKeyName: "pages", isEditable: true, disabled: false, info: scene?.pages || 0 }}
             form={form}
             type={InfoType.Pages}
             editMode={editMode}
@@ -162,13 +176,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
         </IonCol>
         <IonCol size-xs="3" size-sm="3" size-md="3" size-lg="1.5">
           <SceneInfoLabels
-            label={{ 
-              title: "Time", 
-              fieldKeyName: "estimatedSeconds", 
-              isEditable: true, 
-              disabled: false, 
-              info: scene?.estimatedSeconds || 0 
-            }}
+            label={{ title: "Time", fieldKeyName: "estimatedSeconds", isEditable: true, disabled: false, info: scene?.estimatedSeconds || 0 }}
             form={form}
             type={InfoType.Minutes}
             editMode={editMode}

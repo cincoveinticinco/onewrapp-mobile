@@ -53,6 +53,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
     if (isNewOption) {
       setOptions([...options, option]);
     }
+    console.log(option)
+    console.log(currentFieldValue)
     currentFieldValue == option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
   };
 
