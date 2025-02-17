@@ -40,6 +40,8 @@ import AddButton from '../../Shared/Components/AddButton/AddButton';
 import { useRxData } from 'rxdb-hooks';
 import { UserDocType } from '../../Shared/types/user.types';
 import SceneHeader from './SceneHeader';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -125,7 +127,7 @@ const SceneDetails: React.FC<{
   const [sceneColor, setSceneColor] = useState<any>('light');
   const [editMode, setEditMode] = useState<boolean>(false);
   const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
-
+  const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const form = useSceneDetailForm()
   const {
     reset,
@@ -410,6 +412,7 @@ const SceneDetails: React.FC<{
       setEditMode(edit === 'true'); 
     }, 150);
   });
+
   useIonViewWillLeave(() => {
     setEditMode(false);
   });
@@ -520,20 +523,34 @@ const SceneDetails: React.FC<{
       if (sceneDocument) {
         if(creationMode) {
           data.id = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+          await validateSceneExistence(data.id);
           await oneWrapDb?.scenes.upsert(data);
         } else {
+          const sceneId = sceneDocument.get('id');
+          const newId = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+          if(sceneId !== newId) {
+            await validateSceneExistence(newId);
+          }
           await sceneDocument.update({ $set: data });
         }
         successMessageSceneToast('Scene updated successfully');
         setThisScene(data);
         toggleEditMode();
-      } else {
-        errorToast('Error updating scene');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      errorToast('Error updating scene');
+      errorToast(error || 'Error updating scene');
     }
+  }
+
+  const validateSceneExistence = async (id: string) => {
+    const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { id } }).exec();
+
+    if(sceneDocument) {
+      throw 'Scene already exists';
+    }
+
+    return true;
   }
 
   const editModeButtons = () => {
@@ -558,6 +575,22 @@ const SceneDetails: React.FC<{
         </IonButton>
       </>
     );
+  }
+
+  const toolbarButtons = () => {
+    return (
+      <>
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={toggleEditMode}>
+          <CiEdit className="toolbar-icon edit-icon" />
+        </IonButton>
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
+          <PiProhibitLight className="toolbar-icon prohibit-icon" />
+        </IonButton>
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
+          <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+        </IonButton>
+      </>
+    )
   }
 
   const addNoteAlert = () => {
@@ -593,10 +626,7 @@ const SceneDetails: React.FC<{
       {...(creationMode || editMode
         ? { customButtons: [editModeButtons], showLogout: false }
         : {
-            prohibited: true,
-            deleteButton: true,
-            edit: true,
-            editOnClick: toggleEditMode,
+            customButtons: [toolbarButtons],
           })}
       deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
       color={editMode ? 'yellow' : 'tertiary'}
@@ -816,7 +846,8 @@ const SceneDetails: React.FC<{
         message={`Are you sure you want to delete scene ${sceneHeader}?`}
         handleOk={deleteScene}
         inputs={[]}
-        trigger={`open-delete-scene-alert-${sceneId}-details`}
+        isOpen={openDeleteSceneAlert}
+        setIsOpen={setOpenDeleteSceneAlert}
       />
     </IonPage>
   );

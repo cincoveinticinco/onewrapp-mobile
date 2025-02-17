@@ -273,8 +273,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         )
       } */}
       { logoutIcon && showLogout &&
-        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button logout-icon" onClick={logout}>
-          <RiLogoutBoxLine className="toolbar-icon" />
+        <IonButton fill="clear" slot="end" className="ion-no-padding ion-margin-end" onClick={logout} color='danger'>
+          <RiLogoutBoxLine className="toolbar-icon"/>
         </IonButton>
       }
       {

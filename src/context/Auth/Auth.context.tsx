@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider value={value}>
       {children}
         <InputAlert
-          header="Unassign SceneDocType"
+          header="Logout"
           message={`Are you sure you want to logout?`}
           handleOk={() => logoutConfirmation()}
           inputs={[]}
