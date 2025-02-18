@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import './InputItem.scss';
 import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { textTransform } from '@mui/system';
 
 interface InputItemProps {
   label: string;
@@ -105,6 +106,7 @@ const InputItem: React.FC<InputItemProps> = ({
                 }}
                 className={`${isFocused ? 'input-item' : ''} ${className || ''}`}
                 disabled={disabled}
+                style={{ textTransform: 'uppercase' }}
               />
             ) : (
               <IonInput
@@ -132,6 +134,7 @@ const InputItem: React.FC<InputItemProps> = ({
                 }}
                 className={`add-scene-input${(showError || error) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
                 disabled={disabled}
+                style={{ textTransform: 'uppercase' }}
               />
             )
           )}

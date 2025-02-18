@@ -38,6 +38,7 @@ export type Input = {
   selectedCategory?: string;
   multiple?: boolean;
   customCategoryLabel?: string;
+  afterSelection?: () => void;
 }
 
 interface SceneInfoLabelsProps {
@@ -169,6 +170,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             validate={generalValidator}
             displayError={!!errors[fieldKeyName]}
             canCreateNew={input?.canCreateNew}
+            afterSelection={input?.afterSelection}
             ref={input?.ref}
           />
         );
@@ -195,6 +197,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             selectedCategory={input?.selectedCategory}
             multiple={input?.multiple}
             customCategoryLabel={input?.customCategoryLabel}
+            afterSelection={input?.afterSelection}
           />
         )
       case InfoType.LongText:

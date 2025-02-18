@@ -21,6 +21,7 @@ interface SelectItemProps {
   className?: string;
   setOptions: any;
   ref?: any
+  afterSelection?: () => void;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -40,6 +41,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   showLabel = true,
   className = '',
   setOptions,
+  afterSelection = () => {},
   ref
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -53,9 +55,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
     if (isNewOption) {
       setOptions([...options, option]);
     }
-    console.log(option)
-    console.log(currentFieldValue)
     currentFieldValue == option ? setValue(fieldKeyName, null) : setValue(fieldKeyName, option);
+    afterSelection()
   };
 
   const getId = () => {

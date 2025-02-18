@@ -33,9 +33,10 @@ interface InputModalWithSectionsProps {
   selectedCategory?: string | null;
   multiple?: boolean;
   customCategoryLabel?: string;
+  afterSelection?: () => void;
 }
 
-const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
+const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   modalRef = useRef<HTMLIonModalElement>(null),
   optionName,
   listOfOptions,
@@ -45,7 +46,8 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   setValues,
   selectedCategory,
   multiple = true,
-  customCategoryLabel
+  customCategoryLabel,
+  afterSelection = () => {},
 }) => {
   useEffect(() => {
     if (!isOpen) {
@@ -66,7 +68,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   useEffect(() => {
     if (selectedCategory) {
-      setValue('categoryName', selectedCategory.toUpperCase());
+      setValue('categoryName', selectedCategory);
     }
   }, [selectedCategory]);
 
@@ -119,8 +121,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const createNew = () => {
     const categoryName = getValues('categoryName');
     const updatedCreatedOptions = [...createdOptions];
-
-    // Si no es selección múltiple, desmarca todas las opciones existentes
     if (!multiple) {
       updatedCreatedOptions.forEach(category => {
         category.options.forEach(option => {
@@ -141,7 +141,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     }
 
     const categoryIndex = updatedCreatedOptions.findIndex(category => category.category === categoryName);
-
     if (categoryIndex !== -1) {
       updatedCreatedOptions[categoryIndex].options.push({
         label: searchText.trim(),
@@ -151,7 +150,13 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     } else {
       updatedCreatedOptions.push({
         category: categoryName,
-        options: [{ label: searchText.trim(), value: searchText.trim(), checked: true }],
+        options: [
+          {
+            label: searchText.trim(),
+            value: searchText.trim(),
+            checked: true,
+          },
+        ],
       });
     }
 
@@ -161,7 +166,6 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   const toggleCheckOptions = (value: string | number, category: string) => {
     const updatedOptions = filteredOptions.map(cat => {
-      console.log(cat.category, category);
       if (cat.category?.toLowerCase() === category?.toLowerCase()) {
         return {
           ...cat,
@@ -172,7 +176,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       }
       return cat;
     });
-    setFilteredOptions(updatedOptions);
+    setFilteredOptions(updatedOptions)
   };
 
   const onSave = () => {
@@ -196,6 +200,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     }
     
     closeModal();
+    afterSelection()
   };
 
   const getSelectedOptions = () => {
@@ -208,7 +213,7 @@ const InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           checked: option.checked, 
           value: option.value 
         }))
-    );
+    )
   };
 
   if (!isOpen) return null;

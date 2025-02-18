@@ -24,6 +24,7 @@ interface CategorizedSelectProps {
   selectedCategory?: string;
   multiple?: boolean;
   customCategoryLabel?: string;
+  afterSelection?: () => void;
 }
 
 const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
@@ -47,6 +48,7 @@ const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
   selectedCategory,
   multiple = false,
   customCategoryLabel,
+  afterSelection = () => {},
 }) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef = React.useRef<HTMLIonModalElement>(null);
@@ -58,9 +60,11 @@ const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
     if (selectedValues.length > 0) {
       const selectedValue = selectedValues[0];
       setValue(fieldKeyName, selectedValue.value);
+      console.log(watchValue(fieldKeyName));
     } else {
       setValue(fieldKeyName, null);
     }
+    afterSelection();
   };
 
   const getId = () => {
@@ -79,7 +83,7 @@ const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
       ...category,
       options: category.options.map(option => ({
         ...option,
-        checked: option.value === currentFieldValue
+        checked: option.value === currentFieldValue && selectedCategory === category.category
       }))
     }));
   };

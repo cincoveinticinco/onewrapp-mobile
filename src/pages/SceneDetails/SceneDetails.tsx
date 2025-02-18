@@ -26,7 +26,7 @@ import useHideTabs from '../../Shared/hooks/useHideTabs';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
-import { ShootingScene } from '../../Shared/types/shooting.types';
+import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
@@ -42,6 +42,7 @@ import { UserDocType } from '../../Shared/types/user.types';
 import SceneHeader from './SceneHeader';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
+import { useShooting } from '../../hooks/useShooting/useShooting';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -117,6 +118,7 @@ const SceneDetails: React.FC<{
   const history = useHistory();
 
   const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
+  const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
@@ -128,6 +130,7 @@ const SceneDetails: React.FC<{
   const [editMode, setEditMode] = useState<boolean>(false);
   const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
+  const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
   const form = useSceneDetailForm()
   const {
     reset,
@@ -136,6 +139,7 @@ const SceneDetails: React.FC<{
     handleSubmit,
     setValue
   } = form;
+  const { shootingDeleteScene } = useShooting();
 
   const emptyScene = {
     sceneId: 0,
@@ -449,6 +453,27 @@ const SceneDetails: React.FC<{
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId?.toString() || ''));
       setThisSceneShooting(sceneShooting || null);
+      setThisShooting(shooting?._data || null);
+    }
+  
+    if (!shootingId && thisScene?.sceneId) {
+      const shooting = await oneWrapDb?.shootings.findOne({
+        selector: {
+          scenes: {
+            $elemMatch: {
+              sceneId: thisScene.sceneId.toString()
+            }
+          }
+        }
+      }).exec();
+  
+      if (shooting) {
+        const sceneShooting = shooting._data?.scenes.find(
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || '')
+        );
+        setThisSceneShooting(sceneShooting || null);
+        setThisShooting(shooting._data || null);
+      }
     }
   };
 
@@ -538,8 +563,22 @@ const SceneDetails: React.FC<{
         toggleEditMode();
       }
     } catch (error: any) {
-      console.error(error);
       errorToast(error || 'Error updating scene');
+    }
+  }
+
+  const handleUnassignSceneFromShooting = async () => {
+    try {
+      const id = thisShooting?.id;
+      if(thisScene && id) {
+        if (thisScene.sceneId) {
+          await shootingDeleteScene(thisSceneShooting?.sceneId, id);
+          setThisSceneShooting(null);
+          setThisShooting(null)
+        }
+      }
+    } catch (error) {
+      errorToast('Error unassigning scene');
     }
   }
 
@@ -583,9 +622,12 @@ const SceneDetails: React.FC<{
         <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={toggleEditMode}>
           <CiEdit className="toolbar-icon edit-icon" />
         </IonButton>
-        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
-          <PiProhibitLight className="toolbar-icon prohibit-icon" />
-        </IonButton>
+        {
+          thisSceneShooting && 
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
+            <PiProhibitLight className="toolbar-icon prohibit-icon" />
+          </IonButton>
+          }
         <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
           <PiTrashSimpleLight className="toolbar-icon trash-icon" />
         </IonButton>
@@ -848,6 +890,14 @@ const SceneDetails: React.FC<{
         inputs={[]}
         isOpen={openDeleteSceneAlert}
         setIsOpen={setOpenDeleteSceneAlert}
+      />
+      <InputAlert
+        header="Unassign Scene"
+        message={`Are you sure you want to unassign scene ${sceneHeader} from ${thisShooting?.shootDate} shooting?`}
+        handleOk={handleUnassignSceneFromShooting}
+        inputs={[]}
+        isOpen={openUnassignAlert}
+        setIsOpen={setOpenUnassignAlert}
       />
     </IonPage>
   );

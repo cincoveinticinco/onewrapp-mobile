@@ -5,7 +5,7 @@ import { isNumberValidator } from '../../../../Shared/Utils/validators';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
-import { set } from 'lodash';
+import { ListOfOptionsItem } from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 
 interface SceneBasicInfoProps {
   editMode?: boolean;
@@ -27,11 +27,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   } = useSceneFormOptions();
 
   const [locationOptionsCopy, setLocationOptionsCopy] = useState(locationOptions);
-  const [setOptionsCopy, setSetOptionsCopy] = useState(setOptions);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [isAutoSettingLocation, setIsAutoSettingLocation] = useState(false);
-  const [isLocationChange, setIsLocationChange] = useState(false);
-  const previousLocationRef = useRef<string | null>(null);
+  const [setOptionsCopy, setSetOptionsCopy] = useState<ListOfOptionsItem[]>(setOptions);
   const protectionInputRef = useRef<any>(null);
 
   useEffect(() => {
@@ -42,8 +38,6 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const [showProtection, setShowProtection] = useState(false);
 
   const sceneType = watch('sceneType');
-  const location = watch('locationName');
-  const currentSet = watch('setName');
 
   useEffect(() => {
     if (sceneType === SceneTypeEnum.SCENE) {
@@ -55,51 +49,69 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   }, [sceneType, setValue]);
 
   useEffect(() => {
-    if (!isInitialized && scene?.locationName) {
-      setSelectedLocation(scene.locationName);
-      previousLocationRef.current = scene.locationName;
-      setIsInitialized(true);
-      return;
-    }
-
-    if (location !== previousLocationRef.current) {
-      setSelectedLocation(location || null);
-      previousLocationRef.current = location || null;
-
-      if (location !== scene?.locationName && !isAutoSettingLocation) {
-        setIsLocationChange(true);
-        setValue('setName', null);
-        setTimeout(() => {
-          setIsLocationChange(false);
-        }, 100);
-      }
-    }
-  }, [location, setSelectedLocation, setValue, scene?.locationName, isInitialized, isAutoSettingLocation]);
-
-  useEffect(() => {
-    console.log('here')
-    if (!currentSet || isLocationChange) {
-      return;
-    }
-
-    if (currentSet && (!location || location === '')) {
-      const relatedLocation = setOptions.find(
-        (location) => location.options.some((set) => set.value === currentSet)
-      )?.category;
-
-      if (relatedLocation) {
-        setIsAutoSettingLocation(true);
-        setValue('locationName', relatedLocation);
-        
-        setTimeout(() => {
-          setIsAutoSettingLocation(false);
-        }, 100);
-      }
-    }
-  }, [currentSet, setOptions, setValue, isLocationChange]);
+    setSelectedLocation(scene?.locationName || null);
+  }, [scene?.locationName, editMode]);
 
   const getDisabled = () => sceneType !== SceneTypeEnum.PROTECTION;
   const sizeLg = showProtection ? "3" : "4";
+
+  const currentSet = watch('setName');
+
+  useEffect(() => {
+    if (currentSet && selectedLocation) {
+      const currentSetIsNew = !setOptionsCopy.find((set) => set.options.some((option) => option.value === currentSet));
+      if (currentSetIsNew) {
+        setSetOptionsCopy((prev) => {
+          const newSet = prev.find((set) => set.category === selectedLocation);
+          if (newSet) {
+            newSet.options.push({ label: currentSet, value: currentSet, checked: false });
+          } else {
+            const newSet = {
+              category: selectedLocation,
+              options: [{ label: currentSet, value: currentSet, checked: false }],
+              open: true
+            };
+            prev.push(newSet);
+          }
+          return [...prev];
+        });
+      }
+    }
+  }, [currentSet, selectedLocation])
+
+  const currentLocation = watch('locationName') as string | null;
+  useEffect(() => {
+    if (currentLocation) {
+      const currentLocationIsNew = !locationOptionsCopy.includes(currentLocation);
+      if (currentLocationIsNew) {
+        setLocationOptionsCopy((prev) => {
+          return [...prev, currentLocation];
+        });
+      }
+    }
+  }, [currentLocation, locationOptionsCopy]);
+
+  const handleSetSelection = () => {
+    const location = watch('locationName');
+    const currentSet = watch('setName');
+    
+    const setLocation = setOptionsCopy.find((set) => set.options.some((option) => option.value === currentSet))?.category;
+    if (setLocation && !location) {
+      setSelectedLocation(setLocation);
+      setValue('locationName', setLocation);
+    }
+  }
+
+  const handleLocationSelection = () => {
+    // if  location chamges, set should be null
+    const sceneLocation = scene?.locationName
+    const currentLocation = watch('locationName');
+    console.log('sceneLocation', sceneLocation, 'currentLocation', currentLocation)
+    if (sceneLocation !== currentLocation) {
+      setValue('setName', null);
+      setSelectedLocation(currentLocation || null);
+    }
+  }
 
   const memoizedSetLabel = useMemo(() => {
     return (
@@ -113,7 +125,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           setSelectOptions: setSetOptionsCopy, 
           selectedCategory: (selectedLocation || ''), 
           multiple: false, 
-          customCategoryLabel: 'Location' 
+          customCategoryLabel: 'Location',
+          afterSelection: handleSetSelection
         }}
         type={InfoType.CategorizedSelect}
         editMode={editMode}
@@ -137,8 +150,8 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Scene", fieldKeyName: "sceneNumber", isEditable: true, disabled: false, info: scene?.sceneNumber || '-' }}
             form={form}
-            input={{ validators: [isNumberValidator], required: true }}
-            type={InfoType.Number}
+            input={{ required: true }}
+            type={InfoType.Text}
             editMode={editMode}
           />
         </IonCol>
@@ -234,7 +247,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
           <SceneInfoLabels
             label={{ title: "Location", fieldKeyName: "locationName", isEditable: true, disabled: false, info: scene?.locationName || '-' }}
             form={form}
-            input={{ selectOptions: locationOptionsCopy, canCreateNew: true, setSelectOptions: setLocationOptionsCopy }}
+            input={{ selectOptions: locationOptionsCopy, canCreateNew: true, setSelectOptions: setLocationOptionsCopy, afterSelection: handleLocationSelection }}
             type={InfoType.Select}
             editMode={editMode}
           />
