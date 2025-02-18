@@ -285,10 +285,6 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
-          <IonIcon icon={construct} className="tab-bar-icons" />
-          <IonLabel>CREW</IonLabel>
-        </IonTabButton>
         <IonTabButton tab="sets" className={defineButtonClassAccess(SecurePages.SETS)} href={`${url}/sets`}>
           <IonIcon icon={film} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
@@ -296,6 +292,10 @@ const AppTabs: React.FC = () => {
         <IonTabButton tab="elements" className={defineButtonClassAccess(SecurePages.ELEMENTS)} href={`${url}/elements`}>
           <IonIcon icon={cube} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
+          <IonIcon icon={construct} className="tab-bar-icons" />
+          <IonLabel>CREW</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />

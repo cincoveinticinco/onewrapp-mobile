@@ -60,9 +60,15 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   const [filteredOptions, setFilteredOptions] = useState<ListOfOptionsItem[]>([]);
   const [createdOptions, setCreatedOptions] = useState<ListOfOptionsItem[]>([]);
   const [openSelectedOptions, setOpenSelectedOptions] = useState(true);
+
+  const noCategory = customCategoryLabel ? 'NO ' + customCategoryLabel.toUpperCase() : EmptyEnum.NoCategory
+  
   const { control, setValue, getValues } = useForm<{ categoryName: string }>({
-    defaultValues: { categoryName: EmptyEnum.NoCategory },
+    defaultValues: { categoryName: 
+      noCategory
+     },
   });
+
 
   const categorySuggestions = listOfOptions.map(item => item.category);
 
@@ -88,7 +94,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       combinedOptions = combinedOptions.map(category => ({
         ...category,
         options: category.options.filter(option =>
-          option.label.toLowerCase().includes(searchText.toLowerCase())
+          option.label?.toLowerCase().includes(searchText.toLowerCase())
         ),
       }));
     }
@@ -107,7 +113,9 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     setSearchText('');
     setShowError(false);
     setCreatedOptions([]);
-    setValue('categoryName', EmptyEnum.NoCategory);
+    setValue('categoryName', 
+      noCategory
+    );
   };
 
   const closeModal = () => {
@@ -312,9 +320,13 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               category.options.filter(o => !o.checked).length > 0 && (
                 <Section 
                   key={i} 
-                  title={category.category || EmptyEnum.NoCategory} 
+                  title={category.category || 
+                    noCategory
+                  } 
                   open={category.open ?? true} 
-                  setOpen={() => toggleOpenSection(category.category || EmptyEnum.NoCategory)} 
+                  setOpen={() => toggleOpenSection(category.category || 
+                    noCategory
+                  )} 
                   id={category.category}
                 >
                   {category.options
@@ -330,7 +342,9 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                             className="ion-no-margin ion-no-padding checkbox-option"
                             labelPlacement="end"
                             checked={option.checked}
-                            onIonChange={() => toggleCheckOptions(option.value, category.category || EmptyEnum.NoCategory)}
+                            onIonChange={() => toggleCheckOptions(option.value, category.category || 
+                              noCategory
+                            )}
                           >
                             {option.label}
                           </IonCheckbox>

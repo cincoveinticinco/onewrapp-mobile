@@ -23,7 +23,7 @@ export const useSceneFormOptions = () => {
 
   // Separate memo for categorized sets that depends on both offlineScenes and selectedLocation
   const categorizedSets = useMemo(() => {
-    const uniqueLocations = getUniqueValuesByKey(offlineScenes, 'locationName');
+    const uniqueLocations = [...getUniqueValuesByKey(offlineScenes, 'locationName'), 'NO LOCATION']
     
     return uniqueLocations.reduce((acc: ListOfOptionsItem[], location) => {
       // If there's a selected location, only include sets for that location
@@ -32,7 +32,12 @@ export const useSceneFormOptions = () => {
       }
 
       const sets = offlineScenes
-        .filter(scene => scene.locationName === location)
+        .filter(scene => {
+          if (location === 'NO LOCATION') {
+            return !scene.locationName;
+          }
+          return scene.locationName === location;
+        })
         .map(scene => scene.setName)
         // Remove duplicates
         .filter((value, index, self) => self.indexOf(value) === index);

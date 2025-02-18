@@ -58,7 +58,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
   const currentSet = watch('setName');
 
   useEffect(() => {
-    if (currentSet && selectedLocation) {
+    if (currentSet) {
       const currentSetIsNew = !setOptionsCopy.find((set) => set.options.some((option) => option.value === currentSet));
       if (currentSetIsNew) {
         setSetOptionsCopy((prev) => {
@@ -67,7 +67,7 @@ const SceneBasicInfo: React.FC<SceneBasicInfoProps> = ({ editMode, scene, form }
             newSet.options.push({ label: currentSet, value: currentSet, checked: false });
           } else {
             const newSet = {
-              category: selectedLocation,
+              category: selectedLocation || 'NO LOCATION',
               options: [{ label: currentSet, value: currentSet, checked: false }],
               open: true
             };
