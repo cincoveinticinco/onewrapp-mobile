@@ -59,7 +59,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
     }), [uniqueExtras]);
 
   const defineExtrasCategories = useCallback((): string[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map(c => c || EmptyEnum.NoCategory);
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
     const observedCategories = observedExtras.map(e => e.categoryName || EmptyEnum.NoCategory);
     const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
     console.log('allCategories', allCategories);
@@ -170,10 +170,10 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
         selectedCategory={selectedCategory}
       />
 
-      {extrasCategories.every(c => getObservedExtrasInCategoryLength(c) === 0) && !editMode && (
+      {extrasCategories.every(c => getObservedExtrasInCategoryLength(c) === 0) && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>
-            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>NO EXTRAS AVAILABLE</IonCardSubtitle>
+            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)', fontSize: '16px'}}>NO EXTRAS AVAILABLE</IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
       )}

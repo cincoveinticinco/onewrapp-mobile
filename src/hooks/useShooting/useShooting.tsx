@@ -14,7 +14,7 @@ interface UseShootingReturn {
   updateShootingScene: (shootingId: string, sceneId: string, sceneData: Partial<SceneDocType>) => Promise<void>;
   createShooting: (shootingData: ShootingDocType) => Promise<RxDocument>;
   getShootingById: (id: string) => Promise<RxDocument | null>;
-  shootingDeleteScene: (sceneId: number, shootingId: string) => Promise<void>;
+  shootingDeleteScene: (sceneId: string, shootingId: string) => Promise<void>;
 }
 
 export const useShooting = (): UseShootingReturn => {
@@ -139,7 +139,7 @@ export const useShooting = (): UseShootingReturn => {
     }
   }, [oneWrappDB, handleError]);
 
-  const shootingDeleteScene = async (sceneId: number, shootingId: string) => {
+  const shootingDeleteScene = async (sceneId: string, shootingId: string) => {
     try {
       console.log(shootingId)
       const shooting = await oneWrappDB?.shootings.findOne({ selector: { id: shootingId } }).exec();
@@ -152,9 +152,11 @@ export const useShooting = (): UseShootingReturn => {
           (s: any) => s.sceneId !== sceneId
         )
       };
+
+      console.log(shootingCopy)
   
       await oneWrappDB?.shootings.upsert(shootingCopy);
-      successToast('SceneDocType deleted successfully');
+      successToast('Scene unassigned successfully');
     } catch (error) {
       errorToast('Error deleting scene');
       throw error;

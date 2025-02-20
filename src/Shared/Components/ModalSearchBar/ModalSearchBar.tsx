@@ -19,8 +19,8 @@ const ModalSearchBar = ({
         <IonSearchbar
           className="ion-margin-top search-bar"
           value={searchText.toUpperCase()}
-          onIonChange={(e) => setSearchText(e.detail.value!)}
-          onIonInput={(e) => setSearchText(e.detail.value!)}
+          onIonChange={(e) => setSearchText(e.detail.value!.toUpperCase())}
+          onIonInput={(e) => setSearchText(e.detail.value!.toUpperCase())}
           placeholder={placeholder}
           showCancelButton="focus"
           cancelButtonIcon={closeOutline}

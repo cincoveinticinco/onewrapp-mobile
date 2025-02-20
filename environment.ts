@@ -64,7 +64,7 @@ const envConfigs: Record<string, Environment> = {
 };
 
 // Exportamos el environment por defecto para mantener compatibilidad
-const environment: Environment = envConfigs.production;
+const environment: Environment = envConfigs.qa;
 
 export async function loadEnvironment(isIos: boolean) {
   if(isIos) {
@@ -72,11 +72,11 @@ export async function loadEnvironment(isIos: boolean) {
       const { environment: selectedEnv } = await EnvironmentPlugin.getEnvironment();
       console.log("Ambiente seleccionado:", selectedEnv);
       // Actualizamos el environment objeto directamente
-      Object.assign(environment, envConfigs[selectedEnv] || envConfigs.production);
+      Object.assign(environment, envConfigs[selectedEnv] || envConfigs.qa);
     } catch (error) {
       console.error("Error al obtener el ambiente:", error);
       // En caso de error, nos aseguramos de usar producción
-      Object.assign(environment, envConfigs.production);
+      Object.assign(environment, envConfigs.qa);
     }
   } else {
     Object.assign(environment, envConfigs.local);

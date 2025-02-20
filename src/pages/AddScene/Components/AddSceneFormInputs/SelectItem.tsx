@@ -20,7 +20,7 @@ interface SelectItemProps {
   showLabel?: boolean;
   className?: string;
   setOptions: any;
-  ref?: any
+  reference?: any
   afterSelection?: () => void;
 }
 
@@ -42,7 +42,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   className = '',
   setOptions,
   afterSelection = () => {},
-  ref
+  reference
 }) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef = React.useRef<HTMLIonModalElement>(null);
@@ -70,7 +70,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   };
 
   return (
-    <IonItem color="tertiary" id={getId()} onClick={() => setShowModal(true)} ref={ref ? ref : inputRef}>
+    <IonItem color="tertiary" id={getId()} onClick={() => setShowModal(true)} ref={reference ? reference : inputRef}>
       <Controller
         control={control}
         name={fieldKeyName}

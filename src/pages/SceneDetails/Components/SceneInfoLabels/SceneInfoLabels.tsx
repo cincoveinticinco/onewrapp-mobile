@@ -156,7 +156,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
         return (
           <SelectItem
             detailsEditMode={true}
-            label=""
+            label={title}
             options={selectOptions || []}
             setOptions={input?.setSelectOptions}
             inputName={`add-${title}-input`}
@@ -171,7 +171,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
             displayError={!!errors[fieldKeyName]}
             canCreateNew={input?.canCreateNew}
             afterSelection={input?.afterSelection}
-            ref={input?.ref}
+            reference={input?.ref}
           />
         );
 
@@ -179,7 +179,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
         return (
           <CategorizedSelect
             detailsEditMode={true}
-            label=""
+            label={title}
             options={selectOptions || []}
             setOptions={input?.setSelectOptions}
             inputName={`add-${title}-input`}

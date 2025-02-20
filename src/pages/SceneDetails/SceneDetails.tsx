@@ -3,11 +3,10 @@ import {
   IonCard,
   IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
+  useIonViewDidLeave,
   useIonViewWillEnter,
-  useIonViewWillLeave,
 } from '@ionic/react';
 import React, {
-  useCallback,
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -32,7 +31,6 @@ import applyFilters from '../../Shared/Utils/applyFilters';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
-import useSceneDetailForm from './hooks/useSceneDetailForm';
 import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
 import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
@@ -42,7 +40,9 @@ import { UserDocType } from '../../Shared/types/user.types';
 import SceneHeader from './SceneHeader';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import { useShooting } from '../../hooks/useShooting/useShooting';
+import { useForm } from 'react-hook-form';
+import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
+import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -131,15 +131,6 @@ const SceneDetails: React.FC<{
   const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
-  const form = useSceneDetailForm()
-  const {
-    reset,
-    watch,
-    errors,
-    handleSubmit,
-    setValue
-  } = form;
-  const { shootingDeleteScene } = useShooting();
 
   const emptyScene = {
     sceneId: 0,
@@ -156,24 +147,66 @@ const SceneDetails: React.FC<{
     notes: [],
   };
 
-  useEffect(() => {
-    if (thisScene && !creationMode) {
-      reset(thisScene);
-    }
+  const form = useForm<SceneDocType>({
+    defaultValues: emptyScene // Establecemos los valores por defecto iniciales
+  });
 
-    if (creationMode) {
-      reset(emptyScene);
-    }
-  }, [thisScene, reset]);
+  const {
+    reset,
+    watch,
+    formState: { errors },
+    handleSubmit,
+    setValue
+  } = form;
 
-  const toggleEditMode = useCallback(() => {
+  const loadScene = async () => {
+    setSceneIsLoading(true);
+    
+    if (sceneId && oneWrapDb) {
+      try {
+        const scene = await oneWrapDb?.scenes
+          .findOne({ selector: { sceneId: parseInt(sceneId) } })
+          .exec();
+        
+        setThisScene(scene?._data || null);
+
+        // Actualiza el formulario con la nueva escena
+        if (scene?._data && !creationMode) {
+          reset(scene._data, {
+            keepDefaultValues: false
+          });
+        } else if (creationMode) {
+          reset(emptyScene, {
+            keepDefaultValues: false
+          });
+        }
+      } catch (error) {
+        console.error('Error loading scene:', error);
+      } finally {
+        setSceneIsLoading(false);
+      }
+    }
+  };
+
+  useIonViewDidEnter(() => {
+    loadScene();
+  });
+
+  // Limpia el formulario cuando se sale de la vista
+  useIonViewDidLeave(() => {
+    reset(emptyScene);
+    setThisScene(null);
+    setThisSceneShooting(null);
+  });
+
+  const toggleEditMode = () => {
     if (editMode && thisScene) {
       reset(thisScene);
       setEditMode(false);
     } else {
       setEditMode(true);
     }
-  }, [editMode, thisScene, reset]);
+  };
 
   const successMessageSceneToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -410,28 +443,11 @@ const SceneDetails: React.FC<{
   }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
 
   useIonViewWillEnter(() => {
-    setTimeout(() => {
       const params = new URLSearchParams(window.location.search);
       const edit = params.get('edit');
       setEditMode(edit === 'true'); 
-    }, 150);
-  });
-
-  useIonViewWillLeave(() => {
-    setEditMode(false);
-  });
-
-  useEffect(() => {
-    const fetchScene = async () => {
-      if (sceneId && oneWrapDb) {
-        const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-        setThisScene(scene?._data || null);
-        setSceneIsLoading(false);
-      }
-    };
-
-    fetchScene();
-  }, [sceneId, oneWrapDb, offlineScenes]);
+    }
+  );
 
   useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
@@ -519,17 +535,6 @@ const SceneDetails: React.FC<{
     }, 150);
   });
 
-  const deleteScene = async () => {
-    try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-      await sceneToDelete?.remove();
-      history.push(`/my/projects/${id}/strips`);
-      successMessageSceneToast('Scene deleted successfully');
-    } catch (error) {
-      errorToast('Error deleting scene');
-    }
-  };
-
   const sceneHeader = thisScene ? editMode ? `EDIT SCENE ${thisScene.episodeNumber}.${thisScene.sceneNumber}`  : `${thisScene.episodeNumber}.${thisScene.sceneNumber}` : '';
 
   const getSceneStatus = (scene: ShootingScene) => {
@@ -542,7 +547,6 @@ const SceneDetails: React.FC<{
   };
 
   const onSubmitForm = async (data: SceneDocType) => {
-    console.log(data);
     try {
       const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
       if (sceneDocument) {
@@ -559,26 +563,11 @@ const SceneDetails: React.FC<{
           await sceneDocument.update({ $set: data });
         }
         successMessageSceneToast('Scene updated successfully');
-        setThisScene(data);
+        console.log()
         toggleEditMode();
       }
     } catch (error: any) {
       errorToast(error || 'Error updating scene');
-    }
-  }
-
-  const handleUnassignSceneFromShooting = async () => {
-    try {
-      const id = thisShooting?.id;
-      if(thisScene && id) {
-        if (thisScene.sceneId) {
-          await shootingDeleteScene(thisSceneShooting?.sceneId, id);
-          setThisSceneShooting(null);
-          setThisShooting(null)
-        }
-      }
-    } catch (error) {
-      errorToast('Error unassigning scene');
     }
   }
 
@@ -677,12 +666,17 @@ const SceneDetails: React.FC<{
 
   const renderSceneBasicInfo = () => (
     <form onSubmit={handleSubmit(onSubmitForm)} id="scene-detail-info">
-      <SceneBasicInfo editMode={editMode || creationMode} scene={thisScene as SceneDocType} form={form} />
+      <SceneBasicInfo editMode={editMode || creationMode} scene={thisScene as SceneDocType} sceneIsLoading form={{
+        ...form,
+        errors,
+        watch,
+        setValue
+      }} />
     </form>
   );
 
   const renderNotesSection = () => (
-    <div className={`section-wrapper notes-info ${editMode ? 'border-primary' : ''}`}>
+    <div className={`section-wrapper notes-info`}>
       <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: "var(--ion-color-dark)" }}>
         <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
         {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
@@ -712,14 +706,14 @@ const SceneDetails: React.FC<{
 
   const renderElementsSection = () => (
     <>
-      <div className={`section-wrapper characters-info ${editMode ? 'border-primary' : ''}`}>
+      <div className={`section-wrapper characters-info`}>
         <AddCharacterForm
           observedCharacters={watch("characters") || []}
           editMode={editMode || creationMode}
           setCharacters={(value: Character[]) => setValue("characters", value)}
         />
       </div>
-      <div className={`section-wrapper elements-info ${editMode ? 'border-primary' : ''}`}>
+      <div className={`section-wrapper elements-info`}>
         <AddElementForm
           setElements={(value: any) => setValue("elements", value)}
           observedElements={(watch("elements") || []).map((element: any) => ({
@@ -729,7 +723,7 @@ const SceneDetails: React.FC<{
           editMode={editMode || creationMode}
         />
       </div>
-      <div className={`section-wrapper extras-info ${editMode ? 'border-primary' : ''}`}>
+      <div className={`section-wrapper extras-info`}>
         <AddExtraForm setExtras={(value: any) => setValue("extras", value)} observedExtras={watch("extras") || []} editMode={editMode || creationMode} />
       </div>
     </>
@@ -883,22 +877,25 @@ const SceneDetails: React.FC<{
           />
         )
       }
-      <InputAlert
-        header="Delete Scene"
-        message={`Are you sure you want to delete scene ${sceneHeader}?`}
-        handleOk={deleteScene}
-        inputs={[]}
-        isOpen={openDeleteSceneAlert}
-        setIsOpen={setOpenDeleteSceneAlert}
+      <DeleteSceneAlert
+        alertIsOpen={openDeleteSceneAlert}
+        setAlertIsOpen={setOpenDeleteSceneAlert}
+        sceneId={sceneId}
+        projectId={id}
+        sceneHeader={sceneHeader}
+        onSuccess={handleBack}
       />
-      <InputAlert
-        header="Unassign Scene"
-        message={`Are you sure you want to unassign scene ${sceneHeader} from ${thisShooting?.shootDate} shooting?`}
-        handleOk={handleUnassignSceneFromShooting}
-        inputs={[]}
-        isOpen={openUnassignAlert}
-        setIsOpen={setOpenUnassignAlert}
-      />
+      { 
+        thisShooting?.id  &&
+        <UnassignSceneAlert
+          alertIsOpen={openUnassignAlert}
+          setAlertIsOpen={setOpenUnassignAlert}
+          sceneId={sceneId}
+          shootingId={thisShooting?.id}
+          sceneHeader={sceneHeader}
+          onSuccess={fetchSceneShooting}
+        />
+      }
     </IonPage>
   );
 };

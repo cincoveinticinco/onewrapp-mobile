@@ -174,7 +174,8 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   const toggleCheckOptions = (value: string | number, category: string) => {
     const updatedOptions = filteredOptions.map(cat => {
-      if (cat.category?.toLowerCase() === category?.toLowerCase()) {
+      console.log(cat)
+      if (cat?.category?.toLowerCase() === category?.toLowerCase()) {
         return {
           ...cat,
           options: cat.options.map(option =>
@@ -279,14 +280,14 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           
           {/* Main Options Section */}
           {filteredOptions.every(category => category.options.length === 0) ? (
-            <div className="no-items-card">
+            searchText.trim() ? (          <div className="no-items-card">
               <p className="no-items-card-title">
-                <a>{searchText.toUpperCase()}</a> DOES NOT EXIST. DO YOU WANT TO CREATE?
+                <a>{searchText.toUpperCase()}</a> DOES NOT EXIST. DO YOU WANT TO CREATE {selectedCategory && `IN (${selectedCategory.toUpperCase()})`} ?
               </p>
               <IonGrid>
                 <IonRow>
                   <IonCol size='6' offset='3'>
-                    <InputItem
+                    {!selectedCategory && <InputItem
                       label={customCategoryLabel  || 'Category'}
                       placeholder="Enter category"
                       control={control}
@@ -294,8 +295,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                       inputName="category-input"
                       suggestions={categorySuggestions}
                       setValue={setValue}
-                      disabled={selectedCategory !== null}
-                    />
+                    />}
                   </IonCol> 
                 </IonRow>
               </IonGrid>
@@ -314,7 +314,11 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                   className='ion-margin-top save-button' 
                 />
               </div>
-            </div>
+            </div>) : (
+              <div className="no-items-card">
+                <p className="no-items-card-title">NO ITEMS TO SHOW</p>
+              </div>
+            )
           ) : (
             filteredOptions.map((category, i) => (
               category.options.filter(o => !o.checked).length > 0 && (
@@ -355,6 +359,30 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               )
             ))
           )}
+            <div className='buttons-wrapper'>
+              {
+                !filteredOptions.every(category => category.options.length === 0)
+                && (
+                <OutlinePrimaryButton
+                  buttonName="SAVE"
+                  onClick={closeModal}
+                  className="ion-margin"
+                  color='success'
+                />
+                )
+              }
+              {
+                !filteredOptions.every(category => category.options.length === 0)
+                && (
+                <OutlinePrimaryButton
+                  buttonName="CANCEL"
+                  onClick={closeModal}
+                  className="ion-margin"
+                  color='danger'
+                />
+                )
+              }
+          </div>
         </div>
       </IonContent>
     </IonModal>

@@ -81,9 +81,6 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       return character.categoryName === categoryName;
     }), [uniqueCharacters]);
 
-  useEffect(() => {
-    console.log(uniqueCharacters)
-  }, [filterCharactersByCategory])
 
   const defineCharactersCategories = useCallback((): string[] => {
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
@@ -261,10 +258,10 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
         selectedCategory={selectedCategory}
       />
 
-      {filteredCategories.every(c => getObservedCharactersInCategoryLength(c) == 0) && !editMode  && (
+      {filteredCategories.every(c => getObservedCharactersInCategoryLength(c) == 0)  && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>     
-            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>
+            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)', fontSize: '16px' }}>
               NO CHARACTERS AVAILABLE
             </IonCardSubtitle>
           </IonCardHeader>

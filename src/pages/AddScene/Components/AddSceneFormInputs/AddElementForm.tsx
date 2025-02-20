@@ -173,10 +173,10 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
         selectedCategory={selectedCategory}
       />
 
-      {elementsCategories.every(c => getObservedElementsInCategoryLength(c) === 0) && !editMode && (
+      {elementsCategories.every(c => getObservedElementsInCategoryLength(c) === 0) && (
         <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
           <IonCardHeader>
-            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)' }}>NO ELEMENTS AVAILABLE</IonCardSubtitle>
+            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)', fontSize: '16px' }}>NO ELEMENTS AVAILABLE</IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
       )}

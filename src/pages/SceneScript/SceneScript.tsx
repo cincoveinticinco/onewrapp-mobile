@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent, IonHeader, IonPage,
   useIonViewDidEnter,
   useIonViewWillEnter,
@@ -10,7 +11,7 @@ import React, {
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
 import { MdOutlineFaceUnlock } from 'react-icons/md';
-import { PiNotePencil } from 'react-icons/pi';
+import { PiNotePencil, PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
 import { useHistory, useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,11 +28,13 @@ import useHideTabs from '../../Shared/hooks/useHideTabs';
 import {
   Character, Element, Extra, Note, SceneDocType,
 } from '../../Shared/types/scenes.types';
-import { ShootingScene } from '../../Shared/types/shooting.types';
+import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import applyFilters from '../../Shared/Utils/applyFilters';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import './SceneScript.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
+import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -66,6 +69,9 @@ const SceneScript: React.FC<{
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
   const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
   const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
+  const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
+  const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
+  const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
   const errorToast = useErrorToast();
 
   useEffect(() => {
@@ -211,6 +217,10 @@ const SceneScript: React.FC<{
   });
 
   useEffect(() => {
+    fetchSceneShooting();
+  }, [shootingId, oneWrapDb, thisScene]);
+
+  useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
       const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id));
       setCurrentSceneIndex(index);
@@ -224,19 +234,34 @@ const SceneScript: React.FC<{
     }
   }, [currentSceneIndex, filteredScenes]);
 
-  useEffect(() => {
-    const fetchSceneShooting = async () => {
-      if (shootingId && oneWrapDb && thisScene) {
-        const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-        const sceneShooting = shooting?._data?.scenes.find(
-          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene.sceneId,
+  const fetchSceneShooting = async () => {
+    if (shootingId && oneWrapDb && thisScene) {
+      const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId?.toString() || ''));
+      setThisSceneShooting(sceneShooting || null);
+      setThisShooting(shooting?._data || null);
+    }
+  
+    if (!shootingId && thisScene?.sceneId) {
+      const shooting = await oneWrapDb?.shootings.findOne({
+        selector: {
+          scenes: {
+            $elemMatch: {
+              sceneId: thisScene.sceneId.toString()
+            }
+          }
+        }
+      }).exec();
+  
+      if (shooting) {
+        const sceneShooting = shooting._data?.scenes.find(
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || '')
         );
         setThisSceneShooting(sceneShooting || null);
+        setThisShooting(shooting._data || null);
       }
-    };
-
-    fetchSceneShooting();
-  }, [shootingId, oneWrapDb, thisScene]);
+    }
+  };
 
   const getPopupList = (type: 'notes' | 'characters' | 'elements' | 'extras') => {
     let list: any = [];
@@ -432,6 +457,22 @@ const SceneScript: React.FC<{
     setEdition(!edition);
   };
 
+    const toolbarButtons = () => {
+      return (
+        <>
+          {
+            thisSceneShooting && 
+            <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
+              <PiProhibitLight className="toolbar-icon prohibit-icon" />
+            </IonButton>
+            }
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
+            <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+          </IonButton>
+        </>
+      )
+    }
+
   return (
     <>
       <IonPage>
@@ -524,7 +565,7 @@ const SceneScript: React.FC<{
 }
         </div>
         <IonHeader>
-          <Toolbar name="" backString prohibited deleteButton edit editRoute={`/my/projects/${id}/editscene/${sceneId}/details`} handleBack={handleBack} deleteTrigger={`open-delete-scene-alert-${sceneId}-details`} />
+          <Toolbar backString handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />
           <SceneHeader
             sceneColor={sceneColor}
             sceneHeader={sceneHeader}
@@ -587,6 +628,25 @@ const SceneScript: React.FC<{
           routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
           currentRoute="scenescript"
         />
+        <DeleteSceneAlert
+          alertIsOpen={openDeleteSceneAlert}
+          setAlertIsOpen={setOpenDeleteSceneAlert}
+          sceneId={sceneId}
+          projectId={id}
+          sceneHeader={sceneHeader}
+          onSuccess={() => handleBack()}
+        />
+        {
+          thisShooting?.id &&
+          <UnassignSceneAlert
+            alertIsOpen={openUnassignAlert}
+            setAlertIsOpen={setOpenUnassignAlert}
+            sceneId={sceneId}
+            shootingId={thisShooting.id}
+            sceneHeader={sceneHeader}
+            onSuccess={fetchSceneShooting}
+          />
+        }
       </IonPage>
     </>
   );

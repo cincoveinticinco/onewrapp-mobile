@@ -18,7 +18,6 @@ import React, {
 } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { RiLogoutBoxLine } from 'react-icons/ri';
 import { useParams } from 'react-router';
 import DatabaseContext from '../../../context/Database/Database.context';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -91,15 +90,12 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   edit = false,
   editRoute = '',
   deleteTrigger = '',
-  download = true,
   addShoBanSc,
   isLoading = false,
   customButtons = [],
   permissionType,
-  logoutIcon = true,
   customHandleSearch,
   editOnClick,
-  showLogout = true,
   color = 'tertiary',
 }) => {
   const isMobile = useIsMobile();
@@ -157,11 +153,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const generatePdf = (template: any, inputs: any) => {
     console.log('Generating PDF');
   };
-
-  // Get if the platform is ios
-
-  
-
   return (
     <IonToolbar color={color} className="toolbar" id="main-pages-toolbar" style={{
       paddingLeft: back || backString ? '0px' : '16px',
@@ -227,11 +218,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
-      {/* {elipse && (
-        // <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button">
-        //   <IonIcon icon={ellipsisHorizontalOutline} className="toolbar-ellipsis-icon toolbar-icon" />
-        // </IonButton>
-      )} */}
       {
         edit && (
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editOnClick ? undefined : editRoute} onClick={editOnClick}>
@@ -264,18 +250,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         addShoBanSc && (
           addShoBanSc()
         )
-      }
-      {/* {
-        download && (
-          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => generatePdf(template, inputs)}>
-            <RiDownload2Line className="toolbar-icon download-icon" />
-          </IonButton>
-        )
-      } */}
-      { logoutIcon && showLogout &&
-        <IonButton fill="clear" slot="end" className="ion-no-padding ion-margin-end" onClick={logout} color='danger'>
-          <RiLogoutBoxLine className="toolbar-icon"/>
-        </IonButton>
       }
       {
         isLoading || isFetching && (
