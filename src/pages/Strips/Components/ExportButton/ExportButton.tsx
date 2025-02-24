@@ -8,9 +8,10 @@ import { arrowDownCircleOutline, downloadOutline, openOutline } from "ionicons/i
 import ExportModal from "../ExportModal/ExportModal";
 import DatabaseContext from "../../../../context/Database/Database.context";
 import './ExportButton.scss';
+import { WorkerData, WorkerStatusTypeEnum } from "../../../../Shared/types/workers.types";
 
 const ExportButton: React.FC = () => {
-  const { projectId } = useContext(DatabaseContext)
+  const { projectId, isOnline } = useContext(DatabaseContext)
   const [workerParams, setWorkerParams] = useState<any>({
     groupBy: null,
     filterBy: null,
@@ -23,14 +24,14 @@ const ExportButton: React.FC = () => {
     initialParams: workerParams
   });
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: any, filterNamesLength: number) => {
     const updatedParams = {
       ...workerParams,
       projectId: projectId?.toString() || '',
       groupBy: values?.groupBy,
       filterBy: values?.filterBy,
       filterIds: values?.filterIds?.join(',') || '',
-      filterNames: values?.filterNames || [],
+      filterNames: filterNamesLength == values.filterNames?.length ? [] : values?.filterNames,
     };
     setWorkerParams(updatedParams);
     startWorker(updatedParams);
@@ -38,7 +39,7 @@ const ExportButton: React.FC = () => {
 
   const { qeueReportsOW, removeReportFromQeue } = useAppStore();
   
-  const [reports, setReports] = useState<any[]>(qeueReportsOW);
+  const [reports, setReports] = useState<WorkerData[]>(qeueReportsOW);
   const [showReports, setShowReports] = useState<boolean>(false);
   const [openExportModal, setOpenExportModal] = useState<boolean>(false);
 
@@ -46,6 +47,8 @@ const ExportButton: React.FC = () => {
   useEffect(() => {
     setReports(qeueReportsOW);
   }, [qeueReportsOW]);
+
+  if(!isOnline) return null;
 
   return (
     <>
@@ -72,7 +75,7 @@ const ExportButton: React.FC = () => {
           <div className="reports-list">
             <h1 className="ion-padding reports-title">REPORTS</h1>
             {reports.map((report) => (
-              <div key={report.jobId} className="report-item ion-flex ion-justify-content-between ion-padding-start" onClick={() => window.open(report.url, '_blank')} color='tertiary'>
+              <div key={report.jobId} className="report-item ion-flex ion-justify-content-between ion-padding-start" onClick={() => window.open(report.url, '_blank')} color='tertiary' style={report.status === WorkerStatusTypeEnum.Failed ?  {borderColor: 'var(--ion-color-danger)'} : undefined}>
                 <p>{report.jobName?.toUpperCase()}</p>
                 <div slot="end" className="ion-flex ion-align-items-center">
                   <IonButton  slot='end' fill="clear" color="primary" onClick={() => window.open(report.url, '_blank')} className="ion-no-padding">
@@ -101,7 +104,7 @@ const ExportButton: React.FC = () => {
           </div>
         </IonContent>
       </IonModal>
-      <ExportModal modalIsOpen={openExportModal} setModaIsOpen={setOpenExportModal} handleSubmit={(values) => handleSubmit(values)} />
+      <ExportModal modalIsOpen={openExportModal} setModaIsOpen={setOpenExportModal} handleSubmit={handleSubmit} />
     </>
   );
 };

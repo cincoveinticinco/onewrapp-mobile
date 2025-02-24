@@ -14,6 +14,7 @@ import { timeToISOString } from "../utils/timeToISOString.util";
 import { AdvanceCall, LocationInfo, Meal, ShootingScene } from "../../../Shared/types/shooting.types";
 import { ItemReorderEventDetail } from "@ionic/react";
 import { formatShootingDate } from "../utils/formatShootingDate.util";
+import useCombinedScenesWithShootings, { CombinedScenesWithShootings } from "../../../hooks/useCombinedScenesWithShootings/useCombinedScenesWithShootings";
 
 const shootingDataInitial: ShootingDataProps = {
   mergedSceneBanners: [],
@@ -52,6 +53,8 @@ export const useShootingInfo = () => {
   const [generalCallDiffHours, setGeneralCallDiffHours ] = useState<number>(0)
   const [moveDiffHoursAlertOpen, setMoveDiffHoursAlertOpen] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
+
+  const { combinedData: scenesWithShootings, isFetching } = useCombinedScenesWithShootings();
 
   const calculateUpdatedInfo = (scenes: any[]) => {
     const scenesOnly = scenes.filter((item: any) => item.cardType === 'scene');
@@ -99,6 +102,7 @@ export const useShootingInfo = () => {
       await waitForIndexedDB();
       const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
       const scenesInShoot = shooting._data.scenes;
+      const scenesWithShootIds = scenesWithShootings.filter((scene: any) => !!scene.shootingInfo).map((scene: any) => scene.sceneId);
       const bannersInShoot = shooting._data.banners;
       const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
       console.log('Time for getting shooting data:', new Date().getTime() - t1);
@@ -110,9 +114,10 @@ export const useShootingInfo = () => {
           selector: { sceneId: { $in: scenesIds } },
         }).exec(),
         oneWrappDb?.scenes.find({
-          selector: { projectId: shooting._data.projectId, sceneId: { $nin: scenesIds } },
+          selector: { projectId: shooting._data.projectId, sceneId: { $nin: scenesWithShootIds } },
         }).exec()
       ]);
+
       console.log('Time for parallel scene queries:', new Date().getTime() - t2);
   
       // Crear Map para lookup eficiente
@@ -134,22 +139,19 @@ export const useShootingInfo = () => {
       }) ?? [];
       console.log('Time for merging scenes data:', new Date().getTime() - t3);
   
-      // Procesar banners
       const t4 = new Date().getTime();
       const bannersWithType: mergedSceneBanner[] = bannersInShoot.map((banner: any) => ({
         cardType: 'banner',
         ...banner,
       }));
       console.log('Time for processing banners:', new Date().getTime() - t4);
-  
-      // Merge y sort final
+
       const t5 = new Date().getTime();
       const mergedScenes = [...mergedScenesShootData, ...bannersWithType].sort(
         (a: any, b: any) => a.position - b.position
       );
       console.log('Time for final merge and sort:', new Date().getTime() - t5);
   
-      // Calcular información actualizada
       const t6 = new Date().getTime();
       const updatedInfo = calculateUpdatedInfo(mergedScenes);
       console.log('Time for calculating updated info:', new Date().getTime() - t6);

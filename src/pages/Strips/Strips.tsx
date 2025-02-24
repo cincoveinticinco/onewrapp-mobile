@@ -41,6 +41,7 @@ import { Section } from '../../Shared/Components/Section/Section';
 import useCombinedScenesWithShootings from '../../hooks/useCombinedScenesWithShootings/useCombinedScenesWithShootings';
 import { settingsOutline } from 'ionicons/icons';
 import { ShootingDocType } from '../../Shared/types/shooting.types';
+import AppLoader from '../../Shared/hooks/AppLoader';
 
 const Strips: React.FC<{
   permissionType: SecurePages | null;
@@ -50,6 +51,7 @@ const Strips: React.FC<{
     const {
       projectId,
       initialReplicationFinished,
+      isOnline
     } = useContext<DatabaseContextProps>(DatabaseContext);
     const {
       selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions,
@@ -92,7 +94,7 @@ const Strips: React.FC<{
       },
     ]
 
-    const {combinedData: offlineScenes, isFetching: scenesAreLoading } = useCombinedScenesWithShootings();
+    const { combinedData: offlineScenes, isFetching: scenesAreLoading } = useCombinedScenesWithShootings();
 
 
     const [renderScenes, setRenderScenes] = useState<boolean>(false);
@@ -176,24 +178,24 @@ const Strips: React.FC<{
             addSceneToCategory(scene.intOrExtOption, scene);
             break;
 
-            case GroupsSceneEnums.SHOOTING_PLAN:
-              // Agrupar las escenas por shooting_date
-              if (scene.shootingInfo && scene.shootingInfo.shootDate) {
-                // Convertir fecha a formato legible o usar el formato existente como categoría
-                const shootingDate = new Date(scene.shootingInfo.shootDate);
-                const formattedDate = shootingDate.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                });
-                
-                // Si la escena tiene información de shooting, usar la fecha como categoría
-                addSceneToCategory(formattedDate, scene);
-              } else {
-                // Si la escena no tiene información de shooting, agruparla en una categoría especial
-                addSceneToCategory('No Shooting Date', scene);
-              }
-              break;
+          case GroupsSceneEnums.SHOOTING_PLAN:
+            // Agrupar las escenas por shooting_date
+            if (scene.shootingInfo && scene.shootingInfo.shootDate) {
+              // Convertir fecha a formato legible o usar el formato existente como categoría
+              const shootingDate = new Date(scene.shootingInfo.shootDate);
+              const formattedDate = shootingDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              });
+
+              // Si la escena tiene información de shooting, usar la fecha como categoría
+              addSceneToCategory(formattedDate, scene);
+            } else {
+              // Si la escena no tiene información de shooting, agruparla en una categoría especial
+              addSceneToCategory('No Shooting Date', scene);
+            }
+            break;
 
           default:
             addSceneToCategory('Other', scene);
@@ -335,7 +337,7 @@ const Strips: React.FC<{
 
     const GroupByButton = useCallback(() => {
       return (
-        <IonButton fill="clear" color='light' className='ion-no-padding reset-filters-option ion-margin-end' slot="end" onClick={() => setOpenGroupBy(true)}>
+        <IonButton fill="clear" color='light' className='ion-no-padding reset-filters-option' slot="end" onClick={() => setOpenGroupBy(true)} style={!isOnline ? { marginRight: '10px' } : {}}>
           <IonIcon slot="icon-only" icon={settingsOutline} />
         </IonButton>
       )
@@ -405,7 +407,7 @@ const Strips: React.FC<{
       return (
         <>
           {displayedCategories.map((category) => (
-            visibleScenesPerCategory[category] > 0 && categorizedScenes[category]?.length > 0 &&(
+            visibleScenesPerCategory[category] > 0 && categorizedScenes[category]?.length > 0 && (
               <Section
                 title={category}
                 key={category}
@@ -469,22 +471,30 @@ const Strips: React.FC<{
           permissionType={permissionType}
           customButtons={[GroupByButton, ExportButton]}
         >
-          <IonContent
-            scrollEvents={true}
-            color="tertiary"
-            ref={contentRef}
-            id="strips-container-ref"
-            onIonScroll={handleScroll}
-          >
-            <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
-              <IonRefresherContent />
-            </IonRefresher>
-            <ScenesTotals scenes={filteredScenes} />
-            <StripTagsToolbar />
-            <Suspense>
-              {groupBy[0] === noGroupByOption.value ? renderStandardContent : renderCategorizedContent}
-            </Suspense>
-          </IonContent>
+          {
+            scenesAreLoading ? (
+              <IonContent color='tertiary'>
+                <AppLoader />
+              </IonContent>
+            ) : (
+              <IonContent
+                scrollEvents={true}
+                color="tertiary"
+                ref={contentRef}
+                id="strips-container-ref"
+                onIonScroll={handleScroll}
+              >
+                <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
+                  <IonRefresherContent />
+                </IonRefresher>
+                <ScenesTotals scenes={filteredScenes} />
+                <StripTagsToolbar />
+                <Suspense>
+                  {groupBy[0] === noGroupByOption.value ? renderStandardContent : renderCategorizedContent}
+                </Suspense>
+              </IonContent>
+            )
+          }
         </MainPagesLayout>
         <InputSortModal
           pageName="Sort"

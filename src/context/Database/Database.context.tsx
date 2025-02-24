@@ -426,7 +426,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   
       const intervalId = setInterval(() => {
         replicatePeriodically();
-      }, 30000);
+      }, 300000);
 
       return () => clearInterval(intervalId);
     }

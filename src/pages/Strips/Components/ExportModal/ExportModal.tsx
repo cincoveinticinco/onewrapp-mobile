@@ -8,7 +8,7 @@ import { IonContent, IonPage } from "@ionic/react";
 interface ExportModalProps {
   modalIsOpen: boolean;
   setModaIsOpen: (value: boolean) => void;
-  handleSubmit: (values: any) => void;
+  handleSubmit: (values: any, nullFilterNames: number) => void;
 }
 
 export enum GroupsSceneEnums {
@@ -182,7 +182,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ modalIsOpen, setModaIsOpen, h
     <EditionModal
       title="Export Scenes"
       formInputs={modalInputs}
-      handleEdition={(values: any) => handleSubmit(values)}
+      handleEdition={(values: any) => handleSubmit(values, getListOptions(selectedFilter).length)}
       isOpen={modalIsOpen}
       setIsOpen={handleModalClose}
     />

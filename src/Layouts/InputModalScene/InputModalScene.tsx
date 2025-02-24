@@ -4,7 +4,7 @@ import {
   IonModal,
   IonRow,
 } from '@ionic/react';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import CustomSelect from '../../Shared/Components/CustomSelect/CustomSelect';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
@@ -47,6 +47,10 @@ const InputModalScene: React.FC<InputModalProps> = ({
   const [selectedOption, setSelectedOption] = useState<SceneDocType | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
   const isMobile = useIsMobile();
+
+  useEffect(() =>{
+    listOfScenes && console.log('listOfScenes', listOfScenes);
+  }, [listOfScenes])
 
   const closeModal = () => {
     if (modalRef.current) {

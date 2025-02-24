@@ -1,4 +1,3 @@
-// worker.ts
 interface WorkerParams {
   groupBy: string;
   filterBy: string;
@@ -29,7 +28,7 @@ self.onmessage = async (e: MessageEvent<WorkerParams>) => {
       filter_ids: filterIds || '',
       lang: lang || 'eng',
       project_id: projectId || '',
-      filter_names: filterNames.join(',')
+      filter_names: filterNames?.join(',')
     });
     
     const initialResponse = await fetch(`${fullUrl.toString()}?${params.toString()}`, {
