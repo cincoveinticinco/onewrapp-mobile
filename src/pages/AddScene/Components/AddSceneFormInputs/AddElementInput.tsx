@@ -1,146 +1,65 @@
-import {
-  IonCardContent,
-  IonItem,
-  IonList,
-} from '@ionic/react';
-import React, { useContext } from 'react';
-import DatabaseContext from '../../../../context/Database/Database.context';
-import InputModal from '../../../../Layouts/InputModal/InputModal';
-import applyFilters from '../../../../Shared/Utils/applyFilters';
-import getOptionsArray from '../../../../Shared/Utils/getOptionsArray';
-import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../../../Shared/Utils/sortArrayAlphabeticaly';
+import React from 'react';
+import { IonButton, IonCardContent, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList } from '@ionic/react';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { VscEdit } from 'react-icons/vsc';
+
+interface Element {
+  elementName: string;
+  categoryName: string | null;
+}
 
 interface AddElementInputProps {
-  categoryName: string;
-  selectedElements: any;
-  setSelectedElements: (value: any) => void;
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
+  categoryName: string | null;
+  selectedElements: Element[];
+  setSelectedElements: (elements: Element[]) => void;
+  editMode?: boolean;
+  openEditElement: (element: Element) => void;
 }
 
 const AddElementInput: React.FC<AddElementInputProps> = ({
   categoryName,
   selectedElements,
   setSelectedElements,
-  openModal,
-  setOpenModal
+  editMode,
+  openEditElement
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
-
-  const filterSelectedElements = selectedElements.filter((element: any) => {
-    if (categoryName === 'NO CATEGORY') {
-      return element.categoryName === null;
-    }
+  const filterSelectedElements = selectedElements.filter(element => {
+    if (categoryName === EmptyEnum.NoCategory || !categoryName) return !element.categoryName;
     return element.categoryName === categoryName;
   });
 
-  const deleteElement = (element: string) => {
-    setSelectedElements((currentElements: any) => currentElements.filter((el: any) => el.elementName !== element));
-  };
-
-  const uniqueElementsValuesArray = getUniqueValuesFromNestedArray(
-    offlineScenes,
-    'elements',
-    'elementName',
-  );
-
-  const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
-
-  const getFilteredElements = applyFilters(
-    uniqueElementsValuesArray,
-    {
-      categoryName: [categoryCriteria],
-    },
-    false,
-  );
-
-  const getSortedElementNames = sortArrayAlphabeticaly(
-    getOptionsArray('elementName', getFilteredElements),
-  );
-
-  const toggleElement = (element: string) => {
-    const sceneWithElement = offlineScenes.find((scene: any) => scene.elements.some(
-      (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
-    ));
-
-    const elementObject = sceneWithElement?.elements?.find(
-      (el: any) => el.elementName.toUpperCase() === element.toUpperCase(),
-    );
-
-    if (elementObject) {
-      const selectedElementObjectIndex = selectedElements.findIndex(
-        (el: any) => el.elementName === elementObject.elementName,
-      );
-      if (selectedElementObjectIndex !== -1) {
-        setSelectedElements((currentElements: any) => currentElements.filter(
-          (el: any) => el.elementName !== elementObject.elementName,
-        ));
-      } else {
-        const newElement: any = { ...elementObject };
-        newElement.categoryName = categoryName !== 'NO CATEGORY' ? categoryName : null;
-        setSelectedElements((currentElements: any) => [
-          ...currentElements,
-          newElement,
-        ]);
-      }
-    }
-  };
-
-  const clearSelections = () => {
-    setSelectedElements([]);
+  const deleteElement = (elementName: string) => {
+    const updatedElements = selectedElements.filter(element => element.elementName !== elementName);
+    setSelectedElements(updatedElements);
   };
 
   const contentStyle = selectedElements.length === 0 ? 'ion-no-padding' : '';
-
-  const formInputs = [
-    {
-      label: 'Element Name',
-      type: 'text',
-      fieldKeyName: 'elementName',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-element-name-input',
-    },
-  ];
 
   return (
     <IonCardContent className={contentStyle}>
       {filterSelectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {filterSelectedElements.map((element: any, index: number) => (
-            <IonItem
-              key={index}
-              color="tertiary"
-              className="ion-no-margin category-items"
-            >
-              {element.elementName.toUpperCase()}
-              <DeleteButton
-                onClick={() => deleteElement(element.elementName)}
-                slot="end"
-              />
-            </IonItem>
+          {filterSelectedElements.map((element, index) => (
+            <IonItemSliding key={`element-item-${index}-category-${categoryName}`}>
+              <IonItem color='tertiary-dark'>
+                {element.elementName.toUpperCase()}
+              </IonItem>
+              {editMode && (
+                <IonItemOptions side="end">
+                  <IonItemOption color='dark' onClick={() => openEditElement(element)}>
+                    <IonButton fill="clear" color='primary' slot="end"><VscEdit className="label-button" /></IonButton>
+                  </IonItemOption>
+                  <IonItemOption color='dark' onClick={() => deleteElement(element.elementName)}>
+                    <DeleteButton onClick={() => {}} slot="end" />
+                  </IonItemOption>
+                </IonItemOptions>
+              )}
+            </IonItemSliding>
           ))}
         </IonList>
-      ) : (
-        <NoAdded />
-      )}
-      <InputModal
-        optionName={`Elements (  ${categoryName}  )`}
-        listOfOptions={getSortedElementNames}
-        isOpen={openModal}
-        setIsOpen={setOpenModal}
-        handleCheckboxToggle={toggleElement}
-        selectedOptions={selectedElements.map((element: any) => element.elementName)}
-        clearSelections={clearSelections}
-        canCreateNew
-        setSelectedOptions={setSelectedElements}
-        formInputs={formInputs}
-        optionCategory={categoryName || 'NO CATEGORY'}
-        existentOptions={uniqueElementsValuesArray}
-      />
+      ) : <NoAdded />}
     </IonCardContent>
   );
 };

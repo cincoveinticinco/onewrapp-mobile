@@ -16,6 +16,7 @@ import InfoLabel from '../../../../Shared/Components/InfoLabel/InfoLabel';
 import useWarningToast from '../../../../Shared/hooks/useWarningToast';
 import useErrorToast from '../../../../Shared/hooks/useErrorToast';
 import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 interface Cast {
   characterNum: string;
@@ -131,7 +132,7 @@ const CastCard: React.FC<CastCardProps> = ({
   ];
 
   const defaultValues = {
-    categoryName: character.categoryName === 'NO CATEGORY' ? '' : character.categoryName,
+    categoryName: character.categoryName === EmptyEnum.NoCategory ? '' : character.categoryName,
     characterNum: character.characterNum,
     characterName: character.characterName,
   };

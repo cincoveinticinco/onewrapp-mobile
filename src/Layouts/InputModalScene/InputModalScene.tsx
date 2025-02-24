@@ -4,7 +4,7 @@ import {
   IonModal,
   IonRow,
 } from '@ionic/react';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import CustomSelect from '../../Shared/Components/CustomSelect/CustomSelect';
 import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
 import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
@@ -27,6 +27,8 @@ interface InputModalProps {
   sceneCategory?: string;
   existentScenes?: any[];
   modalRef: React.RefObject<HTMLIonModalElement>;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const InputModalScene: React.FC<InputModalProps> = ({
@@ -36,15 +38,24 @@ const InputModalScene: React.FC<InputModalProps> = ({
   handleCheckboxToggle,
   clearSelections,
   modalRef,
+  isOpen,
+  setIsOpen,
 }) => {
+
+  if(!isOpen) return null;
+
   const [selectedOption, setSelectedOption] = useState<SceneDocType | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
-
   const isMobile = useIsMobile();
+
+  useEffect(() =>{
+    listOfScenes && console.log('listOfScenes', listOfScenes);
+  }, [listOfScenes])
 
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.dismiss();
+      setIsOpen(false);
     }
     // Limpiar estados al cerrar
     setSelectedEpisode('');
@@ -122,7 +133,7 @@ const InputModalScene: React.FC<InputModalProps> = ({
   };
 
   return (
-    <IonModal ref={modalRef} trigger={modalTrigger} id="add-scenes-scenes-modal">
+    <IonModal ref={modalRef} trigger={modalTrigger} id="add-scenes-scenes-modal" isOpen={isOpen}>
       <IonHeader>
         <ModalToolbar
           handleSave={closeModal}

@@ -2,6 +2,7 @@ import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
 import { useState } from 'react';
 import sortArrayAlphabeticaly from '../../../../Shared/Utils/sortArrayAlphabeticaly';
 import CategoryContainer from '../CategoryContainer/CategoryContainer';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
 
 const DropDownInfo = ({
   categories, scene, title, characters = false, extras = false, elements = false, notes = false,
@@ -27,7 +28,7 @@ const DropDownInfo = ({
               className="scene-details-card ion-flex-column ion-justify-content-start align-items-center"
             >
               { scene
-                && categories.map((category: string) => <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
+                && categories.map((category: string) => <CategoryContainer categoryName={category || EmptyEnum.NoCategory} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
               {
               valuesByCategory
               && (

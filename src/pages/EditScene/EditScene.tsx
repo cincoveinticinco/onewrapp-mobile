@@ -6,7 +6,6 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
-import AddScenesForm from '../AddScene/Components/AddSceneForm';
 import DatabaseContext from '../../context/Database/Database.context';
 import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
@@ -149,23 +148,6 @@ const EditScene: React.FC = () => {
         {
           sceneDataIsLoading && (
             AppLoader()
-          )
-        }
-        {
-          !sceneDataIsLoading && (
-            <AddScenesForm
-              scrollToTop={() => scrollToTop()}
-              editMode
-              sceneFormId={sceneFormId}
-              handleSubmit={handleSubmit}
-              control={control}
-              errors={errors}
-              reset={reset}
-              setValue={setValue}
-              watch={watch}
-              formData={formData}
-              onSubmit={onSubmit}
-            />
           )
         }
       </IonContent>

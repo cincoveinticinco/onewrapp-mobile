@@ -82,6 +82,7 @@ const LoginPage: React.FC = () => {
         setLoadingAuth(true);
         const googleUser = await GoogleAuth.signIn();
         const accessToken = googleUser.authentication.accessToken;
+        console.log(environment.URL_PATH)
         const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
           method: 'POST',
           headers: {

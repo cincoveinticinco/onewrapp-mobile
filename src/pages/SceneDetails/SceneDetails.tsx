@@ -1,13 +1,15 @@
 import {
   IonButton,
+  IonCard,
   IonCheckbox,
   IonContent, IonHeader, IonPage, useIonViewDidEnter,
+  useIonViewDidLeave,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import DropDownInfo from './Components/DropDownInfo/DropDownInfo';
 import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
 import EditionModal from '../../Shared/Components/EditionModal/EditionModal';
 import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
@@ -22,24 +24,33 @@ import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import useSuccessToast from '../../Shared/hooks/useSuccessToast';
-import { SceneDocType } from '../../Shared/types/scenes.types';
-import { ShootingScene } from '../../Shared/types/shooting.types';
+import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
+import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import applyFilters from '../../Shared/Utils/applyFilters';
-import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
-import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
-import SceneHeader from './SceneHeader';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
+import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
+import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
+import AddButton from '../../Shared/Components/AddButton/AddButton';
+import { useRxData } from 'rxdb-hooks';
+import { UserDocType } from '../../Shared/types/user.types';
+import SceneHeader from './SceneHeader';
+import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
+import { CiEdit } from 'react-icons/ci';
+import { useForm } from 'react-hook-form';
+import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
+import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
   title: string;
   updateTime: (minutes: number, seconds: number) => void;
-}> = ({ value, title, updateTime }) => {
+  editMode: boolean;
+}> = ({ value, title, updateTime, editMode }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
-  const errorToast = useErrorToast();
 
   const handleEdit = () => {
     if (editionModalRef.current) {
@@ -78,7 +89,7 @@ export const EditableTimeField: React.FC<{
         info={`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}
         title={title}
         onEdit={handleEdit}
-        isEditable
+        isEditable={editMode}
       />
       <EditionModal
         modalRef={editionModalRef}
@@ -98,14 +109,16 @@ export const EditableTimeField: React.FC<{
 
 const SceneDetails: React.FC<{
   isShooting?: boolean;
-}> = ({ isShooting = false }) => {
+  creationMode?: boolean;
+}> = ({ isShooting = false, creationMode }) => {
   const toggleTabs = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId: string }>();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const { selectedFilterOptions } = useContext(ScenesContext);
   const history = useHistory();
 
-  const [thisScene, setThisScene] = useState<any | null>(null);
+  const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
+  const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
@@ -114,10 +127,91 @@ const SceneDetails: React.FC<{
   const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
   const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const [sceneColor, setSceneColor] = useState<any>('light');
-  const [openShootDropDown, setOpenShootDropDown] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [addNoteModalOpen, setAddNoteModalOpen] = useState<boolean>(false);
+  const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
+  const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
+
+  const emptyScene = {
+    sceneId: 0,
+    episodeNumber: '',
+    sceneNumber: '',
+    sceneName: '',
+    sceneDescription: '',
+    intOrExtOption: '',
+    dayOrNightOption: '',
+    location: '',
+    characters: [],
+    elements: [],
+    extras: [],
+    notes: [],
+  };
+
+  const form = useForm<SceneDocType>({
+    defaultValues: emptyScene // Establecemos los valores por defecto iniciales
+  });
+
+  const {
+    reset,
+    watch,
+    formState: { errors },
+    handleSubmit,
+    setValue
+  } = form;
+
+  const loadScene = async () => {
+    setSceneIsLoading(true);
+    
+    if (sceneId && oneWrapDb) {
+      try {
+        const scene = await oneWrapDb?.scenes
+          .findOne({ selector: { sceneId: parseInt(sceneId) } })
+          .exec();
+        
+        setThisScene(scene?._data || null);
+
+        // Actualiza el formulario con la nueva escena
+        if (scene?._data && !creationMode) {
+          reset(scene._data, {
+            keepDefaultValues: false
+          });
+        } else if (creationMode) {
+          reset(emptyScene, {
+            keepDefaultValues: false
+          });
+        }
+      } catch (error) {
+        console.error('Error loading scene:', error);
+      } finally {
+        setSceneIsLoading(false);
+      }
+    }
+  };
+
+  useIonViewDidEnter(() => {
+    loadScene();
+  });
+
+  // Limpia el formulario cuando se sale de la vista
+  useIonViewDidLeave(() => {
+    reset(emptyScene);
+    setThisScene(null);
+    setThisSceneShooting(null);
+  });
+
+  const toggleEditMode = () => {
+    if (editMode && thisScene) {
+      reset(thisScene);
+      setEditMode(false);
+    } else {
+      setEditMode(true);
+    }
+  };
 
   const successMessageSceneToast = useSuccessToast();
   const errorToast = useErrorToast();
+
+  const {result: user, isFetching} = useRxData<UserDocType>('users', (collection) => collection.find().sort('asc'));
 
   const convertTo24Hour = (time: string): string => {
     const [timeStr, period] = time.split(' ');
@@ -142,7 +236,7 @@ const SceneDetails: React.FC<{
           const [hours, minutes] = formattedTime.split(':');
           const newTimeISO = timeToISOString({ hours, minutes }, shooting.shootDate);
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, [field]: newTimeISO };
             }
             return scene;
@@ -151,7 +245,7 @@ const SceneDetails: React.FC<{
           setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO });
         }
 
-        successMessageSceneToast('SceneDocType updated successfully');
+        successMessageSceneToast('Scene updated successfully');
       } catch (error) {
         errorToast('Error updating scene');
         throw error;
@@ -162,7 +256,7 @@ const SceneDetails: React.FC<{
   const getSceneColor = async (scene: SceneDocType) => {
     if (isShooting) {
       const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
-      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId));
+      const sceneInShooting = shooting?.[0]?.scenes.find((sceneInShooting: any) => thisScene && parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || ''));
 
       const sceneStatus = sceneInShooting?.status;
       switch (sceneStatus) {
@@ -214,7 +308,7 @@ const SceneDetails: React.FC<{
         if (shooting) {
           const totalSeconds = minutes * 60 + seconds;
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, producedSeconds: totalSeconds };
             }
             return scene;
@@ -236,7 +330,7 @@ const SceneDetails: React.FC<{
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         if (shooting) {
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, partiality: isPartial };
             }
             return scene;
@@ -276,7 +370,7 @@ const SceneDetails: React.FC<{
         const shooting = await oneWrapDb.shootings.findOne({ selector: { id: shootingId } }).exec();
         if (shooting) {
           const updatedScenes = shooting.scenes.map((scene: any) => {
-            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId)) {
+            if (parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '')) {
               return { ...scene, status: newStatus };
             }
             return scene;
@@ -284,7 +378,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, status: newStatus });
         }
-        successMessageSceneToast('SceneDocType status updated successfully');
+        successMessageSceneToast('Scene status updated successfully');
       } catch (error) {
         errorToast('Error updating scene status');
         throw error;
@@ -348,21 +442,16 @@ const SceneDetails: React.FC<{
     filterScenes();
   }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
 
-  useEffect(() => {
-    const fetchScene = async () => {
-      if (sceneId && oneWrapDb) {
-        const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-        setThisScene(scene?._data || null);
-        setSceneIsLoading(false);
-      }
-    };
-
-    fetchScene();
-  }, [sceneId, oneWrapDb, offlineScenes]);
+  useIonViewWillEnter(() => {
+      const params = new URLSearchParams(window.location.search);
+      const edit = params.get('edit');
+      setEditMode(edit === 'true'); 
+    }
+  );
 
   useEffect(() => {
     if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId) : scene.id === thisScene.id));
+      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '') : scene.id === thisScene.id));
       setCurrentSceneIndex(index);
     }
   }, [filteredScenes, thisScene, isShooting]);
@@ -378,8 +467,29 @@ const SceneDetails: React.FC<{
   const fetchSceneShooting = async () => {
     if (shootingId && oneWrapDb && thisScene) {
       const shooting = await oneWrapDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
-      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId));
+      const sceneShooting = shooting?._data?.scenes.find((sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene?.sceneId?.toString() || ''));
       setThisSceneShooting(sceneShooting || null);
+      setThisShooting(shooting?._data || null);
+    }
+  
+    if (!shootingId && thisScene?.sceneId) {
+      const shooting = await oneWrapDb?.shootings.findOne({
+        selector: {
+          scenes: {
+            $elemMatch: {
+              sceneId: thisScene.sceneId.toString()
+            }
+          }
+        }
+      }).exec();
+  
+      if (shooting) {
+        const sceneShooting = shooting._data?.scenes.find(
+          (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || '')
+        );
+        setThisSceneShooting(sceneShooting || null);
+        setThisShooting(shooting._data || null);
+      }
     }
   };
 
@@ -404,9 +514,13 @@ const SceneDetails: React.FC<{
   };
 
   const handleBack = () => {
-    const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
-    history.push(backRoute);
-    toggleTabs.showTabs();
+    if(creationMode) {
+      history.push(`/my/projects/${id}/strips`);
+    } else {
+      const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
+      history.push(backRoute);
+      toggleTabs.showTabs();
+    }
   };
 
   useEffect(() => {
@@ -421,22 +535,7 @@ const SceneDetails: React.FC<{
     }, 150);
   });
 
-  const deleteScene = async () => {
-    try {
-      const sceneToDelete = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-      await sceneToDelete?.remove();
-      history.push(`/my/projects/${id}/strips`);
-      successMessageSceneToast('SceneDocType deleted successfully');
-    } catch (error) {
-      errorToast('Error deleting scene');
-    }
-  };
-
-  const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber) > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
-
-  const sceneCastCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: any) => category.categoryName));
-  const sceneExtrasCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map((category: any) => category.categoryName));
-  const sceneElementsCategories = sortArrayAlphabeticaly(getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: any) => category.categoryName));
+  const sceneHeader = thisScene ? editMode ? `EDIT SCENE ${thisScene.episodeNumber}.${thisScene.sceneNumber}`  : `${thisScene.episodeNumber}.${thisScene.sceneNumber}` : '';
 
   const getSceneStatus = (scene: ShootingScene) => {
     switch (scene.status) {
@@ -447,140 +546,356 @@ const SceneDetails: React.FC<{
     }
   };
 
+  const onSubmitForm = async (data: SceneDocType) => {
+    try {
+      const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
+      if (sceneDocument) {
+        if(creationMode) {
+          data.id = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+          await validateSceneExistence(data.id);
+          await oneWrapDb?.scenes.upsert(data);
+        } else {
+          const sceneId = sceneDocument.get('id');
+          const newId = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+          if(sceneId !== newId) {
+            await validateSceneExistence(newId);
+          }
+          await sceneDocument.update({ $set: data });
+        }
+        successMessageSceneToast('Scene updated successfully');
+        console.log()
+        toggleEditMode();
+      }
+    } catch (error: any) {
+      errorToast(error || 'Error updating scene');
+    }
+  }
+
+  const validateSceneExistence = async (id: string) => {
+    const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { id } }).exec();
+
+    if(sceneDocument) {
+      throw 'Scene already exists';
+    }
+
+    return true;
+  }
+
+  const editModeButtons = () => {
+    return (
+      <>
+        <IonButton
+          slot="end"
+          className="filled-success-button-small"
+          key="custom-edit"
+          type="submit"
+          form="scene-detail-info"
+        >
+          SAVE
+        </IonButton>
+        <IonButton
+          slot="end"
+          className="filled-danger-button-small"
+          onClick={!creationMode ? toggleEditMode : handleBack}
+          key="custom-cancel"
+        >
+          CANCEL
+        </IonButton>
+      </>
+    );
+  }
+
+  const toolbarButtons = () => {
+    return (
+      <>
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={toggleEditMode}>
+          <CiEdit className="toolbar-icon edit-icon" />
+        </IonButton>
+        {
+          thisSceneShooting && 
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
+            <PiProhibitLight className="toolbar-icon prohibit-icon" />
+          </IonButton>
+          }
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
+          <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+        </IonButton>
+      </>
+    )
+  }
+
+  const addNoteAlert = () => {
+    return (
+      <InputAlert
+        inputs={
+          [
+            {
+              name: 'note',
+              type: 'text',
+              placeholder: 'Enter note',
+              label: 'Note',
+              value: '',
+            },
+          ]
+        }
+       header='Add Note'
+       message='Add a note to this scene'
+       handleOk={(inputData) => setValue('notes', [...(watch('notes') || []), {
+          note: inputData.note,
+          email: user[0]?.userEmail || '',
+       }])}
+       isOpen={addNoteModalOpen}
+      />
+    )
+  }
+
+  const renderToolbar = () => (
+    <Toolbar
+      name={creationMode ? "CREATE SCENE" : sceneHeader}
+      backString={!editMode}
+      handleBack={handleBack}
+      {...(creationMode || editMode
+        ? { customButtons: [editModeButtons], showLogout: false }
+        : {
+            customButtons: [toolbarButtons],
+          })}
+      deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
+      color={editMode ? 'yellow' : 'tertiary'}
+    />
+  );
+
+  const renderSceneBasicInfo = () => (
+    <form onSubmit={handleSubmit(onSubmitForm)} id="scene-detail-info">
+      <SceneBasicInfo editMode={editMode || creationMode} scene={thisScene as SceneDocType} sceneIsLoading form={{
+        ...form,
+        errors,
+        watch,
+        setValue
+      }} />
+    </form>
+  );
+
+  const renderNotesSection = () => (
+    <div className={`section-wrapper notes-info`}>
+      <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: "var(--ion-color-dark)" }}>
+        <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
+        {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
+      </div>
+      {(watch("notes") || []).length > 0 ? ( 
+        (watch("notes") || []).map((note: Note, index: number) => (
+          <IonCard
+            color='tertiary-dark'
+            key={`note-${index}`}
+            className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
+          >
+            <p>{note.note}</p>
+            <p>{note.email}</p>
+          </IonCard>
+        ))
+      ) : (
+        <IonCard
+          className="ion-flex-column ion-justify-content-center ion-align-items-center"
+          color='tertiary-dark'
+        >
+          <p>NO NOTES ADDED</p>
+        </IonCard>
+      )}
+      {addNoteAlert()}
+    </div>
+  );
+
+  const renderElementsSection = () => (
+    <>
+      <div className={`section-wrapper characters-info`}>
+        <AddCharacterForm
+          observedCharacters={watch("characters") || []}
+          editMode={editMode || creationMode}
+          setCharacters={(value: Character[]) => setValue("characters", value)}
+        />
+      </div>
+      <div className={`section-wrapper elements-info`}>
+        <AddElementForm
+          setElements={(value: any) => setValue("elements", value)}
+          observedElements={(watch("elements") || []).map((element: any) => ({
+            ...element,
+            categoryName: element.categoryName || "",
+          }))}
+          editMode={editMode || creationMode}
+        />
+      </div>
+      <div className={`section-wrapper extras-info`}>
+        <AddExtraForm setExtras={(value: any) => setValue("extras", value)} observedExtras={watch("extras") || []} editMode={editMode || creationMode} />
+      </div>
+    </>
+  );
+
+  const renderSceneHeader = ()  => {
+    return (
+      <SceneHeader
+        sceneColor={sceneColor}
+        sceneHeader={sceneHeader}
+        previousScene={previousScene}
+        nextScene={nextScene}
+        changeToPreviousScene={changeToPreviousScene}
+        changeToNextScene={changeToNextScene}
+        status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'NOT ASSIGNED'}
+      />
+    )
+  }
+
+  const renderShootingSection = () => {
+    return (
+      isShooting && (
+        <div className="shoot-info">
+          <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }}>
+            <p className="ion-flex ion-align-items-center">SCRIPT INFO</p>
+            {editMode && (
+              <div className="buttons-wrapper">
+                <IonButton
+                  fill="clear"
+                  className={`success${thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : ''}`}
+                  size="small"
+                  onClick={handleShootClick}
+                >
+                  <b>SHOOT</b>
+                </IonButton>
+                <IonButton
+                  className={`danger${thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : ''}`}
+                  fill="clear"
+                  size="small"
+                  onClick={handleNotShootClick}
+                >
+                  <b>NOT SHOOT</b>
+                </IonButton>
+              </div>
+            )}
+          </div>
+          <div className="info">
+            <EditableField
+              field="rehearsalStart"
+              value={thisSceneShooting?.rehearsalStart || ''}
+              title="Rehersal Start"
+              withSymbol={false}
+              permissionType={1}
+              updateShootingTime={updateShootingTime}
+              editMode={editMode}
+            />
+            <EditableField
+              field="rehearsalEnd"
+              value={thisSceneShooting?.rehearsalEnd || ''}
+              title="Rehersal End"
+              withSymbol={false}
+              permissionType={1}
+              updateShootingTime={updateShootingTime}
+              editMode={editMode}
+            />
+            <EditableField
+              field="shootStart"
+              value={thisSceneShooting?.shootStart || ''}
+              title="Shoot Start"
+              withSymbol={false}
+              permissionType={1}
+              updateShootingTime={updateShootingTime}
+              editMode={editMode}
+            />
+            <EditableField
+              field="shootEnd"
+              value={thisSceneShooting?.shootEnd || ''}
+              title="Shoot End"
+              withSymbol={false}
+              permissionType={1}
+              updateShootingTime={updateShootingTime}
+              editMode={editMode}
+            />
+            <EditableTimeField
+              value={thisSceneShooting?.producedSeconds || null}
+              title="Shoot Time"
+              updateTime={updateProducedSeconds}
+              editMode={editMode}
+            />
+            {editMode && (
+              <div>
+                <IonCheckbox
+                  checked={thisSceneShooting?.partiality || false}
+                  onIonChange={(e) => updatePartiality(e.detail.checked)}
+                  labelPlacement="end"
+                  className="partiality-checkbox"
+                >
+                  PARTIALY SHOOT
+                </IonCheckbox>
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    );
+  };
+
+  const renderSceneContent = () => (
+    <>
+      {!creationMode && !editMode && renderSceneHeader()}
+      {sceneIsLoading ? AppLoader() : thisScene && renderSceneBasicInfo()}
+      {renderShootingSection()}
+      {!sceneIsLoading && thisScene && (
+        <div className="grid-scene-info">
+          {renderElementsSection()}
+          {renderNotesSection()}
+        </div>
+      )}
+    </>
+  );
+
+  if (creationMode) {
+    return (
+      <IonPage>
+        <IonHeader>{renderToolbar()}</IonHeader>
+        <IonContent color="tertiary" fullscreen>
+          <>
+          {renderSceneBasicInfo()}
+          <div className="grid-scene-info">
+            {renderElementsSection()}
+            {renderNotesSection()}
+          </div>
+          </>
+        </IonContent>   
+      </IonPage>
+    );
+  }
+
   return (
     <IonPage>
-      <IonHeader>
-        <Toolbar
-          name=""
-          backString
-          prohibited
-          deleteButton
-          edit
-          editRoute={`/my/projects/${id}/editscene/${sceneId}/details`}
-          handleBack={handleBack}
-          deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
-        />
-        <SceneHeader
-          sceneColor={sceneColor}
-          sceneHeader={sceneHeader}
-          previousScene={previousScene}
-          nextScene={nextScene}
-          changeToPreviousScene={changeToPreviousScene}
-          changeToNextScene={changeToNextScene}
-          status={thisSceneShooting ? getSceneStatus(thisSceneShooting) : 'Not Assigned'}
-        />
-      </IonHeader>
+      <IonHeader>{renderToolbar()}</IonHeader>
       <IonContent color="tertiary" fullscreen>
-        {sceneIsLoading ? AppLoader() : <SceneBasicInfo scene={thisScene} />}
-        {
-          isShooting && (
-            <div className="shoot-info">
-              <div className="ion-flex ion-justify-content-between ion-padding-start" style={{ border: '1px solid black', backgroundColor: 'var(--ion-color-dark)' }} onClick={() => setOpenShootDropDown(!setOpenShootDropDown)}>
-                <p style={{ fontSize: '18px' }}><b>SCRIPT INFO</b></p>
-                <div className="buttons-wrapper">
-                  <IonButton
-                    fill="clear"
-                    className={`success${thisSceneShooting?.status === ShootingSceneStatusEnum.Shoot ? ' active' : ''}`}
-                    size="small"
-                    onClick={handleShootClick}
-                  >
-                    <b>SHOOT</b>
-                  </IonButton>
-                  <IonButton
-                    className={`danger${thisSceneShooting?.status === ShootingSceneStatusEnum.NotShoot ? ' active' : ''}`}
-                    fill="clear"
-                    size="small"
-                    onClick={handleNotShootClick}
-                  >
-                    <b>NOT SHOOT</b>
-                  </IonButton>
-                </div>
-              </div>
-              {
-              !openShootDropDown && (
-                <div className="info">
-                  <EditableField
-                    field="rehearsalStart"
-                    value={thisSceneShooting?.rehearsalStart || ''}
-                    title="Rehersal Start"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                  />
-                  <EditableField
-                    field="rehearsalEnd"
-                    value={thisSceneShooting?.rehearsalEnd || ''}
-                    title="Rehersal End"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                  />
-                  <EditableField
-                    field="shootStart"
-                    value={thisSceneShooting?.shootStart || ''}
-                    title="Shoot Start"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                  />
-                  <EditableField
-                    field="shootEnd"
-                    value={thisSceneShooting?.shootEnd || ''}
-                    title="Shoot End"
-                    withSymbol={false}
-                    permissionType={1}
-                    updateShootingTime={updateShootingTime}
-                  />
-                  <EditableTimeField
-                    value={thisSceneShooting?.producedSeconds || null}
-                    title="Shoot Time"
-                    updateTime={updateProducedSeconds}
-                  />
-                  <div>
-                    <IonCheckbox
-                      checked={thisSceneShooting?.partiality || false}
-                      onIonChange={(e) => updatePartiality(e.detail.checked)}
-                      labelPlacement="end"
-                      className="partiality-checkbox"
-                    >
-                      PARTIALY SHOOT
-                    </IonCheckbox>
-                  </div>
-                </div>
-              )
-            }
-            </div>
-          )
-        }
-        {!sceneIsLoading && thisScene && (
-          <div className="grid-scene-info">
-            <div className="section-wrapper characters-info">
-              <DropDownInfo categories={sceneCastCategories} scene={thisScene} title="CHARACTERS" characters />
-            </div>
-            <div className="section-wrapper extras-info">
-              <DropDownInfo categories={sceneExtrasCategories} scene={thisScene} title="EXTRAS" extras />
-            </div>
-            <div className="section-wrapper elements-info">
-              <DropDownInfo categories={sceneElementsCategories} scene={thisScene} title="ELEMENTS" elements />
-            </div>
-            <div className="section-wrapper notes-info">
-              <DropDownInfo categories={['LIST OF NOTES']} scene={thisScene} title="NOTES" notes />
-            </div>
-          </div>
-        )}
+        {renderSceneContent()}
       </IonContent>
-      <SceneDetailsTabs
-        routeDetails={`${rootRoute}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
-        routeScript={`${rootRouteScript}/${sceneId}${isShooting ? '?isShooting=true' : ''}`}
-        currentRoute="scenedetails"
+      {
+        !editMode && (
+          <SceneDetailsTabs
+            routeDetails={`${rootRoute}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
+            routeScript={`${rootRouteScript}/${sceneId}${isShooting ? "?isShooting=true" : ""}`}
+            currentRoute="scenedetails"
+          />
+        )
+      }
+      <DeleteSceneAlert
+        alertIsOpen={openDeleteSceneAlert}
+        setAlertIsOpen={setOpenDeleteSceneAlert}
+        sceneId={sceneId}
+        projectId={id}
+        sceneHeader={sceneHeader}
+        onSuccess={handleBack}
       />
-      <InputAlert
-        header="Delete SceneDocType"
-        message={`Are you sure you want to delete scene ${sceneHeader}?`}
-        handleOk={deleteScene}
-        inputs={[]}
-        trigger={`open-delete-scene-alert-${sceneId}-details`}
-      />
+      { 
+        thisShooting?.id  &&
+        <UnassignSceneAlert
+          alertIsOpen={openUnassignAlert}
+          setAlertIsOpen={setOpenUnassignAlert}
+          sceneId={sceneId}
+          shootingId={thisShooting?.id}
+          sceneHeader={sceneHeader}
+          onSuccess={fetchSceneShooting}
+        />
+      }
     </IonPage>
   );
 };

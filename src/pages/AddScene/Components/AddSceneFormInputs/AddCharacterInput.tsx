@@ -1,39 +1,38 @@
 import React, { useContext } from 'react';
 import {
+  IonButton,
   IonCardContent,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonList,
 } from '@ionic/react';
 import { Character } from '../../../../Shared/types/scenes.types';
-import InputModal from '../../../../Layouts/InputModal/InputModal';
-import getCharactersArray from '../../../../Shared/Utils/getCharactersArray';
-import customArraySort from '../../../../Shared/Utils/customArraySort';
-import removeNumberAndDot from '../../../../Shared/Utils/removeNumberAndDot';
 import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
-import applyFilters from '../../../../Shared/Utils/applyFilters';
-import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
-import DatabaseContext from '../../../../context/Database/Database.context';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { VscEdit } from 'react-icons/vsc';
 
 interface AddCharacterInputProps {
   categoryName: string | null;
   selectedCharacters: any;
   setSelectedCharacters: (value: any) => void;
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
+  editMode?: boolean;
+  openEditCharacter: (character: Character) => void;
 }
 
 const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
   categoryName,
   selectedCharacters,
   setSelectedCharacters,
-  openModal,
-  setOpenModal
+  editMode,
+  openEditCharacter
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
+
   const filterSelectedCharacters = selectedCharacters.filter((character: any) => {
-    if (categoryName === 'NO CATEGORY') {
-      return character.categoryName === null;
+    if (categoryName === EmptyEnum.NoCategory || !categoryName) {
+      return character.categoryName === null || character.categoryName === '' || character.categoryName === undefined;
     }
     return character.categoryName === categoryName;
   });
@@ -47,118 +46,40 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     }
   };
 
-  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(
-    offlineScenes,
-    'characters',
-    'characterName',
-  );
-
-  const categoryCriteria = categoryName === 'NO CATEGORY' ? null : categoryName;
-
-  const getFilteredCharacters = applyFilters(
-    uniqueCharacterValuesArray,
-    {
-      categoryName: [categoryCriteria],
-    },
-    false,
-  );
-
-  const getSortedCharacterNames = customArraySort(
-    getCharactersArray(selectedCharacters.length > 0 ? [...getFilteredCharacters] : getFilteredCharacters),
-  );
-
-  const toggleCharacters = (character: string) => {
-    const sceneWithCharacter = offlineScenes.find((scene: any) => scene.characters.some(
-      (char: any) => char.characterName.toUpperCase()
-          === removeNumberAndDot(character.toUpperCase()),
-    ));
-
-    const characterObject = sceneWithCharacter?.characters?.find(
-      (char: any) => char.characterName.toUpperCase()
-        === removeNumberAndDot(character.toUpperCase()),
-    );
-
-    if (characterObject) {
-      const selectedCharacterObjectIndex = selectedCharacters.findIndex(
-        (char: any) => char.characterName === characterObject.characterName,
-      );
-      if (selectedCharacterObjectIndex !== -1) {
-        setSelectedCharacters((currentCharacters: any) => currentCharacters.filter(
-          (char: any) => char.characterName !== characterObject.characterName,
-        ));
-      } else if (selectedCharacterObjectIndex === -1) {
-        const newCharacter: any = { ...characterObject };
-
-        setSelectedCharacters((currentCharacters: any) => [
-          ...currentCharacters,
-          newCharacter,
-        ]);
-      }
-    }
-  };
-
-  const clearSelections = () => {
-    setSelectedCharacters([]);
-  };
-
-  const formInputs = [
-    {
-      label: 'Character Number',
-      type: 'text',
-      fieldKeyName: 'characterNum',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-character-number-input',
-    },
-    {
-      label: 'Character Name',
-      type: 'text',
-      fieldKeyName: 'characterName',
-      placeholder: 'INSERT',
-      required: true,
-      inputName: 'add-character-name-input',
-    },
-  ];
-
   const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
 
   return (
-    <IonCardContent className={contentStyle}>
+    <IonCardContent className={contentStyle} color='tertiary-dark'>
       {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any, index: number) => (
-            <IonItem
-              key={`character-item-${index}-category-${categoryName}`}
-              color="tertiary"
-              className="ion-no-margin category-items"
-            >
-              {`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}
-              <DeleteButton
-                onClick={() => deleteCharacter(character.characterName)}
-                slot="end"
-              />
-            </IonItem>
+            <IonItemSliding key={`character-item-${index}-category-${categoryName}`}>
+              <IonItem color='tertiary-dark'>
+              <p>{`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}</p>
+              </IonItem>
+              {editMode && (
+              <>
+              <IonItemOptions side="end">
+                <IonItemOption color='dark' onClick={() => openEditCharacter(character)}>
+                  <IonButton fill="clear" color='primary' slot="end">
+                      <VscEdit className="label-button" />
+                  </IonButton>
+                </IonItemOption>
+                <IonItemOption color='dark' onClick={() => deleteCharacter(character.characterName)}>
+                  <DeleteButton
+                    onClick={() => {}}
+                    slot="end"
+                  />
+                </IonItemOption>
+              </IonItemOptions>
+              </>
+              )}
+            </IonItemSliding>
           ))}
         </IonList>
       ) : (
         <NoAdded />
       )}
-      <InputModal
-        optionName={`Characters (  ${categoryName}  )`}
-        listOfOptions={getSortedCharacterNames}
-        handleCheckboxToggle={toggleCharacters}
-        selectedOptions={selectedCharacters.map(
-          (character: any) => character.characterName,
-        )}
-        setSelectedOptions={setSelectedCharacters}
-        clearSelections={clearSelections}
-        canCreateNew
-        optionCategory={categoryName || 'NO CATEGORY'}
-        formInputs={formInputs}
-        existentOptions={uniqueCharacterValuesArray}
-        isOpen={openModal}
-        setIsOpen={setOpenModal}
-      />
     </IonCardContent>
   );
 };

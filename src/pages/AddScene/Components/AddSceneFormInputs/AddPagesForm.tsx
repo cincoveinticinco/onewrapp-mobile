@@ -5,9 +5,10 @@ import fractionToFloat from '../../../../Shared/Utils/fractionToFloat';
 interface AddPagesFormProps {
   handleChange: (value: any, field: string) => void
   observedField: number | null;
+  labels?: boolean
 }
 
-const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField }) => {
+const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField, labels = true }) => {
   // Inicializar los estados con los valores calculados
   const initialInteger = observedField ? Math.floor(observedField) : 0;
   const initialFraction = observedField ? 
@@ -47,7 +48,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           value={pageInteger}
           type="number"
           name="integerPart"
-          label="PAGES"
+          label={labels ? 'PAGES' : ''}
           placeholder="0"
           onIonChange={(e) => handleIntegerChange(Number(e.detail.value))}
           labelPlacement="floating"
@@ -58,7 +59,7 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
           value={pageFraction}
           type="number"
           name="fractionPart"
-          label="PAGES"
+          label={labels ? 'PAGES' : ''}
           placeholder="0"
           onIonChange={(e) => handleFractionChange(Number(e.detail.value))}
           labelPlacement="floating"

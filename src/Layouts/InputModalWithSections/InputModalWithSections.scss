@@ -1,0 +1,55 @@
+@import '../../theme/mixins.scss';
+
+.general-modal-styles {
+  @include modal-styling;
+
+  .add-new-option-description {
+    text-align: center;
+    margin: 0px;
+  }
+
+  ion-input {
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+
+  ion-input.error {
+    color: var(--ion-color-danger);
+  }
+
+  .modal-confirm-button {
+    margin: 5% 16px 16px 16px;
+  }
+
+  .cancel-input-modal-button {
+    margin-bottom: 5%;
+  }
+  
+  .add-new-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 25% !important;
+    position: relative;
+    margin: 100px auto;
+  }
+}
+
+.sections-container {
+  margin-top: 100px;
+}
+
+.children-wrapper {
+  min-height: 0px !important;
+}
+
+@media (min-width: 400px) {
+  .general-modal-styles {
+    .modal-confirm-button {
+      margin: 20% auto 10% auto;
+    }
+  }
+}

@@ -9,6 +9,7 @@ interface SceneHeaderProps {
   changeToPreviousScene: () => void;
   changeToNextScene: () => void;
   status?: string;
+  editMode?: boolean;
 }
 
 const SceneHeader: React.FC<SceneHeaderProps> = ({
@@ -19,11 +20,12 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
   changeToPreviousScene,
   changeToNextScene,
   status,
+  editMode
 }) => (
   <IonToolbar
-    className={`scene-theme-${sceneColor}`}
+    color={sceneColor}
     mode="ios"
-    style={{ border: '1px solid black' }}
+    style={{ border: '1px solid black', color: editMode ? 'black' : 'white' }}
   >
     {previousScene && (
     <IonIcon
@@ -32,9 +34,10 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
       size="large"
       onClick={changeToPreviousScene}
       className="change-scene-button"
+      style={{ color: 'var(--ion-color-contrast)' }}
     />
     )}
-    <IonTitle style={{ fontWeight: 'light' }}>{`${sceneHeader} ${status}`}</IonTitle>
+    <IonTitle style={{ fontWeight: 'light', color: 'var(--ion-color-contrast)' }}><b>{`${sceneHeader} ${editMode ? 'EDIT MODE' : status}`}</b></IonTitle>
     {nextScene && (
     <IonIcon
       icon={chevronForward}
@@ -42,6 +45,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
       size="large"
       onClick={changeToNextScene}
       className="change-scene-button"
+      style={{ color: 'var(--ion-color-contrast)' }}
     />
     )}
   </IonToolbar>

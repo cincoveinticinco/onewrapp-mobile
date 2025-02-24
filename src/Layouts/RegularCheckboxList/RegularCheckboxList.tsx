@@ -32,19 +32,7 @@ const RegularList: React.FC<RegularListProps> = ({
   const memoizedIsOptionChecked = useCallback((option: string) => isOptionChecked(option), [isOptionChecked]);
 
   const getListStyles = () => {
-    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length > 10) {
-      return { border: 'none', outline: 'none', marginTop: '100px' };
-    }
-
-    if (listOfOptions.length > 10) {
-      return { marginTop: '100px' };
-    }
-
-    if (uncheckedFilteredOptions.length === 0 && listOfOptions.length <= 10) {
-      return {};
-    }
-
-    return {};
+    return { border: 'none', outline: 'none', marginTop: '60px' };
   };
 
   const handleItemStyles = (label: string) => {

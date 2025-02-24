@@ -1,7 +1,7 @@
 // Crew.tsx
 import { IonButton, IonContent, IonIcon } from '@ionic/react';
 import { caretDown, caretUp } from 'ionicons/icons';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { useHistory, useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
@@ -96,8 +96,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
     value: department,
     label: department,
   }));
-
-  const getDefaultValuesById = (id: string | null): Partial<FormStructureInterface> => {
+  const getDefaultValuesById = useMemo(() => (id: string | null): Partial<FormStructureInterface> => {
     if (!id) return {};
     const crewMember = crew.find((member) => member.id === id);
     if (!crewMember) return {};
@@ -116,7 +115,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
       emergencyContact: crewMember.emergencyContact,
       department: crewMember.depNameEng || crewMember.depNameEsp || '',
     };
-  };
+  }, [crew]);
 
   const AddEditCrewModal = () => (
     <EditionModal
@@ -129,10 +128,16 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
     />
   );
 
-  const openModal = (id: string | null) => {
+  const openModal = useCallback((id: string | null) => {
     setSelectedCrewId(id);
     setAddNewModalIsOpen(true);
-  };
+    
+    // Optionally save current form state
+    if (id) {
+      const currentValues = getDefaultValuesById(id);
+      localStorage.setItem(`crew_modal_${id}`, JSON.stringify(currentValues));
+    }
+  }, [getDefaultValuesById]);
 
   const openModalButton = (): JSX.Element => (
     <IonButton
@@ -220,9 +225,9 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
               );
             })
           )}
-          <AddEditCrewModal />
         </>
       )}
+        <AddEditCrewModal />
       </IonContent>
     </MainPagesLayout>
   );

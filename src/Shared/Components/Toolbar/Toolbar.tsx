@@ -18,7 +18,6 @@ import React, {
 } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
-import { RiLogoutBoxLine } from 'react-icons/ri';
 import { useParams } from 'react-router';
 import DatabaseContext from '../../../context/Database/Database.context';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -66,6 +65,9 @@ interface ToolbarProps {
   permissionType?: number | null;
   logoutIcon?: boolean;
   customHandleSearch?: (e: any) => void;
+  editOnClick?: () => void;
+  showLogout?: boolean;
+  color?: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = memo(({
@@ -88,13 +90,13 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   edit = false,
   editRoute = '',
   deleteTrigger = '',
-  download = true,
   addShoBanSc,
   isLoading = false,
   customButtons = [],
   permissionType,
-  logoutIcon = true,
-  customHandleSearch
+  customHandleSearch,
+  editOnClick,
+  color = 'tertiary',
 }) => {
   const isMobile = useIsMobile();
 
@@ -151,13 +153,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const generatePdf = (template: any, inputs: any) => {
     console.log('Generating PDF');
   };
-
-  // Get if the platform is ios
-
   
-
   return (
-    <IonToolbar color="tertiary" className="toolbar" id="main-pages-toolbar" style={{
+    <IonToolbar color={color} className="toolbar ion-pading-start" id="main-pages-toolbar" style={{
       paddingLeft: back || backString ? '0px' : '16px',
     }}>
       {menu && (
@@ -192,20 +190,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           />
         </div>
       )}
-      {addScene && (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          routerLink="addscene"
-          className="ion-no-padding toolbar-button"
-          style={{
-            display: disableEditions ? 'none' : 'flex',
-          }}
-        >
-          <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
-        </IonButton>
-      )}
       {backString && (
         <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
           <IonIcon icon={chevronBack} className="toolbar-back-icon toolbar-icon" />
@@ -221,14 +205,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           <IonIcon icon={swapVerticalOutline} className="toolbar-sort-icon toolbar-icon" />
         </IonButton>
       )}
-      {/* {elipse && (
-        // <IonButton fill="clear" slot="end" className="ion-no-padding toolbar-button">
-        //   <IonIcon icon={ellipsisHorizontalOutline} className="toolbar-ellipsis-icon toolbar-icon" />
-        // </IonButton>
-      )} */}
       {
         edit && (
-          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editRoute}>
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" routerLink={editOnClick ? undefined : editRoute} onClick={editOnClick}>
             <CiEdit className="toolbar-icon edit-icon" />
           </IonButton>
         )
@@ -247,6 +226,20 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           </IonButton>
         )
       }
+      {addScene && (
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          routerLink="addscene"
+          className="ion-no-padding toolbar-button"
+          style={{
+            display: disableEditions ? 'none' : 'flex',
+          }}
+        >
+          <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
+        </IonButton>
+      )}
       {
         customButtons.map((renderFunction: any, index) => (
           <React.Fragment key={index}>
@@ -258,18 +251,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         addShoBanSc && (
           addShoBanSc()
         )
-      }
-      {/* {
-        download && (
-          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => generatePdf(template, inputs)}>
-            <RiDownload2Line className="toolbar-icon download-icon" />
-          </IonButton>
-        )
-      } */}
-      { logoutIcon &&
-        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button logout-icon" onClick={logout}>
-          <RiLogoutBoxLine className="toolbar-icon" />
-        </IonButton>
       }
       {
         isLoading || isFetching && (

@@ -6,7 +6,7 @@ type SceneWithIndexSignature = SceneDocType & {
 
 function getUniqueValuesByKey(array: SceneWithIndexSignature[], key: keyof SceneWithIndexSignature) {
   const uniqueValues = new Set<SceneWithIndexSignature[keyof SceneWithIndexSignature]>();
-  array.forEach((item) => {
+  array?.forEach((item) => {
     if (item[key]) {
       uniqueValues.add(item[key]);
     }

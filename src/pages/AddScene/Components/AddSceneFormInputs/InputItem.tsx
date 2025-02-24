@@ -1,7 +1,9 @@
-import { IonInput, IonItem, IonList } from '@ionic/react';
+import { IonInput, IonItem, IonList, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import './InputItem.scss';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { textTransform } from '@mui/system';
 
 interface InputItemProps {
   label: string;
@@ -15,7 +17,10 @@ interface InputItemProps {
   type?: any;
   errorMessage?: string;
   style?: any;
-  suggestions?: string[]; // New prop for suggestions
+  className?: string;
+  suggestions?: string[];
+  textArea?: boolean;
+  disabled?: boolean;
 }
 
 const InputItem: React.FC<InputItemProps> = ({
@@ -30,7 +35,10 @@ const InputItem: React.FC<InputItemProps> = ({
   type = 'text',
   errorMessage = 'REQUIRED *',
   style,
-  suggestions = [], // Default to empty array
+  className,
+  suggestions = [],
+  textArea = false,
+  disabled = false,
 }) => {
   const [showError, setShowError] = useState(displayError);
   const [isFocused, setIsFocused] = useState(false);
@@ -42,60 +50,100 @@ const InputItem: React.FC<InputItemProps> = ({
   }, [displayError]);
 
   const handleInputChange = (value: string) => {
-    if (validate && validate(value.trim()) !== true) {
+    if (validate && validate(value) !== true) {
       setShowError(true);
     } else {
       setShowError(false);
     }
-    setValue(fieldKeyName, value.trim());
+
+    setValue(fieldKeyName, value); // No trimming to preserve spaces
 
     // Filter suggestions based on input
     if (suggestions.length > 0) {
-      const filtered = suggestions.filter((suggestion) => suggestion.toLowerCase().includes(value.toLowerCase()));
+      const filtered = suggestions.filter((suggestion) =>
+        suggestion.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredSuggestions(filtered);
-      setShowSuggestions(filtered.length > 0);
+      setShowSuggestions(filtered.length > 0 && isFocused);
     }
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setValue(fieldKeyName, suggestion);
+    setValue(fieldKeyName, suggestion === EmptyEnum.NoCategory ? EmptyEnum.NoCategory : suggestion);
     setShowSuggestions(false);
   };
 
   return (
     <div style={style} id={inputName}>
-      <IonItem color="tertiary">
+      <IonItem color="tertiary" className='ion-no-padding'>
         <Controller
           control={control}
           name={fieldKeyName}
           rules={{
-            validate: (validate || null),
+            validate: validate || undefined,
           }}
-          render={({ field }) => (
-            <IonInput
-              placeholder={showError ? label : placeholder}
-              type={type}
-              label={showError ? errorMessage : label}
-              labelPlacement="floating"
-              value={field.value}
-              onIonInput={(e) => handleInputChange(e.detail.value || '')}
-              onFocus={() => {
-                setIsFocused(true);
-                setShowSuggestions(true);
-              }}
-              onBlur={() => {
-                setIsFocused(false);
-                setTimeout(() => setShowSuggestions(false), 200);
-              }}
-              className={`add-scene-input${showError ? ' error' : ''} ${isFocused ? 'input-item' : ''}`}
-            />
+          render={({ field, fieldState: { error } }) => (
+            textArea ? (
+              <IonTextarea
+                placeholder={showError ? label : placeholder}
+                value={field.value}
+                onIonInput={(e) => {
+                  let value = e.detail.value || '';
+                  if(value) {
+                    value = value.toUpperCase(); 
+                  }
+                  handleInputChange(value);
+                  field.onChange(value);
+                }}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setFilteredSuggestions(suggestions);
+                  setShowSuggestions(suggestions.length > 0);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                className={`${isFocused ? 'input-item' : ''} ${className || ''}`}
+                disabled={disabled}
+                style={{ textTransform: 'uppercase' }}
+              />
+            ) : (
+              <IonInput
+                placeholder={showError ? label : placeholder}
+                type={type}
+                label={showError ? errorMessage : label?.toUpperCase()}
+                labelPlacement="floating"
+                value={field?.value}
+                onIonInput={(e) => {
+                  let value = e.detail.value || '';
+                  handleInputChange(value);
+                  if(value) {
+                    value = value.toUpperCase(); 
+                  }
+                  field.onChange(value);
+                }}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setFilteredSuggestions(suggestions);
+                  setShowSuggestions(suggestions.length > 0);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                className={`add-scene-input${(showError || error) ? ' error' : ''} ${isFocused ? 'input-item' : ''} ${className || ''}`}
+                disabled={disabled}
+                style={{ textTransform: 'uppercase' }}
+              />
+            )
           )}
         />
       </IonItem>
       {showSuggestions && filteredSuggestions.length > 0 && (
-        <IonList className="suggestions-list">
+        <IonList className="suggestions-list" style={{  maxHeight: '150px', overflow: 'auto' }}>
           {filteredSuggestions.map((suggestion, index) => (
-            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)}>
+            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)} style={{ textTransform: 'uppercase'}}>
               {suggestion}
             </IonItem>
           ))}

@@ -177,8 +177,11 @@ const SceneCard: React.FC<SceneCardProps> = ({
     }
   };
 
-  const goToSceneDetails = () => {
-    const route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+  const goToSceneDetails = (editMode: boolean = false) => {
+    let route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
+    if (editMode) {
+      route += '?edit=true';
+    }
     history.push(route);
     localStorage.setItem('editionBackRoute', route);
   };
@@ -188,16 +191,16 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const cardContent = (
     <IonRow className="scene-card-row" color="tertiary">
       <IonItemSliding className="ion-no-margin ion-no-padding">
-        <IonItem className="ion-no-margin ion-no-padding scene-card-item">
+        <IonItem className="ion-no-margin ion-no-padding scene-card-item" color={defineSceneColor(scene)}>
           {
               isShooting && (
-                <IonReorder className={`reorder-container scene-card scene-theme-${defineSceneColor(scene)}`}>
+                <IonReorder className={`reorder-container scene-card`}>
                   <LuGripHorizontal className="ion-no-padding ion-no-margin grip-sort-item-icon" />
                 </IonReorder>
               )
             }
-          <IonGrid className="ion-no-margin ion-no-padding">
-            <IonRow className={`scene-card scene-theme-${defineSceneColor(scene)}`} onClick={() => goToSceneDetails()}>
+          <IonGrid className="ion-no-margin ion-no-padding" >
+            <IonRow className={`scene-card`} onClick={() => goToSceneDetails()}>
               <IonCol className="scene-card-col-1">
                 <h3 className="scene-card-header">
                   <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
@@ -243,7 +246,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
           <div className="buttons-wrapper">
             <IonButton
               fill="clear"
-              routerLink={`/my/projects/${id}/editscene/${scene.sceneId}`}
+              onClick={() => goToSceneDetails(true)}
               disabled={disableEditions}
             >
               <CiEdit className="button-icon view" />

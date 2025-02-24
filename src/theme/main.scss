@@ -1,5 +1,6 @@
-// VARIABLES
+@import '../theme/mixins.scss';
 
+// VARIABLES
 $colors: (
   danger: var(--ion-color-danger),
   dark: var(--ion-color-dark),
@@ -29,7 +30,8 @@ $colors: (
 
     transition: all 0.3s ease-in-out;
     margin: 6px;
-    min-width: 100px !important;
+    min-width: 180px !important;
+    width: 180px;
     min-height: 40px;
     text-transform: uppercase;
     font-size: 14px !important;
@@ -70,6 +72,33 @@ $colors: (
     }
   }
 
+  .filled-#{$color}-button-small {
+    --background: #{$value};
+    --color: var(--ion-color-contrast)
+    --border-radius: 0;
+    --border-color: #{$value};
+    --border-style: solid;
+    --border-width: 1px;
+
+    transition: all 0.3s ease-in-out;
+    min-width: 100px;
+    margin: 6px auto;
+    width: 80px;
+    min-height: 16px;
+    text-transform: uppercase;
+    font-size: 12px !important;
+    margin: 3px;
+    font-weight: bold;
+
+    &:active {
+      background-color: #{$value};
+    }
+
+    @media (min-width: 500px) {
+      max-width: 100px;
+    }
+  }
+
   .filled-#{$color}-button {
     --background: #{$value};
     --color: var(--ion-color-light);
@@ -79,19 +108,14 @@ $colors: (
     --border-width: 1px;
 
     transition: all 0.3s ease-in-out;
-    min-width: 180px;
-    margin: 6px auto;
-    width: 180px;
+    min-width: 180px !important;
+    margin: 6px auto; 
     min-height: 40px;
     text-transform: uppercase;
     font-size: 14px !important;
 
     &:active {
       background-color: #{$value};
-    }
-
-    @media (min-width: 500px) {
-      max-width: 250px;
     }
   }
 
@@ -107,9 +131,9 @@ $colors: (
     --background-focused: #{$value};
 
     transition: all 0.3s ease-in-out;
-    min-width: 180px;
-    margin-top: 0;
+    min-width: 180px !important;
     width: 180px;
+    margin-top: 0;
     min-height: 40px;
     text-transform: uppercase;
     font-size: 14px !important;
@@ -121,6 +145,10 @@ $colors: (
 
   .background-#{$color} {
     background-color: #{$value} !important;
+  }
+
+  .border-#{$color} {
+    border: 1px solid #{$value} !important;
   }
 }
 
@@ -457,4 +485,16 @@ ion-toast.error-toast {
 .no-items-message {
   text-transform: uppercase;
   font-size: var(--525-medium-title-size);
+}
+
+.full-width {
+  width: 100vw;
+}
+
+.select-alert {
+  display: none !important;
+
+  .alert-wrapper {
+    border: 1px solid var(--ion-color-danger);
+  }
 }

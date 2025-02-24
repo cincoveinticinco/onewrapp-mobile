@@ -30,7 +30,6 @@ import DatabaseContext from '../../../context/Database/Database.context';
 import AppLoader from '../../hooks/AppLoader';
 import { SecurePages } from '../../types/securePages.types';
 import { UserDocType } from '../../types/user.types';
-import AddScene from '../../../pages/AddScene/AddScene';
 import Calendar from '../../../pages/Calendar/Calendar';
 import CallSheet from '../../../pages/CallSheet/CallSheet';
 import Cast from '../../../pages/Cast/Cast';
@@ -124,6 +123,7 @@ const AppTabs: React.FC = () => {
     );
   }
 
+
   return (
     <IonTabs className="ion-tabs">
       <IonRouterOutlet mode="md">
@@ -135,7 +135,8 @@ const AppTabs: React.FC = () => {
           exact
           path={`${urlString}/addscene`}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
-          component={AddScene}
+          component={SceneDetails}
+          additionalProps={{ creationMode: true }}
           unauthorizedRoute={unauthorizedRoute}
         />
         <ProtectedRoute
@@ -284,10 +285,6 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={people} className="tab-bar-icons" />
           <IonLabel>CAST</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
-          <IonIcon icon={construct} className="tab-bar-icons" />
-          <IonLabel>CREW</IonLabel>
-        </IonTabButton>
         <IonTabButton tab="sets" className={defineButtonClassAccess(SecurePages.SETS)} href={`${url}/sets`}>
           <IonIcon icon={film} className="tab-bar-icons" />
           <IonLabel>SETS</IonLabel>
@@ -295,6 +292,10 @@ const AppTabs: React.FC = () => {
         <IonTabButton tab="elements" className={defineButtonClassAccess(SecurePages.ELEMENTS)} href={`${url}/elements`}>
           <IonIcon icon={cube} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
+          <IonIcon icon={construct} className="tab-bar-icons" />
+          <IonLabel>CREW</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />

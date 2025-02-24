@@ -1,7 +1,8 @@
 #main-pages-toolbar {
   display: flex;
   height: auto;
-  min-height: 50px;
+  min-height:60px;
+  padding-top: 12px;
 
   .toolbar-title-link {
     color: var(--ion-color-primary);
@@ -37,7 +38,6 @@
 
   .toolbar-icon {
     font-size: 24px;
-    color: #fff;
   }
 
   .trash-icon {

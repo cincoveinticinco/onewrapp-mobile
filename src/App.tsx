@@ -4,6 +4,7 @@ import {
   IonContent,
   IonPage,
   IonRouterOutlet,
+  isPlatform,
   setupIonicReact,
 } from '@ionic/react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
@@ -28,20 +29,19 @@ import './theme/variables.css';
 import AppLoader from './Shared/hooks/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
+import { loadEnvironment } from '../environment';
 
 setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { isDatabaseReady, oneWrapDb, isOnline } = React.useContext(DatabaseContext);
   const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading } = React.useContext(AuthContext);
-
+  const isIos = isPlatform('ios');
   const history = useHistory();
 
   useEffect(() => {
     // Escucha cambios en la historia de navegación
     const unlisten = history.listen((location) => {
-      // Aquí puedes guardar la ruta actual en localStorage o en tu contexto
-      console.log('Ruta actual:', location.pathname);
     location.pathname !== '/login' && localStorage.setItem('lastAppRoute', location.pathname);
     });
 
@@ -68,14 +68,11 @@ const AppContent: React.FC = () => {
       if (user && loggedIn) {
         const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
         const now = new Date().getTime();
-        console.log(user)
-
         if (now > sessionEndsAt) {
           setLoggedIn(false);
           await logout();
         } else {
           setLoggedIn(true);
-          console.log('User is logged in');
         }
       }
 
@@ -84,6 +81,19 @@ const AppContent: React.FC = () => {
 
     oneWrapDb && fetchUser();
   }, [isOnline, oneWrapDb]);
+
+  useEffect(() => {
+    const initEnvironment = async () => {
+      try {
+        await loadEnvironment(isIos);
+        // Aquí puedes realizar acciones adicionales después de cargar el ambiente
+      } catch (error) {
+        throw new Error('Error loading environment');
+      }
+    };
+
+    initEnvironment();
+  }, []);
 
   if (!loading && isDatabaseReady && loggedIn) {
     return (

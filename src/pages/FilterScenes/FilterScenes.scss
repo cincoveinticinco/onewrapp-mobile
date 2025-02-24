@@ -17,10 +17,11 @@
   }
 
   .filter-button-row {
-    margin-top: 20%;
-  }
+    margin-top: 50px auto;
 
-  .filter-save-button {
-    width: calc(100% - 32px) !important;
+    ion-col {
+      display: flex;
+      justify-content: center;
+    }
   }
 }

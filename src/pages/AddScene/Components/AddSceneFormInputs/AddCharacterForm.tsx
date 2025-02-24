@@ -1,189 +1,318 @@
-import { useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   IonGrid,
   IonCard,
   IonCardSubtitle,
   IonCardHeader,
   AlertInput,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  IonItem,
+  IonButton,
 } from '@ionic/react';
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import { Character } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/AddButton/AddButton';
-import capitalizeString from '../../../../Shared/Utils/capitalizeString';
-import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
+import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
+import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { VscEdit } from 'react-icons/vsc';
+import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 
 interface AddCharacterFormProps {
-  handleSceneChange: (value: any, field: string) => void;
   observedCharacters: Character[];
   editMode?: boolean;
   detailsEditMode?: boolean;
+  setCharacters: (characters: Character[]) => void;
 }
 
 const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
-  handleSceneChange,
   observedCharacters,
   editMode,
-  detailsEditMode,
+  setCharacters
 }) => {
   const { offlineScenes } = useContext(DatabaseContext);
-  const alertRef = useRef<HTMLIonAlertElement>(null);
-
-  // State
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
-  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>(observedCharacters || []);
-  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
-  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({});
+  const [characterCategories, setCharacterCategories] = useState<string[]>([]);
+  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [editCategoryModal, setEditCategoryModal] = useState(false);
+  const [editCharacterModal, setEditCharacterModal] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
-  // Fetch initial categories from offline scenes
-  const defineCharactersCategories = useCallback(() => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName');
-    return uniqueCategoryValues
-      .map(character => character.categoryName)
-      .filter((categoryName): categoryName is string | null => categoryName !== undefined)
-      .sort();
-  }, [offlineScenes]);
+  const handleModalOpen = () => {
+    if(addCategoryModalOpen) {
+      setAddCategoryModalOpen(false);
+      setSelectedCategory(null);
+    } else {
+      setAddCategoryModalOpen(true);
+    }
+  }
+  
+  const uniqueCharacters = useMemo(() => {
+    const offlineChars = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+    const mergedChars = [...offlineChars];
+    
+    observedCharacters.forEach(char => {
+      const existingCharIndex = mergedChars.findIndex(
+        existing => existing.characterName === char.characterName
+      );
+      
+      if (existingCharIndex === -1) {
+        mergedChars.push(char);
+      } else {
+        mergedChars[existingCharIndex] = {
+          ...mergedChars[existingCharIndex],
+          categoryName: char.categoryName
+        };
+      }
+    });
+    
+    return mergedChars;
+  }, [offlineScenes, observedCharacters]);
 
-  // Initialize categories on mount
+  const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => 
+    uniqueCharacters.filter((character: any) => {
+      if(categoryName === EmptyEnum.NoCategory) {
+        return !character.categoryName;
+      }
+      return character.categoryName === categoryName;
+    }), [uniqueCharacters]);
+
+
+  const defineCharactersCategories = useCallback((): string[] => {
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
+    const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : EmptyEnum.NoCategory);
+
+    const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
+
+    const uniqueCategories = Array.from(new Set(allCategories
+      .sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
+
+    return uniqueCategories;
+  }, [offlineScenes, observedCharacters]);
+
   useEffect(() => {
     setCharacterCategories(defineCharactersCategories());
   }, [defineCharactersCategories]);
 
-  // Handle dropdown visibility when there are no characters
-  useEffect(() => {
-    if (!observedCharacters?.length) {
-      setDropDownIsOpen(true);
-    }
-  }, [observedCharacters]);
-
-  // Sync observedCharacters with selectedCharacters when they change
-  useEffect(() => {
-    if (observedCharacters && JSON.stringify(observedCharacters) !== JSON.stringify(selectedCharacters)) {
-      setSelectedCharacters(observedCharacters);
-    }
-  }, [observedCharacters]);
-
-  // Update parent component when selected characters change
   const handleSelectedCharactersChange = useCallback((newCharacters: Character[]) => {
-    setSelectedCharacters(newCharacters);
-  }, [handleSceneChange]);
+    setCharacters(newCharacters);
+  }, [setCharacters]);
 
-  useEffect(() => {
-    handleSceneChange(selectedCharacters, 'characters');
-  }, [selectedCharacters]);
+  const filteredCategories = useMemo(() => characterCategories, [characterCategories]);
 
-  // Handlers
-  const handleOk = (inputData: { [key: string]: any }) => {
-    if (inputData.categoryName) {
-      setCharacterCategories(prev => {
-        const newCategories = [...prev, inputData.categoryName];
-        return newCategories.sort();
-      });
+
+  const setNewCharacters = (charactersValues: {
+    value: string | number;
+    category: string | null;
+  }[]) => {
+    const newCharacters: Character[] = charactersValues.map((character) => {
+      const existingCharacter = uniqueCharacters.find(
+        (char) => char.characterName.toLowerCase() === String(character.value).toLowerCase()
+      );
+      
+      return existingCharacter || {
+        characterName: character.value,
+        categoryName: character.category === EmptyEnum.NoCategory ? null : character.category,
+        characterNum: ''
+      } as Character;
+    });
+    console.log(newCharacters)
+    setCharacters(newCharacters);
+  };
+
+  const getObservedCharactersInCategoryLength = (category: string) => {
+    if(category === EmptyEnum.NoCategory || !category) { 
+      return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
     }
-  };
 
-  const handleDropDown = () => {
-    setDropDownIsOpen(!dropDownIsOpen);
-  };
+    return observedCharacters.filter(character => character.categoryName === category).length;
+  }
 
-  const toggleModal = (category: string) => {
-    setModalStates(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
+  const openCategoryEditor = (category: string) => () => {
+    setSelectedCategory(category);
+    setEditCategoryModal(true);
+  }
 
-  // Helper functions
-  const getAlertTrigger = () => {
-    if (editMode) return 'characters-categories-alert-edit';
-    if (detailsEditMode) return 'characters-categories-alert-details-edit';
-    return 'characters-categories-alert';
-  };
-
-  const getModalTrigger = () => {
-    if (editMode) return 'open-characters-options-modal-edit';
-    if (detailsEditMode) return 'open-characters-options-modal-details-edit';
-    return 'open-characters-options-modal';
-  };
-
-  const alertInputs: AlertInput[] = [
+  const editCategoryInputs = useMemo((): AlertInput[] => [
     {
-      name: 'categoryName',
+      name: 'category',
       type: 'text',
       placeholder: 'Category Name',
-      id: 'add-category-input',
+      value: selectedCategory == EmptyEnum.NoCategory ? '' : selectedCategory,
+    }
+  ], [selectedCategory]);
+
+  const onEditCategory = (inputData: { [key: string]: any }) => {
+    const observedCharactersCopy = structuredClone(observedCharacters);
+    const updatedCharacters = observedCharactersCopy.map(character => {
+      if(selectedCategory === EmptyEnum.NoCategory && !character.categoryName) {
+        character.categoryName = inputData.category;
+      }
+      if(character.categoryName === selectedCategory) {
+        character.categoryName = inputData.category;
+      }
+      return character;
+    });
+    setCharacters(updatedCharacters);
+    setCharacterCategories(defineCharactersCategories());
+    setEditCategoryModal(false);
+  }
+
+  const EditCategoryAlert = () => (
+    <InputAlert
+      isOpen={editCategoryModal}
+      inputs={editCategoryInputs}
+      header="Edit Category"
+      handleOk={onEditCategory}
+      handleCancel={() => setEditCategoryModal(false)}
+    />
+  )
+
+  const openEditCharacterModal = (character: Character) => {
+    console.log('executed')
+    setSelectedCharacter(character);
+    setEditCharacterModal(true);
+  }
+
+  const onEditCharacter = (inputData: { [key: string]: any }) => {
+    const updatedCharacters = observedCharacters.map(character => {
+      if (character.characterName === selectedCharacter?.characterName) {
+        return {
+          ...character,
+          categoryName: inputData.category,
+          characterNum: inputData.characterNum,
+          characterName: inputData.characterName
+        }
+      }
+      return character;
+    });
+    setCharacters(updatedCharacters);
+    setEditCharacterModal(false);
+  }
+    
+
+  const formInputs: AlertInput[] = [
+    {
+      name: 'category',
+      type: 'text',
+      placeholder: 'Category Name',
+      value: selectedCharacter?.categoryName,
     },
+    {
+      name: 'characterNum',
+      type: 'number',
+      placeholder: 'Character Number',
+      value: selectedCharacter?.characterNum,
+    },
+    {
+      name: 'characterName',
+      type: 'text',
+      placeholder: 'Character Name',
+      value: selectedCharacter?.characterName,
+    }
   ];
+
+  const EditCharacterModal = () => (
+    <InputAlert
+      isOpen={editCharacterModal}
+      inputs={formInputs}
+      header="Edit Character"
+      handleOk={onEditCharacter}
+      handleCancel={() => { setEditCharacterModal(false); setSelectedCharacter(null); }}
+    />
+  )
 
   return (
     <>
-      <div
-        className="category-item-title ion-flex ion-justify-content-between"
-        onClick={handleDropDown}
-        style={{ backgroundColor: 'var(--ion-color-tertiary-shade)' }}
-      >
-        <p className="ion-flex ion-align-items-center">Characters</p>
+      <div className="category-item-title ion-flex ion-justify-content-between" style={{ backgroundColor: 'var(--ion-color-dark)' }}>
+        <p className="ion-flex ion-align-items-center ion-padding-start">CHARACTERS</p>
         <div className="categories-card-buttons-wrapper ion-flex ion-align-items-center">
-          <AddButton id={getAlertTrigger()} slot="end"  onClick={(e) => { e.stopPropagation(); }}/>
-          <DropDownButton open={dropDownIsOpen} />
+          {editMode && (
+            <AddButton 
+              onClick={() => setAddCategoryModalOpen(true)} 
+              slot="end"
+            />
+          )}
         </div>
       </div>
 
-      <InputAlert
-        handleOk={handleOk}
-        inputs={alertInputs}
-        trigger={getAlertTrigger()}
-        header="Add Category"
-        message="PLEASE ENTER THE NAME OF THE CATEGORY YOU WANT TO ADD"
-        ref={alertRef}
+      <InputModalWithSections
+        optionName="Categories"
+        listOfOptions={characterCategories.map(category => ({
+          category: category,
+          options: filterCharactersByCategory(category)
+            .map(character => ({
+              label: `${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`,
+              value: character.characterName,
+              checked: observedCharacters.some(char => char.characterName === character.characterName)
+            }))
+        }))}
+        clearSelections={() => {}}
+        isOpen={addCategoryModalOpen}
+        setIsOpen={handleModalOpen}
+        setValues={setNewCharacters}
+        selectedCategory={selectedCategory}
       />
 
-      {characterCategories.length === 0 && (
-        <IonCard color="tertiary" className="no-items-card">
-          <IonCardHeader>
-            <IonCardSubtitle className="no-items-card-title">
-              NO CHARACTERS ADDED TO THIS STRIP
+      {filteredCategories.every(c => getObservedCharactersInCategoryLength(c) == 0)  && (
+        <IonCard style={{ backgroundColor: 'var(--ion-color-tertiary-dark)' }} className="no-items-card">
+          <IonCardHeader>     
+            <IonCardSubtitle className="no-items-card-title" style={{ color: 'var(--ion-color-light)', fontSize: '16px' }}>
+              NO CHARACTERS AVAILABLE
             </IonCardSubtitle>
           </IonCardHeader>
         </IonCard>
       )}
 
-      {characterCategories.length > 0 && dropDownIsOpen && (
+      {dropDownIsOpen && (
         <IonGrid className="add-scene-items-card-grid">
-          {[...characterCategories, 'NO CATEGORY'].map((category, index) => 
-            category && (
-              <IonCard
-                key={`category-item-${index}-category-${category}`}
-                color="tertiary"
+          {filteredCategories
+            .filter(category => getObservedCharactersInCategoryLength(category) > 0)
+            .map((category, index) => (
+            (
+              <IonCard 
+                key={`category-item-${index}-category-${category}`} 
+                color='tertiary-dark'
                 className="add-scene-items-card ion-no-border"
               >
                 <IonCardHeader className="ion-flex">
-                  <div className="ion-flex ion-justify-content-between">
+                  <IonItemSliding>
+                  <IonItemOptions side="end" color='dark'>
+                    {editMode && (
+                    <IonItemOption onClick={openCategoryEditor(category)} color='dark'>
+                      <IonButton fill="clear" color='primary' slot="end">
+                        <VscEdit className="label-button"/>
+                      </IonButton>
+                    </IonItemOption>
+                    )}
+                  </IonItemOptions>
+                  <IonItem color='tertiary-dark'>
+                    <div className="ion-flex ion-justify-content-between">
                     <p className="ion-flex ion-align-items-center">
-                      {capitalizeString(category)}
+                      {category?.toUpperCase()}
                     </p>
-                    <div className="category-buttons-wrapper">
-                      <AddButton
-                        id={`${getModalTrigger()}${category}`}
-                        onClick={(e) => { toggleModal(category); e.stopPropagation(); }}
-                      />
                     </div>
-                  </div>
+                  </IonItem>
+                  </IonItemSliding>
                 </IonCardHeader>
                 <AddCharacterInput
                   categoryName={category}
-                  selectedCharacters={selectedCharacters}
+                  selectedCharacters={observedCharacters}
                   setSelectedCharacters={handleSelectedCharactersChange}
-                  openModal={modalStates[category] || false}
-                  setOpenModal={(isOpen: boolean) => toggleModal(category)}
+                  editMode={editMode}
+                  openEditCharacter={openEditCharacterModal}
                 />
               </IonCard>
             )
-          )}
+          ))}
         </IonGrid>
       )}
+      {editCategoryModal && <EditCategoryAlert /> }
+      {editCharacterModal && <EditCharacterModal />}
     </>
   );
 };

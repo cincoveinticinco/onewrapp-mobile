@@ -1,3 +1,5 @@
+import { EnvironmentPlugin } from './plugins/EnvironmentPlugin';
+
 interface Environment {
   URL_PATH: string;
   SCENES_ENDPOINT_PULL: string;
@@ -22,8 +24,8 @@ interface Environment {
   USER_ENDPOINT_PULL: string;
 }
 
-const environment: Environment = {
-  URL_PATH: import.meta.env.VITE_URL_PATH || '',
+const environmentVariables: Environment = {
+  URL_PATH: import.meta.env.VITE_URL_PATH_LOCAL || '',
   SCENES_ENDPOINT_PULL: import.meta.env.VITE_SCENES_ENDPOINT_PULL || '',
   SCENE_PARAGRAPHS_ENDPOINT_PULL: import.meta.env.VITE_SCENE_PARAGRAPHS_ENDPOINT_PULL || '',
   SCENES_ENDPOINT_PUSH: import.meta.env.VITE_SCENES_ENDPOINT_PUSH || '',
@@ -46,4 +48,40 @@ const environment: Environment = {
   USER_ENDPOINT_PULL: import.meta.env.VITE_USER_ENDPOINT_PULL || '',
 };
 
+const envConfigs: Record<string, Environment> = {
+  qa: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_STAGING || '',
+  },
+  production: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_PRODUCTION || '',
+  },
+  local: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_LOCAL || '',
+  }
+};
+
+// Exportamos el environment por defecto para mantener compatibilidad
+const environment: Environment = envConfigs.qa;
+
+export async function loadEnvironment(isIos: boolean) {
+  if(isIos) {
+    try {
+      const { environment: selectedEnv } = await EnvironmentPlugin.getEnvironment();
+      console.log("Ambiente seleccionado:", selectedEnv);
+      // Actualizamos el environment objeto directamente
+      Object.assign(environment, envConfigs[selectedEnv] || envConfigs.qa);
+    } catch (error) {
+      console.error("Error al obtener el ambiente:", error);
+      // En caso de error, nos aseguramos de usar producción
+      Object.assign(environment, envConfigs.qa);
+    }
+  } else {
+    Object.assign(environment, envConfigs.local);
+  }
+}
+
+// Exportación por defecto del environment
 export default environment;

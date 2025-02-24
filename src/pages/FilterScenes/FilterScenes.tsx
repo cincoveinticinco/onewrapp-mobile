@@ -106,6 +106,7 @@ const FilterScenes = () => {
       resetSelections={resetFilters}
       pageTitle="FILTERS"
       handleSave={handleBack}
+      handleSaveName='FILTER'
       showReset={showReset}
       handleBack={handleBack}
     >
@@ -284,9 +285,10 @@ const FilterScenes = () => {
             <IonRow class="ion-flex ion-justify-content-center filter-button-row">
               <IonCol size-xs="12" size-sm="4" size-md="4">
                 <OutlinePrimaryButton
-                  buttonName="SAVE"
+                  buttonName="FILTER"
                   onClick={handleBack}
                   className='filter-save-button'
+                  color='success'
                 />
               </IonCol>
             </IonRow>

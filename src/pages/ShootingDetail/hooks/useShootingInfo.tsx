@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRxDB } from "rxdb-hooks";
 import { useParams } from "react-router";
 import { mergedSceneBanner, mergedSceneShoot, ShootingDataProps, ShootingInfo } from "../types/ShootingDetail.types";
@@ -14,6 +14,7 @@ import { timeToISOString } from "../utils/timeToISOString.util";
 import { AdvanceCall, LocationInfo, Meal, ShootingScene } from "../../../Shared/types/shooting.types";
 import { ItemReorderEventDetail } from "@ionic/react";
 import { formatShootingDate } from "../utils/formatShootingDate.util";
+import useCombinedScenesWithShootings, { CombinedScenesWithShootings } from "../../../hooks/useCombinedScenesWithShootings/useCombinedScenesWithShootings";
 
 const shootingDataInitial: ShootingDataProps = {
   mergedSceneBanners: [],
@@ -52,83 +53,144 @@ export const useShootingInfo = () => {
   const [generalCallDiffHours, setGeneralCallDiffHours ] = useState<number>(0)
   const [moveDiffHoursAlertOpen, setMoveDiffHoursAlertOpen] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
+
+  const { combinedData: scenesWithShootings, isFetching } = useCombinedScenesWithShootings();
+
   const calculateUpdatedInfo = (scenes: any[]) => {
     const scenesOnly = scenes.filter((item: any) => item.cardType === 'scene');
-    const uniqueSets = new Set(scenesOnly.map((scene: any) => scene.setName && scene.setName.toUpperCase()));
-    const totalPages = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0);
-    const totalTime = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0);
-
+    const setNames = new Set();
+    let totalPages = 0;
+    let totalTime = 0;
+  
+    for (const scene of scenesOnly) {
+      if (scene.setName) setNames.add(scene.setName.toUpperCase());
+      totalPages += scene.pages || 0;
+      totalTime += scene.estimatedSeconds || 0;
+    }
+  
     return {
-      sets: Array.from(uniqueSets).length,
+      sets: setNames.size,
       scenes: scenesOnly.length,
       pages: floatToFraction(totalPages),
       min: secondsToMinSec(totalTime),
     };
   };
 
-  const getShootingData = async () => {
-    setIsLoading(true);
-    const shootings: any = await oneWrappDb?.shootings.find({ selector: { id: shootingId } }).exec();
-    const scenesInShoot = shootings[0]._data.scenes;
-    const bannersInShoot = shootings[0]._data.banners;
-    const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
-
-    const scenesData = await oneWrappDb?.scenes.find({
-      selector: { sceneId: { $in: scenesIds } },
-    }).exec();
-
-    const scenesNotIncluded = await oneWrappDb?.scenes.find({
-      selector: { projectId: shootings[0]._data.projectId, sceneId: { $nin: scenesIds } },
-    }).exec();
-
-    const mergedScenesShootData: mergedSceneShoot[] = scenesData?.map((scene: any) => {
-      const sceneShootingData = scenesInShoot.find((sceneInShoot: any) => parseInt(sceneInShoot.sceneId) === parseInt(scene.sceneId));
-      return {
-        cardType: 'scene',
-        backgroundColor: getSceneBackgroundColor(sceneShootingData),
-        frontId: scene._data.id,
-        sceneHeader: getSceneHeader(scene._data),
-        ...scene._data,
-        ...sceneShootingData,
-      };
-    }) ?? [];
-
-    const bannersWithType: mergedSceneBanner[] = bannersInShoot.map((banner: any) => ({
-      cardType: 'banner', ...banner,
-    }));
-
-    const mergedScenes = [...mergedScenesShootData, ...bannersWithType].sort((a: any, b: any) => a.position - b.position);
-
-    const updatedInfo = calculateUpdatedInfo(mergedScenes);
-
-    const shootingInfo: ShootingInfo = {
-      ...updatedInfo,
-      generalCall: shootings[0]._data.generalCall,
-      onSet: shootings[0]._data.onSet,
-      estimatedWrap: shootings[0]._data.estimatedWrap,
-      wrap: shootings[0]._data.wrap,
-      lastOut: shootings[0]._data.lastOut,
-      locations: shootings[0]._data.locations,
-      hospitals: shootings[0]._data.hospitals,
-      advanceCalls: shootings[0]._data.advanceCalls,
-      meals: shootings[0]._data.meals,
-      protectedScenes: scenesData?.filter((scene: SceneDocType) => scene.protectionType).length || 0,
+  const waitForIndexedDB = async () => {
+    const checkIndexedDB = async () => {
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      return shooting !== null;
     };
-
-    const shootingFormattedDate = formatShootingDate(shootings[0]._data.shootDate, shootings[0]._data.unitNumber);
-
-    setIsLoading(false);
-
-    return {
-      mergedSceneBanners: mergedScenes,
-      mergedScenesShootData,
-      scenesNotIncluded: scenesNotIncluded?.map((scene: any) => scene._data) ?? [],
-      shootingInfo,
-      formattedDate: shootingFormattedDate,
-    };
+  
+    let attempts = 0;
+    while (!(await checkIndexedDB()) && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      attempts++;
+    }
   };
 
-  const fetchData = async () => {
+  const getShootingData = async (): Promise<{
+    mergedSceneBanners: any[];
+    mergedScenesShootData: mergedSceneShoot[];
+    scenesNotIncluded: any[];
+    shootingInfo: ShootingInfo;
+    formattedDate: string;
+  }> => {
+    try {
+      // Primera query - obtener datos del shooting
+      const t1 = new Date().getTime();
+      await waitForIndexedDB();
+      const shooting = await oneWrappDb?.shootings.findOne({ selector: { id: shootingId } }).exec();
+      const scenesInShoot = shooting._data.scenes;
+      const scenesWithShootIds = scenesWithShootings.filter((scene: any) => !!scene.shootingInfo).map((scene: any) => scene.sceneId);
+      const bannersInShoot = shooting._data.banners;
+      const scenesIds = scenesInShoot.map((scene: any) => parseInt(scene.sceneId));
+      console.log('Time for getting shooting data:', new Date().getTime() - t1);
+  
+      // Queries paralelas para scenes
+      const t2 = new Date().getTime();
+      const [scenesData, scenesNotIncluded] = await Promise.all([
+        oneWrappDb?.scenes.find({
+          selector: { sceneId: { $in: scenesIds } },
+        }).exec(),
+        oneWrappDb?.scenes.find({
+          selector: { projectId: shooting._data.projectId, sceneId: { $nin: scenesWithShootIds } },
+        }).exec()
+      ]);
+
+      console.log('Time for parallel scene queries:', new Date().getTime() - t2);
+  
+      // Crear Map para lookup eficiente
+      const t3 = new Date().getTime();
+      const sceneShootingDataMap = new Map(
+        scenesInShoot.map((scene: any) => [parseInt(scene.sceneId), scene])
+      );
+  
+      const mergedScenesShootData: mergedSceneShoot[] = scenesData?.map((scene: any) => {
+        const sceneShootingData = sceneShootingDataMap.get(parseInt(scene.sceneId));
+        return {
+          cardType: 'scene',
+          backgroundColor: getSceneBackgroundColor(sceneShootingData as mergedSceneShoot),
+          frontId: scene._data.id,
+          sceneHeader: getSceneHeader(scene._data),
+          ...scene._data,
+          ...(typeof sceneShootingData === 'object' ? sceneShootingData : {}),
+        };
+      }) ?? [];
+      console.log('Time for merging scenes data:', new Date().getTime() - t3);
+  
+      const t4 = new Date().getTime();
+      const bannersWithType: mergedSceneBanner[] = bannersInShoot.map((banner: any) => ({
+        cardType: 'banner',
+        ...banner,
+      }));
+      console.log('Time for processing banners:', new Date().getTime() - t4);
+
+      const t5 = new Date().getTime();
+      const mergedScenes = [...mergedScenesShootData, ...bannersWithType].sort(
+        (a: any, b: any) => a.position - b.position
+      );
+      console.log('Time for final merge and sort:', new Date().getTime() - t5);
+  
+      const t6 = new Date().getTime();
+      const updatedInfo = calculateUpdatedInfo(mergedScenes);
+      console.log('Time for calculating updated info:', new Date().getTime() - t6);
+  
+      const t7 = new Date().getTime();
+      const shootingInfo: ShootingInfo = {
+        ...updatedInfo,
+        generalCall: shooting._data.generalCall,
+        onSet: shooting._data.onSet,
+        estimatedWrap: shooting._data.estimatedWrap,
+        wrap: shooting._data.wrap,
+        lastOut: shooting._data.lastOut,
+        locations: shooting._data.locations,
+        hospitals: shooting._data.hospitals,
+        advanceCalls: shooting._data.advanceCalls,
+        meals: shooting._data.meals,
+        protectedScenes: scenesData?.filter((scene: SceneDocType) => scene.protectionType).length || 0,
+      };
+      console.log('Time for creating shooting info:', new Date().getTime() - t7);
+  
+      const t8 = new Date().getTime();
+      const shootingFormattedDate = formatShootingDate(shooting._data.shootDate, shooting._data.unitNumber);
+      console.log('Time for formatting date:', new Date().getTime() - t8);
+  
+      const timeTrackerEnd = new Date().getTime();
+      return {
+        mergedSceneBanners: mergedScenes,
+        mergedScenesShootData,
+        scenesNotIncluded: scenesNotIncluded?.map((scene: any) => scene._data) ?? [],
+        shootingInfo,
+        formattedDate: shootingFormattedDate,
+      };
+    } catch (error) {
+      console.error('Error in getShootingData:', error);
+      throw error;
+    }
+  };
+
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       const scenesData = await getShootingData();
@@ -144,13 +206,12 @@ export const useShootingInfo = () => {
         shotingInfo: scenesData.shootingInfo,
         shootingFormattedDate: scenesData.formattedDate,
       });
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [oneWrappDb, shootingId]);
 
   const saveScriptReport = async () => {
     try {
@@ -197,16 +258,10 @@ export const useShootingInfo = () => {
             }
 
           shootingCopy[field] = newTimeISO;
-          setIsLoading(false);
           await oneWrappDb.shootings.upsert(shootingCopy);
-          await fetchData();
-          setShootingData((prev: any) => ({
-            ...prev,
-            shotingInfo: {
-              ...prev.shotingInfo,
-              [field]: time,
-            },
-          }));
+          const shootingDataCopy = structuredClone(shootingData);
+          shootingDataCopy.shotingInfo[field] = newTimeISO;
+          setShootingData(shootingDataCopy)
 
           if(field === 'generalCall') {
             setMoveDiffHoursAlertOpen(true)
@@ -216,8 +271,6 @@ export const useShootingInfo = () => {
       } catch (error) {
         errorToast(`Error updating time: ${error}`);
         throw error;
-      } finally {
-        setIsLoading(false);
       }
     }
   };
@@ -491,6 +544,7 @@ export const useShootingInfo = () => {
       const mealCopy = { ...meal };
       mealCopy.id = meal.meal; // this is a temporary id, in the backend the logic is (meal.meal == id, so it means that meal is new and should be created)
       mealCopy.shootingId = parseInt(shootingId);
+      mealCopy.quantity = Number(meal.quantity);
       const formatedTimeStart = mealCopy.readyAt?.split(':') || ["00", "00"];
       const formatedTimeEnd = mealCopy.endTime?.split(':') || ["00", "00"];
       const shootingCopy = { ...shooting._data };
@@ -500,9 +554,9 @@ export const useShootingInfo = () => {
       shootingCopy.meals = [...shootingCopy.meals, mealCopy];
       await oneWrappDb?.shootings.upsert(shootingCopy);
       successToast('Meal added successfully');
-    } catch (error) {
+    } catch (error: any) {
       errorToast(`Error adding meal: ${error}`);
-      console.error(error)
+      console.error(error?.message  || 'Error adding meal'); 
       return;
     } finally {
       await fetchData();

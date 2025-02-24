@@ -49,7 +49,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         && (
         <IonButton
           fill="clear"
-          color="primary"
+          color="danger"
           slot={isMobile ? 'end' : 'start'}
           onClick={showReset ? handleReset : handleBack}
           className="cancel-button"
@@ -68,7 +68,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
             {
         handleSave
         && (
-        <IonButton fill="clear" color="primary" slot="end" onClick={handleSave}>
+        <IonButton fill="clear" color="success" slot="end" onClick={handleSave}>
           {handleSaveName || 'SAVE'}
         </IonButton>
         )

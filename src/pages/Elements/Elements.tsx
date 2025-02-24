@@ -13,7 +13,7 @@ import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModa
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import { SceneTypeEnum } from '../../Shared/ennums/ennums';
+import { EmptyEnum, SceneTypeEnum } from '../../Shared/ennums/ennums';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
@@ -99,7 +99,7 @@ const Elements: React.FC<{
     const newCategoriesData = uniqueCategoriesStrings.map((categoryName: string) => {
       const categoryScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.categoryName === categoryName));
       return {
-        categoryName: categoryName || 'NO CATEGORY',
+        categoryName: categoryName || EmptyEnum.NoCategory,
         elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName).length,
         scenesQuantity: categoryScenes.length,
         protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
@@ -122,7 +122,7 @@ const Elements: React.FC<{
       const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
       return {
         elementName,
-        elementCategory: elementCategory || 'NO CATEGORY',
+        elementCategory: elementCategory || EmptyEnum.NoCategory,
         scenesQuantity: elementScenes.length,
         protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
         pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
@@ -191,7 +191,7 @@ const Elements: React.FC<{
 
   useEffect(() => {
     categoriesData.forEach((category: any) => {
-      category.categoryName = category.categoryName || 'NO CATEGORY';
+      category.categoryName = category.categoryName || EmptyEnum.NoCategory;
       setDisplayedElements({
         ...displayedElements,
         [category.categoryName]: [],
@@ -201,7 +201,7 @@ const Elements: React.FC<{
 
   useEffect(() => {
     categoriesData.forEach((category: any) => {
-      category.categoryName = category.categoryName || 'NO CATEGORY';
+      category.categoryName = category.categoryName || EmptyEnum.NoCategory;
       setIsDropDownOpen((prev: any) => ({ ...prev, [category.categoryName]: true }));
     });
   }, [categoriesData]);
@@ -211,7 +211,7 @@ const Elements: React.FC<{
       const updatedElements: any = {};
 
       categoriesData.forEach((category: any) => {
-        category.categoryName = category.categoryName || 'NO CATEGORY';
+        category.categoryName = category.categoryName || EmptyEnum.NoCategory;
         const newElements = filteredElements.filter((element: any) => element.elementCategory.toLowerCase() === category.categoryName.toLowerCase());
         updatedElements[category.categoryName] = newElements;
       });

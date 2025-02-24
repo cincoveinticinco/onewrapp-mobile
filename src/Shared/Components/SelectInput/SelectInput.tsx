@@ -3,6 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Controller } from 'react-hook-form';
 import SelectionModal from '../../../Layouts/SelectionModal/SelectionModal';
 import { SelectOptionsInterface } from '../EditionModal/EditionModal';
+import truncateString from '../../Utils/truncateString';
 
 interface SelectItemProps {
   label: string;
@@ -20,6 +21,7 @@ interface SelectItemProps {
   style?: any;
   multipleSelections?: boolean;
   currentFieldValue: any;
+  onValueChanges?: (value: any) => void;
 }
 
 const SelectItem: React.FC<SelectItemProps> = ({
@@ -37,7 +39,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
   detailsEditMode,
   style = {},
   multipleSelections,
-  currentFieldValue
+  currentFieldValue,
+  onValueChanges,
 }) => {
   const [showError, setShowError] = React.useState(false);
 
@@ -84,6 +87,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
         setValue(fieldKeyName, null);
       } else {
         setValue(fieldKeyName, option?.value);
+        onValueChanges && setTimeout(() => onValueChanges(option?.value), 0);
       }
 
       if (validate(currentFieldValue)) {
@@ -104,6 +108,21 @@ const SelectItem: React.FC<SelectItemProps> = ({
       }
     }
   };
+
+  const checkAllOptions = () => {
+    const isAllChecked = currentFieldValue?.length === options?.length;
+    
+    if(!isAllChecked) {
+      if(multipleSelections) {
+        setValue(fieldKeyName, options.map(option => option.value));
+      } else {
+        return
+      }
+    } else {
+      setValue(fieldKeyName, []);
+    }
+    
+  }
 
   const defineTrigger = () => {
     if (editMode) {
@@ -142,7 +161,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
             disabled={disabled}
             class="uppercase"
             style={{
-              width: '100%',
+              width: '200px',
             }}
           >
             {mappedOptions.map((option) => (
@@ -163,6 +182,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
         multipleSelections={multipleSelections}
         canCreateNew={canCreateNew}
         editMode={editMode}
+        checkAllOptions={checkAllOptions}
       />
     </IonItem>
   );

@@ -4,7 +4,7 @@ import {
 } from 'react';
 import DatabaseContext from '../../../context/Database/Database.context';
 import ScenesContext from '../../../context/Scenes/Scenes.context';
-import { SceneTypeEnum } from '../../../Shared/ennums/ennums';
+import { EmptyEnum, SceneTypeEnum } from '../../../Shared/ennums/ennums';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
@@ -42,7 +42,7 @@ const useProcessedCast = () => {
         characterHeader: character.characterNum ? `${character.characterNum}. ${character.characterName}` : character.characterName,
         characterNum: character.characterNum,
         characterName: character.characterName,
-        categoryName: character.categoryName || 'NO CATEGORY',
+        categoryName: character.categoryName || EmptyEnum.NoCategory,
         setsQuantity,
         locationsQuantity,
         pagesSum,
@@ -78,7 +78,7 @@ const useProcessedCast = () => {
         characterNum: null,
         extraName: extra.extraName ? extra.extraName : 'NO NAME',
         characterName: extra.extraName,
-        categoryName: extra.categoryName || 'NO CATEGORY',
+        categoryName: extra.categoryName || EmptyEnum.NoCategory,
         setsQuantity,
         locationsQuantity,
         pagesSum,

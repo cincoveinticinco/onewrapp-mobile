@@ -1,9 +1,10 @@
 #modal-toolbar {
   border-bottom: 0 solid transparent;
-  height: 50px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 12px;
 
   .modal-toolbar-title {
     position: static;
