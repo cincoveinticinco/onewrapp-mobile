@@ -153,8 +153,9 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   const generatePdf = (template: any, inputs: any) => {
     console.log('Generating PDF');
   };
+  
   return (
-    <IonToolbar color={color} className="toolbar" id="main-pages-toolbar" style={{
+    <IonToolbar color={color} className="toolbar ion-pading-start" id="main-pages-toolbar" style={{
       paddingLeft: back || backString ? '0px' : '16px',
     }}>
       {menu && (
@@ -188,20 +189,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
             clearInput
           />
         </div>
-      )}
-      {addScene && (
-        <IonButton
-          fill="clear"
-          slot="end"
-          color="light"
-          routerLink="addscene"
-          className="ion-no-padding toolbar-button"
-          style={{
-            display: disableEditions ? 'none' : 'flex',
-          }}
-        >
-          <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
-        </IonButton>
       )}
       {backString && (
         <IonButton fill="clear" slot="start" className="ion-no-padding toolbar-button" onClick={handleBack}>
@@ -239,6 +226,20 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
           </IonButton>
         )
       }
+      {addScene && (
+        <IonButton
+          fill="clear"
+          slot="end"
+          color="light"
+          routerLink="addscene"
+          className="ion-no-padding toolbar-button"
+          style={{
+            display: disableEditions ? 'none' : 'flex',
+          }}
+        >
+          <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
+        </IonButton>
+      )}
       {
         customButtons.map((renderFunction: any, index) => (
           <React.Fragment key={index}>

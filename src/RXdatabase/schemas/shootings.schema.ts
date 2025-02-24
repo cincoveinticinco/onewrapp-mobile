@@ -94,7 +94,7 @@ const shootingSchemaLiteral= {
         properties: {
           id: {
             type: ['string', 'null'],
-            maxLength: 250,
+            maxLength: 250
           },
           projectId: {
             type: 'number',

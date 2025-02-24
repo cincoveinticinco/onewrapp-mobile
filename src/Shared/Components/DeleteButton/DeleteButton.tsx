@@ -6,7 +6,7 @@ import './DeleteButton.scss';
 interface DeleteButtonProps {
   id?: string
   className?: string
-  onClick?: () => void
+  onClick?: (e?: any) => void
   size?: 'small' | 'default' | 'large' | undefined
   slot?: 'start' | 'end' | 'icon-only' | undefined
 }

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { WorkerData, WorkerStatusTypeEnum } from '../Shared/types/workers.types';
 
 const localStorageAdapter = {
   getItem: (name: string) => {
@@ -27,11 +28,15 @@ interface AppState {
   setProjectsAreOffline: (value: boolean) => void;
   projectsInfoIsOffline: { [key: string]: boolean };
   setProjectsInfoIsOffline: (value: { [key: string]: boolean }) => void;
+  qeueReportsOW: WorkerData[],
+  addReportToQeue: (report: WorkerData) => void;
+  removeReportFromQeue: (reportId: string) => void;
+  updateReportInQeue: (reportId: string, status: WorkerStatusTypeEnum) => void;
 }
 
 const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       projectId: localStorage.getItem('projectId') || null,
       setProjectId: (value) => set({ projectId: value }),
       scenesAreLoading: true,
@@ -48,6 +53,29 @@ const useAppStore = create<AppState>()(
         ? JSON.parse(localStorage.getItem('projectsInfoIsOffline') as string)
         : {},
       setProjectsInfoIsOffline: (value) => set({ projectsInfoIsOffline: value }),
+      qeueReportsOW: localStorage.getItem('qeueReportsOW')
+        ? JSON.parse(localStorage.getItem('qeueReportsOW') as string)
+        : [],
+      addReportToQeue: (report) => {
+        const updatedQeue = [...get().qeueReportsOW, report];
+        localStorage.setItem('qeueReportsOW', JSON.stringify(updatedQeue));
+        set({ qeueReportsOW: updatedQeue });
+      },
+      removeReportFromQeue: (reportId) => {
+        const updatedQeue = get().qeueReportsOW.filter((report) => report.jobId !== reportId);
+        localStorage.setItem('qeueReportsOW', JSON.stringify(updatedQeue));
+        set({ qeueReportsOW: updatedQeue });
+      },
+      updateReportInQeue: (reportId, status: WorkerStatusTypeEnum) => {
+        const updatedQeue = get().qeueReportsOW.map((report) => {
+          if (report.jobId === reportId) {
+            return { ...report, status };
+          }
+          return report;
+        });
+        localStorage.setItem('qeueReportsOW', JSON.stringify(updatedQeue));
+        set({ qeueReportsOW: updatedQeue });
+      },
     }),
     {
       name: 'app-storage',

@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import { InfoType, SceneTypeEnum } from "../../../../Shared/ennums/ennums";
 import SceneInfoLabels from "../../../SceneDetails/Components/SceneInfoLabels/SceneInfoLabels";
-import { IonToolbar } from "@ionic/react";
 import getUniqueValuesFromNestedArray from "../../../../Shared/Utils/getUniqueValuesFromNestedArray";
 import getUniqueValuesByKey from "../../../../Shared/Utils/getUniqueValuesByKey";
 
@@ -76,8 +75,6 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
       totalSets,
       totalSeconds
     });
-
-    console.log('sceneTotals', sceneTotals);
   }, [scenes]);
 
   const wraperLabelStyles = {

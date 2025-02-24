@@ -23,6 +23,7 @@ export interface FormInput {
   search?: boolean;
   multiple?: boolean;
   offset?: string;
+  onValueChanges?: (value: any) => void;
 }
 
 export interface SelectOptionsInterface {
@@ -50,6 +51,7 @@ interface EditionModalProps {
   isOpen?: boolean;
   setIsOpen?: (value: boolean) => void;
   onDidPresent?: () => void;
+  onValueChanges?: (value: any) => void;
 }
 
 const EditionModal: React.FC<EditionModalProps> = ({
@@ -120,7 +122,6 @@ const EditionModal: React.FC<EditionModalProps> = ({
   });
 
   const setNewOptionValue = (fieldKeyName: string, value: string) => {
-    console.log(value, '????')
     if ((value === '' || !value) && fieldKeyName !== 'characterNum') {
       return setValue(fieldKeyName, null);
     }
@@ -203,6 +204,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
                         style={{ width: '100%' }}
                         multipleSelections={input.multiple}
                         currentFieldValue={watch(input.fieldKeyName)}
+                        onValueChanges={input.onValueChanges}
                       />
                     )
                   ) : input.type === 'checkbox' ? (

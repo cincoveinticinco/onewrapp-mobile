@@ -115,6 +115,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
               onNewOptionCreated={(newOption) => {
                 setOptions([...options, newOption]);
               }}
+              setSelectedOptions={setOptions}
             />
           </>
         )}

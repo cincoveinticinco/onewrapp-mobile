@@ -42,8 +42,6 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     // Escucha cambios en la historia de navegación
     const unlisten = history.listen((location) => {
-      // Aquí puedes guardar la ruta actual en localStorage o en tu contexto
-      console.log('Ruta actual:', location.pathname);
     location.pathname !== '/login' && localStorage.setItem('lastAppRoute', location.pathname);
     });
 
@@ -70,14 +68,11 @@ const AppContent: React.FC = () => {
       if (user && loggedIn) {
         const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
         const now = new Date().getTime();
-        console.log(user)
-
         if (now > sessionEndsAt) {
           setLoggedIn(false);
           await logout();
         } else {
           setLoggedIn(true);
-          console.log('User is logged in');
         }
       }
 
@@ -93,7 +88,7 @@ const AppContent: React.FC = () => {
         await loadEnvironment(isIos);
         // Aquí puedes realizar acciones adicionales después de cargar el ambiente
       } catch (error) {
-        console.error('Error al inicializar el ambiente:', error);
+        throw new Error('Error loading environment');
       }
     };
 
