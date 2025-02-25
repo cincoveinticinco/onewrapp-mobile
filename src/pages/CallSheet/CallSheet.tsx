@@ -743,7 +743,6 @@ const CallSheet: React.FC<CallSheetProps> = ({
         <IonHeader>
           <Toolbar
             name={`${view.toUpperCase()} CALL TIME`}
-            logoutIcon={false}
             search={true}
             searchMode={searchMode}
             setSearchMode={setSearchMode}

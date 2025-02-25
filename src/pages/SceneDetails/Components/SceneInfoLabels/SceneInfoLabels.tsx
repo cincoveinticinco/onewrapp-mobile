@@ -95,11 +95,11 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
   
   if (!form) {
     return (
-      <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
+      <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center', margin: '3px' }}>
         {renderInfo()}
         <>
-        <p style={{ fontSize: '10px', margin: '6px', fontWeight: '500' }} >
-          {title.toUpperCase()}
+        <p style={{ fontSize: '10px', margin: '3px', fontWeight: '500' }} >
+         <b> {title.toUpperCase()}</b>
         </p>
         </>
       </div>
@@ -243,9 +243,9 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
   };
 
   return (
-    <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center' }}>
+    <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center', margin: '3px' }}>
       {(editMode && isEditable) ? renderInput() : renderInfo()}
-      <p style={{ fontSize: '10px', margin: '6px', fontWeight: '500' }} className={showError ? 'error' : ''}>
+      <p style={{ fontSize: '10px', margin: '3px', fontWeight: '500' }} className={showError ? 'error' : ''}>
         {!showError ? (
           <>
             {title.toUpperCase()} {type === InfoType.Minutes && '(MM:SS)'} {required ? '*' : ''}

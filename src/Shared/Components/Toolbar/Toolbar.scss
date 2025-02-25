@@ -76,10 +76,9 @@
   }
 
   .toolbar-search-wrapper {
+    width: 50px;
     display: flex;
-    width: 30px;
     transition: all 0.5s ease;
-    border-radius: 30px;
     overflow: hidden;
 
     .toolbar-search-input {
@@ -95,15 +94,6 @@
     display: flex;
     align-items: center;
     margin: 6px 0;
-
-    .toolbar-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: auto;
-      padding: 7px;
-    }
-
     .toolbar-search-input {
       opacity: 1;
       text-align: left;

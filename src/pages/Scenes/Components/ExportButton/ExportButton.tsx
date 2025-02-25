@@ -9,6 +9,7 @@ import ExportModal from "../ExportModal/ExportModal";
 import DatabaseContext from "../../../../context/Database/Database.context";
 import './ExportButton.scss';
 import { WorkerData, WorkerStatusTypeEnum } from "../../../../Shared/types/workers.types";
+import ToolbarButton from "../../../../Shared/Components/ToolbarButton/ToolbarButton";
 
 const ExportButton: React.FC = () => {
   const { projectId, isOnline } = useContext(DatabaseContext)
@@ -52,20 +53,18 @@ const ExportButton: React.FC = () => {
 
   return (
     <>
-      <IonButton
-        fill="clear"
+      <ToolbarButton
+        triggerId="export-button"
+        click={reports.length > 0 ? () => setShowReports(!showReports) : () => setOpenExportModal(true)}
+        show={!loading}
         color={reports.length > 0 ? 'success' : 'light'}
-        className="ion-no-padding reset-filters-option ion-margin-end"
-        onClick={reports.length > 0 ? () => setShowReports(!showReports) : () => setOpenExportModal(true)}
-        disabled={loading}
-        slot="end"
       >
         {loading ? (
           <IonSpinner name="circular" color='success' />
         ) : (
-          <IonIcon slot="icon-only" icon={arrowDownCircleOutline} />
+          <IonIcon icon={arrowDownCircleOutline} />
         )}
-      </IonButton>
+      </ToolbarButton>
       <IonModal isOpen={showReports} onDidDismiss={() => setShowReports(false)} color='tertiary' className="general-modal-styles">
         <IonContent color='tertiary' className='ion-padding'>
           <IonHeader className="add-new-option-description" mode="ios" />

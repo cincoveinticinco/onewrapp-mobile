@@ -23,7 +23,6 @@ import React, {
 } from 'react';
 import {
   Redirect, Route,
-  useParams,
   useRouteMatch,
 } from 'react-router-dom';
 import DatabaseContext from '../../../context/Database/Database.context';
@@ -46,7 +45,7 @@ import Sets from '../../../pages/Sets/Sets';
 import Settings from '../../../pages/Settings/Settings';
 import ShootingDetail from '../../../pages/ShootingDetail/ShootingDetail';
 import StripBoard from '../../../pages/StripBoard/StripBoard';
-import Strips from '../../../pages/Strips/Strips';
+import Scenes from '../../../pages/Scenes/Scenes';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';
 import { useRxDB } from 'rxdb-hooks';
@@ -178,7 +177,7 @@ const AppTabs: React.FC = () => {
           exact
           path={`${urlString}/strips`}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
-          component={Strips}
+          component={Scenes}
           unauthorizedRoute={unauthorizedRoute}
         />
 

@@ -565,7 +565,7 @@ const SceneScript: React.FC<{
 }
         </div>
         <IonHeader>
-          <Toolbar backString handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />
+          <Toolbar handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />
           <SceneHeader
             sceneColor={sceneColor}
             sceneHeader={sceneHeader}

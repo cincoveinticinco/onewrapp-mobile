@@ -21,7 +21,7 @@ import InfoView from './Components/ShootingDetailViews/InfoView/InfoView';
 import ProductionReportView from './Components/ShootingDetailViews/ProductionReportView/ProductionReportView';
 import ScriptReportView from './Components/ShootingDetailViews/ScriptReportView/ScriptReportView';
 import WrapReportView from './Components/ShootingDetailViews/WrapReportView/WrapReportView';
-import SceneCard from '../Strips/Components/SceneCard/SceneCard';
+import SceneCard from '../Scenes/Components/SceneCard/SceneCard';
 import DatabaseContext from '../../context/Database/Database.context';
 import { ShootingSceneStatusEnum } from '../../Shared/ennums/ennums';
 import AppLoader from '../../Shared/hooks/AppLoader';

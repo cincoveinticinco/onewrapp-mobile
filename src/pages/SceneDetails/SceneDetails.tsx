@@ -652,7 +652,6 @@ const SceneDetails: React.FC<{
   const renderToolbar = () => (
     <Toolbar
       name={creationMode ? "CREATE SCENE" : sceneHeader}
-      backString={!editMode}
       handleBack={handleBack}
       {...(creationMode || editMode
         ? { customButtons: [editModeButtons], showLogout: false }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { IonButton } from '@ionic/react';
+import React, { CSSProperties } from 'react';
+import { IonButton, IonItem } from '@ionic/react';
 import { VscEdit, VscSave } from 'react-icons/vsc';
 import AddButton from '../AddButton/AddButton';
 import DropDownButton from '../DropDownButton/DropDownButton';
@@ -64,11 +64,12 @@ export const Section: React.FC<SectionProps> = ({
     return null;
   };
 
-  const [sectionStyle, setSectionStyle] = React.useState({
+  const [sectionStyle, setSectionStyle] = React.useState<CSSProperties>({
     border: '1px solid black',
     backgroundColor: 'var(--ion-color-dark)',
     height: '40px',
     cursor: 'pointer',
+    position: 'relative'
   });
 
   const setTouchStartStyles = () => {

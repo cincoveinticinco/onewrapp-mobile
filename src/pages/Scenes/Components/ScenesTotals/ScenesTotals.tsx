@@ -4,13 +4,16 @@ import { InfoType, SceneTypeEnum } from "../../../../Shared/ennums/ennums";
 import SceneInfoLabels from "../../../SceneDetails/Components/SceneInfoLabels/SceneInfoLabels";
 import getUniqueValuesFromNestedArray from "../../../../Shared/Utils/getUniqueValuesFromNestedArray";
 import getUniqueValuesByKey from "../../../../Shared/Utils/getUniqueValuesByKey";
+import { IonItem } from "@ionic/react";
 
 interface ScenesTotalsProps {
   scenes: SceneDocType[];
+  isSection?: boolean;
 }
 
 const ScenesTotals: React.FC<ScenesTotalsProps> = ({
-  scenes
+  scenes,
+  isSection = false
 }) => {
   const [sceneTotals, setSceneTotals] = useState({
     totalScenes: 0,
@@ -79,19 +82,29 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
 
   const wraperLabelStyles = {
     margin: '0 12px',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 
+  const totalsColor = isSection ? 'light' : 'tertiary';
+  const sectionStyles = isSection ? 'totals-bar-for-section' : 'ion-padding-top';
+  const slot = !isSection ? 'start' : 'end';
+
   return (
-    <div
-    className="ion-padding-top"
-     style={{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-     }}
+    <IonItem
+      className={sectionStyles}
+      color={totalsColor}
     >
-      <div style={wraperLabelStyles}>
+      {
+        isSection && (
+          <div style={{ width: '20%', textWrap: 'nowrap'}}>
+            <b>TOTALS</b>
+          </div>
+        )
+      }
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -104,7 +117,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -117,7 +130,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -130,7 +143,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Pages}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -143,7 +156,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -156,7 +169,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -169,7 +182,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -182,7 +195,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -195,7 +208,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Number}
         />
       </div>
-      <div style={wraperLabelStyles}>
+      <div style={wraperLabelStyles} slot={slot}>
         <SceneInfoLabels
           editMode={false}
           label={{
@@ -208,7 +221,7 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
           type={InfoType.Minutes}
         />
       </div>
-    </div>
+    </IonItem>
   );
 }
 
