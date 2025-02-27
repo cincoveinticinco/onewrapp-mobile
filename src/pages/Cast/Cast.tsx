@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 
 // React component and utility imports
-import { IonContent } from '@ionic/react';
+import { IonContent, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
@@ -20,6 +20,8 @@ import useProcessedCast from './hooks/useProcessedCast';
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
 import AppLoader from '../../Shared/hooks/AppLoader';
+import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import { swapVerticalOutline } from 'ionicons/icons';
 
 const Cast: React.FC<{
   permissionType?: number | null;
@@ -166,6 +168,17 @@ const Cast: React.FC<{
 
   // Render
 
+  const SortButton = () => (
+    <ToolbarButton
+      triggerId="sort-cast-modal-trigger"
+      click={() => {}}
+      show
+      color="light"
+    >
+      <IonIcon icon={swapVerticalOutline} />
+    </ToolbarButton>
+  )
+
   return (
     <>
       <MainPagesLayout
@@ -174,8 +187,7 @@ const Cast: React.FC<{
         handleBack={handleBack}
         title="CAST"
         search
-        sort
-        sortTrigger="sort-cast-modal-trigger"
+        customButtons={[SortButton]}
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
@@ -216,26 +228,26 @@ const Cast: React.FC<{
           {
             !isLoading
             && extras.length > 0 && (
-            <DropDownCast
-              key="cast-dropdown-EXTRAS"
-              category="EXTRAS"
-              isOpen={dropDownIsOpen.EXTRAS}
-              onToggle={() => handleDropDown('EXTRAS')}
-              count={extras.length}
-            >
-              <ScrollInfiniteContext
-                filteredData={extras}
-                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
-                batchSize={7}
+              <DropDownCast
+                key="cast-dropdown-EXTRAS"
+                category="EXTRAS"
+                isOpen={dropDownIsOpen.EXTRAS}
+                onToggle={() => handleDropDown('EXTRAS')}
+                count={extras.length}
               >
-                {
-                  dropDownIsOpen.EXTRAS
-                  && displayedCast.EXTRAS.map((extra: any, index: number) => (
-                    <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
-                  ))
-                }
-              </ScrollInfiniteContext>
-            </DropDownCast>
+                <ScrollInfiniteContext
+                  filteredData={extras}
+                  setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
+                  batchSize={7}
+                >
+                  {
+                    dropDownIsOpen.EXTRAS
+                    && displayedCast.EXTRAS.map((extra: any, index: number) => (
+                      <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
+                    ))
+                  }
+                </ScrollInfiniteContext>
+              </DropDownCast>
             )
           }
         </IonContent>

@@ -87,18 +87,19 @@ const InputModal: React.FC<InputModalProps> = ({
     defaultFormValues[input.fieldKeyName] = null;
   });
 
-
-
   const handleSaveNewOption = () => {
     const newOptionArgument: string = searchText;
     onNewOptionCreated?.(newOptionArgument); // Notificar al padre
     handleCheckboxToggle(newOptionArgument);
     setSearchText('');
     closeModal();
-};
+  };
 
+  useEffect(() => {
+    console.log('filteredOptions', filteredOptions.length);
+  }, [filteredOptions]);
 
-  if(isOpen) {
+  if (isOpen) {
     return (
       <IonModal
         className="general-modal-styles"
@@ -120,14 +121,22 @@ const InputModal: React.FC<InputModalProps> = ({
           <IonContent color="tertiary">
             <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={true} />
             {
+              listOfOptionsCopy.length === 0
+              && (
+                <p className="no-items-message" style={{ marginTop: '10px', border: '1px solid red' }}>
+                  There are no items to show
+                </p>
+              )
+            }
+            {
               searchText.length > 0
               && filteredOptions.length === 0
               && (
-              <p className="no-items-message">
-                There are no coincidences. Do you want to
-                <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}>reset </span>
-                ?
-              </p>
+                <p className="no-items-message">
+                  There are no coincidences. Do you want to
+                  <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}>reset </span>
+                  ?
+                </p>
               )
             }
             <>
@@ -142,49 +151,49 @@ const InputModal: React.FC<InputModalProps> = ({
                 uncheckedFilteredOptions={uncheckedFilteredOptions}
               />
               {
-                filteredOptions.length === 0 && canCreateNew
-                  && (
-                    <div>
-                      <p className="add-new-option-description no-items-message">
-                        <a>{searchText}</a> does not exist. Do you want to create a new one?        
-                      </p>
-                      <div className="buttons-wrapper">
-                        <OutlinePrimaryButton
-                          buttonName="YES"
-                          onClick={handleSaveNewOption}
-                          color='success'
-                        />
-                        <OutlinePrimaryButton
-                          buttonName="NO"
-                          onClick={() => setSearchText('')}
-                          className="ion-margin"
-                          color='danger'
-                        />
-                      </div>
+                filteredOptions.length === 0 && canCreateNew && searchText.trim().length > 0
+                && (
+                  <div>
+                    <p className="add-new-option-description no-items-message">
+                      <a>{searchText}</a> does not exist. Do you want to create a new one?
+                    </p>
+                    <div className="buttons-wrapper">
+                      <OutlinePrimaryButton
+                        buttonName="YES"
+                        onClick={handleSaveNewOption}
+                        color='success'
+                      />
+                      <OutlinePrimaryButton
+                        buttonName="NO"
+                        onClick={() => setSearchText('')}
+                        className="ion-margin"
+                        color='danger'
+                      />
                     </div>
-                  )
-                }
+                  </div>
+                )
+              }
               <div className='buttons-wrapper'>
                 {
                   filteredOptions.length > 0
                   && (
-                  <OutlinePrimaryButton
-                    buttonName="SAVE"
-                    onClick={closeModal}
-                    className="ion-margin"
-                    color='success'
-                  />
+                    <OutlinePrimaryButton
+                      buttonName="SAVE"
+                      onClick={closeModal}
+                      className="ion-margin"
+                      color='success'
+                    />
                   )
                 }
                 {
                   filteredOptions.length > 0
                   && (
-                  <OutlinePrimaryButton
-                    buttonName="CANCEL"
-                    onClick={closeModal}
-                    className="ion-margin"
-                    color='danger'
-                  />
+                    <OutlinePrimaryButton
+                      buttonName="CANCEL"
+                      onClick={closeModal}
+                      className="ion-margin"
+                      color='danger'
+                    />
                   )
                 }
               </div>

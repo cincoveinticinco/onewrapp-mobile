@@ -132,22 +132,24 @@ const SceneDetails: React.FC<{
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
 
-  const emptyScene = {
+  const emptyScene: SceneDocType = {
+    id: '',
+    projectId: Number(id),
     sceneId: 0,
     episodeNumber: '',
     sceneNumber: '',
-    sceneName: '',
-    sceneDescription: '',
-    intOrExtOption: '',
-    dayOrNightOption: '',
-    location: '',
+    setName: '',
+    locationName: '',
+    sceneType: SceneTypeEnum.SCENE,
+    intOrExtOption: IntOrExtOptionEnum.INT,
+    dayOrNightOption: DayOrNightOptionEnum.DAY,
     characters: [],
     elements: [],
     extras: [],
     notes: [],
   };
 
-  const form = useForm<SceneDocType>({
+  const form = useForm<SceneDocType | typeof emptyScene>({
     defaultValues: emptyScene // Establecemos los valores por defecto iniciales
   });
 
@@ -549,25 +551,28 @@ const SceneDetails: React.FC<{
   const onSubmitForm = async (data: SceneDocType) => {
     try {
       const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-      if (sceneDocument) {
-        if(creationMode) {
-          data.id = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
-          await validateSceneExistence(data.id);
-          await oneWrapDb?.scenes.upsert(data);
-        } else {
-          const sceneId = sceneDocument.get('id');
-          const newId = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
-          if(sceneId !== newId) {
-            await validateSceneExistence(newId);
-          }
-          await sceneDocument.update({ $set: data });
+      if(creationMode) {
+        data.id = id + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+        const dataCopy = {
+          ...data,
+          projectId: Number(id),
         }
-        successMessageSceneToast('Scene updated successfully');
-        console.log()
-        toggleEditMode();
+        await validateSceneExistence(data.id);
+        await oneWrapDb?.scenes.insert(dataCopy);
+      } else {
+        const sceneId = sceneDocument.get('id');
+        const newId = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
+        if(sceneId !== newId) {
+          await validateSceneExistence(newId);
+        }
+        await sceneDocument.update({ $set: data });
       }
+      successMessageSceneToast('Scene updated successfully');
+      history.push(`/my/projects/${id}/strips`);
+      toggleEditMode();
     } catch (error: any) {
-      errorToast(error || 'Error updating scene');
+      console.error('Error updating scene:', error);
+      errorToast(error.message || error || 'Error updating scene');
     }
   }
 
@@ -652,6 +657,7 @@ const SceneDetails: React.FC<{
   const renderToolbar = () => (
     <Toolbar
       name={creationMode ? "CREATE SCENE" : sceneHeader}
+      back
       handleBack={handleBack}
       {...(creationMode || editMode
         ? { customButtons: [editModeButtons], showLogout: false }

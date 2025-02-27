@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { IonGrid, IonSpinner } from '@ionic/react';
+import { 
+  IonGrid, 
+  IonContent, 
+  IonInfiniteScroll, 
+  IonInfiniteScrollContent,
+  IonButton
+} from '@ionic/react';
 import { PermisionTypes } from '../../../../Shared/Components/ProtectedRoute/ProtectedRoute';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 import ScenesTotals from '../ScenesTotals/ScenesTotals';
@@ -24,42 +30,43 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
   selectedFilterOptions,
   setSelectedFilterOptions
 }) => {
-  const [displayedCategories, setDisplayedCategories] = useState<string[]>([]);
   const [displayedCategoriesCount, setDisplayedCategoriesCount] = useState<number>(10);
   const [visibleScenesPerCategory, setVisibleScenesPerCategory] = useState<{ [key: string]: number }>({});
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+  const [isInfiniteDisabled, setInfiniteDisabled] = useState<boolean>(false);
 
-  // Update displayed categories when category count changes or categories change
-  useEffect(() => {
-    setDisplayedCategories(sortedCategoryKeys.slice(0, displayedCategoriesCount));
-  }, [sortedCategoryKeys, displayedCategoriesCount]);
-
-  // Initialize visibility states when categories change
   useEffect(() => {
     const initialVisibleScenes: { [key: string]: number } = {};
     const initialOpenSections: { [key: string]: boolean } = {};
-
+    
     sortedCategoryKeys.forEach(category => {
-      initialVisibleScenes[category] = 10; // Initially show 10 scenes per category
-      initialOpenSections[category] = true; // Initially all sections are open
+      initialVisibleScenes[category] = 10;
+      initialOpenSections[category] = true;
     });
-
+    
     setVisibleScenesPerCategory(initialVisibleScenes);
     setOpenSections(initialOpenSections);
   }, [sortedCategoryKeys]);
 
-  // Function to load more scenes for a specific category
+
   const loadMoreScenesForCategory = useCallback((category: string) => {
-    setVisibleScenesPerCategory(prev => ({
-      ...prev,
-      [category]: Math.min(
-        (prev[category] || 10) + 10,
-        categorizedScenes[category]?.length || 0
-      )
-    }));
+    if (!categorizedScenes[category]) {
+      return;
+    }
+    
+    const totalInCategory = categorizedScenes[category].length;
+    
+    setVisibleScenesPerCategory(prev => {
+      const currentCount = prev[category] || 10;
+      const newCount = Math.min(currentCount + 10, totalInCategory);
+      
+      return {
+        ...prev,
+        [category]: newCount
+      };
+    });
   }, [categorizedScenes]);
 
-  // Function to toggle section visibility
   const toggleSectionVisibility = useCallback((category: string) => {
     setOpenSections(prev => ({
       ...prev,
@@ -67,17 +74,20 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
     }));
   }, []);
 
-  // Function to load more categories
-  const loadMoreCategories = useCallback(() => {
-    if (displayedCategoriesCount < sortedCategoryKeys.length) {
-      setDisplayedCategoriesCount(prev => Math.min(prev + 5, sortedCategoryKeys.length));
-    }
+  const handleInfiniteScroll = useCallback((event: CustomEvent<void>) => {
+    const nextCategoriesCount = Math.min(displayedCategoriesCount + 5, sortedCategoryKeys.length);
+    setDisplayedCategoriesCount(nextCategoriesCount);
+
+    setTimeout(() => {
+      (event.target as HTMLIonInfiniteScrollElement).complete();
+
+      if (nextCategoriesCount >= sortedCategoryKeys.length) {
+        setInfiniteDisabled(true);
+      }
+    }, 500);
   }, [displayedCategoriesCount, sortedCategoryKeys.length]);
 
-  // Check if there are any scenes in any category
-  const hasScenes = Object.keys(categorizedScenes).length > 0;
-
-  if (!hasScenes) {
+  if (Object.keys(categorizedScenes).length === 0) {
     return (
       <NoScenesMessage
         hasFilters={Object.keys(selectedFilterOptions).length > 0}
@@ -86,43 +96,63 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
     );
   }
 
+  const hasMoreScenes = (category: string) => {
+    const totalScenes = categorizedScenes[category]?.length || 0;
+    const visibleScenes = visibleScenesPerCategory[category] || 0;
+    return visibleScenes < totalScenes;
+  };
+
   return (
-    <>
-      {displayedCategories.map((category) => (
-        visibleScenesPerCategory[category] > 0 && categorizedScenes[category]?.length > 0 && (
+    <IonContent>
+      {sortedCategoryKeys.slice(0, displayedCategoriesCount).map((category) => (
+        (visibleScenesPerCategory[category] > 0 && categorizedScenes[category]?.length > 0) && (
           <Section
             title={category}
             key={category}
             open={openSections[category] || false}
             setOpen={() => toggleSectionVisibility(category)}
           >
-            <IonGrid className="scenes-grid sectioned-grid ion-margin" id={`category-content-${category}`}>
-              {categorizedScenes[category]?.slice(0, visibleScenesPerCategory[category] || 10).map((scene, i) => (
-                <SceneCard
-                  key={`scene-item-${scene.id}-${i}`}
-                  scene={scene as any}
-                  searchText={searchText}
-                  permissionType={permissionType}
-                />
-              ))}
-              
-              {visibleScenesPerCategory[category] < categorizedScenes[category]?.length && (
-                <div className="ion-text-center ion-padding loading-indicator">
-                  <IonSpinner name="crescent" />
+            <IonGrid className="scenes-grid sectioned-grid ion-margin">
+              {categorizedScenes[category]
+                ?.slice(0, visibleScenesPerCategory[category])
+                .map((scene: SceneDocType, i) => (
+                  <SceneCard
+                    key={`scene-item-${scene.id}-${i}`}
+                    scene={scene as any}
+                    searchText={searchText}
+                    permissionType={permissionType}
+                  />
+                ))}
+              {hasMoreScenes(category) && (
+                <div className="ion-text-center ion-padding">
+                  <IonButton 
+                    onClick={() => loadMoreScenesForCategory(category)}
+                    fill="outline"
+                    size="small"
+                  >
+                    LOAD MORE
+                  </IonButton>
                 </div>
               )}
             </IonGrid>
+            
             <ScenesTotals scenes={categorizedScenes[category]} isSection />
           </Section>
         )
       ))}
-      
-      {displayedCategories.length < sortedCategoryKeys.length && (
-        <div className="ion-text-center ion-padding loading-indicator">
-          <IonSpinner name="crescent" onClick={loadMoreCategories} />
-        </div>
-      )}
-    </>
+
+      {/* Scroll Infinito principal para cargar más categorías */}
+      <IonInfiniteScroll
+        onIonInfinite={handleInfiniteScroll}
+        threshold="100px"
+        disabled={isInfiniteDisabled}
+      >
+        <IonInfiniteScrollContent
+          loadingSpinner="crescent"
+          loadingText="LOADING..."
+        />
+      </IonInfiniteScroll>
+    </IonContent>
   );
 };
 

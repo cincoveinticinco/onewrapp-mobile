@@ -4,16 +4,16 @@ import React from "react";
 interface ToolbarButtonProps {
   children: React.ReactNode;
   click: () => void;
-  triggerId: string;
-  show: boolean;
+  triggerId?: string;
+  show?: boolean;
   color?: string;
   slot?: string;
   routerLink?: string;
 }
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = ({ children, triggerId, click, show , color = "light", slot = "end", routerLink}) => {
+const ToolbarButton: React.FC<ToolbarButtonProps> = ({ children, triggerId, click, show = true, color = "light", slot = "end", routerLink}) => {
   const [buttonColor, setButtonColor] = React.useState<string>(color);
-  
+
   return (
     <IonButton
       onClick={click}

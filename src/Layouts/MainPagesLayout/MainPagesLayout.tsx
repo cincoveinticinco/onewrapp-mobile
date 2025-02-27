@@ -16,11 +16,10 @@ interface MainPagesLayoutProps {
 }
 
 const MainPagesLayout: React.FC<MainPagesLayoutProps> = ({
-  children, searchText, setSearchText, search = false, title, isLoading = false, customButtons = [], permissionType,
+  children, searchText, setSearchText, search = false, title, isLoading = false, customButtons = [], permissionType, handleBack = () => { }
 }) => {
   const [searchMode, setSearchMode] = React.useState(false);
   const history = useHistory();
-  const handleBack = () => history.push('/my/projects');
 
   return (
     <IonPage>

@@ -1,5 +1,6 @@
 import {
   IonContent,
+  IonIcon,
 } from '@ionic/react';
 import React, {
   useContext,
@@ -25,6 +26,8 @@ import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias'
 import './Elements.scss';
 import { useRxData } from 'rxdb-hooks';
 import { SceneDocType } from '../../Shared/types/scenes.types';
+import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import { swapVerticalOutline } from 'ionicons/icons';
 
 const Elements: React.FC<{
   permissionType?: number | null;
@@ -251,15 +254,25 @@ const Elements: React.FC<{
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
   };
 
+  const SortButton = () => (
+    <ToolbarButton
+      triggerId="elements-sort-options"
+      click={() => {}}
+      show
+      color="light"
+    >
+      <IonIcon icon={swapVerticalOutline} />
+    </ToolbarButton>
+  )
+
   if(displayedElements.length === 0 && displayedCategories.length === 0) {
     return (
       <MainPagesLayout
         search
-        sort
         searchText={searchText}
         setSearchText={setSearchText}
         title="ELEMENTS"
-        sortTrigger="elements-sort-options"
+        customButtons={[SortButton]}
       >
         <IonContent color="tertiary" fullscreen>
             <p className="ion-padding-start ion-padding-end"
@@ -283,11 +296,10 @@ const Elements: React.FC<{
     <>
       <MainPagesLayout
         search
-        sort
         searchText={searchText}
         setSearchText={setSearchText}
         title="ELEMENTS"
-        sortTrigger="elements-sort-options"
+        customButtons={[SortButton]}
       >
         <IonContent color="tertiary" fullscreen>
           {

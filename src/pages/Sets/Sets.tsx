@@ -1,5 +1,6 @@
 import {
   IonContent,
+  IonIcon,
 } from '@ionic/react';
 import React, {
   useContext, useEffect,
@@ -19,6 +20,8 @@ import AppLoader from '../../Shared/hooks/AppLoader';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
 import removeAccents from '../../Shared/Utils/removeAccents';
 import './Sets.scss';
+import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import { swapVerticalOutline } from 'ionicons/icons';
 
 const Sets: React.FC<{
   permissionType?: number | null;
@@ -161,15 +164,25 @@ const Sets: React.FC<{
     return 'Set name is required';
   };
 
+  const SortButton = () => (
+    <ToolbarButton
+      triggerId="sort-sets-modal-trigger"
+      click={() => {}}
+      show
+      color="light"
+    >
+      <IonIcon icon={swapVerticalOutline} />
+    </ToolbarButton>
+  )
+
   return (
     <>
       <MainPagesLayout
         searchText={setsSearchText}
         setSearchText={setSetsSearchText}
         title="SETS"
-        search
-        sort
-        sortTrigger="sort-sets-modal-trigger"
+        search 
+        customButtons={[SortButton]}
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           {

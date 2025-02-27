@@ -62,7 +62,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   handleBack,
   isLoading = false,
   customButtons = [],
-  permissionType,
   customHandleSearch,
   color = 'tertiary',
 }) => {
@@ -131,8 +130,8 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       </div>
       <>
       {back && (
-        <ToolbarButton triggerId="back-button" click={() => handleBack} show={true} slot="start">
-          <IonIcon icon={chevronBack} />
+        <ToolbarButton triggerId="back-button" click={() => handleBack?.()} show={true} slot="start">
+          <IonIcon icon={chevronBack} style={{color: `var(--ion-color-${color}-contrast)`}} />
         </ToolbarButton>
       )}
       {search && (

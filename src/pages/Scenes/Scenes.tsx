@@ -11,7 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
 import StripTagsToolbar from './Components/StripTagsToolbar/StripTagsToolbar';
 import { defaultSortOptions } from '../../context/Scenes/Scenes.context';
@@ -21,7 +21,7 @@ import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import './Scenes.scss';
 import ScenesTotals from './Components/ScenesTotals/ScenesTotals';
 import SelectionModal from '../../Layouts/SelectionModal/SelectionModal';
-import { groupsByOptions } from './Components/ExportModal/ExportModal';
+import { groupsByOptions, GroupsSceneEnums } from './Components/ExportModal/ExportModal';
 import AppLoader from '../../Shared/hooks/AppLoader';
 import { PermisionTypes } from '../../Shared/Components/ProtectedRoute/ProtectedRoute';
 import ScenesToolbarButtons from './Components/ScenesTollbarButtons/ScenesToolbarButtons';
@@ -29,12 +29,15 @@ import ScenesList from './Components/ScenesList/ScenesList';
 import GroupedScenesList from './Components/GroupedScenesList/GroupedScenesList';
 import { useScenesFiltering } from '../../hooks/useScenesFiltering/useScenesFiltering';
 import useScenesGrouping from '../../hooks/useScenesGrouping/useScenesGrouping';
+import useProjectWeeks from '../../hooks/useProjectWeeks/useProjectWeeks';
+import ScenesGroupByShootings from './Components/ScenesGroupByShootings/ScenesGroupByShootings';
 
 const Scenes: React.FC<{
   permissionType: PermisionTypes | null;
 }> = ({
   permissionType,
 }) => {
+    const { id: projectId } = useParams<{ id: string }>();
     const contentRef = useRef<HTMLIonContentElement>(null);
 
     const [searchText, setSearchText] = useState('');
@@ -43,6 +46,7 @@ const Scenes: React.FC<{
     const location = useLocation();
     useScrollToTop(contentRef, location);
     const toggleTabs = useHideTabs();
+    const { weeks, isFetching } = useProjectWeeks(projectId);
 
     const defaultSortPosibilitiesOrder = [
       {
@@ -105,7 +109,6 @@ const Scenes: React.FC<{
     }, [noGroupByOption]);
 
     useEffect(() => {
-      console.log(permissionType)
       if (permissionType !== PermisionTypes.READ_AND_WRITE) {
         setDisableEditions(true);
       }
@@ -245,16 +248,26 @@ const Scenes: React.FC<{
                       selectedFilterOptions={selectedFilterOptions}
                       setSelectedFilterOptions={setSelectedFilterOptions}
                     />
-                  ) : (
-                    <GroupedScenesList
-                      categorizedScenes={categorizedScenes}
-                      sortedCategoryKeys={sortedCategoryKeys}
+                  ) : groupBy[0] === GroupsSceneEnums.SHOOTING_PLAN ? (
+                    <ScenesGroupByShootings
+                      scenes={filteredScenes}
+                      weeks={weeks}
                       searchText={searchText}
                       permissionType={permissionType}
                       selectedFilterOptions={selectedFilterOptions}
                       setSelectedFilterOptions={setSelectedFilterOptions}
                     />
-                  )}
+                  )
+                    : (
+                      <GroupedScenesList
+                        categorizedScenes={categorizedScenes}
+                        sortedCategoryKeys={sortedCategoryKeys}
+                        searchText={searchText}
+                        permissionType={permissionType}
+                        selectedFilterOptions={selectedFilterOptions}
+                        setSelectedFilterOptions={setSelectedFilterOptions}
+                      />
+                    )}
                 </Suspense>
               </IonContent>
             )

@@ -135,8 +135,6 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           option.checked = false;
         });
       });
-      
-      // También desmarca las opciones en filteredOptions
       setFilteredOptions(prevOptions => 
         prevOptions.map(category => ({
           ...category,
@@ -197,7 +195,6 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           category: category?.category 
         }))
     );
-
     if (!multiple && selectedValues.length > 1) {
       // Para selección única, solo tomamos el último valor seleccionado
       setValues([selectedValues[selectedValues.length - 1]]);
@@ -224,6 +221,14 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         }))
     )
   };
+  
+  const handleSave = () => {
+    if (filteredOptions.every(category => category.options.length === 0)) {
+      createNew();
+    } else {
+      onSave();
+    }
+  }
 
   if (!isOpen) return null;
 
@@ -277,7 +282,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               ))}
             </Section>
           )}
-          
+
           {/* Main Options Section */}
           {filteredOptions.every(category => category.options.length === 0) ? (
             searchText.trim() ? (          <div className="no-items-card">
@@ -365,7 +370,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 && (
                 <OutlinePrimaryButton
                   buttonName="SAVE"
-                  onClick={closeModal}
+                  onClick={handleSave}
                   className="ion-margin"
                   color='success'
                 />

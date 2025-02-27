@@ -16,6 +16,7 @@ interface SectionProps {
   saveFunction?: () => void;
   permissionType?: number | null;
   id?: string | null;
+  color?: string;
 }
 
 export const Section: React.FC<SectionProps> = ({
@@ -29,7 +30,8 @@ export const Section: React.FC<SectionProps> = ({
   saveAfterEdit = false,
   saveFunction,
   permissionType,
-  id
+  id,
+  color = 'dark'
 }) => {
   const renderEditSaveButton = () => {
     if (saveFunction && setEditMode) {
@@ -66,7 +68,8 @@ export const Section: React.FC<SectionProps> = ({
 
   const [sectionStyle, setSectionStyle] = React.useState<CSSProperties>({
     border: '1px solid black',
-    backgroundColor: 'var(--ion-color-dark)',
+    backgroundColor: `var(--ion-color-${color})`,
+    color:`var(--ion-color-${color}-contrast)`,
     height: '40px',
     cursor: 'pointer',
     position: 'relative'
@@ -75,7 +78,7 @@ export const Section: React.FC<SectionProps> = ({
   const setTouchStartStyles = () => {
     setSectionStyle({
       ...sectionStyle,
-      backgroundColor: 'var(--ion-color-tertiary-dark)',
+      backgroundColor: `var(--ion-color-${color})`,
     });
   }
 

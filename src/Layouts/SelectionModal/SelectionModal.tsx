@@ -110,7 +110,6 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
   });
 
   const isOptionChecked = (label: string) => {
-    console.log(selectedOptions, 'selectedOptions', label)
     const option = listOfOptions.find((o: any) => o.label === label);
     if (typeof option?.value === 'string' || typeof option?.value === 'number') {
      return flatten(selectedOptions).includes(option?.value);

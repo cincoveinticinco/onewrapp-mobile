@@ -2,6 +2,7 @@ import { useRxData } from "rxdb-hooks";
 import { SceneDocType } from "../../Shared/types/scenes.types";
 import { useMemo } from "react";
 import { ShootingDocType } from "../../Shared/types/shooting.types";
+import { useParams } from "react-router";
 
 export type CombinedScenesWithShootings = ( SceneDocType & { shootingInfo: ShootingDocType | null })[];
 
@@ -11,11 +12,21 @@ interface UseCombinedScenesWithShootingsProps {
 }
 
 function useCombinedScenesWithShootings(): UseCombinedScenesWithShootingsProps {
+  const {id: projectId} = useParams<{id: string}>();
+
   const {result: scenes, isFetching: isFetchingScenes} = useRxData<SceneDocType>('scenes', 
-    (collection) => collection.find());
+    (collection) => collection.find({
+      selector: {
+        projectId: Number(projectId)
+      }
+    }));
     
   const {result: shootings, isFetching: isFetchingShootings} = useRxData<ShootingDocType>('shootings', 
-    (collection) => collection.find());
+    (collection) => collection.find({
+      selector: {
+        projectId: Number(projectId)
+      }
+    }));
     
   const combinedData = useMemo(() => {
     if (!scenes || !shootings) return [];
