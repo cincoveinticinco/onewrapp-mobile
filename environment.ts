@@ -23,6 +23,8 @@ interface Environment {
   SERVICE_MATRICES_ENDPOINT_PUSH: string;
   USER_ENDPOINT_PULL: string;
   PROJ_WEEKS_ENDPOINT_PULL: string;
+  STRIPBOARD_ENDPOINT_PULL: string;
+  STRIPBOARD_ENDPOINT_PUSH: string;
 }
 
 const environmentVariables: Environment = {
@@ -48,6 +50,8 @@ const environmentVariables: Environment = {
   SERVICE_MATRICES_ENDPOINT_PUSH: import.meta.env.VITE_SERVICE_MATRICES_ENDPOINT_PUSH || '',
   USER_ENDPOINT_PULL: import.meta.env.VITE_USER_ENDPOINT_PULL || '',
   PROJ_WEEKS_ENDPOINT_PULL: import.meta.env.VITE_PROJ_WEEKS_ENDPOINT_PULL || '',
+  STRIPBOARD_ENDPOINT_PULL: import.meta.env.VITE_STRIPBOARD_ENDPOINT_PULL || '',
+  STRIPBOARD_ENDPOINT_PUSH: import.meta.env.VITE_STRIPBOARD_ENDPOINT_PUSH || '',
 };
 
 const envConfigs: Record<string, Environment> = {

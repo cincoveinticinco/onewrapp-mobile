@@ -22,6 +22,7 @@ import useReplicationStore from '../../stores/useReplicationStore';
 import useAppStore from '../../stores/useAppStore';
 import { DatabaseContextProps } from './types/Database.types';
 import ProjWeeksSchema from '../../RXdatabase/schemas/projWeeks.schema';
+import StripboardSchema from '../../RXdatabase/schemas/stripboard.schema';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
@@ -75,6 +76,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [crewCollection, setCrewCollection] = useState<CrewSchema | null>(null);
   const [serviceMatricesCollection, setServiceMatricesCollection] = useState<ServiceMatricesSchema | null>(null);
   const [projWeeksCollection, setProjWeeksCollection] = useState<ProjWeeksSchema | null>(null);
+  const [stripboardCollection, setStripboardCollection] = useState<StripboardSchema | null>(null);
   const [userCollection, setUserCollection] = useState<UserSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
@@ -90,6 +92,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const resyncServiceMatrices: any = useRef(null);
   const resyncCountries: any = useRef(null);
   const resyncProjWeeks = useRef<any>(null);
+  const resyncProjectStripboard = useRef<any>(null);
 
   const [viewTabs, setViewTabs] = useState(true);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -109,8 +112,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       const serviceMatricesCollection = new ServiceMatricesSchema();
       const userCollection = new UserSchema();
       const projWeeksCollection = new ProjWeeksSchema();
+      const stripboardCollection = new StripboardSchema();
 
-      const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection, userCollection, projWeeksCollection]);
+      const RXdatabase = new AppDataBase([sceneColl, projectColl, paragraphColl, unitsColl, shootingsColl, talentsColl, crewColl, countriesCollection, serviceMatricesCollection, userCollection, projWeeksCollection, stripboardCollection]);
       const dbInstance = await RXdatabase.getDatabaseInstance();
 
       setOneWrapRXdatabase(dbInstance);
@@ -125,6 +129,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setServiceMatricesCollection(serviceMatricesCollection);
       setUserCollection(userCollection);
       setProjWeeksCollection(projWeeksCollection);
+      setStripboardCollection(stripboardCollection);
 
       setIsDatabaseReady(true);
 
@@ -338,6 +343,18 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       parseInt(projectId, 10)
     );
   };
+
+  const initializeStripboardReplication = async () => {
+    if (!projectId) {
+      throw new Error('Project Id not found');
+    }
+    await initializeReplication(
+      stripboardCollection,
+      { projectId: parseInt(projectId, 10) },
+      resyncProjectStripboard,
+      parseInt(projectId, 10)
+    );
+  }
   
   const initializeParagraphReplication = async () => {
     if (!projectId) {
@@ -419,7 +436,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       return
     }
 
-    const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication, initializeProjWeekReplication]
+    const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication, initializeProjWeekReplication, initializeStripboardReplication];
     try {
       for (const replication of replicationsArray) {
         await replication();
@@ -629,8 +646,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           function: initializeCrewReplication,
         },
         {
+          name: 'Stripboard',
+          startPercentage: 90,
+          endPercentage: 95,
+          function: initializeStripboardReplication,
+        },
+        {
           name: 'Project Weeks',
-          startPercentage: 90, // Ajusta según corresponda
+          startPercentage: 95, // Ajusta según corresponda
           endPercentage: 100,   // Ajusta según corresponda
           function: initializeProjWeekReplication,
         },
