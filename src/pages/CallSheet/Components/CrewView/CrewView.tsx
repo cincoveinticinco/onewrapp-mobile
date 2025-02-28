@@ -15,13 +15,12 @@ import {
   IonCheckbox,
 } from '@ionic/react';
 import OutlinePrimaryButton from '../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import AppLoader from '../../../../Shared/hooks/AppLoader';
+import AppLoader from '../../../../Shared/Components/AppLoader/AppLoader';
 import './ CrewView.scss'
 import { ShootingStatusEnum } from '../../../../Shared/ennums/ennums';
 import { CrewCall, ShootingDocType } from '../../../../Shared/types/shooting.types';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
 import { CrewDocType } from '../../../../Shared/types/crew.types';
+import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
 
 interface CrewViewProps {
   crewCalls: CrewCall[];
@@ -56,8 +55,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     status: number;
   }[]>([]);
   const [ copyCrewFromMaster, setCopyCrewFromMaster ] = useState<boolean>(false);
-  const errorToast = useErrorToast();
-  const successToast = useSuccessToast();
+  const { successToast, errorToast } = useAlertToast();
   const [ selectedDate, setSelectedDate ] = useState<string>(availableDates[0]?.date || formattedDate);
 
   const { result: shootings, isFetching }: {

@@ -10,13 +10,12 @@ import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../../context/Database/Database.context';
-import useErrorToast from '../../../../../Shared/hooks/useErrorToast';
-import AppLoader from '../../../../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../../../../Shared/hooks/useSuccessToast';
+import AppLoader from '../../../../../Shared/Components/AppLoader/AppLoader';
 import { ServiceMatricesDocType } from '../../../../../Shared/types/serviceMatrices.types';
 import { ShootingDocType } from '../../../../../Shared/types/shooting.types';
 import DropDownButton from '../../../../../Shared/Components/DropDownButton/DropDownButton';
 import GeneralTable, { Column } from '../../../../../Shared/Components/GeneralTable/GeneralTable';
+import useAlertToast from '../../../../../hooks/useToastAlert/useToastAlert';
 
 interface ServiceDraft {
   id: string;
@@ -46,8 +45,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
   const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
   const [groupedServices, setGroupedServices] = useState<{ [key: string]: { prServiceTypeName: string, services: ServiceDraft[] } }>({});
 
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
 
   const { result: serviceMatrices, isFetching }: {
     result: ServiceMatricesDocType[];

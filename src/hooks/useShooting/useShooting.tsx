@@ -3,8 +3,7 @@ import { RxDocument, RxCollection } from 'rxdb';// Asumiendo que tienes un hook 
 import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import { SceneDocType } from '../../Shared/types/scenes.types';
 import { useRxDB } from 'rxdb-hooks';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
+import useAlertToast from '../useToastAlert/useToastAlert';
 
 interface UseShootingReturn {
   loading: boolean;
@@ -21,8 +20,7 @@ export const useShooting = (): UseShootingReturn => {
   const oneWrappDB: any = useRxDB();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
 
   const handleError = useCallback((error: Error) => {
     setError(error);

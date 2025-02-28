@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import EditionModal, { FormInput, SelectOptionsInterface } from "../../../../Shared/Components/EditionModal/EditionModal";
 import { WorkerJobNameEnum } from "../../../../Shared/types/workers.types";
 import { useScene } from "../../../../hooks/useScene/useScene";
-import AppLoader from "../../../../Shared/hooks/AppLoader";
+import AppLoader from "../../../../Shared/Components/AppLoader/AppLoader";
 import { IonContent, IonPage } from "@ionic/react";
 
 interface ExportModalProps {

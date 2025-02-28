@@ -16,7 +16,7 @@ import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes/Scenes.context';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import toggleFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleFIlterOption';
 import toggleNestedFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleNestedFilterOption';
 import customArraySort from '../../Shared/Utils/customArraySort';

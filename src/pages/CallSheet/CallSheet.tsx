@@ -29,12 +29,11 @@ import { TalentDocType } from '../../Shared/types/talent.types';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 
 import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import getHourMinutesFomISO from '../../Shared/Utils/getHoursMinutesFromISO';
 import './CallSheet.css';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
 import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -81,8 +80,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
   const [searchMode, setSearchMode] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { errorToast, successToast } = useAlertToast();
 
   const getTalentCastOptions = async () => {
     const talents: TalentDocType[] = await oneWrapDb?.talents.find({}).exec() || [];

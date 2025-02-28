@@ -7,12 +7,11 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 const EditScene: React.FC = () => {
   const history = useHistory();
@@ -22,8 +21,7 @@ const EditScene: React.FC = () => {
   const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
   const updatedAt = new Date().toISOString();
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
-  const successMessageToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
   const sceneDefaultValues = {
@@ -98,7 +96,7 @@ const EditScene: React.FC = () => {
   const updateScene = async (formData: any) => {
     try {
       await oneWrapDb?.scenes.upsert(formData);
-      successMessageToast('Scene updated successfully!');
+      successToast('Scene updated successfully!');
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error updating scene');

@@ -15,7 +15,7 @@ import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import { EmptyEnum, SceneTypeEnum } from '../../Shared/ennums/ennums';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';

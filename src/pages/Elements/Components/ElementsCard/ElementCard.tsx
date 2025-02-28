@@ -13,8 +13,6 @@ import useIsMobile from '../../../../Shared/hooks/useIsMobile';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import { checkmarkCircle } from 'ionicons/icons';
-import useWarningToast from '../../../../Shared/hooks/useWarningToast';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
 import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
@@ -22,6 +20,7 @@ import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDow
 import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import './ElementCard.scss';
+import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
 
 interface Element {
   elementName: string;
@@ -92,10 +91,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
     });
   };
 
-  const warningMessageToast = useWarningToast();
-
-  const errorToast = useErrorToast();
-
+  const { errorToast, warningToast } = useAlertToast();
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -185,7 +181,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const editElement = async (newElement: any) => {
     try {
-      warningMessageToast('Please wait, element is being updated...');
+      warningToast('Please wait, element is being updated...');
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
 
@@ -209,7 +205,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const deleteElement = async () => {
     try {
-      warningMessageToast('Please wait, element is being deleted...');
+      warningToast('Please wait, element is being deleted...');
       const scenes = await scenesToEditWithElement();
       const updatedScenes: any = [];
 
@@ -232,7 +228,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const deleteCategory = async () => {
     try {
-      warningMessageToast('Please wait, category is being deleted...');
+      warningToast('Please wait, category is being deleted...');
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
 
@@ -257,7 +253,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const editCategory = async (newCategory: any) => {
     try {
-      warningMessageToast('Please wait, category is being updated...');
+      warningToast('Please wait, category is being updated...');
       const scenes = await scenesToEditWithCategory();
       const updatedScenes: any = [];
 

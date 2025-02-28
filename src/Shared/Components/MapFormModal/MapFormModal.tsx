@@ -17,7 +17,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import environment from '../../../../environment';
-import AppLoader from '../../hooks/AppLoader';
+import AppLoader from '../AppLoader/AppLoader';
 import { LocationInfo } from '../../types/shooting.types';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import OutlinePrimaryButton from '../OutlinePrimaryButton/OutlinePrimaryButton';

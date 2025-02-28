@@ -26,7 +26,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import DatabaseContext from '../../../context/Database/Database.context';
-import AppLoader from '../../hooks/AppLoader';
+import AppLoader from '../AppLoader/AppLoader';
 import { SecurePages } from '../../types/securePages.types';
 import { UserDocType } from '../../types/user.types';
 import Calendar from '../../../pages/Calendar/Calendar';

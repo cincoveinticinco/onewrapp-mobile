@@ -15,18 +15,18 @@ import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import { useAuth } from '../../context/Auth/Auth.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
 import DatabaseContext from '../../context/Database/Database.context';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 const LoginPage: React.FC = () => {
   const { saveLogin, loggedIn, loading, setLoadingAuth } = useAuth();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const history = useHistory();
   const isOnline = useNetworkStatus();
 

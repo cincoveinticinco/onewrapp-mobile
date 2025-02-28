@@ -20,10 +20,8 @@ import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Shared/ennums/ennums';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
@@ -43,6 +41,7 @@ import { CiEdit } from 'react-icons/ci';
 import { useForm } from 'react-hook-form';
 import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
 import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -210,8 +209,7 @@ const SceneDetails: React.FC<{
     }
   };
 
-  const successMessageSceneToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
 
   const {result: user, isFetching} = useRxData<UserDocType>('users', (collection) => collection.find().sort('asc'));
 
@@ -247,7 +245,7 @@ const SceneDetails: React.FC<{
           setThisSceneShooting({ ...thisSceneShooting, [field]: newTimeISO });
         }
 
-        successMessageSceneToast('Scene updated successfully');
+        successToast('Scene updated successfully');
       } catch (error) {
         errorToast('Error updating scene');
         throw error;
@@ -318,7 +316,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, producedSeconds: totalSeconds });
         }
-        successMessageSceneToast('Produced seconds updated successfully');
+        successToast('Produced seconds updated successfully');
       } catch (error) {
         errorToast('Error updating produced seconds');
         throw error;
@@ -340,7 +338,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, partiality: isPartial });
         }
-        successMessageSceneToast('Partiality updated successfully');
+        successToast('Partiality updated successfully');
       } catch (error) {
         errorToast('Error updating partiality');
         throw error;
@@ -380,7 +378,7 @@ const SceneDetails: React.FC<{
           await shooting.update({ $set: { scenes: updatedScenes } });
           setThisSceneShooting({ ...thisSceneShooting, status: newStatus });
         }
-        successMessageSceneToast('Scene status updated successfully');
+        successToast('Scene status updated successfully');
       } catch (error) {
         errorToast('Error updating scene status');
         throw error;
@@ -567,7 +565,7 @@ const SceneDetails: React.FC<{
         }
         await sceneDocument.update({ $set: data });
       }
-      successMessageSceneToast('Scene updated successfully');
+      successToast('Scene updated successfully');
       history.push(`/my/projects/${id}/strips`);
       toggleEditMode();
     } catch (error: any) {

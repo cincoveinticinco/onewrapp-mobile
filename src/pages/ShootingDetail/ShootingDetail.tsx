@@ -24,10 +24,8 @@ import WrapReportView from './Components/ShootingDetailViews/WrapReportView/Wrap
 import SceneCard from '../Scenes/Components/SceneCard/SceneCard';
 import DatabaseContext from '../../context/Database/Database.context';
 import { ShootingSceneStatusEnum } from '../../Shared/ennums/ennums';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import useIsMobile from '../../Shared/hooks/useIsMobile';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import { SceneDocType } from '../../Shared/types/scenes.types';
 import { AdvanceCall, Meal, ShootingScene } from '../../Shared/types/shooting.types';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
@@ -44,7 +42,8 @@ import { mealInputs } from './Inputs/meal.inputs';
 import { bannerInputs } from './Inputs/baner.inputs';
 import { mergedSceneBanner, ShootingDataProps, ShootingViews } from './types/ShootingDetail.types';
 import { advanceCallInputs } from './Inputs/AdvanceCall.inputs';
-import { useShootingInfo } from './hooks/useShootingInfo';
+import { useShootingInfo } from '../../hooks/useShootingInfo/useShootingInfo';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 const ShootingDetail: React.FC<{
   permissionType?: number | null;
@@ -150,8 +149,7 @@ const ShootingDetail: React.FC<{
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
   const mealModalRef = useRef<HTMLIonModalElement>(null);
   const disableEditions = permissionType !== 1;
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const isMobile = useIsMobile();
 
   // *************************** REFS ************************************//

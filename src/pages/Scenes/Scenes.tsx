@@ -22,7 +22,7 @@ import './Scenes.scss';
 import ScenesTotals from './Components/ScenesTotals/ScenesTotals';
 import SelectionModal from '../../Layouts/SelectionModal/SelectionModal';
 import { groupsByOptions, GroupsSceneEnums } from './Components/ExportModal/ExportModal';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import { PermisionTypes } from '../../Shared/Components/ProtectedRoute/ProtectedRoute';
 import ScenesToolbarButtons from './Components/ScenesTollbarButtons/ScenesToolbarButtons';
 import ScenesList from './Components/ScenesList/ScenesList';

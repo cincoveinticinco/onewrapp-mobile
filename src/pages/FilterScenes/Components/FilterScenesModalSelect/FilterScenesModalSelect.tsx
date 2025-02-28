@@ -15,7 +15,7 @@ import capitalizeString from '../../../../Shared/Utils/capitalizeString';
 import removeNumberAndDot from '../../../../Shared/Utils/removeNumberAndDot';
 import truncateString from '../../../../Shared/Utils/truncateString';
 import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
-import AppLoader from '../../../../Shared/hooks/AppLoader';
+import AppLoader from '../../../../Shared/Components/AppLoader/AppLoader';
 import RegularList from '../../../../Layouts/RegularCheckboxList/RegularCheckboxList';
 
 interface FilterScenesModalSelectProps {

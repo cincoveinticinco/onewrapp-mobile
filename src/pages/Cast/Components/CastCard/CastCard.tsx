@@ -13,10 +13,8 @@ import DatabaseContext from '../../../../context/Database/Database.context';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import InfoLabel from '../../../../Shared/Components/InfoLabel/InfoLabel';
-import useWarningToast from '../../../../Shared/hooks/useWarningToast';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
 import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
 
 interface Cast {
   characterNum: string;
@@ -46,8 +44,7 @@ const CastCard: React.FC<CastCardProps> = ({
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
   const disableEditions = permissionType !== 1;
-  const errorToast = useErrorToast();
-  const successToast = useSuccessToast();
+  const { errorToast, warningToast, successToast } = useAlertToast();
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -90,8 +87,6 @@ const CastCard: React.FC<CastCardProps> = ({
       cssClass: 'success-toast',
     });
   };
-
-  const warningMessageToast = useWarningToast();
 
   const formInputs = [
     {
@@ -157,7 +152,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
   const deleteCharacter = async () => {
     try {
-      warningMessageToast('Please wait...');
+      warningToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
 
@@ -171,7 +166,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
       await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      successToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
       errorToast('Error deleting character');
     }
@@ -179,7 +174,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
   const editCharacter = async (newCharacter: any) => {
     try {
-      warningMessageToast('Please wait...');
+      warningToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
 

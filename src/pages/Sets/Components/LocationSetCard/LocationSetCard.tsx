@@ -9,10 +9,7 @@ import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import DatabaseContext from '../../../../context/Database/Database.context';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
 import useIsMobile from '../../../../Shared/hooks/useIsMobile';
-import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
-import useWarningToast from '../../../../Shared/hooks/useWarningToast';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
@@ -21,6 +18,7 @@ import EditionModal from '../../../../Shared/Components/EditionModal/EditionModa
 import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
 import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
+import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
 
 interface Set {
   setName: string;
@@ -79,9 +77,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
-  const errorMessageToast = useErrorToast();
-  const successMessageToast = useSuccessToast();
-  const warningMessageToast = useWarningToast();
+  const { successToast, errorToast, warningToast } = useAlertToast();
   const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
   const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
@@ -160,7 +156,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       if (setIsLoading) {
         setIsLoading(true);
       }
-      warningMessageToast('Please wait, location is being updated');
+      warningToast('Please wait, location is being updated');
       const scenes = await scenesToEditWithLocation();
       const updatedScenes: any = [];
 
@@ -178,16 +174,16 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       }
 
       setTimeout(() => {
-        successMessageToast('Location updated successfully');
+        successToast('Location updated successfully');
       }, 500);
     } catch (error) {
-      errorMessageToast('Error updating location');
+      errorToast('Error updating location');
     }
   };
 
   const editSet = async (newSet: any) => {
     try {
-      warningMessageToast('Please wait, set is being updated');
+      warningToast('Please wait, set is being updated');
       if (setIsLoading) {
         setIsLoading(true);
       }
@@ -209,10 +205,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       }
 
       setTimeout(() => {
-        successMessageToast('Set updated successfully');
+        successToast('Set updated successfully');
       }, 300);
     } catch (error) {
-      errorMessageToast('Error updating set');
+      errorToast('Error updating set');
     }
   };
 
@@ -221,7 +217,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       if (setIsLoading) {
         setIsLoading(true);
       }
-      warningMessageToast('Please wait, location is being deleted');
+      warningToast('Please wait, location is being deleted');
       const scenes = await scenesToEditWithLocation();
       const updatedScenes: any = [];
 
@@ -239,10 +235,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       }
 
       setTimeout(() => {
-        successMessageToast('Location deleted successfully');
+        successToast('Location deleted successfully');
       }, 500);
     } catch (error) {
-      errorMessageToast('Error deleting location');
+      errorToast('Error deleting location');
     }
   };
 
@@ -251,7 +247,7 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       if (setIsLoading) {
         setIsLoading(true);
       }
-      warningMessageToast('Please wait, set is being deleted');
+      warningToast('Please wait, set is being deleted');
       const scenes = await scenesToEditWithSet();
       const updatedScenes: any = [];
 
@@ -269,10 +265,10 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
       }
 
       setTimeout(() => {
-        successMessageToast('Set deleted successfully');
+        successToast('Set deleted successfully');
       }, 500);
     } catch (error) {
-      errorMessageToast('Error deleting set');
+      errorToast('Error deleting set');
     }
   };
 

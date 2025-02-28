@@ -1,18 +1,16 @@
 import { useHistory } from 'react-router-dom';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import { useRxData, useRxDB } from 'rxdb-hooks';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import { useMemo, useState, useEffect } from 'react';
 import { Character, Element, SceneDocType } from '../../Shared/types/scenes.types';
 import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
 import { IntOrExtOptionEnumArray } from '../../Shared/ennums/ennums';
+import useAlertToast from '../useToastAlert/useToastAlert';
 
 export const useScene = () => {
   const history = useHistory();
   const oneWrapDb: any = useRxDB();
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const [loading, setLoading] = useState(true);
 
   const { result: scenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find());

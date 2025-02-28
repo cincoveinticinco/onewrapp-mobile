@@ -9,9 +9,8 @@ import { PiNotePencil } from 'react-icons/pi';
 import DatabaseContext from '../../../context/Database/Database.context';
 import useFormTypeLogic from '../../../hooks/SceneScript/useFormTypeLogic';
 import useIsMobile from '../../../Shared/hooks/useIsMobile';
-import AppLoader from '../../../Shared/hooks/AppLoader';
+import AppLoader from '../../../Shared/Components/AppLoader/AppLoader';
 import useTextSelection from '../../../Shared/hooks/useSelectedText';
-import useSuccessToast from '../../../Shared/hooks/useSuccessToast';
 import InputModal from '../../../Layouts/InputModal/InputModal';
 import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
@@ -24,6 +23,7 @@ import { SearchTerm } from '../../../Shared/Components/HighlightedTextWithArray/
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../../Shared/Utils/removeAccents';
 import FiilledSuccessButton from '../../../Shared/Components/FilledSuccessButton/FillSuccessButton';
+import useAlertToast from '../../../hooks/useToastAlert/useToastAlert';
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -54,7 +54,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   };
   const isMobile = useIsMobile();
 
-  const successToast = useSuccessToast();
+  const { successToast } = useAlertToast();
   const { offlineScenes, oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
   const selectionRef = useRef<string | null>(null);
   const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen);

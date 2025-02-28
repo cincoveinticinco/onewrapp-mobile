@@ -1,20 +1,20 @@
 import { useCallback, useState } from "react";
 import { useRxDB } from "rxdb-hooks";
 import { useParams } from "react-router";
-import { mergedSceneBanner, mergedSceneShoot, ShootingDataProps, ShootingInfo } from "../types/ShootingDetail.types";
-import { getSceneBackgroundColor } from "../utils/getSceneBackgroundColor.util";
-import getSceneHeader from "../../../Shared/Utils/getSceneHeader";
-import floatToFraction from "../../../Shared/Utils/floatToFraction";
-import secondsToMinSec from "../../../Shared/Utils/secondsToMinSec";
-import { SceneDocType } from "../../../Shared/types/scenes.types";
-import useSuccessToast from "../../../Shared/hooks/useSuccessToast";
-import useErrorToast from "../../../Shared/hooks/useErrorToast";
-import convertTo24Hour from "../../../Shared/Utils/convertTo24hours";
-import { timeToISOString } from "../utils/timeToISOString.util";
-import { AdvanceCall, LocationInfo, Meal, ShootingScene } from "../../../Shared/types/shooting.types";
+import { mergedSceneBanner, mergedSceneShoot, ShootingDataProps, ShootingInfo } from "../../pages/ShootingDetail/types/ShootingDetail.types";
+import { getSceneBackgroundColor } from "../../pages/ShootingDetail/utils/getSceneBackgroundColor.util";
+import getSceneHeader from "../../Shared/Utils/getSceneHeader";
+import floatToFraction from "../../Shared/Utils/floatToFraction";
+import secondsToMinSec from "../../Shared/Utils/secondsToMinSec";
+import { SceneDocType } from "../../Shared/types/scenes.types";
+
+import convertTo24Hour from "../../Shared/Utils/convertTo24hours";
+import { timeToISOString } from "../../pages/ShootingDetail/utils/timeToISOString.util";
+import { AdvanceCall, LocationInfo, Meal, ShootingScene } from "../../Shared/types/shooting.types";
 import { ItemReorderEventDetail } from "@ionic/react";
-import { formatShootingDate } from "../utils/formatShootingDate.util";
-import useCombinedScenesWithShootings, { CombinedScenesWithShootings } from "../../../hooks/useCombinedScenesWithShootings/useCombinedScenesWithShootings";
+import { formatShootingDate } from "../../pages/ShootingDetail/utils/formatShootingDate.util";
+import useCombinedScenesWithShootings, { CombinedScenesWithShootings } from "../useCombinedScenesWithShootings/useCombinedScenesWithShootings";
+import useAlertToast from "../useToastAlert/useToastAlert";
 
 const shootingDataInitial: ShootingDataProps = {
   mergedSceneBanners: [],
@@ -43,8 +43,7 @@ export const useShootingInfo = () => {
 
   const oneWrappDb: any = useRxDB();
 
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
 
   const [selectedLocation, setSelectedLocation] = useState<LocationInfo | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<LocationInfo | null>(null);

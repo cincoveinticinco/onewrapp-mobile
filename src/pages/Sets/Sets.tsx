@@ -16,7 +16,7 @@ import useScrollToTop from '../../Shared/hooks/useScrollToTop';
 
 import LocationSetCard from './Components/LocationSetCard/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
 import removeAccents from '../../Shared/Utils/removeAccents';
 import './Sets.scss';

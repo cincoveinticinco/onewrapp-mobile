@@ -11,7 +11,7 @@ import { useRxData } from 'rxdb-hooks';
 import ProjectCard from './Components/ProjectCard/ProjectCard';
 import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);

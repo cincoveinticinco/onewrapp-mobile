@@ -19,7 +19,7 @@ import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
 import { swapVerticalOutline } from 'ionicons/icons';
 

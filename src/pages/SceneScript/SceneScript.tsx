@@ -23,7 +23,6 @@ import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, EmptyEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Shared/ennums/ennums';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import useHideTabs from '../../Shared/hooks/useHideTabs';
 import {
   Character, Element, Extra, Note, SceneDocType,
@@ -35,6 +34,7 @@ import './SceneScript.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
 import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT
@@ -72,7 +72,7 @@ const SceneScript: React.FC<{
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
   const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
-  const errorToast = useErrorToast();
+  const { errorToast } = useAlertToast();
 
   useEffect(() => {
     if (urlShootingId) {

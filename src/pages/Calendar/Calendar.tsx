@@ -15,9 +15,7 @@ import WeekView from './Components/WeekView/WeekView';
 import EditionModal, { FormInput, SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
 import Legend from '../../Shared/Components/Legend/Legend';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 import { ShootingDocType } from '../../Shared/types/shooting.types';
 import { UnitDocType } from '../../Shared/types/unitTypes.types';
 import './Calendar.css';
@@ -25,6 +23,7 @@ import useIsMobile from '../../Shared/hooks/useIsMobile';
 import WeekViewToolbar from './Components/WeekViewToolbar/WeekViewToolbar';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
+import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';
@@ -41,8 +40,7 @@ const Calendar: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openAddShootingModal, setOpenAddShootingModal] = useState(false);
   const [canCreateShooting, setCanCreateShooting] = useState(false);
-  const errorToast = useErrorToast();
-  const successToast = useSuccessToast();
+  const { errorToast, successToast } = useAlertToast();
   const isMobile = useIsMobile()
 
   // QUE PERMISOS DEBE TENER EL PROYECTO PARA PODER CREAR SHOOTINGS?

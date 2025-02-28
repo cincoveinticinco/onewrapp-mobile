@@ -1,9 +1,9 @@
 import { GoogleMap } from '@capacitor/google-maps';
 import React, { useEffect, useRef, useState } from 'react';
 import environment from '../../../../environment';
-import AppLoader from '../../hooks/AppLoader';
+import AppLoader from '../AppLoader/AppLoader';
 import { useIonViewDidEnter } from '@ionic/react';
-import useErrorToast from '../../hooks/useErrorToast';
+import useAlertToast from '../../../hooks/useToastAlert/useToastAlert';
 
 interface LocationInfo {
   locationTypeId: number;
@@ -29,8 +29,7 @@ const colorMap: { [key: number]: string } = {
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapRef }) => {
   const [map, setMap] = useState<GoogleMap | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
-  const errorToast = useErrorToast();
-  const successToast = useErrorToast();
+  const { errorToast } = useAlertToast();
 
   const createMap = async (lat: number, lng: number) => {
     if (!mapRef.current) return;

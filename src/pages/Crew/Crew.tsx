@@ -16,7 +16,7 @@ import './Crew.scss';
 import { crewFormInputs } from './inputs/crewForm.inputs';
 import useCrewOperations from './hooks/useCrewOperations';
 import { FormStructureInterface } from './types/crew.interfaces';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
 
 const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});

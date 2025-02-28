@@ -26,7 +26,7 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
-import AppLoader from './Shared/hooks/AppLoader';
+import AppLoader from './Shared/Components/AppLoader/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
 import { loadEnvironment } from '../environment';
