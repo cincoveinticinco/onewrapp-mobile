@@ -143,3 +143,8 @@ export enum InfoType {
 export enum EmptyEnum {
   NoCategory = 'NO CATEGORY',
 }
+
+export enum StripboardStatusesEnum {
+  New = 1,
+  Published = 2
+}

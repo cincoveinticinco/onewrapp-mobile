@@ -223,6 +223,11 @@ body {
     --ion-color-rose-shade: #dfaed9;
     --ion-color-rose-tint: #fdccf8;
     --ion-color-tertiary-dark: #14181f;
+    --ion-color-tertiary-dark-rgb: 20, 24, 31; 
+    --ion-color-tertiary-dark-contrast: #fff;
+    --ion-color-tertiary-dark-contrast-rgb: 255, 255, 255;
+    --ion-color-tertiary-dark-shade: #14181f;
+    --ion-color-tertiary-dark-tint: #2c313b;
   
     /* CUSTOM 525 VARIABLES */
     --525-small-text-size: 9px;

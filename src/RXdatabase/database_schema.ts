@@ -13,15 +13,24 @@ export default class DatabaseSchema {
     private database!: RxDatabase;
 
     public batchSize: number;
+    
+    private migrationStrategies: any;
 
-    constructor(schemaName: string, schemaInput: any, batchSize: number = 50) {
+    constructor(schemaName: string, schemaInput: any, batchSize: number = 50, migrationStrategies: any = {}) {
       this.schemaName = schemaName;
       this.schemaInput = schemaInput;
       this.batchSize = batchSize;
+      this.migrationStrategies = migrationStrategies;
     }
 
     SchemaName() {
       return this.schemaName;
+    }
+
+    MigrationStrategies() {
+      return this.migrationStrategies
+        ? this.migrationStrategies
+        : {};
     }
 
     SchemaInput() {

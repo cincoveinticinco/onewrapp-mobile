@@ -11,14 +11,6 @@
   text-align: center;
 }
 
-.nav-button {
-  background-color: transparent;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-}
-
 .current-month {
   font-weight: bold;
 }
@@ -32,6 +24,7 @@
 
 .calendar-grid {
   min-height: 100%;
+  max-height: 70vh;
   overflow: hidden;
   margin: 10px;
 }
@@ -52,7 +45,6 @@
   text-align: right;
   color: var(--ion-color-white);
   outline: 0.5px solid var(--ion-color-light);
-  min-height: 150px !important;
   padding: 6px;
 
   ion-card {
@@ -77,19 +69,13 @@
 }
 
 .week-row {
-  height: calc(100% / 6);
+  height: auto;
 
   .other-month,
   .calendar-day,
   .current-day {
-    height: 150px;
     max-width: calc(100% / 7);
-
-    --landscape-height: 150px;
-
-    @supports (orientation: landscape) {
-      --landscape-height: 70px;
-    }
+    --landscape-height: calc(100vh / 8);
 
     @media (orientation: landscape) {
       height: var(--landscape-height);

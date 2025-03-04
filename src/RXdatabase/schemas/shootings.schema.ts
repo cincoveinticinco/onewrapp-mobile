@@ -499,7 +499,7 @@ const shootingSchemaLiteral= {
             maxLength: 250,
           },
           callTime: {
-            type: 'string',
+            type: ['string', 'null'],
           },
           otherCallId: {
             type: 'number',

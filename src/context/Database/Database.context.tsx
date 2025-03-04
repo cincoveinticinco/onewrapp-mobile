@@ -92,7 +92,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const resyncServiceMatrices: any = useRef(null);
   const resyncCountries: any = useRef(null);
   const resyncProjWeeks = useRef<any>(null);
-  const resyncProjectStripboard = useRef<any>(null);
+  const resyncStripboard = useRef<any>(null);
 
   const [viewTabs, setViewTabs] = useState(true);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
@@ -199,6 +199,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     resyncCrew.current = null;
     resyncCountries.current = null;
     resyncServiceMatrices.current = null;
+    resyncProjWeeks.current = null;
+    resyncStripboard.current = null;
 
     // delete replicators instances
 
@@ -351,7 +353,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     await initializeReplication(
       stripboardCollection,
       { projectId: parseInt(projectId, 10) },
-      resyncProjectStripboard,
+      resyncStripboard,
       parseInt(projectId, 10)
     );
   }
@@ -484,6 +486,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncTalents.current = null;
       resyncCrew.current = null;
       resyncCountries.current = null;
+      resyncProjWeeks.current = null;
+      resyncStripboard.current = null;
     }
   }, [projectId]);
 

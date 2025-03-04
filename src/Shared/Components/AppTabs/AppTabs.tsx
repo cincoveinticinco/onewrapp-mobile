@@ -14,6 +14,7 @@ import {
   construct,
   cube,
   film,
+  layersOutline,
   people,
   settings,
   videocam,
@@ -254,9 +255,14 @@ const AppTabs: React.FC = () => {
           unauthorizedRoute={unauthorizedRoute}
         />
 
-        <Route exact path={`${urlString}/stripboard`}>
-          <StripBoard />
-        </Route>
+        <ProtectedRoute
+          exact
+          path={`${urlString}/stripboard`}
+          permissionType={getSecurePageAccess(SecurePages.SCENES)}
+          component={StripBoard}
+          unauthorizedRoute={unauthorizedRoute}
+        />
+
         <Route exact path={`${urlString}/reports`}>
           <Reports />
         </Route>
@@ -295,6 +301,10 @@ const AppTabs: React.FC = () => {
         <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
           <IonIcon icon={construct} className="tab-bar-icons" />
           <IonLabel>CREW</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/stripboard`}>
+          <IonIcon icon={layersOutline} className="tab-bar-icons" />
+          <IonLabel>STRIPBOARD</IonLabel>
         </IonTabButton>
         <IonTabButton tab="settings" className="tab-bar-buttons" href={`${url}/settings`}>
           <IonIcon icon={settings} className="tab-bar-icons" />

@@ -2,6 +2,7 @@ import { RxJsonSchema, toTypedRxJsonSchema } from "rxdb";
 import { StripboardDocType } from "../../Shared/types/stripboard.types";
 import DatabaseSchema from "../database_schema";
 import environment from "../../../environment";
+import { includes } from "lodash";
 
 const stripboardSchemaLiteral = {
   title: 'stripboard schema',
@@ -20,10 +21,33 @@ const stripboardSchemaLiteral = {
       type: 'string',
     },
     startDate: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     statusId: {
       type: 'number',
+    },
+    stripboardHasScenes: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          sceneId: {
+            type: 'number',
+          },
+          projUnitId: {
+            type: 'number',
+          },
+          dayNumber: {
+            type: 'number',
+          },
+          order: {
+            type: 'number',
+          }
+        },
+      },
     },
     updatedAt: {
       type: 'string',
@@ -51,12 +75,13 @@ export default class StripboardSchema extends DatabaseSchema {
 
   static endpointPullName = environment.STRIPBOARD_ENDPOINT_PULL;
   static endpointPushName = environment.STRIPBOARD_ENDPOINT_PUSH;
+  static migrationStrategies = {};
 
   getEndpointPullName() {
     return StripboardSchema.endpointPullName;
   }
 
-  getSchemanAME() {
+  getSchemaName() {
     return StripboardSchema.schemaName;
   }
 
@@ -67,6 +92,6 @@ export default class StripboardSchema extends DatabaseSchema {
   constructor() {
     const { schemaName } = StripboardSchema;
     const schemaInput = stripboardSchemaInput;
-    super(schemaName, schemaInput);
+    super(schemaName, schemaInput, 50, StripboardSchema.migrationStrategies);
   }
 }

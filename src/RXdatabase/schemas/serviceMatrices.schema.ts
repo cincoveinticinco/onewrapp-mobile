@@ -20,7 +20,7 @@ const serviceMatricesSchemaLiteral = {
       type: ['number', 'null'],
     },
     serviceDescription: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     serviceUnitCost: {
       type: ['string', 'null'],
@@ -50,7 +50,7 @@ const serviceMatricesSchemaLiteral = {
       type: 'string',
     },
     providerDocument: {
-      type: 'string',
+      type: ['string', 'null'],
     },
     bItemId: {
       type: ['number', 'null'],

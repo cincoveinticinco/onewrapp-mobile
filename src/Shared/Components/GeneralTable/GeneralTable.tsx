@@ -41,7 +41,8 @@ interface GeneralTableProps {
   editFunction?: EditFunction;
   searchText?: string;
   groupBy?: string;
-  numbered?: boolean; // Nueva propiedad para controlar la numeración
+  numbered?: boolean;
+  rowClick?: (row: any) => void;
 }
 
 const GeneralTable: React.FC<GeneralTableProps> = ({
@@ -52,7 +53,8 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
   editFunction,
   searchText,
   groupBy,
-  numbered = false, // Valor por defecto false
+  numbered = false,
+  rowClick = ( row ) => { console.log(row) }
 }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [openCategories, setOpenCategories] = useState<{[key: string]: boolean}>({});
@@ -226,11 +228,11 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
               <table className="custom-table">
                 <thead>
                   <tr>
-                    {adjustedColumns.map((column) => (
+                    {adjustedColumns.map((column, columnIndex) => (
                       // Use column.key as it should be unique within the columns array
                       <th 
                         key={column.key} 
-                        className={column.sticky ? 'sticky-column' : ''} 
+                        className={`${column.sticky ? 'sticky-column' : ''} ${column.sticky && columnIndex % 2 === 0 ? 'sticky-even' : ''}`} 
                         style={{
                           left: '0px',
                           minWidth: column.minWidth ? `${column.minWidth}px` : undefined,
@@ -245,12 +247,12 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                 <tbody>
                   {groupData.map((row, index) => (
                     // Use row.originalIndex as the unique identifier for the row
-                    <tr key={`row-${row.originalIndex || index }-${groupKey}`} className={editMode ? 'edit-mode' : ''}>
+                    <tr key={`row-${row.originalIndex || index }-${groupKey}`} className={editMode ? 'edit-mode' : ''} onClick={() => rowClick(row)}>
                       {adjustedColumns.map((column) => (
                         // Combine row and column identifiers for a unique cell key
                         <td 
                           key={`cell-${row.originalIndex}-${column.key}`} 
-                          className={column.sticky ? 'sticky-column' : ''} 
+                          className={`${column.sticky ? 'sticky-column' : ''} ${column.sticky && index % 2 !== 0 ? 'sticky-even' : ''}`} 
                           style={{ 
                             left: '0px', 
                             textAlign: column.textAlign || 'center', 

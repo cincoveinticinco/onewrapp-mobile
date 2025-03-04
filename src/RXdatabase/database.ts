@@ -7,13 +7,14 @@ import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
+import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import DatabaseSchema from './database_schema';
 
-addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBDevModePlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
 addRxPlugin(RxDBUpdatePlugin);
 addRxPlugin(RxDBLeaderElectionPlugin);
+addRxPlugin(RxDBMigrationSchemaPlugin);
 
 export default class AppDataBase {
     private dbName = 'onewrappdb'
@@ -56,6 +57,9 @@ export default class AppDataBase {
       this.schemaList.forEach((schema) => {
         schemaObject[schema.SchemaName()] = {
           schema: schema.Schema(),
+          migrationStrategies: {
+            ...schema.MigrationStrategies()
+          }
         };
       });
 
