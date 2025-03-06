@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import { CombinedStripboardType } from '../../../../hooks/database/useStripboards/useStripboards';
 import { DEFAULT_DISPLAY_OPTIONS, SceneCardDisplayOptions } from '../../../../Shared/Components/cards/SceneCard/SceneCard';
 // Definición del tipo para el contexto
@@ -41,10 +41,8 @@ export const StripboardProvider: React.FC<StripboardProviderProps> = ({ children
   const [selectedStripboard, setSelectedStripboard] = useState<CombinedStripboardType | null>(null);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   
-  // Estado para las opciones de visualización
   const [displayOptions, setDisplayOptions] = useState<SceneCardDisplayOptions>({
     ...DEFAULT_DISPLAY_OPTIONS,
-    // Por defecto, solo mostrar el encabezado en el StripBoard
     showSynopsis: false,
     showCharacters: false,
     showExtras: false, 
@@ -53,7 +51,6 @@ export const StripboardProvider: React.FC<StripboardProviderProps> = ({ children
     showAssignmentDate: false,
   });
 
-  // Manejador para cambiar una opción de visualización
   const handleToggleOption = (option: keyof SceneCardDisplayOptions) => {
     setDisplayOptions(prev => ({
       ...prev,
@@ -61,6 +58,17 @@ export const StripboardProvider: React.FC<StripboardProviderProps> = ({ children
     }));
   };
 
+  useEffect(() => {
+    if (selectedStripboard) {
+      // Crea una copia completamente nueva para asegurar que React detecte el cambio
+      setSelectedStripboard({
+        ...selectedStripboard,
+        scenes: structuredClone(selectedStripboard.scenes) || [],
+        scenesNotIncluded: structuredClone(selectedStripboard.scenesNotIncluded) || []
+      });
+    }
+  }, [displayOptions]);
+  
   return (
     <StripboardContext.Provider 
       value={{

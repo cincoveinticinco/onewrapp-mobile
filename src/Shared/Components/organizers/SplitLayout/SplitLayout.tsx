@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 
 interface SplitLayoutProps {
@@ -10,6 +10,11 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
   const [panelContents, setPanelContents] = useState<ReactNode[]>(
     React.Children.toArray(children)
   );
+
+  useEffect(() => {
+    setPanelContents(React.Children.toArray(children));
+  }, [children]);
+  
   const [allowDrag, setAllowDrag] = useState(true);
   const [showDropZone, setShowDropZone] = useState(false);
 
@@ -104,19 +109,50 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
   );
 
   return (
-    <PanelGroup direction={direction} style={{ height: '100vh', backgroundColor: 'var(--background-color-secondary) !important' }}>
+    <PanelGroup direction={direction} style={{ backgroundColor: 'var(--background-color-secondary) !important' }}>
       {panelContents.map((child, index) => (
         <React.Fragment key={index}>
-          {index > 0 && <PanelResizeHandle style={{
-            backgroundColor: 'var(--background-color-primary)',
-            cursor: direction === 'horizontal' ? 'ew-resize' : 'ns-resize',
-            zIndex: 10,
-            ...(direction === 'horizontal' ? { width: '10px', left: '-5px', top: 0, bottom: 0 } : { height: '10px', top: '-5px', left: 0, right: 0})
-          }} />}
+          {index > 0 && 
+          
+            <PanelResizeHandle>
+              <div
+                style={{
+                  backgroundColor: 'var(--ion-color-dark)',
+                  cursor: direction === 'horizontal' ? 'ew-resize' : 'ns-resize',
+                  height: '100%',
+                  zIndex: 10,
+                  position: 'relative',
+                  ...(direction === 'horizontal' ? { width: '10px', top: 0, bottom: 0 } : { height: '10px', top: '-5px', left: 0, right: 0})
+                }}
+              >
+                <div
+                  style={direction === 'horizontal' ? {
+                    width: '50%',
+                    height: '30px',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: 'var(--ion-color-light)',
+                    borderRadius: '5px',
+                  } : {
+                    height: '50%',
+                    width: '30px',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: 'var(--ion-color-light)',
+                    borderRadius: '5px',
+                  }}
+                >
+                </div>
+              </div>
+            </PanelResizeHandle>}
             <Panel 
             defaultSize={50}
             minSize={20} 
-            style={{ overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', maxHeight: '100vh', backgroundColor: 'var(--background-color-secondary) !important' }}
+            style={{ scrollbarWidth: 'none', backgroundColor: 'var(--background-color-secondary) !important' }}
             draggable={allowDrag}
             onDragStart={(e) => handleDragStart(e, index)}
             onMouseDown={handleMouseDown}
