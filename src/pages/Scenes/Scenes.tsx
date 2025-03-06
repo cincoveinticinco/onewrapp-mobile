@@ -12,24 +12,24 @@ import React, {
   useState,
 } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import StripTagsToolbar from './Components/StripTagsToolbar/StripTagsToolbar';
 import { defaultSortOptions } from '../../context/Scenes/Scenes.context';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import './Scenes.scss';
 import ScenesTotals from './Components/ScenesTotals/ScenesTotals';
 import SelectionModal from '../../Layouts/SelectionModal/SelectionModal';
 import { groupsByOptions, GroupsSceneEnums } from './Components/ExportModal/ExportModal';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
-import { PermisionTypes } from '../../Shared/Components/ProtectedRoute/ProtectedRoute';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import { PermisionTypes } from '../../Shared/Components/navigation/ProtectedRoute/ProtectedRoute';
 import ScenesToolbarButtons from './Components/ScenesTollbarButtons/ScenesToolbarButtons';
 import ScenesList from './Components/ScenesList/ScenesList';
 import GroupedScenesList from './Components/GroupedScenesList/GroupedScenesList';
-import { useScenesFiltering } from '../../hooks/useScenesFiltering/useScenesFiltering';
-import useScenesGrouping from '../../hooks/useScenesGrouping/useScenesGrouping';
-import useProjectWeeks from '../../hooks/useProjectWeeks/useProjectWeeks';
+import { useScenesFiltering } from '../../hooks/utils/useScenesFiltering/useScenesFiltering';
+import useScenesGrouping from '../../hooks/utils/useScenesGrouping/useScenesGrouping';
+import useProjectWeeks from '../../hooks/database/useProjectWeeks/useProjectWeeks';
 import ScenesGroupByShootings from './Components/ScenesGroupByShootings/ScenesGroupByShootings';
 
 const Scenes: React.FC<{

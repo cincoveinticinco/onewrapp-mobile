@@ -1,7 +1,7 @@
 import { useRxDB } from "rxdb-hooks";
 import { FormStructureInterface } from "../types/crew.interfaces";
 import { CrewDocType } from "../../../Shared/types/crew.types";
-import useAlertToast from "../../../hooks/useToastAlert/useToastAlert";
+import useAlertToast from "../../../hooks/utils/useToastAlert/useToastAlert";
 
 interface CrewOperationsInterface {
   selectedCrewId?: string | null;

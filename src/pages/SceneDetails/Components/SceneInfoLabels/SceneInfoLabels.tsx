@@ -1,4 +1,4 @@
-import { InfoType } from "../../../../Shared/ennums/ennums";
+import { InfoType } from "../../../../Shared/enums/ennums";
 import InputItem from "../../../AddScene/Components/AddSceneFormInputs/InputItem";
 import { Control, UseFormWatch } from "react-hook-form";
 import './SceneInfoLabels.scss'
@@ -9,7 +9,7 @@ import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import { isRequiredValidator } from "../../../../Shared/Utils/validators";
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
-import CategorizedSelect from "../../../../Shared/Components/CategorizedSelect/CategorizedSelect";
+import CategorizedSelect from "../../../../Shared/Components/inputs/CategorizedSelect/CategorizedSelect";
 
 export type FormType = {
   control: Control<any>;

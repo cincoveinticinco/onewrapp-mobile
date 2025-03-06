@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput, IonButton, IonItemSliding, IonItemOptions, IonItemOption, IonItem } from '@ionic/react';
-import AddButton from '../../../../Shared/Components/AddButton/AddButton';
+import AddButton from '../../../../Shared/Components/buttons/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddExtraInput from './AddExtraInput';
 import { Extra } from '../../../../Shared/types/scenes.types';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import { VscEdit } from 'react-icons/vsc';
 

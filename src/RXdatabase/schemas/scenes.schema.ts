@@ -4,7 +4,7 @@ import {
   IntOrExtOptionEnumArray,
   DayOrNightOptionEnumArray,
   SceneTypeEnum,
-} from '../../Shared/ennums/ennums';
+} from '../../Shared/enums/ennums';
 import environment from '../../../environment';
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import { SceneDocType } from '../../Shared/types/scenes.types';

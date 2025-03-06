@@ -3,9 +3,9 @@ import {
   IonContent, IonHeader, IonModal,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
-import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
-import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import ModalSearchBar from '../../Shared/Components/inputs/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../Shared/Components/modals/ModalToolbar/ModalToolbar';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
 import removeNumberAndDot from '../../Shared/Utils/removeNumberAndDot';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './InputModal.scss';

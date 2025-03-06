@@ -4,8 +4,8 @@ import { VscEdit } from 'react-icons/vsc';
 import { Meal } from '../../../../Shared/types/shooting.types';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import { getAmOrPm } from '../../../../Shared/Utils/getHoursMinutesFromISO';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
 import { mealInputs } from '../../Inputs/meal.inputs';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface MealInfoProps {
   meal: Meal;

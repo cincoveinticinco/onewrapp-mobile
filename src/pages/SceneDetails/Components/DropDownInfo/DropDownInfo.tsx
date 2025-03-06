@@ -2,7 +2,7 @@ import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
 import { useState } from 'react';
 import sortArrayAlphabeticaly from '../../../../Shared/Utils/sortArrayAlphabeticaly';
 import CategoryContainer from '../CategoryContainer/CategoryContainer';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 
 const DropDownInfo = ({
   categories, scene, title, characters = false, extras = false, elements = false, notes = false,

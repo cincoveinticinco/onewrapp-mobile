@@ -1,4 +1,4 @@
-import { Column } from "../../../../../../Shared/Components/GeneralTable/GeneralTable";
+import { Column } from "../../../../../../Shared/Components/tables/GeneralTable/GeneralTable";
 
 export   const castColumns: Column[] = [
     {

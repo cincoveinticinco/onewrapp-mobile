@@ -1,6 +1,6 @@
 import { IonButton, IonCol, IonRow } from '@ionic/react';
 import React from 'react';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 
 import './FilterScenesButtonsSelect.scss';
 

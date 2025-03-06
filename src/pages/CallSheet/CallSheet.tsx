@@ -15,12 +15,12 @@ import CrewView from './Components/CrewView/CrewView';
 import ExtraView from './Components/ExtraView/ExtraView';
 import OtherCalls from './Components/OtherCalls/OtherCalls';
 import PictureCars from './Components/PictureCars/PictureCars';
-import AddButton from '../../Shared/Components/AddButton/AddButton';
-import ExploreContainer from '../../Shared/Components/ExploreContainer/ExploreContainer';
+import AddButton from '../../Shared/Components/buttons/AddButton/AddButton';
+import ExploreContainer from '../../Shared/Components/descriptive/ExploreContainer/ExploreContainer';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingStatusEnum } from '../../Shared/ennums/ennums';
-import useHandleBack from '../../Shared/hooks/useHandleBack';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+import { ShootingStatusEnum } from '../../Shared/enums/ennums';
+import useHandleBack from '../../hooks/utils/useHandleBack/useHandleBack';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import { Character, SceneDocType } from '../../Shared/types/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, ShootingDocType
@@ -31,9 +31,9 @@ import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import getHourMinutesFomISO from '../../Shared/Utils/getHoursMinutesFromISO';
 import './CallSheet.css';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 

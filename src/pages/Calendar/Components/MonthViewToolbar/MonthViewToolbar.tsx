@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { LiaDotCircle } from 'react-icons/lia';
 import { useHistory } from 'react-router';
 import './MonthViewToolbar.css';
-import ToolbarButton from '../../../../Shared/Components/ToolbarButton/ToolbarButton';
+import ToolbarButton from '../../../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
 
 interface MonthViewToolbarProps {
   currentDate: Date;

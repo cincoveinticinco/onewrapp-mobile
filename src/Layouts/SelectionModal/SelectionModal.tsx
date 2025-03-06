@@ -5,15 +5,15 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
-import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
-import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
-import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
+import ModalSearchBar from '../../Shared/Components/inputs/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../Shared/Components/modals/ModalToolbar/ModalToolbar';
+import OutlineLightButton from '../../Shared/Components/buttons/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
 import RegularList from '../RegularCheckboxList/RegularCheckboxList';
 import './SelectionModal.scss';
 import { flatten } from 'lodash';
-import { EmptyEnum } from '../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../Shared/enums/ennums';
 import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
 
 interface FormInputsProps {

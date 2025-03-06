@@ -7,20 +7,20 @@ import React, {
 import { IonContent, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import CastCard from './Components/CastCard/CastCard';
 import DropDownCast from './Components/DropDownCast/DropDownCast';
 
 // Custom contexts and hooks imports
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes/Scenes.context';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
-import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
 import { swapVerticalOutline } from 'ionicons/icons';
 
 const Cast: React.FC<{

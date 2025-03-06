@@ -1,9 +1,9 @@
 import { IonCheckbox, IonList } from '@ionic/react';
 import React from 'react';
-import HighlightedText from '../../Shared/Components/HighlightedText/HighlightedText';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
 import { SceneDocType } from '../../Shared/types/scenes.types';
 import './ScenesCheckboxList.scss';
+import HighlightedText from '../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 
 interface ScenesCheckboxListProps {
   listOfScenes: SceneDocType[];

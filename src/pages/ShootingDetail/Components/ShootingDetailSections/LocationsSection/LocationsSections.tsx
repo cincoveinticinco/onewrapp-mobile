@@ -5,8 +5,8 @@ import { LocationInfo } from '../../../../../Shared/types/shooting.types';
 import InputAlert from '../../../../../Layouts/InputAlert/InputAlert';
 import generateLocationLink from '../../../../../Shared/Utils/getLocationLink';
 import truncateString from '../../../../../Shared/Utils/truncateString';
-import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import { Section } from '../../../../../Shared/Components/Section/Section';
+import OutlinePrimaryButton from '../../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../../../Shared/Components/organizers/Section/Section';
 
 interface LocationsSectionProps {
   locations: LocationInfo[];

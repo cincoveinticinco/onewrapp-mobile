@@ -9,9 +9,9 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { useRxData } from 'rxdb-hooks';
 import ProjectCard from './Components/ProjectCard/ProjectCard';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);

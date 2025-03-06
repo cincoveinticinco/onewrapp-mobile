@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { PermisionTypes } from "../../../../Shared/Components/ProtectedRoute/ProtectedRoute";
+import { PermisionTypes } from "../../../../Shared/Components/navigation/ProtectedRoute/ProtectedRoute";
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import ScrollInfiniteContext from "../../../../context/ScrollInfinite/ScrollInfinite.context";
 import { IonGrid } from "@ionic/react";
-import SceneCard from "../SceneCard/SceneCard";
+import SceneCard from "../../../../Shared/Components/cards/SceneCard/SceneCard";
 import NoScenesMessage from "../NoScenesMessage/NoScenesMessage";
 
 const ScenesList: React.FC<{

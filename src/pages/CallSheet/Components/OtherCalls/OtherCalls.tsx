@@ -1,9 +1,9 @@
 import React from 'react';
 import { normalizeString } from 'rxdb';
 import { OtherCall } from '../../../../Shared/types/shooting.types';
-import EditionModal, { FormInput } from '../../../../Shared/Components/EditionModal/EditionModal';
-import GeneralTable, { Column } from '../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable, { Column } from '../../../../Shared/Components/tables/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
+import EditionModal, { FormInput } from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface OtherCallsProps {
   otherCalls: OtherCall[]

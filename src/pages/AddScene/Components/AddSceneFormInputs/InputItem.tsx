@@ -2,7 +2,7 @@ import { IonInput, IonItem, IonList, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import './InputItem.scss';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import { textTransform } from '@mui/system';
 
 interface InputItemProps {

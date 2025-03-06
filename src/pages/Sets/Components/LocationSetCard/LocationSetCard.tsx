@@ -9,16 +9,16 @@ import React, { useContext, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import DatabaseContext from '../../../../context/Database/Database.context';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
+import DropDownButton from '../../../../Shared/Components/buttons/DropDownButton/DropDownButton';
 import './LocationSetCard.scss'; // Asegúrate de tener tu archivo SCSS
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
-import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface Set {
   setName: string;

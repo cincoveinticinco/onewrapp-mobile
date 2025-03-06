@@ -1,0 +1,30 @@
+@import '../../../../theme/mixins';
+
+.app-tabs-container {
+  padding: 10px;
+  transition: all 1s ease-in-out;
+  height: 60px; 
+  box-sizing: border-box;
+
+  .tab-bar-buttons {
+    @include tab-bar-buttons;
+    font-size: 10px !important;
+  }
+
+  .tab-bar-buttons.tablet {
+    display: none;
+  }
+
+  ion-label {
+    font-size: 12px;
+  }
+}
+
+.hide-tabs {
+  display: none;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

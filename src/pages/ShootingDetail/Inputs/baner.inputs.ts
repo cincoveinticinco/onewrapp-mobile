@@ -1,4 +1,4 @@
-import { FormInput, SelectOptionsInterface } from "../../../Shared/Components/EditionModal/EditionModal";
+import { FormInput, SelectOptionsInterface } from "../../../Shared/Components/modals/EditionModal/EditionModal";
 import colorIsDark from "../../../Shared/Utils/colorIsDark";
 
 const availableColors = [

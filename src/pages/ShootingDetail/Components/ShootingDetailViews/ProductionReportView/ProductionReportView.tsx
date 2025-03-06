@@ -10,12 +10,12 @@ import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../../context/Database/Database.context';
-import AppLoader from '../../../../../Shared/Components/AppLoader/AppLoader';
+import AppLoader from '../../../../../Shared/Components/loaders/AppLoader/AppLoader';
 import { ServiceMatricesDocType } from '../../../../../Shared/types/serviceMatrices.types';
 import { ShootingDocType } from '../../../../../Shared/types/shooting.types';
-import DropDownButton from '../../../../../Shared/Components/DropDownButton/DropDownButton';
-import GeneralTable, { Column } from '../../../../../Shared/Components/GeneralTable/GeneralTable';
-import useAlertToast from '../../../../../hooks/useToastAlert/useToastAlert';
+import DropDownButton from '../../../../../Shared/Components/buttons/DropDownButton/DropDownButton';
+import GeneralTable, { Column } from '../../../../../Shared/Components/tables/GeneralTable/GeneralTable';
+import useAlertToast from '../../../../../hooks/utils/useToastAlert/useToastAlert';
 
 interface ServiceDraft {
   id: string;

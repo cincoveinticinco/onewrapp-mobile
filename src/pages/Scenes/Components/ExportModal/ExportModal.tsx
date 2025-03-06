@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import EditionModal, { FormInput, SelectOptionsInterface } from "../../../../Shared/Components/EditionModal/EditionModal";
 import { WorkerJobNameEnum } from "../../../../Shared/types/workers.types";
-import { useScene } from "../../../../hooks/useScene/useScene";
-import AppLoader from "../../../../Shared/Components/AppLoader/AppLoader";
+import { useScene } from "../../../../hooks/database/useScene/useScene";
+import AppLoader from "../../../../Shared/Components/loaders/AppLoader/AppLoader";
 import { IonContent, IonPage } from "@ionic/react";
+import EditionModal, { FormInput, SelectOptionsInterface } from "../../../../Shared/Components/modals/EditionModal/EditionModal";
 
 interface ExportModalProps {
   modalIsOpen: boolean;

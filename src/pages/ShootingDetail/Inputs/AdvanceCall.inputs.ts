@@ -1,4 +1,5 @@
-import { FormInput, SelectOptionsInterface } from "../../../Shared/Components/EditionModal/EditionModal";
+import { FormInput, SelectOptionsInterface } from "../../../Shared/Components/modals/EditionModal/EditionModal";
+
 
 export const advanceCallInputs: (departments: SelectOptionsInterface[] ) => FormInput[]  = (departments) => [
     {

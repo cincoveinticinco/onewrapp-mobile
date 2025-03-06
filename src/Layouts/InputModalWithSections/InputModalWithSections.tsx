@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IonCheckbox, IonCol, IonContent, IonHeader, IonModal, IonRow, IonGrid } from '@ionic/react';
-import ModalSearchBar from '../../Shared/Components/ModalSearchBar/ModalSearchBar';
-import ModalToolbar from '../../Shared/Components/ModalToolbar/ModalToolbar';
+import ModalSearchBar from '../../Shared/Components/inputs/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../Shared/Components/modals/ModalToolbar/ModalToolbar';
 import './InputModalWithSections.scss';
-import { Section } from '../../Shared/Components/Section/Section';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../Shared/Components/organizers/Section/Section';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
 import InputItem from '../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
 import { useForm } from 'react-hook-form';
-import { EmptyEnum } from '../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../Shared/enums/ennums';
 
 export interface ListOfOptionsItem {
   category: string;

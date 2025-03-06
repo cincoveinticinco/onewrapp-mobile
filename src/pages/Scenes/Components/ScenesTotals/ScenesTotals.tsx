@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
-import { InfoType, SceneTypeEnum } from "../../../../Shared/ennums/ennums";
+import { InfoType, SceneTypeEnum } from "../../../../Shared/enums/ennums";
 import SceneInfoLabels from "../../../SceneDetails/Components/SceneInfoLabels/SceneInfoLabels";
 import getUniqueValuesFromNestedArray from "../../../../Shared/Utils/getUniqueValuesFromNestedArray";
 import getUniqueValuesByKey from "../../../../Shared/Utils/getUniqueValuesByKey";

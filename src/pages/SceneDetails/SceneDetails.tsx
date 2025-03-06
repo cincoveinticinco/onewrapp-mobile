@@ -11,17 +11,15 @@ import React, {
 } from 'react';
 import { useHistory, useParams } from 'react-router';
 import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
-import EditionModal from '../../Shared/Components/EditionModal/EditionModal';
-import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
-} from '../../Shared/ennums/ennums';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+} from '../../Shared/enums/ennums';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
@@ -32,16 +30,18 @@ import { DatabaseContextProps } from '../../context/Database/types/Database.type
 import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddCharacterForm';
 import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
 import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
-import AddButton from '../../Shared/Components/AddButton/AddButton';
+import AddButton from '../../Shared/Components/buttons/AddButton/AddButton';
 import { useRxData } from 'rxdb-hooks';
 import { UserDocType } from '../../Shared/types/user.types';
 import SceneHeader from './SceneHeader';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import { useForm } from 'react-hook-form';
-import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
-import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import UnassignSceneAlert from '../../Shared/Components/modals/UnassignSceneAlert/UnassignSceneAlert';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
+import DeleteSceneAlert from '../../Shared/Components/modals/DeleteSceneAlert/DeleteSceneAlert';
+import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTabs/SceneDetailsTabs';
+import EditionModal from '../../Shared/Components/modals/EditionModal/EditionModal';
 
 export const EditableTimeField: React.FC<{
   value: number | null;

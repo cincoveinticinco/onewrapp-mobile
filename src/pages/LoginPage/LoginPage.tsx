@@ -19,10 +19,10 @@ import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
-import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import useNetworkStatus from '../../hooks/utils/useNetworkStatus/useNetworkStatus';
 import DatabaseContext from '../../context/Database/Database.context';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const LoginPage: React.FC = () => {
   const { saveLogin, loggedIn, loading, setLoadingAuth } = useAuth();

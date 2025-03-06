@@ -6,11 +6,11 @@ import {
   IonInfiniteScrollContent,
   IonButton
 } from '@ionic/react';
-import { PermisionTypes } from '../../../../Shared/Components/ProtectedRoute/ProtectedRoute';
+import { PermisionTypes } from '../../../../Shared/Components/navigation/ProtectedRoute/ProtectedRoute';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 import ScenesTotals from '../ScenesTotals/ScenesTotals';
-import SceneCard from '../SceneCard/SceneCard';
-import { Section } from '../../../../Shared/Components/Section/Section';
+import SceneCard from '../../../../Shared/Components/cards/SceneCard/SceneCard';
+import { Section } from '../../../../Shared/Components/organizers/Section/Section';
 import NoScenesMessage from '../NoScenesMessage/NoScenesMessage';
 
 interface GroupedScenesListProps {

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { IonContent, IonGrid } from '@ionic/react';
-import { PermisionTypes } from '../../../../Shared/Components/ProtectedRoute/ProtectedRoute';
-import { Section } from '../../../../Shared/Components/Section/Section';
+import { PermisionTypes } from '../../../../Shared/Components/navigation/ProtectedRoute/ProtectedRoute';
+import { Section } from '../../../../Shared/Components/organizers/Section/Section';
 import NoScenesMessage from '../NoScenesMessage/NoScenesMessage';
-import { CombinedScenesWithShootings } from '../../../../hooks/useCombinedScenesWithShootings/useCombinedScenesWithShootings';
 import ScenesTotals from '../ScenesTotals/ScenesTotals';
-import SceneCard from '../SceneCard/SceneCard';
+import SceneCard from '../../../../Shared/Components/cards/SceneCard/SceneCard';
+import { CombinedScenesWithShootings } from '../../../../hooks/database/useCombinedScenesWithShootings/useCombinedScenesWithShootings';
 
 interface ShootingData {
   shootingLabel: string;

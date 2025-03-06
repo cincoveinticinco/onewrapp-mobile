@@ -1,9 +1,9 @@
 import { IonCol, IonGrid, IonRow } from '@ionic/react';
 import SceneInfoLabels, { FormType } from '../SceneInfoLabels/SceneInfoLabels';
-import { InfoType, SceneTypeEnum } from '../../../../Shared/ennums/ennums';
+import { InfoType, SceneTypeEnum } from '../../../../Shared/enums/ennums';
 import { isNumberValidator } from '../../../../Shared/Utils/validators';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSceneFormOptions } from '../../../../hooks/useSceneOptions/useSceneOptions';
+import { useSceneFormOptions } from '../../../../hooks/database/useSceneOptions/useSceneOptions';
 import { SceneDocType } from '../../../../Shared/types/scenes.types';
 import { ListOfOptionsItem } from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 

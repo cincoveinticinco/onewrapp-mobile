@@ -8,10 +8,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/Database/Database.context';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const EditSceneToDetails: React.FC = () => {
   const history = useHistory();

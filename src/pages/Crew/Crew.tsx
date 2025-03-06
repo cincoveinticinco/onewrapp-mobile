@@ -7,7 +7,6 @@ import { useHistory, useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import CrewCard from './Components/CrewCard/CrewCard';
-import EditionModal, { SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
 import { CountryDocType } from '../../Shared/types/country.types';
 import { CrewDocType } from '../../Shared/types/crew.types';
 import { UnitDocType } from '../../Shared/types/unitTypes.types';
@@ -16,7 +15,8 @@ import './Crew.scss';
 import { crewFormInputs } from './inputs/crewForm.inputs';
 import useCrewOperations from './hooks/useCrewOperations';
 import { FormStructureInterface } from './types/crew.interfaces';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import EditionModal, { SelectOptionsInterface } from '../../Shared/Components/modals/EditionModal/EditionModal';
 
 const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<{ [key: string]: boolean }>({});

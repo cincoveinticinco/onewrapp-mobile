@@ -2,8 +2,8 @@ import {
   IonCard, IonCardContent,
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
-import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../../Shared/ennums/ennums';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../../Shared/enums/ennums';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import { ShootingDocType } from '../../../../Shared/types/shooting.types';
 
 const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> = ({ className, shooting }) => {

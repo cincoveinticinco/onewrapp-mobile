@@ -3,7 +3,7 @@ import { PiTrashSimpleLight } from 'react-icons/pi';
 import { VscEdit } from 'react-icons/vsc';
 import { AdvanceCall } from '../../../../Shared/types/shooting.types';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface AdvanceCallInfoProps {
   call: AdvanceCall;

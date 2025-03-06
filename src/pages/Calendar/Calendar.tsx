@@ -12,18 +12,18 @@ import { useRxData } from 'rxdb-hooks';
 import MonthView from './Components/MonthView/MonthView';
 import MonthViewToolbar from './Components/MonthViewToolbar/MonthViewToolbar';
 import WeekView from './Components/WeekView/WeekView';
-import EditionModal, { FormInput, SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
-import Legend from '../../Shared/Components/Legend/Legend';
+import Legend from '../../Shared/Components/descriptive/Legend/Legend';
 import DatabaseContext from '../../context/Database/Database.context';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import { ShootingDocType } from '../../Shared/types/shooting.types';
 import { UnitDocType } from '../../Shared/types/unitTypes.types';
 import './Calendar.css';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
 import WeekViewToolbar from './Components/WeekViewToolbar/WeekViewToolbar';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
+import EditionModal, { FormInput, SelectOptionsInterface } from '../../Shared/Components/modals/EditionModal/EditionModal';
 
 const Calendar: React.FC = () => {
   const LOCAL_STORAGE_KEY = 'calendarCurrentDate';

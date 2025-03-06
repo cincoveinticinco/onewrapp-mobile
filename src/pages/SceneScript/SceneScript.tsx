@@ -16,14 +16,13 @@ import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
 import { useHistory, useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import ScriptPage from './Components/ScriptPage';
-import SceneDetailsTabs from '../../Shared/Components/SeceneDetailsTabs/SceneDetailsTabs';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, EmptyEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
-} from '../../Shared/ennums/ennums';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+} from '../../Shared/enums/ennums';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import {
   Character, Element, Extra, Note, SceneDocType,
 } from '../../Shared/types/scenes.types';
@@ -32,9 +31,10 @@ import applyFilters from '../../Shared/Utils/applyFilters';
 import SceneHeader from '../SceneDetails/SceneHeader';
 import './SceneScript.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
-import DeleteSceneAlert from '../../Shared/Components/DeleteSceneAlert/DeleteSceneAlert';
-import UnassignSceneAlert from '../../Shared/Components/UnassignSceneAlert/UnassignSceneAlert';
-import useAlertToast from '../../hooks/useToastAlert/useToastAlert';
+import UnassignSceneAlert from '../../Shared/Components/modals/UnassignSceneAlert/UnassignSceneAlert';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
+import DeleteSceneAlert from '../../Shared/Components/modals/DeleteSceneAlert/DeleteSceneAlert';
+import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTabs/SceneDetailsTabs';
 
 // BLUE CHARACTER
 // YELLOW ELEMENT

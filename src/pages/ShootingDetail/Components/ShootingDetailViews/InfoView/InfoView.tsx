@@ -1,5 +1,5 @@
 import { IonContent } from '@ionic/react';
-import useIsMobile from '../../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../../hooks/utils/useIsMobile/useIsMobile';
 import { LocationInfo, Meal } from '../../../../../Shared/types/shooting.types';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';

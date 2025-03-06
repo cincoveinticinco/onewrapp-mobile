@@ -228,6 +228,9 @@ body {
     --ion-color-tertiary-dark-contrast-rgb: 255, 255, 255;
     --ion-color-tertiary-dark-shade: #14181f;
     --ion-color-tertiary-dark-tint: #2c313b;
+    --drop-zone-color-primary: #19d0f95a;
+    --drop-zone-color-secondary: #3dc2ff5a;
+    --drop-zone-color-tertiary: #282f3a5a;
   
     /* CUSTOM 525 VARIABLES */
     --525-small-text-size: 9px;

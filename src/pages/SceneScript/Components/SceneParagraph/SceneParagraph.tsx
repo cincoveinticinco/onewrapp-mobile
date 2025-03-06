@@ -1,5 +1,5 @@
 import React from 'react';
-import HighlightedTextWithArray, { SearchTerm } from '../../../../Shared/Components/HighlightedTextWithArray/HighlightedTextWithArray';
+import HighlightedTextWithArray, { SearchTerm } from '../../../../Shared/Components/descriptive/HighlightedTextWithArray/HighlightedTextWithArray';
 
 enum ParagraphTypeEnum {
   Action = 'Action',

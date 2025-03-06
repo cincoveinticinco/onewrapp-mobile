@@ -1,15 +1,15 @@
 import { useParams } from "react-router";
-import useWebWorker from "../../../../hooks/useWebWorker/useWebWorker";
-import useAppStore from "../../../../stores/useAppStore";
+import useWebWorker from "../../../../hooks/utils/useWebWorker/useWebWorker";
+import useAppStore from "../../../../hooks/utils/useAppStore/useAppStore";
 import { useContext, useEffect, useState } from "react";
 import { IonButton, IonContent, IonHeader, IonIcon, IonItem, IonModal, IonSpinner, IonTitle, IonToolbar } from "@ionic/react";
-import DeleteButton from "../../../../Shared/Components/DeleteButton/DeleteButton";
+import DeleteButton from "../../../../Shared/Components/buttons/DeleteButton/DeleteButton";
 import { arrowDownCircleOutline, downloadOutline, openOutline } from "ionicons/icons";
 import ExportModal from "../ExportModal/ExportModal";
 import DatabaseContext from "../../../../context/Database/Database.context";
 import './ExportButton.scss';
 import { WorkerData, WorkerStatusTypeEnum } from "../../../../Shared/types/workers.types";
-import ToolbarButton from "../../../../Shared/Components/ToolbarButton/ToolbarButton";
+import ToolbarButton from "../../../../Shared/Components/buttons/ToolbarButton/ToolbarButton";
 
 const ExportButton: React.FC = () => {
   const { projectId, isOnline } = useContext(DatabaseContext)

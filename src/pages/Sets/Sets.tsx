@@ -9,18 +9,18 @@ import React, {
 } from 'react';
 import { useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 
 import LocationSetCard from './Components/LocationSetCard/LocationSetCard';
-import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+import useProcessedSetsAndLocations from '../../hooks/database/useSets/usePorcessedSetsAndLocations';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
 import removeAccents from '../../Shared/Utils/removeAccents';
 import './Sets.scss';
-import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
 import { swapVerticalOutline } from 'ionicons/icons';
 
 const Sets: React.FC<{

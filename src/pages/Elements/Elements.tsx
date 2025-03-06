@@ -10,13 +10,13 @@ import React, {
 } from 'react';
 import { useLocation } from 'react-router';
 import ElementCard from './Components/ElementsCard/ElementCard';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { elementsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import { EmptyEnum, SceneTypeEnum } from '../../Shared/ennums/ennums';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import { EmptyEnum, SceneTypeEnum } from '../../Shared/enums/ennums';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
@@ -26,7 +26,7 @@ import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias'
 import './Elements.scss';
 import { useRxData } from 'rxdb-hooks';
 import { SceneDocType } from '../../Shared/types/scenes.types';
-import ToolbarButton from '../../Shared/Components/ToolbarButton/ToolbarButton';
+import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
 import { swapVerticalOutline } from 'ionicons/icons';
 
 const Elements: React.FC<{

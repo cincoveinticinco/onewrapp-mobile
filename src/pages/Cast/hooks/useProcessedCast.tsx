@@ -4,7 +4,7 @@ import {
 } from 'react';
 import DatabaseContext from '../../../context/Database/Database.context';
 import ScenesContext from '../../../context/Scenes/Scenes.context';
-import { EmptyEnum, SceneTypeEnum } from '../../../Shared/ennums/ennums';
+import { EmptyEnum, SceneTypeEnum } from '../../../Shared/enums/ennums';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';

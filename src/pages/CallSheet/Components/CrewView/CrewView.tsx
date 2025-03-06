@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GeneralTable, { Column, EditFunction } from '../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable, { Column, EditFunction } from '../../../../Shared/Components/tables/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import { useParams } from 'react-router';
 import { useRxData, useRxDB } from 'rxdb-hooks';
@@ -14,13 +14,13 @@ import {
   IonDatetime,
   IonCheckbox,
 } from '@ionic/react';
-import OutlinePrimaryButton from '../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import AppLoader from '../../../../Shared/Components/AppLoader/AppLoader';
+import OutlinePrimaryButton from '../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import AppLoader from '../../../../Shared/Components/loaders/AppLoader/AppLoader';
 import './ CrewView.scss'
-import { ShootingStatusEnum } from '../../../../Shared/ennums/ennums';
+import { ShootingStatusEnum } from '../../../../Shared/enums/ennums';
 import { CrewCall, ShootingDocType } from '../../../../Shared/types/shooting.types';
 import { CrewDocType } from '../../../../Shared/types/crew.types';
-import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
 
 interface CrewViewProps {
   crewCalls: CrewCall[];

@@ -17,7 +17,7 @@ import {
 import { refresh, reload } from 'ionicons/icons';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/Database/Database.context';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import './ReplicationPage.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 

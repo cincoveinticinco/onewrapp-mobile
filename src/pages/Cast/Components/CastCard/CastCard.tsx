@@ -3,18 +3,18 @@ import {
   IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,} from '@ionic/react';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
 import './CastCard.scss';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import { checkmarkCircle } from 'ionicons/icons';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import InfoLabel from '../../../../Shared/Components/InfoLabel/InfoLabel';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
-import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
+import InfoLabel from '../../../../Shared/Components/descriptive/InfoLabel/InfoLabel';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface Cast {
   characterNum: string;

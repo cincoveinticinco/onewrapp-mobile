@@ -1,5 +1,5 @@
-import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import { Section } from '../../../../../Shared/Components/Section/Section';
+import OutlinePrimaryButton from '../../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../../../Shared/Components/organizers/Section/Section';
 import AdvanceCallInfo from '../../AdvanceCallInfo/AdvanceCallInfo';
 
 interface AdvanceCallsSectionProps {

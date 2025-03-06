@@ -6,17 +6,17 @@ import React, {
   useCallback, useContext, useEffect, useMemo,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
-import { ProtectionTypeEnumArray } from '../../Shared/ennums/ennums';
+import { ProtectionTypeEnumArray } from '../../Shared/enums/ennums';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import FilterScenesButtonsSelect from './Components/FilterScenesButtonsSelect/FilterScenesButtonsSelect';
 import FilterScenesModalSelect from './Components/FilterScenesModalSelect/FilterScenesModalSelect';
-import OutlineLightButton from '../../Shared/Components/OutlineLightButton/OutlineLightButton';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlineLightButton from '../../Shared/Components/buttons/OutlineLightButton/OutlineLightButton';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes/Scenes.context';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
-import AppLoader from '../../Shared/Components/AppLoader/AppLoader';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import toggleFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleFIlterOption';
 import toggleNestedFilterOption from '../../Shared/Utils/FilterScenesUtils/toggleNestedFilterOption';
 import customArraySort from '../../Shared/Utils/customArraySort';

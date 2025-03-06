@@ -9,18 +9,18 @@ import {
 } from '@ionic/react';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import { checkmarkCircle } from 'ionicons/icons';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
+import DropDownButton from '../../../../Shared/Components/buttons/DropDownButton/DropDownButton';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import './ElementCard.scss';
-import useAlertToast from '../../../../hooks/useToastAlert/useToastAlert';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface Element {
   elementName: string;

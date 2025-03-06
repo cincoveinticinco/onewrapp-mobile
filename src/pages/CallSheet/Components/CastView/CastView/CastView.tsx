@@ -1,5 +1,5 @@
 import { normalizeString } from 'rxdb';
-import GeneralTable from '../../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable from '../../../../../Shared/Components/tables/GeneralTable/GeneralTable';
 import NoRegisters from '../../NoRegisters/NoRegisters';
 import { castColumns } from './tables/cast.columns';
 import { sortCast } from './utils/Cast.utils';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { IonButton, IonCardContent, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList } from '@ionic/react';
-import DeleteButton from '../../../../Shared/Components/DeleteButton/DeleteButton';
-import NoAdded from '../../../../Shared/Components/NoAdded/NoAdded';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import DeleteButton from '../../../../Shared/Components/buttons/DeleteButton/DeleteButton';
+import NoAdded from '../../../../Shared/Components/descriptive/NoAdded/NoAdded';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import { VscEdit } from 'react-icons/vsc';
 
 interface Element {

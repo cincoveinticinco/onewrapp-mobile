@@ -1,6 +1,6 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
-import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Shared/ennums/ennums';
+import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Shared/enums/ennums';
 import DatabaseSchema from '../database_schema';
 import { ShootingDocType } from '../../Shared/types/shooting.types';
 

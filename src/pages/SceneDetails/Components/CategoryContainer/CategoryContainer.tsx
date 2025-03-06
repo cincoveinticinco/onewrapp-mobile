@@ -1,6 +1,6 @@
 import { IonCardContent, IonCardHeader } from '@ionic/react';
 import { Note, SceneDocType } from '../../../../Shared/types/scenes.types';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 
 const CategoryContainer = ({
   categoryName, scene, characters, extras, elements, notes,

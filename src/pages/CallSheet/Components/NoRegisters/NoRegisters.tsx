@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import OutlinePrimaryButton from '../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlinePrimaryButton from '../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
 
 interface NoRegistersProps {
   addNew: () => void;

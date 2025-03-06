@@ -16,13 +16,13 @@ import AuthContext from '../Auth/Auth.context';
 import CountriesSchema from '../../RXdatabase/schemas/country.schema';
 import ServiceMatricesSchema from '../../RXdatabase/schemas/serviceMatrices.schema';
 import UserSchema from '../../RXdatabase/schemas/user.schema';
-import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
+import useNetworkStatus from '../../hooks/utils/useNetworkStatus/useNetworkStatus';
 import environment from '../../../environment';
 import useReplicationStore from '../../stores/useReplicationStore';
-import useAppStore from '../../stores/useAppStore';
 import { DatabaseContextProps } from './types/Database.types';
 import ProjWeeksSchema from '../../RXdatabase/schemas/projWeeks.schema';
 import StripboardSchema from '../../RXdatabase/schemas/stripboard.schema';
+import useAppStore from '../../hooks/utils/useAppStore/useAppStore';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,

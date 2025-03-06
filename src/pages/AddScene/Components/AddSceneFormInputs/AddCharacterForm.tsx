@@ -14,10 +14,10 @@ import {
 import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import { Character } from '../../../../Shared/types/scenes.types';
-import AddButton from '../../../../Shared/Components/AddButton/AddButton';
+import AddButton from '../../../../Shared/Components/buttons/AddButton/AddButton';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
-import { EmptyEnum } from '../../../../Shared/ennums/ennums';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import { VscEdit } from 'react-icons/vsc';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 
