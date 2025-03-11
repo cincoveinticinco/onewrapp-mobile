@@ -49,6 +49,7 @@ const StripBoardContent: React.FC = () => {
         <StripboardModal 
           scenes={structuredClone(selectedStripboard.scenes) || []} 
           scenesNotIncluded={selectedStripboard.scenesNotIncluded || []}
+          startDate={selectedStripboard.startDate}
         />
       )}
       <DisplayOptionsModal />
