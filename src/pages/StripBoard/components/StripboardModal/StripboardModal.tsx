@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { 
   IonButton, 
   IonContent, 
@@ -10,110 +10,127 @@ import {
 } from "@ionic/react";
 import { settings } from "ionicons/icons";
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
-import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
 import ModalToolbar from "../../../../Shared/Components/modals/ModalToolbar/ModalToolbar";
 import SplitLayout from "../../../../Shared/Components/organizers/SplitLayout/SplitLayout";
-import ScenesList from "../ScenesList/ScenesList";
 import AppLoader from "../../../../Shared/Components/loaders/AppLoader/AppLoader";
+import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
+import ScenesList from "../ScenesList/ScenesList";
+import { StripboardWeeks } from "../../../../hooks/database/useStripboards/useStripboards";
+import { Section } from "../../../../Shared/Components/organizers/Section/Section";
 
 interface StripboardModalProps {
   scenes: SceneDocType[];
   scenesNotIncluded: SceneDocType[];
-  startDate: string | null
+  weeks: StripboardWeeks[];
 }
 
-const INITIAL_LOAD_COUNT = 70; // Cantidad inicial de escenas mostradas
-const LOAD_MORE_COUNT = 5; // Cantidad a cargar en cada scroll
+const INITIAL_LOAD_COUNT = 70;
+const LOAD_MORE_COUNT = 5;
+const SCROLL_RESET_DELAY = 300;
+const LOAD_MORE_DELAY = 200;
 
-const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncluded, startDate}) => {
+export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncluded, weeks }) => {
   const { detailIsOpen, setDetailIsOpen, setShowOptionsModal } = useContext(StripboardContext);
 
-  // Estados para manejar la cantidad de escenas mostradas
-  const [scenesToDisplay, setScenesToDisplay] = useState(INITIAL_LOAD_COUNT);
   const [scenesNotIncludedToDisplay, setScenesNotIncludedToDisplay] = useState(INITIAL_LOAD_COUNT);
   const [scenesCopy, setScenesCopy] = useState<SceneDocType[]>([]);
   const [scenesNotIncludedCopy, setScenesNotIncludedCopy] = useState<SceneDocType[]>([]);
   const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  const [weeksInStripboard, setWeeksInStripboard] = useState<string[]>([])
+  
+  // Create state for scenes in units
+  const [unitScenes, setUnitScenes] = useState<Record<string, SceneDocType[]>>({});
 
   useEffect(() => {
-    const scenesStructCopy = structuredClone(scenes);
-    const scenesNotIncludedStrucCopy = structuredClone(scenesNotIncluded);
-    if(scenesStructCopy && scenesNotIncludedStrucCopy) {
-      setScenesCopy(scenesStructCopy);
-      setScenesNotIncludedCopy(scenesNotIncludedStrucCopy);
+    if (scenes && scenesNotIncluded) {
+      setScenesCopy(structuredClone(scenes));
+      setScenesNotIncludedCopy(structuredClone(scenesNotIncluded));
       setScenesAreLoading(false);
+      
+      // Initialize unit scenes
+      const unitScenesMap: Record<string, SceneDocType[]> = {};
+      weeks.forEach(week => {
+        week.days.forEach(day => {
+          day.units.forEach(unit => {
+            unitScenesMap[unit.unitId] = structuredClone(unit.scenes);
+          });
+        });
+      });
+      setUnitScenes(unitScenesMap);
     }
-  }, [scenes, scenesNotIncluded]);
+  }, [scenes, scenesNotIncluded, weeks]);
+
+  const resetScrollPosition = useCallback(() => {
+    const ionContents = document.querySelectorAll('ion-content');
+    ionContents.forEach(content => {
+      try {
+        (content as any).scrollToTop(0);
+      } catch (e) {
+        // Scrolling errors can be safely ignored
+      }
+    });
+  }, []);
 
   useEffect(() => {
-
-  }, [])
+    if (detailIsOpen) {
+      const timer = setTimeout(resetScrollPosition, SCROLL_RESET_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [detailIsOpen, resetScrollPosition]);
   
-  const loadMoreScenes = (ev: CustomEvent, type: "included" | "notIncluded") => {
-    console.log(`🔄 Ejecutando loadMoreScenes para: ${type}`);
-  
-    // Almacena una referencia al elemento para asegurarse de que complete() se llama
+  const loadMoreScenes = useCallback((ev: CustomEvent, type: "included" | "notIncluded") => {
     const scrollElement = ev.target as HTMLIonInfiniteScrollElement;
-    
-    setTimeout(() => {
-      if (type === "included") {
-        setScenesToDisplay((prev) => {
-          const newCount = Math.min(prev + LOAD_MORE_COUNT, scenesCopy.length);
-          console.log(`✅ Nuevas escenas mostradas (included): ${newCount}`);
-          return newCount;
-        });
-      } else {
-        setScenesNotIncludedToDisplay((prev) => {
-          const newCount = Math.min(prev + LOAD_MORE_COUNT, scenesNotIncludedCopy.length);
-          console.log(`✅ Nuevas escenas mostradas (notIncluded): ${newCount}`);
-          return newCount;
-        });
-      }
-  
-      // Asegurarse de que complete() se llama incluso si ocurre algún error
-      try {
-        scrollElement.complete();
-      } catch (error) {
-        console.error("Error al completar infinite scroll:", error);
-        // Intentar resetear el estado
-        setTimeout(() => {
-          try {
-            scrollElement.disabled = true;
-            setTimeout(() => {
-              scrollElement.disabled = false;
-            }, 100);
-          } catch (e) {
-            // Ignorar errores secundarios
-          }
-        }, 100);
-      }
-    }, 500);
-  };
 
-  const sectionToolbar = (sectionName: string) => (
+    const timer = setTimeout(() => {
+      if (type === "notIncluded") {
+        setScenesNotIncludedToDisplay(prev => 
+          Math.min(prev + LOAD_MORE_COUNT, scenesNotIncludedCopy.length)
+        );
+      }
+    }, LOAD_MORE_DELAY);
+
+    scrollElement.complete().catch(error => {
+      console.error("Error completing infinite scroll:", error);
+    });
+
+    return () => clearTimeout(timer);
+  }, [scenesNotIncludedCopy.length]);
+
+  const sectionToolbar = useCallback((sectionName: string) => (
     <ModalToolbar
       toolbarTitle={sectionName}
       customButtons={[]}
     />
-  )
+  ), []);
 
-  useEffect(() => {
-    if (detailIsOpen) {
-      // Cuando se abre el modal, damos tiempo a que se renderice y luego reseteamos los scrolls
-      setTimeout(() => {
-        const ionContents = document.querySelectorAll('ion-content');
-        ionContents.forEach(content => {
-          try {
-            // Esto forzará a Ionic a recalcular los scrolls
-            (content as any).scrollToTop(0);
-          } catch (e) {
-            // Ignorar errores
-          }
-        });
-      }, 300);
-    }
-  }, [detailIsOpen]);
+  const updateUnitScenes = useCallback((unitId: number, scenes: SceneDocType[]) => {
+    setUnitScenes(prev => ({
+      ...prev,
+      [unitId]: scenes
+    }));
+  }, []);
+
+  if (scenesAreLoading) {
+    return (
+      <IonModal isOpen={detailIsOpen} onDidDismiss={() => setDetailIsOpen(false)} color="tertiary" className="modal-styles">
+        <IonHeader style={{ zIndex: '20' }}>
+          <ModalToolbar
+            toolbarTitle="Stripboard"
+            handleBack={() => setDetailIsOpen(false)}
+            customButtons={[
+              () => (
+                <IonButton fill="clear" key="settings" onClick={() => setShowOptionsModal(true)} slot="end" color="light">
+                  <IonIcon icon={settings} />
+                </IonButton>
+              )
+            ]}
+          />
+        </IonHeader>
+        <IonContent scrollEvents={true}>
+          <AppLoader />
+        </IonContent>
+      </IonModal>
+    );
+  }
 
   return (
     <IonModal isOpen={detailIsOpen} onDidDismiss={() => setDetailIsOpen(false)} color="tertiary" className="modal-styles">
@@ -123,62 +140,67 @@ const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncl
           handleBack={() => setDetailIsOpen(false)}
           customButtons={[
             () => (
-              <IonButton fill='clear' key="settings" onClick={() => setShowOptionsModal(true)} slot="end" color='light'>
+              <IonButton fill="clear" key="settings" onClick={() => setShowOptionsModal(true)} slot="end" color="light">
                 <IonIcon icon={settings} />
               </IonButton>
             )
           ]}
         />
       </IonHeader>
-      {
-        scenesAreLoading ? (
-          <IonContent scrollEvents={true}> 
-            <AppLoader  />
-          </IonContent>
-        ) : (
-          <IonContent scrollEvents={true}>
-            <SplitLayout>
-            {/* Lista de escenas incluidas */}
-            <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
-              <ScenesList 
-                scenes={scenesCopy} 
-                scenesToDisplay={scenesToDisplay} 
-                setScenes={setScenesCopy} 
-                listId="included-scenes" 
-                sectionToolbar={sectionToolbar("Included Scenes")}
-                >
-                <IonInfiniteScroll
-                  threshold="150px"
-                  onIonInfinite={(e) => loadMoreScenes(e, "included")}
-                  disabled={scenesToDisplay >= scenesCopy.length}
-                >
-                  <IonInfiniteScrollContent />
-                </IonInfiniteScroll>
-              </ScenesList>
-            </IonContent>
-            {/* Lista de escenas NO incluidas */}
-            <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
-              <ScenesList 
-                scenes={scenesNotIncludedCopy} 
-                scenesToDisplay={scenesNotIncludedToDisplay} 
-                setScenes={setScenesNotIncludedCopy} 
-                listId="not-included-scenes" 
-                sectionToolbar={sectionToolbar("Not Included Scenes")}
+      <IonContent scrollEvents={true}>
+        <SplitLayout>
+          <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
+            {weeks.map((week, weekIndex) => (
+              <Section 
+                key={`week-${week.weekNumber}-${weekIndex}`} 
+                title={`WEEK ${week.weekNumber} FROM ${week.weekStartDate} TO ${week.weekEndDate}`} 
+                open={true}
               >
-                <IonInfiniteScroll
-                  threshold="150px"
-                  onIonInfinite={(e) => loadMoreScenes(e, "notIncluded")}
-                  disabled={scenesNotIncludedToDisplay >= scenesNotIncludedCopy.length}
-                >
-                  <IonInfiniteScrollContent />
-                </IonInfiniteScroll>
-              </ScenesList>
-            </IonContent>
-          </SplitLayout>
-        </IonContent>
-        )
-      }
-        
+                {week.days.map((day, dayIndex) => (
+                  <Section 
+                    key={`day-${day.dayNumber}-${dayIndex}`} 
+                    title={`DAY ${day.dayNumber}`} 
+                    open={true}
+                  >
+                    {day.units.map((unit, unitIndex) => (
+                      <Section 
+                        key={`unit-${unit.unitNumber}-${unitIndex}`} 
+                        title={`UNIT ${unit.unitNumber}`} 
+                        open={true}
+                      >
+                        <ScenesList
+                          scenes={unitScenes[unit.unitId] || []}
+                          scenesToDisplay={INITIAL_LOAD_COUNT}
+                          setScenes={(scenes: SceneDocType[]) => updateUnitScenes(unit.unitId, scenes)}
+                          listId={`unit-${unit.unitId}`}
+                          sectionToolbar={sectionToolbar(`Unit ${unit.unitNumber}`)}
+                        />
+                      </Section>
+                    ))}
+                  </Section>
+                ))}
+              </Section>
+            ))}
+          </IonContent>
+          <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
+            <ScenesList 
+              scenes={scenesNotIncludedCopy} 
+              scenesToDisplay={scenesNotIncludedToDisplay} 
+              setScenes={setScenesNotIncludedCopy} 
+              listId="not-included-scenes" 
+              sectionToolbar={sectionToolbar("Not Included Scenes")}
+            >
+              <IonInfiniteScroll
+                threshold="150px"
+                onIonInfinite={(e) => loadMoreScenes(e, "notIncluded")}
+                disabled={scenesNotIncludedToDisplay >= scenesNotIncludedCopy.length}
+              >
+                <IonInfiniteScrollContent />
+              </IonInfiniteScroll>
+            </ScenesList>
+          </IonContent>
+        </SplitLayout>
+      </IonContent>
     </IonModal>
   );
 };

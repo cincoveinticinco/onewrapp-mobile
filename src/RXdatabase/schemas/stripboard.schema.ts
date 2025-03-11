@@ -2,7 +2,6 @@ import { RxJsonSchema, toTypedRxJsonSchema } from "rxdb";
 import { StripboardDocType } from "../../Shared/types/stripboard.types";
 import DatabaseSchema from "../database_schema";
 import environment from "../../../environment";
-import { includes } from "lodash";
 
 const stripboardSchemaLiteral = {
   title: 'stripboard schema',

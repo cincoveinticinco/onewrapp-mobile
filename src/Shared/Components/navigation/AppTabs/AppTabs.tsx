@@ -45,7 +45,7 @@ import SceneScript from '../../../../pages/SceneScript/SceneScript';
 import Sets from '../../../../pages/Sets/Sets';
 import Settings from '../../../../pages/Settings/Settings';
 import ShootingDetail from '../../../../pages/ShootingDetail/ShootingDetail';
-import StripBoard from '../../../../pages/StripBoard/StripBoard';
+import StripBoard from '../../../../pages/Stripboard/Stripboard';
 import Scenes from '../../../../pages/Scenes/Scenes';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';

@@ -1,8 +1,8 @@
 import { SceneDocType } from "../../../../Shared/types/scenes.types";
 import SceneCard from "../../../../Shared/Components/cards/SceneCard/SceneCard";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
 import DragAndDropBox from "../../../../Shared/Components/organizers/DragAndDropBox/DragAndDropBox";
+import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
 
 // Evento para comunicación entre componentes
 const DragDropEvents = {
@@ -33,7 +33,7 @@ const DragDropEvents = {
 interface ScenesListProps {
   scenes: SceneDocType[];
   scenesToDisplay: number;
-  setScenes: React.Dispatch<React.SetStateAction<SceneDocType[]>>;
+  setScenes: React.Dispatch<React.SetStateAction<SceneDocType[]>> | ((scenes: SceneDocType[]) => void);
   listId: string;
   children?: React.ReactNode;
   sectionToolbar?: React.ReactNode;
@@ -244,8 +244,10 @@ const ScenesList: React.FC<ScenesListProps> = ({
       sceneMap: newSceneMap,
       length: prev.length - 1
     }));
+
+    const newScenes = scenes.filter(scene => scene.id !== sceneId);
     
-    setScenes(prevScenes => prevScenes.filter(scene => scene.id !== sceneId));
+    setScenes(newScenes);
   }, [displayData, setScenes]);
   
   const onDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, scene: SceneDocType) => {

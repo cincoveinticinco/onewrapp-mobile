@@ -4,17 +4,21 @@ import {
 import { useParams } from 'react-router';
 import useStripboards, { CombinedStripboardType } from '../../hooks/database/useStripboards/useStripboards';
 import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
-import GeneralTable, { Column } from '../../Shared/Components/tables/GeneralTable/GeneralTable';
-import React, { useContext } from 'react';
+import GeneralTable from '../../Shared/Components/tables/GeneralTable/GeneralTable';
+import React, { useContext, useEffect } from 'react';
 import './StripBoard.scss';
-import StripboardModal from './components/StripboardModal/StripboardModal';
 import { StripboardContext, StripboardProvider } from './context/StripboardContext/StripboardContext';
-import DisplayOptionsModal from './components/DisplayOptionsModal/DisplayOptionsModal';
 import TableColumns from './tables/StripboardTable';
+import StripboardModal from './components/StripboardModal/StripboardModal';
+import DisplayOptionsModal from './components/DisplayOptionsModal/DisplayOptionsModal';
 
 const StripBoardContent: React.FC = () => {
   const { id: projectId } = useParams<{ id: string }>();
   const { stripboards, isFetching } = useStripboards({ projectId: projectId });
+
+  useEffect(() => {
+    console.log(stripboards);
+  }, [stripboards])
   
   const { 
     setDetailIsOpen, 
@@ -49,7 +53,7 @@ const StripBoardContent: React.FC = () => {
         <StripboardModal 
           scenes={structuredClone(selectedStripboard.scenes) || []} 
           scenesNotIncluded={selectedStripboard.scenesNotIncluded || []}
-          startDate={selectedStripboard.startDate}
+          weeks={selectedStripboard.weeks}
         />
       )}
       <DisplayOptionsModal />
