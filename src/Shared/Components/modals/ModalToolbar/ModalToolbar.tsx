@@ -5,6 +5,7 @@ import { chevronBack } from 'ionicons/icons';
 import React from 'react';
 import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import './ModalToolbar.scss';
+import zIndex from '@mui/material/styles/zIndex';
 
 interface ModalToolbarProps {
   handleReset?: () => void
@@ -12,7 +13,7 @@ interface ModalToolbarProps {
   handleSave?: () => void
   showReset?: boolean
   handleSaveName?: string
-  handleBack: () => void
+  handleBack?: () => void
   customButtons?: (() => JSX.Element)[]
 }
 
@@ -32,7 +33,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
   return (
     <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
       {
-        isMobile || !handleReset
+        isMobile || !handleReset && handleBack
         && (
           <IonButton fill="clear" color="primary" slot="start" onClick={handleBack}>
             <IonIcon icon={chevronBack} color="light" />
