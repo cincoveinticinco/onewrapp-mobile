@@ -60,6 +60,7 @@ interface SceneCardProps {
   shootingDeleteScene?: () => void;
   permissionType?: number | null;
   displayOptions?: Partial<SceneCardDisplayOptions>;
+  goToDetail?: boolean;
 }
 
 const SceneCard: React.FC<SceneCardProps> = ({
@@ -70,6 +71,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
   shootingDeleteScene, 
   permissionType,
   displayOptions = {},
+  goToDetail = true,
 }) => {
   // Combinar opciones predeterminadas con las proporcionadas
   const options: SceneCardDisplayOptions = {
@@ -215,6 +217,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   const goToSceneDetails = (editMode: boolean = false) => {
+    if(!goToDetail) return;
     let route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
     if (editMode) {
       route += '?edit=true';
