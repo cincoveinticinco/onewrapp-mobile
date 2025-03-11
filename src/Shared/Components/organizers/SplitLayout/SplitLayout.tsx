@@ -5,7 +5,7 @@ interface SplitLayoutProps {
   children: ReactNode[];
 }
 
-const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
+const SplitLayout: React.FC<SplitLayoutProps> = ({ children}) => {
   const [direction, setDirection] = useState<'horizontal' | 'vertical'>('horizontal');
   const [panelContents, setPanelContents] = useState<ReactNode[]>(
     React.Children.toArray(children)
@@ -77,6 +77,7 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
 
     return (
       <div
+        draggable={false}
         style={{
           position: 'absolute',
           ...positionStyles[position],
@@ -109,7 +110,7 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
   );
 
   return (
-    <PanelGroup direction={direction} style={{ backgroundColor: 'var(--background-color-secondary) !important' }}>
+    <PanelGroup direction={direction} style={{ backgroundColor: 'var(--background-color-secondary) !important'}}>
       {panelContents.map((child, index) => (
         <React.Fragment key={index}>
           {index > 0 && 
@@ -150,24 +151,18 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children }) => {
               </div>
             </PanelResizeHandle>}
             <Panel 
-            defaultSize={50}
-            minSize={20} 
-            style={{ scrollbarWidth: 'none', backgroundColor: 'var(--background-color-secondary) !important' }}
-            draggable={allowDrag}
-            onDragStart={(e) => handleDragStart(e, index)}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-            onMouseUp={handleMouseUp}
-            onTouchEnd={handleTouchEnd}
-            id={index.toString()}
+              defaultSize={50}
+              minSize={20} 
+              style={{ scrollbarWidth: 'none', backgroundColor: 'var(--background-color-secondary) !important'}}
+              draggable={allowDrag}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+              onMouseUp={handleMouseUp}
+              onTouchEnd={handleTouchEnd}
+              id={index.toString()}
             >
             {child}
-            {direction === 'horizontal' && (
-              <>
-              <DirectionDropComponent position="top" />
-              <DirectionDropComponent position="bottom" />
-              </>
-            )}
             
             {direction === 'vertical' && (
               <>
