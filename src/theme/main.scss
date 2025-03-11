@@ -498,3 +498,12 @@ ion-toast.error-toast {
     border: 1px solid var(--ion-color-danger);
   }
 }
+
+.hide-scrollbar {
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
