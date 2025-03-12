@@ -477,6 +477,18 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   useEffect(() => {
     if(projectId) {
       localStorage.setItem('projectId', projectId);
+      if(resyncScenes.current) resyncScenes.current.cancelReplication();
+      if(resyncShootings.current) resyncShootings.current.cancelReplication();
+      if(resyncProjectsUser.current) resyncProjectsUser.current.cancelReplication();
+      if(resyncParagraphs.current) resyncParagraphs.current.cancelReplication();
+      if(resyncUnits.current) resyncUnits.current.cancelReplication();
+      if(resyncTalents.current) resyncTalents.current.cancelReplication();
+      if(resyncCrew.current) resyncCrew.current.cancelReplication();
+      if(resyncCountries.current) resyncCountries.current.cancelReplication();
+      if(resyncServiceMatrices.current) resyncServiceMatrices.current.cancelReplication();
+      if(resyncProjWeeks.current) resyncProjWeeks.current.cancelReplication();
+      if(resyncStripboard.current) resyncStripboard.current.cancelReplication();
+
       resyncScenes.current = null;
       resyncShootings.current = null;
       resyncProjectsUser.current = null;
