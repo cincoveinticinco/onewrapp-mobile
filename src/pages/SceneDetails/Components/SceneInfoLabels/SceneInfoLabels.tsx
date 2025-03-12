@@ -219,9 +219,9 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
         return (
           <div className="custom-pages-input">
             <AddPagesForm
-              handleChange={setValue}
-              observedField={fieldKeyName ? Number(watch(fieldKeyName as keyof SceneDocType)) || null : null}
-              labels={false}
+                handleChange={(value, field: any) => setValue(field, value)}
+                observedField={fieldKeyName ? Number(watch(fieldKeyName as keyof SceneDocType)) || null : null}
+                labels={false}
             />
           </div>
         );
