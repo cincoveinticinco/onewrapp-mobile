@@ -170,10 +170,33 @@ export default class HttpReplicator {
     }
   }
 
-  public cancelReplication() {
-    this.replicationStates.forEach((replicationState) => {
-      replicationState.cancel();
+  public async cancelReplication() {
+    const cancelPromises = this.replicationStates.map(replicationState => {
+      return new Promise(resolve => {
+        try {
+          replicationState.cancel();
+          
+          // Wait for cancel to complete
+          const subscription = replicationState.canceled$.subscribe(() => {
+            subscription.unsubscribe();
+            resolve(true);
+          });
+          
+          // Fallback in case cancel doesn't trigger event
+          setTimeout(() => {
+            subscription.unsubscribe();
+            resolve(false);
+          }, 1000);
+        } catch (e) {
+          console.warn('Error in cancel replication:', e);
+          resolve(false);
+        }
+      });
     });
+    
+    await Promise.all(cancelPromises);
+    this.replicationStates = [];
+    console.log('Replication fully cancelled');
   }
 
   public removeReplication() {

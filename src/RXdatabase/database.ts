@@ -5,7 +5,7 @@ import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
+import { rxdb, RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import DatabaseSchema from './database_schema';
@@ -42,7 +42,8 @@ export default class AppDataBase {
       const dbInstance = await createRxDatabase({
         name: this.dbName,
         storage,
-        multiInstance: false
+        multiInstance: false,
+        ignoreDuplicate: true 
       });
 
       await this.setCollections(dbInstance);
@@ -69,16 +70,35 @@ export default class AppDataBase {
 
     public async getDatabaseInstance() {
       try {
-        // Check if database already exists in IndexedDB
-        const existingDb = await this.dbInstance;
-        if (existingDb) {
-          return existingDb;
+        const existingDbName = 'onewrappdb';
+        let dbExists = false;
+        
+        // Intenta primero con indexedDB.databases()
+        try {
+          dbExists = (await indexedDB.databases()).some(db => db.name === existingDbName);
+        } catch (e) {
+          console.warn('Error checking for existing database:', e);
+        }
+        
+        if (dbExists) {
+          console.log('Using existing database instance');
+          // Asegurarse de que la instancia es válida intentando acceder a alguna colección
+          try {
+            const dbInstance = await this.dbInstance;
+            // Verificar si la instancia es válida
+            if (dbInstance && Object.keys(dbInstance.collections).length > 0) {
+              return dbInstance;
+            }
+          } catch (accessError) {
+            console.warn('Existing database instance is invalid or inaccessible:', accessError);
+          }
         }
       } catch (error) {
-        console.warn('Failed to get existing database, creating new instance', error);
+        console.warn('Error during database existence check:', error);
       }
       
-      // Create a new instance only if needed
+      // Si llegamos aquí, necesitamos crear una nueva instancia
+      console.log('Creating new database instance');
       this.dbInstance = this.initializeDatabase();
       return this.dbInstance;
     }

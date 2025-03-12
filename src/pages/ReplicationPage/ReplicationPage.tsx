@@ -56,7 +56,8 @@ const ReplicationPage: React.FC = () => {
       setIsReplicating(true);
       initialProjectReplication().then(() => {
         setIsReplicating(false);
-        history.push(`/my/projects/${id}/strips`);
+         // we need to avoid multiple replication instances creations when project is changed, so we use window.location.replace
+        window.location.replace(`/my/projects/${id}/strips`);
       }).catch(() => {
         setIsReplicating(false);
         setError('There was an error replicating the data. Please try again or contact support.');
@@ -96,21 +97,9 @@ const ReplicationPage: React.FC = () => {
     );
   }
 
-  const retryReplication = () => {
-    setError(null);
-    setIsReplicating(true);
-    hardResync().then(() => {
-      setIsReplicating(false);
-      history.push(`/my/projects/${id}/strips`);
-    }).catch(() => {
-      setIsReplicating(false);
-      setError('There was an error replicating the data. Please try again or contact support.');
-    });
-  }
-
   const handleRetry = () => {
     if (isOnline) {
-      retryReplication();
+      window.location.reload();
     }
   };
 

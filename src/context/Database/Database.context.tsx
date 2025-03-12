@@ -148,6 +148,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
+    console.log(`Initializing ${collection.getSchemaName()} replication for project ${projectId}`);
+    
     if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) {
       const failedData = !projectId ? 'Project Id not found' : !oneWrapRXdatabase ? 'Database not initialized' : !collection ? 'Collection not found' : 'Invalid initialization parameters';
       throw new Error('Invalid initialization parameters ' + failedData);
@@ -162,18 +164,19 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       .then((data: any) => (data[0] ? data[0] : null));
   
     if (!resyncRef.current) {
+      console.log(`Creating new replicator for ${collection.getSchemaName()} - Project ${projectId}`);
       const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
       if (isOnline) {
         await replicator.startReplication(true, canPush);
         resyncRef.current = replicator;
       }
     } else {
+      console.log(`Reusing existing replicator for ${collection.getSchemaName()} - Project ${projectId}`);
       isOnline && resyncRef.current.resyncReplication();
     }
   
     return true;
   }
-
   const hardAppReset = async () => {
     await oneWrapRXdatabase.remove();
     localStorage.clear();
@@ -468,6 +471,53 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     }
   }, [oneWrapRXdatabase, isOnline, projectId, initialReplicationFinished]);
 
+  const cleanupReplicators = async () => {
+    // Create an array of all replicator refs
+    const replicators = [
+      resyncScenes.current,
+      resyncShootings.current,
+      resyncProjectsUser.current,
+      resyncParagraphs.current,
+      resyncUnits.current,
+      resyncTalents.current,
+      resyncCrew.current,
+      resyncServiceMatrices.current,
+      resyncCountries.current,
+      resyncProjWeeks.current,
+      resyncStripboard.current,
+    ];
+    
+    // Wait for all cancellations to complete
+    await Promise.all(
+      replicators
+        .filter(r => r !== null)
+        .map(replicator => {
+          return new Promise<void>(resolve => {
+            try {
+              replicator.cancelReplication();
+              // Wait a small delay to ensure cancellation is processed
+              setTimeout(resolve, 100);
+            } catch (e) {
+              console.warn('Error cancelling replication:', e);
+              resolve();
+            }
+          });
+        })
+    );
+    
+    resyncScenes.current = null;
+    resyncShootings.current = null;
+    resyncProjectsUser.current = null;
+    resyncParagraphs.current = null;
+    resyncUnits.current = null;
+    resyncTalents.current = null;
+    resyncCrew.current = null;
+    resyncServiceMatrices.current = null;
+    resyncCountries.current = null;
+    resyncProjWeeks.current = null;
+    resyncStripboard.current = null
+  };
+  
   useEffect(() => {
     if (!oneWrapRXdatabase) {
       initializeDatabase();
@@ -476,30 +526,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if(projectId) {
+      // Create a function to properly clean up all replicator
+  
+      // Run the cleanup
+      cleanupReplicators().then(() => {
+        console.log('All replicators cleaned up for project change');
+      });
+      
       localStorage.setItem('projectId', projectId);
-      if(resyncScenes.current) resyncScenes.current.cancelReplication();
-      if(resyncShootings.current) resyncShootings.current.cancelReplication();
-      if(resyncProjectsUser.current) resyncProjectsUser.current.cancelReplication();
-      if(resyncParagraphs.current) resyncParagraphs.current.cancelReplication();
-      if(resyncUnits.current) resyncUnits.current.cancelReplication();
-      if(resyncTalents.current) resyncTalents.current.cancelReplication();
-      if(resyncCrew.current) resyncCrew.current.cancelReplication();
-      if(resyncCountries.current) resyncCountries.current.cancelReplication();
-      if(resyncServiceMatrices.current) resyncServiceMatrices.current.cancelReplication();
-      if(resyncProjWeeks.current) resyncProjWeeks.current.cancelReplication();
-      if(resyncStripboard.current) resyncStripboard.current.cancelReplication();
-
-      resyncScenes.current = null;
-      resyncShootings.current = null;
-      resyncProjectsUser.current = null;
-      resyncParagraphs.current = null;
-      resyncServiceMatrices.current = null;
-      resyncUnits.current = null;
-      resyncTalents.current = null;
-      resyncCrew.current = null;
-      resyncCountries.current = null;
-      resyncProjWeeks.current = null;
-      resyncStripboard.current = null;
     }
   }, [projectId]);
 

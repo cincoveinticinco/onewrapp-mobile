@@ -8,6 +8,7 @@ import { ProjectStatusEnum } from '../../../../Shared/enums/ennums';
 import { ProjectDocType } from '../../../../RXdatabase/schemas/projects.schema';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import './ProjectCard.css';
+import { useHistory } from 'react-router';
 
 interface ProjectCardProps {
   project: ProjectDocType;
@@ -15,6 +16,7 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const { setProjectId, projectsInfoIsOffline } = React.useContext<any>(DatabaseContext);
+  const history = useHistory()
 
   const defineBgColor = (status: string) => {
     switch (status) {
@@ -46,8 +48,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
   const getProjectLink = (id: string) => (projectsInfoIsOffline[`${id}`] ? `/my/projects/${id}/strips` : `/my/projects/${id}/replication`);
 
+  const cardOnClick = (id: string) => {
+    if(projectsInfoIsOffline[`${id}`] ) {
+      // we need to avoid multiple replication instances creations when project is changed, so we use window.location.replace
+      window.location.replace(`/my/projects/${id}/strips`);
+    } else {
+      history.push(`/my/projects/${id}/replication`);
+    }
+    setProjectId(id);
+  }
+
   return (
-    <IonCard routerLink={getProjectLink(project.id)} className="project-card project-card project-card" onClick={() => { setProjectId(project.id); }}>
+    <IonCard className="project-card project-card project-card" onClick={() => cardOnClick(project.id)}>
       <IonCardTitle
         class="ion-justify-content-center ion-align-items-center project-abreviation"
         style={{
