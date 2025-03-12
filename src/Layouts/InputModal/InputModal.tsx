@@ -95,10 +95,6 @@ const InputModal: React.FC<InputModalProps> = ({
     closeModal();
   };
 
-  useEffect(() => {
-    console.log('filteredOptions', filteredOptions.length);
-  }, [filteredOptions]);
-
   if (isOpen) {
     return (
       <IonModal
