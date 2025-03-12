@@ -113,8 +113,8 @@ const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
               }}
             >
               {options.flatMap(category => 
-                category.options.map(option => (
-                  <IonSelectOption key={`${category.category}-${option.value}`} value={option.value}>
+                category.options.map((option, index) => (
+                  <IonSelectOption key={`${category.category}-${option.value}-${index}`} value={option.value}>
                     {option.label && `${option.label} (${category.category?.toLocaleUpperCase()})`}
                   </IonSelectOption>
                 ))
