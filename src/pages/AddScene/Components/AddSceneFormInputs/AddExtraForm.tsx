@@ -62,7 +62,6 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
     const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
     const observedCategories = observedExtras.map(e => e.categoryName || EmptyEnum.NoCategory);
     const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
-    console.log('allCategories', allCategories);
     return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
   }, [offlineScenes, observedExtras]);
 
