@@ -15,6 +15,7 @@ addRxPlugin(RxDBQueryBuilderPlugin);
 addRxPlugin(RxDBUpdatePlugin);
 addRxPlugin(RxDBLeaderElectionPlugin);
 addRxPlugin(RxDBMigrationSchemaPlugin);
+addRxPlugin(RxDBMigrationPlugin);
 
 export default class AppDataBase {
     private dbName = 'onewrappdb'
@@ -67,16 +68,18 @@ export default class AppDataBase {
     }
 
     public async getDatabaseInstance() {
-      // If the instance was already created, return it
-      if (this.dbInstance) {
-        return this.dbInstance;
+      try {
+        // Check if database already exists in IndexedDB
+        const existingDb = await this.dbInstance;
+        if (existingDb) {
+          return existingDb;
+        }
+      } catch (error) {
+        console.warn('Failed to get existing database, creating new instance', error);
       }
-      // If the instance was not created, create it and return it
+      
+      // Create a new instance only if needed
       this.dbInstance = this.initializeDatabase();
-      return this;
-    }
-
-    public getCollections() {
-      return this.schemaList;
+      return this.dbInstance;
     }
 }
