@@ -445,7 +445,11 @@ const SceneDetails: React.FC<{
   useIonViewWillEnter(() => {
       const params = new URLSearchParams(window.location.search);
       const edit = params.get('edit');
-      setEditMode(edit === 'true'); 
+      setTimeout(() => {
+        if (edit) {
+          toggleEditMode();
+        }
+      }, 500)
     }
   );
 
@@ -549,6 +553,7 @@ const SceneDetails: React.FC<{
   const onSubmitForm = async (data: SceneDocType) => {
     try {
       const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
+      
       if(creationMode) {
         data.id = id + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
         const dataCopy = {
@@ -563,11 +568,12 @@ const SceneDetails: React.FC<{
         if(sceneId !== newId) {
           await validateSceneExistence(newId);
         }
-        await sceneDocument.update({ $set: data });
+        console.log('data', data);
+        await sceneDocument.update({ $set: data })
       }
       successToast('Scene updated successfully');
-      history.push(`/my/projects/${id}/strips`);
       toggleEditMode();
+      await loadScene();
     } catch (error: any) {
       console.error('Error updating scene:', error);
       errorToast(error.message || error || 'Error updating scene');
@@ -648,6 +654,7 @@ const SceneDetails: React.FC<{
           email: user[0]?.userEmail || '',
        }])}
        isOpen={addNoteModalOpen}
+       setIsOpen={setAddNoteModalOpen}
       />
     )
   }
