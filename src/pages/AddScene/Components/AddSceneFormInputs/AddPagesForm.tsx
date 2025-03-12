@@ -26,16 +26,21 @@ const AddPagesForm: React.FC<AddPagesFormProps> = ({ handleChange, observedField
       
       setPageInteger(integerPart);
       setPageFraction(fractionPart);
+    } else {
+      setPageInteger(0);
+      setPageFraction(0);
     }
   }, [observedField]);
 
   const handleIntegerChange = (value: number) => {
+    console.log(value, typeof value);
     setPageInteger(value);
     const newValue = fractionToFloat(value, pageFraction);
     handleChange(newValue, 'pages');
   };
 
   const handleFractionChange = (value: number) => {
+    console.log(value, typeof value);
     setPageFraction(value);
     const newValue = fractionToFloat(pageInteger, value);
     handleChange(newValue, 'pages');
