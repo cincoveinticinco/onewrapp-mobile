@@ -14,7 +14,6 @@ import SceneBasicInfo from './Components/SceneBasicInfo/SceneBasicInfo';
 import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import { EditableField, ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
 import DatabaseContext from '../../context/Database/Database.context';
-import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
   DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
 } from '../../Shared/enums/ennums';
@@ -23,7 +22,6 @@ import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import { Character, Note, SceneDocType } from '../../Shared/types/scenes.types';
 import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
-import applyFilters from '../../Shared/Utils/applyFilters';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 import './SceneDetails.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
@@ -31,8 +29,6 @@ import AddCharacterForm from '../AddScene/Components/AddSceneFormInputs/AddChara
 import AddElementForm from '../AddScene/Components/AddSceneFormInputs/AddElementForm';
 import AddExtraForm from '../AddScene/Components/AddSceneFormInputs/AddExtraForm';
 import AddButton from '../../Shared/Components/buttons/AddButton/AddButton';
-import { useRxData } from 'rxdb-hooks';
-import { UserDocType } from '../../Shared/types/user.types';
 import SceneHeader from './SceneHeader';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
@@ -42,6 +38,8 @@ import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 import DeleteSceneAlert from '../../Shared/Components/modals/DeleteSceneAlert/DeleteSceneAlert';
 import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTabs/SceneDetailsTabs';
 import EditionModal from '../../Shared/Components/modals/EditionModal/EditionModal';
+import useUser from '../../hooks/database/useUser/useUser';
+import { useScenesFiltering } from '../../hooks/utils/useScenesFiltering/useScenesFiltering';
 
 export const EditableTimeField: React.FC<{
   value: number | null;
@@ -112,8 +110,8 @@ const SceneDetails: React.FC<{
 }> = ({ isShooting = false, creationMode }) => {
   const toggleTabs = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId: string }>();
-  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
-  const { selectedFilterOptions } = useContext(ScenesContext);
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { filteredScenes } = useScenesFiltering('')
   const history = useHistory();
 
   const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
@@ -121,7 +119,6 @@ const SceneDetails: React.FC<{
   const [thisSceneShooting, setThisSceneShooting] = useState<any | null>(null);
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
-  const [filteredScenes, setFilteredScenes] = useState<SceneDocType[]>([]);
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
   const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
   const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
@@ -160,15 +157,36 @@ const SceneDetails: React.FC<{
     setValue
   } = form;
 
+  useEffect(() => {
+    const fetchScenes = async () => {
+      if (thisScene) {
+        const contextScenes = isShooting ? filteredScenes : await getScenesInShooting();
+        setCurrentSceneIndex(contextScenes.findIndex((scene: SceneDocType) => scene.sceneId === thisScene.sceneId));
+      }
+    };
+    fetchScenes();
+  }, [thisScene, isShooting])
+
+  useEffect(() => {
+    const fetchContextScenes = async () => {
+      const contextScenes = isShooting ? filteredScenes : await getScenesInShooting();
+      if (currentSceneIndex >= 0) {
+        setPreviousScene(contextScenes[currentSceneIndex - 1] || null);
+        setNextScene(contextScenes[currentSceneIndex + 1] || null);
+      }
+    };
+    fetchContextScenes();
+  }, [currentSceneIndex, isShooting])
+
   const loadScene = async () => {
     setSceneIsLoading(true);
-    
+
     if (sceneId && oneWrapDb) {
       try {
         const scene = await oneWrapDb?.scenes
           .findOne({ selector: { sceneId: parseInt(sceneId) } })
           .exec();
-        
+
         setThisScene(scene?._data || null);
 
         // Actualiza el formulario con la nueva escena
@@ -181,17 +199,22 @@ const SceneDetails: React.FC<{
             keepDefaultValues: false
           });
         }
+
+        return scene?._data;
       } catch (error) {
         console.error('Error loading scene:', error);
+        return null;
       } finally {
         setSceneIsLoading(false);
       }
     }
+    return null;
   };
 
   useIonViewDidEnter(() => {
-    loadScene();
+    loadScene()
   });
+
 
   // Limpia el formulario cuando se sale de la vista
   useIonViewDidLeave(() => {
@@ -211,7 +234,7 @@ const SceneDetails: React.FC<{
 
   const { successToast, errorToast } = useAlertToast();
 
-  const {result: user, isFetching} = useRxData<UserDocType>('users', (collection) => collection.find().sort('asc'));
+  const { currentUser } = useUser()
 
   const convertTo24Hour = (time: string): string => {
     const [timeStr, period] = time.split(' ');
@@ -417,55 +440,16 @@ const SceneDetails: React.FC<{
 
   const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
 
-  useEffect(() => {
-    const filterScenes = async () => {
-      setSceneIsLoading(true);
-      let filtered: SceneDocType[];
-      if (!isShooting) {
-        filtered = selectedFilterOptions
-          ? applyFilters(offlineScenes, selectedFilterOptions)
-          : offlineScenes;
-      } else {
-        const scenesInShooting = await getScenesInShooting();
-        filtered = [];
-        for (const sceneId of scenesInShooting) {
-          const scene = offlineScenes.find((scene: any) => parseInt(scene.sceneId) === sceneId);
-          if (scene) {
-            filtered.push(scene);
-          }
-        }
-      }
-      setFilteredScenes(filtered);
-      setSceneIsLoading(false);
-    };
-
-    filterScenes();
-  }, [isShooting, offlineScenes, selectedFilterOptions, shootingId, oneWrapDb]);
-
   useIonViewWillEnter(() => {
-      const params = new URLSearchParams(window.location.search);
-      const edit = params.get('edit');
-      setTimeout(() => {
-        if (edit) {
-          toggleEditMode();
-        }
-      }, 500)
-    }
+    const params = new URLSearchParams(window.location.search);
+    const edit = params.get('edit');
+    setTimeout(() => {
+      if (edit) {
+        toggleEditMode();
+      }
+    }, 500)
+  }
   );
-
-  useEffect(() => {
-    if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === parseInt(thisScene.sceneId?.toString() || '') : scene.id === thisScene.id));
-      setCurrentSceneIndex(index);
-    }
-  }, [filteredScenes, thisScene, isShooting]);
-
-  useEffect(() => {
-    if (currentSceneIndex >= 0) {
-      setPreviousScene(filteredScenes[currentSceneIndex - 1] || null);
-      setNextScene(filteredScenes[currentSceneIndex + 1] || null);
-    }
-  }, [currentSceneIndex, filteredScenes]);
 
   // Set this scene shooting
   const fetchSceneShooting = async () => {
@@ -475,7 +459,7 @@ const SceneDetails: React.FC<{
       setThisSceneShooting(sceneShooting || null);
       setThisShooting(shooting?._data || null);
     }
-  
+
     if (!shootingId && thisScene?.sceneId) {
       const shooting = await oneWrapDb?.shootings.findOne({
         selector: {
@@ -486,7 +470,7 @@ const SceneDetails: React.FC<{
           }
         }
       }).exec();
-  
+
       if (shooting) {
         const sceneShooting = shooting._data?.scenes.find(
           (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || '')
@@ -502,6 +486,7 @@ const SceneDetails: React.FC<{
   }, [shootingId, oneWrapDb, thisScene]);
 
   const changeToNextScene = () => {
+    console.log(nextScene, '????????')
     if (nextScene) {
       const route = `${rootRoute}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
       history.push(route);
@@ -518,7 +503,7 @@ const SceneDetails: React.FC<{
   };
 
   const handleBack = () => {
-    if(creationMode) {
+    if (creationMode) {
       history.push(`/my/projects/${id}/strips`);
     } else {
       const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
@@ -539,7 +524,7 @@ const SceneDetails: React.FC<{
     }, 150);
   });
 
-  const sceneHeader = thisScene ? editMode ? `EDIT SCENE ${thisScene.episodeNumber}.${thisScene.sceneNumber}`  : `${thisScene.episodeNumber}.${thisScene.sceneNumber}` : '';
+  const sceneHeader = thisScene ? editMode ? `EDIT SCENE ${thisScene.episodeNumber}.${thisScene.sceneNumber}` : `${thisScene.episodeNumber}.${thisScene.sceneNumber}` : '';
 
   const getSceneStatus = (scene: ShootingScene) => {
     switch (scene.status) {
@@ -550,22 +535,42 @@ const SceneDetails: React.FC<{
     }
   };
 
+  const getTemporarySceneId = () => {
+    let temporaryId: number;
+    let sceneExists;
+
+    do {
+      temporaryId = 10000000 + Math.floor(Math.random() * 10000000);
+      sceneExists = filteredScenes.find((scene: SceneDocType) => scene.sceneId === temporaryId);
+    } while (sceneExists);
+
+    return temporaryId;
+  }
+
   const onSubmitForm = async (data: SceneDocType) => {
+    console.log(data)
     try {
       const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-      
-      if(creationMode) {
+
+      if (creationMode) {
         data.id = id + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
         const dataCopy = {
           ...data,
           projectId: Number(id),
         }
+        
+        
+
+        // all temporary ids are more than 10000000, after the first replication, the scene id will be overwritten
+        data.sceneId = getTemporarySceneId();
+
         await validateSceneExistence(data.id);
         await oneWrapDb?.scenes.insert(dataCopy);
+
       } else {
         const sceneId = sceneDocument.get('id');
         const newId = data?.projectId + '.' + data?.episodeNumber + '.' + data?.sceneNumber;
-        if(sceneId !== newId) {
+        if (sceneId !== newId) {
           await validateSceneExistence(newId);
         }
         console.log('data', data);
@@ -583,7 +588,7 @@ const SceneDetails: React.FC<{
   const validateSceneExistence = async (id: string) => {
     const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { id } }).exec();
 
-    if(sceneDocument) {
+    if (sceneDocument) {
       throw 'Scene already exists';
     }
 
@@ -621,11 +626,11 @@ const SceneDetails: React.FC<{
           <CiEdit className="toolbar-icon edit-icon" />
         </IonButton>
         {
-          thisSceneShooting && 
+          thisSceneShooting &&
           <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
             <PiProhibitLight className="toolbar-icon prohibit-icon" />
           </IonButton>
-          }
+        }
         <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
           <PiTrashSimpleLight className="toolbar-icon trash-icon" />
         </IonButton>
@@ -647,14 +652,14 @@ const SceneDetails: React.FC<{
             },
           ]
         }
-       header='Add Note'
-       message='Add a note to this scene'
-       handleOk={(inputData) => setValue('notes', [...(watch('notes') || []), {
+        header='Add Note'
+        message='Add a note to this scene'
+        handleOk={(inputData) => setValue('notes', [...(watch('notes') || []), {
           note: inputData.note,
-          email: user[0]?.userEmail || '',
-       }])}
-       isOpen={addNoteModalOpen}
-       setIsOpen={setAddNoteModalOpen}
+          email: currentUser.userEmail || '',
+        }])}
+        isOpen={addNoteModalOpen}
+        setIsOpen={setAddNoteModalOpen}
       />
     )
   }
@@ -667,8 +672,8 @@ const SceneDetails: React.FC<{
       {...(creationMode || editMode
         ? { customButtons: [editModeButtons], showLogout: false }
         : {
-            customButtons: [toolbarButtons],
-          })}
+          customButtons: [toolbarButtons],
+        })}
       deleteTrigger={`open-delete-scene-alert-${sceneId}-details`}
       color={editMode ? 'yellow' : 'tertiary'}
     />
@@ -691,7 +696,7 @@ const SceneDetails: React.FC<{
         <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
         {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
       </div>
-      {(watch("notes") || []).length > 0 ? ( 
+      {(watch("notes") || []).length > 0 ? (
         (watch("notes") || []).map((note: Note, index: number) => (
           <IonCard
             color='tertiary-dark'
@@ -739,7 +744,7 @@ const SceneDetails: React.FC<{
     </>
   );
 
-  const renderSceneHeader = ()  => {
+  const renderSceneHeader = () => {
     return (
       <SceneHeader
         sceneColor={sceneColor}
@@ -861,13 +866,13 @@ const SceneDetails: React.FC<{
         <IonHeader>{renderToolbar()}</IonHeader>
         <IonContent color="tertiary" fullscreen>
           <>
-          {renderSceneBasicInfo()}
-          <div className="grid-scene-info">
-            {renderElementsSection()}
-            {renderNotesSection()}
-          </div>
+            {renderSceneBasicInfo()}
+            <div className="grid-scene-info">
+              {renderElementsSection()}
+              {renderNotesSection()}
+            </div>
           </>
-        </IonContent>   
+        </IonContent>
       </IonPage>
     );
   }
@@ -876,6 +881,7 @@ const SceneDetails: React.FC<{
     <IonPage>
       <IonHeader>{renderToolbar()}</IonHeader>
       <IonContent color="tertiary" fullscreen>
+        {errors && Object.keys(errors).length > 0 && <p>There are errors</p>}
         {renderSceneContent()}
       </IonContent>
       {
@@ -895,8 +901,8 @@ const SceneDetails: React.FC<{
         sceneHeader={sceneHeader}
         onSuccess={handleBack}
       />
-      { 
-        thisShooting?.id  &&
+      {
+        thisShooting?.id &&
         <UnassignSceneAlert
           alertIsOpen={openUnassignAlert}
           setAlertIsOpen={setOpenUnassignAlert}

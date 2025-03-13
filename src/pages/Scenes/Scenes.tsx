@@ -3,7 +3,6 @@ import {
   IonRefresher,
   IonRefresherContent,
   useIonViewDidEnter,
-  useIonViewWillEnter,
 } from '@ionic/react';
 import React, {
   Suspense,

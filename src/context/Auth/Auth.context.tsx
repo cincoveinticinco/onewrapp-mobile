@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
 
   const checkSession = useCallback(async () => {
-   
+
     return true;
   }, []);
 

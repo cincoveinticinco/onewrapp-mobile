@@ -116,6 +116,7 @@ const sceneSchemaLiteral = {
       items: {
         type: 'object',
         properties: {
+          id: { type: ['number', 'null']},
           email: { type: ['string', 'null'] },
           note: { type: ['string', 'null'] },
           updatedAt: { type: ['string', 'null'] },

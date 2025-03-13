@@ -586,7 +586,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           projectId: projectIdInt,
         },
         sort: [
-          { updatedAt: 'asc' },
+          { updatedAt: 'desc' },
         ],
       }).$.subscribe((data: RxLocalDocumentData[]) => {
         setOfflineScenes(data);
