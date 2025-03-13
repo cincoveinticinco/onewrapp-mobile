@@ -35,7 +35,7 @@ setupIonicReact();
 
 const AppContent: React.FC = () => {
   const { isDatabaseReady, oneWrapDb, isOnline } = React.useContext(DatabaseContext);
-  const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading } = React.useContext(AuthContext);
+  const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading, checkSession } = React.useContext(AuthContext);
   const isIos = isPlatform('ios');
   const history = useHistory();
 
@@ -51,20 +51,22 @@ const AppContent: React.FC = () => {
     };
   }, [history]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      if (oneWrapDb) {
-        const user = await oneWrapDb.user.findOne().exec();
-        if (user) {
-          return user._data;
-        }
+  const getUser = async () => {
+    if (oneWrapDb) {
+      const user = await oneWrapDb.user.findOne().exec();
+      if (user) {
+        return user._data;
       }
-      return null;
-    };
+    }
+    return null;
+  };
 
-    const fetchUser = async () => {
-      setLoadingAuth(true);
-      const user = await getUser();
+  const getSession = async () => {
+    setLoadingAuth(true);
+    const user = await getUser();
+    if(isOnline) {
+      checkSession()
+    } else {
       if (user && loggedIn) {
         const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
         const now = new Date().getTime();
@@ -75,11 +77,14 @@ const AppContent: React.FC = () => {
           setLoggedIn(true);
         }
       }
+    }
 
-      setLoadingAuth(false);
-    };
 
-    oneWrapDb && fetchUser();
+    setLoadingAuth(false);
+  };
+
+  useEffect(() => {
+    oneWrapDb && getSession();
   }, [isOnline, oneWrapDb]);
 
   useEffect(() => {

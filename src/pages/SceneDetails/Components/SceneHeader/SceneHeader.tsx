@@ -34,7 +34,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
       size="large"
       onClick={changeToPreviousScene}
       className="change-scene-button"
-      style={{ color: 'var(--ion-color-contrast)' }}
+      style={{ color: 'var(--ion-color-contrast)', cursor: 'pointer'}}
     />
     )}
     <IonTitle style={{ fontWeight: 'light', color: 'var(--ion-color-contrast)' }}><b>{`${sceneHeader} ${editMode ? 'EDIT MODE' : status}`}</b></IonTitle>
@@ -45,7 +45,7 @@ const SceneHeader: React.FC<SceneHeaderProps> = ({
       size="large"
       onClick={changeToNextScene}
       className="change-scene-button"
-      style={{ color: 'var(--ion-color-contrast)' }}
+      style={{ color: 'var(--ion-color-contrast)', cursor: 'pointer'}}
     />
     )}
   </IonToolbar>

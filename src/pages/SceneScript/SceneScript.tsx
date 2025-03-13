@@ -20,7 +20,7 @@ import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext from '../../context/Scenes/Scenes.context';
 import {
-  DayOrNightOptionEnum, EmptyEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum,
+  EmptyEnum, ShootingSceneStatusEnum,
 } from '../../Shared/enums/ennums';
 import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import {
@@ -28,24 +28,22 @@ import {
 } from '../../Shared/types/scenes.types';
 import { ShootingDocType, ShootingScene } from '../../Shared/types/shooting.types';
 import applyFilters from '../../Shared/Utils/applyFilters';
-import SceneHeader from '../SceneDetails/SceneHeader';
+import SceneHeader from '../SceneDetails/Components/SceneHeader/SceneHeader';
 import './SceneScript.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 import UnassignSceneAlert from '../../Shared/Components/modals/UnassignSceneAlert/UnassignSceneAlert';
 import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 import DeleteSceneAlert from '../../Shared/Components/modals/DeleteSceneAlert/DeleteSceneAlert';
 import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTabs/SceneDetailsTabs';
-
-// BLUE CHARACTER
-// YELLOW ELEMENT
-// GREEN EXTRA
+import { useDataInSceneDetail } from '../../hooks/database/useDataInSceneDetail/useDataInSceneDetail';
+import useSceneDetailNavigation from '../../hooks/database/useSceneDetailNavigation/useSceneDetailNavigation';
 
 const SceneScript: React.FC<{
   isShooting?: boolean;
 }> = ({ isShooting = false }) => {
+
   const { hideTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
-  const [thisScene, setThisScene] = useState<SceneDocType | null>(null);
   const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
   const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
@@ -66,19 +64,41 @@ const SceneScript: React.FC<{
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
   const [filteredScenes, setFilteredScenes] = useState<SceneDocType[]>([]);
-  const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
-  const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
-  const [nextScene, setNextScene] = useState<SceneDocType | null>(null);
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
   const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
   const { errorToast } = useAlertToast();
+
+
+
+  const {
+    thisScene,
+    sceneColor,
+  } = useDataInSceneDetail(sceneId, id);
+
 
   useEffect(() => {
     if (urlShootingId) {
       setShootingId(urlShootingId);
     }
   }, [urlShootingId]);
+
+  useEffect(() => {
+    if (thisScene) {
+      setCharactersArray(thisScene?.characters || []);
+      setElementsArray(thisScene?.elements || []);
+      setExtrasArray(thisScene?.extras || []);
+      setNotesArray(thisScene?.notes || []);
+    }
+  }, [thisScene]);
+
+  const {
+    previousScene,
+    nextScene,
+    changeToNextScene,
+    changeToPreviousScene
+  } = useSceneDetailNavigation(filteredScenes, sceneId, isShooting, id, urlShootingId);
+
 
   const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
   const rootRouteScript = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/script` : `/my/projects/${id}/strips/details/script`;
@@ -180,32 +200,6 @@ const SceneScript: React.FC<{
     }
   };
 
-  const getCurrentScene = async () => {
-    const scene = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();
-    if (scene._data) {
-      return scene._data;
-    }
-  };
-
-  const fetchScene = async () => {
-    if (sceneId && oneWrapDb) {
-      const scene = await getCurrentScene();
-      setThisScene(scene);
-      setCharactersArray(scene?.characters);
-      setElementsArray(scene?.elements);
-      setExtrasArray(scene?.extras);
-      setNotesArray(scene?.notes);
-    }
-  };
-
-  useIonViewWillEnter(() => {
-    fetchScene();
-  });
-
-  useEffect(() => {
-    fetchScene();
-  }, [offlineScenes]);
-
   const sceneHeader = thisScene ? `${parseInt(thisScene.episodeNumber ?? '') > 0 ? (`${thisScene.episodeNumber}.`) : ''}${thisScene.sceneNumber}` : '';
 
   useIonViewDidEnter(() => {
@@ -220,19 +214,6 @@ const SceneScript: React.FC<{
     fetchSceneShooting();
   }, [shootingId, oneWrapDb, thisScene]);
 
-  useEffect(() => {
-    if (filteredScenes.length > 0 && thisScene) {
-      const index = filteredScenes.findIndex((scene: any) => (isShooting ? parseInt(scene.sceneId) === thisScene.sceneId : scene.id === thisScene.id));
-      setCurrentSceneIndex(index);
-    }
-  }, [filteredScenes, thisScene, isShooting]);
-
-  useEffect(() => {
-    if (currentSceneIndex >= 0) {
-      setPreviousScene(filteredScenes[currentSceneIndex - 1] || null);
-      setNextScene(filteredScenes[currentSceneIndex + 1] || null);
-    }
-  }, [currentSceneIndex, filteredScenes]);
 
   const fetchSceneShooting = async () => {
     if (shootingId && oneWrapDb && thisScene) {
@@ -241,7 +222,7 @@ const SceneScript: React.FC<{
       setThisSceneShooting(sceneShooting || null);
       setThisShooting(shooting?._data || null);
     }
-  
+
     if (!shootingId && thisScene?.sceneId) {
       const shooting = await oneWrapDb?.shootings.findOne({
         selector: {
@@ -252,7 +233,7 @@ const SceneScript: React.FC<{
           }
         }
       }).exec();
-  
+
       if (shooting) {
         const sceneShooting = shooting._data?.scenes.find(
           (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === parseInt(thisScene.sceneId?.toString() || '')
@@ -345,31 +326,6 @@ const SceneScript: React.FC<{
     setShowTotalsPopup(true);
   };
 
-  const changeToNextScene = () => {
-    if (nextScene) {
-      const route = `${rootRouteScript}/${nextScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
-      history.push(route);
-      localStorage.setItem('editionBackRoute', route);
-    }
-  };
-
-  const getSceneStatus = (scene: ShootingScene) => {
-    switch (scene.status) {
-      case ShootingSceneStatusEnum.Assigned: return 'ASSIGNED';
-      case ShootingSceneStatusEnum.NotShoot: return 'NOT SHOOT';
-      case ShootingSceneStatusEnum.Shoot: return 'SHOOT';
-      default: return 'NOT ASSIGNED';
-    }
-  };
-
-  const changeToPreviousScene = () => {
-    if (previousScene) {
-      const route = `${rootRouteScript}/${previousScene.sceneId}${isShooting ? '?isShooting=true' : ''}`;
-      history.push(route);
-      localStorage.setItem('editionBackRoute', route);
-    }
-  };
-
   const handleBack = () => {
     const backRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}` : `/my/projects/${id}/strips`;
     history.push(backRoute);
@@ -392,54 +348,14 @@ const SceneScript: React.FC<{
     return '16px';
   };
 
-  const [sceneColor, setSceneColor] = useState<string>('light');
-
-  const getSceneColor = async (scene: SceneDocType) => {
-    if (isShooting) {
-      const shooting = await oneWrapDb?.shootings.find({ selector: { id: shootingId } }).exec();
-      const sceneInShooting = shooting?.[0]?.scenes.find(
-        (sceneInShooting: any) => parseInt(sceneInShooting.sceneId) === thisScene?.sceneId,
-      );
-
-      const sceneStatus = sceneInShooting?.status;
-      switch (sceneStatus) {
-        case ShootingSceneStatusEnum.Assigned: return 'light';
-        case ShootingSceneStatusEnum.NotShoot: return 'danger';
-        case ShootingSceneStatusEnum.Shoot: return 'success';
-        default: return 'light';
-      }
-    } else {
-      const intOrExt = [IntOrExtOptionEnum.EXT, IntOrExtOptionEnum.INT_EXT, IntOrExtOptionEnum.EXT_INT];
-
-      if (scene.sceneType === SceneTypeEnum.PROTECTION) {
-        return 'rose';
-      }
-      if (scene.sceneType === SceneTypeEnum.SCENE) {
-        if (!scene.intOrExtOption || !scene.dayOrNightOption) {
-          return 'dark';
-        }
-        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
-          return 'light';
-        }
-        if (scene.intOrExtOption === IntOrExtOptionEnum.INT && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
-          return 'success';
-        }
-        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.DAY) {
-          return 'yellow';
-        }
-        if (intOrExt.includes(scene.intOrExtOption?.toUpperCase() as any) && scene.dayOrNightOption === DayOrNightOptionEnum.NIGHT) {
-          return 'primary';
-        }
-      }
-      return 'light';
+  const getSceneStatus = (scene: ShootingScene) => {
+    switch (scene.status) {
+      case ShootingSceneStatusEnum.Assigned: return 'ASSIGNED';
+      case ShootingSceneStatusEnum.NotShoot: return 'NOT SHOOT';
+      case ShootingSceneStatusEnum.Shoot: return 'SHOOT';
+      default: return 'NOT ASSIGNED';
     }
   };
-
-  useEffect(() => {
-    if (thisScene) {
-      getSceneColor(thisScene).then(setSceneColor);
-    }
-  }, [thisScene, isShooting]);
 
   const handleZoomIn = () => {
     const newZoomLevel = zoomLevel < 1.5 ? zoomLevel + 0.1 : zoomLevel;
@@ -457,21 +373,21 @@ const SceneScript: React.FC<{
     setEdition(!edition);
   };
 
-    const toolbarButtons = () => {
-      return (
-        <>
-          {
-            thisSceneShooting && 
-            <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
-              <PiProhibitLight className="toolbar-icon prohibit-icon" />
-            </IonButton>
-            }
-          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
-            <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+  const toolbarButtons = () => {
+    return (
+      <>
+        {
+          thisSceneShooting &&
+          <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenUnassignAlert(true)}>
+            <PiProhibitLight className="toolbar-icon prohibit-icon" />
           </IonButton>
-        </>
-      )
-    }
+        }
+        <IonButton fill="clear" slot="end" color="light" className="ion-no-padding toolbar-button" onClick={() => setOpenDeleteSceneAlert(true)}>
+          <PiTrashSimpleLight className="toolbar-icon trash-icon" />
+        </IonButton>
+      </>
+    )
+  }
 
   return (
     <>
@@ -512,57 +428,57 @@ const SceneScript: React.FC<{
           </div>
           {
             popupType && popupType === 'notes' && showTotalsPopup && (
-            <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
-              {getPopupList(popupType)?.length === 0 ? (
-                <div className="total-popup-item ion-padding-start">
-                  NO
-                  {popupType.toUpperCase()}
-                  {' '}
-                  ADDED
-                </div>
-              ) : (
-                getPopupList(popupType)?.map((item: string, i: number) => (
-                  <div key={i} className="total-popup-item ion-padding-start">{item && item.toUpperCase()}</div>
-                ))
-              )}
-            </div>
+              <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
+                {getPopupList(popupType)?.length === 0 ? (
+                  <div className="total-popup-item ion-padding-start">
+                    NO
+                    {popupType.toUpperCase()}
+                    {' '}
+                    ADDED
+                  </div>
+                ) : (
+                  getPopupList(popupType)?.map((item: string, i: number) => (
+                    <div key={i} className="total-popup-item ion-padding-start">{item && item.toUpperCase()}</div>
+                  ))
+                )}
+              </div>
             )
           }
           {
             popupType && popupType !== 'notes' && showTotalsPopup && (
-            <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
-              { getPopupCategories(popupType).length === 0 ? (
-                <div className="total-popup-item ion-padding-start">
-                  NO
-                  {popupType.toUpperCase()}
-                  {' '}
-                  ADDED
-                </div>
-              )
-                : getPopupCategories(popupType).map((category: string) => (
-                  <div className="popup-category-container" key={uuidv4()}>
-                    <p
-                      key={category + popupType}
-                      className="popup-category ion-no-margin ion-padding"
-                      style={{
-                        backgroundColor: 'var(--ion-color-tertiary-shade)',
-                        border: '1px solid var(--ion-color-primary)',
-                      }}
-                    >
-                      {category && category.toUpperCase()}
-                    </p>
-                    <div className="popup-list-container">
-                      {
-                        getPopupListByCategory(popupType, (category === EmptyEnum.NoCategory ? null : category)).map((item: string) => (
-                          <p className="total-popup-item ion-no-margin ion-padding-start" key={item + popupType + category}>{item && item.toUpperCase()}</p>
-                        ))
-                      }
-                    </div>
+              <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
+                {getPopupCategories(popupType).length === 0 ? (
+                  <div className="total-popup-item ion-padding-start">
+                    NO
+                    {popupType.toUpperCase()}
+                    {' '}
+                    ADDED
                   </div>
-                ))}
-            </div>
+                )
+                  : getPopupCategories(popupType).map((category: string) => (
+                    <div className="popup-category-container" key={uuidv4()}>
+                      <p
+                        key={category + popupType}
+                        className="popup-category ion-no-margin ion-padding"
+                        style={{
+                          backgroundColor: 'var(--ion-color-tertiary-shade)',
+                          border: '1px solid var(--ion-color-primary)',
+                        }}
+                      >
+                        {category && category.toUpperCase()}
+                      </p>
+                      <div className="popup-list-container">
+                        {
+                          getPopupListByCategory(popupType, (category === EmptyEnum.NoCategory ? null : category)).map((item: string) => (
+                            <p className="total-popup-item ion-no-margin ion-padding-start" key={item + popupType + category}>{item && item.toUpperCase()}</p>
+                          ))
+                        }
+                      </div>
+                    </div>
+                  ))}
+              </div>
             )
-}
+          }
         </div>
         <IonHeader>
           <Toolbar handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />

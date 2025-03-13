@@ -4,6 +4,7 @@ import React, {
 } from 'react';
 import DatabaseContext from '../Database/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import environment from '../../../environment';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -41,8 +42,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
 
   const checkSession = useCallback(async () => {
-
-    return true;
+    const token = localStorage.getItem('token');
+    console.log('EXECUTING CHECK SESSION')
+    if (token) {
+      try {
+        const response = await fetch(`${environment.URL_PATH}/verify_session`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+          setLoggedIn(true);
+          return true;
+        }
+        localStorage.removeItem('token');
+        setUser(null);
+        setLoggedIn(false);
+        return false;
+      } catch (error) {
+        localStorage.removeItem('token');
+        setUser(null);
+        setLoggedIn(false);
+      }
+    }
+    setLoggedIn(false);
+    return false;
   }, []);
 
     // save loggedin in localstorage
