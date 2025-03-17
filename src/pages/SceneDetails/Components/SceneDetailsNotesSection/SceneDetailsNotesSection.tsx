@@ -3,11 +3,11 @@ import AddButton from "../../../../Shared/Components/buttons/AddButton/AddButton
 import { useSceneDetailsContext } from "../../Context/SceneDetailsContext";
 import AddNoteAlert from "../AddNoteAlert/AddNoteAlert";
 import { Note } from "../../../../Shared/types/scenes.types";
+import { useEffect } from "react";
 
 const SceneDetailsNotesSection = () => {
   const { editMode, setAddNoteModalOpen, form } = useSceneDetailsContext();
   const { watch } = form;
-
   return (
     <div className={`section-wrapper notes-info`}>
       <div className="ion-flex ion-justify-content-between" style={{ backgroundColor: "var(--ion-color-dark)" }}>
@@ -21,8 +21,8 @@ const SceneDetailsNotesSection = () => {
             key={`note-${index}`}
             className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
           >
-            <p>{note.note}</p>
-            <p>{note.email}</p>
+            <p className="ion-no-padding ion-no-margin-bottom"><b>{note.userName?.toLocaleUpperCase()}</b></p>
+            <p className="ion-no-padding ion-no-margin-top">{note.note?.toLocaleUpperCase()}</p>
           </IonCard>
         ))
       ) : (

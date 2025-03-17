@@ -5,6 +5,7 @@ import DatabaseContext from '../../../context/Database/Database.context';
 import { SceneDocType } from '../../../Shared/types/scenes.types';
 import useAlertToast from '../../utils/useToastAlert/useToastAlert';
 import { DayOrNightOptionEnum, IntOrExtOptionEnum, SceneTypeEnum, ShootingSceneStatusEnum } from '../../../Shared/enums/ennums';
+import { useHistory } from 'react-router';
 
 
 export const useDataInSceneDetail = (sceneId: string, projectId: string, creationMode = false) => {
@@ -13,6 +14,8 @@ export const useDataInSceneDetail = (sceneId: string, projectId: string, creatio
   const [sceneIsLoading, setSceneIsLoading] = useState<boolean>(true);
   const [sceneColor, setSceneColor] = useState<string>('light');
   const { successToast, errorToast } = useAlertToast();
+
+  const history = useHistory();
 
   const emptyScene: SceneDocType = {
     id: '',
@@ -120,6 +123,7 @@ export const useDataInSceneDetail = (sceneId: string, projectId: string, creatio
         await validateSceneExistence(data.id);
         await oneWrapDb?.scenes.insert(sceneToSave);
         successToast('Scene created successfully');
+        history.push(`/my/projects/${projectId}/strips/details/scene/${temporaryId}`);
         return temporaryId;
       } else {
         const sceneDocument = await oneWrapDb?.scenes.findOne({ selector: { sceneId: parseInt(sceneId) } }).exec();

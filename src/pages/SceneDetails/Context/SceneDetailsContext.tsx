@@ -91,6 +91,13 @@ export const SceneDetailsProvider: React.FC<{
     setThisScene
   } = useDataInSceneDetail(sceneId, id, creationMode);
 
+  useEffect(() => {
+    if (thisScene) {
+      setThisScene(thisScene);
+      reset(thisScene);
+    }
+  }, [thisScene]);
+
   const {
     previousScene,
     nextScene,

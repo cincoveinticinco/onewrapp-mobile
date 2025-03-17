@@ -27,24 +27,24 @@ import useAppStore from '../../hooks/utils/useAppStore/useAppStore';
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
   offlineScenes: [],
-  setStartReplication: () => {},
+  setStartReplication: () => { },
   projectId: null,
-  setProjectId: () => {},
+  setProjectId: () => { },
   startReplication: false,
   isOnline: false,
   scenesAreLoading: true,
   viewTabs: true,
-  setViewTabs: () => {},
-  setScenesAreLoading: () => {},
+  setViewTabs: () => { },
+  setScenesAreLoading: () => { },
   projectsAreLoading: true,
-  setProjectsAreLoading: () => {},
+  setProjectsAreLoading: () => { },
   isDatabaseReady: false,
   initialProjectReplication: () => new Promise(() => false),
   replicationPercentage: 0,
   replicationStatus: '',
   initialReplicationFinished: false,
   projectsInfoIsOffline: {},
-  setProjectsInfoIsOffline: () => {},
+  setProjectsInfoIsOffline: () => { },
   initializeProjectsUserReplication: () => new Promise(() => false),
   initializeAllReplications: () => new Promise(() => false),
   hardResync: () => new Promise(() => false),
@@ -54,8 +54,8 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { initialReplicationFinished, setInitialReplicationFinished } = useReplicationStore();
-  
-  const { 
+
+  const {
     scenesAreLoading, setScenesAreLoading,
     replicationStatus, setReplicationStatus,
     replicationPercentage, setReplicationPercentage,
@@ -98,7 +98,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
-  const isOnline =  useNetworkStatus();
+  const isOnline = useNetworkStatus();
   const initializeDatabase = async () => {
     try {
       const sceneColl = new ScenesSchema();
@@ -149,20 +149,20 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const initializeReplication = async (collection: any, selector: any, resyncRef: any, projectId: number | null = null) => {
     console.log(`Initializing ${collection.getSchemaName()} replication for project ${projectId}`);
-    
+
     if (!oneWrapRXdatabase || !collection || (projectId && !projectId)) {
       const failedData = !projectId ? 'Project Id not found' : !oneWrapRXdatabase ? 'Database not initialized' : !collection ? 'Collection not found' : 'Invalid initialization parameters';
       throw new Error('Invalid initialization parameters ' + failedData);
     }
-  
+
     const canPush = ['scenes', 'shootings', 'crew'].includes(collection.getSchemaName().toLowerCase());
-  
+
     const lastItem = await oneWrapRXdatabase[collection.getSchemaName()].find({ selector })
       .sort({ updatedAt: 'desc' })
       .limit(1)
       .exec()
       .then((data: any) => (data[0] ? data[0] : null));
-  
+
     if (!resyncRef.current) {
       console.log(`Creating new replicator for ${collection.getSchemaName()} - Project ${projectId}`);
       const replicator = new HttpReplicator(oneWrapRXdatabase, [collection], projectId, lastItem, getToken);
@@ -174,7 +174,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       console.log(`Reusing existing replicator for ${collection.getSchemaName()} - Project ${projectId}`);
       isOnline && resyncRef.current.resyncReplication();
     }
-  
+
     return true;
   }
   const hardAppReset = async () => {
@@ -209,9 +209,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
     await initialProjectReplication();
   }
-  
+
   const handleDeletedRecords = async (collectionName: string, apiEndpoint: string, projectId: string) => {
-    
+
     // El problema actual es el siguiente. Supongamos que tengo un shooting que fue borrado desde la aplicación web. El shooting era de la unidad 1 con id = 63 y se creó para el día 21 de octubre del 2024 a las 5 de la tarde, por lo tanto, el id del shootin en local sería 2024-10-21_63. Al eliminarse el shooting, la tabla de auditoria en el backend guarda el shooting borrado, que servira de consulta para la aplicación offline. Cuando el usuario de la aplicación offline se conecte, se hara una consulta a la tabla de auditoria, que enviara a la aplicación todos los shootings que fueron borrados en los últimos 3 días, en este caso, envía un array con el id [2023-10-21_63] y desde la aplicación offline, se eliminan en local todos los shooting que tengan este id. Que pasa si ese mismo día, despues de haber borrado ese shooting, lo vuelvo a crear para añadir otra configuración? La aplicación offline, al sincronizarse traera de nuevo el shooting 2024-10-21_63, pero como la consulta a la tabla de auditoria sigue retornando [2023-10-21_63], lo borrara durante los 3 días siguientes. 
 
     // OPCION 1:  Se me ocurrio usar el createdAt como referencia, para decirle a la aplicación local que el shooting solo se podrá borrar siempre y cuando coincidan el id y el created_at, el problema, es que RXDB escribe automaticamente un createdAt pero basado en el momento en el que se creo el registro en la base de datos local.
@@ -226,74 +226,74 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     // 5. Crear el shooting en la aplicación web o en la aplicación local
     // 6. Sincronizar la aplicación local
     // 7. Verificar que el shooting no fue eliminado
-    
+
     try {
       // Obtener el último registro actualizado
       const lastData = await oneWrapRXdatabase[collectionName]
-      .find({
-        selector: {
-        projectId: parseInt(projectId, 10)
-        }
-      })
-      .sort({
-        updatedAt: 'desc'
-      })
-      .limit(1)
-      .exec();
-    
+        .find({
+          selector: {
+            projectId: parseInt(projectId, 10)
+          }
+        })
+        .sort({
+          updatedAt: 'desc'
+        })
+        .limit(1)
+        .exec();
+
       const last_updated_at = lastData[0]?.updatedAt ? new Date(lastData[0]?.updatedAt).toISOString() : '1970-01-01T00:00:00.000Z';
-      
+
       // Configurar los parámetros de la URL
       const params = new URLSearchParams({
-      project_id: projectId.toString(),
-      last_item_updated_at: last_updated_at
+        project_id: projectId.toString(),
+        last_item_updated_at: last_updated_at
       });
-    
+
       const url = `${environment.URL_PATH}/${apiEndpoint}?${params.toString()}`;
-    
+
       // Llamada a la API
       const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Owsession': `${await getToken()}`,
-        'Content-Type': 'application/json'
-      }
+        method: 'GET',
+        headers: {
+          'Owsession': `${await getToken()}`,
+          'Content-Type': 'application/json'
+        }
       });
-    
+
       if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    
+
       const data = await response.json();
-    
+
       // Si hay registros eliminados, procesarlos
       if (data[collectionName] && data[collectionName].length > 0) {
-      const deletedItems = data[collectionName];
-      
-      // Procesar las eliminaciones usando una transacción de RxDB
-      await oneWrapRXdatabase[collectionName].database.waitForLeadership();
-      
-      for (const deletedItem of deletedItems) {
-        if(deletedItem) {
-        const query = deletedItem && oneWrapRXdatabase[collectionName].find({
-          selector: {
-          id: deletedItem.id,
-          createdAtBack: deletedItem.createdAt
+        const deletedItems = data[collectionName];
+
+        // Procesar las eliminaciones usando una transacción de RxDB
+        await oneWrapRXdatabase[collectionName].database.waitForLeadership();
+
+        for (const deletedItem of deletedItems) {
+          if (deletedItem) {
+            const query = deletedItem && oneWrapRXdatabase[collectionName].find({
+              selector: {
+                id: deletedItem.id,
+                createdAtBack: deletedItem.createdAt
+              }
+            });
+
+            const localItems = await query.exec();
+            if (localItems.length > 0) {
+              await Promise.all(
+                localItems.map(async (item: any) => {
+                  await item.remove();
+                })
+              );
+            }
           }
-        });
-    
-        const localItems = await query.exec();
-        if (localItems.length > 0) {
-          await Promise.all(
-          localItems.map(async (item: any) => {
-            await item.remove();
-          })
-          );
-        }
         }
       }
-      }
-    
+
       return true;
     } catch (error) {
       console.error(`Error in handling deleted records for ${collectionName}:`, error);
@@ -305,7 +305,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     await initializeReplication(projectCollection, {}, resyncProjectsUser);
     await initializeReplication(userCollection, {}, resyncProjectsUser);
   };
-  
+
   const initializeSceneReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -319,7 +319,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('scenes', 'get_deleted_scenes', projectId);
   };
-  
+
   const initializeServiceMatricesReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -360,12 +360,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       parseInt(projectId, 10)
     );
   }
-  
+
   const initializeParagraphReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
     }
-    
+
     await initializeReplication(
       paragraphCollection,
       { projectId: parseInt(projectId, 10) },
@@ -374,7 +374,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('paragraphs', 'get_deleted_paragraphs', projectId);
   };
-  
+
   const initializeTalentsReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -387,7 +387,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('talents', 'get_deleted_talents', projectId);
   };
-  
+
   const initializeUnitReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -400,7 +400,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('units', 'get_deleted_units', projectId);
   };
-  
+
   const initializeShootingReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -413,7 +413,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('shootings', 'get_deleted_shootings', projectId);
   };
-  
+
   const initializeCrewReplication = async () => {
     if (!projectId) {
       throw new Error('Project Id not found');
@@ -426,7 +426,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     );
     await handleDeletedRecords('crew', 'get_deleted_crew', projectId);
   };
-  
+
   const initializeCountriesReplication = async () => {
     await initializeReplication(
       countriesCollection,
@@ -436,20 +436,46 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initializeAllReplications = async () => {
-    if(initialProjectReplicationInCourse || allReplicationsInCourse) {
+    if (initialProjectReplicationInCourse || allReplicationsInCourse) {
       console.warn((initialProjectReplicationInCourse ? 'initialProjectReplicationInCourse' : 'allReplicationsInCourse') + ' is in course');
-      return
     }
-
-    const replicationsArray = [initializeProjectsUserReplication, initializeSceneReplication, initializeServiceMatricesReplication, initializeParagraphReplication, initializeTalentsReplication, initializeUnitReplication, initializeShootingReplication, initializeCrewReplication, initializeCountriesReplication, initializeProjWeekReplication, initializeStripboardReplication];
+  
+    // Actualizar el estado para indicar que la replicación está en curso
+    setAllReplicationsInCourse(true);
+    console.info('Starting all replications...');
+  
+    const replicationsArray = [
+      initializeProjectsUserReplication,
+      initializeSceneReplication, 
+      initializeServiceMatricesReplication, 
+      initializeParagraphReplication, 
+      initializeTalentsReplication, 
+      initializeUnitReplication, 
+      initializeShootingReplication, 
+      initializeCrewReplication, 
+      initializeCountriesReplication, 
+      initializeProjWeekReplication, 
+      initializeStripboardReplication
+    ];
+  
     try {
       for (const replication of replicationsArray) {
-        await replication();
+        try {
+          await replication();
+        } catch (error) {
+          console.error(`Error in replication function ${replication.name}:`, error);
+          // Continuamos con la siguiente replicación en caso de error
+        }
       }
+      console.info('All replications completed successfully');
+      return true;
     } catch (error) {
-      console.error('Error in initializeAllReplications:', error);
-      throw error;
-    } 
+      console.error('Unhandled error in initializeAllReplications:', error);
+      return false;
+    } finally {
+      // Asegurarnos de que se restablezca el estado independientemente de errores
+      setAllReplicationsInCourse(false);
+    }
   };
 
   useEffect(() => {
@@ -461,11 +487,11 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     console.warn(warnMessage)
     if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
 
-      replicatePeriodically();  
-  
+      replicatePeriodically();
+
       const intervalId = setInterval(() => {
         replicatePeriodically();
-      }, 300000);
+      }, 30000);
 
       return () => clearInterval(intervalId);
     }
@@ -486,7 +512,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       resyncProjWeeks.current,
       resyncStripboard.current,
     ];
-    
+
     // Wait for all cancellations to complete
     await Promise.all(
       replicators
@@ -504,7 +530,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           });
         })
     );
-    
+
     resyncScenes.current = null;
     resyncShootings.current = null;
     resyncProjectsUser.current = null;
@@ -517,7 +543,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     resyncProjWeeks.current = null;
     resyncStripboard.current = null
   };
-  
+
   useEffect(() => {
     if (!oneWrapRXdatabase) {
       initializeDatabase();
@@ -525,14 +551,14 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   }, [isOnline, oneWrapRXdatabase]);
 
   useEffect(() => {
-    if(projectId) {
+    if (projectId) {
       // Create a function to properly clean up all replicator
-  
+
       // Run the cleanup
       cleanupReplicators().then(() => {
         console.log('All replicators cleaned up for project change');
       });
-      
+
       localStorage.setItem('projectId', projectId);
     }
   }, [projectId]);
@@ -630,12 +656,12 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   };
 
   const initialProjectReplication = async () => {
-    if(allReplicationsInCourse || initialProjectReplicationInCourse) {
+    if (allReplicationsInCourse || initialProjectReplicationInCourse) {
       return
     }
 
     let currentStep: string = '';
-    
+
     try {
       if (!projectId) {
         throw new Error('Project Id not found');
@@ -645,7 +671,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
-  
+
       const steps = [
         {
           name: 'Scene',
@@ -708,17 +734,17 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           function: initializeProjWeekReplication,
         },
       ];
-  
+
       for (const step of steps) {
         currentStep = step.name;
         setReplicationStatus(`Starting ${step.name} replication...`);
         incrementPercentage(step.startPercentage, step.startPercentage + 5, 10000);
-        
+
         await step.function();
-     
+
         incrementPercentage(step.startPercentage + 5, step.endPercentage, 10000);
       }
-  
+
       setReplicationStatus('Replication finished');
       setReplicationPercentage(100);
       setInitialReplicationFinished(true);
@@ -727,7 +753,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         [projectId]: true,
       });
       setReplicationPercentage(0);
-      
+
     } catch (error: any) {
       setReplicationStatus(`Error during ${currentStep} replication: ${error.message}`);
       setReplicationPercentage(0);

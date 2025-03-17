@@ -23,6 +23,7 @@ const AddNoteAlert = () => {
       handleOk={(inputData) => setValue('notes', [...(watch('notes') || []), {
         note: inputData.note,
         email: currentUser.userEmail || '',
+        userName: currentUser.userName || '',
       }])}
       isOpen={addNoteModalOpen}
       setIsOpen={setAddNoteModalOpen}
