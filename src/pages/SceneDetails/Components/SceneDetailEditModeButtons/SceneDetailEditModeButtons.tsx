@@ -2,7 +2,7 @@ import { IonButton } from "@ionic/react";
 import { useSceneDetailsContext } from "../../Context/SceneDetailsContext";
 
 const SceneDetailEditModeButtons = () => {
-  const { creationMode, toggleEditMode, handleBack } = useSceneDetailsContext();
+  const { creationMode, toggleEditMode, handleBack, sceneId } = useSceneDetailsContext();
   return (
     <>
       <IonButton
@@ -10,7 +10,7 @@ const SceneDetailEditModeButtons = () => {
         className="filled-success-button-small"
         key="custom-edit"
         type="submit"
-        form="scene-detail-info"
+        form={`scene-detail-info-${sceneId}`}
       >
         SAVE
       </IonButton>
