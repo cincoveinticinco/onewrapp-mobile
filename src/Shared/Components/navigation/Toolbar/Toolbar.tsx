@@ -21,6 +21,7 @@ import AuthContext from '../../../../context/Auth/Auth.context';
 import { useRxData } from 'rxdb-hooks';
 import { ProjectDocType } from '../../../../RXdatabase/schemas/projects.schema';
 import ToolbarButton from '../../buttons/ToolbarButton/ToolbarButton';
+import SearchToolbarButton from '../../buttons/SearchToolbarButton/SearchToolbarButton';
 
 export interface ToolbarButton {
   name: string;
@@ -135,19 +136,13 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
         </ToolbarButton>
       )}
       {search && (
-        <div slot="end" className={`ion-no-padding toolbar-search-wrapper ${searchMode ? 'search' : ''}`}>
-          <ToolbarButton triggerId="search-button" click={toggleSearchMode} show={!searchMode}>
-            <IonIcon color={searchMode ? 'primary' : 'light'} icon={searchMode ? caretForward : searchOutline} />
-          </ToolbarButton>
-          <IonInput
-            value={searchText}
-            onIonInput={handleSearchInput}
-            className="toolbar-search-input"
-            placeholder=""
-            ref={searchRef}
-            clearInput
-          />
-        </div>
+        <SearchToolbarButton
+          search={search}
+          searchMode={searchMode}
+          toggleSearchMode={toggleSearchMode}
+          searchText={searchText || ''}
+          handleSearchInput={handleSearchInput}
+        />
       )}
       {
         customButtons.map((renderFunction: any, index) => (

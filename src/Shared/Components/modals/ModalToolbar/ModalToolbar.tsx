@@ -6,6 +6,8 @@ import React from 'react';
 import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import './ModalToolbar.scss';
 import zIndex from '@mui/material/styles/zIndex';
+import SearchToolbarButton, { SearchToolbarButtonProps } from '../../buttons/SearchToolbarButton/SearchToolbarButton';
+
 
 interface ModalToolbarProps {
   handleReset?: () => void
@@ -15,6 +17,7 @@ interface ModalToolbarProps {
   handleSaveName?: string
   handleBack?: () => void
   customButtons?: (() => JSX.Element)[]
+  search?: SearchToolbarButtonProps
 }
 
 const ModalToolbar: React.FC<ModalToolbarProps> = (
@@ -26,6 +29,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     handleSaveName,
     handleBack,
     customButtons = [],
+    search,
   },
 ) => {
   const isMobile = useIsMobile();
@@ -74,6 +78,16 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         </IonButton>
         )
       }
+
+      { search && (
+        <SearchToolbarButton
+          search={search.search}
+          searchMode={search.searchMode}
+          toggleSearchMode={search.toggleSearchMode}
+          searchText={search.searchText}
+          handleSearchInput={search.handleSearchInput}
+        />
+      )}
 
     </IonToolbar>
   );
