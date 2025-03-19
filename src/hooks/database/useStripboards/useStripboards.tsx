@@ -5,6 +5,8 @@ import { SceneDocType } from "../../../Shared/types/scenes.types";
 import { StripboardStatusesEnum } from "../../../Shared/enums/ennums";
 import { addDays, format } from "date-fns";
 import { UnitDocType } from "../../../Shared/types/unitTypes.types";
+import floatToFraction from "../../../Shared/Utils/floatToFraction";
+import secondsToMinSec from "../../../Shared/Utils/secondsToMinSec";
 
 interface UseStripboardsProps {
   projectId: string;
@@ -21,22 +23,57 @@ export type CombinedStripboardType = StripboardDocType & {
   weeks: StripboardWeeks[];
 };
 
-export interface StripboardWeekDays {
-  dayNumber: number;
-  units: StripboardUnits[];
-}
-
 export interface StripboardUnits {
   unitId: number,
-  unitNumber: string, 
+  unitNumber: string,
+  totalScenes: number;
+  totalProtection: number;
+  totalMinutes: string;
+  totalPages: string;
   scenes: SceneDocType[]
+}
+
+export interface StripboardWeekDays {
+  dayNumber: number;
+  totalScenes: number;
+  totalProtection: number;
+  totalMinutes: string;
+  totalPages: string;
+  units: StripboardUnits[];
 }
 
 export interface StripboardWeeks {
   weekNumber: number;
   weekStartDate: string;
   weekEndDate: string;
+  totalScenes: number;
+  totalProtection: number;
+  totalMinutes: string;
+  totalPages: string;
+  totalUnits: number;
+  totalDays: number;
   days: StripboardWeekDays[];
+};
+
+// Función para calcular las métricas para un conjunto de escenas
+const calculateMetrics = (scenes: SceneDocType[]) => {
+  const totalScenes = scenes.length;
+  const totalProtection = scenes.filter(scene => scene.protectionType !== null).length;
+  
+  // Calcular minutos totales
+  const totalSeconds = scenes.reduce((acc, scene) => acc + (scene.estimatedSeconds || 0), 0);
+  const totalMinutes = secondsToMinSec(totalSeconds);
+  
+  // Calcular páginas totales
+  const totalPagesFloat = scenes.reduce((acc, scene) => acc + (scene.pages || 0), 0);
+  const totalPages = floatToFraction(totalPagesFloat);
+  
+  return {
+    totalScenes,
+    totalProtection,
+    totalMinutes,
+    totalPages
+  };
 };
 
 const getNumberOfWeeks = (startDate: string, stripboardHasScenes: StripboardHasScene) => {
@@ -77,14 +114,14 @@ const getTotalShootingDays = (stripboardHasScenes: StripboardHasScene) => {
 const getScenesInUnit = (unitId: number, stripboardHasScenes: StripboardHasScene, scenes: SceneDocType[], dayNumber?: number): SceneDocType[]  => {
   // Filtrar las entradas de stripboardHasScenes que coincidan con unitId y dayNumber
   const sceneIds = stripboardHasScenes
-    .filter(scene => scene.projUnitId === unitId && scene.dayNumber === dayNumber)
+    .filter(scene => scene.projUnitId === unitId && (dayNumber === undefined || scene.dayNumber === dayNumber))
     .map(scene => scene.sceneId);
   
   // Obtener las escenas completas basadas en los IDs filtrados
   return scenes.filter(scene => sceneIds.includes(scene.sceneId));
 }
 
-const getStripboardUnitsInDay = (dayNumber: number, stripboardHasScenes: StripboardHasScene, units: UnitDocType[]): StripboardUnits[] => {
+const getStripboardUnitsInDay = (dayNumber: number, stripboardHasScenes: StripboardHasScene, scenes: SceneDocType[], units: UnitDocType[]): StripboardUnits[] => {
   // Encontrar todas las unidades únicas para el día especificado
   const uniqueUnitIds = [...new Set(
     stripboardHasScenes
@@ -95,10 +132,14 @@ const getStripboardUnitsInDay = (dayNumber: number, stripboardHasScenes: Stripbo
   // Mapear los IDs de unidades a objetos StripboardUnits
   return uniqueUnitIds.map(unitId => {
     const unit = units.find(u => Number(u.id) === unitId);
+    const unitScenes = getScenesInUnit(unitId ?? 0, stripboardHasScenes, scenes, dayNumber);
+    const metrics = calculateMetrics(unitScenes);
+    
     return {
       unitId: unitId ?? 0,
       unitNumber: unit?.unitNumber ? `${unit.unitNumber}` : '',
-      scenes: [] as SceneDocType[] // Las escenas se completarán después
+      scenes: unitScenes,
+      ...metrics
     };
   });
 }
@@ -118,16 +159,16 @@ const getStripboardDaysInWeek = (weekNumber: number, stripboardHasScenes: Stripb
   // Mapear los números de día a objetos StripboardWeekDays
   return uniqueDayNumbers.map(dayNumber => {
     if(dayNumber) {
-      const dayUnits = getStripboardUnitsInDay(dayNumber!, stripboardHasScenes, units);
+      const dayUnits = getStripboardUnitsInDay(dayNumber, stripboardHasScenes, scenes, units);
       
-      // Completar las escenas para cada unidad
-      dayUnits.forEach(unit => {
-        unit.scenes = getScenesInUnit(unit.unitId, stripboardHasScenes, scenes, dayNumber);
-      });
+      // Calcular métricas para todas las escenas del día
+      const dayScenes = dayUnits.flatMap(unit => unit.scenes);
+      const metrics = calculateMetrics(dayScenes);
       
       return {
         dayNumber,
-        units: dayUnits
+        units: dayUnits,
+        ...metrics
       };
     }
     return undefined;
@@ -152,11 +193,22 @@ const getStripboardWeeks = (stripboardHasScenes: StripboardHasScene, stripboardS
     // Obtener los días para esta semana
     const days = getStripboardDaysInWeek(weekNumber, stripboardHasScenes, stripboardStartDate, scenes, units);
     
+    // Calcular métricas para toda la semana
+    const weekScenes = days.flatMap(day => day.units.flatMap(unit => unit.scenes));
+    const metrics = calculateMetrics(weekScenes);
+    
+    // Calcular totalDays y totalUnits
+    const totalDays = days.length;
+    const totalUnits = new Set(days.flatMap(day => day.units.map(unit => unit.unitId))).size;
+    
     weeks.push({
       weekNumber,
       weekStartDate: format(weekStartDate, 'yyyy-MM-dd'),
       weekEndDate: format(weekEndDate, 'yyyy-MM-dd'),
-      days: days
+      days,
+      totalDays,
+      totalUnits,
+      ...metrics
     });
   }
   
@@ -202,33 +254,30 @@ const useStripboards = ({ projectId }: UseStripboardsProps) => {
     })
   );
 
+  const { result: scenesNotIncluded, isFetching: isScenesNotIncludedFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+      sceneId: { $nin: scenesIds.length ? scenesIds : ['none'] }
+    }
+  }));
+
   const combinedStripboards = useMemo<CombinedStripboardType[]>(() => {
     if (!stripboards || !scenes || !units || isStripboardsFetching || isScenesFetching || isUnitsFetching) {
       return [];
     }
 
     return stripboards.map((stripboard) => {
-      const stripboardScenes = scenes.filter((scene) => 
-        stripboard?._data?.stripboardHasScenes?.some(
-          (stripboardScene) => stripboardScene.sceneId === scene.sceneId
-        )
-      );
-
-      const scenesNotIncluded = scenes.filter((scene) =>
-        !stripboardScenes.some((stripboardScene) => stripboardScene.sceneId === scene.sceneId)
-      );
-      
       // Obtener la estructura de semanas
       const weeks = getStripboardWeeks(
         stripboard.stripboardHasScenes || [], 
-        stripboard.startDate || '', 
-        stripboardScenes.map(s => s._data),
+        stripboard.startDate || '',
+        scenes.map(s => s._data),
         units.map(u => u._data)
       );
       
       return {
         ...stripboard._data,
-        scenes: stripboardScenes.map(s => s._data),
+        scenes: scenes.map(s => s._data),
         scenesNotIncluded: scenesNotIncluded.map(s => s._data) || [],
         totalWeeks: getNumberOfWeeks(stripboard.startDate || '', stripboard.stripboardHasScenes || []),
         totalScenes: stripboard?.stripboardHasScenes?.length || 0,
@@ -238,11 +287,11 @@ const useStripboards = ({ projectId }: UseStripboardsProps) => {
         weeks: weeks,
       };
     });
-  }, [stripboards, scenes, units, isStripboardsFetching, isScenesFetching, isUnitsFetching]);
+  }, [stripboards, scenes, units, isStripboardsFetching, isScenesFetching, isUnitsFetching, scenesNotIncluded, isScenesNotIncludedFetching]);
 
-  return { 
-    stripboards: combinedStripboards, 
-    isFetching: isStripboardsFetching || isScenesFetching || isUnitsFetching
+  return {
+    stripboards: combinedStripboards,
+    isFetching: isStripboardsFetching || isScenesFetching || isUnitsFetching || isScenesNotIncludedFetching
   };
 };
 

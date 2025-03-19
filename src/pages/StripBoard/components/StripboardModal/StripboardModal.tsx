@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState, useCallback } from "react";
-import { 
-  IonButton, 
-  IonContent, 
-  IonHeader, 
-  IonIcon, 
-  IonInfiniteScroll, 
-  IonInfiniteScrollContent, 
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonModal,
 } from "@ionic/react";
 import { settings } from "ionicons/icons";
@@ -16,7 +16,7 @@ import AppLoader from "../../../../Shared/Components/loaders/AppLoader/AppLoader
 import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
 import ScenesList from "../ScenesList/ScenesList";
 import { StripboardWeeks } from "../../../../hooks/database/useStripboards/useStripboards";
-import { Section } from "../../../../Shared/Components/organizers/Section/Section";
+import WeeksList from "./Components/WeeksList/WeeksList";
 
 interface StripboardModalProps {
   scenes: SceneDocType[];
@@ -149,46 +149,20 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
       </IonHeader>
       <IonContent scrollEvents={true}>
         <SplitLayout>
-          <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
-            {weeks.map((week, weekIndex) => (
-              <Section 
-                key={`week-${week.weekNumber}-${weekIndex}`} 
-                title={`WEEK ${week.weekNumber} FROM ${week.weekStartDate} TO ${week.weekEndDate}`} 
-                open={true}
-              >
-                {week.days.map((day, dayIndex) => (
-                  <Section 
-                    key={`day-${day.dayNumber}-${dayIndex}`} 
-                    title={`DAY ${day.dayNumber}`} 
-                    open={true}
-                  >
-                    {day.units.map((unit, unitIndex) => (
-                      <Section 
-                        key={`unit-${unit.unitNumber}-${unitIndex}`} 
-                        title={`UNIT ${unit.unitNumber}`} 
-                        open={true}
-                      >
-                        <ScenesList
-                          scenes={unitScenes[unit.unitId] || []}
-                          scenesToDisplay={INITIAL_LOAD_COUNT}
-                          setScenes={(scenes: SceneDocType[]) => updateUnitScenes(unit.unitId, scenes)}
-                          listId={`unit-${unit.unitId}`}
-                          sectionToolbar={sectionToolbar(`Unit ${unit.unitNumber}`)}
-                        />
-                      </Section>
-                    ))}
-                  </Section>
-                ))}
-              </Section>
-            ))}
-          </IonContent>
+          <>
+            <WeeksList 
+              weeks={weeks} 
+              unitScenes={unitScenes} 
+              updateUnitScenes={updateUnitScenes} 
+            />
+          </>
           <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
             <ScenesList 
               scenes={scenesNotIncludedCopy} 
               scenesToDisplay={scenesNotIncludedToDisplay} 
               setScenes={setScenesNotIncludedCopy} 
               listId="not-included-scenes" 
-              sectionToolbar={sectionToolbar("Not Included Scenes")}
+              sectionToolbar={sectionToolbar(`Scenes (${scenesNotIncludedCopy.length})`)}
             >
               <IonInfiniteScroll
                 threshold="150px"

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useForm, UseFormReturn } from 'react-hook-form';
-import { SceneDocType, Note, Character } from '../../../Shared/types/scenes.types';
+import { SceneDocType } from '../../../Shared/types/scenes.types';
 import { ShootingScene } from '../../../Shared/types/shooting.types';
 import { ShootingSceneStatusEnum } from '../../../Shared/enums/ennums';
 import { useDataInSceneDetail } from '../../../hooks/database/useDataInSceneDetail/useDataInSceneDetail';
