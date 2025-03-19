@@ -145,11 +145,8 @@ const getStripboardUnitsInDay = (dayNumber: number, stripboardHasScenes: Stripbo
 }
 
 const getStripboardDaysInWeek = (weekNumber: number, stripboardHasScenes: StripboardHasScene, startDate: string, scenes: SceneDocType[], units: UnitDocType[]): StripboardWeekDays[] => {
-  const startDateObj = new Date(startDate);
-  const weekStartDay = (weekNumber - 1) * 7 + 1; // Día inicial de la semana (considerando que la semana 1 comienza con el día 1)
-  const weekEndDay = weekNumber * 7; // Día final de la semana
-  
-  // Obtener todos los números de día únicos dentro del rango de la semana
+  const weekStartDay = (weekNumber - 1) * 7 + 1; 
+  const weekEndDay = weekNumber * 7;
   const uniqueDayNumbers = [...new Set(
     stripboardHasScenes
       .filter(scene => scene.dayNumber !== undefined && scene.dayNumber >= weekStartDay && scene.dayNumber <= weekEndDay)
