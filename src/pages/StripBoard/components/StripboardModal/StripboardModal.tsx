@@ -17,11 +17,13 @@ import { StripboardContext } from "../../context/StripboardContext/StripboardCon
 import ScenesList from "../ScenesList/ScenesList";
 import { StripboardWeeks } from "../../../../hooks/database/useStripboards/useStripboards";
 import WeeksList from "./Components/WeeksList/WeeksList";
+import { SearchToolbarButtonProps } from "../../../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton";
 
 interface StripboardModalProps {
   scenes: SceneDocType[];
   scenesNotIncluded: SceneDocType[];
   weeks: StripboardWeeks[];
+  stripboardName: string;
 }
 
 const INITIAL_LOAD_COUNT = 70;
@@ -29,7 +31,7 @@ const LOAD_MORE_COUNT = 5;
 const SCROLL_RESET_DELAY = 300;
 const LOAD_MORE_DELAY = 200;
 
-export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncluded, weeks }) => {
+export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncluded, weeks, stripboardName }) => {
   const { detailIsOpen, setDetailIsOpen, setShowOptionsModal } = useContext(StripboardContext);
 
   const [scenesNotIncludedToDisplay, setScenesNotIncludedToDisplay] = useState(INITIAL_LOAD_COUNT);
@@ -95,10 +97,13 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
     return () => clearTimeout(timer);
   }, [scenesNotIncludedCopy.length]);
 
-  const sectionToolbar = useCallback((sectionName: string) => (
+  const sectionToolbar = useCallback((sectionName: string, search?: SearchToolbarButtonProps) => (
     <ModalToolbar
       toolbarTitle={sectionName}
       customButtons={[]}
+      search={search}
+      slotTitle="start"
+      color="tertiary-dark"
     />
   ), []);
 
@@ -149,20 +154,13 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
       </IonHeader>
       <IonContent scrollEvents={true}>
         <SplitLayout>
-          <>
-            <WeeksList 
-              weeks={weeks} 
-              unitScenes={unitScenes} 
-              updateUnitScenes={updateUnitScenes} 
-            />
-          </>
           <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
             <ScenesList 
               scenes={scenesNotIncludedCopy} 
               scenesToDisplay={scenesNotIncludedToDisplay} 
               setScenes={setScenesNotIncludedCopy} 
               listId="not-included-scenes" 
-              sectionToolbar={sectionToolbar(`Scenes (${scenesNotIncludedCopy.length})`)}
+              sectionToolbar={(search?: SearchToolbarButtonProps) => sectionToolbar(`Scenes (${scenesNotIncludedCopy.length})`, search)}
             >
               <IonInfiniteScroll
                 threshold="150px"
@@ -173,6 +171,12 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
               </IonInfiniteScroll>
             </ScenesList>
           </IonContent>
+            <WeeksList 
+              weeks={weeks} 
+              unitScenes={unitScenes} 
+              updateUnitScenes={updateUnitScenes} 
+              stripboardName={stripboardName}
+            />
         </SplitLayout>
       </IonContent>
     </IonModal>
