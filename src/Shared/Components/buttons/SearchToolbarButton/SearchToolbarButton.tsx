@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { IonIcon, IonInput } from '@ionic/react';
 import { caretForward, searchOutline } from 'ionicons/icons';
 import ToolbarButton from '../ToolbarButton/ToolbarButton';
+import './SearchToolbarButton.scss';
 
 export interface SearchToolbarButtonProps {
   search: boolean;
