@@ -3,6 +3,7 @@ import SceneCard from "../../../../Shared/Components/cards/SceneCard/SceneCard";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import DragAndDropBox from "../../../../Shared/Components/organizers/DragAndDropBox/DragAndDropBox";
 import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
+import { SearchToolbarButtonProps } from "../../../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton";
 
 // Evento para comunicación entre componentes
 const DragDropEvents = {
@@ -36,7 +37,7 @@ interface ScenesListProps {
   setScenes: React.Dispatch<React.SetStateAction<SceneDocType[]>> | ((scenes: SceneDocType[]) => void);
   listId: string;
   children?: React.ReactNode;
-  sectionToolbar?: React.ReactNode;
+  sectionToolbar?: (search?: SearchToolbarButtonProps) => React.ReactNode;
 }
 
 // Estructura de datos optimizada para escenas
@@ -58,6 +59,7 @@ const ScenesList: React.FC<ScenesListProps> = ({
   const { displayOptions } = useContext(StripboardContext);
   const [overIndex, setOverIndex] = useState<number | null>(null);
   const [searchText, setSearchText] = useState<string>('')
+  const [searchMode, setSearchMode] = useState<boolean>(false);
   
   // Referencias para el estado de arrastre
   const dragSourceRef = useRef<string | null>(null);
@@ -350,8 +352,14 @@ const ScenesList: React.FC<ScenesListProps> = ({
   const scenesToRender = displayedScenes();
   
   return (
-    <DragAndDropBox onDrop={onDrop} scrollInfiniteComponent={children} {...{className: `drop-container drop-${listId} border-light`, style: {padding: '10px', height: 'auto', minHeight: '100%', scrollbarWidth: 'none'}}}>
-      {sectionToolbar}
+    <DragAndDropBox onDrop={onDrop} scrollInfiniteComponent={children} {...{className: `drop-container drop-${listId}`, style: {padding: '6px', height: 'auto', minHeight: '100%', scrollbarWidth: 'none'}}}>
+      {sectionToolbar && sectionToolbar({ 
+        search: true,
+        searchMode,
+        toggleSearchMode: () => setSearchMode(prev => !prev),
+        searchText,
+        handleSearchInput: (e: CustomEvent) => setSearchText(e.detail.value!)
+      })}
       {scenesToRender.map((scene, index) => (
         <div 
           onDragStart={(e) => onDragStart(e, scene)} 
