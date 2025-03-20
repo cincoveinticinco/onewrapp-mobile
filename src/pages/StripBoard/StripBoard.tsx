@@ -51,6 +51,7 @@ const StripBoardContent: React.FC = () => {
       </IonContent>
       {selectedStripboard && (
         <StripboardModal 
+          stripboardName={selectedStripboard.name}
           scenes={structuredClone(selectedStripboard.scenes) || []} 
           scenesNotIncluded={selectedStripboard.scenesNotIncluded || []}
           weeks={selectedStripboard.weeks}
