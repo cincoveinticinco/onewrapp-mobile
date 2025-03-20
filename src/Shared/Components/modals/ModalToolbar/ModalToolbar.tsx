@@ -17,7 +17,9 @@ interface ModalToolbarProps {
   handleSaveName?: string
   handleBack?: () => void
   customButtons?: (() => JSX.Element)[]
-  search?: SearchToolbarButtonProps
+  search?: SearchToolbarButtonProps,
+  slotTitle?: string
+  color?: string
 }
 
 const ModalToolbar: React.FC<ModalToolbarProps> = (
@@ -30,12 +32,14 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
     handleBack,
     customButtons = [],
     search,
+    slotTitle,
+    color = 'tertiary'
   },
 ) => {
   const isMobile = useIsMobile();
 
   return (
-    <IonToolbar color="tertiary" id="modal-toolbar" className="ion-no-padding">
+    <IonToolbar color={color} id="modal-toolbar" className="ion-no-padding">
       {
         isMobile || !handleReset && handleBack
         && (
@@ -44,7 +48,7 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
           </IonButton>
         )
       }
-      <IonTitle className="modal-toolbar-title">
+      <IonTitle className={!slotTitle ? "modal-toolbar-title" : slotTitle}>
         {toolbarTitle.toUpperCase()}
       </IonTitle>
 
