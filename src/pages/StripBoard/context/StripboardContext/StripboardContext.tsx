@@ -1,6 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
-import { CombinedStripboardType } from '../../../../hooks/database/useStripboards/useStripboards';
 import { DEFAULT_DISPLAY_OPTIONS, SceneCardDisplayOptions } from '../../../../Shared/Components/cards/SceneCard/SceneCard';
+import { CombinedStripboardType } from '../../../../Shared/types/stripboard.types';
 // Definición del tipo para el contexto
 
 interface StripboardContextType {
@@ -63,8 +63,6 @@ export const StripboardProvider: React.FC<StripboardProviderProps> = ({ children
       // Crea una copia completamente nueva para asegurar que React detecte el cambio
       setSelectedStripboard({
         ...selectedStripboard,
-        scenes: structuredClone(selectedStripboard.scenes) || [],
-        scenesNotIncluded: structuredClone(selectedStripboard.scenesNotIncluded) || []
       });
     }
   }, [displayOptions]);
