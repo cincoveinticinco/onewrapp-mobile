@@ -1,16 +1,23 @@
-import { StripboardWeeks } from "../../../../../../hooks/database/useStripboards/useStripboards";
+import { memo, useCallback } from "react";
 import { Section, SectionTotal } from "../../../../../../Shared/Components/organizers/Section/Section";
 import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
+import { StripboardWeeks } from "../../../../../../Shared/types/stripboard.types";
 import DayItem from "../DayItem/DayItem";
 
 
 interface WeekItemProps {
   week: StripboardWeeks;
-  unitScenes: Record<string, SceneDocType[]>;
-  updateUnitScenes: (unitId: number, scenes: SceneDocType[]) => void;
+  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void
 }
 
-const WeekItem: React.FC<WeekItemProps> = ({ week, unitScenes, updateUnitScenes }) => {
+const WeekItem: React.FC<WeekItemProps> = memo(({ week, updateStripboardHasScenes }) => {
+  const handleUpdateScenes = useCallback(
+    (scenes: SceneDocType[], dayNumber: number, unitId: number) => {
+      updateStripboardHasScenes(scenes, dayNumber, unitId);
+    },
+    [updateStripboardHasScenes] // Se mantiene la misma referencia
+  );
+
   const getTotalsInWeeks = (week: StripboardWeeks): SectionTotal[] => {
     return [
       {
@@ -40,7 +47,7 @@ const WeekItem: React.FC<WeekItemProps> = ({ week, unitScenes, updateUnitScenes 
         value: week.totalDays
       }
     ];
-  };
+  }
 
   return (
     <Section
@@ -49,18 +56,11 @@ const WeekItem: React.FC<WeekItemProps> = ({ week, unitScenes, updateUnitScenes 
       open={true}
       totals={getTotalsInWeeks(week)}
     >
-      <>
-        {week.days.map((day, dayIndex) => (
-          <DayItem 
-            key={`day-${day.dayNumber}-${dayIndex}`} 
-            day={day} 
-            unitScenes={unitScenes} 
-            updateUnitScenes={updateUnitScenes} 
-          />
-        ))}
-      </>
+      {week.days.map((day) => (
+        <DayItem key={day.dayNumber} day={day} updateStripboardHasScenes={handleUpdateScenes} />
+      ))}
     </Section>
   );
-};
+});
 
 export default WeekItem;
