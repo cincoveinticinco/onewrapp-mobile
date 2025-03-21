@@ -1,17 +1,18 @@
-import { StripboardUnits } from "../../../../../../hooks/database/useStripboards/useStripboards";
 import { Section, SectionTotal } from "../../../../../../Shared/Components/organizers/Section/Section";
 import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
+import { StripboardUnits } from "../../../../../../Shared/types/stripboard.types";
 import ScenesList from "../../../ScenesList/ScenesList";
-
 interface UnitItemProps {
   unit: StripboardUnits;
-  unitScenes: Record<string, SceneDocType[]>;
-  updateUnitScenes: (unitId: number, scenes: SceneDocType[]) => void;
+  unitScenes: SceneDocType[];
+  dayNumber: number;
+  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void;
 }
 
-const INITIAL_LOAD_COUNT = 70;
+const INITIAL_LOAD_COUNT = 10;
 
-const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, updateUnitScenes }) => {
+const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber, updateStripboardHasScenes}) => {
+
   const getTotalsInUnits = (unit: StripboardUnits): SectionTotal[] => {
     return [
       {
@@ -43,9 +44,9 @@ const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, updateUnitScenes 
       totals={getTotalsInUnits(unit)}
     >
       <ScenesList
-        scenes={unitScenes[unit.unitId] || []}
+        scenes={unitScenes || []}
         scenesToDisplay={INITIAL_LOAD_COUNT}
-        setScenes={(scenes: SceneDocType[]) => updateUnitScenes(unit.unitId, scenes)}
+        setScenes={(scenes: SceneDocType[]) => updateStripboardHasScenes(scenes, dayNumber, unit.unitId)}
         listId={`unit-${unit.unitId}`}
       />
     </Section>
