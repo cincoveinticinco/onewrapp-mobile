@@ -1,18 +1,20 @@
 import { IonContent, IonHeader } from "@ionic/react";
-import { StripboardWeeks } from "../../../../../../hooks/database/useStripboards/useStripboards";
-import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
 import WeekItem from "../WeekItem/WeekItem";
 import ModalToolbar from "../../../../../../Shared/Components/modals/ModalToolbar/ModalToolbar";
+import { StripboardWeeks } from "../../../../../../Shared/types/stripboard.types";
+import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
+import React from "react";
 
 
 interface WeeksListProps {
   weeks: StripboardWeeks[];
-  unitScenes: Record<string, SceneDocType[]>;
-  updateUnitScenes: (unitId: number, scenes: SceneDocType[]) => void;
   stripboardName: string;
+  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void
 }
 
-const WeeksList: React.FC<WeeksListProps> = ({ weeks, unitScenes, updateUnitScenes, stripboardName }) => {
+const WeeksList: React.FC<WeeksListProps> = ({ weeks, stripboardName, updateStripboardHasScenes }) => {
+  
+
   return (
     <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
       <IonHeader>
@@ -25,12 +27,11 @@ const WeeksList: React.FC<WeeksListProps> = ({ weeks, unitScenes, updateUnitScen
         <WeekItem
           key={`week-${week.weekNumber}-${weekIndex}`} 
           week={week} 
-          unitScenes={unitScenes} 
-          updateUnitScenes={updateUnitScenes} 
+          updateStripboardHasScenes={updateStripboardHasScenes}
         />
       ))}
     </IonContent>
   );
 };
 
-export default WeeksList;
+export default React.memo(WeeksList);
