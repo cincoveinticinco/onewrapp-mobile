@@ -2,7 +2,6 @@ import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { useParams } from 'react-router';
-import useStripboards, { CombinedStripboardType } from '../../hooks/database/useStripboards/useStripboards';
 import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import GeneralTable from '../../Shared/Components/tables/GeneralTable/GeneralTable';
 import React, { useContext, useEffect } from 'react';
@@ -11,6 +10,8 @@ import { StripboardContext, StripboardProvider } from './context/StripboardConte
 import TableColumns from './tables/StripboardTable';
 import StripboardModal from './components/StripboardModal/StripboardModal';
 import DisplayOptionsModal from './components/DisplayOptionsModal/DisplayOptionsModal';
+import useStripboards from '../../hooks/database/useStripboards/useStripboards';
+import { CombinedStripboardType } from '../../Shared/types/stripboard.types';
 
 const StripBoardContent: React.FC = () => {
   const { id: projectId } = useParams<{ id: string }>();
@@ -30,7 +31,7 @@ const StripBoardContent: React.FC = () => {
     setSelectedStripboard(stripboard);
     setDetailIsOpen(true);
   };
-  
+
   return (
     <IonPage color='tertiary'>
       <IonHeader>
@@ -51,10 +52,7 @@ const StripBoardContent: React.FC = () => {
       </IonContent>
       {selectedStripboard && (
         <StripboardModal 
-          stripboardName={selectedStripboard.name}
-          scenes={structuredClone(selectedStripboard.scenes) || []} 
-          scenesNotIncluded={selectedStripboard.scenesNotIncluded || []}
-          weeks={selectedStripboard.weeks}
+          stripboardId={selectedStripboard.id}
         />
       )}
       <DisplayOptionsModal />
