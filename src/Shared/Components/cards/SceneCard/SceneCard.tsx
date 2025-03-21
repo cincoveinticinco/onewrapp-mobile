@@ -8,7 +8,7 @@ import {
   useIonToast,
 } from '@ionic/react';
 import { checkmarkCircle } from 'ionicons/icons';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
 import { LuGripHorizontal } from 'react-icons/lu';
@@ -170,6 +170,9 @@ const SceneCard: React.FC<SceneCardProps> = ({
     }
   };
 
+  const sceneColor = useMemo(() => defineSceneColor(scene), [scene]);
+  const highlightColor = useMemo(() => defineHighlightColor(scene), [scene]);
+
   const getExtras = (scene: SceneDocType) => {
     const { extras } = scene;
     let extrasString = '';
@@ -231,7 +234,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const cardContent = (
     <IonRow className="scene-card-row" color="tertiary">
       <IonItemSliding className="ion-no-margin ion-no-padding">
-        <IonItem className="ion-no-margin ion-no-padding scene-card-item" color={defineSceneColor(scene)}>
+        <IonItem className="ion-no-margin ion-no-padding scene-card-item" color={sceneColor}>
           {
               isShooting && (
                 <IonReorder className={`reorder-container scene-card`}>
@@ -244,12 +247,12 @@ const SceneCard: React.FC<SceneCardProps> = ({
               <IonCol className="scene-card-col-1">
                 {options.showHeader && (
                   <h3 className="scene-card-header">
-                    <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                    <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} highlightColor={highlightColor} />
                   </h3>
                 )}
                 {options.showSynopsis && (
                   <p className="scene-card-synopsis">
-                    <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                    <HighlightedText text={scene.synopsis || ''} searchTerm={searchText} highlightColor={highlightColor} />
                   </p>
                 )}
                 {(options.showCharacters || options.showExtras) && (
@@ -258,7 +261,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
                       <>
                         <strong>CHARACTERS:</strong>
                         {' '}
-                        <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                        <HighlightedText text={getCharacters(scene) !== '' ? getCharacters(scene) : 'NO CHARACTERS'} searchTerm={searchText} highlightColor={highlightColor} />
                         {options.showExtras && <br />}
                       </>
                     )}
@@ -266,7 +269,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
                       <>
                         <strong>EXTRAS: </strong>
                         {' '}
-                        <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                        <HighlightedText text={getExtras(scene)} searchTerm={searchText} highlightColor={highlightColor} />
                       </>
                     )}
                   </p>
@@ -278,14 +281,14 @@ const SceneCard: React.FC<SceneCardProps> = ({
                     <p className="ion-no-margin">
                       <strong>P: </strong>
                       {' '}
-                      <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                      <HighlightedText text={getPageNumber(scene) || 'N/A'} searchTerm={searchText} highlightColor={highlightColor} />
                     </p>
                   )}
                   {options.showTimeInfo && (
                     <p className="ion-no-margin">
                       <strong>M: </strong>
                       {' '}
-                      <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={defineHighlightColor(scene)} />
+                      <HighlightedText text={scene.estimatedSeconds ? secondsToMinSec(scene.estimatedSeconds) : 'N/A'} searchTerm={searchText} highlightColor={highlightColor} />
                     </p>
                   )}
                 </IonCol>
@@ -364,4 +367,4 @@ const SceneCard: React.FC<SceneCardProps> = ({
   return cardContent;
 };
 
-export default SceneCard;
+export default React.memo(SceneCard);
