@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRxData, useRxDB } from 'rxdb-hooks';
-import { StripboardDocType } from '../../../Shared/types/stripboard.types';
+import { StripboardDocType, StripboardHasScene } from '../../../Shared/types/stripboard.types';
 import { SceneDocType } from '../../../Shared/types/scenes.types';
 import { UnitDocType } from '../../../Shared/types/unitTypes.types';
 import { StripboardStatusesEnum } from '../../../Shared/enums/ennums';
@@ -61,9 +61,30 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
     })
   );
 
-  const updateStripboardHasScenes = (scenes: SceneDocType[], dayNumber: number, unitId: number) => {
-    console.log(scenes)
+  const updateStripboardHasScenes = (sceneId: string | number, dayNumber: number, unitId: number, order: number) => {
+    if (!currentStripboard) return;
+
+    const stripboardHasScenes = currentStripboard.stripboardHasScenes || [];
+    const formatedScene = {
+      sceneId: Number(sceneId),
+      projUnitId: unitId,
+      dayNumber,
+      order: order
+    };
+
+    const updateStripboardHasScenes = stripboardHasScenes.filter(s => s.sceneId !== formatedScene.sceneId);
+
+    setCurrentStripboard({
+      ...currentStripboard,
+      stripboardHasScenes: [
+        ...updateStripboardHasScenes,
+        formatedScene
+      ]
+    });
+
+    console.log(currentStripboard);
   };
+  
 
   // Fetch scenes not included in stripboard
   const { result: scenesNotIncluded, isFetching: isScenesNotIncludedFetching,  } = useRxData<SceneDocType>(
@@ -104,7 +125,7 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
       statusString: currentStripboard.statusId === StripboardStatusesEnum.New ? 'New' : 'Published',
       weeks: weeks,
     };
-  }, [currentStripboard, scenes, units, scenesNotIncluded, isStripboardFetching, isScenesFetching, isUnitsFetching, isScenesNotIncludedFetching]);
+  }, [scenes, units, scenesNotIncluded, isStripboardFetching, isScenesFetching, isUnitsFetching, isScenesNotIncludedFetching]);
 
   useEffect(() => {
     setIsLoading(
@@ -119,7 +140,7 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
     stripboard: detailedStripboard,
     stripboardEditingCopy: currentStripboard,
     isLoading,
-    updateStripboardHasScenes
+    updateStripboardHasScenes,
   };
 };
 

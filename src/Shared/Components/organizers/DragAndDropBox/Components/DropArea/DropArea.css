@@ -1,0 +1,20 @@
+.drop-area {
+  border: 2px dashed var(--ion-color-primary);
+  border-radius: 0.5rem;
+  padding: .5rem;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: border 0.3s;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.hide-drop-area {
+  border: 2px dashed var(--ion-color-primary);
+  opacity: 0;
+  padding: 0px;
+  margin: 0px;
+  height: 22px;
+}

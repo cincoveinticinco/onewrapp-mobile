@@ -6,10 +6,9 @@ import { SceneDocType } from '../../../../../../Shared/types/scenes.types';
 
 interface DayItemProps {
   day: StripboardWeekDays;
-  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void
 }
 
-const DayItem: React.FC<DayItemProps> = ({ day, updateStripboardHasScenes }) => {
+const DayItem: React.FC<DayItemProps> = ({ day,}) => {
   const getTotalsInDays = (day: StripboardWeekDays): SectionTotal[] => {
     return [
       {
@@ -46,7 +45,6 @@ const DayItem: React.FC<DayItemProps> = ({ day, updateStripboardHasScenes }) => 
           unit={unit} 
           unitScenes={unit.scenes}
           dayNumber={day.dayNumber}
-          updateStripboardHasScenes={updateStripboardHasScenes}
         />
       ))}
     </Section>

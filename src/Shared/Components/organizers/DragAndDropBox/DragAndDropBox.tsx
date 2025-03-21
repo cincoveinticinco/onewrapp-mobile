@@ -15,7 +15,7 @@ const DragAndDropBox: React.FC<DragAndDropBoxProps> = ({
   children,
   scrollInfiniteComponent,
   className = '',
-  style = {}
+  style = {},
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   

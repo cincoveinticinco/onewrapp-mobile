@@ -5,87 +5,57 @@ import { SceneDocType } from '../../../../Shared/types/scenes.types';
 import { SearchToolbarButtonProps } from '../../../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton';
 import { StripboardContext } from '../../context/StripboardContext/StripboardContext';
 import DraggableItem from '../../../../Shared/Components/organizers/DragAndDropBox/Components/DraggableItem/DraggableItem';
+import { StripboardDetailContext } from '../StripboardModal/Context/StripboardDetailContext';
+import DropArea from '../../../../Shared/Components/organizers/DragAndDropBox/Components/DropArea/DropArea';
 
 interface ScenesListProps {
   scenes: SceneDocType[];
   scenesToDisplay: number;
-  setScenes: (scenes: SceneDocType[]) => void;
   listId: string;
   children?: React.ReactNode;
   sectionToolbar?: (search?: SearchToolbarButtonProps) => React.ReactNode;
+  dayNumber?: number;
+  unitId?: number;
 }
 
 const ScenesList: React.FC<ScenesListProps> = ({
   scenes,
   scenesToDisplay,
-  setScenes,
   listId,
   children,
-  sectionToolbar
+  sectionToolbar,
+  unitId,
+  dayNumber
 }) => {
   const { displayOptions } = useContext(StripboardContext);
   const [searchText, setSearchText] = useState<string>('');
   const [searchMode, setSearchMode] = useState<boolean>(false);
+
+  const { setActiveScene, updateStripboardHasScenes } = useContext(StripboardDetailContext);
   
-  // Función que maneja el movimiento de escenas entre listas
-  const handleSceneMove = useCallback((
-    sceneId: string, 
-    sourceListId: string, 
-    targetListId: string, 
-    targetIndex: number
-  ) => {
-    // Si la operación es dentro de la misma lista
-    if (sourceListId === targetListId && sourceListId === listId) {
-      const sourceIndex = scenes.findIndex(scene => scene.id === sceneId);
-      if (sourceIndex === -1) return;
-      
-      // Crear una copia del array de escenas
-      const newScenes = [...scenes];
-      
-      // Mover la escena dentro del array
-      const [movedScene] = newScenes.splice(sourceIndex, 1);
-      
-      // Si targetIndex es -1, añadimos al final
-      if (targetIndex === -1) {
-        newScenes.push(movedScene);
-      } else {
-        // Ajustar el índice si es necesario
-        const adjustedIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
-        newScenes.splice(adjustedIndex, 0, movedScene);
-      }
-      
-      // Actualizar el estado
-      setScenes(newScenes);
-    }
-    
-    // Es una operación entre listas - sólo manejamos si somos la fuente o destino
-    else if (sourceListId === listId || targetListId === listId) {
-      // Si somos la lista fuente, debemos eliminar la escena
-      if (sourceListId === listId) {
-        const sourceIndex = scenes.findIndex(scene => scene.id === sceneId);
-        if (sourceIndex === -1) return;
-        
-        const newScenes = [...scenes];
-        newScenes.splice(sourceIndex, 1);
-        setScenes(newScenes);
-      }
-      
-      // Nota: El manejo cuando somos la lista destino debe ocurrir en el componente padre
-      // que coordina el estado global, ya que necesitamos acceso a la escena que se mueve
-    }
-  }, [scenes, setScenes, listId]);
-  
-  // Filtrar escenas según la búsqueda
   const filteredScenes = useMemo(() => {
     if (!searchText) return scenes.slice(0, scenesToDisplay);
     
     return scenes
       .slice(0, scenesToDisplay);
   }, [scenes, scenesToDisplay, searchText]);
+
+  interface OnDropParams {
+    sceneId: string | number;
+    index: number;
+  }
+
+  const onDrop = ({ sceneId, index }: OnDropParams) => {
+    if (!unitId) return;
+    if (!dayNumber) return;
+    if (!sceneId) return;
+    console.log(`${sceneId} dropped at index ${index} from ${unitId ? `unit ${unitId}` : `not included scenes`} at ${unitId ? `unit ${unitId}` : `not included scenes`}`);
+    updateStripboardHasScenes(sceneId, dayNumber, unitId, index);
+  };
   
   return (
     <DragAndDropBox
-      onItemMove={handleSceneMove}
+      onItemMove={() => {}}
       listId={listId}
       className={`scenes-list scenes-list-${listId}`}
       style={{ padding: '6px', height: 'auto', minHeight: '100%', scrollbarWidth: 'none' }}
@@ -98,14 +68,19 @@ const ScenesList: React.FC<ScenesListProps> = ({
         searchText,
         handleSearchInput: (e: CustomEvent) => setSearchText(e.detail.value!)
       })}
-      
+    
       {filteredScenes.map((scene, index) => (
+        <React.Fragment key={`${scene.id}`}>
+        {index === 0 && <DropArea itemId={scene.id as string} onDrop={() => onDrop({
+          sceneId: scene.id as string,
+          index: 0
+        })} />}
         <DraggableItem
           key={scene.id}
-          itemId={scene.id || ''}
-          listId={listId}
-          index={index}
-          onItemMove={handleSceneMove}
+          itemId={scene.sceneId!}
+          elementPosition={index}
+          setActiveElement={setActiveScene as any}
+          onDrop={(itemId, elementPosition) => onDrop({ sceneId: itemId, index: elementPosition })}
         >
           <SceneCard
             scene={scene}
@@ -113,6 +88,7 @@ const ScenesList: React.FC<ScenesListProps> = ({
             goToDetail={false}
           />
         </DraggableItem>
+        </React.Fragment>
       ))}
     </DragAndDropBox>
   );

@@ -7,16 +7,9 @@ import DayItem from "../DayItem/DayItem";
 
 interface WeekItemProps {
   week: StripboardWeeks;
-  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void
 }
 
-const WeekItem: React.FC<WeekItemProps> = memo(({ week, updateStripboardHasScenes }) => {
-  const handleUpdateScenes = useCallback(
-    (scenes: SceneDocType[], dayNumber: number, unitId: number) => {
-      updateStripboardHasScenes(scenes, dayNumber, unitId);
-    },
-    [updateStripboardHasScenes] // Se mantiene la misma referencia
-  );
+const WeekItem: React.FC<WeekItemProps> = memo(({ week}) => {
 
   const getTotalsInWeeks = (week: StripboardWeeks): SectionTotal[] => {
     return [
@@ -57,7 +50,7 @@ const WeekItem: React.FC<WeekItemProps> = memo(({ week, updateStripboardHasScene
       totals={getTotalsInWeeks(week)}
     >
       {week.days.map((day) => (
-        <DayItem key={day.dayNumber} day={day} updateStripboardHasScenes={handleUpdateScenes} />
+        <DayItem key={day.dayNumber} day={day} />
       ))}
     </Section>
   );

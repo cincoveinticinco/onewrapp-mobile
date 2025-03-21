@@ -6,12 +6,11 @@ interface UnitItemProps {
   unit: StripboardUnits;
   unitScenes: SceneDocType[];
   dayNumber: number;
-  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void;
 }
 
 const INITIAL_LOAD_COUNT = 10;
 
-const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber, updateStripboardHasScenes}) => {
+const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber}) => {
 
   const getTotalsInUnits = (unit: StripboardUnits): SectionTotal[] => {
     return [
@@ -46,8 +45,9 @@ const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber, update
       <ScenesList
         scenes={unitScenes || []}
         scenesToDisplay={INITIAL_LOAD_COUNT}
-        setScenes={(scenes: SceneDocType[]) => updateStripboardHasScenes(scenes, dayNumber, unit.unitId)}
         listId={`unit-${unit.unitId}`}
+        dayNumber={dayNumber}
+        unitId={unit.unitId}
       />
     </Section>
   );

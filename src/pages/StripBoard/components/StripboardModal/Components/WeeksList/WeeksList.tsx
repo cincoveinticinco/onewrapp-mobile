@@ -9,10 +9,9 @@ import React from "react";
 interface WeeksListProps {
   weeks: StripboardWeeks[];
   stripboardName: string;
-  updateStripboardHasScenes: (scenes: SceneDocType[], dayNumber: number, unitId: number) => void
 }
 
-const WeeksList: React.FC<WeeksListProps> = ({ weeks, stripboardName, updateStripboardHasScenes }) => {
+const WeeksList: React.FC<WeeksListProps> = ({ weeks, stripboardName }) => {
   
 
   return (
@@ -27,7 +26,6 @@ const WeeksList: React.FC<WeeksListProps> = ({ weeks, stripboardName, updateStri
         <WeekItem
           key={`week-${week.weekNumber}-${weekIndex}`} 
           week={week} 
-          updateStripboardHasScenes={updateStripboardHasScenes}
         />
       ))}
     </IonContent>
