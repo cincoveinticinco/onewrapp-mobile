@@ -171,13 +171,13 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children}) => {
               </>
             )}
             
-            {direction === 'horizontal' 
+            {/* {direction === 'horizontal' 
               ? (index === 0 
               ? <ContentDropComponent index={0} /> 
               : <ContentDropComponent index={1} />)
               : (index === 0 
               ? <ContentDropComponent index={0} /> 
-              : <ContentDropComponent index={1} />)}
+              : <ContentDropComponent index={1} />)} */}
             </Panel>
         </React.Fragment>
       ))}
