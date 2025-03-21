@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import {
   IonButton,
   IonContent,
@@ -15,15 +15,15 @@ import SplitLayout from "../../../../Shared/Components/organizers/SplitLayout/Sp
 import AppLoader from "../../../../Shared/Components/loaders/AppLoader/AppLoader";
 import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
 import ScenesList from "../ScenesList/ScenesList";
-import { StripboardWeeks } from "../../../../hooks/database/useStripboards/useStripboards";
 import WeeksList from "./Components/WeeksList/WeeksList";
 import { SearchToolbarButtonProps } from "../../../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton";
+import secondsToMinSec from "../../../../Shared/Utils/secondsToMinSec";
+import useStripboardDetail from "../../../../hooks/database/useStripboardDetail/useStripboardDetail";
+import { useParams } from "react-router";
+import { StripboardWeeks } from "../../../../Shared/types/stripboard.types";
 
 interface StripboardModalProps {
-  scenes: SceneDocType[];
-  scenesNotIncluded: SceneDocType[];
-  weeks: StripboardWeeks[];
-  stripboardName: string;
+  stripboardId: string;
 }
 
 const INITIAL_LOAD_COUNT = 70;
@@ -31,35 +31,30 @@ const LOAD_MORE_COUNT = 5;
 const SCROLL_RESET_DELAY = 300;
 const LOAD_MORE_DELAY = 200;
 
-export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenesNotIncluded, weeks, stripboardName }) => {
+export const StripboardModal: React.FC<StripboardModalProps> = ({ stripboardId }) => {
   const { detailIsOpen, setDetailIsOpen, setShowOptionsModal } = useContext(StripboardContext);
+  const { id: projectId } = useParams<{ id: string }>();
+  const { stripboard, isLoading, updateStripboardHasScenes } = useStripboardDetail({ 
+    stripboardId, 
+    projectId 
+  });
 
   const [scenesNotIncludedToDisplay, setScenesNotIncludedToDisplay] = useState(INITIAL_LOAD_COUNT);
-  const [scenesCopy, setScenesCopy] = useState<SceneDocType[]>([]);
   const [scenesNotIncludedCopy, setScenesNotIncludedCopy] = useState<SceneDocType[]>([]);
-  const [scenesAreLoading, setScenesAreLoading] = useState(true);
-  
-  // Create state for scenes in units
-  const [unitScenes, setUnitScenes] = useState<Record<string, SceneDocType[]>>({});
+  const [weeksCopy, setWeeksCopy] = useState<StripboardWeeks[]>([]);
 
+  const totalMinutesNotIncluded = useMemo(() => {
+    const totalSeconds = scenesNotIncludedCopy.reduce((acc, scene) => acc + (scene.estimatedSeconds || 0), 0);
+    return secondsToMinSec(totalSeconds);
+  }, [scenesNotIncludedCopy]);
+
+  // Solo actualizamos las copias locales cuando el stripboard cambia y NO estamos en edición
   useEffect(() => {
-    if (scenes && scenesNotIncluded) {
-      setScenesCopy(structuredClone(scenes));
-      setScenesNotIncludedCopy(structuredClone(scenesNotIncluded));
-      setScenesAreLoading(false);
-      
-      // Initialize unit scenes
-      const unitScenesMap: Record<string, SceneDocType[]> = {};
-      weeks.forEach(week => {
-        week.days.forEach(day => {
-          day.units.forEach(unit => {
-            unitScenesMap[unit.unitId] = structuredClone(unit.scenes);
-          });
-        });
-      });
-      setUnitScenes(unitScenesMap);
+    if (stripboard) {
+      setScenesNotIncludedCopy(stripboard.scenesNotIncluded);
+      setWeeksCopy(stripboard.weeks);
     }
-  }, [scenes, scenesNotIncluded, weeks]);
+  }, [stripboard]);
 
   const resetScrollPosition = useCallback(() => {
     const ionContents = document.querySelectorAll('ion-content');
@@ -107,35 +102,11 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
     />
   ), []);
 
-  const updateUnitScenes = useCallback((unitId: number, scenes: SceneDocType[]) => {
-    setUnitScenes(prev => ({
-      ...prev,
-      [unitId]: scenes
-    }));
-  }, []);
-
-  if (scenesAreLoading) {
-    return (
-      <IonModal isOpen={detailIsOpen} onDidDismiss={() => setDetailIsOpen(false)} color="tertiary" className="modal-styles">
-        <IonHeader style={{ zIndex: '20' }}>
-          <ModalToolbar
-            toolbarTitle="Stripboard"
-            handleBack={() => setDetailIsOpen(false)}
-            customButtons={[
-              () => (
-                <IonButton fill="clear" key="settings" onClick={() => setShowOptionsModal(true)} slot="end" color="light">
-                  <IonIcon icon={settings} />
-                </IonButton>
-              )
-            ]}
-          />
-        </IonHeader>
-        <IonContent scrollEvents={true}>
-          <AppLoader />
-        </IonContent>
-      </IonModal>
-    );
-  }
+  // Este es el handler que pasa a WeeksList para manejar actualizaciones locales
+  const handleUpdateStripboardHasScenes = useCallback((scenes: SceneDocType[], dayNumber: number, unitId: number) => {
+    // Primero actualizamos las copias locales para reflejar inmediatamente el cambio en la UI
+    updateStripboardHasScenes(scenes, dayNumber, unitId);
+  }, [updateStripboardHasScenes]);
 
   return (
     <IonModal isOpen={detailIsOpen} onDidDismiss={() => setDetailIsOpen(false)} color="tertiary" className="modal-styles">
@@ -152,33 +123,46 @@ export const StripboardModal: React.FC<StripboardModalProps> = ({ scenes, scenes
           ]}
         />
       </IonHeader>
-      <IonContent scrollEvents={true}>
-        <SplitLayout>
-          <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
-            <ScenesList 
-              scenes={scenesNotIncludedCopy} 
-              scenesToDisplay={scenesNotIncludedToDisplay} 
-              setScenes={setScenesNotIncludedCopy} 
-              listId="not-included-scenes" 
-              sectionToolbar={(search?: SearchToolbarButtonProps) => sectionToolbar(`Scenes (${scenesNotIncludedCopy.length})`, search)}
-            >
-              <IonInfiniteScroll
-                threshold="150px"
-                onIonInfinite={(e) => loadMoreScenes(e, "notIncluded")}
-                disabled={scenesNotIncludedToDisplay >= scenesNotIncludedCopy.length}
-              >
-                <IonInfiniteScrollContent />
-              </IonInfiniteScroll>
-            </ScenesList>
+      {
+        isLoading ? (
+          <IonContent color='tertiary' fullscreen>
+            <AppLoader />
           </IonContent>
-            <WeeksList 
-              weeks={weeks} 
-              unitScenes={unitScenes} 
-              updateUnitScenes={updateUnitScenes} 
-              stripboardName={stripboardName}
-            />
-        </SplitLayout>
-      </IonContent>
+        ) : stripboard ? (
+          (
+            <IonContent scrollEvents={true}>
+              <SplitLayout>
+                <IonContent color="tertiary" scrollEvents={true} className="hide-scrollbar">
+                  <ScenesList 
+                    scenes={scenesNotIncludedCopy} 
+                    scenesToDisplay={scenesNotIncludedToDisplay} 
+                    setScenes={setScenesNotIncludedCopy} 
+                    listId="not-included-scenes" 
+                    sectionToolbar={(search?: SearchToolbarButtonProps) => sectionToolbar(`Scenes (${scenesNotIncludedCopy.length}) - MIN ${totalMinutesNotIncluded} `, search)}
+                  >
+                    <IonInfiniteScroll
+                      threshold="150px"
+                      onIonInfinite={(e) => loadMoreScenes(e, "notIncluded")}
+                      disabled={scenesNotIncludedToDisplay >= scenesNotIncludedCopy.length}
+                    >
+                      <IonInfiniteScrollContent />
+                    </IonInfiniteScroll>
+                  </ScenesList>
+                </IonContent>
+                <WeeksList 
+                  weeks={weeksCopy}
+                  stripboardName={stripboard.name}
+                  updateStripboardHasScenes={handleUpdateStripboardHasScenes}
+                />
+              </SplitLayout>
+            </IonContent>
+          )
+        ) : (
+          <IonContent color='tertiary' fullscreen>
+            <div>Stripboard not found</div>
+          </IonContent>
+        )
+      }
     </IonModal>
   );
 };
