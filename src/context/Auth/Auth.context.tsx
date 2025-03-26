@@ -5,6 +5,7 @@ import React, {
 import DatabaseContext from '../Database/Database.context';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import environment from '../../../environment';
+import { useHistory } from 'react-router';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -39,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string>('');
   const { oneWrapDb } = useContext(DatabaseContext);
   const alertRef = React.useRef<any>(null);
+  const history = useHistory();
   
 
   const checkSession = useCallback(async () => {
@@ -60,12 +62,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         localStorage.removeItem('token');
         setUser(null);
-        setLoggedIn(false);
         return false;
       } catch (error) {
         localStorage.removeItem('token');
+        history.push('/');
         setUser(null);
-        setLoggedIn(false);
       }
     }
     setLoggedIn(false);
