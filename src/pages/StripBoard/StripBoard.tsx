@@ -1,35 +1,28 @@
 import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
-import { useParams } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import GeneralTable from '../../Shared/Components/tables/GeneralTable/GeneralTable';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './StripBoard.scss';
-import { StripboardContext, StripboardProvider } from './context/StripboardContext/StripboardContext';
+import { StripboardProvider } from './context/StripboardContext/StripboardContext';
 import TableColumns from './tables/StripboardTable';
-import StripboardModal from './components/StripboardModal/StripboardModal';
-import DisplayOptionsModal from './components/DisplayOptionsModal/DisplayOptionsModal';
 import useStripboards from '../../hooks/database/useStripboards/useStripboards';
 import { CombinedStripboardType } from '../../Shared/types/stripboard.types';
 
 const StripBoardContent: React.FC = () => {
   const { id: projectId } = useParams<{ id: string }>();
   const { stripboards, isFetching } = useStripboards({ projectId: projectId });
+  const history = useHistory();
+  const routeMatch = useRouteMatch()
 
   useEffect(() => {
     console.log(stripboards);
   }, [stripboards])
-  
-  const { 
-    setDetailIsOpen, 
-    setSelectedStripboard,
-    selectedStripboard 
-  } = useContext(StripboardContext);
 
   const openDetail = (stripboard: CombinedStripboardType) => {
-    setSelectedStripboard(stripboard);
-    setDetailIsOpen(true);
+    history.push(`${routeMatch.url}/${stripboard.id}`);
   };
 
   return (
@@ -50,12 +43,6 @@ const StripBoardContent: React.FC = () => {
           />
         )}
       </IonContent>
-      {selectedStripboard && (
-        <StripboardModal 
-          stripboardId={selectedStripboard.id}
-        />
-      )}
-      <DisplayOptionsModal />
     </IonPage>
   );
 };
