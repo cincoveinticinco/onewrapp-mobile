@@ -9,12 +9,12 @@
   transition: border 0.3s;
   opacity: 1;
   transition: opacity 0.3s;
+  height: 100%;
 }
 
 .hide-drop-area {
   border: 2px dashed var(--ion-color-primary);
   opacity: 0;
   padding: 0px;
-  margin: 0px;
-  height: 22px;
+  height: 12px;
 }
