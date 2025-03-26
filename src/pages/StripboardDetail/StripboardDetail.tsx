@@ -7,23 +7,19 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonModal,
+  IonPage,
 } from "@ionic/react";
 import { settings } from "ionicons/icons";
-import ModalToolbar from "../../../../Shared/Components/modals/ModalToolbar/ModalToolbar";
-import SplitLayout from "../../../../Shared/Components/organizers/SplitLayout/SplitLayout";
-import AppLoader from "../../../../Shared/Components/loaders/AppLoader/AppLoader";
-import { StripboardContext } from "../../context/StripboardContext/StripboardContext";
-import ScenesList from "../ScenesList/ScenesList";
+import ModalToolbar from "../../Shared/Components/modals/ModalToolbar/ModalToolbar";
+import SplitLayout from "../../Shared/Components/organizers/SplitLayout/SplitLayout";
+import AppLoader from "../../Shared/Components/loaders/AppLoader/AppLoader";
+import ScenesList from "./Components/ScenesList/ScenesList";
 import WeeksList from "./Components/WeeksList/WeeksList";
-import { SearchToolbarButtonProps } from "../../../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton";
+import { SearchToolbarButtonProps } from "../../Shared/Components/buttons/SearchToolbarButton/SearchToolbarButton";
 import { StripboardDetailContext, StripboardDetailProvider } from "./Context/StripboardDetailContext";
-
-interface StripboardModalProps {
-  stripboardId: string;
-}
-
-const StripboardModalContent: React.FC = () => {
-  const { detailIsOpen, setDetailIsOpen, setShowOptionsModal } = useContext(StripboardContext);
+import { useParams } from "react-router";
+import DisplayOptionsModal from "./Components/DisplayOptionsModal/DisplayOptionsModal";
+const StripboardDetailContent: React.FC = () => {
 
   const { 
     isLoading, 
@@ -32,17 +28,11 @@ const StripboardModalContent: React.FC = () => {
     scenesNotIncludedToDisplay, 
     totalMinutesNotIncluded, 
     loadMoreScenes, 
-    resetScrollPosition, 
     weeks,
-    activeScene
+    activeScene,
+    setShowOptions
   } = useContext(StripboardDetailContext);
 
-  useEffect(() => {
-    if (detailIsOpen) {
-      const timer = setTimeout(resetScrollPosition, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [detailIsOpen, resetScrollPosition]);
 
   const sectionToolbar = (sectionName: string, search?: SearchToolbarButtonProps) => (
     <ModalToolbar
@@ -55,14 +45,14 @@ const StripboardModalContent: React.FC = () => {
   );
 
   return (
-    <IonModal isOpen={detailIsOpen} onDidDismiss={() => setDetailIsOpen(false)} color="tertiary" className="modal-styles">
+    <IonPage>
       <IonHeader style={{ zIndex: '20' }}>
         <ModalToolbar
           toolbarTitle="Stripboard"
-          handleBack={() => setDetailIsOpen(false)}
+          handleBack={() => history.back()}
           customButtons={[
             () => (
-              <IonButton fill="clear" key="settings" onClick={() => setShowOptionsModal(true)} slot="end" color="light">
+              <IonButton fill="clear" key="settings" onClick={() => setShowOptions(true)} slot="end" color="light">
                 <IonIcon icon={settings} />
               </IonButton>
             )
@@ -93,6 +83,7 @@ const StripboardModalContent: React.FC = () => {
                       <IonInfiniteScrollContent />
                     </IonInfiniteScroll>
                   </ScenesList>
+                  <DisplayOptionsModal />
                 </IonContent>
                 <WeeksList 
                   weeks={weeks}
@@ -107,16 +98,19 @@ const StripboardModalContent: React.FC = () => {
           </IonContent>
         )
       }
-    </IonModal>
+    </IonPage>
   );
 };
 
-export const StripboardModal: React.FC<StripboardModalProps> = ({ stripboardId }) => {
+export const StripboardDetail: React.FC= () => {
+  const { stripboardId } = useParams<{ stripboardId: string }>();
+
+  console.log(stripboardId);
   return (
     <StripboardDetailProvider stripboardId={stripboardId}>
-      <StripboardModalContent />
+      <StripboardDetailContent />
     </StripboardDetailProvider>
   );
 };
 
-export default StripboardModal;
+export default StripboardDetail;

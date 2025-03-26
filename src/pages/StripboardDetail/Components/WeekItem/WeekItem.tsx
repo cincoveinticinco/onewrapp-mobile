@@ -1,7 +1,7 @@
-import { memo, useCallback } from "react";
-import { Section, SectionTotal } from "../../../../../../Shared/Components/organizers/Section/Section";
-import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
-import { StripboardWeeks } from "../../../../../../Shared/types/stripboard.types";
+import { memo, useCallback, useState } from "react";
+import { Section, SectionTotal } from "../../../../Shared/Components/organizers/Section/Section";
+import { SceneDocType } from "../../../../Shared/types/scenes.types";
+import { StripboardWeeks } from "../../../../Shared/types/stripboard.types";
 import DayItem from "../DayItem/DayItem";
 
 
@@ -10,6 +10,8 @@ interface WeekItemProps {
 }
 
 const WeekItem: React.FC<WeekItemProps> = memo(({ week}) => {
+
+  const [weekIsOpen, setWeekIsOpen] = useState(true);
 
   const getTotalsInWeeks = (week: StripboardWeeks): SectionTotal[] => {
     return [
@@ -46,8 +48,9 @@ const WeekItem: React.FC<WeekItemProps> = memo(({ week}) => {
     <Section
       key={`week-${week.weekNumber}`} 
       title={`WEEK ${week.weekNumber} FROM ${week.weekStartDate} TO ${week.weekEndDate}`} 
-      open={true}
+      open={weekIsOpen}
       totals={getTotalsInWeeks(week)}
+      setOpen={setWeekIsOpen}
     >
       {week.days.map((day) => (
         <DayItem key={day.dayNumber} day={day} />

@@ -62,13 +62,24 @@ export const getTotalShootingDays = (stripboardHasScenes: StripboardHasScene) =>
 
 export const getScenesInUnit = (unitId: number, stripboardHasScenes: StripboardHasScene, scenes: SceneDocType[], dayNumber?: number): SceneDocType[]  => {
   // Filtrar las entradas de stripboardHasScenes que coincidan con unitId y dayNumber
-  const sceneIds = stripboardHasScenes
-    .filter(scene => scene.projUnitId === unitId && (dayNumber === undefined || scene.dayNumber === dayNumber))
+
+  const deepCopy: StripboardHasScene = JSON.parse(JSON.stringify(stripboardHasScenes));
+
+  const sceneIds = deepCopy
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .filter(scene => scene.projUnitId === unitId && (dayNumber === undefined || scene.dayNumber === dayNumber))
     .map(scene => scene.sceneId)
+
+  const orderedScenes: SceneDocType[] = [];
+
+  sceneIds.forEach(sceneId => {
+    const scene = scenes.find(s => s.sceneId === sceneId);
+    if(scene) {
+      orderedScenes.push(scene);
+    }
+  });
   
-  // Obtener las escenas completas basadas en los IDs filtrados
-  return scenes.filter(scene => sceneIds.includes(scene.sceneId))
+  return orderedScenes
 };
 
 export const getStripboardUnitsInDay = (dayNumber: number, stripboardHasScenes: StripboardHasScene, scenes: SceneDocType[], units: UnitDocType[]): StripboardUnits[] => {

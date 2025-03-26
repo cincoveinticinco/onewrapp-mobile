@@ -1,27 +1,28 @@
 import React, { useContext } from 'react';
 import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonModal, IonToggle } from '@ionic/react';
 import ModalToolbar from '../../../../Shared/Components/modals/ModalToolbar/ModalToolbar';
-import { StripboardContext } from '../../context/StripboardContext/StripboardContext';
+import { StripboardContext } from '../../../Stripboard/context/StripboardContext/StripboardContext';
+import StripboardDetailContext from '../../Context/StripboardDetailContext';
 
 const DisplayOptionsModal: React.FC = () => {
   const { 
-    showOptionsModal, 
-    setShowOptionsModal, 
+    showOptions, 
+    setShowOptions, 
     displayOptions, 
     handleToggleOption 
-  } = useContext(StripboardContext);
+  } = useContext(StripboardDetailContext);
 
   return (
     <IonModal 
-      isOpen={showOptionsModal} 
-      onDidDismiss={() => setShowOptionsModal(false)} 
+      isOpen={showOptions} 
+      onDidDismiss={() => setShowOptions(false)} 
       color='tertiary' 
       className='modal-styles'
     >
       <IonHeader>
         <ModalToolbar
           toolbarTitle='Display Options'
-          handleBack={() => setShowOptionsModal(false)}
+          handleBack={() => setShowOptions(false)}
         />
       </IonHeader>
       <IonContent color="tertiary">

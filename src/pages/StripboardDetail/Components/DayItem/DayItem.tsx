@@ -1,14 +1,16 @@
 import React from 'react';
-import { Section, SectionTotal } from '../../../../../../Shared/Components/organizers/Section/Section';
+import { Section, SectionTotal } from '../../../../Shared/Components/organizers/Section/Section';
 import UnitItem from '../UnitItem/UnitItem';
-import { StripboardWeekDays } from '../../../../../../Shared/types/stripboard.types';
-import { SceneDocType } from '../../../../../../Shared/types/scenes.types';
+import { StripboardWeekDays } from '../../../../Shared/types/stripboard.types';
+import { SceneDocType } from '../../../../Shared/types/scenes.types';
 
 interface DayItemProps {
   day: StripboardWeekDays;
 }
 
 const DayItem: React.FC<DayItemProps> = ({ day,}) => {
+  const [dayIsOpen, setDayIsOpen] = React.useState(true);
+
   const getTotalsInDays = (day: StripboardWeekDays): SectionTotal[] => {
     return [
       {
@@ -36,8 +38,9 @@ const DayItem: React.FC<DayItemProps> = ({ day,}) => {
     <Section
       key={`day-${day.dayNumber}`} 
       title={`DAY ${day.dayNumber}`} 
-      open={true}
+      open={dayIsOpen}
       totals={getTotalsInDays(day)}
+      setOpen={setDayIsOpen}
     >
       {day.units.map((unit, unitIndex) => (
         <UnitItem

@@ -1,7 +1,8 @@
-import { Section, SectionTotal } from "../../../../../../Shared/Components/organizers/Section/Section";
-import { SceneDocType } from "../../../../../../Shared/types/scenes.types";
-import { StripboardUnits } from "../../../../../../Shared/types/stripboard.types";
-import ScenesList from "../../../ScenesList/ScenesList";
+import { useState } from "react";
+import { Section, SectionTotal } from "../../../../Shared/Components/organizers/Section/Section";
+import { SceneDocType } from "../../../../Shared/types/scenes.types";
+import { StripboardUnits } from "../../../../Shared/types/stripboard.types";
+import ScenesList from "../ScenesList/ScenesList";
 interface UnitItemProps {
   unit: StripboardUnits;
   unitScenes: SceneDocType[];
@@ -11,6 +12,7 @@ interface UnitItemProps {
 const INITIAL_LOAD_COUNT = 10;
 
 const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber}) => {
+  const [unitIsOpen, setUnitIsOpen] = useState(dayNumber === 1);
 
   const getTotalsInUnits = (unit: StripboardUnits): SectionTotal[] => {
     return [
@@ -39,7 +41,8 @@ const UnitItem: React.FC<UnitItemProps> = ({ unit, unitScenes, dayNumber}) => {
     <Section
       key={`unit-${unit.unitNumber}`}
       title={`UNIT ${unit.unitNumber}`}
-      open={true}
+      open={unitIsOpen}
+      setOpen={setUnitIsOpen}
       totals={getTotalsInUnits(unit)}
     >
       <ScenesList
