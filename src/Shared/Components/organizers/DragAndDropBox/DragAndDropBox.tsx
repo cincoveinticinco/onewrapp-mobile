@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 
 interface DragAndDropBoxProps {
-  onItemMove?: (itemId: string, sourceListId: string, targetListId: string, targetIndex: number) => void;
-  listId: string;
   children: React.ReactNode;
   scrollInfiniteComponent?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  listId: string;
+  onDrop: () => void;
 }
 
-const DragAndDropBox: React.FC<DragAndDropBoxProps> = ({ 
-  onItemMove, 
+const DragAndDropBox: React.FC<DragAndDropBoxProps> = ({
   listId, 
   children,
   scrollInfiniteComponent,
   className = '',
   style = {},
+  onDrop
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   
@@ -42,30 +42,12 @@ const DragAndDropBox: React.FC<DragAndDropBoxProps> = ({
   
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
-    
+    // Quitamos el indicador visual cuando se suelta el elemento
     setIsDragOver(false);
     
-    // Extraer los datos del arrastre
-    const dataString = e.dataTransfer.getData('application/json');
-    if (!dataString) return;
-    
-    try {
-      const { itemId, sourceListId, sourceIndex } = JSON.parse(dataString);
-      
-      // Si no hay función de manejo, no hacemos nada
-      if (!onItemMove) return;
-      
-      // Calcular el índice de destino - para un contenedor entero sería al final
-      // En una implementación real, podrías calcular la posición relativa para insertar
-      const targetIndex = -1; // -1 significa "al final"
-      
-      // Llamar a la función que actualiza el estado
-      onItemMove(itemId, sourceListId, listId, targetIndex);
-    } catch (error) {
-      console.error('Error parsing drag data:', error);
-    }
-  };
+    // Ejecutamos la función de drop
+    onDrop();
+  }
   
   // Estilo condicional basado en el estado
   const dragOverStyle = isDragOver ? {
@@ -80,6 +62,7 @@ const DragAndDropBox: React.FC<DragAndDropBoxProps> = ({
       style={{ ...style, ...dragOverStyle }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      id={listId}
       onDrop={handleDrop}
     >
       {children}
