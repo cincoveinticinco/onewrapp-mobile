@@ -1,9 +1,10 @@
 import React, { CSSProperties } from 'react';
-import { IonButton, IonCol, IonGrid, IonItem, IonRow } from '@ionic/react';
-import { VscEdit, VscSave } from 'react-icons/vsc';
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow } from '@ionic/react';
+import { VscEdit } from 'react-icons/vsc';
 import AddButton from '../../buttons/AddButton/AddButton';
 import DropDownButton from '../../buttons/DropDownButton/DropDownButton';
 import InfoLabel from '../../descriptive/InfoLabel/InfoLabel';
+import { caretDownOutline, caretUpOutline } from 'ionicons/icons';
 
 export type SectionTotal = {
   name: string;
@@ -111,7 +112,7 @@ export const Section: React.FC<SectionProps> = ({
         onMouseDown={setTouchStartStyles}
         onTouchEnd={onTouchEndStyles}
         onMouseUp={onTouchEndStyles}
-        className='ion-padding-start ion-padding-end'
+        className='ion-padding-start'
       >
         <p className='ion-no-margin ion-flex  ion-align-items-center' style={{ fontSize: '14px', width: '30%', height: '100%' }}><b>{title.toUpperCase()}</b></p>
         {totals?.length > 0 && !editMode && (
@@ -123,8 +124,13 @@ export const Section: React.FC<SectionProps> = ({
                 </IonCol>
               ))}
               {setOpen &&
-                <IonCol size="1" style={{ textAlign: 'right' }}>
-                  <DropDownButton open={open} />
+                <IonCol style={{
+                  minWidth: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }} >
+                  {!open ? <IonIcon icon={caretDownOutline} /> : <IonIcon icon={caretUpOutline} color='primary' />}
                 </IonCol>
               }
             </IonRow>
