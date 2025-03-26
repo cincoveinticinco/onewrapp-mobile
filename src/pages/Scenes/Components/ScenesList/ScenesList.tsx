@@ -17,9 +17,10 @@ const ScenesList: React.FC<{
   searchText, 
   permissionType,
   selectedFilterOptions,
-  setSelectedFilterOptions 
+  setSelectedFilterOptions
 }) => {
-  const [displayedScenes, setDisplayedScenes] = useState<SceneDocType[]>([]);
+
+  const [ displayedScenes, setDisplayedScenes ] = useState<SceneDocType[]>([]);
 
   useEffect(() => {
     console.log("🔄 Actualizando displayedScenes con nuevas filteredScenes");
