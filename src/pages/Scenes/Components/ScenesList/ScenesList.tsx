@@ -23,7 +23,6 @@ const ScenesList: React.FC<{
   const [ displayedScenes, setDisplayedScenes ] = useState<SceneDocType[]>([]);
 
   useEffect(() => {
-    console.log("🔄 Actualizando displayedScenes con nuevas filteredScenes");
     setDisplayedScenes([...filteredScenes.slice(0, 20)]); // Clonar para forzar actualización
   }, [filteredScenes]);
 
