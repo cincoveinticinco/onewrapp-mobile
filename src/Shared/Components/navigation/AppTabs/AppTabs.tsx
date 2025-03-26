@@ -45,11 +45,12 @@ import SceneScript from '../../../../pages/SceneScript/SceneScript';
 import Sets from '../../../../pages/Sets/Sets';
 import Settings from '../../../../pages/Settings/Settings';
 import ShootingDetail from '../../../../pages/ShootingDetail/ShootingDetail';
-import StripBoard from '../../../../pages/Stripboard/Stripboard';
 import Scenes from '../../../../pages/Scenes/Scenes';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';
 import { useRxDB } from 'rxdb-hooks';
+import StripBoard from '../../../../pages/Stripboard/StripBoard';
+import StripboardDetail from '../../../../pages/StripboardDetail/StripboardDetail';
 
 setupIonicReact();
 
@@ -262,6 +263,10 @@ const AppTabs: React.FC = () => {
           component={StripBoard}
           unauthorizedRoute={unauthorizedRoute}
         />
+
+        <Route exact path={`${urlString}/stripboard/:stripboardId`}>
+          <StripboardDetail />
+        </Route>
 
         <Route exact path={`${urlString}/reports`}>
           <Reports />
