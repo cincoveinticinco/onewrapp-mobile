@@ -14,11 +14,12 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
   setActiveElement,
   elementPosition,
   children,
-  onDrop
+  onDrop,
+  ...props
 }) => {
 
   return (
-    <React.Fragment>
+    <React.Fragment key={`drag-wrapper-${itemId}`}>
       <div
         draggable
         onDragStart={() => setActiveElement(itemId)}
@@ -26,10 +27,10 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
         data-item-id={itemId}
         className='draggable-item'
         id={`draggable-item-${itemId}`}
+        {...props}
       >
         {children}
       </div>
-      <DropArea itemId={itemId} onDrop={() => onDrop(itemId, elementPosition)}/>
     </React.Fragment>
   );
 };
