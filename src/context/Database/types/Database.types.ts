@@ -18,7 +18,6 @@ export interface DatabaseContextProps {
   initialProjectReplication: () => Promise<void>;
   replicationPercentage: number;
   replicationStatus: string;
-  initialReplicationFinished: boolean;
   projectsInfoIsOffline: {[key: string]: boolean};
   setProjectsInfoIsOffline: (projectsInfoIsOffline: {[key: string]: boolean}) => void;
   initializeProjectsUserReplication: () => Promise<void>;

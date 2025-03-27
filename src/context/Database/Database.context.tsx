@@ -42,7 +42,6 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initialProjectReplication: () => new Promise(() => false),
   replicationPercentage: 0,
   replicationStatus: '',
-  initialReplicationFinished: false,
   projectsInfoIsOffline: {},
   setProjectsInfoIsOffline: () => { },
   initializeProjectsUserReplication: () => new Promise(() => false),
@@ -52,8 +51,6 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
-
-  const { initialReplicationFinished, setInitialReplicationFinished } = useReplicationStore();
 
   const {
     scenesAreLoading, setScenesAreLoading,
@@ -443,7 +440,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     // Actualizar el estado para indicar que la replicación está en curso
     setAllReplicationsInCourse(true);
     console.info('Starting all replications...');
-  
+
     const replicationsArray = [
       initializeProjectsUserReplication,
       initializeSceneReplication, 
@@ -483,9 +480,9 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       console.info('Replicating data...');
       await initializeAllReplications();
     };
-    const warnMessage = !isOnline ? 'project is not online' : !oneWrapRXdatabase ? 'database is not initialized' : !projectId ? 'project id not found' : !initialReplicationFinished ? 'initial replication is not finished' : 'NO ERRORS';
+    const warnMessage = !isOnline ? 'project is not online' : !oneWrapRXdatabase ? 'database is not initialized' : !projectId ? 'project id not found' : 'NO ERRORS';
     console.warn(warnMessage)
-    if (oneWrapRXdatabase && isOnline && projectId && initialReplicationFinished) {
+    if (oneWrapRXdatabase && isOnline && projectId) {
 
       replicatePeriodically();
 
@@ -495,7 +492,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       return () => clearInterval(intervalId);
     }
-  }, [oneWrapRXdatabase, isOnline, projectId, initialReplicationFinished]);
+  }, [oneWrapRXdatabase, isOnline, projectId]);
 
   const cleanupReplicators = async () => {
     // Create an array of all replicator refs
@@ -668,7 +665,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       }
 
       setInitialProjectReplicationInCourse(true);
-      setInitialReplicationFinished(false);
       setReplicationPercentage(0);
       setReplicationStatus('Starting replication...');
 
@@ -747,7 +743,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
       setReplicationStatus('Replication finished');
       setReplicationPercentage(100);
-      setInitialReplicationFinished(true);
       setProjectsInfoIsOffline({
         ...projectsInfoIsOffline,
         [projectId]: true,
@@ -757,7 +752,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     } catch (error: any) {
       setReplicationStatus(`Error during ${currentStep} replication: ${error.message}`);
       setReplicationPercentage(0);
-      setInitialReplicationFinished(false);
       console.log(error)
       throw error;
     } finally {
@@ -786,7 +780,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           initialProjectReplication,
           replicationPercentage,
           replicationStatus,
-          initialReplicationFinished,
           projectsInfoIsOffline,
           setProjectsInfoIsOffline,
           initializeProjectsUserReplication,

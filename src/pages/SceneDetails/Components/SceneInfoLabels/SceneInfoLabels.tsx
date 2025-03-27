@@ -246,7 +246,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
     <div className="ion-flex-column labels-wrapper" style={{ textAlign: 'center', height: '100%', justifyContent: 'center', margin: '3px' }}>
       {(editMode && isEditable) ? renderInput() : renderInfo()}
       <p style={{ fontSize: '10px', margin: '3px', fontWeight: '500' }} className={showError && editMode ? 'error' : ''}>
-        {!showError && !editMode ? (
+        { !showError ? (
           <>
             {title.toUpperCase()} {type === InfoType.Minutes && '(MM:SS)'} {required ? '*' : ''}
           </>
