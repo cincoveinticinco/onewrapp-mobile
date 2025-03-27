@@ -10,6 +10,7 @@ import SelectItem from '../../inputs/SelectInput/SelectInput';
 import CustomSelect from '../../inputs/CustomSelect/CustomSelect';
 import InputItem from '../../../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../../buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import DateInput from '../../inputs/DateInput/DateInput';
 
 export interface FormInput {
   fieldKeyName: string;
@@ -24,6 +25,8 @@ export interface FormInput {
   multiple?: boolean;
   offset?: string;
   onValueChanges?: (value: any) => void;
+  min?: string;
+  max?: string;
 }
 
 export interface SelectOptionsInterface {
@@ -112,7 +115,7 @@ const EditionModal: React.FC<EditionModalProps> = ({
 
   const {
     control,
-    formState: { errors },
+    formState: {},
     handleSubmit,
     setValue,
     resetField,
@@ -223,6 +226,20 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       />
                       <IonLabel className="ion-padding-start">{input.label}</IonLabel>
                     </IonItem>
+                  ) : input.type === 'date' ? (
+                    <DateInput
+                      label={input.label}
+                      fieldKeyName={input.fieldKeyName}
+                      control={control}
+                      placeholder={input.placeholder}
+                      required={input.required}
+                      displayError={showError[input.fieldKeyName as keyof typeof showError]}
+                      errorMessage={errorMessage}
+                      min={input.min}
+                      max={input.max}
+                      onValueChanges={input.onValueChanges}
+                      style={{ width: '100%' }}
+                    />
                   ) : (
                     <InputItem
                       label={input.label}

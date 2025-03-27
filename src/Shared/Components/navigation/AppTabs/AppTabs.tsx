@@ -49,7 +49,7 @@ import Scenes from '../../../../pages/Scenes/Scenes';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';
 import { useRxDB } from 'rxdb-hooks';
-import StripBoard from '../../../../pages/Stripboard/StripBoard';
+import Stripboard from '../../../../pages/Stripboard/Stripboard';
 import StripboardDetail from '../../../../pages/StripboardDetail/StripboardDetail';
 
 setupIonicReact();
@@ -260,7 +260,7 @@ const AppTabs: React.FC = () => {
           exact
           path={`${urlString}/stripboard`}
           permissionType={getSecurePageAccess(SecurePages.SCENES)}
-          component={StripBoard}
+          component={Stripboard}
           unauthorizedRoute={unauthorizedRoute}
         />
 

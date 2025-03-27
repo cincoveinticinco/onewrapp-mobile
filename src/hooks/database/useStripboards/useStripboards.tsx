@@ -55,7 +55,7 @@ const useStripboards = ({ projectId }: UseStripboardsProps) => {
         projectId: stripboard.projectId
       };
     });
-  }, [stripboards, isStripboardsFetching]);
+  }, [stripboards, isStripboardsFetching]);  
 
   return {
     stripboards: stripboardsList,

@@ -17,7 +17,7 @@ const ScenesList: React.FC<{
   searchText, 
   permissionType,
   selectedFilterOptions,
-  setSelectedFilterOptions
+  setSelectedFilterOptions2907
 }) => {
 
   const [ displayedScenes, setDisplayedScenes ] = useState<SceneDocType[]>([]);

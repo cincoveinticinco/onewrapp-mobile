@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonModal, IonToggle } from '@ionic/react';
 import ModalToolbar from '../../../../Shared/Components/modals/ModalToolbar/ModalToolbar';
-import { StripboardContext } from '../../../Stripboard/context/StripboardContext/StripboardContext';
+import { StripboardContext } from '../../../Stripboard/Context/StripboardContext/StripboardContext';
 import StripboardDetailContext from '../../Context/StripboardDetailContext';
 
 const DisplayOptionsModal: React.FC = () => {
