@@ -17,7 +17,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ note, setNote }) => {
           className={isFocused ? 'input-item' : 'script-popup-input'}
           value={note && note.note}
           labelPlacement="floating"
-          label="Note"
+          label="NOTE"
           placeholder="INSERT NOTE"
           onIonChange={(e) => setNote((prevNote: any) => ({ ...prevNote, note: e.detail.value || '' }))}
           autoGrow

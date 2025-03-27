@@ -267,13 +267,14 @@ ion-toolbar {
   border-bottom: 1px solid rgb(0, 0, 0) !important;
   background-color: var(--ion-color-tertiary);
   cursor: pointer;
+  height: 50px;
 
   .checkbox-option {
     background-color: var(--ion-color-white) !important;
   }
 
   ion-checkbox {
-    --size: 12px;
+    --size: 16px;
     --checkbox-background-checked: radial-gradient(circle, yellow 35%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 1) 48%, yellow 50%, rgba(255, 255, 255, 1) 58%);
     --checkbox-background: white !important;
   }

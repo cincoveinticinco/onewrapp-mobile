@@ -21,6 +21,7 @@ import './ElementCard.scss';
 import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
 import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
+import { set } from 'lodash';
 
 interface Element {
   elementName: string;
@@ -67,8 +68,11 @@ const ElementCard: React.FC<ElementCardProps> = ({
   const modalRef = useRef<HTMLIonModalElement>(null);
   const disableEditions = permissionType !== 1;
 
+  const [editionModalIsOpen, setEditionModalIsOpen] = React.useState(false);
+
   const openEditModal = () => {
     modalRef.current?.present();
+    setEditionModalIsOpen(true);
   };
 
   const openDeleteElementAlert = () => {
@@ -296,56 +300,60 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   return (
     <>
-      <IonItemSliding onClick={onClick}>
-        <IonItem mode="md" className="element-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-          <div className={`${'element-card-wrapper' + ' '}${section}${section === 'category' && ' background-tertiary-dark'}`}>
-            <div color="dark" className="element-card-header">
-              <IonTitle className="element-card-header-title">
-                <HighlightedText
-                  text={elementName() || (`${data.categoryName} (${elementsQuantity})`) || ''}
-                  searchTerm={searchText}
-                />
-              </IonTitle>
-              {
-              section === 'category'
-              && isMobile
-              && <DropDownButton open={isOpen} />
-            }
-              {/* {section === 'element' && (
-              <p className="element-card-header-subtitle">
-                {data.category ? data.category.toUpperCase() : EmptyEnum.NoCategory}
-              </p>
-            )} */}
+      {
+        !editionModalIsOpen && (
+        <IonItemSliding onClick={onClick}>
+          <IonItem mode="md" className="element-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
+            <div className={`${'element-card-wrapper' + ' '}${section}${section === 'category' && ' background-tertiary-dark'}`}>
+              <div color="dark" className="element-card-header">
+                <IonTitle className="element-card-header-title">
+                  <HighlightedText
+                    text={elementName() || (`${data.categoryName} (${elementsQuantity})`) || ''}
+                    searchTerm={searchText}
+                  />
+                </IonTitle>
+                {
+                section === 'category'
+                && isMobile
+                && <DropDownButton open={isOpen} />
+              }
+                {/* {section === 'element' && (
+                <p className="element-card-header-subtitle">
+                  {data.category ? data.category.toUpperCase() : EmptyEnum.NoCategory}
+                </p>
+              )} */}
+              </div>
+              <div className="element-card-content">
+                <InfoLabel label="SCN." value={data.scenesQuantity} />
+                <InfoLabel label="PROT." value={data.protectionQuantity} />
+                <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+                <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
+                <InfoLabel label="EP" value={data.episodesQuantity} />
+                <InfoLabel label="PART." value={`${data.participation}%`} />
+                {
+                section === 'category'
+                && !isMobile
+                && <DropDownButton open={isOpen} />
+              }
+              </div>
             </div>
-            <div className="element-card-content">
-              <InfoLabel label="SCN." value={data.scenesQuantity} />
-              <InfoLabel label="PROT." value={data.protectionQuantity} />
-              <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
-              <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
-              <InfoLabel label="EP" value={data.episodesQuantity} />
-              <InfoLabel label="PART." value={`${data.participation}%`} />
-              {
-              section === 'category'
-              && !isMobile
-              && <DropDownButton open={isOpen} />
-            }
+          </IonItem>
+          <IonItemOptions className="element-card-item-options">
+            <div className="buttons-wrapper">
+              <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
+                <CiEdit className="button-icon view" />
+              </IonButton>
+              <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => values) : scenesToEditWithElement()?.then((values: any) => values))} disabled={disableEditions}>
+                <PiProhibitLight className="button-icon ban" />
+              </IonButton>
+              <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>
+                <PiTrashSimpleLight className="button-icon trash" />
+              </IonButton>
             </div>
-          </div>
-        </IonItem>
-        <IonItemOptions className="element-card-item-options">
-          <div className="buttons-wrapper">
-            <IonButton fill="clear" onClick={openEditModal} disabled={disableEditions}>
-              <CiEdit className="button-icon view" />
-            </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? scenesToEditWithCategory()?.then((values: any) => values) : scenesToEditWithElement()?.then((values: any) => values))} disabled={disableEditions}>
-              <PiProhibitLight className="button-icon ban" />
-            </IonButton>
-            <IonButton fill="clear" onClick={() => (section === 'category' ? openDeleteCategoryAlert() : openDeleteElementAlert())} disabled={disableEditions}>
-              <PiTrashSimpleLight className="button-icon trash" />
-            </IonButton>
-          </div>
-        </IonItemOptions>
-      </IonItemSliding>
+          </IonItemOptions>
+        </IonItemSliding>
+        )
+      }
       <EditionModal
         formInputs={section === 'category' ? formCategoryInputs : formElementInputs}
         handleEdition={section === 'category' ? editCategory : editElement}
@@ -353,6 +361,8 @@ const ElementCard: React.FC<ElementCardProps> = ({
         defaultFormValues={section === 'category' ? defaultFormValuesForCategories : defaultFormValuesForElements}
         validate={validateExistence}
         modalRef={modalRef}
+        isOpen={editionModalIsOpen}
+        setIsOpen={setEditionModalIsOpen}
       />
 
       <InputAlert

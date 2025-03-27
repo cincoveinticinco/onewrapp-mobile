@@ -1,83 +1,98 @@
-import {
-  IonInput, IonItem, IonSelect, IonSelectOption,
-} from '@ionic/react';
-import { useState } from 'react';
+import React from 'react';
+import { IonInput, IonItem } from '@ionic/react';
+import { useForm } from 'react-hook-form';
 import { Character } from '../../../../Shared/types/scenes.types';
+import SelectItem from '../../../AddScene/Components/AddSceneFormInputs/SelectItem';
 
 interface CharacterFormProps {
   character: Character;
-  setCharacter: React.Dispatch<React.SetStateAction<any>>;
-  characterCategories: (string | null)[]
+  setCharacter: React.Dispatch<React.SetStateAction<Character>>;
+  characterCategories: (string | null)[];
+  setCharacterCategories: React.Dispatch<React.SetStateAction<(string | null)[]>>;
 }
 
-const CharacterForm: React.FC<CharacterFormProps> = ({ character, setCharacter, characterCategories }) => {
-  const [isFocused, setIsFocused] = useState([false, false, false]);
+const CharacterForm: React.FC<CharacterFormProps> = ({ 
+  character, 
+  setCharacter, 
+  characterCategories,
+  setCharacterCategories 
+}) => {
+  const { control, setValue, watch } = useForm({
+    defaultValues: {
+      characterNum: character.characterNum || '',
+      categoryName: character.categoryName || '',
+      characterName: character.characterName || ''
+    }
+  });
+
+  const handleCharacterNumChange = (num: string | null) => {
+    setCharacter((prevCharacter) => ({ 
+      ...prevCharacter, 
+      characterNum: num 
+    }));
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    setCharacter((prevCharacter) => ({ 
+      ...prevCharacter, 
+      categoryName: category || '' 
+    }));
+  };
+
+  const handleCharacterNameChange = (name: string) => {
+    setCharacter((prevCharacter) => ({ 
+      ...prevCharacter, 
+      characterName: name 
+    }));
+  };
 
   return (
     <>
       <IonItem color="tertiary">
         <IonInput
-          className={isFocused[0] ? 'input-item' : 'script-popup-input'}
-          value={character && character.characterNum}
+          value={character.characterNum}
           labelPlacement="floating"
-          label="Character Number"
+          label="CHARACTER NUMBER"
           placeholder="INSERT CHARACTER NUMBER"
-          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterNum: e.detail.value || null }))}
-          onFocus={() => setIsFocused([true, false, false])}
-          onBlur={() => setIsFocused([false, false, false])}
+          onIonChange={(e) => handleCharacterNumChange(e.detail.value || null)}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px',
+            fontSize: '16px',
+            textTransform: 'uppercase'
           }}
         />
       </IonItem>
-      <IonItem color="tertiary">
-        <IonSelect
-          className={isFocused[1] ? 'input-item' : 'script-popup-input'}
-          value={character.categoryName}
-          labelPlacement="floating"
-          label="Character Category"
-          placeholder="INSERT CHARACTER CATEGORY"
-          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, categoryName: e.detail.value || null }))}
-          style={{
-            borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px',
-          }}
-          onFocus={() => setIsFocused([false, true, false])}
-          onBlur={() => setIsFocused([false, false, false])}
-          interface="popover"
-        >
-          {
-              characterCategories.map((category: (string | null)) => (
-                category
-                  ? (
-                    <IonSelectOption key={category} value={category}>
-                      {category.toUpperCase()}
-                    </IonSelectOption>
-                  )
-                  : (
-                    <IonSelectOption key={category} value={category}>
-                      NO CATEGORY
-                    </IonSelectOption>
-                  )
-              ))
-}
-        </IonSelect>
-      </IonItem>
+
+      <SelectItem
+        label="CHARACTER CATEGORY"
+        options={characterCategories.filter(category => category !== null) as string[]}
+        control={control}
+        fieldKeyName="categoryName"
+        inputName="characterCategory"
+        setValue={setValue}
+        watchValue={watch}
+        canCreateNew={true}
+        setOptions={(newCategories: any) => {
+          setCharacterCategories(newCategories);
+        }}
+        afterSelection={() => {
+          const selectedCategory = watch('categoryName');
+          handleCategoryChange(selectedCategory);
+        }}
+      />
+      
       <IonItem color="tertiary">
         <IonInput
-          className={isFocused[2] ? 'input-item' : 'script-popup-input'}
-          value={character && character.characterName}
+          value={character.characterName}
           labelPlacement="floating"
-          label="Character Name *"
+          label="CHARACTER NAME *"
           placeholder="INSERT CHARACTER NAME"
-          onIonChange={(e) => setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: e.detail.value || null }))}
+          onIonChange={(e) => handleCharacterNameChange(e.detail.value || '')}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px',
+            fontSize: '16px',
+            textTransform: 'uppercase'
           }}
-          onFocus={() => setIsFocused([false, false, true])}
-          onBlur={() => setIsFocused([false, false, false])}
         />
       </IonItem>
     </>

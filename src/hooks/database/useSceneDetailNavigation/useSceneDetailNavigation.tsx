@@ -7,7 +7,8 @@ export const useSceneDetailNavigation = (
   currentSceneId: string,
   isShooting: boolean,
   projectId: string,
-  shootingId?: string
+  shootingId?: string,
+  isScript?: boolean
 ) => {
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(-1);
   const [previousScene, setPreviousScene] = useState<SceneDocType | null>(null);
@@ -15,8 +16,8 @@ export const useSceneDetailNavigation = (
   const history = useHistory();
 
   const rootRoute = isShooting 
-    ? `/my/projects/${projectId}/shooting/${shootingId}/details/scene` 
-    : `/my/projects/${projectId}/strips/details/scene`;
+    ? `/my/projects/${projectId}/shooting/${shootingId}/details/${isScript ? 'script' : 'scene'}` 
+    : `/my/projects/${projectId}/strips/details/${isScript ? 'script' : 'scene'}`;
 
   useEffect(() => {
     // Encontrar el índice de la escena actual

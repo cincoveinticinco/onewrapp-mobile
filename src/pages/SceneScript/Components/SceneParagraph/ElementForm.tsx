@@ -1,69 +1,74 @@
-import {
-  IonInput, IonItem, IonSelect, IonSelectOption,
-} from '@ionic/react';
-import React, { useState } from 'react';
+import React from 'react';
+import { IonItem, IonInput } from '@ionic/react';
+import { useForm, Controller } from 'react-hook-form';
 import { Element } from '../../../../Shared/types/scenes.types';
+import SelectItem from '../../../AddScene/Components/AddSceneFormInputs/SelectItem';
 
 interface ElementFormProps {
   element: Element;
   setElement: React.Dispatch<React.SetStateAction<Element>>;
   elementCategories: (string | null)[];
+  setElementCategories: React.Dispatch<React.SetStateAction<(string | null)[]>>;
 }
 
-const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementCategories }) => {
-  const [isFocused, setIsFocused] = useState([false, false]);
+const ElementForm: React.FC<ElementFormProps> = ({ element, setElement, elementCategories, setElementCategories }) => {
+  const { control, setValue, watch } = useForm({
+    defaultValues: {
+      categoryName: element.categoryName || '',
+      elementName: element.elementName || ''
+    }
+  });
+
+  const handleCategoryChange = (category: string | null) => {
+    setElement((prevElement) => ({ 
+      ...prevElement, 
+      categoryName: category || '' 
+    }));
+  };
+
+  const handleElementNameChange = (name: string) => {
+    setElement((prevElement) => ({ 
+      ...prevElement, 
+      elementName: name 
+    }));
+  };
 
   return (
     <>
-      <IonItem color="tertiary">
-        <IonSelect
-          className={isFocused[0] ? 'input-item' : 'script-popup-input'}
-          value={element && element.categoryName}
-          labelPlacement="floating"
-          label="Element Category"
-          onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, categoryName: e.detail.value || '' }))}
-          interface="popover"
-          style={{
-            borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px',
-          }}
-          onFocus={() => setIsFocused([true, false])}
-          onBlur={() => setIsFocused([false, false])}
-          placeholder="INSERT"
-        >
-
-          {elementCategories.map((category: (string | null)) => (
-            category
-              ? (
-                <IonSelectOption key={category} value={category}>
-                  {category.toUpperCase()}
-                </IonSelectOption>
-              )
-              : (
-                <IonSelectOption key={category} value={category}>
-                  NO CATEGORY
-                </IonSelectOption>
-              )
-          ))}
-        </IonSelect>
-      </IonItem>
+      <SelectItem
+        label="ELEMENT CATEGORY"
+        options={elementCategories.filter(category => category !== null) as string[]}
+        control={control}
+        fieldKeyName="categoryName"
+        inputName="elementCategory"
+        setValue={setValue}
+        watchValue={watch}
+        canCreateNew={true}
+        setOptions={(newCategories: any) => {
+          setElementCategories(newCategories);
+        }}
+        afterSelection={() => {
+          const selectedCategory = watch('categoryName');
+          handleCategoryChange(selectedCategory);
+        }}
+      />
+      
       <IonItem color="tertiary">
         <IonInput
-          className={isFocused[1] ? 'input-item' : 'script-popup-input'}
           value={element.elementName}
           labelPlacement="floating"
-          label="Element Name *"
+          label="ELEMENT NAME *"
           placeholder="INSERT ELEMENT NAME"
-          onIonChange={(e) => setElement((prevElement: any) => ({ ...prevElement, elementName: e.detail.value || '' }))}
+          onIonChange={(e) => handleElementNameChange(e.detail.value || '')}
           style={{
             borderBottom: '1px solid var(--ion-color-light)',
-            fontSize: '12px',
+            fontSize: '16px',
+            textTransform: 'uppercase'
           }}
-          onFocus={() => setIsFocused([false, true])}
-          onBlur={() => setIsFocused([false, false])}
         />
       </IonItem>
     </>
   );
 };
+
 export default ElementForm;

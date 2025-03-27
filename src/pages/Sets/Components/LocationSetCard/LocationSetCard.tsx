@@ -62,7 +62,7 @@ interface LocationSetCardProps {
 // CONTENT
 // CHAR SORT, CATEGORY
 
-const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string}> = ({ label, value, symbol }) => (
+const InfoLabel: React.FC<{ label: string, value: string | number, symbol?: string }> = ({ label, value, symbol }) => (
   <p className="info-label">
     <span className="value-part">
       {value}
@@ -81,12 +81,14 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   const deleteSetAlert = useRef<HTMLIonAlertElement>(null);
   const deleteLocationAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
+  const [editionModalIsOpen, setEditionModalIsOpen] = React.useState(false);
 
   const disableEditions = permissionType !== 1;
 
   const openEditModal = () => {
     if (modalRef.current) {
       modalRef.current.present();
+      setEditionModalIsOpen(true);
     }
   };
 
@@ -314,67 +316,80 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
   };
 
   return (
-    <IonItemSliding onClick={() => getOnclick()}>
-      <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-        <div className={set ? 'location-set-card-wrapper set' : 'location-set-card-wrapper location background-tertiary-dark'}>
-          <div className="location-set-card-header">
-            <IonTitle className="location-set-card-header-title">
-              <HighlightedText text={set ? set.setName : location ? (`${location?.locationName} (${setsQuantity})`) : 'NO LOCATION'} searchTerm={searchText} />
-            </IonTitle>
-            {
-              location
-              && isMobile
-              && <DropDownButton open={isOpen || false} />
-            }
-            {/* {set && (
-              <IonTitle className="location-set-card-header-subtitle">
-                {set.locationName ? set.locationName.toUpperCase() : 'NO LOCATION'}
-              </IonTitle>
-            )} */}
-          </div>
-          <div className="location-set-card-content">
-            {set ? (
-              <>
-                <InfoLabel label="SCN." value={set.scenesQuantity} />
-                <InfoLabel label="PROT." value={set.protectionQuantity} />
-                <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
-                <InfoLabel label="TIME" value={minutes} symbol={seconds} />
-                <InfoLabel label="EP." value={set.episodesQuantity} />
-                <InfoLabel label="PART." value={`${set.participation}%`} />
-              </>
-            ) : (
-              location && (
-                <>
-                  <InfoLabel label="SCN." value={location.scenesQuantity} />
-                  <InfoLabel label="PROT." value={location.protectionQuantity} />
-                  <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
-                  <InfoLabel label="TIME" value={minutes} symbol={seconds} />
-                  <InfoLabel label="EP." value={location.episodesQuantity} />
-                  <InfoLabel label="PART." value={`${location.participation}%`} />
+    <>
+      {
+        !editionModalIsOpen && (
+          <IonItemSliding onClick={() => getOnclick()}>
+            <IonItem mode="md" className="location-set-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
+              <div className={set ? 'location-set-card-wrapper set' : 'location-set-card-wrapper location background-tertiary-dark'}>
+                <div className="location-set-card-header">
+                  <IonTitle className="location-set-card-header-title">
+                    <HighlightedText text={set ? set.setName : location ? (`${location?.locationName} (${setsQuantity})`) : 'NO LOCATION'} searchTerm={searchText} />
+                  </IonTitle>
                   {
-                    !isMobile
+                    location
+                    && isMobile
                     && <DropDownButton open={isOpen || false} />
                   }
-                </>
-              )
-            )}
-          </div>
-        </div>
-      </IonItem>
-      <IonItemOptions className="location-set-card-item-options">
-        <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={() => openEditModal()} disabled={disableEditions}>
-            <CiEdit className="button-icon view" />
-          </IonButton>
-          <IonButton fill="clear" disabled={disableEditions}>
-            <PiProhibitLight className="button-icon ban" />
-          </IonButton>
-          <IonButton fill="clear" onClick={() => openAlert()} disabled={disableEditions}>
-            <PiTrashSimpleLight className="button-icon trash" />
-          </IonButton>
-        </div>
-      </IonItemOptions>
+                  {/* {set && (
+                <IonTitle className="location-set-card-header-subtitle">
+                  {set.locationName ? set.locationName.toUpperCase() : 'NO LOCATION'}
+                </IonTitle>
+              )} */}
+                </div>
+                <div className="location-set-card-content">
+                  {set ? (
+                    <>
+                      <InfoLabel label="SCN." value={set.scenesQuantity} />
+                      <InfoLabel label="PROT." value={set.protectionQuantity} />
+                      <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+                      <InfoLabel label="TIME" value={minutes} symbol={seconds} />
+                      <InfoLabel label="EP." value={set.episodesQuantity} />
+                      <InfoLabel label="PART." value={`${set.participation}%`} />
+                    </>
+                  ) : (
+                    location && (
+                      <>
+                        <InfoLabel label="SCN." value={location.scenesQuantity} />
+                        <InfoLabel label="PROT." value={location.protectionQuantity} />
+                        <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+                        <InfoLabel label="TIME" value={minutes} symbol={seconds} />
+                        <InfoLabel label="EP." value={location.episodesQuantity} />
+                        <InfoLabel label="PART." value={`${location.participation}%`} />
+                        {
+                          !isMobile
+                          && <DropDownButton open={isOpen || false} />
+                        }
+                      </>
+                    )
+                  )}
+                </div>
+              </div>
+            </IonItem>
+            <IonItemOptions className="location-set-card-item-options">
+              <div className="buttons-wrapper">
+                <IonButton fill="clear" onClick={() => openEditModal()} disabled={disableEditions}>
+                  <CiEdit className="button-icon view" />
+                </IonButton>
+                <IonButton fill="clear" disabled={disableEditions}>
+                  <PiProhibitLight className="button-icon ban" />
+                </IonButton>
+                <IonButton fill="clear" onClick={() => openAlert()} disabled={disableEditions}>
+                  <PiTrashSimpleLight className="button-icon trash" />
+                </IonButton>
+              </div>
+            </IonItemOptions>
 
+            <InputAlert
+              ref={location ? deleteLocationAlert : deleteSetAlert}
+              handleOk={location ? deleteLocation : deleteSet}
+              header={location ? 'Delete Location' : 'Delete Set'}
+              message={location ? `Are you sure you want to delete the location ${location.locationName}?` : `Are you sure you want to delete the set ${set?.setName}?`}
+              inputs={[]}
+            />
+          </IonItemSliding>
+        )
+      }
       <EditionModal
         formInputs={location ? locationInputs : setInputs}
         handleEdition={location ? editLocation : editSet}
@@ -382,16 +397,11 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
         defaultFormValues={location ? defaultFormValuesForLocations : defaultFormValuesForSets}
         validate={location ? validateLocationExistence : validateSetExistence}
         modalRef={modalRef}
+        isOpen={editionModalIsOpen}
+        setIsOpen={setEditionModalIsOpen}
       />
 
-      <InputAlert
-        ref={location ? deleteLocationAlert : deleteSetAlert}
-        handleOk={location ? deleteLocation : deleteSet}
-        header={location ? 'Delete Location' : 'Delete Set'}
-        message={location ? `Are you sure you want to delete the location ${location.locationName}?` : `Are you sure you want to delete the set ${set?.setName}?`}
-        inputs={[]}
-      />
-    </IonItemSliding>
+    </>
   );
 };
 

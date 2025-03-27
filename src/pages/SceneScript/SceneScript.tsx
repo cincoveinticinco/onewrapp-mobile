@@ -38,6 +38,8 @@ import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTa
 import { useDataInSceneDetail } from '../../hooks/database/useDataInSceneDetail/useDataInSceneDetail';
 import useSceneDetailNavigation from '../../hooks/database/useSceneDetailNavigation/useSceneDetailNavigation';
 
+export type SceneItemType = 'elements' | 'characters' | 'extras' | 'notes';
+
 const SceneScript: React.FC<{
   isShooting?: boolean;
 }> = ({ isShooting = false }) => {
@@ -74,6 +76,7 @@ const SceneScript: React.FC<{
   const {
     thisScene,
     sceneColor,
+    setThisScene
   } = useDataInSceneDetail(sceneId, id);
 
 
@@ -97,7 +100,7 @@ const SceneScript: React.FC<{
     nextScene,
     changeToNextScene,
     changeToPreviousScene
-  } = useSceneDetailNavigation(filteredScenes, sceneId, isShooting, id, urlShootingId);
+  } = useSceneDetailNavigation(filteredScenes, sceneId, isShooting, id, urlShootingId, true);
 
 
   const rootRoute = isShooting ? `/my/projects/${id}/shooting/${shootingId}/details/scene` : `/my/projects/${id}/strips/details/scene`;
@@ -144,59 +147,66 @@ const SceneScript: React.FC<{
     oneWrapDb && printParagraphs();
   }, [oneWrapDb]);
 
-  const createNewElement = async (element: Element) => {
-    try {
-      const sceneElements = new Set(await thisScene?.elements);
-      sceneElements.add(element);
-      const newScene = { ...thisScene, elements: Array.from(sceneElements) };
-      await oneWrapDb?.scenes.upsert(newScene);
-    } catch (error) {
-      errorToast('Error creating element');
+const createNewSceneItem = async <T extends unknown>(
+  thisScene: SceneDocType | null,
+  oneWrapDb: DatabaseContextProps['oneWrapDb'],
+  itemType: SceneItemType,
+  newItem: T,
+  errorMessage: string
+): Promise<SceneDocType | null> => {
+  try {
+    if (!thisScene) {
+      errorToast('No scene selected');
+      return null;
     }
-  };
 
-  const createNewCharacter = async (character: Character) => {
-    try {
-      const sceneCharacters = new Set(await thisScene?.characters);
-      sceneCharacters.add(character);
-      const newScene = { ...thisScene, characters: Array.from(sceneCharacters) };
-      await oneWrapDb?.scenes.upsert(newScene);
-    } catch (error) {
-      errorToast('Error creating character');
+    // Ensure the scene item array exists, default to empty array if undefined
+    const currentItems = (thisScene[itemType] as T[]) || [];
+    
+    // Create a Set to ensure unique items
+    const sceneItems = new Set(currentItems);
+    sceneItems.add(newItem);
+
+    // Create new scene with updated items
+    const newScene = { 
+      ...thisScene, 
+      [itemType]: Array.from(sceneItems) 
+    };
+
+    // Upsert the scene
+    await oneWrapDb?.scenes?.upsert(newScene);
+    return newScene;
+  } catch (error) {
+    errorToast?.(errorMessage);
+    console.error(`Error in createNewSceneItem for ${itemType}:`, error);
+    return null;
+  }
+};
+
+  const handleCreation = async (type: ('element' | 'character' | 'extra' | 'note'), data: any) => {
+    let newScene: SceneDocType | null = null;
+
+    const typeToItemMap: Record<'element' | 'character' | 'extra' | 'note', { type: SceneItemType; errorMessage: string }> = {
+      'element': { type: 'elements', errorMessage: 'Error creating element' },
+      'character': { type: 'characters', errorMessage: 'Error creating character' },
+      'extra': { type: 'extras', errorMessage: 'Error creating extra' },
+      'note': { type: 'notes', errorMessage: 'Error creating note' }
+    };
+
+    const itemConfig = typeToItemMap[type];
+
+    if (itemConfig) {
+      newScene = await createNewSceneItem(
+        thisScene, 
+        oneWrapDb, 
+        itemConfig.type, 
+        data, 
+        itemConfig.errorMessage
+      );
     }
-  };
 
-  const createNewExtra = async (extra: Extra) => {
-    try {
-      const sceneExtras = new Set(await thisScene?.extras);
-      sceneExtras.add(extra);
-      const newScene = { ...thisScene, extras: Array.from(sceneExtras) };
-      await oneWrapDb?.scenes.upsert(newScene);
-    } catch (error) {
-      errorToast('Error creating extra');
-    }
-  };
-
-  const createNewNote = async (note: Note) => {
-    try {
-      const sceneNotes = new Set(await thisScene?.notes);
-      sceneNotes.add(note);
-      const newScene = { ...thisScene, notes: Array.from(sceneNotes) };
-      await oneWrapDb?.scenes.upsert(newScene);
-    } catch (error) {
-      errorToast('Error creating note');
-    }
-  };
-
-  const handleCreation = (type: ('element' | 'character' | 'extra' | 'note'), data: any) => {
-    if (type === 'element') {
-      createNewElement(data);
-    } else if (type === 'character') {
-      createNewCharacter(data);
-    } else if (type === 'extra') {
-      createNewExtra(data);
-    } else if (type === 'note') {
-      createNewNote(data);
+    if (newScene) {
+      setThisScene(newScene);
     }
   };
 
@@ -481,7 +491,7 @@ const SceneScript: React.FC<{
           }
         </div>
         <IonHeader>
-          <Toolbar handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />
+          <Toolbar back handleBack={handleBack} name='Scene Script' customButtons={[toolbarButtons]} />
           <SceneHeader
             sceneColor={sceneColor}
             sceneHeader={sceneHeader}

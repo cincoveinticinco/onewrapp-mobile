@@ -1,6 +1,6 @@
 import { IonButton } from '@ionic/react';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext, useEffect, useMemo, useRef, useState,
 } from 'react';
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
@@ -123,12 +123,27 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
   }, [selectedText]);
 
-  const elementsUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName).filter((categoryName) => categoryName !== undefined);
-  const charactersUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: Character) => category.categoryName).filter((categoryName) => categoryName !== undefined);
+  const elementsUniqueCategories = useMemo(() => getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName).filter((categoryName) => categoryName !== undefined), [offlineScenes]);
+  const charactersUniqueCategories = useMemo(() => 
+      getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName')
+        .map((category: Character) => category.categoryName)
+        .filter((categoryName) => categoryName !== undefined), 
+    [offlineScenes]);
 
   const handleFormTypeChange = (newFormType: 'character' | 'element' | 'extra' | 'note') => {
     setFormType(newFormType);
   };
+  const [elementCategories, setElementCategories] = useState<(string | null)[]>([]);
+
+  useEffect(() => {
+    setElementCategories(elementsUniqueCategories);
+  }, [elementsUniqueCategories]);
+
+  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
+
+  useEffect(() => {
+    setCharacterCategories(charactersUniqueCategories);
+  }, [charactersUniqueCategories]);
 
   const handlePopupClose = () => {
     setShowPopup(false);
@@ -365,8 +380,8 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
                   <HiMiniUsers className={`form-type-icon${formType === 'extra' ? ' active' : ''}`} />
                 </button>
               </div>
-              {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={charactersUniqueCategories} />}
-              {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementsUniqueCategories} />}
+              {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={characterCategories} setCharacterCategories={setCharacterCategories} />}
+              {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementCategories} setElementCategories={setElementCategories} />}
               {formType === 'extra' && <MemoizedExtraForm extra={extra} setExtra={setExtra} />}
               {formType === 'note' && <MemoizedNoteForm note={note} setNote={setNote} />}
               <>

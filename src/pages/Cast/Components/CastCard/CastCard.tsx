@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import {
-  IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,} from '@ionic/react';
+  IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,
+} from '@ionic/react';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import './CastCard.scss';
@@ -46,6 +47,8 @@ const CastCard: React.FC<CastCardProps> = ({
   const disableEditions = permissionType !== 1;
   const { errorToast, warningToast, successToast } = useAlertToast();
 
+  const [openEditionModal, setOpenEditionModal] = React.useState(false);
+
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
     return {
@@ -55,7 +58,10 @@ const CastCard: React.FC<CastCardProps> = ({
   };
 
   const modalRef = React.useRef<HTMLIonModalElement>(null);
-  const openModalEdition = () => modalRef.current?.present();
+  const openModalEdition = () => {
+    setOpenEditionModal(true);
+    modalRef.current?.present();
+  }
 
   const fraction = floatToFraction(character.pagesSum);
 
@@ -248,49 +254,64 @@ const CastCard: React.FC<CastCardProps> = ({
   const validateExistence = (value: string) => validationFunction(value, character.characterName);
 
   return (
-    <IonItemSliding>
-      <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-        <div className="cast-card-wrapper">
-          <div className="cast-card-image">
-            {/* EMPTY TEMPORARY */}
-          </div>
-          <div color="dark" className="cast-card-header">
-            <IonTitle className="cast-card-header-title">
-              <HighlightedText
-                text={`${getCharacterNum(character)} ${character.characterName || character.extraName}`}
-                searchTerm={searchText}
-              />
-            </IonTitle>
-            <p className="cast-card-header-subtitle">
-              TALENT NOT ASSIGNED
-            </p>
-          </div>
-          <div className="cast-card-content">
-            <InfoLabel label="PART." value={character.participation} symbol="%" />
-            <InfoLabel label="LOC." value={character.locationsQuantity} />
-            <InfoLabel label="SETS" value={character.setsQuantity} />
-            <InfoLabel label="EP." value={character.episodesQuantity} />
-            <InfoLabel label="SCN." value={character.scenesQuantity} />
-            <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
-            <InfoLabel label="PROT." value={character.protectionQuantity} />
-            <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
-          </div>
-        </div>
-      </IonItem>
-      <IonItemOptions className="cast-card-item-options">
-        <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
-            <CiEdit className="button-icon view" />
-          </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
-            <PiProhibitLight className="button-icon ban" />
-          </IonButton>
-          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
-            <PiTrashSimpleLight className="button-icon trash" />
-          </IonButton>
-        </div>
-      </IonItemOptions>
 
+
+    <>
+      {
+        !openEditionModal && (
+          <IonItemSliding>
+            <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
+              <div className="cast-card-wrapper">
+                <div className="cast-card-image">
+                  {/* EMPTY TEMPORARY */}
+                </div>
+                <div color="dark" className="cast-card-header">
+                  <IonTitle className="cast-card-header-title">
+                    <HighlightedText
+                      text={`${getCharacterNum(character)} ${character.characterName || character.extraName}`}
+                      searchTerm={searchText}
+                    />
+                  </IonTitle>
+                  <p className="cast-card-header-subtitle">
+                    TALENT NOT ASSIGNED
+                  </p>
+                </div>
+                <div className="cast-card-content">
+                  <InfoLabel label="PART." value={character.participation} symbol="%" />
+                  <InfoLabel label="LOC." value={character.locationsQuantity} />
+                  <InfoLabel label="SETS" value={character.setsQuantity} />
+                  <InfoLabel label="EP." value={character.episodesQuantity} />
+                  <InfoLabel label="SCN." value={character.scenesQuantity} />
+                  <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+                  <InfoLabel label="PROT." value={character.protectionQuantity} />
+                  <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
+                </div>
+              </div>
+            </IonItem>
+            <IonItemOptions className="cast-card-item-options">
+              <div className="buttons-wrapper">
+                <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
+                  <CiEdit className="button-icon view" />
+                </IonButton>
+                <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
+                  <PiProhibitLight className="button-icon ban" />
+                </IonButton>
+                <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
+                  <PiTrashSimpleLight className="button-icon trash" />
+                </IonButton>
+              </div>
+            </IonItemOptions>
+            <InputAlert
+              header="Delete Scene"
+              message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
+              handleOk={() => (!character.extraName ? deleteCharacter() : deleteExtra())}
+              inputs={[]}
+              trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
+            />
+
+          </IonItemSliding>
+        )
+      }
       <EditionModal
         formInputs={!character.extraName ? formInputs : extraFormInputs}
         handleEdition={!character.extraName ? editCharacter : editExtra}
@@ -298,17 +319,10 @@ const CastCard: React.FC<CastCardProps> = ({
         defaultFormValues={!character.extraName ? defaultValues : extraDefaultValues}
         validate={validateExistence}
         modalRef={modalRef}
+        isOpen={openEditionModal}
+        setIsOpen={setOpenEditionModal}
       />
-
-      <InputAlert
-        header="Delete Scene"
-        message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
-        handleOk={() => (!character.extraName ? deleteCharacter() : deleteExtra())}
-        inputs={[]}
-        trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
-      />
-
-    </IonItemSliding>
+    </>
   );
 };
 
