@@ -53,7 +53,7 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
       {filterSelectedCharacters.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any) => (
-            <IonItemSliding key={`character-item-category-${categoryName}`}>
+            <IonItemSliding key={`character-item-category-${categoryName}-${character.characterName}`}>
               <IonItem color='tertiary-dark'>
               <p>{`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}</p>
               </IonItem>
