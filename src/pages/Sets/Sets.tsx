@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
 import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
@@ -175,6 +175,9 @@ const Sets: React.FC<{
     </ToolbarButton>
   )
 
+  const history = useHistory()
+  const handleBack = () => history.push('/my/projects');
+
   return (
     <>
       <MainPagesLayout
@@ -183,6 +186,7 @@ const Sets: React.FC<{
         title="SETS"
         search 
         customButtons={[SortButton]}
+        handleBack={handleBack}
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           {

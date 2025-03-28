@@ -9,13 +9,20 @@ import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import { useRxData, useRxDB } from 'rxdb-hooks';
+import { useParams } from 'react-router';
+import { SceneDocType } from '../../../Shared/types/scenes.types';
 
 const useProcessedCast = () => {
   const { castSelectedSortOptions } = useContext(ScenesContext);
   const [isLoading, setIsLoading] = useState(true);
   const [processedCast, setProcessedCast] = useState<any[]>([]);
   const [processedExtras, setProcessedExtras] = useState<any[]>([]);
-  const { result: scenes, isFetching } = useRxData('scenes', (collection) => collection.find());
+  const { id: projectId } = useParams<{ id: string }>();
+  const { result: scenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    } 
+  }));
 
   const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
 

@@ -2,11 +2,17 @@ import { useRxData } from 'rxdb-hooks';
 import { UnitDocType } from '../../../Shared/types/unitTypes.types';
 import { SelectOptionsInterface } from '../../../Shared/Components/modals/EditionModal/EditionModal';
 import { useMemo } from 'react';
+import { useParams } from 'react-router';
 
 const useUnits = () => {
-  const { result: units, isFetching: isFetchingUnits } = useRxData(
+  const { id: projectId } = useParams<{ id: string }>();
+  const { result: units, isFetching: isFetchingUnits } = useRxData<UnitDocType>(
     'units',
-    (collection) => collection.find().sort({ unitNumber: 'asc' })
+    (collection) => collection.find({
+      selector: {
+        projectId: Number(projectId),
+      }
+    }).sort({ unitNumber: 'asc'})
   );
 
   const getUnitOptions = (units: UnitDocType[]): SelectOptionsInterface[] => 

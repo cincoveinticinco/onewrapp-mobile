@@ -76,7 +76,7 @@ const Cast: React.FC<{
     return uniqueArray;
   };
 
-  const characterCategoriesArray: any[] = useMemo(() => getUniqueValuesByKey(processedCast, 'categoryName'), [processedCast]);
+  const characterCategoriesArray: any[] = useMemo(() => getUniqueValuesByKey(cast, 'categoryName'), [cast]);
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 

@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useRxData, useRxDB } from 'rxdb-hooks';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import { useMemo, useState, useEffect } from 'react';
@@ -12,8 +12,13 @@ export const useScene = () => {
   const oneWrapDb: any = useRxDB();
   const { successToast, errorToast } = useAlertToast();
   const [loading, setLoading] = useState(true);
+  const { id: projectId } = useParams<{ id: string }>();
 
-  const { result: scenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find());
+  const { result: scenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
 
   useEffect(() => {
     if (!isFetching) {

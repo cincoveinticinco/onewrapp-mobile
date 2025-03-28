@@ -39,7 +39,7 @@ interface ProductionReportViewProps {
 }
 
 const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText }) => {
-  const { shootingId } = useParams<{ shootingId: string }>();
+  const { shootingId, id: projectId } = useParams<{ shootingId: string, id: string }>();
   const { oneWrapDb } = useContext(DatabaseContext);
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
@@ -52,7 +52,11 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
     isFetching: boolean;
   } = useRxData(
     'service_matrices',
-    (collection) => collection.find(),
+    (collection) => collection.find({
+      selector: {
+        projectId: Number(projectId),
+      },
+    }),
   );
 
   const { result: [shooting], isFetching: isShootingFetching }: {
@@ -62,6 +66,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
     'shootings',
     (collection) => collection.find({
       selector: {
+        projectId: Number(projectId),
         id: {
           $eq: shootingId,
         },

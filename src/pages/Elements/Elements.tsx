@@ -8,7 +8,7 @@ import React, {
   useMemo, useRef,
   useState,
 } from 'react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import ElementCard from './Components/ElementsCard/ElementCard';
 import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import DatabaseContext from '../../context/Database/Database.context';
@@ -42,8 +42,13 @@ const Elements: React.FC<{
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
+  const { id: projectId } = useParams<{ id: string }>();
 
-  const { result: offlineScenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find());
+  const { result: offlineScenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    },
+  }));
 
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions,
@@ -254,6 +259,9 @@ const Elements: React.FC<{
     return elementsData.some((elementData: any) => normalize(elementData.elementName) === normalizedElementName && normalize(elementData.elementName) !== normalizedCurrentElement) ? 'This element already exists' : true;
   };
 
+  const history = useHistory()
+  const handleBack = () => history.push('/my/projects');
+
   const SortButton = () => (
     <ToolbarButton
       triggerId="elements-sort-options"
@@ -273,6 +281,7 @@ const Elements: React.FC<{
         setSearchText={setSearchText}
         title="ELEMENTS"
         customButtons={[SortButton]}
+        handleBack={handleBack}
       >
         <IonContent color="tertiary" fullscreen>
             <p className="ion-padding-start ion-padding-end"
@@ -300,6 +309,7 @@ const Elements: React.FC<{
         setSearchText={setSearchText}
         title="ELEMENTS"
         customButtons={[SortButton]}
+        handleBack={handleBack}
       >
         <IonContent color="tertiary" fullscreen>
           {

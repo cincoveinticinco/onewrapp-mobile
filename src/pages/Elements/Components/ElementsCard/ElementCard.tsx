@@ -66,7 +66,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
   const deleteElementAlert = useRef<HTMLIonAlertElement>(null);
   const deleteCategoryAlert = useRef<HTMLIonAlertElement>(null);
   const modalRef = useRef<HTMLIonModalElement>(null);
-  const disableEditions = permissionType !== 1;
+  const disableEditions = false;
 
   const [editionModalIsOpen, setEditionModalIsOpen] = React.useState(false);
 
@@ -175,11 +175,12 @@ const ElementCard: React.FC<ElementCardProps> = ({
   ];
 
   const defaultFormValuesForElements = useMemo(() => {
+    console.log(data, '????????????????')
     return {
-      categoryName: data.categoryName,
+      categoryName: data.elementCategory,
       elementName: data.elementName,
     };
-  }, [data.categoryName, data.elementName]);
+  }, [data.elementCategory, data.elementName]);
 
   const defaultFormValuesForCategories = useMemo(() => {
     return {

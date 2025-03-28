@@ -148,7 +148,7 @@ const CastCard: React.FC<CastCardProps> = ({
     )
   }, [character]);
 
-  const scenesToEdit = () => oneWrapDb?.scenes.find({
+  const scenesToEdit = async () => oneWrapDb?.scenes.find({
     selector: {
       projectId,
       'characters.characterName': character.characterName,
@@ -185,9 +185,11 @@ const CastCard: React.FC<CastCardProps> = ({
   };
 
   const editCharacter = async (newCharacter: any) => {
+    console.log(newCharacter, 'Çççççççççç')
     try {
       warningToast('Please wait...');
       const scenes = await scenesToEdit();
+      console.log(scenes, 'Çççççççççç')
       const updatedScenes: any = [];
 
       scenes?.forEach((scene: any) => {
@@ -198,7 +200,7 @@ const CastCard: React.FC<CastCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {

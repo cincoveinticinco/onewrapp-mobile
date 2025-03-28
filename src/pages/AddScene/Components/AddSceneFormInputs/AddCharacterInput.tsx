@@ -55,24 +55,24 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
           {filterSelectedCharacters.map((character: any) => (
             <IonItemSliding key={`character-item-category-${categoryName}-${character.characterName}`}>
               <IonItem color='tertiary-dark'>
-              <p>{`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}</p>
+                <p>{`${character.characterNum ? `${character.characterNum}.` : ''} ${character.characterName.toUpperCase()}`}</p>
               </IonItem>
               {editMode && (
-              <>
-              <IonItemOptions side="end">
-                <IonItemOption color='dark' onClick={() => openEditCharacter(character)}>
-                  <IonButton fill="clear" color='primary' slot="end">
-                      <VscEdit className="label-button" />
-                  </IonButton>
-                </IonItemOption>
-                <IonItemOption color='dark' onClick={() => deleteCharacter(character.characterName)}>
-                  <DeleteButton
-                    onClick={() => {}}
-                    slot="end"
-                  />
-                </IonItemOption>
-              </IonItemOptions>
-              </>
+                <>
+                  <IonItemOptions side="end">
+                    <IonItemOption color='dark' onClick={() => openEditCharacter(character)}>
+                      <IonButton fill="clear" color='primary' slot="end">
+                        <VscEdit className="label-button" />
+                      </IonButton>
+                    </IonItemOption>
+                    <IonItemOption color='dark' onClick={() => deleteCharacter(character.characterName)}>
+                      <DeleteButton
+                        onClick={() => { }}
+                        slot="end"
+                      />
+                    </IonItemOption>
+                  </IonItemOptions>
+                </>
               )}
             </IonItemSliding>
           ))}

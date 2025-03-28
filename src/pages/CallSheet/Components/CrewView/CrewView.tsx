@@ -21,6 +21,7 @@ import { ShootingStatusEnum } from '../../../../Shared/enums/ennums';
 import { CrewCall, ShootingDocType } from '../../../../Shared/types/shooting.types';
 import { CrewDocType } from '../../../../Shared/types/crew.types';
 import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import { UnitDocType } from '../../../../Shared/types/unitTypes.types';
 
 interface CrewViewProps {
   crewCalls: CrewCall[];
@@ -58,13 +59,28 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   const { successToast, errorToast } = useAlertToast();
   const [ selectedDate, setSelectedDate ] = useState<string>(availableDates[0]?.date || formattedDate);
 
+  const { id: projectId } = useParams<{ id: string }>();
+
   const { result: shootings, isFetching }: {
     result: ShootingDocType[];
     isFetching: boolean;
-  } = useRxData('shootings', (collection) => collection.find());
-  const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
+  } = useRxData('shootings', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
 
-  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find());
+  const { result: units, isFetching: isFetchingUnits } = useRxData<UnitDocType>('units', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
+
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
   const [ selectedUnitId, setSelectedUnitId ] = useState<string>('');
 
   const formattedData = crewCalls.map((crew) => ({
