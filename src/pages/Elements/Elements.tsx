@@ -311,8 +311,8 @@ const Elements: React.FC<{
             && (
             <>
               <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>
-                {displayedCategories.map((category, index) => (
-                  <div key={category + index}>
+                {displayedCategories.map((category) => (
+                  <div key={category.categoryName}>
                     { elements[category.categoryName]
                       && elements[category.categoryName].length > 0
                       && (

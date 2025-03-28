@@ -247,7 +247,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
                 <tbody>
                   {groupData.map((row, index) => (
                     // Use row.originalIndex as the unique identifier for the row
-                    <tr key={`row-${row.originalIndex || index }-${groupKey}`} className={editMode ? 'edit-mode' : ''} onClick={() => rowClick(row)}>
+                    <tr key={`row-${row.originalIndex }-${groupKey}`} className={editMode ? 'edit-mode' : ''} onClick={() => rowClick(row)}>
                       {adjustedColumns.map((column) => (
                         // Combine row and column identifiers for a unique cell key
                         <td 

@@ -37,8 +37,8 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     <IonCardContent className={contentStyle}>
       {filterSelectedExtras.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {filterSelectedExtras.map((extra, index) => (
-            <IonItemSliding key={`extra-item-${index}-category-${categoryName}`}>
+          {filterSelectedExtras.map((extra) => (
+            <IonItemSliding key={`extra-item-category-${categoryName}-${extra.extraName}`}>
               <IonItem color='tertiary-dark'>
                 {extra.extraName?.toUpperCase()}
               </IonItem>

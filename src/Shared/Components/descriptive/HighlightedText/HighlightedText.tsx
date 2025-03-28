@@ -41,7 +41,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({
 
         if (removeAccents(part.toLowerCase()) === normalizedSearchText) {
           return (
-            <span key={index} style={{ backgroundColor: highlightColor }}>
+            <span key={`part-${part}-${index}`} style={{ backgroundColor: highlightColor }}>
               {originalPart.toUpperCase()}
             </span>
           );

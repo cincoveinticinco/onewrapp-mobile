@@ -23,6 +23,7 @@ import { DatabaseContextProps } from './types/Database.types';
 import ProjWeeksSchema from '../../RXdatabase/schemas/projWeeks.schema';
 import StripboardSchema from '../../RXdatabase/schemas/stripboard.schema';
 import useAppStore from '../../hooks/utils/useAppStore/useAppStore';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
@@ -77,6 +78,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [userCollection, setUserCollection] = useState<UserSchema | null>(null);
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [countriesCollection, setCountriesCollection] = useState<any>(null);
+  const { errorToast }= useAlertToast();
   const { getToken } = useContext(AuthContext);
 
   const resyncScenes: any = useRef(null);

@@ -7,6 +7,8 @@ import {
 import { Control, Controller } from 'react-hook-form';
 import './DateInput.css';
 
+export type DateString = `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
+
 interface DateInputProps {
   label: string;
   fieldKeyName: string;
@@ -17,8 +19,8 @@ interface DateInputProps {
   errorMessage?: string;
   style?: React.CSSProperties;
   onValueChanges?: (value: string) => void;
-  min?: string;
-  max?: string;
+  min?: DateString;
+  max?: DateString;
 }
 
 const DateInput: React.FC<DateInputProps> = ({
@@ -34,6 +36,7 @@ const DateInput: React.FC<DateInputProps> = ({
   min,
   max,
 }) => {
+
   return (
     <Controller
       name={fieldKeyName}

@@ -182,8 +182,8 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
       )}
 
       <IonGrid className="add-scene-items-card-grid">
-        {elementsCategories.filter(category => getObservedElementsInCategoryLength(category) > 0).map((category, index) => (
-          <IonCard key={`category-item-${index}-category-${category}`} color='tertiary-dark' className="add-scene-items-card ion-no-border">
+        {elementsCategories.filter(category => getObservedElementsInCategoryLength(category) > 0).map((category) => (
+          <IonCard key={`element-item-category-${category}`} color='tertiary-dark' className="add-scene-items-card ion-no-border">
             <IonCardHeader className="ion-flex">
               <IonItemSliding>
                 <IonItemOptions side="end" color='dark'>

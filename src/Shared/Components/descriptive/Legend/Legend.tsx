@@ -15,8 +15,8 @@ const Legend: React.FC<LegendProps> = ({ items }) => (
     display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px', flexWrap: 'wrap',
   }}
   >
-    {items.map((item, index) => (
-      <IonChip key={index} style={{ backgroundColor: 'transparent', flex: '1' }}>
+    {items.map((item) => (
+      <IonChip key={`chip-legend-${item.label}`} style={{ backgroundColor: 'transparent', flex: '1' }}>
         <div
           style={{
             width: '16px',

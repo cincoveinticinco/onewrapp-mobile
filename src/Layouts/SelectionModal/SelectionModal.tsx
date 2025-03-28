@@ -233,9 +233,9 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
           </IonHeader>
           {
               formInputs
-              && formInputs.map((input: any, i: any) => (
+              && formInputs.map((input: FormInputsProps) => (
                 <InputItem
-                  key={i}
+                  key={`input-${input.fieldKeyName}-${input.inputName}`}
                   label={input.label}
                   placeholder={input.placeholder}
                   control={control}

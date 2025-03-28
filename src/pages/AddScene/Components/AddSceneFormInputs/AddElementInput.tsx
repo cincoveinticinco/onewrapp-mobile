@@ -41,8 +41,8 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     <IonCardContent className={contentStyle}>
       {filterSelectedElements.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
-          {filterSelectedElements.map((element, index) => (
-            <IonItemSliding key={`element-item-${index}-category-${categoryName}`}>
+          {filterSelectedElements.map((element) => (
+            <IonItemSliding key={`element-item-category-${categoryName}-${element.elementName}`}>
               <IonItem color='tertiary-dark'>
                 {element.elementName.toUpperCase()}
               </IonItem>

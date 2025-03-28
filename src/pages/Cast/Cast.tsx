@@ -76,7 +76,7 @@ const Cast: React.FC<{
     return uniqueArray;
   };
 
-  const characterCategoriesArray: any[] = getUniqueValuesByKey(cast, 'categoryName');
+  const characterCategoriesArray: any[] = useMemo(() => getUniqueValuesByKey(processedCast, 'categoryName'), [processedCast]);
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
@@ -196,9 +196,9 @@ const Cast: React.FC<{
           }
           {
             !isLoading
-            && characterCategoriesArray.map((category: string, index: number) => (
+            && characterCategoriesArray.map((category: string) => (
               <DropDownCast
-                key={`cast-dropdown-${category}-${index}`}
+                key={`cast-dropdown-${category}`}
                 category={category}
                 isOpen={dropDownIsOpen[category]}
                 onToggle={() => handleDropDown(category)}
@@ -211,9 +211,9 @@ const Cast: React.FC<{
                 >
                   {
                   displayedCast[category]
-                  && displayedCast[category].map((character: any, index: number) => (
+                  && displayedCast[category].map((character: any) => (
                     <CastCard
-                      key={`${category}-${index}`}
+                      key={`${category}-${character.characterName}`}
                       character={character}
                       searchText={castSearchText}
                       validationFunction={validateCastExistence}
@@ -243,7 +243,7 @@ const Cast: React.FC<{
                   {
                     dropDownIsOpen.EXTRAS
                     && displayedCast.EXTRAS.map((extra: any, index: number) => (
-                      <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
+                      <CastCard key={`EXTRAS-${extra?.extraName}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
                     ))
                   }
                 </ScrollInfiniteContext>
@@ -266,4 +266,4 @@ const Cast: React.FC<{
   );
 };
 
-export default Cast;
+export default React.memo(Cast);

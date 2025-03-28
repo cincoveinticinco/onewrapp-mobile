@@ -115,9 +115,9 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
             <IonGrid className="scenes-grid sectioned-grid ion-margin">
               {categorizedScenes[category]
                 ?.slice(0, visibleScenesPerCategory[category])
-                .map((scene: SceneDocType, i) => (
+                .map((scene: SceneDocType) => (
                   <SceneCard
-                    key={`scene-item-${scene.id}-${i}`}
+                    key={`scene-item-${scene?.id}`}
                     scene={scene as any}
                     searchText={searchText}
                     permissionType={permissionType}

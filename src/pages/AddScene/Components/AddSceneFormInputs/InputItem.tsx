@@ -142,8 +142,8 @@ const InputItem: React.FC<InputItemProps> = ({
       </IonItem>
       {showSuggestions && filteredSuggestions.length > 0 && (
         <IonList className="suggestions-list" style={{  maxHeight: '150px', overflow: 'auto' }}>
-          {filteredSuggestions.map((suggestion, index) => (
-            <IonItem key={index} button onClick={() => handleSuggestionClick(suggestion)} style={{ textTransform: 'uppercase'}}>
+          {filteredSuggestions.map((suggestion) => (
+            <IonItem key={`suggestion-${suggestion}`} button onClick={() => handleSuggestionClick(suggestion)} style={{ textTransform: 'uppercase'}}>
               {suggestion}
             </IonItem>
           ))}

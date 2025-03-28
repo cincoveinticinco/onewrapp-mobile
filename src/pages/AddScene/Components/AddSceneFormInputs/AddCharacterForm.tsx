@@ -272,10 +272,10 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
         <IonGrid className="add-scene-items-card-grid">
           {filteredCategories
             .filter(category => getObservedCharactersInCategoryLength(category) > 0)
-            .map((category, index) => (
+            .map((category) => (
             (
               <IonCard 
-                key={`category-item-${index}-category-${category}`} 
+                key={`category-item-category-${category}`} 
                 color='tertiary-dark'
                 className="add-scene-items-card ion-no-border"
               >

@@ -178,8 +178,8 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
       )}
 
       <IonGrid className="add-scene-items-card-grid">
-        {extrasCategories.filter(category => getObservedExtrasInCategoryLength(category) > 0).map((category, index) => (
-          <IonCard key={`category-item-${index}-category-${category}`} color='tertiary-dark' className="add-scene-items-card ion-no-border">
+        {extrasCategories.filter(category => getObservedExtrasInCategoryLength(category) > 0).map((category) => (
+          <IonCard key={`extras-item-category-${category}`} color='tertiary-dark' className="add-scene-items-card ion-no-border">
                 <IonCardHeader className="ion-flex">
                   <IonItemSliding>
                   <IonItemOptions side="end" color='dark'>

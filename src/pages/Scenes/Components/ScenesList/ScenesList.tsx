@@ -17,7 +17,7 @@ const ScenesList: React.FC<{
   searchText, 
   permissionType,
   selectedFilterOptions,
-  setSelectedFilterOptions2907
+  setSelectedFilterOptions
 }) => {
 
   const [ displayedScenes, setDisplayedScenes ] = useState<SceneDocType[]>([]);
@@ -42,9 +42,9 @@ const ScenesList: React.FC<{
         filteredData={filteredScenes} 
         batchSize={20}
       >
-        {displayedScenes.map((scene, i) => (
+        {displayedScenes.map((scene) => (
           <SceneCard
-            key={`scene-item-${scene.id}-${i}`}
+            key={`scene-item-${scene.id}`}
             scene={scene as any}
             searchText={searchText}
             permissionType={permissionType}

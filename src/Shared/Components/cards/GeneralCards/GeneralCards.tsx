@@ -315,7 +315,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
   return (
     <div className="cards-container">
       {filteredData.map((row, index) => (
-        <IonCard key={index} className={`general-card ${editMode ? 'editing' : ''}`}>
+        <IonCard key={`general-card-${row}`} className={`general-card ${editMode ? 'editing' : ''}`}>
           {renderCardContent(row, index)}
         </IonCard>
       ))}

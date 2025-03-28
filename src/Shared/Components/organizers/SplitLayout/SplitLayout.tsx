@@ -112,7 +112,7 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children}) => {
   return (
     <PanelGroup direction={direction} style={{ backgroundColor: 'var(--background-color-secondary) !important'}}>
       {panelContents.map((child, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={`${child?.toString()}`}>
           {index > 0 && 
           
             <PanelResizeHandle>

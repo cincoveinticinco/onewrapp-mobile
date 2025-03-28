@@ -61,10 +61,10 @@ const CategoryContainer = ({
         </IonCardHeader>
         <IonCardContent>
           {
-            getValuesByCategory(categoryName, scene).map((value: any, i) => (
+            getValuesByCategory(categoryName, scene).map((value: any) => (
               <p
                 style={{ fontSize: '14px', margin: '6px 0px' }}
-                key={i + Math.random()}
+                key={`${categoryName}-${value?.characterName || value?.extraName || value?.elementName || value?.note}`}
               >
                 {
                   characters

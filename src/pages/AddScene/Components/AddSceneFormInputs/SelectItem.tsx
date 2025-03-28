@@ -93,8 +93,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
                 field.onChange(e.detail.value);
               }}
             >
-              {options.map((option, index) => (
-                <IonSelectOption key={index} value={option}>
+              {options.map((option) => (
+                <IonSelectOption key={`option-to-select-${option}`} value={option}>
                   {option.toUpperCase()}
                 </IonSelectOption>
               ))}

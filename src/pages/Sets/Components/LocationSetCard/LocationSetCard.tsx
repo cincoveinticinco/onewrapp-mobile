@@ -5,7 +5,7 @@ import {
   IonItemSliding,
   IonTitle,
 } from '@ionic/react';
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import DatabaseContext from '../../../../context/Database/Database.context';
@@ -20,7 +20,7 @@ import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
 import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
-interface Set {
+export interface Set {
   setName: string;
   locationName: string;
   charactersLength: number;
@@ -130,14 +130,18 @@ const LocationSetCard: React.FC<LocationSetCardProps> = ({
     },
   ];
 
-  const defaultFormValuesForSets = {
-    locationName: set?.locationName,
-    setName: set?.setName,
-  };
+  const defaultFormValuesForSets = useMemo(() => {
+    return {
+      locationName: set?.locationName,
+      setName: set?.setName,
+    };
+  }, [set]);
 
-  const defaultFormValuesForLocations = {
-    locationName: location?.locationName || null,
-  };
+  const defaultFormValuesForLocations = useMemo(() => {
+    return {
+      locationName: location?.locationName || null,
+    };
+  }, [location]);
 
   const scenesToEditWithLocation = () => oneWrapDb?.scenes.find({
     selector: {

@@ -168,9 +168,9 @@ const ScenesGroupByShootings: React.FC<ScenesGroupByShootingsProps> = ({
               >
                 {/* Renderizar directamente las escenas en lugar de usar GroupedScenesList */}
                 <IonGrid className="scenes-grid ion-margin">
-                  {scenes.map((scene, i) => (
+                  {scenes.map((scene) => (
                     <SceneCard
-                      key={`scene-item-${scene.id || i}-${i}`}
+                      key={`grouped-scene-item-${scene.id}`}
                       scene={scene as any}
                       searchText={searchText}
                       permissionType={permissionType}

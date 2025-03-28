@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import {
   IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,
 } from '@ionic/react';
@@ -132,15 +132,21 @@ const CastCard: React.FC<CastCardProps> = ({
     },
   ];
 
-  const defaultValues = {
-    categoryName: character.categoryName === EmptyEnum.NoCategory ? '' : character.categoryName,
-    characterNum: character.characterNum,
-    characterName: character.characterName,
-  };
+  const defaultValues = useMemo(() => {
+    return{
+      categoryName: character.categoryName === EmptyEnum.NoCategory ? '' : character.categoryName,
+      characterNum: character.characterNum,
+      characterName: character.characterName,
+    };
+  }, [character]);
 
-  const extraDefaultValues = {
-    extraName: character.extraName,
-  };
+  const extraDefaultValues = useMemo(() => {
+    return (
+      {
+        extraName: character.extraName,
+      }
+    )
+  }, [character]);
 
   const scenesToEdit = () => oneWrapDb?.scenes.find({
     selector: {
@@ -254,8 +260,6 @@ const CastCard: React.FC<CastCardProps> = ({
   const validateExistence = (value: string) => validationFunction(value, character.characterName);
 
   return (
-
-
     <>
       {
         !openEditionModal && (
@@ -326,4 +330,4 @@ const CastCard: React.FC<CastCardProps> = ({
   );
 };
 
-export default CastCard;
+export default React.memo(CastCard);

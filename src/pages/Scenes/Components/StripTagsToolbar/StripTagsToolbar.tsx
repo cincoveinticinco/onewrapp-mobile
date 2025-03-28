@@ -40,7 +40,7 @@ const StripTagsToolbar = () => {
       {filterOptionsStrings && filterOptionsStrings.length > 0 && (
         <IonList color="tertiary" className="list-of-tags-filters">
           {filterOptionsStrings.map((string: any) => (
-            <StripTag key={`${Math.random()}`} tagKey={`${Math.random()}`} filterOption={string} />
+            <StripTag key={`strip-tag-${string}`} tagKey={`${Math.random()}`} filterOption={string} />
           ))}
         </IonList>
       )}

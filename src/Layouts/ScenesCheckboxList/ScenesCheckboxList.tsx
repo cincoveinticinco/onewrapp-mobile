@@ -61,10 +61,10 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
 
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin scenes-list" style={getListStyles()}>
-      {uncheckedFilteredScenes.map((scene: SceneDocType, i: number) => (
+      {uncheckedFilteredScenes.map((scene: SceneDocType) => (
         <div
           color="tertiary"
-          key={`filter-item-${i}`}
+          key={`filter-item-${scene.episodeNumber}-${scene.sceneNumber}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(scene)}
         >

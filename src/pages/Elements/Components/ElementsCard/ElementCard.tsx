@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import {
   IonItemSliding,
   IonItemOptions,
@@ -174,14 +174,18 @@ const ElementCard: React.FC<ElementCardProps> = ({
     },
   ];
 
-  const defaultFormValuesForElements = {
-    categoryName: data.elementCategory,
-    elementName: data.elementName,
-  };
+  const defaultFormValuesForElements = useMemo(() => {
+    return {
+      categoryName: data.categoryName,
+      elementName: data.elementName,
+    };
+  }, [data.categoryName, data.elementName]);
 
-  const defaultFormValuesForCategories = {
-    categoryName: data.categoryName,
-  };
+  const defaultFormValuesForCategories = useMemo(() => {
+    return {
+      categoryName: data.categoryName,
+    };
+  }, [data.categoryName]);
 
   const editElement = async (newElement: any) => {
     try {

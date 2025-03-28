@@ -80,6 +80,14 @@ const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
+  const [reRenderCard, setReRenderCard] = React.useState(false);
+
+  const closeCard = () => {
+    setReRenderCard(!reRenderCard);
+    setTimeout(() => {
+      setReRenderCard(false);
+    }, 100);
+  }
 
   const disableEditions = permissionType !== 1;
 
@@ -90,12 +98,14 @@ const SceneCard: React.FC<SceneCardProps> = ({
   const alertShooSceneRef = React.useRef<HTMLIonAlertElement>(null);
 
   const openDeleteAlert = async () => {
+    closeCard();
     if (alertRef.current) {
       await alertRef.current.present();
     }
   };
 
   const openUnassignAlert = async () => {
+    closeCard();
     if (alertShooSceneRef.current) {
       await alertShooSceneRef.current.present();
     }
@@ -220,6 +230,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   const goToSceneDetails = (editMode: boolean = false) => {
+    closeCard();
     if(!goToDetail) return;
     let route = isShooting ? `${detailsRoute}?isShooting=true` : detailsRoute;
     if (editMode) {
@@ -231,7 +242,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
 
   const shootingCardSceneClass = (isShooting && (isProduced === ShootingSceneStatusEnum.Assigned ? 'background-light' : isProduced === ShootingSceneStatusEnum.Shoot ? 'background-success' : 'background-danger'));
 
-  const cardContent = (
+  const cardContent = !reRenderCard &&  (
     <IonRow className="scene-card-row" color="tertiary">
       <IonItemSliding className="ion-no-margin ion-no-padding">
         <IonItem className="ion-no-margin ion-no-padding scene-card-item" color={sceneColor}>

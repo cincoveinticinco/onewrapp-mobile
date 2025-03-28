@@ -118,8 +118,8 @@ export const Section: React.FC<SectionProps> = ({
         {totals?.length > 0 && !editMode && (
           <IonGrid style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <IonRow>
-              {totals.map((total, index) => (
-                <IonCol key={index} color="none" className='ion-padding-start'>
+              {totals.map((total) => (
+                <IonCol key={`total-${total.name}`} color="none" className='ion-padding-start'>
                   <InfoLabel label={total.name} value={total.value} symbol={total?.symbol} />
                 </IonCol>
               ))}

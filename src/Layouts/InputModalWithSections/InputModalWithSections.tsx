@@ -255,9 +255,9 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           {/* Selected Options Section */}
           {getSelectedOptions().length > 0 && (
             <Section title="Selected Options" open={openSelectedOptions} setOpen={setOpenSelectedOptions}>
-              {getSelectedOptions().map((option, i) => (
+              {getSelectedOptions().map((option) => (
                 <div 
-                  key={i} 
+                  key={`selected-option-${option}`}
                   className="checkbox-item-option filter-item ion-no-margin ion-no-padding" 
                   onClick={() => toggleCheckOptions(option.value, option.category)}
                 >
@@ -325,10 +325,10 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
               </div>
             )
           ) : (
-            filteredOptions.map((category, i) => (
+            filteredOptions.map((category) => (
               category.options.filter(o => !o.checked).length > 0 && (
                 <Section 
-                  key={i} 
+                  key={`category-option-${category.category}`}
                   title={category.category || 
                     noCategory
                   } 
@@ -340,10 +340,10 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 >
                   {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
-                    .map((option, j) => (
+                    .map((option) => (
                       !option.checked && (
                         <div 
-                          key={`filter-item-${i}-${j}`} 
+                          key={`filter-item-${category.category}-${option.label}`} 
                           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
                         >
                           <IonCheckbox

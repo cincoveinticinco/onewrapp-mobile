@@ -160,7 +160,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 style={{ color: 'var(--ion-color-primary)' }}
               >
                 {checkedOptions.map((option: string, i: number) => (
-                  <span key={`checked-option-${i}`}>
+                  <span key={`checked-option-${option}`}>
                     {i > 0 && ', '}
                     {capitalizeString(option)}
                   </span>

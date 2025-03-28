@@ -38,13 +38,13 @@ const HighlightedTextWithArray: React.FC<HighlightedTextWithArrayProps> = ({
 
   return (
     <span className="highlighted-text">
-      {parts.map((part: any, index: any) => {
+      {parts.map((part: any) => {
         const normalizedPart = removeAccents(part).toLowerCase();
         const isHighlighted = normalizedSearchTerms.includes(normalizedPart);
         return isHighlighted ? (
           <mark
             style={{ backgroundColor: getBackgroundColor(part), color: textColor }}
-            key={index}
+            key={`part-${part}`}
           >
             {part}
           </mark>

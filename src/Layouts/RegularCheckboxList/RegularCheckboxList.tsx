@@ -46,10 +46,10 @@ const RegularList: React.FC<RegularListProps> = ({
 
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin options-list" style={getListStyles()}>
-      {checkedSelectedOptions.map((option: string, i: number) => (
+      {checkedSelectedOptions.map((option: string) => (
         <div
           color="tertiary"
-          key={`filter-item-${i}`}
+          key={`filter-item-${option}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
           style={handleItemStyles(option)}
@@ -64,10 +64,10 @@ const RegularList: React.FC<RegularListProps> = ({
           </IonCheckbox>
         </div>
       ))}
-      {uncheckedFilteredOptions.map((option: string, i: number) => (
+      {uncheckedFilteredOptions.map((option: string) => (
         <div
           color="tertiary"
-          key={`filter-item-${i}`}
+          key={`filter-item-${option}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(option)}
           style={handleItemStyles(option)}

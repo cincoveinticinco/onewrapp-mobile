@@ -14,7 +14,7 @@ import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scen
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 
-import LocationSetCard from './Components/LocationSetCard/LocationSetCard';
+import LocationSetCard, { Set as SetInterface } from './Components/LocationSetCard/LocationSetCard';
 import useProcessedSetsAndLocations from '../../hooks/database/useSets/usePorcessedSetsAndLocations';
 import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
@@ -194,8 +194,8 @@ const Sets: React.FC<{
               !isLoading && (
                 <>
                   <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations} batchSize={9}>
-                    {displayedLocations.map((location, index) => (
-                      <div key={`location${index}${location}`}>
+                    {displayedLocations.map((location) => (
+                      <div key={`location${location.locationName}`}>
                         {
                         sets[location.locationName].length > 0
                         && (
@@ -223,16 +223,16 @@ const Sets: React.FC<{
                             >
                               {
                                 displayedSets[location.locationName]
-                                && displayedSets[location.locationName].map((set: any, index: number) => (
+                                && displayedSets[location.locationName].map((set: SetInterface) => (
                                   <LocationSetCard
-                                    key={index}
+                                    key={`set-card-${set.setName}`}
                                     set={set}
                                     searchText={setsSearchText}
                                     validationFunction={validateSetExists}
                                     permissionType={permissionType}
                                   />
                                 ))
-}
+                              }
                             </ScrollInfiniteContext>
                             )
                           }

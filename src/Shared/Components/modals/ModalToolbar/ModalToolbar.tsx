@@ -68,8 +68,8 @@ const ModalToolbar: React.FC<ModalToolbarProps> = (
         )
             }
             {
-        customButtons && customButtons.map((button, index) => (
-          <React.Fragment key={index}>
+        customButtons && customButtons.map((button) => (
+          <React.Fragment key={`${button}`}>
             {button()}
           </React.Fragment>
         ))

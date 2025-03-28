@@ -10,7 +10,7 @@ import SelectItem from '../../inputs/SelectInput/SelectInput';
 import CustomSelect from '../../inputs/CustomSelect/CustomSelect';
 import InputItem from '../../../../pages/AddScene/Components/AddSceneFormInputs/InputItem';
 import OutlinePrimaryButton from '../../buttons/OutlinePrimaryButton/OutlinePrimaryButton';
-import DateInput from '../../inputs/DateInput/DateInput';
+import DateInput, { DateString } from '../../inputs/DateInput/DateInput';
 
 export interface FormInput {
   fieldKeyName: string;
@@ -25,8 +25,8 @@ export interface FormInput {
   multiple?: boolean;
   offset?: string;
   onValueChanges?: (value: any) => void;
-  min?: string;
-  max?: string;
+  min?: DateString;
+  max?: DateString;
 }
 
 export interface SelectOptionsInterface {
@@ -187,18 +187,19 @@ const EditionModal: React.FC<EditionModalProps> = ({
         {formInputs && (
           <IonGrid className="edit-inputs-wrapper" fixed style={{ maxWidth: '600px' }}>
             <IonRow>
-              {formInputs.map((input: any, i: number) => (
-                <IonCol key={i} offset={input?.offset || 0} sizeSm={input?.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center ion-align-items-end">
+              {formInputs.map((input: FormInput, i: number) => (
+                <IonCol key={i} offset={input?.offset || ''} sizeSm={input?.col || '6'} sizeXs="12" className="ion-flex ion-justify-content-center ion-align-items-end">
                   {input.type === 'select' ? (
                     input.search ? (
-                      <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
+                      <></>
+                      // <CustomSelect input={input} setNewOptionValue={setNewOptionValue} enableSearch />
                     ) : (
                       <SelectItem
                         control={control}
                         fieldKeyName={input.fieldKeyName}
                         label={input.label}
                         inputName={input.fieldKeyName}
-                        options={input.selectOptions}
+                        options={input.selectOptions || []}
                         canCreateNew={false}
                         setValue={setNewOptionValue}
                         validate={() => true}
@@ -246,14 +247,14 @@ const EditionModal: React.FC<EditionModalProps> = ({
                       placeholder={input.placeholder}
                       control={control}
                       fieldKeyName={input.fieldKeyName}
-                      inputName={input.inputName}
+                      inputName={input.inputName || ''}
                       displayError={input.fieldKeyName !== 'characterNum' ? showError[input.fieldKeyName as keyof typeof showError] : false}
                       setValue={setNewOptionValue}
-                      validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName, input.required)}
+                      validate={input.fieldKeyName === 'characterNum' ? () => true : (value: string) => handleValidation(value, input.fieldKeyName, input.required ?? false)}
                       type={input.type}
                       errorMessage={errorMessage}
                       style={{ width: '100%' }}
-                      suggestions={input.selectOptions?.map((option: FormInput) => option.label) || []}
+                      suggestions={input.selectOptions?.map((option: SelectOptionsInterface) => option.label) || []}
                     />
                   )}
                 </IonCol>

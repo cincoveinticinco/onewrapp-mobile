@@ -8,13 +8,22 @@ import { EmptyEnum, SceneTypeEnum } from '../../../Shared/enums/ennums';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
+import { useRxData, useRxDB } from 'rxdb-hooks';
 
 const useProcessedCast = () => {
-  const { offlineScenes } = useContext(DatabaseContext);
   const { castSelectedSortOptions } = useContext(ScenesContext);
   const [isLoading, setIsLoading] = useState(true);
   const [processedCast, setProcessedCast] = useState<any[]>([]);
   const [processedExtras, setProcessedExtras] = useState<any[]>([]);
+  const { result: scenes, isFetching } = useRxData('scenes', (collection) => collection.find());
+
+  const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (scenes) {
+      setOfflineScenes(scenes);
+    }
+  }, [scenes, isFetching]);
 
   useEffect(() => {
     setIsLoading(true);

@@ -448,7 +448,7 @@ const createNewSceneItem = async <T extends unknown>(
                   </div>
                 ) : (
                   getPopupList(popupType)?.map((item: string, i: number) => (
-                    <div key={i} className="total-popup-item ion-padding-start">{item && item.toUpperCase()}</div>
+                    <div key={`popup-list-${item}`} className="total-popup-item ion-padding-start">{item && item.toUpperCase()}</div>
                   ))
                 )}
               </div>
@@ -466,9 +466,9 @@ const createNewSceneItem = async <T extends unknown>(
                   </div>
                 )
                   : getPopupCategories(popupType).map((category: string) => (
-                    <div className="popup-category-container" key={uuidv4()}>
+                    <div className="popup-category-container" key={`scene-script-${category || '' }`}>
                       <p
-                        key={category + popupType}
+    
                         className="popup-category ion-no-margin ion-padding"
                         style={{
                           backgroundColor: 'var(--ion-color-tertiary-shade)',

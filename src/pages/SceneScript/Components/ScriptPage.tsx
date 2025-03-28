@@ -305,9 +305,9 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
           transformOrigin: 'top left',
         }}
       >
-        {paragraphs.map((paragraph, index) => (
+        {paragraphs.map((paragraph) => (
           <SceneParagraph
-            key={index}
+            key={`paragraph-${paragraph.id}`}
             type={paragraph.type}
             content={paragraph.content}
             searchTermsArray={searchTerms}
