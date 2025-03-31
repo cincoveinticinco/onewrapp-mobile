@@ -84,20 +84,22 @@ export const Section: React.FC<SectionProps> = ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   });
 
   const setTouchStartStyles = () => {
     setSectionStyle({
       ...sectionStyle,
-      backgroundColor: `var(--ion-color-${color})`,
+      backgroundColor: `var(--ion-color-${color}-shade)`,
+      color: `var(--ion-color-${color}-contrast)`,
     });
   }
 
   const onTouchEndStyles = () => {
     setSectionStyle({
       ...sectionStyle,
-      backgroundColor: 'var(--ion-color-dark)',
+      backgroundColor: `var(--ion-color-${color}-shade)`,
+      color: 'var(--ion-color-${color}-contrast)',
     });
   }
 
@@ -114,7 +116,7 @@ export const Section: React.FC<SectionProps> = ({
         onMouseUp={onTouchEndStyles}
         className='ion-padding-start'
       >
-        <p className='ion-no-margin ion-flex  ion-align-items-center' style={{ fontSize: '14px', width: '30%', height: '100%' }}><b>{title.toUpperCase()}</b></p>
+        <p className='ion-no-margin ion-flex  ion-align-items-center' style={{ fontSize: '16px', width: '30%', height: '100%' }}><b>{title.toUpperCase()}</b></p>
         {totals?.length > 0 && !editMode && (
           <IonGrid style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <IonRow>
@@ -125,7 +127,7 @@ export const Section: React.FC<SectionProps> = ({
               ))}
               {setOpen &&
                 <IonCol style={{
-                  minWidth: '30px',
+                  minWidth: '40px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -161,8 +163,23 @@ export const Section: React.FC<SectionProps> = ({
                 </>
               )}
               {permissionType == 1 && <AddButton onClick={onAddClick} />}
-              {setOpen && totals.length > 0 && <DropDownButton open={open} />}
             </div>)
+        }
+        {
+          totals.length === 0 && (
+            <IonGrid style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <IonRow>
+                  <IonCol style={{
+                    minWidth: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }} >
+                    {!open ? <IonIcon icon={caretDownOutline} /> : <IonIcon icon={caretUpOutline} color='primary' />}
+                  </IonCol>
+                </IonRow>
+            </IonGrid>
+          )
         }
       </div>
       <div className="children-wrapper">

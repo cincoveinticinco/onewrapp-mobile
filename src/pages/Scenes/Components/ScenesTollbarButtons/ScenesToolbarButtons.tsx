@@ -13,12 +13,13 @@ const ScenesToolbarButtons: React.FC<{
   return (
     <>
       <ToolbarButton
-        triggerId='group-by-modal-trigger'
-        click={() => setOpenGroupBy(true)}
-        show={true}
+        triggerId='add-scene-button'
+        click={() => {}}
+        show={!disableEditions}
         color="light"
+        routerLink="addscene"
       >
-        <IonIcon icon={settingsOutline} />
+        <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
       </ToolbarButton>
 
 
@@ -32,7 +33,7 @@ const ScenesToolbarButtons: React.FC<{
       >
         <IonIcon icon={funnelOutline}/>
       </ToolbarButton>
-      
+
       <ToolbarButton
         triggerId='sort-scenes-modal-trigger'
         click={() => {}}
@@ -41,18 +42,17 @@ const ScenesToolbarButtons: React.FC<{
       >
         <IonIcon icon={swapVerticalOutline} />
       </ToolbarButton>
-      
-      <ExportButton />
-      
+
       <ToolbarButton
-        triggerId='add-scene-button'
-        click={() => {}}
-        show={!disableEditions}
+        triggerId='group-by-modal-trigger'
+        click={() => setOpenGroupBy(true)}
+        show={true}
         color="light"
-        routerLink="addscene"
       >
-        <IonIcon icon={addOutline} className="toolbar-add-icon toolbar-icon" />
+        <IonIcon icon={settingsOutline} />
       </ToolbarButton>
+
+      <ExportButton />
     </>
   );
 };

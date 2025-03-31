@@ -40,7 +40,7 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
     const initialOpenSections: { [key: string]: boolean } = {};
     
     sortedCategoryKeys.forEach(category => {
-      initialVisibleScenes[category] = 10;
+      initialVisibleScenes[category] = 30;
       initialOpenSections[category] = true;
     });
     
@@ -68,6 +68,7 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
   }, [categorizedScenes]);
 
   const toggleSectionVisibility = useCallback((category: string) => {
+    console.log('TOGGLE SECTION VISIBILITY ',  category);
     setOpenSections(prev => ({
       ...prev,
       [category]: !prev[category]
@@ -109,8 +110,9 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
           <Section
             title={category}
             key={category}
-            open={openSections[category] || false}
+            open={openSections[category]}
             setOpen={() => toggleSectionVisibility(category)}
+            color='light'
           >
             <IonGrid className="scenes-grid sectioned-grid ion-margin">
               {categorizedScenes[category]

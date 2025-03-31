@@ -49,8 +49,8 @@ import Scenes from '../../../../pages/Scenes/Scenes';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import './AppTabs.scss';
 import { useRxDB } from 'rxdb-hooks';
-import Stripboard from '../../../../pages/Stripboard/Stripboard';
 import StripboardDetail from '../../../../pages/StripboardDetail/StripboardDetail';
+import Stripboard from '../../../../pages/Stripboard/StripBoard';
 
 setupIonicReact();
 
@@ -154,13 +154,13 @@ const AppTabs: React.FC = () => {
           component={Cast}
           unauthorizedRoute={unauthorizedRoute}
         />
-        <ProtectedRoute
+        {/* <ProtectedRoute
           exact
           path={`${urlString}/crew`}
           permissionType={getSecurePageAccess(SecurePages.CREW)}
           component={Crew}
           unauthorizedRoute={unauthorizedRoute}
-        />
+        /> */}
         <ProtectedRoute
           exact
           path={`${urlString}/sets`}
@@ -303,10 +303,10 @@ const AppTabs: React.FC = () => {
           <IonIcon icon={cube} className="tab-bar-icons" />
           <IonLabel>ELEMENTS</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
+        {/* <IonTabButton tab="crew" className={defineButtonClassAccess(SecurePages.CREW)} href={`${url}/crew`}>
           <IonIcon icon={construct} className="tab-bar-icons" />
           <IonLabel>CREW</IonLabel>
-        </IonTabButton>
+        </IonTabButton> */}
         <IonTabButton tab="reports" className="tab-bar-buttons" href={`${url}/stripboard`}>
           <IonIcon icon={layersOutline} className="tab-bar-icons" />
           <IonLabel>STRIPBOARD</IonLabel>

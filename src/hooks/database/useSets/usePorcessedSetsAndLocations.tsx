@@ -74,7 +74,7 @@ const useProcessedSetsAndLocations = () => {
       estimatedTimeSum,
       episodesQuantity,
       participation,
-      locationName: locationName || 'NO LOCATION',
+      locationName: locationName || locationName == '' ? locationName : 'NO LOCATION',
     };
   }, [offlineScenes]);
 
@@ -87,7 +87,7 @@ const useProcessedSetsAndLocations = () => {
 
   // Memoized processed locations data
   const processedLocations = useMemo(() => {
-    const uniqueLocationNames = getUniqueValuesByKey(offlineScenes, 'locationName');
+    const uniqueLocationNames = getUniqueValuesByKey(offlineScenes, 'locationName').concat('NO LOCATION');
 
     const processedLocationsData = (locationName: string) => {
       const locationScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.locationName === locationName);

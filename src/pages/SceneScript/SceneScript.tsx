@@ -14,7 +14,6 @@ import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { PiNotePencil, PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { RiEditFill, RiZoomInFill, RiZoomOutFill } from 'react-icons/ri';
 import { useHistory, useParams } from 'react-router';
-import { v4 as uuidv4 } from 'uuid';
 import ScriptPage from './Components/ScriptPage';
 import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
@@ -37,6 +36,7 @@ import DeleteSceneAlert from '../../Shared/Components/modals/DeleteSceneAlert/De
 import SceneDetailsTabs from '../../Shared/Components/navigation/SeceneDetailsTabs/SceneDetailsTabs';
 import { useDataInSceneDetail } from '../../hooks/database/useDataInSceneDetail/useDataInSceneDetail';
 import useSceneDetailNavigation from '../../hooks/database/useSceneDetailNavigation/useSceneDetailNavigation';
+import { useScenesFiltering } from '../../hooks/utils/useScenesFiltering/useScenesFiltering';
 
 export type SceneItemType = 'elements' | 'characters' | 'extras' | 'notes';
 
@@ -65,11 +65,12 @@ const SceneScript: React.FC<{
   const [paragraphsAreLoading, setParagraphsAreLoading] = useState(true);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
   const [shootingId, setShootingId] = useState<string | undefined>(urlShootingId);
-  const [filteredScenes, setFilteredScenes] = useState<SceneDocType[]>([]);
   const [openDeleteSceneAlert, setOpenDeleteSceneAlert] = useState<boolean>(false);
   const [openUnassignAlert, setOpenUnassignAlert] = useState<boolean>(false);
   const [thisShooting, setThisShooting] = useState<ShootingDocType | null>(null);
   const { errorToast } = useAlertToast();
+
+  const { filteredScenes } = useScenesFiltering('');
 
 
 
@@ -114,24 +115,6 @@ const SceneScript: React.FC<{
     const orderedScenes = [...shootingDoc._data.scenes].sort((a, b) => a.position - b.position);
     return orderedScenes.map((scene: any) => parseInt(scene.sceneId));
   };
-
-  useEffect(() => {
-    const filterScenes = async () => {
-      let filtered: SceneDocType[];
-
-      if (!isShooting) {
-        filtered = selectedFilterOptions ? applyFilters(offlineScenes, selectedFilterOptions) : offlineScenes;
-      } else {
-        const scenesInShooting = await getScenesInShooting();
-
-        filtered = offlineScenes.filter((scene: any) => scenesInShooting.includes(parseInt(scene.sceneId, 10)));
-      }
-
-      setFilteredScenes(filtered);
-    };
-
-    filterScenes();
-  }, [isShooting, offlineScenes, selectedFilterOptions]);
 
   useEffect(() => {
     const printParagraphs = async () => {
@@ -468,11 +451,11 @@ const createNewSceneItem = async <T extends unknown>(
                   : getPopupCategories(popupType).map((category: string) => (
                     <div className="popup-category-container" key={`scene-script-${category || '' }`}>
                       <p
-    
-                        className="popup-category ion-no-margin ion-padding"
+                        className="popup-category ion-no-margin border-light"
                         style={{
-                          backgroundColor: 'var(--ion-color-tertiary-shade)',
-                          border: '1px solid var(--ion-color-primary)',
+                          backgroundColor: 'var(--ion-color-tertiary-dark)',
+                          fontWeight: 'bold',
+                          padding: '6px'
                         }}
                       >
                         {category && category.toUpperCase()}

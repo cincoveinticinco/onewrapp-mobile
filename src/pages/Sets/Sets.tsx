@@ -65,6 +65,10 @@ const Sets: React.FC<{
         const normalizedSetLocation = removeAccents(set.locationName.toLowerCase());
         const normalizedSetName = removeAccents(set.setName.toLowerCase());
 
+        if (location.locationName === 'NO LOCATION') {
+          return (!set.locationName || set.locationName == '') && normalizedSetName.includes(normalizedSearchText);
+        }
+
         return normalizedSetLocation === normalizedLocation
           && normalizedSetName.includes(normalizedSearchText);
       });

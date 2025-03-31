@@ -3,7 +3,7 @@ const getOptionsArray = (nestedKey: string, uniqueValuesArray: any[]) => {
 
   if (Array.isArray(uniqueValuesArray)) {
     uniqueValuesArray.forEach((value: any) => {
-      if (value[nestedKey].length > 1) {
+      if (value[nestedKey]?.length > 1) {
         extrasOrItemsArray.push(value[nestedKey]);
       }
     });
