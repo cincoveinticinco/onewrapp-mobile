@@ -47,7 +47,7 @@ const CategoryContainer = ({
     return [];
   };
 
-  if (getValuesByCategory(categoryName, scene).length > 0) {
+  if (getValuesByCategory(categoryName, scene)?.length > 0) {
     return (
       <>
         <IonCardHeader>

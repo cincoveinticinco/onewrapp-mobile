@@ -24,4 +24,5 @@ export interface DatabaseContextProps {
   initializeAllReplications: () => Promise<boolean>;
   hardAppReset: () => void;
   hardResync: () => Promise<void>;
+  initialReplicationDone: boolean;
 }

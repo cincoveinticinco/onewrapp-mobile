@@ -35,11 +35,11 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     setSelectedElements(updatedElements);
   };
 
-  const contentStyle = selectedElements.length === 0 ? 'ion-no-padding' : '';
+  const contentStyle = selectedElements?.length === 0 ? 'ion-no-padding' : '';
 
   return (
     <IonCardContent className={contentStyle}>
-      {filterSelectedElements.length > 0 ? (
+      {filterSelectedElements?.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedElements.map((element) => (
             <IonItemSliding key={`element-item-category-${categoryName}-${element.elementName}`}>

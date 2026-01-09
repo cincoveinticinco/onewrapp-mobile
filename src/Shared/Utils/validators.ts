@@ -8,10 +8,10 @@ export const isNotEmptyValidator = (value: string) =>
   value.trim() !== '' ? true : 'Cannot be empty';
 
 export const isMinLengthValidator = (value: string, minLength: number) => 
-  value.trim().length >= minLength ? true : `Minimum length is ${minLength}`;
+  value.trim()?.length >= minLength ? true : `Minimum length is ${minLength}`;
 
 export const isMaxLengthValidator = (value: string, maxLength: number) => 
-  value.trim().length <= maxLength ? true : `Maximum length is ${maxLength}`;
+  value.trim()?.length <= maxLength ? true : `Maximum length is ${maxLength}`;
 
 export const isMinValueValidator = (value: number, minValue: number) => 
   value >= minValue ? true : `Minimum value is ${minValue}`;

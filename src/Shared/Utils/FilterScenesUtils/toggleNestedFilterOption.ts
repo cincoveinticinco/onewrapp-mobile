@@ -27,11 +27,11 @@ const toggleNestedFilterOption = (
     nestedOptionArray[nestedKey].push(optionValue);
   }
 
-  if (nestedOptionArray[nestedKey].length === 0) {
-    updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey].length > 0);
+  if (nestedOptionArray[nestedKey]?.length === 0) {
+    updatedOptions[category] = updatedOptions[category].filter((opt: any) => opt[nestedKey]?.length > 0);
   }
 
-  if (updatedOptions[category].length === 0) {
+  if (updatedOptions[category]?.length === 0) {
     delete updatedOptions[category];
   }
 

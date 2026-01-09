@@ -132,12 +132,12 @@ const ScenesGroupByShootings: React.FC<ScenesGroupByShootingsProps> = ({
   }, [weeks]);
 
   // Si no hay escenas o no hay datos organizados, mostrar mensaje vacío
-  const hasScenes = Object.values(organizedData).some(week => week.shootings.length > 0);
+  const hasScenes = Object.values(organizedData).some(week => week.shootings?.length > 0);
 
   if (!hasScenes) {
     return (
       <NoScenesMessage
-        hasFilters={Object.keys(selectedFilterOptions).length > 0}
+        hasFilters={Object.keys(selectedFilterOptions)?.length > 0}
         resetFilters={() => setSelectedFilterOptions({})}
       />
     );
@@ -147,7 +147,7 @@ const ScenesGroupByShootings: React.FC<ScenesGroupByShootingsProps> = ({
     <IonContent>
       {Object.entries(organizedData).map(([weekId, weekData]) => {
         // Skip empty weeks
-        if (weekData.shootings.length === 0) return null;
+        if (weekData.shootings?.length === 0) return null;
 
         // Calcular el total de escenas en esta semana para el resumen
         const scenesInWeek = weekData.shootings.flatMap(shooting => shooting.scenes);

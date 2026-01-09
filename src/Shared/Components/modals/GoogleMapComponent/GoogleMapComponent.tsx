@@ -86,7 +86,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ locations, mapR
   };
 
   const initMap = async () => {
-    if (locations.length > 0 && mapRef.current && !mapInitialized) {
+    if (locations?.length > 0 && mapRef.current && !mapInitialized) {
       if (!locations[0]?.lat) {
         throw new Error('Location is missing lat');
       }

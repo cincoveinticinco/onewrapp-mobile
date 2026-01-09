@@ -87,7 +87,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
   );
   
   useEffect(() => {
-    if (offlineScenes.length > 0) setSceneToPrint(offlineScenes[0]._data);
+    if (offlineScenes?.length > 0) setSceneToPrint(offlineScenes[0]._data);
     if (sceneToPrint) {
       const inputs = [{ a: `LOCATION: ${sceneToPrint.locationName}`, b: `SET: ${sceneToPrint.setName}`, c: sceneToPrint.synopsis }];
       setInputs(inputs);
@@ -126,7 +126,7 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
       )}
       <div className="toolbar-title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
       <IonTitle className={`toolbar-title ${isMobile && searchMode ? 'hidden' : ''}`} slot="start">
-        {currentProject && currentProject.length > 0 ? `${currentProject[0].projAbreviation?.toUpperCase()} - ${name}` : ''}
+        {currentProject && currentProject?.length > 0 ? `${currentProject[0].projAbreviation?.toUpperCase()} - ${name}` : ''}
       </IonTitle>
       </div>
       <>

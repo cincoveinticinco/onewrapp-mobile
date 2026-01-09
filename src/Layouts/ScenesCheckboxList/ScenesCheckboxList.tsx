@@ -44,15 +44,15 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
   }
 
   const getListStyles = () => {
-    if (uncheckedFilteredScenes.length === 0 && listOfScenes.length > 10) {
+    if (uncheckedFilteredScenes?.length === 0 && listOfScenes?.length > 10) {
       return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
-    if (listOfScenes.length > 10) {
+    if (listOfScenes?.length > 10) {
       return { marginTop: '100px' };
     }
 
-    if (uncheckedFilteredScenes.length === 0 && listOfScenes.length <= 10) {
+    if (uncheckedFilteredScenes?.length === 0 && listOfScenes?.length <= 10) {
       return {};
     }
 
@@ -73,7 +73,7 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
             checked={isSceneChecked(scene)}
-            disabled={!multipleSelections && checkedSelectedScenes.length > 0}
+            disabled={!multipleSelections && checkedSelectedScenes?.length > 0}
           >
             <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} />
           </IonCheckbox>

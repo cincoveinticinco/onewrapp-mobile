@@ -122,15 +122,15 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   }, [searchText]);
 
   const getListStyles = () => {
-    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
+    if (uncheckedfilteredFiltersOptions?.length === 0 && listOfFilters?.length > 10) {
       return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
-    if (listOfFilters.length > 10) {
+    if (listOfFilters?.length > 10) {
       return { marginTop: '100px' };
     }
 
-    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length <= 10) {
+    if (uncheckedfilteredFiltersOptions?.length === 0 && listOfFilters?.length <= 10) {
       return {};
     }
 
@@ -152,7 +152,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           className="ion-no-margin ion-no-padding"
         >
           {
-            checkedOptions.length === 0 ? (
+            checkedOptions?.length === 0 ? (
               <p className="ion-no-margin ion-no-padding">View All</p>
             ) : (
               <p
@@ -168,7 +168,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               </p>
             )
           }
-          <IonIcon color={checkedOptions.length > 0 ? 'primary' : 'light'} icon={chevronForward} />
+          <IonIcon color={checkedOptions?.length > 0 ? 'primary' : 'light'} icon={chevronForward} />
         </IonButton>
       </IonCol>
       <IonModal
@@ -182,11 +182,11 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
             handleSave={handleSave}
             toolbarTitle={filterName}
             handleReset={clearFilterOptions}
-            showReset={Object.entries(selectedFilterOptions).length > 0}
+            showReset={Object.entries(selectedFilterOptions)?.length > 0}
           />
         </IonHeader>
         <IonContent color="tertiary">
-          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
+          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters?.length > 10} />
           {
             dataIsLoading && (
               AppLoader()
@@ -206,7 +206,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                   selectedOptions={selectedFilterOptions}
                 />
                 {
-                  uncheckedfilteredFiltersOptions.length === 0
+                  uncheckedfilteredFiltersOptions?.length === 0
                   && (
                     <p className="no-items-message">
                       There are no coincidences. Do you want to

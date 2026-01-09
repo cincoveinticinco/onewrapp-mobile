@@ -124,7 +124,7 @@ const ElementCard: React.FC<ElementCardProps> = ({
 
   const elementName = () => {
     if (data.elementName) {
-      if (data.elementName.length > 2) {
+      if (data.elementName?.length > 2) {
         return data.elementName;
       }
 

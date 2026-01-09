@@ -14,7 +14,7 @@ const SceneDetailsNotesSection = () => {
         <p className="ion-flex ion-align-items-center ion-padding-start">NOTES</p>
         {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
       </div>
-      {(watch("notes") || []).length > 0 ? (
+      {(watch("notes") || [])?.length > 0 ? (
         (watch("notes") || []).map((note: Note) => (
           <IonCard
             color='tertiary-dark'

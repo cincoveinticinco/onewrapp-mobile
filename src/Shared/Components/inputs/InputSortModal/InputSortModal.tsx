@@ -113,7 +113,7 @@ const InputSortModal: React.FC<InputSortModalProps> = ({
               <SortPosibilityCheckbox
                 key={sortPosibility.id}
                 sortPosibility={sortPosibility}
-                index={index + getCheckedSortOptions().length}
+                index={index + getCheckedSortOptions()?.length}
                 setSortPosibilities={setSortPosibilities}
                 sortPosibilities={sortPosibilities}
                 selectedSortOptions={selectedSortOptions}

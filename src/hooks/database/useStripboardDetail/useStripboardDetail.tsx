@@ -101,7 +101,7 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
     'scenes',
     (collection) => collection.find({
       selector: {
-        sceneId: { $in: sceneIds.length ? sceneIds : ['none'] }
+        sceneId: { $in: sceneIds?.length ? sceneIds : ['none'] }
       }
     })
   );
@@ -112,7 +112,7 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
     (collection) => collection.find({
       selector: {
         projectId: Number(projectId),
-        sceneId: { $nin: sceneIds.length ? sceneIds : ['none'] }
+        sceneId: { $nin: sceneIds?.length ? sceneIds : ['none'] }
       }
     })
   );
@@ -251,7 +251,7 @@ const useStripboardDetail = ({ stripboardId, projectId }: UseStripboardDetailPro
       scenes: scenes?.map(s => s._data) || [],
       scenesNotIncluded: filteredScenesNotIncluded || [],
       totalWeeks: getNumberOfWeeks(startDate, stripboardHasScenes),
-      totalScenes: stripboardHasScenes.length || 0,
+      totalScenes: stripboardHasScenes?.length || 0,
       totalDays: getNumberOfDays(stripboardHasScenes),
       totalShootingDays: getTotalShootingDays(stripboardHasScenes),
       statusString: currentStripboard.statusId === StripboardStatusesEnum.New ? 'New' : 'Published',

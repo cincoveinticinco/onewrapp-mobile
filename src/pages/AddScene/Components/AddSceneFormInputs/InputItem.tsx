@@ -59,12 +59,12 @@ const InputItem: React.FC<InputItemProps> = ({
     setValue(fieldKeyName, value); // No trimming to preserve spaces
 
     // Filter suggestions based on input
-    if (suggestions.length > 0) {
+    if (suggestions?.length > 0) {
       const filtered = suggestions.filter((suggestion) =>
         suggestion.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredSuggestions(filtered);
-      setShowSuggestions(filtered.length > 0 && isFocused);
+      setShowSuggestions(filtered?.length > 0 && isFocused);
     }
   };
 
@@ -98,7 +98,7 @@ const InputItem: React.FC<InputItemProps> = ({
                 onFocus={() => {
                   setIsFocused(true);
                   setFilteredSuggestions(suggestions);
-                  setShowSuggestions(suggestions.length > 0);
+                  setShowSuggestions(suggestions?.length > 0);
                 }}
                 onBlur={() => {
                   setIsFocused(false);
@@ -126,7 +126,7 @@ const InputItem: React.FC<InputItemProps> = ({
                 onFocus={() => {
                   setIsFocused(true);
                   setFilteredSuggestions(suggestions);
-                  setShowSuggestions(suggestions.length > 0);
+                  setShowSuggestions(suggestions?.length > 0);
                 }}
                 onBlur={() => {
                   setIsFocused(false);
@@ -140,7 +140,7 @@ const InputItem: React.FC<InputItemProps> = ({
           )}
         />
       </IonItem>
-      {showSuggestions && filteredSuggestions.length > 0 && (
+      {showSuggestions && filteredSuggestions?.length > 0 && (
         <IonList className="suggestions-list" style={{  maxHeight: '150px', overflow: 'auto' }}>
           {filteredSuggestions.map((suggestion) => (
             <IonItem key={`suggestion-${suggestion}`} button onClick={() => handleSuggestionClick(suggestion)} style={{ textTransform: 'uppercase'}}>

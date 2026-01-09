@@ -107,7 +107,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   };
 
   const getAvailableShootingDays = (unitId: string) => {
-    const shootingDays = shootings.filter((shooting: any) => shooting._data.unitId === parseInt(unitId) && shooting._data.crewCalls.length > 0).map((shooting: any) => {
+    const shootingDays = shootings.filter((shooting: any) => shooting._data.unitId === parseInt(unitId) && shooting._data.crewCalls?.length > 0).map((shooting: any) => {
       return {
         date: shooting.shootDate,
         status: shooting.status
@@ -321,7 +321,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     )
   }
 
-  if (!crewCalls.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} name='Copy Crew' />;
+  if (!crewCalls?.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} name='Copy Crew' />;
 
   return (
     <GeneralTable

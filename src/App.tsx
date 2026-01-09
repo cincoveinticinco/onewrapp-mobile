@@ -34,7 +34,7 @@ import { loadEnvironment } from '../environment';
 setupIonicReact();
 
 const AppContent: React.FC = () => {
-  const { isDatabaseReady, oneWrapDb, isOnline } = React.useContext(DatabaseContext);
+  const { isDatabaseReady, oneWrapDb, isOnline, initialReplicationDone } = React.useContext(DatabaseContext);
   const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading, checkSession } = React.useContext(AuthContext);
   const isIos = isPlatform('ios');
   const history = useHistory();
@@ -100,7 +100,7 @@ const AppContent: React.FC = () => {
     initEnvironment();
   }, []);
 
-  if (!loading && isDatabaseReady && loggedIn) {
+  if (!loading && isDatabaseReady && initialReplicationDone && loggedIn) {
     return (
       <>
           <Route exact path="/login">

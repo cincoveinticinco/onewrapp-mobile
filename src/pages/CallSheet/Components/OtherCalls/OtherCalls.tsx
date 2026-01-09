@@ -89,7 +89,7 @@ const OtherCalls: React.FC<OtherCallsProps> = ({
 
   if (isOpen) return <AddNewCallModal />;
 
-  if (!otherCalls.length) return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
+  if (!otherCalls?.length) return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
 
   return (
     <>

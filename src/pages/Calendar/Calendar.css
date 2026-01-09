@@ -1,81 +1,112 @@
 .calendar {
-  font-family: Arial, sans-serif;
-  border-radius: 5px;
-  overflow: scroll;
-}
-
-.calendar-header {
-  background-color: #4285f4;
-  color: white;
-  padding: 10px;
-  text-align: center;
-}
-
-.current-month {
-  font-weight: bold;
-}
-
-.day-of-week {
-  background-color: #f2f2f2;
-  border: 1px solid #ccc;
-  padding: 5px;
-  text-align: center;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .calendar-grid {
+  --calendar-gap: clamp(6px, 1.2vw, 12px);
+  --calendar-cell-radius: 12px;
+  --calendar-cell-border: rgba(255, 255, 255, 0.12);
+  --calendar-cell-bg: rgba(255, 255, 255, 0.06);
+  --calendar-cell-bg-muted: rgba(255, 255, 255, 0.03);
+  --calendar-cell-text: rgba(255, 255, 255, 0.92);
+  --calendar-cell-subtle: rgba(255, 255, 255, 0.6);
+  --ion-grid-padding: 0px;
+
   min-height: 100%;
-  max-height: 70vh;
-  overflow: hidden;
-  margin: 10px;
+  margin: clamp(8px, 1.5vw, 16px);
+  padding: var(--calendar-gap);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(900px 240px at 10% 0%, rgba(55, 130, 180, 0.18), transparent 60%),
+    radial-gradient(700px 220px at 90% 10%, rgba(60, 160, 120, 0.16), transparent 60%),
+    linear-gradient(180deg, rgba(11, 24, 32, 0.8) 0%, rgba(11, 24, 32, 0.65) 100%);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
 .day-names-row {
   text-align: center;
   text-transform: uppercase;
-  font-weight: bold;
-  background-color: var(--ion-color-dark);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: var(--calendar-gap);
 
   ion-col {
-    outline: 1px solid #ccc;
-    padding: 10px;
+    padding: 10px 4px;
   }
 }
 
-.calendar-day {
+.calendar-grid .calendar-day,
+.calendar-grid .other-month {
+  position: relative;
   text-align: right;
-  color: var(--ion-color-white);
-  outline: 0.5px solid var(--ion-color-light);
-  padding: 6px;
+  padding: 10px;
+  border-radius: var(--calendar-cell-radius);
+  border: 1px solid var(--calendar-cell-border);
+  background: var(--calendar-cell-bg);
+  color: var(--calendar-cell-text);
+  min-height: clamp(92px, 12vh, 155px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 
   ion-card {
     margin: 6px 0 !important;
-    border-radius: 0;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
   }
 }
 
-.sunday {
-  background-color: var(--ion-color-tertiary-dark);
+.calendar-grid .calendar-day:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
 }
 
-.other-month {
-  color: #ccc;
-  outline: 0.5px solid #ccc;
-  text-align: right;
+.day-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.current-day {
-  outline: 2px solid var(--ion-color-yellow);
+.calendar-grid .sunday {
+  background: linear-gradient(160deg, rgba(25, 60, 70, 0.6), rgba(20, 45, 60, 0.5));
+}
+
+.calendar-grid .other-month {
+  color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--calendar-cell-bg-muted);
+}
+
+.calendar-grid .current-day {
+  border-color: rgba(255, 212, 99, 0.8);
+  background:
+    linear-gradient(160deg, rgba(255, 214, 102, 0.2), rgba(255, 214, 102, 0.03)),
+    var(--calendar-cell-bg);
+  box-shadow: 0 0 0 1px rgba(255, 214, 102, 0.2), 0 10px 18px rgba(0, 0, 0, 0.35);
   color: var(--ion-color-yellow);
 }
 
 .week-row {
   height: auto;
+  align-items: stretch;
+  margin-bottom: var(--calendar-gap);
 
   .other-month,
   .calendar-day,
   .current-day {
     max-width: calc(100% / 7);
     --landscape-height: calc(100vh / 8);
+    height: 100%;
+    margin: 0px 6px !important;
 
     @media (orientation: landscape) {
       height: var(--landscape-height);
@@ -88,41 +119,76 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    padding: 4px 6px;
     font-weight: 600 !important;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
 
     .unit-name {
       font-size: 12px;
       font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: rgba(0, 0, 0, 0.85);
     }
 
     &:hover {
-      filter: brightness(0.9);
+      filter: brightness(0.95);
     }
   }
+}
+
+.week-row:last-child {
+  margin-bottom: 0;
+}
+
+.week-view {
+  padding: 12px;
+}
+
+.week-day ion-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 30, 40, 0.6);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+}
+
+.week-day ion-card.current-day {
+  border-color: rgba(255, 212, 99, 0.8);
+  box-shadow: 0 0 0 1px rgba(255, 214, 102, 0.2), 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+.week-day ion-card ion-card-title {
+  font-size: 1rem;
+  letter-spacing: 0.02em;
 }
 
 .week-shooting {
   background-color: var(--ion-color-yellow);
   padding: 0;
   font-weight: 600;
+  border-radius: 10px;
 }
 
 .unit-produced {
   display: flex;
   align-items: center;
   margin-bottom: 0 !important;
+  color: var(--ion-color-tertiary-dark);
 }
 
-.day {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: right;
-  cursor: pointer;
-}
+@media (max-width: 1024px) {
+  .calendar-grid {
+    margin: 8px;
+    padding: 10px;
+  }
 
-.empty-day {
-  border: 1px solid transparent;
+  .calendar-day,
+  .other-month {
+    min-height: clamp(80px, 11vh, 130px);
+  }
 }
 
 @media (max-width: 768px) {
@@ -144,6 +210,10 @@
     .current-day {
       min-height: 70px;
     }
+  }
+
+  .week-view {
+    padding: 8px;
   }
 }
 

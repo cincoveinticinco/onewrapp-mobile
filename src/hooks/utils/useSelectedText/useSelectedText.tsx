@@ -6,7 +6,7 @@ const useTextSelection = (handlePopupOpen: (selectedText: string, x: number, y: 
 
   const handleSelection = () => {
     const selection = window.getSelection();
-    if (selection && selection.toString().length > 1) {
+    if (selection && selection.toString()?.length > 1) {
       selectionRef.current = selection.toString();
       setSelectedText(selectionRef.current);
       const range = selection.getRangeAt(0);

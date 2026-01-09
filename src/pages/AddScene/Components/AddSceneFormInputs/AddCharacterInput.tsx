@@ -46,11 +46,11 @@ const AddCharacterInput: React.FC<AddCharacterInputProps> = ({
     }
   };
 
-  const contentStyle = selectedCharacters.length === 0 ? 'ion-no-padding' : '';
+  const contentStyle = selectedCharacters?.length === 0 ? 'ion-no-padding' : '';
 
   return (
     <IonCardContent className={contentStyle} color='tertiary-dark'>
-      {filterSelectedCharacters.length > 0 ? (
+      {filterSelectedCharacters?.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedCharacters.map((character: any) => (
             <IonItemSliding key={`character-item-category-${categoryName}-${character.characterName}`}>

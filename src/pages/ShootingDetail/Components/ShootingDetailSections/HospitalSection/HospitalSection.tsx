@@ -46,7 +46,7 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
-      {hospitals.length > 0 ? (
+      {hospitals?.length > 0 ? (
         hospitals.map((hospital, hospitalIndex) => (
           <div key={`${hospital.lat ?? ''}${hospital.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert

@@ -108,13 +108,13 @@ const Elements: React.FC<{
       const categoryScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.categoryName === categoryName));
       return {
         categoryName: categoryName || EmptyEnum.NoCategory,
-        elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName).length,
-        scenesQuantity: categoryScenes.length,
-        protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
+        elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName)?.length,
+        scenesQuantity: categoryScenes?.length,
+        protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length,
         pagesSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
         estimatedTimeSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
-        episodesQuantity: getUniqueValuesByKey(categoryScenes, 'episodeNumber').length,
-        participation: ((categoryScenes.length / offlineScenes.length) * 100).toFixed(2),
+        episodesQuantity: getUniqueValuesByKey(categoryScenes, 'episodeNumber')?.length,
+        participation: ((categoryScenes?.length / offlineScenes?.length) * 100).toFixed(2),
       };
     });
 
@@ -131,12 +131,12 @@ const Elements: React.FC<{
       return {
         elementName,
         elementCategory: elementCategory || EmptyEnum.NoCategory,
-        scenesQuantity: elementScenes.length,
-        protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length,
+        scenesQuantity: elementScenes?.length,
+        protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length,
         pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
         estimatedTimeSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
-        episodesQuantity: getUniqueValuesByKey(elementScenes, 'episodeNumber').length,
-        participation: ((elementScenes.length / offlineScenes.length) * 100).toFixed(2),
+        episodesQuantity: getUniqueValuesByKey(elementScenes, 'episodeNumber')?.length,
+        participation: ((elementScenes?.length / offlineScenes?.length) * 100).toFixed(2),
       };
     });
 
@@ -172,9 +172,9 @@ const Elements: React.FC<{
   }, [elementsData]);
 
   useEffect(() => {
-    if (searchText.length > 0) {
+    if (searchText?.length > 0) {
       const newFilteredCategories = () => {
-        if (searchText.length > 0) {
+        if (searchText?.length > 0) {
           return categoriesData.filter((category: any) => {
             const normalizedCategoryName = removeAccents(category.categoryName).toLowerCase();
             const normalizedSearchText = removeAccents(searchText).toLowerCase();
@@ -215,7 +215,7 @@ const Elements: React.FC<{
   }, [categoriesData]);
 
   useEffect(() => {
-    if (categoriesData.length > 0 && filteredElements.length > 0) {
+    if (categoriesData?.length > 0 && filteredElements?.length > 0) {
       const updatedElements: any = {};
 
       categoriesData.forEach((category: any) => {
@@ -273,7 +273,7 @@ const Elements: React.FC<{
     </ToolbarButton>
   )
 
-  if(displayedElements.length === 0 && displayedCategories.length === 0) {
+  if(displayedElements?.length === 0 && displayedCategories?.length === 0) {
     return (
       <MainPagesLayout
         search
@@ -324,7 +324,7 @@ const Elements: React.FC<{
                 {displayedCategories.map((category) => (
                   <div key={category.categoryName}>
                     { elements[category.categoryName]
-                      && elements[category.categoryName].length > 0
+                      && elements[category.categoryName]?.length > 0
                       && (
                       <ElementCard
                         data={category}
@@ -335,7 +335,7 @@ const Elements: React.FC<{
                           ...isDropDownOpen,
                           [category.categoryName]: !isDropDownOpen[category.categoryName],
                         })}
-                        elementsQuantity={elements[category.categoryName] ? elements[category.categoryName].length : 0}
+                        elementsQuantity={elements[category.categoryName] ? elements[category.categoryName]?.length : 0}
                         validationFunction={validateCategoryExists}
                       />
                       )}

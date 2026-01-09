@@ -139,36 +139,38 @@ export const Section: React.FC<SectionProps> = ({
           </IonGrid>
         )}
         {
-          totals.length === 0 && (
-            <div onClick={(e) => e.stopPropagation()}>
-              {editMode !== undefined && setEditMode && (
-                <>
-                  {!saveAfterEdit ? (
-                    <IonButton
-                      fill="clear"
-                      slot="end"
-                      color="light"
-                      className="toolbar-button"
-                      disabled={permissionType !== 1}
-                      onClick={() => setEditMode(!editMode)}
-                    >
-                      <VscEdit
-                        className="toolbar-icon"
-                        style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
-                      />
-                    </IonButton>
-                  ) : (
-                    renderEditSaveButton()
-                  )}
-                </>
-              )}
-              {permissionType == 1 && <AddButton onClick={onAddClick} />}
-            </div>)
-        }
-        {
-          totals.length === 0 && (
+          totals?.length === 0 && (
             <IonGrid style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <IonRow>
+                  <IonCol>
+                    {
+                      totals?.length === 0 && (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          {editMode !== undefined && setEditMode && (
+                            <>
+                              {!saveAfterEdit ? (
+                                <IonButton
+                                  fill="clear"
+                                  slot="end"
+                                  color="light"
+                                  className="toolbar-button"
+                                  disabled={permissionType !== 1}
+                                  onClick={() => setEditMode(!editMode)}
+                                >
+                                  <VscEdit
+                                    className="toolbar-icon"
+                                    style={editMode ? { color: 'var(--ion-color-primary)' } : { color: 'var(--ion-color-light)' }}
+                                  />
+                                </IonButton>
+                              ) : (
+                                renderEditSaveButton()
+                              )}
+                            </>
+                          )}
+                          {permissionType == 1 && <AddButton onClick={onAddClick} />}
+                        </div>)
+                    }
+                  </IonCol>
                   <IonCol style={{
                     minWidth: '40px',
                     display: 'flex',

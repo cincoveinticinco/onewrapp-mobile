@@ -141,7 +141,7 @@ const ExtraView: React.FC<ExtraViewProps> = ({
 
   if (addNewModalIsOpen) return <AddNewExtraModal />;
 
-  if (!extraViewData.length) {
+  if (!extraViewData?.length) {
     return (
       <NoRegisters
         addNew={() => setAddNewModalIsOpen(true)}

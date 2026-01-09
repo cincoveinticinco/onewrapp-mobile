@@ -43,7 +43,7 @@ const ScrollInfiniteContextV2: React.FC<ScrollInfiniteContextV2Props> = ({
       { (
         <IonInfiniteScroll 
           onIonInfinite={handleInfinite} 
-          disabled={isInfiniteDisabled || currentBatch.length >= filteredData.length}
+          disabled={isInfiniteDisabled || currentBatch?.length >= filteredData?.length}
           threshold="100px"
         >
           <IonInfiniteScrollContent loadingText="Loading more..." />

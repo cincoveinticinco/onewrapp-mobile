@@ -405,19 +405,19 @@ const createNewSceneItem = async <T extends unknown>(
         <div className="script-total-buttons-container">
           <div className="total-buttons-wrapper" onClick={() => handleOpenTotalsPopup('notes')}>
             <PiNotePencil className="script-button-icon" style={popupType === 'notes' ? { color: 'var(--ion-color-primary)' } : {}} />
-            <span className="total-length notes">{getPopupList('notes').length}</span>
+            <span className="total-length notes">{getPopupList('notes')?.length}</span>
           </div>
           <div className="total-buttons-wrapper" onClick={() => handleOpenTotalsPopup('characters')}>
             <MdOutlineFaceUnlock className="script-button-icon" style={popupType === 'characters' ? { color: 'var(--ion-color-primary)' } : {}} />
-            <span className="total-length characters">{getPopupList('characters').length}</span>
+            <span className="total-length characters">{getPopupList('characters')?.length}</span>
           </div>
           <div className="total-buttons-wrapper" onClick={() => handleOpenTotalsPopup('elements')}>
             <FaClipboardList className="script-button-icon" style={popupType === 'elements' ? { color: 'var(--ion-color-primary)' } : {}} />
-            <span className="total-length elements">{getPopupList('elements').length}</span>
+            <span className="total-length elements">{getPopupList('elements')?.length}</span>
           </div>
           <div className="total-buttons-wrapper" onClick={() => handleOpenTotalsPopup('extras')}>
             <HiMiniUsers className="script-button-icon" style={popupType === 'extras' ? { color: 'var(--ion-color-primary)' } : {}} />
-            <span className="total-length extras">{getPopupList('extras').length}</span>
+            <span className="total-length extras">{getPopupList('extras')?.length}</span>
           </div>
           {
             popupType && popupType === 'notes' && showTotalsPopup && (
@@ -440,7 +440,7 @@ const createNewSceneItem = async <T extends unknown>(
           {
             popupType && popupType !== 'notes' && showTotalsPopup && (
               <div className="script-total-popup-background" style={{ top: getPopupPositionTop() }} onClick={() => getPopupList(popupType)}>
-                {getPopupCategories(popupType).length === 0 ? (
+                {getPopupCategories(popupType)?.length === 0 ? (
                   <div className="total-popup-item ion-padding-start">
                     NO
                     {popupType.toUpperCase()}
@@ -507,7 +507,7 @@ const createNewSceneItem = async <T extends unknown>(
         </IonContent>
         {
           !paragraphsAreLoading
-          && paragraphs.length > 10
+          && paragraphs?.length > 10
           && (
             <div
               className="script-page-top-bar"

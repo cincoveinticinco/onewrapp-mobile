@@ -58,7 +58,7 @@ const CastView: React.FC<CastViewProps> = ({
     }
   } />;
 
-  if (!castData || castData.length === 0) {
+  if (!castData || castData?.length === 0) {
     return <NoRegisters addNew={() => setIsOpen(true)} disabled={permissionType !== 1} />;
   }
   

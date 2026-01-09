@@ -325,7 +325,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const getNumberScenesByCast = (castName: string) => scenes.filter((scene: any) => {
         const characters = scene._data.characters || [];
         return characters.some((character: any) => normalizeString(character.characterName) === normalizeString(castName));
-      }).length.toString() || '--';
+      })?.length.toString() || '--';
 
       const characterNames = [...new Set(scenes.flatMap((scene: { _data: SceneDocType; }) => (scene._data.characters || []).map((character: Character) => character.characterName && normalizeString(character.characterName.toLowerCase()))))];
 

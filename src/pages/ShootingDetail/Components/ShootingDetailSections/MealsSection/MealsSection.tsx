@@ -34,7 +34,7 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
     permissionType={permissionType}
   >
     <div style={{ width: '100%', height: '100%' }}>
-      {meals.length > 0 ? (
+      {meals?.length > 0 ? (
         meals.map((meal) => (
           <MealInfo
             key={meal.id}

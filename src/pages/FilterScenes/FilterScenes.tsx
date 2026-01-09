@@ -94,7 +94,7 @@ const FilterScenes = () => {
   const getSortedElementCategoryNames = useMemo(() => sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray)), [uniqueCategoryElementsValuesArray]);
 
   useEffect(() => {
-    if (Object.entries(selectedFilterOptions).length > 0) {
+    if (Object.entries(selectedFilterOptions)?.length > 0) {
       setShowReset(true);
     } else {
       setShowReset(false);

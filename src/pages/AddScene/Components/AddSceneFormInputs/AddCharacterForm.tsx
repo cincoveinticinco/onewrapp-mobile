@@ -126,10 +126,10 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
   const getObservedCharactersInCategoryLength = (category: string) => {
     if(category === EmptyEnum.NoCategory || !category) { 
-      return observedCharacters.filter(character => !character.categoryName || character.categoryName == '').length;
+      return observedCharacters.filter(character => !character.categoryName || character.categoryName == '')?.length;
     }
 
-    return observedCharacters.filter(character => character.categoryName === category).length;
+    return observedCharacters.filter(character => character.categoryName === category)?.length;
   }
 
   const openCategoryEditor = (category: string) => () => {

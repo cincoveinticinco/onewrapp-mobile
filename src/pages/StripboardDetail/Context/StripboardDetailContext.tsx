@@ -138,7 +138,7 @@ export const StripboardDetailProvider = ({ children, stripboardId }: { children:
 
     const timer = setTimeout(() => {
       setScenesNotIncludedToDisplay(prev => 
-        Math.min(prev + LOAD_MORE_COUNT, scenesNotIncluded.length)
+        Math.min(prev + LOAD_MORE_COUNT, scenesNotIncluded?.length)
       );
       
       scrollElement.complete().catch(error => {
@@ -148,7 +148,7 @@ export const StripboardDetailProvider = ({ children, stripboardId }: { children:
 
     // Return cleanup function to clear timer if component unmounts
     return () => clearTimeout(timer);
-  }, [scenesNotIncluded.length]);
+  }, [scenesNotIncluded?.length]);
 
   // Memoized context value to prevent unnecessary re-renders
   const contextValue = useMemo<StripboardDetailContextType>(() => ({

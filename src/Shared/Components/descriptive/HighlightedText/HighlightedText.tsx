@@ -29,7 +29,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({
   const parts = normalizedText.split(new RegExp(`(${escapedSearchText})`, 'gi'));
 
   const getOriginalPart = (part: string, startIndex: number): string =>
-    text.substr(startIndex, part.length);
+    text.substr(startIndex, part?.length);
 
   let currentIndex = 0;
 
@@ -37,7 +37,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({
     <>
       {parts.map((part, index) => {
         const originalPart = getOriginalPart(part, currentIndex);
-        currentIndex += part.length;
+        currentIndex += part?.length;
 
         if (removeAccents(part.toLowerCase()) === normalizedSearchText) {
           return (

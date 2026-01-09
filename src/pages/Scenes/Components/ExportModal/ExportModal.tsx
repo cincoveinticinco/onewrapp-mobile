@@ -182,7 +182,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ modalIsOpen, setModaIsOpen, h
     <EditionModal
       title="Export Scenes"
       formInputs={modalInputs}
-      handleEdition={(values: any) => handleSubmit(values, getListOptions(selectedFilter).length)}
+      handleEdition={(values: any) => handleSubmit(values, getListOptions(selectedFilter)?.length)}
       isOpen={modalIsOpen}
       setIsOpen={handleModalClose}
     />

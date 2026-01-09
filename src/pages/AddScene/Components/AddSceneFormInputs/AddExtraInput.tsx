@@ -31,11 +31,11 @@ const AddExtraInput: React.FC<AddExtraInputProps> = ({
     setSelectedExtras(updatedExtras);
   };
 
-  const contentStyle = selectedExtras.length === 0 ? 'ion-no-padding' : '';
+  const contentStyle = selectedExtras?.length === 0 ? 'ion-no-padding' : '';
 
   return (
     <IonCardContent className={contentStyle}>
-      {filterSelectedExtras.length > 0 ? (
+      {filterSelectedExtras?.length > 0 ? (
         <IonList className="ion-no-padding ion-no-margin">
           {filterSelectedExtras.map((extra) => (
             <IonItemSliding key={`extra-item-category-${categoryName}-${extra.extraName}`}>

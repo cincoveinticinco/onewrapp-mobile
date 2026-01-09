@@ -142,7 +142,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   const [mapInitialized, setMapInitialized] = useState(false);
 
   useIonViewDidEnter(() => {
-    if (shootingInfo.locations.length > 0 && mapRef.current) {
+    if (shootingInfo.locations?.length > 0 && mapRef.current) {
       const lat = shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0;
       const lng = shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0;
 
@@ -207,7 +207,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   };
 
   useEffect(() => {
-    if (shootingInfo.locations.length > 0) {
+    if (shootingInfo.locations?.length > 0) {
       setFirstLocationLat(shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0);
       setFirstLocationLng(shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0);
     }
@@ -236,7 +236,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
       <IonRow>
         <IonCol sizeSm="10" sizeXs='12'>
           {
-            shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
+            shootingInfo.locations?.length > 0 && firstLocationLat && firstLocationLng ? (
               <div className="map-container">
                 <GoogleMapComponent
                   locations={[...shootingInfo.locations.map(loc => ({ ...loc, locationTypeId: loc.locationTypeId ?? 0, locationName: loc.locationName ?? '' })), ...shootingInfo.hospitals.map(hosp => ({ ...hosp, locationTypeId: hosp.locationTypeId ?? 0, locationName: hosp.locationName ?? '' }))]}
@@ -302,7 +302,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               <ShootingInfoLabels info={separateTimeOrPages(shootingInfo.min).main} symbol={separateTimeOrPages(shootingInfo.min).symbol} title="Minutes" />
             </IonCol>
             <IonCol size="auto">
-              <ShootingInfoLabels info={shootingInfo.locations.length.toString()} title="Locations" />
+              <ShootingInfoLabels info={shootingInfo.locations?.length.toString()} title="Locations" />
             </IonCol>
             <IonCol size="auto">
               <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />

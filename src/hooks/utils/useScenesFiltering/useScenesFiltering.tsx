@@ -7,16 +7,14 @@ import { DatabaseContextProps } from "../../../context/Database/types/Database.t
 import useCombinedScenesWithShootings from "../../database/useCombinedScenesWithShootings/useCombinedScenesWithShootings";
 
 export const useScenesFiltering = (searchText: string) => {
-  const { projectId, initialReplicationFinished } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions } = useContext<any>(ScenesContext);
   const { combinedData: offlineScenes, isFetching: scenesAreLoading } = useCombinedScenesWithShootings();
 
   const [filteredScenes, setFilteredScenes] = useState<any[]>([]);
-  const [renderScenes, setRenderScenes] = useState<boolean>(false);
+  const [renderScenes, setRenderScenes] = useState<boolean>(true);
 
-  useEffect(() => {
-    setRenderScenes(initialReplicationFinished);
-  }, [initialReplicationFinished]);
+  // Removed initialReplicationFinished dependency as it no longer exists
 
   useEffect(() => {
     if (!offlineScenes) return;
@@ -31,7 +29,7 @@ export const useScenesFiltering = (searchText: string) => {
   }, [offlineScenes, selectedFilterOptions, selectedSortOptions, projectId, renderScenes]);
 
   useEffect(() => {
-    if (searchText.length > 0) {
+    if (searchText?.length > 0) {
       const filterCriteria = {
         ...selectedFilterOptions,
         $or: {

@@ -7,8 +7,8 @@ import secondsToMinSec from "./secondsToMinSec";
 
 // Función para calcular las métricas para un conjunto de escenas
 export const calculateMetrics = (scenes: SceneDocType[]) => {
-  const totalScenes = scenes.length;
-  const totalProtection = scenes.filter(scene => scene.protectionType !== null).length;
+  const totalScenes = scenes?.length;
+  const totalProtection = scenes.filter(scene => scene.protectionType !== null)?.length;
   
   // Calcular minutos totales
   const totalSeconds = scenes.reduce((acc, scene) => acc + (scene.estimatedSeconds || 0), 0);
@@ -45,7 +45,7 @@ export const getNumberOfDays = (stripboardHasScenes: StripboardHasScene) => {
     return acc;
   }, []);
 
-  return uniqueDays.length;
+  return uniqueDays?.length;
 };
 
 export const getTotalShootingDays = (stripboardHasScenes: StripboardHasScene) => {
@@ -57,7 +57,7 @@ export const getTotalShootingDays = (stripboardHasScenes: StripboardHasScene) =>
     return acc;
   }, []);
 
-  return uniqueUnitsDayNumberCombination.length;
+  return uniqueUnitsDayNumberCombination?.length;
 };
 
 export const getScenesInUnit = (unitId: number, stripboardHasScenes: StripboardHasScene, scenes: SceneDocType[], dayNumber?: number): SceneDocType[]  => {
@@ -134,7 +134,7 @@ export const getStripboardDaysInWeek = (weekNumber: number, stripboardHasScenes:
 };
 
 export const getStripboardWeeks = (stripboardHasScenes: StripboardHasScene, stripboardStartDate: string, scenes: SceneDocType[], units: UnitDocType[]): StripboardWeeks[] => {
-  if (!stripboardHasScenes || !stripboardHasScenes.length || !stripboardStartDate) {
+  if (!stripboardHasScenes || !stripboardHasScenes?.length || !stripboardStartDate) {
     return [];
   }
 
@@ -156,7 +156,7 @@ export const getStripboardWeeks = (stripboardHasScenes: StripboardHasScene, stri
     const metrics = calculateMetrics(weekScenes);
     
     // Calcular totalDays y totalUnits
-    const totalDays = days.length;
+    const totalDays = days?.length;
     const totalUnits = new Set(days.flatMap(day => day.units.map(unit => unit.unitId))).size;
     
     weeks.push({

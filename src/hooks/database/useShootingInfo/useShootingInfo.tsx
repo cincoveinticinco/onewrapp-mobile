@@ -68,7 +68,7 @@ export const useShootingInfo = () => {
   
     return {
       sets: setNames.size,
-      scenes: scenesOnly.length,
+      scenes: scenesOnly?.length,
       pages: floatToFraction(totalPages),
       min: secondsToMinSec(totalTime),
     };
@@ -166,7 +166,7 @@ export const useShootingInfo = () => {
         hospitals: shooting._data.hospitals,
         advanceCalls: shooting._data.advanceCalls,
         meals: shooting._data.meals,
-        protectedScenes: scenesData?.filter((scene: SceneDocType) => scene.protectionType).length || 0,
+        protectedScenes: scenesData?.filter((scene: SceneDocType) => scene.protectionType)?.length || 0,
       };
       console.log('Time for creating shooting info:', new Date().getTime() - t7);
   
@@ -487,7 +487,7 @@ export const useShootingInfo = () => {
   const addNewBanner = async (banner: any) => {
     try {
       const bannerCopy = { ...banner };
-      bannerCopy.position = shootingData.mergedSceneBanners.length;
+      bannerCopy.position = shootingData.mergedSceneBanners?.length;
       // Generamos un ID temporal único
       bannerCopy.id = null;
       bannerCopy.fontSize = parseInt(bannerCopy.fontSize);
@@ -515,7 +515,7 @@ export const useShootingInfo = () => {
 
     const advanceCallCopy = { ...advanceCall };
 
-    advanceCallCopy.id = `advance-call-${shootingData.shotingInfo.advanceCalls.length + 1}`;
+    advanceCallCopy.id = `advance-call-${shootingData.shotingInfo.advanceCalls?.length + 1}`;
     advanceCallCopy.shootingId = parseInt(shootingId);
     advanceCallCopy.createdAt = new Date().toISOString();
     advanceCallCopy.updatedAt = new Date().toISOString();

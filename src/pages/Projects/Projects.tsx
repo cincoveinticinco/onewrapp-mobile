@@ -42,7 +42,7 @@ const Projects: React.FC = () => {
 
   useEffect(() => {
     // Additional fallback to ensure loading state is managed
-    if (!isFetching && projects.length > 0) {
+    if (!isFetching && projects?.length > 0) {
       setIsLoading(false);
     }
   }, [isFetching, projects]);

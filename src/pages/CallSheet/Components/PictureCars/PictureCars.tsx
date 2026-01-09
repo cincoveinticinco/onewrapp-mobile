@@ -80,7 +80,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
 
   if (isOpen) return <AddNewModal />;
 
-  if (!pictureCars.length) {
+  if (!pictureCars?.length) {
     return (
       <NoRegisters
         addNew={() => setIsOpen(true)}

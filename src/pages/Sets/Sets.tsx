@@ -88,7 +88,7 @@ const Sets: React.FC<{
   }, [processedSets, setsSearchText]);
 
   useEffect(() => {
-    if (processedLocations.length > 0 && filteredSets.length > 0) {
+    if (processedLocations?.length > 0 && filteredSets?.length > 0) {
       processedLocations.forEach((location: any) => {
         const filteredSetsByLocation = filteredSets.filter((set: any) => {
           if (location.locationName === 'NO LOCATION') {
@@ -205,13 +205,13 @@ const Sets: React.FC<{
                     {displayedLocations.map((location) => (
                       <div key={`location${location.locationName}`}>
                         {
-                        sets[location.locationName].length > 0
+                        sets[location.locationName]?.length > 0
                         && (
                         <LocationSetCard
                           location={location}
                           searchText={setsSearchText}
                           setsQuantity={
-                          sets[location.locationName] ? sets[location.locationName].length : 0
+                          sets[location.locationName] ? sets[location.locationName]?.length : 0
                           }
                           onClick={() => toggleDropDown(location.locationName)}
                           isOpen={dropDownIsOpen[location.locationName]}

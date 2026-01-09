@@ -72,7 +72,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       <IonCardHeader class="ion-no-padding">
         <IonCardSubtitle class="project-card-subtitle">
           {`${project.id}.`}
-          {project.projName.length > 9 ? `${project.projName.substring(0, 9)}...` : project.projName}
+          {project.projName?.length > 9 ? `${project.projName.substring(0, 9)}...` : project.projName}
           {' '}
           {project.season ? `S${project.season}` : null}
         </IonCardSubtitle>

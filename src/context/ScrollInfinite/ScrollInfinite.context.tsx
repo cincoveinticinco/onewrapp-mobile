@@ -18,7 +18,7 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({
   const [isInfiniteDisabled, setInfiniteDisabled] = React.useState(false);
 
   const loadMoreData = () => {
-    if (currentBatch * batchSize >= filteredData.length) {
+    if (currentBatch * batchSize >= filteredData?.length) {
       setInfiniteDisabled(true);
       return;
     }
@@ -45,7 +45,7 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({
   }, [thisPath]);
 
   useEffect(() => {
-    if (filteredData.length > currentBatch * batchSize) {
+    if (filteredData?.length > currentBatch * batchSize) {
       setInfiniteDisabled(false);
     }
   }, [filteredData]);
@@ -53,7 +53,7 @@ const ScrollInfiniteContext: React.FC<ScrollInfiniteContextProps> = ({
   return (
     <div>
       {children}
-      {filteredData.length > batchSize && (
+      {filteredData?.length > batchSize && (
       <IonInfiniteScroll onIonInfinite={handleInfinite} disabled={isInfiniteDisabled} threshold="100px">
         <IonInfiniteScrollContent loadingText="Loading more elements..." />
       </IonInfiniteScroll>

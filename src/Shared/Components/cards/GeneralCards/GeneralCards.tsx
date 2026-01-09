@@ -243,7 +243,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
 
     return (
       <>
-        {(headerColumn || switchColumns.length > 0) && (
+        {(headerColumn || switchColumns?.length > 0) && (
           <IonCardHeader 
             style={{
               backgroundColor: !editMode ? row?.backgroundColor : 'var(--ion-color-dark)',
@@ -260,7 +260,7 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
                   {renderField(row, headerColumn, rowIndex)}
                 </IonCardTitle>
               )}
-              {switchColumns.length > 0 && editMode && (
+              {switchColumns?.length > 0 && editMode && (
                 <div className="card-header-switches">
                   {switchColumns.map(column => (
                     <div key={column.key} className="header-switch">

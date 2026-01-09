@@ -1,0 +1,251 @@
+import { replicateRxCollection } from 'rxdb/plugins/replication';
+import { BehaviorSubject, interval } from 'rxjs';
+import { filter, map, withLatestFrom } from 'rxjs/operators';
+import environment from '../../../environment';
+import AppDataBase from './database';
+
+const POLL_INTERVAL_MS = 100000;
+
+export default class HttpReplicator {
+  private database: AppDataBase;
+
+  private collections: any;
+
+  private projectId: (number | null);
+
+  private lastItem: any;
+
+  public replicationStates: any[] = [];
+
+  public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {});
+
+  private onProgress?: (percentage: number) => void;
+  private pollingEnabled$?: BehaviorSubject<boolean>;
+
+  constructor(
+    database: any, 
+    collections: any, 
+    projectId: (number | null) = null, 
+    lastItem: any = null, 
+    getToken: () => Promise<string> = () => new Promise<string>((resolve) => {}),
+    onProgress?: (percentage: number) => void,
+    pollingEnabled$?: BehaviorSubject<boolean>
+  ) {
+    this.database = database;
+    this.collections = collections;
+    this.projectId = projectId;
+    this.lastItem = lastItem;
+    this.getToken = getToken;
+    this.onProgress = onProgress;
+    this.pollingEnabled$ = pollingEnabled$;
+  }
+
+  public updateOnProgressCallback(onProgress: (percentage: number) => void): void {
+    this.onProgress = onProgress;
+  }
+
+  public stopReplication() {
+    this.replicationStates.forEach((replicationState) => {
+      if (replicationState) {
+        replicationState.cancel();
+      }
+    });
+    this.replicationStates = [];
+  }
+
+  private async setupHttpReplication(collection: any, projectId: (number | null), lastItem: any = null, pull: boolean, push: boolean) {
+    const currentTimestamp = new Date().toISOString();
+    const { getToken } = this;
+
+    try {
+      const replicationConfig: any = {
+        collection: this.database[collection.SchemaName() as keyof AppDataBase],
+        replicationIdentifier: `my-http-replication-${collection.SchemaName()}`,
+        retryTime: 1000 * 30,
+      };
+
+      // Configuración del PULL
+      if (pull) {
+        const self = this;
+        const poll$ = this.pollingEnabled$
+          ? interval(POLL_INTERVAL_MS).pipe(
+              withLatestFrom(this.pollingEnabled$),
+              filter(([, enabled]) => enabled),
+              map(() => 'RESYNC' as const)
+            )
+          : undefined;
+        replicationConfig.pull = {
+          batchSize: 100,
+          stream$: poll$,
+          async handler(checkpointOrNull: any, batchSize: number) {
+            if(projectId) {
+              const collectionName = collection.getSchemaName();
+              console.warn(`projectId is ${projectId} used for ${collectionName} pull!`);
+            }
+            const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
+            const token = await getToken();
+            const id = checkpointOrNull ? checkpointOrNull.id : 0;
+            const previousProjectId = checkpointOrNull?.previousProjectId ? checkpointOrNull?.previousProjectId : null;
+            const collectionName = collection.getSchemaName();
+
+            const url = new URL(`${environment.URL_PATH}/${collection.getEndpointPullName()}`);
+            url.searchParams.append('updated_at', updatedAt);
+            url.searchParams.append('id', id.toString());
+            url.searchParams.append('batch_size', batchSize.toString());
+            if (collection.SchemaName() !== 'projects') {
+              url.searchParams.append('previous_project_id', (previousProjectId ? previousProjectId.toString() :  projectId));
+            }
+            if (projectId) {
+              url.searchParams.append('project_id', projectId.toString());
+            }
+            if (lastItem) {
+              url.searchParams.append('last_item_id', lastItem.id.toString());
+              url.searchParams.append('last_item_updated_at', lastItem.updatedAt);
+            }
+
+            const response = await fetch(url.toString(), {
+              headers: {
+                owsession: token,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error in ${collection.SchemaName()} pull! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Emitir progreso si viene del backend
+            if (data.progress_percentage !== undefined && self.onProgress) {
+              console.log(`📊 Backend progress received: ${data.progress_percentage}% for ${collectionName}`);
+              self.onProgress(data.progress_percentage);
+            }
+            
+            return {
+              documents: data[collectionName],
+              checkpoint: data.checkpoint,
+            };
+          },
+        };
+      }
+
+      // Configuración del PUSH
+      if (push) {
+        replicationConfig.push = {
+          async handler(changeRows: any): Promise<any> {
+            const token = await getToken();
+            const rawResponse = await fetch(`${environment.URL_PATH}/${collection.getEndpointPushName()}`, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                owsession: token,
+              },
+              body: JSON.stringify({ changeRows }),
+            });
+
+            if (!rawResponse.ok) {
+              throw new Error(`HTTP error in ${collection.SchemaName()} push! status: ${rawResponse.status}`);
+            }
+
+            const conflictsArray = await rawResponse.json();
+            return conflictsArray;
+          },
+        };
+      }
+
+      const replicationState = replicateRxCollection(replicationConfig);
+
+      // Crear una promesa que se rechazará si hay un error en la replicación
+      const errorPromise = new Promise((_, reject) => {
+        replicationState.error$.subscribe((err) => {
+          reject(new Error(`Replication error in ${collection.SchemaName()}: ${err.message}`));
+        });
+      });
+
+      // Esperar tanto la replicación inicial como posibles errores
+      await Promise.race([
+        this.monitorReplicationStatus(replicationState),
+        errorPromise
+      ]);
+
+      this.replicationStates.push(replicationState);
+      return replicationState;
+
+    } catch (error: any) {
+      // Cancelar la replicación si existe y hubo un error
+      this.stopReplication();
+      throw new Error(`Replication failed for ${collection.SchemaName()}: ${error.message}`);
+    }
+  }
+
+  public async startReplication(pull: boolean = true, push: boolean = true) {
+    try {
+      const promises = this.collections.map((collection: any) => 
+        this.setupHttpReplication(collection, this.projectId, this.lastItem, pull, push)
+      );
+      await Promise.all(promises);
+    } catch (error) {
+      this.stopReplication(); // Asegurar que todas las replicaciones se detengan si hay un error
+      throw error; // Propagar el error
+    }
+  }
+
+  public async monitorReplicationStatus(replicationState: any) {
+    try {
+      await replicationState.awaitInitialReplication();
+      return true;
+    } catch (error: any) {
+      throw new Error(`Initial replication failed: ${error.message}`);
+    }
+  }
+
+  public async resyncReplication(): Promise<void> {
+    if (this.replicationStates && this.replicationStates?.length > 0) {
+      const resyncPromises = this.replicationStates.map(async (replicationState) => {
+        replicationState.reSync();
+        // Esperar a que termine la resincronización
+        await this.monitorReplicationStatus(replicationState);
+      });
+      
+      await Promise.all(resyncPromises);
+    }
+  }
+
+  public async cancelReplication() {
+    const cancelPromises = this.replicationStates.map(replicationState => {
+      return new Promise(resolve => {
+        try {
+          replicationState.cancel();
+          
+          // Wait for cancel to complete
+          let subscription: any = null;
+          subscription = replicationState.canceled$.subscribe(() => {
+            if (subscription) subscription.unsubscribe();
+            resolve(true);
+          });
+          
+          // Fallback in case cancel doesn't trigger event
+          setTimeout(() => {
+            if (subscription) subscription.unsubscribe();
+            resolve(false);
+          }, 1000);
+        } catch (e) {
+          console.warn('Error in cancel replication:', e);
+          resolve(false);
+        }
+      });
+    });
+    
+    await Promise.all(cancelPromises);
+    this.replicationStates = [];
+    console.log('Replication fully cancelled');
+  }
+
+  public removeReplication() {
+    this.replicationStates.forEach((replicationState) => {
+      replicationState.cancel();
+    });
+    this.replicationStates = [];
+  }
+}

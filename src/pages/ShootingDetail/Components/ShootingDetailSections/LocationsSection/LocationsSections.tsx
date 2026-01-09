@@ -46,7 +46,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
-      {locations.length > 0 ? (
+      {locations?.length > 0 ? (
         locations.map((location, locationIndex) => (
           <div key={`${location.lat ?? ''}${location.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
             <InputAlert

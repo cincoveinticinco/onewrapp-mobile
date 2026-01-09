@@ -56,13 +56,13 @@ const useProcessedSetsAndLocations = () => {
 
   const processSet = useCallback((setName: string) => {
     const setScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.setName === setName);
-    const charactersLength = setScenes.reduce((acc: number, scene: SceneDataProps) => (scene._data.characters ? acc + scene._data.characters.length : acc), 0);
-    const scenesQuantity = setScenes.length;
-    const protectionQuantity = setScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
+    const charactersLength = setScenes.reduce((acc: number, scene: SceneDataProps) => (scene._data.characters ? acc + scene._data.characters?.length : acc), 0);
+    const scenesQuantity = setScenes?.length;
+    const protectionQuantity = setScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length;
     const pagesSum = setScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.pages || 0), 0);
     const estimatedTimeSum = setScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.estimatedSeconds || 0), 0);
-    const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber').length;
-    const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
+    const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber')?.length;
+    const participation = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(2);
     const { locationName } = setScenes[0]._data;
 
     return {
@@ -91,12 +91,12 @@ const useProcessedSetsAndLocations = () => {
 
     const processedLocationsData = (locationName: string) => {
       const locationScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.locationName === locationName);
-      const scenesQuantity = locationScenes.length;
-      const protectionQuantity = locationScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION).length;
+      const scenesQuantity = locationScenes?.length;
+      const protectionQuantity = locationScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length;
       const pagesSum = locationScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.pages || 0), 0);
       const estimatedTimeSum = locationScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.estimatedSeconds || 0), 0);
-      const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber').length;
-      const participation = ((scenesQuantity / offlineScenes.length) * 100).toFixed(2);
+      const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber')?.length;
+      const participation = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(2);
 
       return {
         locationName,

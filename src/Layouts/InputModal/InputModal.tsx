@@ -117,7 +117,7 @@ const InputModal: React.FC<InputModalProps> = ({
           <IonContent color="tertiary">
             <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={true} />
             {
-              listOfOptionsCopy.length === 0
+              listOfOptionsCopy?.length === 0
               && (
                 <p className="no-items-message" style={{ marginTop: '10px', border: '1px solid red' }}>
                   There are no items to show
@@ -125,8 +125,8 @@ const InputModal: React.FC<InputModalProps> = ({
               )
             }
             {
-              searchText.length > 0
-              && filteredOptions.length === 0
+              searchText?.length > 0
+              && filteredOptions?.length === 0
               && (
                 <p className="no-items-message">
                   There are no coincidences. Do you want to
@@ -147,7 +147,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 uncheckedFilteredOptions={uncheckedFilteredOptions}
               />
               {
-                filteredOptions.length === 0 && canCreateNew && searchText.trim().length > 0
+                filteredOptions?.length === 0 && canCreateNew && searchText.trim()?.length > 0
                 && (
                   <div>
                     <p className="add-new-option-description no-items-message">
@@ -171,7 +171,7 @@ const InputModal: React.FC<InputModalProps> = ({
               }
               <div className='buttons-wrapper'>
                 {
-                  filteredOptions.length > 0
+                  filteredOptions?.length > 0
                   && (
                     <OutlinePrimaryButton
                       buttonName="SAVE"
@@ -182,7 +182,7 @@ const InputModal: React.FC<InputModalProps> = ({
                   )
                 }
                 {
-                  filteredOptions.length > 0
+                  filteredOptions?.length > 0
                   && (
                     <OutlinePrimaryButton
                       buttonName="CANCEL"

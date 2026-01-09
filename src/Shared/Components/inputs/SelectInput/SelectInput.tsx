@@ -50,13 +50,13 @@ const SelectItem: React.FC<SelectItemProps> = ({
   const mapValueToString = (value: any): string => {
     if (Array.isArray(value)) {
       return value.map(v => {
-        if (typeof v === 'object' && v !== null && Object.keys(v).length) {
+        if (typeof v === 'object' && v !== null && Object.keys(v)?.length) {
           return v.getValue || v.id || JSON.stringify(v);
         }
         return String(v);
       }).join(', ');
     }
-    if (typeof value === 'object' && value !== null && Object.keys(value).length) {
+    if (typeof value === 'object' && value !== null && Object.keys(value)?.length) {
       return value.getValue || value.id || JSON.stringify(value);
     }
     return String(value);

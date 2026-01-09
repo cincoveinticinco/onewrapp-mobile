@@ -48,7 +48,7 @@ const useStripboards = ({ projectId }: UseStripboardsProps) => {
         startDate: stripboard.startDate,
         statusId: stripboard.statusId,
         statusString: stripboard.statusId === StripboardStatusesEnum.New ? 'New' : 'Published',
-        totalScenes: stripboardHasScenes.length || 0,
+        totalScenes: stripboardHasScenes?.length || 0,
         totalDays: getNumberOfDays(stripboardHasScenes),
         totalShootingDays: getTotalShootingDays(stripboardHasScenes),
         totalWeeks: getNumberOfWeeks(startDate, stripboardHasScenes),

@@ -259,7 +259,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setSelectedSceneId(sceneId);
   };
 
-  if (paragraphs.length === 0) {
+  if (paragraphs?.length === 0) {
     return (
       <div
         className="script-page"

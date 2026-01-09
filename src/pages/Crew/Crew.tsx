@@ -172,7 +172,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
         <AppLoader />
       ) : (
         <>
-          {filteredDepartments.length === 0 && !isFetching ? (
+          {filteredDepartments?.length === 0 && !isFetching ? (
             <p style={
               {
                 position: 'absolute',
@@ -191,7 +191,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
               const departmentMembers = crewByDepartment[department].filter((member) => member.fullName?.toLowerCase().includes(searchText.toLowerCase())
                 || department.toLowerCase().includes(searchText.toLowerCase()));
 
-              if (departmentMembers.length === 0) return null;
+              if (departmentMembers?.length === 0) return null;
 
               return (
                 <div key={department}>
@@ -205,7 +205,7 @@ const Crew: React.FC<{permissionType?: number | null}> = ({ permissionType }) =>
                     {department}
                     {' '}
                     (
-                    {departmentMembers.length}
+                    {departmentMembers?.length}
                     )
                     <IonIcon
                       color={isDropDownOpen[department] ? 'primary' : 'light'}

@@ -114,7 +114,7 @@ const SceneInfoLabels: React.FC<SceneInfoLabelsProps> = ({
       ? [...(validators || []), isRequiredValidator]
       : validators;
   
-    if (effectiveValidators && effectiveValidators.length > 0) {
+    if (effectiveValidators && effectiveValidators?.length > 0) {
       for (let validator of effectiveValidators) {
         const result = validator(value);
         if (result !== true) {

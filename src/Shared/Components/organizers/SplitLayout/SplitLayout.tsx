@@ -23,7 +23,7 @@ const SplitLayout: React.FC<SplitLayoutProps> = ({ children}) => {
   };
 
   const handleTouchStart = (ev: React.TouchEvent) => {
-    setAllowDrag(ev.touches.length === 2);
+    setAllowDrag(ev.touches?.length === 2);
   };
 
   const handleMouseUp = () => {

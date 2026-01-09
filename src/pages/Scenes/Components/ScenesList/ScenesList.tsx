@@ -26,10 +26,10 @@ const ScenesList: React.FC<{
     setDisplayedScenes([...filteredScenes.slice(0, 20)]); // Clonar para forzar actualización
   }, [filteredScenes]);
 
-  if (filteredScenes.length === 0) {
+  if (filteredScenes?.length === 0) {
     return (
       <NoScenesMessage 
-        hasFilters={Object.keys(selectedFilterOptions).length > 0}
+        hasFilters={Object.keys(selectedFilterOptions)?.length > 0}
         resetFilters={() => setSelectedFilterOptions({})}
       />
     );

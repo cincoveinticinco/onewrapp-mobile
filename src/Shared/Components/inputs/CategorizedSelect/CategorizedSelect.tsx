@@ -57,7 +57,7 @@ const CategorizedSelect: React.FC<CategorizedSelectProps> = ({
   const currentFieldValue = watchValue(fieldKeyName);
 
   const handleSetValues = (selectedValues: { value: string | number; category: string | null }[]) => {
-    if (selectedValues.length > 0) {
+    if (selectedValues?.length > 0) {
       const selectedValue = selectedValues[0];
       setValue(fieldKeyName, selectedValue.value);
       console.log(watchValue(fieldKeyName));

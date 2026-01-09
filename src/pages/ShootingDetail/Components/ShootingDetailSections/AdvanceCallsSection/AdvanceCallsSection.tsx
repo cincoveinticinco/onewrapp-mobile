@@ -38,7 +38,7 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
-      {advanceCalls.length > 0 ? (
+      {advanceCalls?.length > 0 ? (
         advanceCalls.map((call) => (
           <AdvanceCallInfo
             key={call.id}

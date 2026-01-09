@@ -8,7 +8,7 @@ const DropDownInfo = ({
   categories, scene, title, characters = false, extras = false, elements = false, notes = false,
 }: any) => {
   const [open, setOpen] = useState<boolean>(true);
-  const valuesByCategory = characters ? scene.characters.length === 0 : extras ? scene.extras.length === 0 : elements ? scene.elements.length === 0 : notes ? scene.notes.every((note: any) => note.note === null) : true;
+  const valuesByCategory = characters ? scene.characters?.length === 0 : extras ? scene.extras?.length === 0 : elements ? scene.elements?.length === 0 : notes ? scene.notes.every((note: any) => note.note === null) : true;
 
   const getUniqueCategoriesFromScene = (scene: any, characters: boolean, extras: boolean, elements: boolean) => {
     const categories = characters ? scene.characters.map((character: any) => character.categoryName) : extras ? scene.extras.map((extra: any) => extra.categoryName) : elements ? scene.elements.map((element: any) => element.categoryName) : [];

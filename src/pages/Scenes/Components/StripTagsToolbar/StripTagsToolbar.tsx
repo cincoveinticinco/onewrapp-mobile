@@ -37,7 +37,7 @@ const StripTagsToolbar = () => {
 
   return (
     <>
-      {filterOptionsStrings && filterOptionsStrings.length > 0 && (
+      {filterOptionsStrings && filterOptionsStrings?.length > 0 && (
         <IonList color="tertiary" className="list-of-tags-filters">
           {filterOptionsStrings.map((string: any) => (
             <StripTag key={`strip-tag-${string}`} tagKey={`${Math.random()}`} filterOption={string} />

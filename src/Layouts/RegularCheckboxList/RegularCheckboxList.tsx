@@ -77,7 +77,7 @@ const RegularList: React.FC<RegularListProps> = ({
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
             checked={memoizedIsOptionChecked(option)}
-            disabled={!multipleSelections && checkedSelectedOptions.length > 0}
+            disabled={!multipleSelections && checkedSelectedOptions?.length > 0}
           >
             <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
           </IonCheckbox>

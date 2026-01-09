@@ -195,10 +195,10 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           category: category?.category 
         }))
     );
-    if (!multiple && selectedValues.length > 1) {
+    if (!multiple && selectedValues?.length > 1) {
       // Para selección única, solo tomamos el último valor seleccionado
-      setValues([selectedValues[selectedValues.length - 1]]);
-    } else if (selectedValues.length > 0) {
+      setValues([selectedValues[selectedValues?.length - 1]]);
+    } else if (selectedValues?.length > 0) {
       setValues(selectedValues);
     } else {
       setShowError(true);
@@ -223,7 +223,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
   };
   
   const handleSave = () => {
-    if (filteredOptions.every(category => category.options.length === 0)) {
+    if (filteredOptions.every(category => category.options?.length === 0)) {
       createNew();
     } else {
       onSave();
@@ -241,7 +241,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
     >
       <IonHeader>
         <ModalToolbar
-          handleSave={filteredOptions.every(category => category.options.length === 0) ? createNew : onSave}
+          handleSave={filteredOptions.every(category => category.options?.length === 0) ? createNew : onSave}
           toolbarTitle={`${optionName} ${!multiple ? '(Single Selection)' : ''}`}
           handleReset={clearSelections}
           customButtons={[]}
@@ -253,7 +253,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
       <IonContent color="tertiary">
         <div className='sections-container'>
           {/* Selected Options Section */}
-          {getSelectedOptions().length > 0 && (
+          {getSelectedOptions()?.length > 0 && (
             <Section title="Selected Options" open={openSelectedOptions} setOpen={setOpenSelectedOptions}>
               {getSelectedOptions().map((option) => (
                 <div 
@@ -284,7 +284,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           )}
 
           {/* Main Options Section */}
-          {filteredOptions.every(category => category.options.length === 0) ? (
+          {filteredOptions.every(category => category.options?.length === 0) ? (
             searchText.trim() ? (          <div className="no-items-card">
               <p className="no-items-card-title">
                 <a>{searchText.toUpperCase()}</a> DOES NOT EXIST. DO YOU WANT TO CREATE {selectedCategory && `IN (${selectedCategory.toUpperCase()})`} ?
@@ -326,7 +326,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
             )
           ) : (
             filteredOptions.map((category) => (
-              category.options.filter(o => !o.checked).length > 0 && (
+              category.options.filter(o => !o.checked)?.length > 0 && (
                 <Section 
                   key={`category-option-${category.category}`}
                   title={category.category || 
@@ -366,7 +366,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           )}
             <div className='buttons-wrapper'>
               {
-                !filteredOptions.every(category => category.options.length === 0)
+                !filteredOptions.every(category => category.options?.length === 0)
                 && (
                 <OutlinePrimaryButton
                   buttonName="SAVE"
@@ -377,7 +377,7 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 )
               }
               {
-                !filteredOptions.every(category => category.options.length === 0)
+                !filteredOptions.every(category => category.options?.length === 0)
                 && (
                 <OutlinePrimaryButton
                   buttonName="CANCEL"

@@ -61,11 +61,11 @@ const ScenesTotals: React.FC<ScenesTotalsProps> = ({
 
     const uniqueSets = getUniqueValuesByKey(scenes, 'setName')
 
-    totalCharacters = uniqueCharacters.length;
-    totalExtras = uniqueExtras.length;
-    totalElements = uniqueElements.length;
-    totalLocations = uniqueLocations.length;
-    totalSets = uniqueSets.length;
+    totalCharacters = uniqueCharacters?.length;
+    totalExtras = uniqueExtras?.length;
+    totalElements = uniqueElements?.length;
+    totalLocations = uniqueLocations?.length;
+    totalSets = uniqueSets?.length;
 
     setSceneTotals({
       totalScenes,

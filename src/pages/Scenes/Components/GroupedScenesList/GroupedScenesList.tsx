@@ -54,7 +54,7 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
       return;
     }
     
-    const totalInCategory = categorizedScenes[category].length;
+    const totalInCategory = categorizedScenes[category]?.length;
     
     setVisibleScenesPerCategory(prev => {
       const currentCount = prev[category] || 10;
@@ -76,22 +76,22 @@ const GroupedScenesList: React.FC<GroupedScenesListProps> = ({
   }, []);
 
   const handleInfiniteScroll = useCallback((event: CustomEvent<void>) => {
-    const nextCategoriesCount = Math.min(displayedCategoriesCount + 5, sortedCategoryKeys.length);
+    const nextCategoriesCount = Math.min(displayedCategoriesCount + 5, sortedCategoryKeys?.length);
     setDisplayedCategoriesCount(nextCategoriesCount);
 
     setTimeout(() => {
       (event.target as HTMLIonInfiniteScrollElement).complete();
 
-      if (nextCategoriesCount >= sortedCategoryKeys.length) {
+      if (nextCategoriesCount >= sortedCategoryKeys?.length) {
         setInfiniteDisabled(true);
       }
     }, 500);
-  }, [displayedCategoriesCount, sortedCategoryKeys.length]);
+  }, [displayedCategoriesCount, sortedCategoryKeys?.length]);
 
-  if (Object.keys(categorizedScenes).length === 0) {
+  if (Object.keys(categorizedScenes)?.length === 0) {
     return (
       <NoScenesMessage
-        hasFilters={Object.keys(selectedFilterOptions).length > 0}
+        hasFilters={Object.keys(selectedFilterOptions)?.length > 0}
         resetFilters={() => setSelectedFilterOptions({})}
       />
     );

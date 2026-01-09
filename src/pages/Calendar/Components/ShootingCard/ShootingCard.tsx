@@ -56,7 +56,7 @@ const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> 
                 {' '}
                 /
                 {' '}
-                {shooting.scenes.length}
+                {shooting.scenes?.length}
               </p>
             )
           }

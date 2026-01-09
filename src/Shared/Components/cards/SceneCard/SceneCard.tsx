@@ -187,7 +187,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
     const { extras } = scene;
     let extrasString = '';
 
-    if (extras && extras.length > 0) {
+    if (extras && extras?.length > 0) {
       extras.forEach((extra) => {
         if (extra.extraName) {
           extrasString += `${extra.extraName.toUpperCase()}, `;

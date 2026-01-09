@@ -134,7 +134,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 
   return (
     <>
-      {mergedScenesShoot.length > 0 ? (
+      {mergedScenesShoot?.length > 0 ? (
         <GeneralCards
           columns={tableColumns}
           data={mergedScenesShoot}

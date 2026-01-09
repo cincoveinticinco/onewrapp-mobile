@@ -80,8 +80,8 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
   };
 
   const getObservedElementsInCategoryLength = (category: string) => {
-    if (category === EmptyEnum.NoCategory) return observedElements.filter(e => !e.categoryName).length;
-    return observedElements.filter(e => e.categoryName === category).length;
+    if (category === EmptyEnum.NoCategory) return observedElements.filter(e => !e.categoryName)?.length;
+    return observedElements.filter(e => e.categoryName === category)?.length;
   };
 
   const openCategoryEditor = (category: string) => () => {

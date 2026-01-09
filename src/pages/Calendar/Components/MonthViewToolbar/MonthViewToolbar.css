@@ -1,23 +1,46 @@
 .date-picker {
   position: fixed;
-  right: 0;
+  top: calc(env(safe-area-inset-top) + 72px);
+  right: clamp(8px, 2vw, 16px);
+  z-index: 30;
+  width: min(360px, 92vw);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
 
-  --ion-color-base: var(--ion-color-primary);
-  --ion-color-contrast: var(--ion-color-primary-contrast);
-  --background: var(--ion-color-light);
-  --color: var(--ion-color-dark);
-
-  color: var(--ion-color-tertiary);
+  --background: rgba(10, 24, 32, 0.94);
+  --color: #f2f7fa;
+  --wheel-fade-background: rgba(10, 24, 32, 0.7);
+  --wheel-highlight-background: rgba(255, 214, 102, 0.18);
+  --wheel-highlight-border-color: rgba(255, 214, 102, 0.4);
+  --wheel-highlight-border-radius: 10px;
+  --padding-start: 8px;
+  --padding-end: 8px;
 
   &::part(wheel-item) {
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
   }
 
   &::part(wheel-item active) {
-    color: var(--ion-color-primary);
+    color: var(--ion-color-yellow);
+    font-weight: 700;
   }
 
   button {
     text-transform: uppercase !important;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 600px) {
+  .date-picker {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(320px, 92vw);
   }
 }

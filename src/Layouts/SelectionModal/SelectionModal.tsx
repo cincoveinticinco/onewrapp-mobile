@@ -267,8 +267,8 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
         <IonContent color="tertiary">
           <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={true} />
           {
-            searchText.length > 0
-            && filteredOptions.length === 0
+            searchText?.length > 0
+            && filteredOptions?.length === 0
             && (
             <p className="no-items-message">
               There are no coincidences. Do you want to
@@ -290,7 +290,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
               optionsWithStyles={listOfOptions}
             />
             {
-              filteredOptions.length === 0 && canCreateNew
+              filteredOptions?.length === 0 && canCreateNew
                 && (
                 <p className="no-items-message">
                   There are no coincidences. Do you want to create a new one ?
@@ -302,7 +302,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
                 )
               }
             {
-              filteredOptions.length > 0
+              filteredOptions?.length > 0
               && (
               <OutlinePrimaryButton
                 buttonName="SAVE"
@@ -314,7 +314,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({
             }
             {
               isMobile
-              && filteredOptions.length > 0
+              && filteredOptions?.length > 0
               && (
               <OutlineLightButton
                 buttonName="CANCEL"

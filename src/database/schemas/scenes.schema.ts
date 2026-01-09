@@ -1,0 +1,187 @@
+import DatabaseSchema from '../core/database_schema';
+import {
+  ProtectionTypeEnumArray,
+  IntOrExtOptionEnumArray,
+  DayOrNightOptionEnumArray,
+  SceneTypeEnum,
+} from '../../Shared/enums/ennums';
+import environment from '../../../environment';
+import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
+import { SceneDocType } from '../../Shared/types/scenes.types';
+
+const sceneSchemaLiteral = {
+  title: 'scene schema',
+  version: 0,
+  type: 'object',
+  primaryKey: 'id',
+  properties: {
+    id: {
+      type: 'string',
+      maxLength: 250,
+    },
+    sceneId: {
+      type: 'number',
+    },
+    projectId: {
+      type: 'number',
+    },
+    episodeNumber: {
+      type: 'string',
+    },
+    sceneNumber: {
+      type: 'string',
+    },
+    sceneType: {
+      type: 'string',
+      enum: [SceneTypeEnum.SCENE, SceneTypeEnum.PROTECTION],
+    },
+    protectionType: {
+      type: ['string', 'null'],
+      enum: [
+        ...ProtectionTypeEnumArray,
+        null,
+      ],
+    },
+    intOrExtOption: {
+      type: ['string', 'null'],
+      enum: [
+        ...IntOrExtOptionEnumArray,
+        null,
+      ],
+    },
+    dayOrNightOption: {
+      type: ['string', 'null'],
+      enum: [
+        ...DayOrNightOptionEnumArray,
+        null,
+      ],
+    },
+    locationName: {
+      type: ['string', 'null'],
+    },
+    setName: {
+      type: ['string', 'null'],
+    },
+    scriptDay: {
+      type: ['string', 'null'],
+    },
+    year: {
+      type: ['string', 'null'],
+    },
+    synopsis: {
+      type: ['string', 'null'],
+    },
+    page: {
+      type: ['string', 'null'],
+    },
+    pages: {
+      type: ['number', 'null'],
+    },
+    estimatedSeconds: {
+      type: ['integer', 'null'],
+    },
+    characters: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          categoryName: { type: ['string', 'null'] },
+          characterName: { type: 'string' },
+          characterNum: { type: ['string', 'null'] },
+        },
+      },
+    },
+    extras: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          categoryName: { type: ['string', 'null'] },
+          extraName: { type: 'string' },
+        },
+      },
+    },
+    elements: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          categoryName: { type: ['string', 'null'] },
+          elementName: { type: 'string' },
+        },
+      },
+    },
+    notes: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: ['number', 'null']},
+          email: { type: ['string', 'null'] },
+          note: { type: ['string', 'null'] },
+          userName: { type: ['string', 'null'] },
+          updatedAt: { type: ['string', 'null'] },
+        },
+      },
+    },
+    updatedAt: {
+      type: 'string',
+    },
+    createdAt: {
+      type: 'string',
+    },
+    createdAtBack: {
+      type: 'string',
+    }
+  },
+  required: ['episodeNumber', 'sceneNumber', 'sceneType', 'setName', 'projectId'],
+} as const;
+
+export const scenesShcemaTyped = toTypedRxJsonSchema(sceneSchemaLiteral);
+
+const sceneSchema: RxJsonSchema<SceneDocType> = sceneSchemaLiteral;
+
+/// SI ES PELICULA EL NUMERO DE EPISODIOS ES 0
+
+const sceneSchemaInput = {
+  scenes: {
+    schema: sceneSchema,
+    checkpointFields: [
+      'id',
+      'updatedAt',
+      'previousProjectId',
+    ],
+    deletedField: 'deleted',
+    headerFields: ['Authorization'],
+  },
+};
+
+export default class ScenesSchema extends DatabaseSchema {
+  static schemaName = 'scenes';
+
+  static endpointPullName = environment.SCENES_ENDPOINT_PULL;
+
+  static endpointPushName = environment.SCENES_ENDPOINT_PUSH;
+
+  getEndpointPullName() {
+    return ScenesSchema.endpointPullName;
+  }
+
+  getEndpointPushName() {
+    return ScenesSchema.endpointPushName;
+  }
+
+  getSchemaName() {
+    return ScenesSchema.schemaName;
+  }
+
+  constructor() {
+    const { schemaName } = ScenesSchema;
+    const schemaInput = sceneSchemaInput;
+    super(schemaName, schemaInput);
+  }
+}
+
+// IF PROTECTION, PROTECTION TYPE IS REQUIRED
+
+// WHITE TEXT AND COLOR BLACK

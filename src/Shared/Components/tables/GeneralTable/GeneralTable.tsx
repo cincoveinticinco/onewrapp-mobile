@@ -222,7 +222,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
       {Object.entries(groupedData).map(([groupKey, groupData]) => (
         // Use groupKey alone as it should already be unique
         <div key={groupKey} className="category-item">
-          {groupBy && renderCategoryDropdown(groupKey, groupData.length)}
+          {groupBy && renderCategoryDropdown(groupKey, groupData?.length)}
           {(!groupBy || !openCategories[groupKey]) && (
             <div className="table-wrapper">
               <table className="custom-table">

@@ -81,7 +81,7 @@ const Cast: React.FC<{
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
   useEffect(() => {
-    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
+    const filteredCast = castSearchText?.length > 0 ? processedCast.filter((character: any) => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
       return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
@@ -90,7 +90,7 @@ const Cast: React.FC<{
   }, [processedCast, castSearchText]);
 
   useEffect(() => {
-    const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
+    const filteredExtras = castSearchText?.length > 0 ? processedExtras.filter((extra: any) => {
       const extraHeader = `${extra.extraName}`;
       return extraHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedExtras;
@@ -107,7 +107,7 @@ const Cast: React.FC<{
       setDropDownIsOpen((prev: any) => ({ ...prev, [category]: true }));
     });
 
-    if (extras.length > 0) {
+    if (extras?.length > 0) {
       setDropDownIsOpen((prev: any) => ({ ...prev, EXTRAS: true }));
     }
   }, [cast, extras]);
@@ -125,7 +125,7 @@ const Cast: React.FC<{
       setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category).slice(0, 5) }));
     });
 
-    if (extras.length > 0) {
+    if (extras?.length > 0) {
       setDisplayedCast((prev: any) => ({ ...prev, EXTRAS: extras.slice(0, 5) }));
     }
   }, [cast, extras, isLoading]);
@@ -202,7 +202,7 @@ const Cast: React.FC<{
                 category={category}
                 isOpen={dropDownIsOpen[category]}
                 onToggle={() => handleDropDown(category)}
-                count={filterCastByCategory(category).length}
+                count={filterCastByCategory(category)?.length}
               >
                 <ScrollInfiniteContext
                   filteredData={filteredCast[category]}
@@ -227,13 +227,13 @@ const Cast: React.FC<{
           }
           {
             !isLoading
-            && extras.length > 0 && (
+            && extras?.length > 0 && (
               <DropDownCast
                 key="cast-dropdown-EXTRAS"
                 category="EXTRAS"
                 isOpen={dropDownIsOpen.EXTRAS}
                 onToggle={() => handleDropDown('EXTRAS')}
-                count={extras.length}
+                count={extras?.length}
               >
                 <ScrollInfiniteContext
                   filteredData={extras}

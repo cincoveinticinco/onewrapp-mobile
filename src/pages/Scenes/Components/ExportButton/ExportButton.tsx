@@ -55,9 +55,9 @@ const ExportButton: React.FC = () => {
     <>
       <ToolbarButton
         triggerId="export-button"
-        click={reports.length > 0 ? () => setShowReports(!showReports) : () => setOpenExportModal(true)}
+        click={reports?.length > 0 ? () => setShowReports(!showReports) : () => setOpenExportModal(true)}
         show={!loading}
-        color={reports.length > 0 ? 'success' : 'light'}
+        color={reports?.length > 0 ? 'success' : 'light'}
       >
         {loading ? (
           <IonSpinner name="circular" color='success' />
@@ -90,7 +90,7 @@ const ExportButton: React.FC = () => {
                 </div>
               </div>
             ))}
-            <div className="report-item ion-flex ion-justify-content-between report-item ion-padding-start" color='tertiary' style={reports.length > 0 ? {borderTop: 'none'} : undefined}>
+            <div className="report-item ion-flex ion-justify-content-between report-item ion-padding-start" color='tertiary' style={reports?.length > 0 ? {borderTop: 'none'} : undefined}>
               <p>EXPORT NEW</p>
               <IonButton
                 fill="clear"

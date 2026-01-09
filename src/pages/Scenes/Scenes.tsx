@@ -156,8 +156,8 @@ const Scenes: React.FC<{
       const clientHeight = scrollElement.clientHeight;
 
       if (scrollPosition + clientHeight >= scrollHeight - 200) {
-        if (displayedCategoriesCount < sortedCategoryKeys.length) {
-          setDisplayedCategoriesCount(prev => Math.min(prev + 5, sortedCategoryKeys.length));
+        if (displayedCategoriesCount < sortedCategoryKeys?.length) {
+          setDisplayedCategoriesCount(prev => Math.min(prev + 5, sortedCategoryKeys?.length));
         }
 
         displayedCategories.forEach(category => {
@@ -165,7 +165,7 @@ const Scenes: React.FC<{
           if (categoryElement && openSections[category]) {
             const rect = categoryElement.getBoundingClientRect();
             if (rect.bottom >= 0 && rect.top <= clientHeight &&
-              visibleScenesPerCategory[category] < categorizedScenes[category].length) {
+              visibleScenesPerCategory[category] < categorizedScenes[category]?.length) {
               loadMoreScenesForCategory(category);
             }
           }

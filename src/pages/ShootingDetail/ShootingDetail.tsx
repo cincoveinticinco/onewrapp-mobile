@@ -189,8 +189,8 @@ const ShootingDetail: React.FC<{
     const totalTime = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0);
 
     return {
-      sets: Array.from(uniqueSets).length,
-      scenes: scenesOnly.length,
+      sets: Array.from(uniqueSets)?.length,
+      scenes: scenesOnly?.length,
       pages: floatToFraction(totalPages),
       min: secondsToMinSec(totalTime),
     };
@@ -218,7 +218,7 @@ const ShootingDetail: React.FC<{
         shootingId: parseInt(shootingId),
         sceneId: scene.sceneId?.toString(),
         status: ShootingSceneStatusEnum.Assigned,
-        position: shootingData.mergedSceneBanners.length + 1,
+        position: shootingData.mergedSceneBanners?.length + 1,
         rehearsalStart: null,
         rehearsalEnd: null,
         comment: '',
@@ -766,7 +766,7 @@ const ShootingDetail: React.FC<{
                 AppLoader()
               ) : (
                 <>
-                  {shootingData.mergedSceneBanners.length === 0 ? (
+                  {shootingData.mergedSceneBanners?.length === 0 ? (
                     <div
                       className="ion-padding-start ion-flex"
                       style={{

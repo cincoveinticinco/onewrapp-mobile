@@ -73,12 +73,12 @@ const StripboardDetailContent: React.FC = () => {
                     scenes={scenesNotIncluded} 
                     scenesToDisplay={scenesNotIncludedToDisplay}
                     listId="not-included-scenes" 
-                    sectionToolbar={(search?: SearchToolbarButtonProps) => sectionToolbar(`Scenes (${scenesNotIncluded.length}) - MIN ${totalMinutesNotIncluded} ${activeScene} `, search)}
+                    sectionToolbar={(search?: SearchToolbarButtonProps) => sectionToolbar(`Scenes (${scenesNotIncluded?.length}) - MIN ${totalMinutesNotIncluded} ${activeScene} `, search)}
                   >
                     <IonInfiniteScroll
                       threshold="150px"
                       onIonInfinite={loadMoreScenes}
-                      disabled={scenesNotIncludedToDisplay >= scenesNotIncluded.length}
+                      disabled={scenesNotIncludedToDisplay >= scenesNotIncluded?.length}
                     >
                       <IonInfiniteScrollContent />
                     </IonInfiniteScroll>

@@ -178,7 +178,7 @@ const Calendar: React.FC = () => {
             setCalendarState((prevState) => ({
               ...prevState,
               shootings: shootingsData as ShootingDocType[],
-              currentDate: shootingsData.length > 0
+              currentDate: shootingsData?.length > 0
                 ? startOfDay(new Date(shootingsData[0].shootDate as string))
                 : prevState.currentDate,
             }));
@@ -210,7 +210,7 @@ const Calendar: React.FC = () => {
       setCalendarState((prevState) => ({
         ...prevState,
         shootings: shootingsData as ShootingDocType[],
-        currentDate: shootingsData.length > 0
+        currentDate: shootingsData?.length > 0
           ? startOfDay(new Date(shootingsData[0].shootDate as string))
           : prevState.currentDate,
       }));

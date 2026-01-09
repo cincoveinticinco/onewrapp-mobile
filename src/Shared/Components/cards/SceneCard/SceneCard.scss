@@ -1,4 +1,4 @@
-@import '../../../../theme/mixins';
+@use '../../../../theme/mixins' as *;
 
 .scene-theme-shooting-card {
   background-color: #212730 !important;
