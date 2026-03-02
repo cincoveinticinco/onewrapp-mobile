@@ -7,6 +7,7 @@ import {
 import React, {
   Suspense,
   useCallback,
+  useDeferredValue,
   useEffect,
   useRef,
   useState,
@@ -27,10 +28,11 @@ import { PermisionTypes } from '../../Shared/Components/navigation/ProtectedRout
 import ScenesToolbarButtons from './Components/ScenesTollbarButtons/ScenesToolbarButtons';
 import ScenesList from './Components/ScenesList/ScenesList';
 import GroupedScenesList from './Components/GroupedScenesList/GroupedScenesList';
-import { useScenesFiltering } from '../../hooks/utils/useScenesFiltering/useScenesFiltering';
+import { useScenesFilteringOptimized } from '../../hooks/utils/useScenesFiltering/useScenesFilteringOptimized';
 import useScenesGrouping from '../../hooks/utils/useScenesGrouping/useScenesGrouping';
 import useProjectWeeks from '../../hooks/database/useProjectWeeks/useProjectWeeks';
 import ScenesGroupByShootings from './Components/ScenesGroupByShootings/ScenesGroupByShootings';
+import { useDebounce } from '../../hooks/utils/useDebounce/useDebounce';
 
 const Scenes: React.FC<{
   permissionType: PermisionTypes | null;
@@ -41,6 +43,10 @@ const Scenes: React.FC<{
     const contentRef = useRef<HTMLIonContentElement>(null);
 
     const [searchText, setSearchText] = useState('');
+    // Debounce prevents excessive filtering during rapid typing (200ms delay)
+    const debouncedSearchText = useDebounce(searchText, 200);
+    // Deferred value prevents UI blocking on every keystroke
+    const deferredSearchText = useDeferredValue(debouncedSearchText);
     const [openGroupBy, setOpenGroupBy] = useState(false);
     const history = useHistory();
     const location = useLocation();
@@ -73,10 +79,6 @@ const Scenes: React.FC<{
     ]
 
     const [replicatorCreated, setReplicatorCreated] = useState<boolean>(false);
-    const [displayedCategories, setDisplayedCategories] = useState<string[]>([]);
-    const [displayedCategoriesCount, setDisplayedCategoriesCount] = useState<number>(10);
-    const [visibleScenesPerCategory, setVisibleScenesPerCategory] = useState<{ [key: string]: number }>({});
-    const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
     const [disableEditions, setDisableEditions] = useState<boolean>(false);
     const [sortPosibilities, setSortPosibilities] = useState<any[]>(() => {
       const savedOrder = localStorage.getItem('sortPosibilitiesOrder');
@@ -93,7 +95,7 @@ const Scenes: React.FC<{
       selectedSortOptions,
       setSelectedSortOptions,
       scenesAreLoading
-    } = useScenesFiltering(searchText);
+    } = useScenesFilteringOptimized(deferredSearchText);
 
     const [groupBy, setGroupBy] = useState<string[]>([]);
 
@@ -122,59 +124,6 @@ const Scenes: React.FC<{
     });
 
     useEffect(() => {
-      setDisplayedCategories(sortedCategoryKeys.slice(0, displayedCategoriesCount));
-    }, [sortedCategoryKeys, displayedCategoriesCount]);
-
-    useEffect(() => {
-      const initialVisibleScenes: { [key: string]: number } = {};
-      const initialOpenSections: { [key: string]: boolean } = {};
-
-      sortedCategoryKeys.forEach(category => {
-        initialVisibleScenes[category] = 10;
-        initialOpenSections[category] = true;
-      });
-
-      setVisibleScenesPerCategory(initialVisibleScenes);
-      setOpenSections(initialOpenSections);
-    }, [sortedCategoryKeys]);
-
-    // Función para cargar más escenas para una categoría específica
-    const loadMoreScenesForCategory = useCallback((category: string) => {
-      setVisibleScenesPerCategory(prev => ({
-        ...prev,
-        [category]: Math.min(
-          (prev[category] || 10) + 10,
-          categorizedScenes[category]?.length || 0
-        )
-      }));
-    }, [categorizedScenes]);
-
-    const handleScroll = useCallback((event: CustomEvent) => {
-      const scrollElement = event.target as HTMLIonContentElement;
-      const scrollPosition = scrollElement.scrollTop;
-      const scrollHeight = scrollElement.scrollHeight;
-      const clientHeight = scrollElement.clientHeight;
-
-      if (scrollPosition + clientHeight >= scrollHeight - 200) {
-        if (displayedCategoriesCount < sortedCategoryKeys?.length) {
-          setDisplayedCategoriesCount(prev => Math.min(prev + 5, sortedCategoryKeys?.length));
-        }
-
-        displayedCategories.forEach(category => {
-          const categoryElement = document.getElementById(`category-content-${category}`);
-          if (categoryElement && openSections[category]) {
-            const rect = categoryElement.getBoundingClientRect();
-            if (rect.bottom >= 0 && rect.top <= clientHeight &&
-              visibleScenesPerCategory[category] < categorizedScenes[category]?.length) {
-              loadMoreScenesForCategory(category);
-            }
-          }
-        });
-      }
-    }, [displayedCategoriesCount, sortedCategoryKeys, displayedCategories, openSections,
-      visibleScenesPerCategory, categorizedScenes, loadMoreScenesForCategory]);
-
-    useEffect(() => {
       localStorage.setItem('selectedSortOptions', JSON.stringify(selectedSortOptions));
     }, [selectedSortOptions]);
 
@@ -197,7 +146,6 @@ const Scenes: React.FC<{
       } else if (label === noGroupByOption.label) {
         setGroupBy([noGroupByOption.value]);
       }
-      setDisplayedCategoriesCount(10);
     }, [noGroupByOption]);
 
 
@@ -223,11 +171,9 @@ const Scenes: React.FC<{
               </IonContent>
             ) : (
               <IonContent
-                scrollEvents={true}
                 color="tertiary"
                 ref={contentRef}
                 id="strips-container-ref"
-                onIonScroll={handleScroll}
               >
                 <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
                   <IonRefresherContent />
