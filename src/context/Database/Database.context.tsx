@@ -4,14 +4,12 @@
  */
 
 import React, { useContext, useEffect, useState } from 'react';
-import { RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
 import AuthContext from '../Auth/Auth.context';
 import useNetworkStatus from '../../hooks/utils/useNetworkStatus/useNetworkStatus';
 import useAppStore from '../../hooks/utils/useAppStore/useAppStore';
 import { databaseManager, replicationManager, dbEvents } from '../../database';
 import { DatabaseContextProps } from './types/Database.types';
-import { ProjectDocType } from '../../RXdatabase/schemas/projects.schema';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
@@ -162,51 +160,35 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
     };
   }, [projectsInfoIsOffline]);
 
-  // Suscribirse a proyectos
+  // Proyectos: iniciar suscripción en el módulo y escuchar eventos
   useEffect(() => {
-    setProjectsAreLoading(true);
-    
-    if (oneWrapRXdatabase) {
-      const subscription = oneWrapRXdatabase.projects
-        .find()
-        .sort({ updatedAt: 'asc' })
-        .$.subscribe({
-          next: (data: ProjectDocType[]) => {
-            setProjectsAreOffline(true);
-            const projects = data.map((project: any) => project._data);
-            
-            const storedInfo = localStorage.getItem('projectsInfoIsOffline');
-            const projectsInfo = storedInfo
-              ? JSON.parse(storedInfo)
-              : Object.fromEntries(projects.map((p: any) => [String(p.id), false]));
-            setProjectsInfoIsOffline(projectsInfo);
-          },
-          error: () => setProjectsAreLoading(false),
-          complete: () => setProjectsAreLoading(false),
-        });
+    if (!isDatabaseReady) return;
 
-      return () => subscription.unsubscribe();
-    }
-  }, [oneWrapRXdatabase]);
+    databaseManager.startProjectsSubscription();
 
-  // Suscribirse a escenas
+    return dbEvents.on('projects:changed', (projects) => {
+      setProjectsAreOffline(true);
+      const storedInfo = localStorage.getItem('projectsInfoIsOffline');
+      const projectsInfo = storedInfo
+        ? JSON.parse(storedInfo)
+        : Object.fromEntries(projects.map((p: any) => [String(p.id), false]));
+      setProjectsInfoIsOffline(projectsInfo);
+    });
+  }, [isDatabaseReady]);
+
+  // Escenas: la suscripción la gestiona ReplicationManager.setProjectId(), solo escuchamos eventos
   useEffect(() => {
+    if (!projectId) return;
+
     setScenesAreLoading(true);
-    
-    if (oneWrapRXdatabase && projectId) {
-      const subscription = oneWrapRXdatabase.scenes
-        .find({
-          selector: { projectId: parseInt(projectId) },
-          sort: [{ updatedAt: 'desc' }],
-        })
-        .$.subscribe((data: RxLocalDocumentData[]) => {
-          setOfflineScenes(data);
-          setScenesAreLoading(false);
-        });
 
-      return () => subscription.unsubscribe();
-    }
-  }, [oneWrapRXdatabase, projectId]);
+    return dbEvents.on('scenes:changed', ({ scenes, projectId: changedProjectId }) => {
+      if (changedProjectId === parseInt(projectId)) {
+        setOfflineScenes(scenes);
+        setScenesAreLoading(false);
+      }
+    });
+  }, [projectId]);
 
   // Replicación automática (polling interno RxDB)
   useEffect(() => {

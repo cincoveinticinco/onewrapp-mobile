@@ -40,6 +40,8 @@ class DatabaseManager {
   public userCollection: UserSchema | null = null;
   public countriesCollection: CountriesSchema | null = null;
 
+  private projectsSubscription: { unsubscribe: () => void } | null = null;
+
   private constructor() {
     // Private para singleton
   }
@@ -194,6 +196,21 @@ class DatabaseManager {
     return this.dbInstance;
   }
 
+  public startProjectsSubscription(): void {
+    if (!this.dbInstance || this.projectsSubscription) return;
+
+    this.projectsSubscription = this.dbInstance.projects
+      .find()
+      .sort({ updatedAt: 'asc' })
+      .$.subscribe({
+        next: (data: any[]) => {
+          const projects = data.map((p: any) => p._data);
+          dbEvents.emit('projects:changed', projects);
+        },
+        error: (err: any) => console.error('[DatabaseManager] Projects subscription error:', err),
+      });
+  }
+
   /**
    * Verificar si la base de datos está lista
    */
@@ -212,6 +229,8 @@ class DatabaseManager {
    * Reset completo de la aplicación
    */
   public async hardAppReset(): Promise<void> {
+    this.projectsSubscription?.unsubscribe();
+    this.projectsSubscription = null;
     if (this.dbInstance) {
       await this.dbInstance.remove();
     }

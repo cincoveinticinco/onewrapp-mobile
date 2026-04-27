@@ -39,6 +39,9 @@ export class ReplicationManager {
   private pollingEnabled$ = new BehaviorSubject<boolean>(true);
   private pollingPauseCount = 0;
 
+  // Suscripción a escenas del proyecto actual
+  private scenesSubscription: { unsubscribe: () => void } | null = null;
+
   private constructor() {
     // Private para singleton
   }
@@ -89,9 +92,28 @@ export class ReplicationManager {
   public setProjectId(projectId: number | null): void {
     if (this.currentProjectId !== projectId) {
       this.currentProjectId = projectId;
-      // Limpiar replicadores del proyecto anterior
       this.cleanupReplicators();
+      this.startScenesSubscription(projectId);
     }
+  }
+
+  private startScenesSubscription(projectId: number | null): void {
+    this.scenesSubscription?.unsubscribe();
+    this.scenesSubscription = null;
+
+    if (!projectId) return;
+
+    const db = databaseManager.getDatabase();
+    if (!db) return;
+
+    this.scenesSubscription = db.scenes
+      .find({
+        selector: { projectId },
+        sort: [{ updatedAt: 'desc' }],
+      })
+      .$.subscribe((data: any[]) => {
+        dbEvents.emit('scenes:changed', { scenes: data, projectId });
+      });
   }
 
   private pausePolling(): void {
@@ -427,11 +449,7 @@ export class ReplicationManager {
    */
   public async initializeAllReplications(): Promise<boolean> {
     if (this.initialProjectReplicationInCourse || this.allReplicationsInCourse) {
-      console.warn(
-        (this.initialProjectReplicationInCourse
-          ? 'initialProjectReplicationInCourse'
-          : 'allReplicationsInCourse') + ' is in course'
-      );
+      console.log('[DB][REPLICATION] Cycle skipped - previous still running');
       return false;
     }
 

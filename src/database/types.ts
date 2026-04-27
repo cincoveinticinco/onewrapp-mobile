@@ -56,6 +56,8 @@ export interface DatabaseEventMap {
   'replication:error': { error: Error; step?: string };
   'projects:loaded': any[];
   'scenes:loaded': any[];
+  'projects:changed': any[];
+  'scenes:changed': { scenes: any[]; projectId: number };
 }
 
 export type DatabaseEventType = keyof DatabaseEventMap;
