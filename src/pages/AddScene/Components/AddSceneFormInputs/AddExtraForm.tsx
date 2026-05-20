@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput, IonButton, IonItemSliding, IonItemOptions, IonItemOption, IonItem } from '@ionic/react';
 import AddButton from '../../../../Shared/Components/buttons/AddButton/AddButton';
-import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import AddExtraInput from './AddExtraInput';
@@ -9,6 +8,7 @@ import { Extra } from '../../../../Shared/types/scenes.types';
 import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import { VscEdit } from 'react-icons/vsc';
+import { useProjectScenes } from '../../../../hooks/database/useProjectScenes/useProjectScenes';
 
 interface AddExtraFormProps {
   observedExtras: Extra[];
@@ -21,7 +21,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   editMode,
   setExtras,
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
+  const projectScenes = useProjectScenes();
   const [extrasCategories, setExtrasCategories] = useState<string[]>([]);
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -39,7 +39,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
   };
 
   const uniqueExtras = useMemo(() => {
-    const offlineExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+    const offlineExtras = getUniqueValuesFromNestedArray(projectScenes, 'extras', 'extraName');
     const mergedExtras = [...offlineExtras];
     observedExtras.forEach(extra => {
       const existingExtraIndex = mergedExtras.findIndex(existing => existing.extraName === extra.extraName);
@@ -50,7 +50,7 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
       }
     });
     return mergedExtras;
-  }, [offlineScenes, observedExtras]);
+  }, [projectScenes, observedExtras]);
 
   const filterExtrasByCategory = useMemo(() => (categoryName: string | null) =>
     uniqueExtras.filter(extra => {
@@ -59,11 +59,11 @@ const AddExtraForm: React.FC<AddExtraFormProps> = ({
     }), [uniqueExtras]);
 
   const defineExtrasCategories = useCallback((): string[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(projectScenes, 'extras', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
     const observedCategories = observedExtras.map(e => e.categoryName || EmptyEnum.NoCategory);
     const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
     return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
-  }, [offlineScenes, observedExtras]);
+  }, [projectScenes, observedExtras]);
 
   useEffect(() => setExtrasCategories(defineExtrasCategories()), [defineExtrasCategories]);
 

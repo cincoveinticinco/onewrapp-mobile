@@ -25,15 +25,6 @@
 
 }
 
-.scene-card-row {
-  padding: 6px 0;
-}
-
-.scene-card-row ion-item-sliding {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
 .scene-theme-primary {
   background-color: var(--ion-color-primary);
 
@@ -71,7 +62,7 @@
 
 .scene-card-col-1 {
   grid-column: 1 / 15;
-  padding: 12px;
+  padding: 6px;
 }
 
 .scene-card-col-2 {
@@ -100,17 +91,9 @@
 }
 
 .scene-card-item {
-  --inner-border-width: 0;
-
   &::part(native) {
     --ion-safe-area-right: 0;
     --inner-padding-end: 0;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow:
-      0 12px 28px rgba(0, 0, 0, 0.18),
-      0 1px 0 rgba(255, 255, 255, 0.08) inset;
-    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 }
 

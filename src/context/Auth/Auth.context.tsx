@@ -45,7 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkSession = useCallback(async () => {
     const token = localStorage.getItem('token');
-    console.log('EXECUTING CHECK SESSION')
     if (token) {
       try {
         const response = await fetch(`${environment.URL_PATH}/verify_session`, {

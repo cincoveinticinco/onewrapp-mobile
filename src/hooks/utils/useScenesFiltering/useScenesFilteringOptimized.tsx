@@ -34,13 +34,11 @@ export const useScenesFilteringOptimized = (searchText: string) => {
   const filteredScenes = useMemo(() => {
     if (!scenesFromDB || scenesFromDB.length === 0) return [];
     
-    console.log("🟢 Filtrando escenas con:", selectedFilterOptions);
     // Use the original applyFilters for complex nested filters, accent removal, etc.
     const filteredData = Object.keys(selectedFilterOptions).length > 0
       ? applyFilters(scenesFromDB, selectedFilterOptions)
       : scenesFromDB;
     
-    console.log("🔵 Ordenando escenas con:", selectedSortOptions);
     const sortedData = sortByCriterias(filteredData, selectedSortOptions);
     
     return sortedData;

@@ -1,5 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
-import DatabaseContext from '../../../context/Database/Database.context';
+import { useMemo, useState } from 'react';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import sortArrayAlphabeticaly from '../../../Shared/Utils/sortArrayAlphabeticaly';
 import {
@@ -9,21 +8,22 @@ import {
   SceneTypeEnumArray,
 } from '../../../Shared/enums/ennums';
 import { ListOfOptionsItem } from '../../../Layouts/InputModalWithSections/InputModalWithSections';
+import { useProjectScenes } from '../useProjectScenes/useProjectScenes';
 
 export const useSceneFormOptions = () => {
-  const { offlineScenes } = useContext(DatabaseContext);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const scenesForOptions = useProjectScenes();
 
   // Separate memo for location names
   const locationNames = useMemo(() => {
     return sortArrayAlphabeticaly(
-      getUniqueValuesByKey(offlineScenes, 'locationName')
+      getUniqueValuesByKey(scenesForOptions, 'locationName')
     );
-  }, [offlineScenes]);
+  }, [scenesForOptions]);
 
-  // Separate memo for categorized sets that depends on both offlineScenes and selectedLocation
+  // Separate memo for categorized sets that depends on both project scenes and selectedLocation
   const categorizedSets = useMemo(() => {
-    const uniqueLocations = [...getUniqueValuesByKey(offlineScenes, 'locationName'), 'NO LOCATION']
+    const uniqueLocations = [...getUniqueValuesByKey(scenesForOptions, 'locationName'), 'NO LOCATION']
     
     return uniqueLocations.reduce((acc: ListOfOptionsItem[], location) => {
       // If there's a selected location, only include sets for that location
@@ -31,7 +31,7 @@ export const useSceneFormOptions = () => {
         return acc;
       }
 
-      const sets = offlineScenes
+      const sets = scenesForOptions
         .filter(scene => {
           if (location === 'NO LOCATION') {
             return !scene.locationName;
@@ -51,7 +51,7 @@ export const useSceneFormOptions = () => {
       acc.push(optionItem);
       return acc;
     }, []);
-  }, [offlineScenes, selectedLocation]);
+  }, [scenesForOptions, selectedLocation]);
 
   const sceneTypeOptions = SceneTypeEnumArray;
   const protectionTypeValues = ProtectionTypeEnumArray;

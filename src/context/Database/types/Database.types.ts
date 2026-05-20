@@ -2,7 +2,6 @@ import { RxDatabase } from "rxdb";
 
 export interface DatabaseContextProps {
   oneWrapDb: RxDatabase | null;
-  offlineScenes: any[];
   setStartReplication: (startReplication: boolean) => void;
   projectId: number | null;
   setProjectId: (projectId: any) => void;

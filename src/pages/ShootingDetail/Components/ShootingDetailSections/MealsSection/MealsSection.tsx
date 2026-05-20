@@ -35,9 +35,9 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
   >
     <div style={{ width: '100%', height: '100%' }}>
       {meals?.length > 0 ? (
-        meals.map((meal) => (
+        meals.map((meal, index) => (
           <MealInfo
-            key={meal.id}
+            key={`meal-${meal.id || meal.mealId || meal.meal || meal.readyAt || meal.endTime || index}-${index}`}
             meal={meal}
             editMode
             getHourMinutesFomISO={getHourMinutesFomISO}

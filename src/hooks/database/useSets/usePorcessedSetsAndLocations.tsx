@@ -1,16 +1,12 @@
 import {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
-import DatabaseContext from '../../../context/Database/Database.context';
 import ScenesContext from '../../../context/Scenes/Scenes.context';
 import { SceneTypeEnum } from '../../../Shared/enums/ennums';
 import { SceneDocType } from '../../../Shared/types/scenes.types';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
-
-interface SceneDataProps {
-  _data: SceneDocType;
-}
+import { useProjectScenes } from '../useProjectScenes/useProjectScenes';
 
 interface SetInformation {
   setName: string;
@@ -25,7 +21,7 @@ interface SetInformation {
 }
 
 const useProcessedSetsAndLocations = () => {
-  const { offlineScenes } = useContext(DatabaseContext);
+  const projectScenes = useProjectScenes();
   const { setsSelectedSortOptions } = useContext(ScenesContext);
   const [locationsSelectedSortOptions, setLocationsSelectedSortOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -55,15 +51,15 @@ const useProcessedSetsAndLocations = () => {
   // Memoized function to process set data
 
   const processSet = useCallback((setName: string) => {
-    const setScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.setName === setName);
-    const charactersLength = setScenes.reduce((acc: number, scene: SceneDataProps) => (scene._data.characters ? acc + scene._data.characters?.length : acc), 0);
+    const setScenes = projectScenes.filter((scene: SceneDocType) => scene.setName === setName);
+    const charactersLength = setScenes.reduce((acc: number, scene: SceneDocType) => (scene.characters ? acc + scene.characters?.length : acc), 0);
     const scenesQuantity = setScenes?.length;
-    const protectionQuantity = setScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length;
-    const pagesSum = setScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.pages || 0), 0);
-    const estimatedTimeSum = setScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.estimatedSeconds || 0), 0);
+    const protectionQuantity = setScenes.filter((scene: SceneDocType) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length;
+    const pagesSum = setScenes.reduce((acc: number, scene: SceneDocType) => acc + (scene.pages || 0), 0);
+    const estimatedTimeSum = setScenes.reduce((acc: number, scene: SceneDocType) => acc + (scene.estimatedSeconds || 0), 0);
     const episodesQuantity = getUniqueValuesByKey(setScenes, 'episodeNumber')?.length;
-    const participation = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(2);
-    const { locationName } = setScenes[0]._data;
+    const participation = projectScenes.length > 0 ? ((scenesQuantity / projectScenes.length) * 100).toFixed(2) : '0.00';
+    const { locationName } = setScenes[0];
 
     return {
       setName,
@@ -76,27 +72,27 @@ const useProcessedSetsAndLocations = () => {
       participation,
       locationName: locationName || locationName == '' ? locationName : 'NO LOCATION',
     };
-  }, [offlineScenes]);
+  }, [projectScenes]);
 
   // Memoized processed sets data
   const processedSets = useMemo<SetInformation[]>(() => {
-    const uniqueSetNames: string[] = getUniqueValuesByKey(offlineScenes, 'setName');
+    const uniqueSetNames: string[] = getUniqueValuesByKey(projectScenes, 'setName');
     setIsLoading(false);
     return sortByCriterias(uniqueSetNames.map(processSet), setsSelectedSortOptions);
-  }, [offlineScenes, setsSelectedSortOptions, processSet]);
+  }, [projectScenes, setsSelectedSortOptions, processSet]);
 
   // Memoized processed locations data
   const processedLocations = useMemo(() => {
-    const uniqueLocationNames = getUniqueValuesByKey(offlineScenes, 'locationName').concat('NO LOCATION');
+    const uniqueLocationNames = getUniqueValuesByKey(projectScenes, 'locationName').concat('NO LOCATION');
 
     const processedLocationsData = (locationName: string) => {
-      const locationScenes = offlineScenes.filter((scene: SceneDataProps) => scene._data.locationName === locationName);
+      const locationScenes = projectScenes.filter((scene: SceneDocType) => scene.locationName === locationName);
       const scenesQuantity = locationScenes?.length;
-      const protectionQuantity = locationScenes.filter((scene: SceneDataProps) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length;
-      const pagesSum = locationScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.pages || 0), 0);
-      const estimatedTimeSum = locationScenes.reduce((acc: number, scene: SceneDataProps) => acc + (scene._data.estimatedSeconds || 0), 0);
+      const protectionQuantity = locationScenes.filter((scene: SceneDocType) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length;
+      const pagesSum = locationScenes.reduce((acc: number, scene: SceneDocType) => acc + (scene.pages || 0), 0);
+      const estimatedTimeSum = locationScenes.reduce((acc: number, scene: SceneDocType) => acc + (scene.estimatedSeconds || 0), 0);
       const episodesQuantity = getUniqueValuesByKey(locationScenes, 'episodeNumber')?.length;
-      const participation = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(2);
+      const participation = projectScenes.length > 0 ? ((scenesQuantity / projectScenes.length) * 100).toFixed(2) : '0.00';
 
       return {
         locationName,
@@ -110,7 +106,7 @@ const useProcessedSetsAndLocations = () => {
     };
 
     return sortByCriterias(uniqueLocationNames.map(processedLocationsData), locationsSelectedSortOptions);
-  }, [offlineScenes, locationsSelectedSortOptions]);
+  }, [projectScenes, locationsSelectedSortOptions]);
 
   return {
     processedSets, processedLocations, isLoading, setIsLoading,

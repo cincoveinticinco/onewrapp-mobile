@@ -172,7 +172,6 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
 
   const toggleCheckOptions = (value: string | number, category: string) => {
     const updatedOptions = filteredOptions.map(cat => {
-      console.log(cat)
       if (cat?.category?.toLowerCase() === category?.toLowerCase()) {
         return {
           ...cat,
@@ -221,6 +220,19 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
         }))
     )
   };
+
+  const getOptionKey = (
+    prefix: string,
+    option: { label: string; value: string | number; category?: string | null },
+    index: number,
+  ) => {
+    const categoryKey = option.category || noCategory;
+    const valueKey = typeof option.value === 'object'
+      ? JSON.stringify(option.value)
+      : String(option.value);
+
+    return `${prefix}-${categoryKey}-${option.label}-${valueKey}-${index}`;
+  };
   
   const handleSave = () => {
     if (filteredOptions.every(category => category.options?.length === 0)) {
@@ -255,9 +267,9 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
           {/* Selected Options Section */}
           {getSelectedOptions()?.length > 0 && (
             <Section title="Selected Options" open={openSelectedOptions} setOpen={setOpenSelectedOptions}>
-              {getSelectedOptions().map((option) => (
+              {getSelectedOptions().map((option, index) => (
                 <div 
-                  key={`selected-option-${option}`}
+                  key={getOptionKey('selected-option', option, index)}
                   className="checkbox-item-option filter-item ion-no-margin ion-no-padding" 
                   onClick={() => toggleCheckOptions(option.value, option.category)}
                 >
@@ -340,10 +352,10 @@ const  InputModalWithSections: React.FC<InputModalWithSectionsProps> = ({
                 >
                   {category.options
                     .sort((a, b) => Number(b.checked) - Number(a.checked))
-                    .map((option) => (
+                    .map((option, index) => (
                       !option.checked && (
                         <div 
-                          key={`filter-item-${category.category}-${option.label}`} 
+                          key={getOptionKey('filter-item', { ...option, category: category.category }, index)} 
                           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
                         >
                           <IonCheckbox

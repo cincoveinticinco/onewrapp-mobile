@@ -46,7 +46,6 @@ const InputModal: React.FC<InputModalProps> = ({
   handleCheckboxToggle,
   selectedOptions,
   clearSelections,
-  multipleSelections = true,
   canCreateNew = false,
   formInputs,
   isOpen = false,
@@ -137,11 +136,8 @@ const InputModal: React.FC<InputModalProps> = ({
             }
             <>
               <RegularList
-                listOfOptions={listOfOptions}
-                selectedOptions={selectedOptions}
                 handleCheckboxToggle={handleCheckboxToggle}
                 isOptionChecked={isOptionChecked}
-                multipleSelections={multipleSelections}
                 searchText={searchText}
                 checkedSelectedOptions={checkedSelectedOptions}
                 uncheckedFilteredOptions={uncheckedFilteredOptions}

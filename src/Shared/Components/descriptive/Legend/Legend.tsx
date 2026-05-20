@@ -8,26 +8,34 @@ interface LegendItem {
 
 interface LegendProps {
   items: LegendItem[];
+  className?: string;
 }
 
-const Legend: React.FC<LegendProps> = ({ items }) => (
-  <div style={{
-    display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px', flexWrap: 'wrap',
-  }}
+const Legend: React.FC<LegendProps> = ({ items, className }) => (
+  <div
+    className={className}
+    style={className ? undefined : {
+      display: 'flex', justifyContent: 'flex-start', gap: '10px', margin: '6px 0px', flexWrap: 'wrap',
+    }}
   >
     {items.map((item) => (
-      <IonChip key={`chip-legend-${item.label}`} style={{ backgroundColor: 'transparent', flex: '1' }}>
+      <IonChip
+        key={`chip-legend-${item.label}`}
+        className={className ? `${className}-item` : undefined}
+        style={className ? undefined : { backgroundColor: 'transparent', flex: '1' }}
+      >
         <div
+          className={className ? `${className}-dot` : undefined}
           style={{
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
+            width: className ? undefined : '16px',
+            height: className ? undefined : '16px',
+            borderRadius: className ? undefined : '50%',
             backgroundColor: item.color,
-            marginRight: '12px',
-            flexShrink: 0
+            marginRight: className ? undefined : '12px',
+            flexShrink: className ? undefined : 0,
           }}
         />
-        <IonLabel style={{
+        <IonLabel style={className ? undefined : {
           fontSize: '14px',
           color: 'var(--ion-color-light)',
         }}

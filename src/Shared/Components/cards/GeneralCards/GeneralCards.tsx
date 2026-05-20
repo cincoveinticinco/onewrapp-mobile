@@ -312,10 +312,28 @@ const GeneralCards: React.FC<GeneralCardsProps> = ({
     );
   };
 
+  const getRowKey = (row: any, index: number) => {
+    const stableValue = row?.id
+      ?? row?.sceneId
+      ?? row?.shootingSceneId
+      ?? row?.sceneHeader
+      ?? row?.characterName
+      ?? row?.extraName
+      ?? row?.elementName
+      ?? row?.crewId
+      ?? row?.talentId;
+
+    if (stableValue !== undefined && stableValue !== null) {
+      return `general-card-${stableValue}-${index}`;
+    }
+
+    return `general-card-row-${index}`;
+  };
+
   return (
     <div className="cards-container">
       {filteredData.map((row, index) => (
-        <IonCard key={`general-card-${row}`} className={`general-card ${editMode ? 'editing' : ''}`}>
+        <IonCard key={getRowKey(row, index)} className={`general-card ${editMode ? 'editing' : ''}`}>
           {renderCardContent(row, index)}
         </IonCard>
       ))}

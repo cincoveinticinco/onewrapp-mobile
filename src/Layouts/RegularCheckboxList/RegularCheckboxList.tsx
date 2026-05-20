@@ -7,22 +7,20 @@ import { SelectOptionsInterface } from '../../Shared/Components/modals/EditionMo
 import HighlightedText from '../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 
 interface RegularListProps {
-  listOfOptions: string[];
-  selectedOptions: string[];
   handleCheckboxToggle: (option: string) => void;
   isOptionChecked: (option: string) => boolean;
-  multipleSelections: boolean;
   searchText: string;
   uncheckedFilteredOptions: string[];
   checkedSelectedOptions: string[];
   optionsWithStyles?: SelectOptionsInterface[];
+  listOfOptions?: string[];
+  selectedOptions?: string[];
+  multipleSelections?: boolean;
 }
 
 const RegularList: React.FC<RegularListProps> = ({
-  listOfOptions,
   handleCheckboxToggle,
   isOptionChecked,
-  multipleSelections,
   searchText,
   uncheckedFilteredOptions,
   checkedSelectedOptions,
@@ -77,7 +75,6 @@ const RegularList: React.FC<RegularListProps> = ({
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
             checked={memoizedIsOptionChecked(option)}
-            disabled={!multipleSelections && checkedSelectedOptions?.length > 0}
           >
             <HighlightedText text={truncateString(option.toUpperCase(), 30)} searchTerm={searchText} />
           </IonCheckbox>

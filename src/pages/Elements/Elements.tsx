@@ -8,7 +8,7 @@ import React, {
   useMemo, useRef,
   useState,
 } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import ElementCard from './Components/ElementsCard/ElementCard';
 import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import DatabaseContext from '../../context/Database/Database.context';
@@ -24,10 +24,9 @@ import removeAccents from '../../Shared/Utils/removeAccents';
 import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import sortByCriterias from '../../Shared/Utils/SortScenesUtils/sortByCriterias';
 import './Elements.scss';
-import { useRxData } from 'rxdb-hooks';
-import { SceneDocType } from '../../Shared/types/scenes.types';
 import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
 import { swapVerticalOutline } from 'ionicons/icons';
+import { useProjectScenes } from '../../hooks/database/useProjectScenes/useProjectScenes';
 
 const Elements: React.FC<{
   permissionType?: number | null;
@@ -42,13 +41,8 @@ const Elements: React.FC<{
   const [searchText, setSearchText] = useState('');
   const [isDropDownOpen, setIsDropDownOpen] = useState<any>({});
   const [elementsCategoriesSelectedSortOptions, setElementsCategoriesSelectedSortOptions] = useState<any[]>([]);
-  const { id: projectId } = useParams<{ id: string }>();
-
-  const { result: offlineScenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
-    selector: {
-      projectId: Number(projectId),
-    },
-  }));
+  const projectScenes = useProjectScenes();
+  const { scenesAreLoading } = useContext(DatabaseContext);
 
   const {
     elementsSelectedSortOptions, setElementsSelectedSortOptions,
@@ -84,10 +78,6 @@ const Elements: React.FC<{
     localStorage.setItem('elementsSortPosibilities', JSON.stringify(elementsSortPosibilities));
   }, [elementsSortPosibilities]);
 
-  useEffect(() => {
-    console.log('offlineScenes', offlineScenes.slice(0, 10));
-  }, [offlineScenes]);
-
   const clearSelectedElementsSortOptions = () => {
     localStorage.removeItem('elementsSelectedSortOptions');
     localStorage.removeItem('elementsSortPosibilities');
@@ -100,48 +90,48 @@ const Elements: React.FC<{
   useScrollToTop(contentRef, thisPath);
 
   const categoriesData = useMemo(() => {
-    const uniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
+    const uniqueCategories = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'categoryName');
     const uniqueCategoriesStrings = sortArrayAlphabeticaly(uniqueCategories.map((element: any) => element.categoryName));
-    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+    const uniqueElements = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'elementName');
 
     const newCategoriesData = uniqueCategoriesStrings.map((categoryName: string) => {
-      const categoryScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.categoryName === categoryName));
+      const categoryScenes = projectScenes.filter((scene: any) => scene.elements?.some((element: any) => element.categoryName === categoryName));
       return {
         categoryName: categoryName || EmptyEnum.NoCategory,
         elementsQuantity: uniqueElements.filter((element: any) => element.categoryName === categoryName)?.length,
         scenesQuantity: categoryScenes?.length,
-        protectionQuantity: categoryScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length,
-        pagesSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
-        estimatedTimeSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
+        protectionQuantity: categoryScenes.filter((scene: any) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length,
+        pagesSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0),
+        estimatedTimeSum: categoryScenes.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0),
         episodesQuantity: getUniqueValuesByKey(categoryScenes, 'episodeNumber')?.length,
-        participation: ((categoryScenes?.length / offlineScenes?.length) * 100).toFixed(2),
+        participation: projectScenes.length > 0 ? ((categoryScenes?.length / projectScenes.length) * 100).toFixed(2) : '0.00',
       };
     });
 
     return sortByCriterias(newCategoriesData, elementsCategoriesSelectedSortOptions);
-  }, [offlineScenes, elementsCategoriesSelectedSortOptions]);
+  }, [projectScenes, elementsCategoriesSelectedSortOptions]);
 
   const elementsData = useMemo(() => {
-    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+    const uniqueElements = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'elementName');
     const uniqueElementsStrings = sortArrayAlphabeticaly(uniqueElements.map((element: any) => element.elementName));
 
     const newElementsData = uniqueElementsStrings.map((elementName: string) => {
       const elementCategory = uniqueElements.find((element: any) => element.elementName === elementName)?.categoryName;
-      const elementScenes = offlineScenes.filter((scene: any) => scene._data.elements.some((element: any) => element.elementName === elementName));
+      const elementScenes = projectScenes.filter((scene: any) => scene.elements?.some((element: any) => element.elementName === elementName));
       return {
         elementName,
         elementCategory: elementCategory || EmptyEnum.NoCategory,
         scenesQuantity: elementScenes?.length,
-        protectionQuantity: elementScenes.filter((scene: any) => scene._data.sceneType === SceneTypeEnum.PROTECTION)?.length,
-        pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.pages || 0), 0),
-        estimatedTimeSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene._data.estimatedSeconds || 0), 0),
+        protectionQuantity: elementScenes.filter((scene: any) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length,
+        pagesSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0),
+        estimatedTimeSum: elementScenes.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0),
         episodesQuantity: getUniqueValuesByKey(elementScenes, 'episodeNumber')?.length,
-        participation: ((elementScenes?.length / offlineScenes?.length) * 100).toFixed(2),
+        participation: projectScenes.length > 0 ? ((elementScenes?.length / projectScenes.length) * 100).toFixed(2) : '0.00',
       };
     });
 
     return sortByCriterias(newElementsData, elementsSelectedSortOptions);
-  }, [offlineScenes, elementsSelectedSortOptions]);
+  }, [projectScenes, elementsSelectedSortOptions]);
 
   useEffect(() => {
     const categoriesSelectedSortOptions = () => {
@@ -313,11 +303,11 @@ const Elements: React.FC<{
       >
         <IonContent color="tertiary" fullscreen>
           {
-            isFetching
+            scenesAreLoading
             && AppLoader()
           }
           {
-            !isFetching
+            !scenesAreLoading
             && (
             <>
               <ScrollInfiniteContext setDisplayedData={setDisplayedCategories} filteredData={filteredCategories} batchSize={8}>

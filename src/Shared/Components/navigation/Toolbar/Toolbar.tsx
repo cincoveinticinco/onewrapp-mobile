@@ -11,13 +11,11 @@ import {
   menuOutline, searchOutline,
 } from 'ionicons/icons';
 import React, {
-  memo, useContext, useEffect, useRef, useState,
+  memo, useRef,
 } from 'react';
 import { useParams } from 'react-router';
-import DatabaseContext from '../../../../context/Database/Database.context';
 import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import './Toolbar.scss';
-import AuthContext from '../../../../context/Auth/Auth.context';
 import { useRxData } from 'rxdb-hooks';
 import { ProjectDocType } from '../../../../RXdatabase/schemas/projects.schema';
 import ToolbarButton from '../../buttons/ToolbarButton/ToolbarButton';
@@ -68,13 +66,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
 
-  const { offlineScenes } = useContext(DatabaseContext);
-  const { logout } = useContext(AuthContext);
-
-
-  const [sceneToPrint, setSceneToPrint] = useState<any>({});
-  const [inputs, setInputs] = useState<any>([]);
-
   const { id } = useParams<{ id: string }>();
 
   const { result: currentProject, isFetching } = useRxData<ProjectDocType>(
@@ -86,14 +77,6 @@ const Toolbar: React.FC<ToolbarProps> = memo(({
     })
   );
   
-  useEffect(() => {
-    if (offlineScenes?.length > 0) setSceneToPrint(offlineScenes[0]._data);
-    if (sceneToPrint) {
-      const inputs = [{ a: `LOCATION: ${sceneToPrint.locationName}`, b: `SET: ${sceneToPrint.setName}`, c: sceneToPrint.synopsis }];
-      setInputs(inputs);
-    }
-  }, [offlineScenes, sceneToPrint]);
-
   const handleSearchInput = (e: any) => {
     if(customHandleSearch) {
       customHandleSearch(e);

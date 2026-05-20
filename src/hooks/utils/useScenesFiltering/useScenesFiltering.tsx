@@ -9,7 +9,7 @@ import useCombinedScenesWithShootings from "../../database/useCombinedScenesWith
 export const useScenesFiltering = (searchText: string) => {
   const { projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const { selectedFilterOptions, setSelectedFilterOptions, selectedSortOptions, setSelectedSortOptions } = useContext<any>(ScenesContext);
-  const { combinedData: offlineScenes, isFetching: scenesAreLoading } = useCombinedScenesWithShootings();
+  const { combinedData: scenesFromDB, isFetching: scenesAreLoading } = useCombinedScenesWithShootings();
 
   const [filteredScenes, setFilteredScenes] = useState<any[]>([]);
   const [renderScenes, setRenderScenes] = useState<boolean>(true);
@@ -17,16 +17,14 @@ export const useScenesFiltering = (searchText: string) => {
   // Removed initialReplicationFinished dependency as it no longer exists
 
   useEffect(() => {
-    if (!offlineScenes) return;
+    if (!scenesFromDB) return;
 
-    console.log("🟢 Filtrando escenas con:", selectedFilterOptions);
-    const filteredData = applyFilters(offlineScenes, selectedFilterOptions);
+    const filteredData = applyFilters(scenesFromDB, selectedFilterOptions);
 
-    console.log("🔵 Ordenando escenas con:", selectedSortOptions);
     const sortedData = sortByCriterias(filteredData, selectedSortOptions);
 
     setFilteredScenes([...sortedData]); // ⚠️ Asegura que React detecte cambios
-  }, [offlineScenes, selectedFilterOptions, selectedSortOptions, projectId, renderScenes]);
+  }, [scenesFromDB, selectedFilterOptions, selectedSortOptions, projectId, renderScenes]);
 
   useEffect(() => {
     if (searchText?.length > 0) {

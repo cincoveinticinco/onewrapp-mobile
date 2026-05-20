@@ -68,10 +68,6 @@ export default class HttpReplicator {
               )
             : undefined,
           async handler(checkpointOrNull: any, batchSize: number = 20) {
-            if(projectId) {
-              const collectionName = collection.getSchemaName();
-              console.warn(`projectId is ${projectId} used for ${collectionName} pull!`);
-            }
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
             const token = await getToken();
             const id = checkpointOrNull ? checkpointOrNull.id : 0;

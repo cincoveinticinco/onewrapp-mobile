@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   IonGrid,
   IonCard,
@@ -15,11 +15,11 @@ import AddCharacterInput from './AddCharacterInput';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import { Character } from '../../../../Shared/types/scenes.types';
 import AddButton from '../../../../Shared/Components/buttons/AddButton/AddButton';
-import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import { VscEdit } from 'react-icons/vsc';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
+import { useProjectScenes } from '../../../../hooks/database/useProjectScenes/useProjectScenes';
 
 interface AddCharacterFormProps {
   observedCharacters: Character[];
@@ -33,7 +33,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   editMode,
   setCharacters
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
+  const projectScenes = useProjectScenes();
   const [dropDownIsOpen, setDropDownIsOpen] = useState(true);
   const [characterCategories, setCharacterCategories] = useState<string[]>([]);
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
@@ -52,7 +52,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
   }
   
   const uniqueCharacters = useMemo(() => {
-    const offlineChars = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
+    const offlineChars = getUniqueValuesFromNestedArray(projectScenes, 'characters', 'characterName');
     const mergedChars = [...offlineChars];
     
     observedCharacters.forEach(char => {
@@ -71,7 +71,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
     });
     
     return mergedChars;
-  }, [offlineScenes, observedCharacters]);
+  }, [projectScenes, observedCharacters]);
 
   const filterCharactersByCategory = useMemo(() => (categoryName: string | null) => 
     uniqueCharacters.filter((character: any) => {
@@ -83,7 +83,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
 
 
   const defineCharactersCategories = useCallback((): string[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(projectScenes, 'characters', 'categoryName').map(category => category.categoryName ? category.categoryName : EmptyEnum.NoCategory);
     const observedCategories = observedCharacters.map(character => character.categoryName).map(category => category ? category : EmptyEnum.NoCategory);
 
     const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
@@ -92,7 +92,7 @@ const AddCharacterForm: React.FC<AddCharacterFormProps> = ({
       .sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
 
     return uniqueCategories;
-  }, [offlineScenes, observedCharacters]);
+  }, [projectScenes, observedCharacters]);
 
   useEffect(() => {
     setCharacterCategories(defineCharactersCategories());

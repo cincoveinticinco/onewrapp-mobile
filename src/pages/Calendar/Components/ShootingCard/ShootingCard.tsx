@@ -3,7 +3,6 @@ import {
 } from '@ionic/react';
 import { useHistory, useParams } from 'react-router';
 import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../../../../Shared/enums/ennums';
-import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import { ShootingDocType } from '../../../../Shared/types/shooting.types';
 
 const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> = ({ className, shooting }) => {
@@ -25,7 +24,8 @@ const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> 
     return 'var(--ion-color-primary)';
   };
 
-  const isMobile = useIsMobile();
+  const producedScenes = getTotalProducedScenes();
+
   return (
     <IonCard
       className={className}
@@ -35,34 +35,19 @@ const ShootingCard: React.FC<{ className?: string, shooting: ShootingDocType }> 
         width: '100%',
       }}
     >
-      <IonCardContent style={{ width: '100%', padding: '6px' }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-        >
-          <p className="unit-name">
-            <b>
-              U.
-              {shooting && shooting.unitNumber}
-            </b>
-          </p>
-          {
-            !isMobile && (
-              <p className="unit-produced">
-                {' '}
-                {getTotalProducedScenes()}
-                {' '}
-                /
-                {' '}
-                {shooting.scenes?.length}
-              </p>
-            )
-          }
+      <IonCardContent className="shooting-card-content">
+        <div className="shooting-card-summary">
+          <span className="unit-name">
+            U.
+            {shooting.unitNumber}
+          </span>
+          <span className="unit-produced">
+            {producedScenes}
+            /
+            {shooting.scenes?.length}
+          </span>
         </div>
       </IonCardContent>
-      <p />
     </IonCard>
   );
 };

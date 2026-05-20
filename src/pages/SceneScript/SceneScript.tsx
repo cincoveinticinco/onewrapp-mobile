@@ -47,7 +47,7 @@ const SceneScript: React.FC<{
   const { hideTabs } = useHideTabs();
   const { sceneId, id, shootingId: urlShootingId } = useParams<{ sceneId: string; id: string; shootingId?: string }>();
   const [thisSceneShooting, setThisSceneShooting] = useState<ShootingScene | null>(null);
-  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
   const history = useHistory();
   const { selectedFilterOptions } = useContext(ScenesContext);
   const [zoomLevel, setZoomLevel] = useState(() => {

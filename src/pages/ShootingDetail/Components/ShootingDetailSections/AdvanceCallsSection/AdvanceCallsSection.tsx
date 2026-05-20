@@ -39,9 +39,9 @@ export const AdvanceCallsSection: React.FC<AdvanceCallsSectionProps> = ({
       permissionType={permissionType}
     >
       {advanceCalls?.length > 0 ? (
-        advanceCalls.map((call) => (
+        advanceCalls.map((call, index) => (
           <AdvanceCallInfo
-            key={call.id}
+            key={`advance-call-${call.id || call.dep_name_eng || call.dep_name_esp || call.adv_call_time || index}-${index}`}
             call={call}
             editMode={editMode}
             getHourMinutesFomISO={getHourMinutesFomISO}

@@ -1,46 +1,29 @@
 import {
-  useContext, useEffect,
-  useState,
+  useContext, useEffect, useState,
 } from 'react';
-import DatabaseContext from '../../../context/Database/Database.context';
 import ScenesContext from '../../../context/Scenes/Scenes.context';
 import { EmptyEnum, SceneTypeEnum } from '../../../Shared/enums/ennums';
 import getUniqueValuesByKey from '../../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortByCriterias from '../../../Shared/Utils/SortScenesUtils/sortByCriterias';
-import { useRxData, useRxDB } from 'rxdb-hooks';
-import { useParams } from 'react-router';
-import { SceneDocType } from '../../../Shared/types/scenes.types';
+import { useProjectScenes } from '../../../hooks/database/useProjectScenes/useProjectScenes';
 
 const useProcessedCast = () => {
   const { castSelectedSortOptions } = useContext(ScenesContext);
   const [isLoading, setIsLoading] = useState(true);
   const [processedCast, setProcessedCast] = useState<any[]>([]);
   const [processedExtras, setProcessedExtras] = useState<any[]>([]);
-  const { id: projectId } = useParams<{ id: string }>();
-  const { result: scenes, isFetching } = useRxData<SceneDocType>('scenes', (collection) => collection.find({
-    selector: {
-      projectId: Number(projectId),
-    } 
-  }));
-
-  const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (scenes) {
-      setOfflineScenes(scenes);
-    }
-  }, [scenes, isFetching]);
+  const projectScenes = useProjectScenes();
 
   useEffect(() => {
     setIsLoading(true);
     const processCharacter = (character: any) => {
-      const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
-        const hasCharacter = scene._data.characters.some(
+      const scenes: any[] = projectScenes.reduce((acc: any[], scene: any) => {
+        const hasCharacter = scene.characters?.some(
           (sceneCharacter: any) => sceneCharacter.characterName === character.characterName,
         );
         if (hasCharacter) {
-          acc.push(scene._data);
+          acc.push(scene);
         }
         return acc;
       }, []);
@@ -52,7 +35,7 @@ const useProcessedCast = () => {
       const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber')?.length;
       const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE)?.length;
       const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length;
-      const participation: string = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(0);
+      const participation: string = projectScenes.length > 0 ? ((scenesQuantity / projectScenes.length) * 100).toFixed(0) : '0';
 
       return {
         characterHeader: character.characterNum ? `${character.characterNum}. ${character.characterName}` : character.characterName,
@@ -71,12 +54,12 @@ const useProcessedCast = () => {
     };
 
     const processExtra = (extra: any) => {
-      const scenes: any[] = offlineScenes.reduce((acc: any[], scene: any) => {
-        const hasExtra = scene._data.extras.some(
+      const scenes: any[] = projectScenes.reduce((acc: any[], scene: any) => {
+        const hasExtra = scene.extras?.some(
           (sceneExtra: any) => sceneExtra.extraName === extra.extraName,
         );
         if (hasExtra) {
-          acc.push(scene._data);
+          acc.push(scene);
         }
         return acc;
       }, []);
@@ -88,7 +71,7 @@ const useProcessedCast = () => {
       const episodesQuantity: number = getUniqueValuesByKey(scenes, 'episodeNumber')?.length;
       const scenesQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.SCENE)?.length;
       const protectionQuantity: number = scenes.filter((scene) => scene.sceneType === SceneTypeEnum.PROTECTION)?.length;
-      const participation: string = ((scenesQuantity / offlineScenes?.length) * 100).toFixed(0);
+      const participation: string = projectScenes.length > 0 ? ((scenesQuantity / projectScenes.length) * 100).toFixed(0) : '0';
 
       return {
         characterNum: null,
@@ -106,8 +89,8 @@ const useProcessedCast = () => {
       };
     };
 
-    const uniqueCharacters: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-    const uniqueExtras: any[] = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
+    const uniqueCharacters: any[] = getUniqueValuesFromNestedArray(projectScenes, 'characters', 'characterName');
+    const uniqueExtras: any[] = getUniqueValuesFromNestedArray(projectScenes, 'extras', 'extraName');
 
     const sortedCast = sortByCriterias(uniqueCharacters.map(processCharacter), castSelectedSortOptions);
     const sortedExtras = sortByCriterias(uniqueExtras.map(processExtra), castSelectedSortOptions);
@@ -115,7 +98,7 @@ const useProcessedCast = () => {
     setProcessedCast(sortedCast);
     setProcessedExtras(sortedExtras);
     setIsLoading(false);
-  }, [offlineScenes, castSelectedSortOptions]);
+  }, [projectScenes, castSelectedSortOptions]);
 
   return { processedCast, processedExtras, isLoading };
 };

@@ -78,10 +78,6 @@ export default class HttpReplicator {
           batchSize: 100,
           stream$: poll$,
           async handler(checkpointOrNull: any, batchSize: number) {
-            if(projectId) {
-              const collectionName = collection.getSchemaName();
-              console.warn(`projectId is ${projectId} used for ${collectionName} pull!`);
-            }
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
             const token = await getToken();
             const id = checkpointOrNull ? checkpointOrNull.id : 0;
@@ -117,7 +113,6 @@ export default class HttpReplicator {
             
             // Emitir progreso si viene del backend
             if (data.progress_percentage !== undefined && self.onProgress) {
-              console.log(`📊 Backend progress received: ${data.progress_percentage}% for ${collectionName}`);
               self.onProgress(data.progress_percentage);
             }
             

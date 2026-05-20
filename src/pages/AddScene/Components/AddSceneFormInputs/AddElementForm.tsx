@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IonGrid, IonCard, IonCardHeader, IonCardSubtitle, AlertInput, IonButton, IonItemSliding, IonItemOptions, IonItemOption, IonItem } from '@ionic/react';
 import AddButton from '../../../../Shared/Components/buttons/AddButton/AddButton';
-import DatabaseContext from '../../../../context/Database/Database.context';
 import InputModalWithSections from '../../../../Layouts/InputModalWithSections/InputModalWithSections';
 import getUniqueValuesFromNestedArray from '../../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import { EmptyEnum } from '../../../../Shared/enums/ennums';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
 import { VscEdit } from 'react-icons/vsc';
 import AddElementInput from './AddElementInput';
+import { useProjectScenes } from '../../../../hooks/database/useProjectScenes/useProjectScenes';
 
 interface Element {
   elementName: string;
@@ -25,7 +25,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
   editMode,
   setElements,
 }) => {
-  const { offlineScenes } = useContext(DatabaseContext);
+  const projectScenes = useProjectScenes();
   const [elementsCategories, setElementsCategories] = useState<string[]>([]);
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -43,7 +43,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
   };
 
   const uniqueElements = useMemo(() => {
-    const offlineElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+    const offlineElements = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'elementName');
     const mergedElements = [...offlineElements];
     observedElements.forEach(el => {
       const existingElementIndex = mergedElements.findIndex(existing => existing.elementName === el.elementName);
@@ -54,7 +54,7 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
       }
     });
     return mergedElements;
-  }, [offlineScenes, observedElements]);
+  }, [projectScenes, observedElements]);
 
   const filterElementsByCategory = useMemo(() => (categoryName: string | null) =>
     uniqueElements.filter(element => {
@@ -63,11 +63,11 @@ const AddElementForm: React.FC<AddElementFormProps> = ({
     }), [uniqueElements]);
 
   const defineElementsCategories = useCallback((): string[] => {
-    const uniqueCategoryValues = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
+    const uniqueCategoryValues = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'categoryName').map(c => c.categoryName || EmptyEnum.NoCategory);
     const observedCategories = observedElements.map(e => e.categoryName || EmptyEnum.NoCategory);
     const allCategories = [...uniqueCategoryValues, ...observedCategories, EmptyEnum.NoCategory];
     return Array.from(new Set(allCategories.sort((a, b) => (a && b ? String(a).localeCompare(String(b)) : 0))));
-  }, [offlineScenes, observedElements]);
+  }, [projectScenes, observedElements]);
 
   useEffect(() => setElementsCategories(defineElementsCategories()), [defineElementsCategories]);
 

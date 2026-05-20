@@ -313,11 +313,11 @@ const Calendar: React.FC = () => {
           />
         )}
       </IonHeader>
-      <IonContent color="tertiary" fullscreen>
+      <IonContent color="tertiary" fullscreen className="calendar-content">
         <IonRefresher slot="fixed" onIonRefresh={() => window.location.reload()}>
           <IonRefresherContent />
         </IonRefresher>
-        <Legend items={legendItems} />
+        <Legend items={legendItems} className="calendar-legend" />
         {isLoading || isFetchingUnits ? (
           AppLoader()
         ) : !isMobile  ? (

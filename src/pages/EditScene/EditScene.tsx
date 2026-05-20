@@ -20,7 +20,7 @@ const EditScene: React.FC = () => {
   const projectId = parseInt(id);
   const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
   const { successToast, errorToast } = useAlertToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
@@ -85,7 +85,7 @@ const EditScene: React.FC = () => {
 
   useEffect(() => {
     fetchScene();
-  }, [offlineScenes]);
+  }, [oneWrapDb, sceneId]);
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();

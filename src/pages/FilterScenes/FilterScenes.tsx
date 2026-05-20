@@ -3,7 +3,7 @@ import {
   useIonViewWillEnter, useIonViewWillLeave,
 } from '@ionic/react';
 import React, {
-  useCallback, useContext, useEffect, useMemo,
+  useCallback, useEffect, useMemo,
 } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { ProtectionTypeEnumArray } from '../../Shared/enums/ennums';
@@ -12,7 +12,6 @@ import FilterScenesButtonsSelect from './Components/FilterScenesButtonsSelect/Fi
 import FilterScenesModalSelect from './Components/FilterScenesModalSelect/FilterScenesModalSelect';
 import OutlineLightButton from '../../Shared/Components/buttons/OutlineLightButton/OutlineLightButton';
 import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
-import DatabaseContext from '../../context/Database/Database.context';
 import ScenesContext, { SelectedFilterOptionsInterface } from '../../context/Scenes/Scenes.context';
 import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
@@ -26,10 +25,11 @@ import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import getUniqueValuesFromNestedArray from '../../Shared/Utils/getUniqueValuesFromNestedArray';
 import sortArrayAlphabeticaly from '../../Shared/Utils/sortArrayAlphabeticaly';
 import './FilterScenes.scss';
+import { useProjectScenes } from '../../hooks/database/useProjectScenes/useProjectScenes';
 
 const FilterScenes = () => {
   const { selectedFilterOptions, setSelectedFilterOptions } = React.useContext<any>(ScenesContext);
-  const { offlineScenes } = useContext(DatabaseContext);
+  const projectScenes = useProjectScenes();
   const [showReset, setShowReset] = React.useState(false);
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -42,7 +42,7 @@ const FilterScenes = () => {
     setTimeout(() => {
       setDataIsLoading(false);
     }, 500);
-  }, [offlineScenes]);
+  }, [projectScenes]);
 
   useIonViewWillEnter(() => {
     hideTabs();
@@ -82,15 +82,15 @@ const FilterScenes = () => {
     handleBack();
   };
 
-  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-  const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
-  const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
-  const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName');
+  const uniqueCharacterValuesArray = getUniqueValuesFromNestedArray(projectScenes, 'characters', 'characterName');
+  const uniqueElementsValuesAarray = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'elementName');
+  const uniqueExtrasValuesArray = getUniqueValuesFromNestedArray(projectScenes, 'extras', 'extraName');
+  const uniqueCategoryElementsValuesArray = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'categoryName');
   const getSortedCharacterNames = useMemo(() => customArraySort(getCharactersArray(uniqueCharacterValuesArray)), [uniqueCharacterValuesArray]);
   const getSortedExtraNames = useMemo(() => customArraySort(getOptionsArray('extraName', uniqueExtrasValuesArray)), [uniqueExtrasValuesArray]);
   const getSortedElementNames = useMemo(() => sortArrayAlphabeticaly(getOptionsArray('elementName', uniqueElementsValuesAarray)), [uniqueElementsValuesAarray]);
-  const getSortedLocationNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'locationName')), [offlineScenes]);
-  const getSortedSetNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(offlineScenes, 'setName')), [offlineScenes]);
+  const getSortedLocationNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(projectScenes, 'locationName')), [projectScenes]);
+  const getSortedSetNames = useMemo(() => sortArrayAlphabeticaly(getUniqueValuesByKey(projectScenes, 'setName')), [projectScenes]);
   const getSortedElementCategoryNames = useMemo(() => sortArrayAlphabeticaly(getOptionsArray('categoryName', uniqueCategoryElementsValuesArray)), [uniqueCategoryElementsValuesArray]);
 
   useEffect(() => {
@@ -148,14 +148,14 @@ const FilterScenes = () => {
 
             <FilterScenesModalSelect
               filterName="EPISODES"
-              listOfFilters={getUniqueValuesByKey(offlineScenes, 'episodeNumber').map(String)}
+              listOfFilters={getUniqueValuesByKey(projectScenes, 'episodeNumber').map(String)}
               handleSingleFilterOption={handleSingleFilterOption}
               optionKey="episodeNumber"
             />
 
             {/* <FilterScenesModalSelect
                 filterName='SCENE STATUS'
-                listOfFilters={getUniqueValuesByKey(offlineScenes, 'characters')}
+                listOfFilters={getUniqueValuesByKey(projectScenes, 'characters')}
               /> */}
 
             <FilterScenesButtonsSelect
@@ -279,7 +279,7 @@ const FilterScenes = () => {
 
             {/* <FilterScenesModalSelect
                 filterName='DATE'
-                listOfFilters={getUniqueValuesByKey(offlineScenes, 'date')}
+                listOfFilters={getUniqueValuesByKey(projectScenes, 'date')}
               /> */}
 
             <IonRow class="ion-flex ion-justify-content-center filter-button-row">

@@ -15,10 +15,10 @@ const SceneDetailsNotesSection = () => {
         {editMode && <AddButton onClick={() => setAddNoteModalOpen(true)} slot="end" />}
       </div>
       {(watch("notes") || [])?.length > 0 ? (
-        (watch("notes") || []).map((note: Note) => (
+        (watch("notes") || []).map((note: Note, index: number) => (
           <IonCard
             color='tertiary-dark'
-            key={`note-${note}`}
+            key={`note-${note.userName || 'unknown'}-${note.note || 'empty'}-${index}`}
             className="scene-details-card ion-flex-column ion-justify-content-center ion-align-items-start ion-padding-start"
           >
             <p className="ion-no-padding ion-no-margin-bottom"><b>{note.userName?.toLocaleUpperCase()}</b></p>

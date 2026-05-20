@@ -20,7 +20,7 @@ interface UseFormTypeLogicReturnValue {
   popupMessage: string
 }
 
-const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTypeLogicReturnValue => {
+const useFormTypeLogic = (scenes: any[], selectedText: string): UseFormTypeLogicReturnValue => {
   const [formType, setFormType] = useState<'character' | 'element' | 'extra' | 'note' | null>(null);
   const [popupMessage, setPopupMessage] = useState('');
 
@@ -45,9 +45,10 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
 
   useEffect(() => {
     const normalizedSelectedText = removeAccents(selectedText).toLowerCase().trim();
-    const uniqueCharacters = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'characterName');
-    const uniqueExtras = getUniqueValuesFromNestedArray(offlineScenes, 'extras', 'extraName');
-    const uniqueElements = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'elementName');
+    const projectScenes = (scenes || []).map((scene: any) => scene?._data || scene).filter(Boolean);
+    const uniqueCharacters = getUniqueValuesFromNestedArray(projectScenes, 'characters', 'characterName');
+    const uniqueExtras = getUniqueValuesFromNestedArray(projectScenes, 'extras', 'extraName');
+    const uniqueElements = getUniqueValuesFromNestedArray(projectScenes, 'elements', 'elementName');
 
     const foundCharacter = uniqueCharacters.find((character: Character) => character.characterName && removeAccents(character.characterName).toLowerCase().trim() === normalizedSelectedText);
     const foundElement = uniqueElements.find((element: Element) => element.elementName && removeAccents(element.elementName).toLowerCase().trim() === normalizedSelectedText);
@@ -77,7 +78,7 @@ const useFormTypeLogic = (offlineScenes: any[], selectedText: string): UseFormTy
     setCharacter((prevCharacter: any) => ({ ...prevCharacter, characterName: selectedText }));
     setElement((prevElement: any) => ({ ...prevElement, elementName: selectedText }));
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
-  }, [selectedText]);
+  }, [scenes, selectedText]);
 
   return {
     formType, extra, setExtra, element, setElement, character, setCharacter, note, setNote, setFormType, popupMessage,

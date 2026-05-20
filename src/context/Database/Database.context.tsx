@@ -13,7 +13,6 @@ import { DatabaseContextProps } from './types/Database.types';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
-  offlineScenes: [],
   setStartReplication: () => {},
   projectId: null,
   setProjectId: () => {},
@@ -58,7 +57,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
   const [viewTabs, setViewTabs] = useState(true);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
-  const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
   const [initialReplicationDone, setInitialReplicationDone] = useState(false);
   
@@ -182,9 +180,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
     setScenesAreLoading(true);
 
-    return dbEvents.on('scenes:changed', ({ scenes, projectId: changedProjectId }) => {
+    return dbEvents.on('scenes:changed', ({ projectId: changedProjectId }) => {
       if (changedProjectId === parseInt(projectId)) {
-        setOfflineScenes(scenes);
         setScenesAreLoading(false);
       }
     });
@@ -218,7 +215,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       <DatabaseContext.Provider
         value={{
           oneWrapDb: oneWrapRXdatabase,
-          offlineScenes,
           setStartReplication,
           projectId: projectId ? parseInt(projectId) : null,
           setProjectId,

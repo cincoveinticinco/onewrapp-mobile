@@ -1,7 +1,6 @@
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import { RxLocalDocumentData } from 'rxdb';
 import { Provider } from 'rxdb-hooks';
 import AppDataBase from '../../RXdatabase/database';
 import HttpReplicator from '../../RXdatabase/replicator';
@@ -27,7 +26,6 @@ import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const DatabaseContext = React.createContext<DatabaseContextProps>({
   oneWrapDb: null,
-  offlineScenes: [],
   setStartReplication: () => { },
   projectId: null,
   setProjectId: () => { },
@@ -49,6 +47,7 @@ const DatabaseContext = React.createContext<DatabaseContextProps>({
   initializeAllReplications: () => new Promise(() => false),
   hardResync: () => new Promise(() => false),
   hardAppReset: () => new Promise(() => false),
+  initialReplicationDone: false,
 });
 
 export const DatabaseContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -95,7 +94,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
 
   const [viewTabs, setViewTabs] = useState(true);
   const [projectsAreLoading, setProjectsAreLoading] = useState(true);
-  const [offlineScenes, setOfflineScenes] = useState<any[]>([]);
   const [startReplication, setStartReplication] = useState(false);
   const isOnline = useNetworkStatus();
   const initializeDatabase = async () => {
@@ -613,8 +611,7 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
         sort: [
           { updatedAt: 'desc' },
         ],
-      }).$.subscribe((data: RxLocalDocumentData[]) => {
-        setOfflineScenes(data);
+      }).$.subscribe(() => {
         setScenesAreLoading(false);
       });
       return () => { subscription.unsubscribe(); };
@@ -766,7 +763,6 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
       <DatabaseContext.Provider
         value={{
           oneWrapDb: oneWrapRXdatabase,
-          offlineScenes,
           setStartReplication,
           projectId: projectId ? parseInt(projectId) : null,
           setProjectId,
@@ -787,7 +783,8 @@ export const DatabaseContextProvider = ({ children }: { children: React.ReactNod
           initializeProjectsUserReplication,
           initializeAllReplications,
           hardResync,
-          hardAppReset
+          hardAppReset,
+          initialReplicationDone: false,
         }}
       >
         {children}
