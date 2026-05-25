@@ -2,8 +2,6 @@ workflows:
   ios-testflight:
     name: iOS TestFlight
     max_build_duration: 120
-    integrations:
-      app_store_connect: App Store Connect API
     environment:
       ios_signing:
         distribution_type: app_store
@@ -36,5 +34,6 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
-        auth: integration
+        apple_id: $APPLE_ID
+        password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: true
