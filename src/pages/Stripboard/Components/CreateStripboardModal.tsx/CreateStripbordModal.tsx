@@ -30,7 +30,7 @@ const CreateStripboardModal: React.FC<CreateStripboardModalProps> = ({
       required: true,
       col: '6',
       offset: '3',
-      min: new Date().toISOString(),
+      min: new Date().toISOString().split('T')[0] as `${number}${number}${number}${number}-${number}${number}-${number}${number}`,
     },
   ];
   return (
