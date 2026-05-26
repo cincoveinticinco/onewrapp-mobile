@@ -67,7 +67,6 @@
 				4E14663E2D5BFA7600F4FE79 /* EnvironmentPlugin.m */,
 				4E14663B2D5BECE500F4FE79 /* EnvironmentPlugin.swift */,
 				4E1466392D5BEC4600F4FE79 /* Settings.bundle */,
-				BB0011212D5BEC4600F4FE79 /* PrivacyInfo.xcprivacy */,
 				504EC3061FED79650016851F /* App */,
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
@@ -93,6 +92,7 @@
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
+				BB0011212D5BEC4600F4FE79 /* PrivacyInfo.xcprivacy */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
 			);
