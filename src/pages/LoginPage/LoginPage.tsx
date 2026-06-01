@@ -82,11 +82,19 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLoginMobile = async () => {
     setIsLoggingIn(true);
+    console.log('[LOGIN] handleGoogleLoginMobile start — isOnline:', isOnline);
+    console.log('[LOGIN] URL_PATH:', environment.URL_PATH);
     try {
       if(isOnline) {
+        console.log('[LOGIN] Calling GoogleAuth.signIn()...');
         const googleUser = await GoogleAuth.signIn();
+        console.log('[LOGIN] GoogleAuth.signIn() success — email:', googleUser.email);
+        console.log('[LOGIN] accessToken present:', !!googleUser.authentication.accessToken);
+        console.log('[LOGIN] idToken present:', !!googleUser.authentication.idToken);
+
         const accessToken = googleUser.authentication.accessToken;
-        console.log(environment.URL_PATH)
+        console.log('[LOGIN] POST to:', `${environment.URL_PATH}/google_sign_in`);
+
         const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
           method: 'POST',
           headers: {
@@ -94,16 +102,22 @@ const LoginPage: React.FC = () => {
           },
           body: JSON.stringify({ access_token: accessToken }),
         });
+
+        console.log('[LOGIN] Backend response status:', response.status);
         const data = await response.json();
-  
+        console.log('[LOGIN] Backend response body:', JSON.stringify(data));
+
         if (data.token) {
+          console.log('[LOGIN] Login successful');
           saveLogin(data.token, data.user);
           history.push('/my/projects');
         } else {
+          console.warn('[LOGIN] Login failed — backend error:', data.error);
           history.push('/user-not-found');
           errorToast(data.error);
         }
       } else {
+        console.log('[LOGIN] Offline mode — checking local session...');
         const getUser = async () => {
           if(oneWrapDb) {
             const user = await oneWrapDb.user.findOne().exec();
@@ -111,32 +125,31 @@ const LoginPage: React.FC = () => {
               return user._data;
             }
           }
-  
           return null;
         }
-  
+
         const user = await getUser();
-  
+
         if (user) {
           const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
           const now = new Date().getTime();
-  
+          console.log('[LOGIN] Offline session — ends at:', user.sessionEndsAt, '— valid:', now < sessionEndsAt);
           if (now < sessionEndsAt) {
-            console.log('User is logged in');
             saveLogin(user.sessionToken, user);
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[LOGIN] Error in handleGoogleLoginMobile:', error);
+      console.error('[LOGIN] Error message:', error?.message);
+      console.error('[LOGIN] Error code:', error?.code);
+      console.error('[LOGIN] Error stack:', error?.stack);
       if (isOnline) {
-        errorToast('Error during Google Sign In (Mobile)');
-      } else {
-        console.error(error);
+        errorToast(`Error during Google Sign In (Mobile): ${error?.message || error}`);
       }
     } finally {
       setIsLoggingIn(false);
     }
-    
   };
 
   // Función para el login en web usando @react-oauth/google

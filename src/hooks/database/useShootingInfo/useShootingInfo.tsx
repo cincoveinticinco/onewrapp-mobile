@@ -192,7 +192,6 @@ export const useShootingInfo = () => {
         formattedDate: shootingFormattedDate,
       };
     } catch (error) {
-      console.error('Error in getShootingData:', error);
       throw error;
     }
   };
@@ -216,7 +215,7 @@ export const useShootingInfo = () => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      throw error;
+      errorToast('Error loading shooting data');
     }
   }, [oneWrappDb, shootingId, scenesWithShootings]);
 
@@ -228,7 +227,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       successToast('Script report saved successfully');
     } catch (error) {
-      errorToast(`Error saving script report: ${error}`);
+      errorToast('Error saving script report');
       throw error;
     } finally {
       await fetchData();
@@ -276,7 +275,7 @@ export const useShootingInfo = () => {
           successToast('Time updated successfully');
         }
       } catch (error) {
-        errorToast(`Error updating time: ${error}`);
+        errorToast('Error updating time');
         throw error;
       }
     }
@@ -368,7 +367,7 @@ export const useShootingInfo = () => {
 
       fetchData();
     } catch (error) {
-      errorToast(`Error adding location: ${error}`);
+      errorToast('Error adding location');
       return;
     } finally {
       await fetchData();
@@ -422,7 +421,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
-      errorToast(`Error updating location: ${error}`);
+      errorToast('Error updating location');
       throw error;
     } finally {
       await fetchData();
@@ -449,7 +448,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
-      errorToast(`Error updating hospital: ${error}`);
+      errorToast('Error updating hospital');
       throw error;
     } finally {
       await fetchData();
@@ -467,7 +466,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
-      errorToast(`Error removing location: ${error}`);
+      errorToast('Error removing location');
       throw error;
     } finally {
       await fetchData();
@@ -485,7 +484,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       fetchData();
     } catch (error) {
-      errorToast(`Error removing hospital: ${error}`);
+      errorToast('Error removing hospital');
       throw error;
     } finally {
       await fetchData();
@@ -537,7 +536,7 @@ export const useShootingInfo = () => {
     try {
       await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      errorToast(`Error adding advance call: ${error}`);
+      errorToast('Error adding advance call');
       return;
     } finally {
       await fetchData();
@@ -562,7 +561,7 @@ export const useShootingInfo = () => {
       await oneWrappDb?.shootings.upsert(shootingCopy);
       successToast('Meal added successfully');
     } catch (error: any) {
-      errorToast(`Error adding meal: ${error}`);
+      errorToast('Error adding meal');
       console.error(error?.message  || 'Error adding meal'); 
       return;
     } finally {
@@ -602,7 +601,7 @@ export const useShootingInfo = () => {
           }
         }
       } catch (error) {
-        errorToast(`Error updating meal: ${error}`);
+        errorToast('Error updating meal');
         throw error;
       } finally {
         await fetchData();
@@ -640,7 +639,7 @@ export const useShootingInfo = () => {
           }
         }
       } catch (error) {
-        errorToast(`Error updating advance call: ${error}`);
+        errorToast('Error updating advance call');
       } finally {
         await fetchData();
         successToast('Advance call updated successfully');
@@ -672,7 +671,7 @@ export const useShootingInfo = () => {
       event.detail.complete();
       await oneWrappDb?.shootings.upsert(shootingCopy);
     } catch (error) {
-      errorToast(`Error reordering scenes: ${error}`);
+      errorToast('Error reordering scenes');
       throw error;
     }
   };

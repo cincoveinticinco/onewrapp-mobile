@@ -67,10 +67,9 @@ const AppTabs: React.FC = () => {
   };
 
   const fetchCurrentProject = async () => {
-    console.log(!!oneWrapDb)
     const projects = await oneWrapDb?.projects.find().exec();
     const cProject = projects?.find((project: any) => project._data.id == projectId);
-    setCurrentCompany(cProject.companyId);
+    if (cProject) setCurrentCompany(cProject.companyId);
   };
 
   const getSecurePageAccess = useCallback((pageId: number) => {
@@ -86,7 +85,7 @@ const AppTabs: React.FC = () => {
       }
     }
     return null;
-  }, [currentCompany, user]);
+  }, [currentCompany, user, projectId]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -98,7 +97,7 @@ const AppTabs: React.FC = () => {
     if(oneWrapDb) {
       loadData();
     }
-  }, [oneWrapDb]);
+  }, [oneWrapDb, projectId]);
 
   const urlString = '/my/projects/:id' as any;
   const { url } = useRouteMatch();
