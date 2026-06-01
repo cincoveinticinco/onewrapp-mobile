@@ -10,7 +10,6 @@ import {
   IonList,
   IonModal,
   IonRow,
-  useIonViewWillLeave,
 } from '@ionic/react';
 import {
   useCallback,
@@ -35,11 +34,9 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
 }) => {
   const mapRef = useRef<HTMLElement | null>(null);
   const [map, setMap] = useState<GoogleMap | null>(null);
-  const [mapInitialized, setMapInitialized] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [marker, setMarker] = useState<string | null>(null);
-  const [currentAddress, setCurrentAddress] = useState('');
   const [locationName, setLocationName] = useState('');
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
@@ -67,14 +64,10 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   }, [selectedLocation]);
 
   useEffect(() => {
-    if (isOpen && !mapInitialized) {
-      setTimeout(() => {
-        createMap();
-      }, 300);
-    } else if (map && lat && lng) {
+    if (map && lat && lng) {
       updateMarker(lat, lng);
     }
-  }, [isOpen, mapInitialized, map, lat, lng]);
+  }, [map, lat, lng]);
 
   const createMap = async () => {
     if (!mapRef.current) return;
@@ -93,7 +86,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         },
       });
       setMap(newMap);
-      setMapInitialized(true);
 
       await newMap.setOnMapClickListener((event) => {
         updateMarker(event.latitude, event.longitude);
@@ -140,7 +132,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
         
         if (data.status === 'OK' && data.results && data.results[0]) {
           const address = data.results[0].formatted_address;
-          setCurrentAddress(address);
           setSearchTerm(address);
           setLocationAddress(address);
 
@@ -151,14 +142,12 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
             setLocationPostalCode(postalComponent.long_name);
           }
         } else {
-          setCurrentAddress('Address not found');
           setSearchTerm('');
           setLocationAddress('');
           setLocationPostalCode('');
         }
       } catch (error) {
         console.error('Error getting address:', error);
-        setCurrentAddress('Error getting address');
         setSearchTerm('');
         setLocationAddress('');
         setLocationPostalCode('');
@@ -167,8 +156,6 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   };
 
   const handleCloseModal = () => {
-    setMapInitialized(false);
-    setCurrentAddress('');
     setSuggestions([]);
     setSearchTerm('');
     setMarker(null);
@@ -293,7 +280,7 @@ const MapFormModal: React.FC<MapFormModalProps> = ({
   }}
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
+    <IonModal isOpen={isOpen} onDidPresent={createMap} onDidDismiss={handleCloseModal} className="general-modal-styles" color="tertiary">
       <IonHeader />
       <IonContent color="tertiary">
         <div style={{
