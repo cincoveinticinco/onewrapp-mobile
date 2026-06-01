@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRxDB } from "rxdb-hooks";
 import { useParams } from "react-router";
 import { mergedSceneBanner, mergedSceneShoot, ShootingDataProps, ShootingInfo } from "../../../pages/ShootingDetail/types/ShootingDetail.types";
@@ -52,7 +52,16 @@ export const useShootingInfo = () => {
   const [moveDiffHoursAlertOpen, setMoveDiffHoursAlertOpen] = useState(false);
   const { shootingId } = useParams<{ shootingId: string }>();
 
-  const { combinedData: scenesWithShootings, isFetching } = useCombinedScenesWithShootings();
+  const { combinedData: scenesWithShootings } = useCombinedScenesWithShootings();
+
+  useEffect(() => {
+    setShootingData(shootingDataInitial);
+    setIsLoading(true);
+    setSelectedLocation(null);
+    setSelectedHospital(null);
+    setGeneralCallDiffHours(0);
+    setMoveDiffHoursAlertOpen(false);
+  }, [shootingId]);
 
   const calculateUpdatedInfo = (scenes: any[]) => {
     const scenesOnly = scenes.filter((item: any) => item.cardType === 'scene');
@@ -209,7 +218,7 @@ export const useShootingInfo = () => {
       setIsLoading(false);
       throw error;
     }
-  }, [oneWrappDb, shootingId]);
+  }, [oneWrappDb, shootingId, scenesWithShootings]);
 
   const saveScriptReport = async () => {
     try {
