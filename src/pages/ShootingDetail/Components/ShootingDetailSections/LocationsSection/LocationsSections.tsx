@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { PiTrashSimpleLight } from 'react-icons/pi';
 import { VscEdit } from 'react-icons/vsc';
 import { LocationInfo } from '../../../../../Shared/types/shooting.types';
@@ -32,9 +32,17 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
   openEditModal,
 }) => {
   const alertRef: any = useRef(null);
+  const [pendingLocation, setPendingLocation] = useState<{ location: LocationInfo; index: number } | null>(null);
 
-  const openAlert = () => {
+  const openAlert = (location: LocationInfo, index: number) => {
+    setPendingLocation({ location, index });
     alertRef.current?.present();
+  };
+
+  const handleConfirmDelete = () => {
+    if (pendingLocation) {
+      removeLocation(pendingLocation.location, pendingLocation.index);
+    }
   };
 
   return (
@@ -46,16 +54,16 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
+      <InputAlert
+        handleOk={handleConfirmDelete}
+        header="Delete Location"
+        message={`Are you sure you want to delete ${pendingLocation?.location.locationName ?? ''}?`}
+        ref={alertRef}
+        inputs={[]}
+      />
       {locations?.length > 0 ? (
         locations.map((location, locationIndex) => (
           <div key={`${location.lat ?? ''}${location.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
-            <InputAlert
-              handleOk={() => removeLocation(location, locationIndex)}
-              header="Delete Location"
-              message={`Are you sure you want to delete ${location.locationName ?? ''}?`}
-              ref={alertRef}
-              inputs={[]}
-            />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>
                 {truncateString(location.locationName?.toUpperCase() ?? '', 50)}
@@ -72,7 +80,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
             </div>
             <div className="ion-flex-column location-buttons">
               {editMode && <VscEdit className="edit-location" onClick={() => openEditModal(locationIndex)} />}
-              {editMode && <PiTrashSimpleLight className="delete-location" onClick={() => openAlert()} />}
+              {editMode && <PiTrashSimpleLight className="delete-location" onClick={() => openAlert(location, locationIndex)} />}
             </div>
           </div>
         ))
