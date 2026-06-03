@@ -64,6 +64,7 @@ const stripboardSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
+      'previousProjectId',
     ],
     deletedField: 'deleted',
   },

@@ -87,6 +87,7 @@ const crewSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
+      'previousProjectId',
     ],
     deletedField: 'deleted',
     headerFields: ['Authorization'],

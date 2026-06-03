@@ -56,6 +56,7 @@ const talentSchemaInput = {
     checkpointFields: [
       'id',
       'updatedAt',
+      'previousProjectId',
     ],
     deletedField: 'deleted',
     headerFields: ['Authorization'],

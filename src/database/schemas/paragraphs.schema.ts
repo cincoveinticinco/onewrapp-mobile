@@ -75,7 +75,7 @@ const sceneParagraphSchema: RxJsonSchema<SceneParagraphDocType> = sceneParagraph
 const sceneParagraphSchemaInput = {
   paragraphs: {
     schema: sceneParagraphSchema,
-    checkpointFields: ['id', 'updatedAt'],
+    checkpointFields: ['id', 'updatedAt', 'previousProjectId'],
     deletedField: 'deleted',
     headerFields: ['Authorization'],
   },
