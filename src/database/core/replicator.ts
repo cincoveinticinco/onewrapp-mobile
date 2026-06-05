@@ -75,7 +75,7 @@ export default class HttpReplicator {
             )
           : undefined;
         replicationConfig.pull = {
-          batchSize: 100,
+          batchSize: collection.batchSize,
           stream$: poll$,
           async handler(checkpointOrNull: any, batchSize: number) {
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';

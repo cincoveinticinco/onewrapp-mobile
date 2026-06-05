@@ -103,6 +103,6 @@ export default class SceneParagraphSchema extends DatabaseSchema {
   constructor() {
     const { schemaName } = SceneParagraphSchema;
     const schemaInput = sceneParagraphSchemaInput;
-    super(schemaName, schemaInput);
+    super(schemaName, schemaInput, 2000);
   }
 }
