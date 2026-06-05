@@ -4,7 +4,7 @@ import {
   IntOrExtOptionEnumArray,
   DayOrNightOptionEnumArray,
   SceneTypeEnum,
-} from '../../Shared/ennums/ennums';
+} from '../../Shared/enums/ennums';
 import environment from '../../../environment';
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import { SceneDocType } from '../../Shared/types/scenes.types';
@@ -116,8 +116,10 @@ const sceneSchemaLiteral = {
       items: {
         type: 'object',
         properties: {
+          id: { type: ['number', 'null']},
           email: { type: ['string', 'null'] },
           note: { type: ['string', 'null'] },
+          userName: { type: ['string', 'null'] },
           updatedAt: { type: ['string', 'null'] },
         },
       },

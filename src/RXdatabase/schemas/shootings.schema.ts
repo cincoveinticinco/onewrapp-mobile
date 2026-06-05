@@ -1,6 +1,6 @@
 import { RxJsonSchema, toTypedRxJsonSchema } from 'rxdb';
 import environment from '../../../environment';
-import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Shared/ennums/ennums';
+import { ShootingSceneStatusEnumArray, ShootingStatusEnumArray } from '../../Shared/enums/ennums';
 import DatabaseSchema from '../database_schema';
 import { ShootingDocType } from '../../Shared/types/shooting.types';
 
@@ -94,7 +94,7 @@ const shootingSchemaLiteral= {
         properties: {
           id: {
             type: ['string', 'null'],
-            maxLength: 250,
+            maxLength: 250
           },
           projectId: {
             type: 'number',
@@ -499,7 +499,7 @@ const shootingSchemaLiteral= {
             maxLength: 250,
           },
           callTime: {
-            type: 'string',
+            type: ['string', 'null'],
           },
           otherCallId: {
             type: 'number',

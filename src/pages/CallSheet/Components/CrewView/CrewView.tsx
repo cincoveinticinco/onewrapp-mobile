@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GeneralTable, { Column, EditFunction } from '../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable, { Column, EditFunction } from '../../../../Shared/Components/tables/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
 import { useParams } from 'react-router';
 import { useRxData, useRxDB } from 'rxdb-hooks';
@@ -14,14 +14,14 @@ import {
   IonDatetime,
   IonCheckbox,
 } from '@ionic/react';
-import OutlinePrimaryButton from '../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import AppLoader from '../../../../Shared/hooks/AppLoader';
+import OutlinePrimaryButton from '../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import AppLoader from '../../../../Shared/Components/loaders/AppLoader/AppLoader';
 import './ CrewView.scss'
-import { ShootingStatusEnum } from '../../../../Shared/ennums/ennums';
+import { ShootingStatusEnum } from '../../../../Shared/enums/ennums';
 import { CrewCall, ShootingDocType } from '../../../../Shared/types/shooting.types';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
 import { CrewDocType } from '../../../../Shared/types/crew.types';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import { UnitDocType } from '../../../../Shared/types/unitTypes.types';
 
 interface CrewViewProps {
   crewCalls: CrewCall[];
@@ -56,17 +56,31 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     status: number;
   }[]>([]);
   const [ copyCrewFromMaster, setCopyCrewFromMaster ] = useState<boolean>(false);
-  const errorToast = useErrorToast();
-  const successToast = useSuccessToast();
+  const { successToast, errorToast } = useAlertToast();
   const [ selectedDate, setSelectedDate ] = useState<string>(availableDates[0]?.date || formattedDate);
+
+  const { id: projectId } = useParams<{ id: string }>();
 
   const { result: shootings, isFetching }: {
     result: ShootingDocType[];
     isFetching: boolean;
-  } = useRxData('shootings', (collection) => collection.find());
-  const { result: units, isFetching: isFetchingUnits } = useRxData('units', (collection) => collection.find());
+  } = useRxData('shootings', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
 
-  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find());
+  const { result: units, isFetching: isFetchingUnits } = useRxData<UnitDocType>('units', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
+
+  const { result: crew, isFetching: isFetchingCrew } = useRxData<CrewDocType>('crew', (collection) => collection.find({
+    selector: {
+      projectId: Number(projectId),
+    }
+  }));
   const [ selectedUnitId, setSelectedUnitId ] = useState<string>('');
 
   const formattedData = crewCalls.map((crew) => ({
@@ -93,7 +107,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
   };
 
   const getAvailableShootingDays = (unitId: string) => {
-    const shootingDays = shootings.filter((shooting: any) => shooting._data.unitId === parseInt(unitId) && shooting._data.crewCalls.length > 0).map((shooting: any) => {
+    const shootingDays = shootings.filter((shooting: any) => shooting._data.unitId === parseInt(unitId) && shooting._data.crewCalls?.length > 0).map((shooting: any) => {
       return {
         date: shooting.shootDate,
         status: shooting.status
@@ -307,7 +321,7 @@ const CrewView: React.FC<CrewViewProps> = ({ crewCalls, editMode, setCrewCalls, 
     )
   }
 
-  if (!crewCalls.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} name='Copy Crew' />;
+  if (!crewCalls?.length) return <NoRegisters addNew={() => setOpenCopyCrewModal(true)} name='Copy Crew' />;
 
   return (
     <GeneralTable

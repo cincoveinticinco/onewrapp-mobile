@@ -1,8 +1,7 @@
 import { useRxDB } from "rxdb-hooks";
-import useErrorToast from "../../../Shared/hooks/useErrorToast";
-import useSuccessToast from "../../../Shared/hooks/useSuccessToast";
 import { FormStructureInterface } from "../types/crew.interfaces";
 import { CrewDocType } from "../../../Shared/types/crew.types";
+import useAlertToast from "../../../hooks/utils/useToastAlert/useToastAlert";
 
 interface CrewOperationsInterface {
   selectedCrewId?: string | null;
@@ -17,8 +16,7 @@ const useCrewOperations = ({
   setAddNewModalIsOpen = (isOpen: boolean) => {},
   id = '',
 }: CrewOperationsInterface) => {
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const oneWrappDb: any = useRxDB();
 
     const handleUpsert = async (data: FormStructureInterface) => {

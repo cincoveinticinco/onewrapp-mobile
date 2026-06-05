@@ -10,6 +10,7 @@ interface InputAlertProps {
   subHeader?: string;
   message?: string;
   isOpen?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
   handleCancel?: () => void;
 }
 
@@ -21,12 +22,14 @@ const InputAlert: React.ForwardRefRenderFunction<HTMLIonAlertElement, InputAlert
   header,
   subHeader,
   message,
-  isOpen = false
+  isOpen = false,
+  setIsOpen = () => {}
 }, ref) => {
   const [alertInputs, setAlertInputs] = useState(inputs);
 
   const handleDismiss = () => {
     setAlertInputs(inputs.map(input => ({ ...input, value: '' })));
+    setIsOpen(false);
   };
 
   return (

@@ -1,5 +1,5 @@
 import { ExtractDocumentTypeFromTypedRxJsonSchema } from 'rxdb';
-import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../ennums/ennums';
+import { ShootingSceneStatusEnum, ShootingStatusEnum } from '../enums/ennums';
 import { shootingSchemaTyped } from '../../RXdatabase/schemas/shootings.schema';
 
 export type ShootingDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof shootingSchemaTyped>;

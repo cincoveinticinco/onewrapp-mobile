@@ -6,3 +6,6 @@ dist
 .env.stg
 # Local Netlify folder
 .netlify
+
+# Test coverage output
+coverage

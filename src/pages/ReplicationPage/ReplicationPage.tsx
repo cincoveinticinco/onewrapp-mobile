@@ -17,7 +17,7 @@ import {
 import { refresh, reload } from 'ionicons/icons';
 import { useHistory, useParams } from 'react-router';
 import DatabaseContext from '../../context/Database/Database.context';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import './ReplicationPage.scss';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
 
@@ -38,6 +38,8 @@ const ReplicationPage: React.FC = () => {
   const [dots, setDots] = useState('');
   const [messageIndex, setMessageIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const normalizedPercentage = Math.max(0, Math.min(100, replicationPercentage || 0));
+  const isReplicationComplete = !!id && (projectsInfoIsOffline[`${id}`] || normalizedPercentage >= 100);
 
   const messages = [
     'Please wait, replication can take some minutes to finish',
@@ -50,13 +52,19 @@ const ReplicationPage: React.FC = () => {
     toggleTabs.hideTabs();
   });
 
+  // Debug: Log progress updates
+  useEffect(() => {
+    console.log(`📊 ReplicationPage - Progress: ${replicationPercentage}%, Status: ${replicationStatus}`);
+  }, [replicationPercentage, replicationStatus]);
+
 
   useEffect(() => {
-    if (isOnline && !projectsInfoIsOffline[`project_${id}`]) {
+    if (isOnline && id && !projectsInfoIsOffline[`${id}`]) {
       setIsReplicating(true);
       initialProjectReplication().then(() => {
         setIsReplicating(false);
-        history.push(`/my/projects/${id}/strips`);
+         // we need to avoid multiple replication instances creations when project is changed, so we use window.location.replace
+        // window.location.replace(`/my/projects/${id}/strips`);
       }).catch(() => {
         setIsReplicating(false);
         setError('There was an error replicating the data. Please try again or contact support.');
@@ -66,11 +74,11 @@ const ReplicationPage: React.FC = () => {
 
   useEffect(() => {
     const dotsInterval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? '' : `${prev}.`));
+      setDots((prev) => (prev?.length >= 3 ? '' : `${prev}.`));
     }, 500);
 
     const messageInterval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % messages.length);
+      setMessageIndex((prev) => (prev + 1) % messages?.length);
     }, 10000); // Change message every 10 seconds
 
     return () => {
@@ -96,21 +104,15 @@ const ReplicationPage: React.FC = () => {
     );
   }
 
-  const retryReplication = () => {
-    setError(null);
-    setIsReplicating(true);
-    hardResync().then(() => {
-      setIsReplicating(false);
-      history.push(`/my/projects/${id}/strips`);
-    }).catch(() => {
-      setIsReplicating(false);
-      setError('There was an error replicating the data. Please try again or contact support.');
-    });
-  }
-
   const handleRetry = () => {
     if (isOnline) {
-      retryReplication();
+      window.location.reload();
+    }
+  };
+  
+  const handleGoToProject = () => {
+    if (id) {
+      window.location.replace(`/my/projects/${id}/strips`);
     }
   };
 
@@ -123,15 +125,24 @@ const ReplicationPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonContent className="replication-page-content" color="tertiary">
-          <IonCard className="replication-card" color="tertiary">
-            <IonCardContent>
-              <IonText color="danger">
-                <h2>Error while replicating</h2>
-                <p>{error}</p>
-                {retryButton()}
-              </IonText>
-            </IonCardContent>
-          </IonCard>
+          <div className="replication-bg" aria-hidden="true">
+            <video className="replication-video" autoPlay muted loop playsInline>
+              <source src="/videos/backgroundLogin.webm" type="video/webm" />
+              <source src="/videos/backgroundLogin.mp4" type="video/mp4" />
+            </video>
+            <div className="replication-bg-overlay" />
+          </div>
+          <div className="replication-content">
+            <IonCard className="replication-card" color="tertiary">
+              <IonCardContent>
+                <IonText color="danger">
+                  <h2>Error while replicating</h2>
+                  <p>{error}</p>
+                  {retryButton()}
+                </IonText>
+              </IonCardContent>
+            </IonCard>
+          </div>
         </IonContent>
       </IonPage>
     );
@@ -145,42 +156,62 @@ const ReplicationPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="replication-page-content" color="tertiary">
-        <IonCard className="replication-card" color="tertiary">
-          <IonCardContent>
-            <IonText color="primary">
-              <h2>Replication Progress</h2>
-            </IonText>
-            {isReplicating && (
-              <div className="spinner-container">
-                <p>
-                  {messages[messageIndex]}
-                  {dots}
-                </p>
-              </div>
-            )}
-            <IonProgressBar
-              value={replicationPercentage / 100}
-              style={{ height: '20px', margin: '20px 0', borderRadius: '10px' }}
-              className="progress-bar"
-            />
-            <IonText>
-              <h3 className="replication-percentage">
-                {replicationPercentage}
-                %
-              </h3>
-              <p>{replicationStatus}</p>
-            </IonText>
-          </IonCardContent>
-        </IonCard>
+        <div className="replication-bg" aria-hidden="true">
+          <video className="replication-video" autoPlay muted loop playsInline>
+            <source src="/videos/backgroundLogin.webm" type="video/webm" />
+            <source src="/videos/backgroundLogin.mp4" type="video/mp4" />
+          </video>
+          <div className="replication-bg-overlay" />
+        </div>
+        <div className="replication-content">
+          <IonCard className="replication-card" color="tertiary">
+            <IonCardContent>
+              <IonText color="primary">
+                <h2>Replication Progress</h2>
+              </IonText>
+              {isReplicating && (
+                <div className="spinner-container">
+                  <p>
+                    {messages[messageIndex]}
+                    {dots}
+                  </p>
+                </div>
+              )}
+              <IonProgressBar
+                value={normalizedPercentage / 100}
+                className="progress-bar"
+              />
+              <IonText>
+                <h3 className="replication-percentage">
+                  {Math.round(normalizedPercentage)}
+                  %
+                </h3>
+                <p className="replication-status">{replicationStatus}</p>
+              </IonText>
+            </IonCardContent>
+          </IonCard>
 
-        {!isOnline && (
-          <IonText color="danger" className="offline-message">
-            <p>You are offline. Please connect to the internet to start replication.</p>
-          </IonText>
-        )}
+          {!isOnline && (
+            <IonText color="danger" className="offline-message">
+              <p>You are offline. Please connect to the internet to start replication.</p>
+            </IonText>
+          )}
 
-        {retryButton()}
-        <IonSpinner name="crescent" color="primary" />
+          {isReplicationComplete ? (
+            <IonButton
+              expand="block"
+              onClick={handleGoToProject}
+              className="retry-button"
+              style={{
+                '--background': 'var(--ion-color-success)',
+              }}
+            >
+              Go to Project
+            </IonButton>
+          ) : (
+            retryButton()
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

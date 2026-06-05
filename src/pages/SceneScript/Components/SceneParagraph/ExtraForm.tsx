@@ -17,7 +17,7 @@ const ExtraForm: React.FC<ExtraFormProps> = ({ extra, setExtra }) => {
           className={isFocused ? 'input-item' : 'script-popup-input'}
           value={extra.extraName}
           labelPlacement="floating"
-          label="Extra Name *"
+          label="EXTRA NAME *"
           placeholder="INSERT EXTRA NAME"
           style={{
             borderBottom: '1px solid var(--ion-color-light)',

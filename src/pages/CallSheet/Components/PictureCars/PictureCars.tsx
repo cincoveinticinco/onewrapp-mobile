@@ -1,8 +1,8 @@
 import React from 'react';
 import { PictureCar } from '../../../../Shared/types/shooting.types';
-import EditionModal, { FormInput } from '../../../../Shared/Components/EditionModal/EditionModal';
-import GeneralTable, { Column } from '../../../../Shared/Components/GeneralTable/GeneralTable';
+import GeneralTable, { Column } from '../../../../Shared/Components/tables/GeneralTable/GeneralTable';
 import NoRegisters from '../NoRegisters/NoRegisters';
+import EditionModal, { FormInput } from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface PictureCarsProps {
   pictureCars: PictureCar[]
@@ -80,7 +80,7 @@ const PictureCars: React.FC<PictureCarsProps> = ({
 
   if (isOpen) return <AddNewModal />;
 
-  if (!pictureCars.length) {
+  if (!pictureCars?.length) {
     return (
       <NoRegisters
         addNew={() => setIsOpen(true)}

@@ -1,0 +1,6 @@
+@use '../../theme/mixins' as *;
+
+.modal-styles {
+  @include modal-styling;
+  background-color: var(--ion-color-tertiary);
+}

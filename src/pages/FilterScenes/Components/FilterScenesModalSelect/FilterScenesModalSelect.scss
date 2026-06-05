@@ -1,4 +1,4 @@
-@import '../../../../theme/mixins';
+@use '../../../../theme/mixins' as *;
 
 .filters-items-rows {
   border-bottom: 1px solid var(--ion-color-dark);

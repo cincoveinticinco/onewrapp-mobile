@@ -15,12 +15,12 @@ import CrewView from './Components/CrewView/CrewView';
 import ExtraView from './Components/ExtraView/ExtraView';
 import OtherCalls from './Components/OtherCalls/OtherCalls';
 import PictureCars from './Components/PictureCars/PictureCars';
-import AddButton from '../../Shared/Components/AddButton/AddButton';
-import ExploreContainer from '../../Shared/Components/ExploreContainer/ExploreContainer';
+import AddButton from '../../Shared/Components/buttons/AddButton/AddButton';
+import ExploreContainer from '../../Shared/Components/descriptive/ExploreContainer/ExploreContainer';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingStatusEnum } from '../../Shared/ennums/ennums';
-import useHandleBack from '../../Shared/hooks/useHandleBack';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
+import { ShootingStatusEnum } from '../../Shared/enums/ennums';
+import useHandleBack from '../../hooks/utils/useHandleBack/useHandleBack';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import { Character, SceneDocType } from '../../Shared/types/scenes.types';
 import {
   CastCalls, CrewCall, ExtraCall, OtherCall, PictureCar, ShootingDocType
@@ -29,12 +29,11 @@ import { TalentDocType } from '../../Shared/types/talent.types';
 import timeToISOString from '../../Shared/Utils/timeToIsoString';
 
 import { ShootingInfoLabels } from '../ShootingDetail/Components/ShootingBasicInfo/ShootingBasicInfo';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
 import getHourMinutesFomISO from '../../Shared/Utils/getHoursMinutesFromISO';
 import './CallSheet.css';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 type CallSheetView = 'cast' | 'extras' | 'pictureCars' | 'others' | 'crew';
 
@@ -81,8 +80,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
   const [editedCastCalls, setEditedCastCalls] = useState<any>([]);
   const [searchMode, setSearchMode] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { errorToast, successToast } = useAlertToast();
 
   const getTalentCastOptions = async () => {
     const talents: TalentDocType[] = await oneWrapDb?.talents.find({}).exec() || [];
@@ -327,7 +325,7 @@ const CallSheet: React.FC<CallSheetProps> = ({
       const getNumberScenesByCast = (castName: string) => scenes.filter((scene: any) => {
         const characters = scene._data.characters || [];
         return characters.some((character: any) => normalizeString(character.characterName) === normalizeString(castName));
-      }).length.toString() || '--';
+      })?.length.toString() || '--';
 
       const characterNames = [...new Set(scenes.flatMap((scene: { _data: SceneDocType; }) => (scene._data.characters || []).map((character: Character) => character.characterName && normalizeString(character.characterName.toLowerCase()))))];
 
@@ -743,7 +741,6 @@ const CallSheet: React.FC<CallSheetProps> = ({
         <IonHeader>
           <Toolbar
             name={`${view.toUpperCase()} CALL TIME`}
-            logoutIcon={false}
             search={true}
             searchMode={searchMode}
             setSearchMode={setSearchMode}

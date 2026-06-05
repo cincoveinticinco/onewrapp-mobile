@@ -1,6 +1,10 @@
 import { replicateRxCollection } from 'rxdb/plugins/replication';
+import { BehaviorSubject, interval } from 'rxjs';
+import { filter, map, withLatestFrom } from 'rxjs/operators';
 import environment from '../../environment';
 import AppDataBase from './database';
+
+const POLL_INTERVAL_MS = 30000;
 
 export default class HttpReplicator {
   private database: AppDataBase;
@@ -14,13 +18,22 @@ export default class HttpReplicator {
   public replicationStates: any[] = [];
 
   public getToken: () => Promise<string> = () => new Promise<string>((resolve) => {});
+  private pollingEnabled$?: BehaviorSubject<boolean>;
 
-  constructor(database: any, collections: any, projectId: (number | null) = null, lastItem: any = null, getToken: () => Promise<string> = () => new Promise<string>((resolve) => {})) {
+  constructor(
+    database: any,
+    collections: any,
+    projectId: (number | null) = null,
+    lastItem: any = null,
+    getToken: () => Promise<string> = () => new Promise<string>((resolve) => {}),
+    pollingEnabled$?: BehaviorSubject<boolean>
+  ) {
     this.database = database;
     this.collections = collections;
     this.projectId = projectId;
     this.lastItem = lastItem;
     this.getToken = getToken;
+    this.pollingEnabled$ = pollingEnabled$;
   }
 
   public stopReplication() {
@@ -46,11 +59,15 @@ export default class HttpReplicator {
       // Configuración del PULL
       if (pull) {
         replicationConfig.pull = {
-          async handler(checkpointOrNull: any, batchSize: number) {
-            if(projectId) {
-              const collectionName = collection.getSchemaName();
-              console.warn(`projectId is ${projectId} used for ${collectionName} pull!`);
-            }
+          batchSize: 20,
+          stream$: this.pollingEnabled$
+            ? interval(POLL_INTERVAL_MS).pipe(
+                withLatestFrom(this.pollingEnabled$),
+                filter(([, enabled]) => enabled),
+                map(() => 'RESYNC' as const)
+              )
+            : undefined,
+          async handler(checkpointOrNull: any, batchSize: number = 20) {
             const updatedAt = checkpointOrNull ? checkpointOrNull.updatedAt : '1970-01-01T00:00:00.000Z';
             const token = await getToken();
             const id = checkpointOrNull ? checkpointOrNull.id : 0;
@@ -170,10 +187,33 @@ export default class HttpReplicator {
     }
   }
 
-  public cancelReplication() {
-    this.replicationStates.forEach((replicationState) => {
-      replicationState.cancel();
+  public async cancelReplication() {
+    const cancelPromises = this.replicationStates.map(replicationState => {
+      return new Promise(resolve => {
+        try {
+          replicationState.cancel();
+          
+          // Wait for cancel to complete
+          const subscription = replicationState.canceled$.subscribe(() => {
+            subscription.unsubscribe();
+            resolve(true);
+          });
+          
+          // Fallback in case cancel doesn't trigger event
+          setTimeout(() => {
+            subscription.unsubscribe();
+            resolve(false);
+          }, 1000);
+        } catch (e) {
+          console.warn('Error in cancel replication:', e);
+          resolve(false);
+        }
+      });
     });
+    
+    await Promise.all(cancelPromises);
+    this.replicationStates = [];
+    console.log('Replication fully cancelled');
   }
 
   public removeReplication() {

@@ -1,9 +1,9 @@
 import { IonCheckbox, IonList } from '@ionic/react';
 import React from 'react';
-import HighlightedText from '../../Shared/Components/HighlightedText/HighlightedText';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
 import { SceneDocType } from '../../Shared/types/scenes.types';
 import './ScenesCheckboxList.scss';
+import HighlightedText from '../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 
 interface ScenesCheckboxListProps {
   listOfScenes: SceneDocType[];
@@ -44,15 +44,15 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
   }
 
   const getListStyles = () => {
-    if (uncheckedFilteredScenes.length === 0 && listOfScenes.length > 10) {
+    if (uncheckedFilteredScenes?.length === 0 && listOfScenes?.length > 10) {
       return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
-    if (listOfScenes.length > 10) {
+    if (listOfScenes?.length > 10) {
       return { marginTop: '100px' };
     }
 
-    if (uncheckedFilteredScenes.length === 0 && listOfScenes.length <= 10) {
+    if (uncheckedFilteredScenes?.length === 0 && listOfScenes?.length <= 10) {
       return {};
     }
 
@@ -61,10 +61,10 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
 
   return (
     <IonList color="tertiary" className="ion-no-padding ion-margin scenes-list" style={getListStyles()}>
-      {uncheckedFilteredScenes.map((scene: SceneDocType, i: number) => (
+      {uncheckedFilteredScenes.map((scene: SceneDocType) => (
         <div
           color="tertiary"
-          key={`filter-item-${i}`}
+          key={`filter-item-${scene.episodeNumber}-${scene.sceneNumber}`}
           className="checkbox-item-option filter-item ion-no-margin ion-no-padding"
           onClick={() => handleCheckboxToggle(scene)}
         >
@@ -73,7 +73,7 @@ const ScenesCheckboxList: React.FC<ScenesCheckboxListProps> = ({
             className="ion-no-margin ion-no-padding checkbox-option"
             labelPlacement="end"
             checked={isSceneChecked(scene)}
-            disabled={!multipleSelections && checkedSelectedScenes.length > 0}
+            disabled={!multipleSelections && checkedSelectedScenes?.length > 0}
           >
             <HighlightedText text={getSceneHeader(scene)} searchTerm={searchText} />
           </IonCheckbox>

@@ -1,6 +1,6 @@
 import { IonButton, IonCol, IonRow } from '@ionic/react';
 import React from 'react';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 
 import './FilterScenesButtonsSelect.scss';
 
@@ -27,11 +27,12 @@ const FilterScenesButtonsSelect: React.FC<FilterScenesButtonsSelectProps> = ({ s
       </IonCol>
       {
         selectOptions.map(({ filterName, handleOption, class: optionClass }) => (
-          <IonCol key={`filter-button-select-${filterName}`} size-xs="6" size-sm={selectOptions.length > 2 ? '3' : '6'}>
+          <IonCol key={`filter-button-select-${filterName}`} size-xs="6" size-sm={selectOptions?.length > 2 ? '3' : '6'}>
             <IonButton
               expand="block"
               className={`${optionClass} filter-button-select`}
               onClick={handleOption}
+              style={{ width: '100% !important' }}
             >
               {filterName}
             </IonButton>

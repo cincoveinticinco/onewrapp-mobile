@@ -1,24 +1,27 @@
 import {
   IonContent,
+  IonIcon,
 } from '@ionic/react';
 import React, {
   useContext, useEffect,
   useRef,
   useState,
 } from 'react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import ScenesContext, { setsDefaultSortOptions } from '../../context/Scenes/Scenes.context';
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 
-import LocationSetCard from './Components/LocationSetCard/LocationSetCard';
-import useProcessedSetsAndLocations from '../../hooks/Sets/usePorcessedSetsAndLocations';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import LocationSetCard, { Set as SetInterface } from './Components/LocationSetCard/LocationSetCard';
+import useProcessedSetsAndLocations from '../../hooks/database/useSets/usePorcessedSetsAndLocations';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
 import removeAccents from '../../Shared/Utils/removeAccents';
 import './Sets.scss';
+import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
+import { swapVerticalOutline } from 'ionicons/icons';
 
 const Sets: React.FC<{
   permissionType?: number | null;
@@ -62,6 +65,10 @@ const Sets: React.FC<{
         const normalizedSetLocation = removeAccents(set.locationName.toLowerCase());
         const normalizedSetName = removeAccents(set.setName.toLowerCase());
 
+        if (location.locationName === 'NO LOCATION') {
+          return (!set.locationName || set.locationName == '') && normalizedSetName.includes(normalizedSearchText);
+        }
+
         return normalizedSetLocation === normalizedLocation
           && normalizedSetName.includes(normalizedSearchText);
       });
@@ -81,7 +88,7 @@ const Sets: React.FC<{
   }, [processedSets, setsSearchText]);
 
   useEffect(() => {
-    if (processedLocations.length > 0 && filteredSets.length > 0) {
+    if (processedLocations?.length > 0 && filteredSets?.length > 0) {
       processedLocations.forEach((location: any) => {
         const filteredSetsByLocation = filteredSets.filter((set: any) => {
           if (location.locationName === 'NO LOCATION') {
@@ -161,15 +168,29 @@ const Sets: React.FC<{
     return 'Set name is required';
   };
 
+  const SortButton = () => (
+    <ToolbarButton
+      triggerId="sort-sets-modal-trigger"
+      click={() => {}}
+      show
+      color="light"
+    >
+      <IonIcon icon={swapVerticalOutline} />
+    </ToolbarButton>
+  )
+
+  const history = useHistory()
+  const handleBack = () => history.push('/my/projects');
+
   return (
     <>
       <MainPagesLayout
         searchText={setsSearchText}
         setSearchText={setSetsSearchText}
         title="SETS"
-        search
-        sort
-        sortTrigger="sort-sets-modal-trigger"
+        search 
+        customButtons={[SortButton]}
+        handleBack={handleBack}
       >
         <IonContent color="tertiary" fullscreen ref={contentRef}>
           {
@@ -181,16 +202,16 @@ const Sets: React.FC<{
               !isLoading && (
                 <>
                   <ScrollInfiniteContext setDisplayedData={setDisplayedLocations} filteredData={filteredLocations} batchSize={9}>
-                    {displayedLocations.map((location, index) => (
-                      <div key={`location${index}${location}`}>
+                    {displayedLocations.map((location) => (
+                      <div key={`location${location.locationName}`}>
                         {
-                        sets[location.locationName].length > 0
+                        sets[location.locationName]?.length > 0
                         && (
                         <LocationSetCard
                           location={location}
                           searchText={setsSearchText}
                           setsQuantity={
-                          sets[location.locationName] ? sets[location.locationName].length : 0
+                          sets[location.locationName] ? sets[location.locationName]?.length : 0
                           }
                           onClick={() => toggleDropDown(location.locationName)}
                           isOpen={dropDownIsOpen[location.locationName]}
@@ -210,16 +231,16 @@ const Sets: React.FC<{
                             >
                               {
                                 displayedSets[location.locationName]
-                                && displayedSets[location.locationName].map((set: any, index: number) => (
+                                && displayedSets[location.locationName].map((set: SetInterface) => (
                                   <LocationSetCard
-                                    key={index}
+                                    key={`set-card-${set.setName}`}
                                     set={set}
                                     searchText={setsSearchText}
                                     validationFunction={validateSetExists}
                                     permissionType={permissionType}
                                   />
                                 ))
-}
+                              }
                             </ScrollInfiniteContext>
                             )
                           }

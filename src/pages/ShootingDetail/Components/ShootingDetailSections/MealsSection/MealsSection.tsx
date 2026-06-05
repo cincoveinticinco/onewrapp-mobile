@@ -1,7 +1,6 @@
 import { Meal } from '../../../../../Shared/types/shooting.types';
-import { FormInput } from '../../../../../Shared/Components/EditionModal/EditionModal';
-import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import { Section } from '../../../../../Shared/Components/Section/Section';
+import OutlinePrimaryButton from '../../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../../../Shared/Components/organizers/Section/Section';
 import MealInfo from '../../MealInfo/MealInfo';
 
 interface MealsSectionProps {
@@ -35,10 +34,10 @@ export const MealsSection: React.FC<MealsSectionProps> = ({
     permissionType={permissionType}
   >
     <div style={{ width: '100%', height: '100%' }}>
-      {meals.length > 0 ? (
-        meals.map((meal) => (
+      {meals?.length > 0 ? (
+        meals.map((meal, index) => (
           <MealInfo
-            key={meal.id}
+            key={`meal-${meal.id || meal.mealId || meal.meal || meal.readyAt || meal.endTime || index}-${index}`}
             meal={meal}
             editMode
             getHourMinutesFomISO={getHourMinutesFomISO}

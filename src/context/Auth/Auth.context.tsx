@@ -3,6 +3,9 @@ import React, {
   useEffect,
 } from 'react';
 import DatabaseContext from '../Database/Database.context';
+import InputAlert from '../../Layouts/InputAlert/InputAlert';
+import environment from '../../../environment';
+import { useHistory } from 'react-router';
 
 interface AuthContextType {
   loggedIn: boolean;
@@ -36,11 +39,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string>('');
   const { oneWrapDb } = useContext(DatabaseContext);
+  const alertRef = React.useRef<any>(null);
+  const history = useHistory();
   
 
   const checkSession = useCallback(async () => {
-   
-    return true;
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const response = await fetch(`${environment.URL_PATH}/verify_session`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+          setLoggedIn(true);
+          return true;
+        }
+        localStorage.removeItem('token');
+        setUser(null);
+        return false;
+      } catch (error) {
+        localStorage.removeItem('token');
+        history.push('/');
+        setUser(null);
+      }
+    }
+    setLoggedIn(false);
+    return false;
   }, []);
 
     // save loggedin in localstorage
@@ -56,6 +85,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = async () => {
+    await openLogoutAlert();
+  }
+
+  const openLogoutAlert = async () => {
+    if (alertRef.current) {
+      await alertRef.current.present();
+    }
+  };
+
+  const logoutConfirmation = async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('loggedIn');
     setUser(null);
@@ -97,6 +136,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+        <InputAlert
+          header="Logout"
+          message={`Are you sure you want to logout?`}
+          handleOk={() => logoutConfirmation()}
+          inputs={[]}
+          ref={alertRef}
+        /> 
     </AuthContext.Provider>
   );
 }

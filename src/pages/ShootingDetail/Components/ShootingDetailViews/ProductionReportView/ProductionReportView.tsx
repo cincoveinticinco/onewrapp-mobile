@@ -10,13 +10,12 @@ import { useParams } from 'react-router';
 import { RxDocument } from 'rxdb';
 import { useRxData } from 'rxdb-hooks';
 import DatabaseContext from '../../../../../context/Database/Database.context';
-import useErrorToast from '../../../../../Shared/hooks/useErrorToast';
-import AppLoader from '../../../../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../../../../Shared/hooks/useSuccessToast';
+import AppLoader from '../../../../../Shared/Components/loaders/AppLoader/AppLoader';
 import { ServiceMatricesDocType } from '../../../../../Shared/types/serviceMatrices.types';
 import { ShootingDocType } from '../../../../../Shared/types/shooting.types';
-import DropDownButton from '../../../../../Shared/Components/DropDownButton/DropDownButton';
-import GeneralTable, { Column } from '../../../../../Shared/Components/GeneralTable/GeneralTable';
+import DropDownButton from '../../../../../Shared/Components/buttons/DropDownButton/DropDownButton';
+import GeneralTable, { Column } from '../../../../../Shared/Components/tables/GeneralTable/GeneralTable';
+import useAlertToast from '../../../../../hooks/utils/useToastAlert/useToastAlert';
 
 interface ServiceDraft {
   id: string;
@@ -40,21 +39,24 @@ interface ProductionReportViewProps {
 }
 
 const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText }) => {
-  const { shootingId } = useParams<{ shootingId: string }>();
+  const { shootingId, id: projectId } = useParams<{ shootingId: string, id: string }>();
   const { oneWrapDb } = useContext(DatabaseContext);
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
   const [groupedServices, setGroupedServices] = useState<{ [key: string]: { prServiceTypeName: string, services: ServiceDraft[] } }>({});
 
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
 
   const { result: serviceMatrices, isFetching }: {
     result: ServiceMatricesDocType[];
     isFetching: boolean;
   } = useRxData(
     'service_matrices',
-    (collection) => collection.find(),
+    (collection) => collection.find({
+      selector: {
+        projectId: Number(projectId),
+      },
+    }),
   );
 
   const { result: [shooting], isFetching: isShootingFetching }: {
@@ -64,6 +66,7 @@ const ProductionReportView: React.FC<ProductionReportViewProps> = ({ searchText 
     'shootings',
     (collection) => collection.find({
       selector: {
+        projectId: Number(projectId),
         id: {
           $eq: shootingId,
         },

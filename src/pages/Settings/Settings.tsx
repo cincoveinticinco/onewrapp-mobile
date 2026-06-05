@@ -2,7 +2,7 @@ import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
 } from '@ionic/react';
 import { useHistory } from 'react-router';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
 import { useAuth } from '../../context/Auth/Auth.context';
 import { useContext } from 'react';
 import DatabaseContext from '../../context/Database/Database.context';

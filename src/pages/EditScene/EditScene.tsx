@@ -6,14 +6,12 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
-import AddScenesForm from '../AddScene/Components/AddSceneForm';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const EditScene: React.FC = () => {
   const history = useHistory();
@@ -22,9 +20,8 @@ const EditScene: React.FC = () => {
   const projectId = parseInt(id);
   const handleBack = () => history.push(`/my/projects/${projectId}/strips`);
   const updatedAt = new Date().toISOString();
-  const { oneWrapDb, offlineScenes } = useContext<DatabaseContextProps>(DatabaseContext);
-  const successMessageToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { successToast, errorToast } = useAlertToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
   const sceneDefaultValues = {
@@ -88,7 +85,7 @@ const EditScene: React.FC = () => {
 
   useEffect(() => {
     fetchScene();
-  }, [offlineScenes]);
+  }, [oneWrapDb, sceneId]);
 
   const scrollToTop = () => {
     contentRef.current?.scrollToTop();
@@ -99,7 +96,7 @@ const EditScene: React.FC = () => {
   const updateScene = async (formData: any) => {
     try {
       await oneWrapDb?.scenes.upsert(formData);
-      successMessageToast('Scene updated successfully!');
+      successToast('Scene updated successfully!');
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error updating scene');
@@ -149,23 +146,6 @@ const EditScene: React.FC = () => {
         {
           sceneDataIsLoading && (
             AppLoader()
-          )
-        }
-        {
-          !sceneDataIsLoading && (
-            <AddScenesForm
-              scrollToTop={() => scrollToTop()}
-              editMode
-              sceneFormId={sceneFormId}
-              handleSubmit={handleSubmit}
-              control={control}
-              errors={errors}
-              reset={reset}
-              setValue={setValue}
-              watch={watch}
-              formData={formData}
-              onSubmit={onSubmit}
-            />
           )
         }
       </IonContent>

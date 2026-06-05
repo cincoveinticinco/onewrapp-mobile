@@ -1,12 +1,12 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { PiTrashSimpleLight } from 'react-icons/pi';
 import { VscEdit } from 'react-icons/vsc';
 import { LocationInfo } from '../../../../../Shared/types/shooting.types';
 import InputAlert from '../../../../../Layouts/InputAlert/InputAlert';
 import generateLocationLink from '../../../../../Shared/Utils/getLocationLink';
 import truncateString from '../../../../../Shared/Utils/truncateString';
-import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import { Section } from '../../../../../Shared/Components/Section/Section';
+import OutlinePrimaryButton from '../../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import { Section } from '../../../../../Shared/Components/organizers/Section/Section';
 
 interface HospitalsSectionProps {
   hospitals: LocationInfo[];
@@ -32,9 +32,17 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
   openEditModal,
 }) => {
   const alertRef: any = useRef(null);
+  const [pendingHospital, setPendingHospital] = useState<{ hospital: LocationInfo; index: number } | null>(null);
 
-  const openAlert = () => {
+  const openAlert = (hospital: LocationInfo, index: number) => {
+    setPendingHospital({ hospital, index });
     alertRef.current?.present();
+  };
+
+  const handleConfirmDelete = () => {
+    if (pendingHospital) {
+      removeHospital(pendingHospital.hospital, pendingHospital.index);
+    }
   };
 
   return (
@@ -46,16 +54,16 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
       onAddClick={onAddClick}
       permissionType={permissionType}
     >
-      {hospitals.length > 0 ? (
+      <InputAlert
+        handleOk={handleConfirmDelete}
+        header="Delete Hospital"
+        message={`Are you sure you want to delete ${pendingHospital?.hospital.locationName ?? ''}?`}
+        ref={alertRef}
+        inputs={[]}
+      />
+      {hospitals?.length > 0 ? (
         hospitals.map((hospital, hospitalIndex) => (
           <div key={`${hospital.lat ?? ''}${hospital.lng ?? ''}`} className="ion-padding-start location-info-grid" style={{ width: '100%' }}>
-            <InputAlert
-              handleOk={() => removeHospital(hospital, hospitalIndex)}
-              header="Delete Hospital"
-              message={`Are you sure you want to delete ${hospital.locationName ?? ''}?`}
-              ref={alertRef}
-              inputs={[]}
-            />
             <h5 className="ion-flex ion-align-items-flex-start ion-justify-content-between">
               <b>{truncateString(hospital.locationName?.toUpperCase() ?? '', 50)}</b>
             </h5>
@@ -70,7 +78,7 @@ export const HospitalsSection: React.FC<HospitalsSectionProps> = ({
             </div>
             <div className="ion-flex-column location-buttons">
               {editMode && <VscEdit className="edit-location" onClick={() => openEditModal(hospitalIndex)} />}
-              {editMode && <PiTrashSimpleLight className="delete-location" onClick={() => openAlert()} />}
+              {editMode && <PiTrashSimpleLight className="delete-location" onClick={() => openAlert(hospital, hospitalIndex)} />}
             </div>
           </div>
         ))

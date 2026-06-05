@@ -1,37 +1,143 @@
 .replication-page-content {
-  padding: 20px;
+  --background: transparent;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.replication-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.replication-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) brightness(0.6);
+}
+
+.replication-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 360px at 15% 10%, rgba(30, 120, 150, 0.102), transparent 80%),
+    radial-gradient(700px 300px at 85% 15%, rgba(40, 120, 91, 0.059), transparent 95%),
+    linear-gradient(180deg, rgba(6, 18, 26, 0.72) 0%, rgba(6, 18, 26, 0.298) 100%);
+}
+
+.replication-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 36px 20px 48px;
   text-align: center;
 }
 
 .replication-card {
-  margin: 20px 0;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: min(520px, 92vw);
+  margin: 10px auto;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.08);
+  animation: fade-up 520ms ease-out 40ms both;
 }
 
 .progress-bar {
+  width: min(320px, 72vw);
   height: 20px;
-  border-radius: 10px;
+  margin: 18px auto;
+  border-radius: 999px;
   background-color: rgba(255, 255, 255, 0.1);
+  --progress-background: var(--ion-color-warning);
+  --buffer-background: rgba(255, 255, 255, 0.2);
+  --background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 .replication-percentage {
-  margin-top: 10px;
-  font-size: 1.2em;
-  font-weight: bold;
+  margin-top: 8px;
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.replication-status {
+  display: inline-block;
+  margin-top: 8px !important;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.92em;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.spinner-container p {
+  margin: 12px 0 0;
+  font-size: 0.95em;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .offline-message {
-  margin: 20px 0;
-  font-size: 1.1em;
+  margin: 12px 0 4px;
+  font-size: 0.98em;
   font-weight: 500;
+  background: rgba(148, 20, 20, 0.3);
+  border: 1px solid rgba(255, 120, 120, 0.4);
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: min(420px, 90vw);
+  animation: fade-up 520ms ease-out 120ms both;
 }
 
 .retry-button {
   --background: var(--ion-color-yellow);
-  --background-hover: #4c8dff;
-  --background-activated: #4c8dff;
+  --background-hover: #2a97b5;
+  --background-activated: #2a97b5;
+  --border-radius: 14px;
 
-  max-width: 250px;
-  margin: 50px auto;
+  max-width: 220px;
+  margin: 20px auto 0;
+  animation: fade-up 520ms ease-out 160ms both;
+}
+
+.replication-content ion-spinner {
+  margin-top: 6px;
+  opacity: 0.8;
+  animation: fade-up 520ms ease-out 200ms both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .replication-video {
+    display: none;
+  }
+
+  .replication-card,
+  .offline-message,
+  .retry-button,
+  .replication-content ion-spinner {
+    animation: none;
+  }
 }

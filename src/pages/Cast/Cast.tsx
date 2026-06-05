@@ -4,22 +4,24 @@ import React, {
 } from 'react';
 
 // React component and utility imports
-import { IonContent } from '@ionic/react';
+import { IonContent, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router';
 import MainPagesLayout from '../../Layouts/MainPagesLayout/MainPagesLayout';
-import InputSortModal from '../../Shared/Components/InputSortModal/InputSortModal';
+import InputSortModal from '../../Shared/Components/inputs/InputSortModal/InputSortModal';
 import CastCard from './Components/CastCard/CastCard';
 import DropDownCast from './Components/DropDownCast/DropDownCast';
 
 // Custom contexts and hooks imports
 import ScrollInfiniteContext from '../../context/ScrollInfinite/ScrollInfinite.context';
 import ScenesContext, { castDefaultSortOptions } from '../../context/Scenes/Scenes.context';
-import useScrollToTop from '../../Shared/hooks/useScrollToTop';
+import useScrollToTop from '../../hooks/utils/useScrollToTop/useScrollToTop';
 import useProcessedCast from './hooks/useProcessedCast';
 // Utility and configuration imports
 import getUniqueValuesByKey from '../../Shared/Utils/getUniqueValuesByKey';
 import defaultSortPosibilitiesOrder from '../../Shared/Utils/Cast/SortOptions';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import ToolbarButton from '../../Shared/Components/buttons/ToolbarButton/ToolbarButton';
+import { swapVerticalOutline } from 'ionicons/icons';
 
 const Cast: React.FC<{
   permissionType?: number | null;
@@ -74,12 +76,12 @@ const Cast: React.FC<{
     return uniqueArray;
   };
 
-  const characterCategoriesArray: any[] = getUniqueValuesByKey(cast, 'categoryName');
+  const characterCategoriesArray: any[] = useMemo(() => getUniqueValuesByKey(cast, 'categoryName'), [cast]);
 
   const filterCastByCategory = (category: string) => cast.filter((character: any) => character.categoryName === category);
 
   useEffect(() => {
-    const filteredCast = castSearchText.length > 0 ? processedCast.filter((character: any) => {
+    const filteredCast = castSearchText?.length > 0 ? processedCast.filter((character: any) => {
       const characterHeader = `${character.characterNum}. ${character.characterName}`;
       return characterHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedCast;
@@ -88,7 +90,7 @@ const Cast: React.FC<{
   }, [processedCast, castSearchText]);
 
   useEffect(() => {
-    const filteredExtras = castSearchText.length > 0 ? processedExtras.filter((extra: any) => {
+    const filteredExtras = castSearchText?.length > 0 ? processedExtras.filter((extra: any) => {
       const extraHeader = `${extra.extraName}`;
       return extraHeader.toLowerCase().includes(castSearchText.toLowerCase());
     }) : processedExtras;
@@ -105,7 +107,7 @@ const Cast: React.FC<{
       setDropDownIsOpen((prev: any) => ({ ...prev, [category]: true }));
     });
 
-    if (extras.length > 0) {
+    if (extras?.length > 0) {
       setDropDownIsOpen((prev: any) => ({ ...prev, EXTRAS: true }));
     }
   }, [cast, extras]);
@@ -123,7 +125,7 @@ const Cast: React.FC<{
       setDisplayedCast((prev: any) => ({ ...prev, [category]: filterCastByCategory(category).slice(0, 5) }));
     });
 
-    if (extras.length > 0) {
+    if (extras?.length > 0) {
       setDisplayedCast((prev: any) => ({ ...prev, EXTRAS: extras.slice(0, 5) }));
     }
   }, [cast, extras, isLoading]);
@@ -166,6 +168,17 @@ const Cast: React.FC<{
 
   // Render
 
+  const SortButton = () => (
+    <ToolbarButton
+      triggerId="sort-cast-modal-trigger"
+      click={() => {}}
+      show
+      color="light"
+    >
+      <IonIcon icon={swapVerticalOutline} />
+    </ToolbarButton>
+  )
+
   return (
     <>
       <MainPagesLayout
@@ -174,8 +187,7 @@ const Cast: React.FC<{
         handleBack={handleBack}
         title="CAST"
         search
-        sort
-        sortTrigger="sort-cast-modal-trigger"
+        customButtons={[SortButton]}
       >
         <IonContent color="tertiary" fullscreen ref={contentRef} className="cast-page-content">
           {
@@ -184,13 +196,13 @@ const Cast: React.FC<{
           }
           {
             !isLoading
-            && characterCategoriesArray.map((category: string, index: number) => (
+            && characterCategoriesArray.map((category: string) => (
               <DropDownCast
-                key={`cast-dropdown-${category}-${index}`}
+                key={`cast-dropdown-${category}`}
                 category={category}
                 isOpen={dropDownIsOpen[category]}
                 onToggle={() => handleDropDown(category)}
-                count={filterCastByCategory(category).length}
+                count={filterCastByCategory(category)?.length}
               >
                 <ScrollInfiniteContext
                   filteredData={filteredCast[category]}
@@ -199,9 +211,9 @@ const Cast: React.FC<{
                 >
                   {
                   displayedCast[category]
-                  && displayedCast[category].map((character: any, index: number) => (
+                  && displayedCast[category].map((character: any) => (
                     <CastCard
-                      key={`${category}-${index}`}
+                      key={`${category}-${character.characterName}`}
                       character={character}
                       searchText={castSearchText}
                       validationFunction={validateCastExistence}
@@ -215,27 +227,27 @@ const Cast: React.FC<{
           }
           {
             !isLoading
-            && extras.length > 0 && (
-            <DropDownCast
-              key="cast-dropdown-EXTRAS"
-              category="EXTRAS"
-              isOpen={dropDownIsOpen.EXTRAS}
-              onToggle={() => handleDropDown('EXTRAS')}
-              count={extras.length}
-            >
-              <ScrollInfiniteContext
-                filteredData={extras}
-                setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
-                batchSize={7}
+            && extras?.length > 0 && (
+              <DropDownCast
+                key="cast-dropdown-EXTRAS"
+                category="EXTRAS"
+                isOpen={dropDownIsOpen.EXTRAS}
+                onToggle={() => handleDropDown('EXTRAS')}
+                count={extras?.length}
               >
-                {
-                  dropDownIsOpen.EXTRAS
-                  && displayedCast.EXTRAS.map((extra: any, index: number) => (
-                    <CastCard key={`EXTRAS-${index}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
-                  ))
-                }
-              </ScrollInfiniteContext>
-            </DropDownCast>
+                <ScrollInfiniteContext
+                  filteredData={extras}
+                  setDisplayedData={(newElements: any[]) => handleSetDisplayedCast('EXTRAS', newElements)}
+                  batchSize={7}
+                >
+                  {
+                    dropDownIsOpen.EXTRAS
+                    && displayedCast.EXTRAS.map((extra: any, index: number) => (
+                      <CastCard key={`EXTRAS-${extra?.extraName}`} character={extra} searchText={castSearchText} validationFunction={validateExtraExistence} />
+                    ))
+                  }
+                </ScrollInfiniteContext>
+              </DropDownCast>
             )
           }
         </IonContent>
@@ -254,4 +266,4 @@ const Cast: React.FC<{
   );
 };
 
-export default Cast;
+export default React.memo(Cast);

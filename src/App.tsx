@@ -4,13 +4,14 @@ import {
   IonContent,
   IonPage,
   IonRouterOutlet,
+  isPlatform,
   setupIonicReact,
 } from '@ionic/react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
 import { IonReactRouter } from '@ionic/react-router';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Projects from './pages/Projects/Projects';
-import AppTabs from './Shared/Components/AppTabs/AppTabs';
+import AppTabs from './Shared/Components/navigation/AppTabs/AppTabs';
 import { ScenesContextProvider } from './context/Scenes/Scenes.context';
 import DatabaseContext from './context/Database/Database.context';
 import AuthContext from './context/Auth/Auth.context';
@@ -25,23 +26,22 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
-import AppLoader from './Shared/hooks/AppLoader';
+import AppLoader from './Shared/Components/loaders/AppLoader/AppLoader';
 import NoUserFounded from './pages/NoUserFounded/NoUserFounded';
 import PageNotExists from './pages/PageNotExists/PageNotExists';
+import { loadEnvironment } from '../environment';
 
 setupIonicReact();
 
 const AppContent: React.FC = () => {
-  const { isDatabaseReady, oneWrapDb, isOnline } = React.useContext(DatabaseContext);
-  const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading } = React.useContext(AuthContext);
-
+  const { isDatabaseReady, oneWrapDb, isOnline, initialReplicationDone } = React.useContext(DatabaseContext);
+  const { logout, setLoggedIn, setLoadingAuth, loggedIn, loading, checkSession } = React.useContext(AuthContext);
+  const isIos = isPlatform('ios');
   const history = useHistory();
 
   useEffect(() => {
     // Escucha cambios en la historia de navegación
     const unlisten = history.listen((location) => {
-      // Aquí puedes guardar la ruta actual en localStorage o en tu contexto
-      console.log('Ruta actual:', location.pathname);
     location.pathname !== '/login' && localStorage.setItem('lastAppRoute', location.pathname);
     });
 
@@ -51,41 +51,56 @@ const AppContent: React.FC = () => {
     };
   }, [history]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      if (oneWrapDb) {
-        const user = await oneWrapDb.user.findOne().exec();
-        if (user) {
-          return user._data;
-        }
+  const getUser = async () => {
+    if (oneWrapDb) {
+      const user = await oneWrapDb.user.findOne().exec();
+      if (user) {
+        return user._data;
       }
-      return null;
-    };
+    }
+    return null;
+  };
 
-    const fetchUser = async () => {
-      setLoadingAuth(true);
-      const user = await getUser();
+  const getSession = async () => {
+    setLoadingAuth(true);
+    const user = await getUser();
+    if(isOnline) {
+      checkSession()
+    } else {
       if (user && loggedIn) {
         const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
         const now = new Date().getTime();
-        console.log(user)
-
         if (now > sessionEndsAt) {
           setLoggedIn(false);
           await logout();
         } else {
           setLoggedIn(true);
-          console.log('User is logged in');
         }
       }
+    }
 
-      setLoadingAuth(false);
-    };
 
-    oneWrapDb && fetchUser();
+    setLoadingAuth(false);
+  };
+
+  useEffect(() => {
+    oneWrapDb && getSession();
   }, [isOnline, oneWrapDb]);
 
-  if (!loading && isDatabaseReady && loggedIn) {
+  useEffect(() => {
+    const initEnvironment = async () => {
+      try {
+        await loadEnvironment(isIos);
+        // Aquí puedes realizar acciones adicionales después de cargar el ambiente
+      } catch (error) {
+        throw new Error('Error loading environment');
+      }
+    };
+
+    initEnvironment();
+  }, []);
+
+  if (!loading && isDatabaseReady && initialReplicationDone && loggedIn) {
     return (
       <>
           <Route exact path="/login">

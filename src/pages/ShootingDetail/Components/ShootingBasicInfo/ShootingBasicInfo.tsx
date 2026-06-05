@@ -1,17 +1,18 @@
 import {
   IonCol, IonGrid, IonRow,
+  useIonViewDidEnter,
 } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { VscEdit } from 'react-icons/vsc';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
 import { LocationInfo } from '../../../../Shared/types/shooting.types';
 import getHourMinutesFomISO from '../../../../Shared/Utils/getHoursMinutesFromISO';
 import separateTimeOrPages from '../../../../Shared/Utils/SeparateTimeOrPages';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
-import GoogleMapComponent from '../../../../Shared/Components/GoogleMapComponent/GoogleMapComponent';
 import './ShootingBasicInfo.scss';
 import { GoogleMap } from '@capacitor/google-maps';
 import environment from '../../../../../environment';
+import GoogleMapComponent from '../../../../Shared/Components/modals/GoogleMapComponent/GoogleMapComponent';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface EditableFieldProps {
   field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds';
@@ -20,6 +21,7 @@ interface EditableFieldProps {
   withSymbol: boolean;
   permissionType?: number | null;
   updateShootingTime: (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut' | 'rehearsalStart' | 'rehearsalEnd' | 'shootStart' | 'shootEnd' | 'estimatedSeconds', time: string) => void;
+  editMode?: boolean;
 }
 
 export const EditableField: React.FC<EditableFieldProps> = ({
@@ -29,6 +31,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   withSymbol,
   permissionType,
   updateShootingTime,
+  editMode = true,
 }) => {
   const editionModalRef = useRef<HTMLIonModalElement>(null);
   const { main, symbol } = separateTimeOrPages(value);
@@ -61,7 +64,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
         symbol={withSymbol ? symbol : ''}
         title={title}
         onEdit={handleEdit}
-        isEditable={permissionType === 1}
+        isEditable={permissionType === 1 && editMode}
       />
       <EditionModal
         modalRef={editionModalRef}
@@ -138,8 +141,8 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   const [marker, setMarker] = useState<string | null>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
 
-  useEffect(() => {
-    if (shootingInfo.locations.length > 0 && mapRef.current) {
+  useIonViewDidEnter(() => {
+    if (shootingInfo.locations?.length > 0 && mapRef.current) {
       const lat = shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0;
       const lng = shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0;
 
@@ -149,7 +152,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         updateMarker(lat, lng);
       }
     }
-  }, [shootingInfo, mapInitialized, mapRef.current]);
+  });
 
   const createMap = async (lat: number, lng: number) => {
     if (!mapRef.current) return;
@@ -181,10 +184,19 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
         await map.removeMarker(marker);
       }
 
-      const newMarker = await map.addMarker({
-        coordinate: { lat: latitude, lng: longitude },
-        draggable: true,
-      });
+      let newMarker;
+      try {
+        newMarker = await map.addMarker({
+          coordinate: { lat: latitude, lng: longitude },
+          draggable: true,
+        });
+      } catch (error) {
+        console.error('Error adding marker, retrying:', error);
+        newMarker = await map.addMarker({
+          coordinate: { lat: latitude, lng: longitude },
+          draggable: true,
+        });
+      }
 
       setMarker(newMarker);
 
@@ -195,18 +207,11 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
   };
 
   useEffect(() => {
-    if (shootingInfo.locations.length > 0) {
+    if (shootingInfo.locations?.length > 0) {
       setFirstLocationLat(shootingInfo.locations[0].lat ? parseFloat(shootingInfo.locations[0].lat) : 0);
       setFirstLocationLng(shootingInfo.locations[0].lng ? parseFloat(shootingInfo.locations[0].lng) : 0);
     }
   }, [shootingInfo.locations]);
-
-  const handleEdit = (field: 'generalCall' | 'onSet' | 'estimatedWrap' | 'wrap' | 'lastOut') => {
-    setEditingField(field);
-    if (editionModalRef.current) {
-      editionModalRef.current.present();
-    }
-  };
 
   const handleEdition = (formData: { time: string }) => {
     if (editingField) {
@@ -231,7 +236,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
       <IonRow>
         <IonCol sizeSm="10" sizeXs='12'>
           {
-            shootingInfo.locations.length > 0 && firstLocationLat && firstLocationLng ? (
+            shootingInfo.locations?.length > 0 && firstLocationLat && firstLocationLng ? (
               <div className="map-container">
                 <GoogleMapComponent
                   locations={[...shootingInfo.locations.map(loc => ({ ...loc, locationTypeId: loc.locationTypeId ?? 0, locationName: loc.locationName ?? '' })), ...shootingInfo.hospitals.map(hosp => ({ ...hosp, locationTypeId: hosp.locationTypeId ?? 0, locationName: hosp.locationName ?? '' }))]}
@@ -297,7 +302,7 @@ const ShootingBasicInfo: React.FC<ShootingBasicInfoProps> = ({ shootingInfo, upd
               <ShootingInfoLabels info={separateTimeOrPages(shootingInfo.min).main} symbol={separateTimeOrPages(shootingInfo.min).symbol} title="Minutes" />
             </IonCol>
             <IonCol size="auto">
-              <ShootingInfoLabels info={shootingInfo.locations.length.toString()} title="Locations" />
+              <ShootingInfoLabels info={shootingInfo.locations?.length.toString()} title="Locations" />
             </IonCol>
             <IonCol size="auto">
               <ShootingInfoLabels info={shootingInfo.sets.toString()} title="Sets" />

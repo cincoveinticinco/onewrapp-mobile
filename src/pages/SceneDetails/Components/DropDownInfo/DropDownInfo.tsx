@@ -2,12 +2,13 @@ import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
 import { useState } from 'react';
 import sortArrayAlphabeticaly from '../../../../Shared/Utils/sortArrayAlphabeticaly';
 import CategoryContainer from '../CategoryContainer/CategoryContainer';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
 
 const DropDownInfo = ({
   categories, scene, title, characters = false, extras = false, elements = false, notes = false,
 }: any) => {
   const [open, setOpen] = useState<boolean>(true);
-  const valuesByCategory = characters ? scene.characters.length === 0 : extras ? scene.extras.length === 0 : elements ? scene.elements.length === 0 : notes ? scene.notes.every((note: any) => note.note === null) : true;
+  const valuesByCategory = characters ? scene.characters?.length === 0 : extras ? scene.extras?.length === 0 : elements ? scene.elements?.length === 0 : notes ? scene.notes.every((note: any) => note.note === null) : true;
 
   const getUniqueCategoriesFromScene = (scene: any, characters: boolean, extras: boolean, elements: boolean) => {
     const categories = characters ? scene.characters.map((character: any) => character.categoryName) : extras ? scene.extras.map((extra: any) => extra.categoryName) : elements ? scene.elements.map((element: any) => element.categoryName) : [];
@@ -27,7 +28,7 @@ const DropDownInfo = ({
               className="scene-details-card ion-flex-column ion-justify-content-start align-items-center"
             >
               { scene
-                && categories.map((category: string) => <CategoryContainer categoryName={category || 'NO CATEGORY'} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
+                && categories.map((category: string) => <CategoryContainer categoryName={category || EmptyEnum.NoCategory} scene={scene} key={`${category}details`} characters={characters} extras={extras} elements={elements} notes={notes} />)}
               {
               valuesByCategory
               && (

@@ -15,18 +15,18 @@ import environment from '../../../environment';
 import footerLogo from '../../assets/images/footerLogo.png';
 import logo from '../../assets/images/logo_onewrapp.png';
 import { useAuth } from '../../context/Auth/Auth.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
 import './LoginPage.css';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useNetworkStatus from '../../Shared/hooks/useNetworkStatus';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import useNetworkStatus from '../../hooks/utils/useNetworkStatus/useNetworkStatus';
 import DatabaseContext from '../../context/Database/Database.context';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const LoginPage: React.FC = () => {
-  const { saveLogin, loggedIn, loading, setLoadingAuth } = useAuth();
-  const errorToast = useErrorToast();
+  const { saveLogin, loggedIn, setLoadingAuth } = useAuth();
+  const { successToast, errorToast } = useAlertToast();
   const history = useHistory();
   const isOnline = useNetworkStatus();
 
@@ -35,6 +35,7 @@ const LoginPage: React.FC = () => {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ showAppLogin, setShowAppLogin ] = useState(false)
+  const [ isLoggingIn, setIsLoggingIn ] = useState(false)
   
   useIonViewWillEnter(() => {
     GoogleAuth.initialize({
@@ -54,6 +55,7 @@ const LoginPage: React.FC = () => {
   // THE APP LOGIN CONSUMES app_sign_in AND NEED TO SEND THE PARAMS email AND password
 
   const appLogin = async () => {
+    setIsLoggingIn(true);
     try {
       const response = await fetch(`${environment.URL_PATH}/app_sign_in`, {
         method: 'POST',
@@ -73,15 +75,26 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       errorToast('Error during App Sign In');
       console.error(error);
+    } finally {
+      setIsLoggingIn(false);
     }
   }
 
   const handleGoogleLoginMobile = async () => {
-    if(isOnline) {
-      try {
-        setLoadingAuth(true);
+    setIsLoggingIn(true);
+    console.log('[LOGIN] handleGoogleLoginMobile start — isOnline:', isOnline);
+    console.log('[LOGIN] URL_PATH:', environment.URL_PATH);
+    try {
+      if(isOnline) {
+        console.log('[LOGIN] Calling GoogleAuth.signIn()...');
         const googleUser = await GoogleAuth.signIn();
+        console.log('[LOGIN] GoogleAuth.signIn() success — email:', googleUser.email);
+        console.log('[LOGIN] accessToken present:', !!googleUser.authentication.accessToken);
+        console.log('[LOGIN] idToken present:', !!googleUser.authentication.idToken);
+
         const accessToken = googleUser.authentication.accessToken;
+        console.log('[LOGIN] POST to:', `${environment.URL_PATH}/google_sign_in`);
+
         const response = await fetch(`${environment.URL_PATH}/google_sign_in`, {
           method: 'POST',
           headers: {
@@ -89,8 +102,72 @@ const LoginPage: React.FC = () => {
           },
           body: JSON.stringify({ access_token: accessToken }),
         });
+
+        console.log('[LOGIN] Backend response status:', response.status);
         const data = await response.json();
-  
+        console.log('[LOGIN] Backend response body:', JSON.stringify(data));
+
+        if (data.token) {
+          console.log('[LOGIN] Login successful');
+          saveLogin(data.token, data.user);
+          history.push('/my/projects');
+        } else {
+          console.warn('[LOGIN] Login failed — backend error:', data.error);
+          history.push('/user-not-found');
+          errorToast(data.error);
+        }
+      } else {
+        console.log('[LOGIN] Offline mode — checking local session...');
+        const getUser = async () => {
+          if(oneWrapDb) {
+            const user = await oneWrapDb.user.findOne().exec();
+            if(user) {
+              return user._data;
+            }
+          }
+          return null;
+        }
+
+        const user = await getUser();
+
+        if (user) {
+          const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
+          const now = new Date().getTime();
+          console.log('[LOGIN] Offline session — ends at:', user.sessionEndsAt, '— valid:', now < sessionEndsAt);
+          if (now < sessionEndsAt) {
+            saveLogin(user.sessionToken, user);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('[LOGIN] Error in handleGoogleLoginMobile:', error);
+      console.error('[LOGIN] Error message:', error?.message);
+      console.error('[LOGIN] Error code:', error?.code);
+      console.error('[LOGIN] Error stack:', error?.stack);
+      if (isOnline) {
+        errorToast(`Error during Google Sign In (Mobile): ${error?.message || error}`);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  // Función para el login en web usando @react-oauth/google
+  const handleGoogleLoginWeb = useGoogleLogin({
+    onSuccess: async (response) => {
+      setIsLoggingIn(true);
+      try {
+        const accessToken = response.access_token;
+
+        const res = await fetch(`${environment.URL_PATH}/google_sign_in`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ access_token: accessToken }),
+        });
+        const data = await res.json();
+
         if (data.token) {
           saveLogin(data.token, data.user);
           history.push('/my/projects');
@@ -99,67 +176,17 @@ const LoginPage: React.FC = () => {
           errorToast(data.error);
         }
       } catch (error) {
-        errorToast('Error during Google Sign In (Mobile)');
-      } finally {
-        setLoadingAuth(false);
-      }
-    } else {
-       try {
-        const getUser = async () => {
-          if(oneWrapDb) {
-            const user = await oneWrapDb.user.findOne().exec();
-            if(user) {
-              return user._data;
-            }
-          }
-  
-          return null;
-        }
-  
-        const user = await getUser();
-  
-        if (user) {
-          const sessionEndsAt = new Date(user.sessionEndsAt).getTime();
-          const now = new Date().getTime();
-  
-          if (now < sessionEndsAt) {
-            console.log('User is logged in');
-            saveLogin(user.sessionToken, user);
-          }
-       }
-      } catch (error) {
+        errorToast('Error during Google Sign In');
         console.error(error);
-      }
-    }
-    
-  };
-
-  // Función para el login en web usando @react-oauth/google
-  const handleGoogleLoginWeb = useGoogleLogin({
-    onSuccess: async (response) => {
-      const accessToken = response.access_token;
-
-      const res = await fetch(`${environment.URL_PATH}/google_sign_in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ access_token: accessToken }),
-      });
-      const data = await res.json();
-
-      if (data.token) {
-        saveLogin(data.token, data.user);
-        history.push('/my/projects');
-      } else {
-        history.push('/user-not-found');
-        errorToast(data.error);
+      } finally {
+        setIsLoggingIn(false);
       }
     },
     onError: (errorResponse:any) => errorToast(errorResponse.error_description || 'Error during Google Sign In'),
   });
 
   const handleOfflineLoginWeb = async () => {
+    setIsLoggingIn(true);
     try {
       const getUser = async () => {
         if(oneWrapDb) {
@@ -190,6 +217,8 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       errorToast('Error during offline login');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -253,7 +282,7 @@ const LoginPage: React.FC = () => {
             />
             </div>
           {
-            showAppLogin ? 
+            showAppLogin ?
             (
               <>
                 <div className="login-video-wrapper">
@@ -269,16 +298,16 @@ const LoginPage: React.FC = () => {
                     onReady={() => setLoadingAuth(false)}
                   />
                 </div>
-                {renderLoginForm()}
+                {isLoggingIn ? <AppLoader /> : renderLoginForm()}
               </>
             )
-            : 
+            :
             (
               <>
                 <div className="main-logo-wrapper">
                   <img src={logo} alt="logo" className="login-logo" />
                 </div>
-                {loading ? 
+                {isLoggingIn ? 
                 (<>
                     <AppLoader />
                 </> ) : 

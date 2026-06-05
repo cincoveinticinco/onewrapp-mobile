@@ -1,8 +1,8 @@
 import React from 'react';
-import { ShootingSceneStatusEnum } from '../../../../../Shared/ennums/ennums';
-import { Column } from '../../../../../Shared/Components/GeneralTable/GeneralTable';
-import OutlinePrimaryButton from '../../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import GeneralCards from '../../../../../Shared/Components/GeneralCards/GeneralCards';
+import { ShootingSceneStatusEnum } from '../../../../../Shared/enums/ennums';
+import { Column } from '../../../../../Shared/Components/tables/GeneralTable/GeneralTable';
+import OutlinePrimaryButton from '../../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import GeneralCards from '../../../../../Shared/Components/cards/GeneralCards/GeneralCards';
 import { mergedSceneShoot } from '../../../types/ShootingDetail.types';
 
 interface ScriptReportViewProps {
@@ -134,7 +134,7 @@ const ScriptReportView: React.FC<ScriptReportViewProps> = ({
 
   return (
     <>
-      {mergedScenesShoot.length > 0 ? (
+      {mergedScenesShoot?.length > 0 ? (
         <GeneralCards
           columns={tableColumns}
           data={mergedScenesShoot}

@@ -11,9 +11,9 @@ const toggleFilterOption = (prevOptions: SelectedFilterOptionsInterface, categor
     currentOptions.push(optionValue);
   }
 
-  updatedOptions[category] = currentOptions.length > 0 ? currentOptions : [];
+  updatedOptions[category] = currentOptions?.length > 0 ? currentOptions : [];
 
-  if (updatedOptions[category] && updatedOptions[category].length === 0) {
+  if (updatedOptions[category] && updatedOptions[category]?.length === 0) {
     delete updatedOptions[category as keyof typeof updatedOptions];
   }
 

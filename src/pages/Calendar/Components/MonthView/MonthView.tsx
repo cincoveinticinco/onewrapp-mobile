@@ -44,7 +44,7 @@ const MonthView: React.FC<{ currentDate: Date; shootings: ShootingDocType[] }> =
     );
   });
 
-  const getSHootingsByDay = (day: Date) => shootings.filter((shooting) => {
+  const getShootingsByDay = (day: Date) => shootings.filter((shooting) => {
     const shootDate = new Date(shooting.shootDate as string);
     const adjustedShootDate = new Date(shootDate.getTime() + (24 * 60 * 60 * 1000));
     return (
@@ -70,23 +70,18 @@ const MonthView: React.FC<{ currentDate: Date; shootings: ShootingDocType[] }> =
 
       days.push(
         <IonCol key={currentDay.toISOString()} className={dayClass}>
-          <span
-            className={`ion-flex ion-align-items-center ${dayCount ? 'space-flex-row' : 'end-flex-row'}`}
-            style={{
-              fontSize: '10px',
-            }}
-          >
+          <span className={`day-heading ${dayCount ? 'space-flex-row' : 'end-flex-row'}`}>
             {dayCount && (
-            <span>
+            <span className="shoot-day-label">
               DAY #
               {dayCount}
             </span>
             )}
-            <span className="day-number bold">{format(currentDay, 'd')}</span>
+            <span className="day-number">{format(currentDay, 'd')}</span>
           </span>
 
           {
-            dayHasShooting(currentDay) && getSHootingsByDay(currentDay).map((shooting) => (
+            dayHasShooting(currentDay) && getShootingsByDay(currentDay).map((shooting) => (
               isCurrentMonth && <ShootingCard key={shooting.id} shooting={shooting} className="month-shooting" />
             ))
           }
@@ -98,6 +93,8 @@ const MonthView: React.FC<{ currentDate: Date; shootings: ShootingDocType[] }> =
 
     return days;
   };
+
+  const calendarDays = renderDays();
 
   return (
     <IonGrid className="calendar-grid">
@@ -112,7 +109,7 @@ const MonthView: React.FC<{ currentDate: Date; shootings: ShootingDocType[] }> =
       </IonRow>
       {[...Array(6)].map((_, weekIndex) => (
         <IonRow key={weekIndex} className="week-row">
-          {renderDays().slice(weekIndex * 7, (weekIndex + 1) * 7)}
+          {calendarDays.slice(weekIndex * 7, (weekIndex + 1) * 7)}
         </IonRow>
       ))}
     </IonGrid>

@@ -5,9 +5,10 @@ import minSecToSeconds from '../../../../Shared/Utils/minSecToSeconds';
 interface AddSecondsFormProps {
   handleChange: (value: any, field: string) => void
   observedField: number
+  labels?: boolean
 }
 
-const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedField }) => {
+const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedField, labels = true }) => {
   const [minutes, setMinutes]: any[] = React.useState(null);
   const [seconds, setSeconds]: any[] = React.useState(null);
   const [formInitialized, setFormInitialized] = React.useState(false);
@@ -26,7 +27,7 @@ const AddSecondsForm: React.FC<AddSecondsFormProps> = ({ handleChange, observedF
 
   return (
     <div className="estimated-minutes-input">
-      <p id="estimated-minutes-label">ESTIMATED TIME (MM:SS)</p>
+      { labels && <p id="estimated-minutes-label">Estimated Time</p> }
       <IonItem color="tertiary" id="add-scene-minutes-input">
         <IonInput
           value={minutes}

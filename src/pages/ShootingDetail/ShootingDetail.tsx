@@ -4,16 +4,15 @@ import {
   useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
 } from '@ionic/react';
 import {
-  useContext, useEffect, useRef, useState,
+  useContext, useMemo, useRef, useState,
 } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { VscEdit } from 'react-icons/vsc';
 import { useHistory, useParams } from 'react-router';
 import { useRxData } from 'rxdb-hooks';
-import EditionModal, { SelectOptionsInterface } from '../../Shared/Components/EditionModal/EditionModal';
-import MapFormModal from '../../Shared/Components/MapFormModal/MapFormModal';
-import OutlinePrimaryButton from '../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import MapFormModal from '../../Shared/Components/modals/MapFormModal/MapFormModal';
+import OutlinePrimaryButton from '../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import ShootingBanner from './Components/ShootingBannerCard/ShootingBanner';
 import { ShootingInfoLabels } from './Components/ShootingBasicInfo/ShootingBasicInfo';
 import ShootingDetailTabs from './Components/ShootingDetailTabs/ShootingDetailTabs';
@@ -21,31 +20,28 @@ import InfoView from './Components/ShootingDetailViews/InfoView/InfoView';
 import ProductionReportView from './Components/ShootingDetailViews/ProductionReportView/ProductionReportView';
 import ScriptReportView from './Components/ShootingDetailViews/ScriptReportView/ScriptReportView';
 import WrapReportView from './Components/ShootingDetailViews/WrapReportView/WrapReportView';
-import SceneCard from '../Strips/Components/SceneCard/SceneCard';
+import SceneCard from '../../Shared/Components/cards/SceneCard/SceneCard';
 import DatabaseContext from '../../context/Database/Database.context';
-import { ShootingSceneStatusEnum } from '../../Shared/ennums/ennums';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import useIsMobile from '../../Shared/hooks/useIsMobile';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import { ShootingSceneStatusEnum } from '../../Shared/enums/ennums';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
+import useIsMobile from '../../hooks/utils/useIsMobile/useIsMobile';
 import { SceneDocType } from '../../Shared/types/scenes.types';
 import { AdvanceCall, Meal, ShootingScene } from '../../Shared/types/shooting.types';
 import InputModalScene from '../../Layouts/InputModalScene/InputModalScene';
-import floatToFraction from '../../Shared/Utils/floatToFraction';
 import getHourMinutesFomISO from '../../Shared/Utils/getHoursMinutesFromISO';
-import secondsToMinSec from '../../Shared/Utils/secondsToMinSec';
 import separateTimeOrPages from '../../Shared/Utils/SeparateTimeOrPages';
 import './ShootingDetail.css';
-import Legend from '../../Shared/Components/Legend/Legend';
+import Legend from '../../Shared/Components/descriptive/Legend/Legend';
 import CallSheet from '../CallSheet/CallSheet';
 import InputAlert from '../../Layouts/InputAlert/InputAlert';
 import { CrewDocType } from '../../Shared/types/crew.types';
 import { mealInputs } from './Inputs/meal.inputs';
 import { bannerInputs } from './Inputs/baner.inputs';
-import { mergedSceneBanner, ShootingDataProps, ShootingViews } from './types/ShootingDetail.types';
+import { mergedSceneBanner, ShootingViews } from './types/ShootingDetail.types';
 import { advanceCallInputs } from './Inputs/AdvanceCall.inputs';
-import { useShootingInfo } from './hooks/useShootingInfo';
-import { normalizeString } from 'rxdb';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
+import EditionModal, { SelectOptionsInterface } from '../../Shared/Components/modals/EditionModal/EditionModal';
+import { useShootingInfo } from '../../hooks/database/useShootingInfo/useShootingInfo';
 
 const ShootingDetail: React.FC<{
   permissionType?: number | null;
@@ -99,25 +95,18 @@ const ShootingDetail: React.FC<{
 
   //* ***************************** RXDB HOOKS *****************************/
 
-  const [departments, setDepartments] = useState<SelectOptionsInterface[]>([]);
-
-  const getCrewDepartments = () => {
-    const departments = crew.map((c: CrewDocType) => c.depNameEng);
-    const uniqueDepartments = Array.from(new Set(departments)).filter((dep): dep is string => dep !== null);
-    return uniqueDepartments.map((dep: string) => ({ value: dep, label: dep }));
-  }
-
-  useEffect(() => {
-    if(crew && !isFetchingCrew ) {
-      setDepartments(getCrewDepartments());
-    }
+  const departments = useMemo<SelectOptionsInterface[]>(() => {
+    if (!crew || isFetchingCrew) return [];
+    const depNames = crew.map((c: CrewDocType) => c.depNameEng);
+    const unique = Array.from(new Set(depNames)).filter((dep): dep is string => dep !== null);
+    return unique.map((dep: string) => ({ value: dep, label: dep }));
   }, [crew, isFetchingCrew]);
 
   // *************************** CONSTANTS ************************************//
 
   // *************************** STATES ************************************//
 
-  const [isDisabled, unused_] = useState(false);
+  const isDisabled = false;
   const { shootingId } = useParams<{ shootingId: string }>();
   const history = useHistory();
   const [selectedScenes, setSelectedScenes] = useState<any>([]);
@@ -135,11 +124,8 @@ const ShootingDetail: React.FC<{
   const [scriptReportEditMode, setScriptReportEditMode] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchMode, setSearchMode] = useState(false);
-  const [formattedAdvancedCallInputs, setFormattedAdvancedCallInputs] = useState<any>([]);
-
-  useEffect(() => {
-    setFormattedAdvancedCallInputs(advanceCallInputs(departments));
-  }, [departments])
+  const formattedAdvancedCallInputs = useMemo(() => advanceCallInputs(departments), [departments]);
+  const [modalSceneIsOpen, setModalSceneIsOpen] = useState(false);
 
   // *************************** STATES ************************************//
 
@@ -150,8 +136,7 @@ const ShootingDetail: React.FC<{
   const advanceCallModalRef = useRef<HTMLIonModalElement>(null);
   const mealModalRef = useRef<HTMLIonModalElement>(null);
   const disableEditions = permissionType !== 1;
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast, errorToast } = useAlertToast();
   const isMobile = useIsMobile();
 
   // *************************** REFS ************************************//
@@ -184,20 +169,6 @@ const ShootingDetail: React.FC<{
     return false;
   };
 
-  const calculateUpdatedInfo = (scenes: any[]) => {
-    const scenesOnly = scenes.filter((item: any) => item.cardType === 'scene');
-    const uniqueSets = new Set(scenesOnly.map((scene: any) => scene.setName && scene.setName.toUpperCase()));
-    const totalPages = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.pages || 0), 0);
-    const totalTime = scenesOnly.reduce((acc: number, scene: any) => acc + (scene.estimatedSeconds || 0), 0);
-
-    return {
-      sets: Array.from(uniqueSets).length,
-      scenes: scenesOnly.length,
-      pages: floatToFraction(totalPages),
-      min: secondsToMinSec(totalTime),
-    };
-  };
-
   const validateMealExistence = (meal: string) => {
     const { meals: shootingMeals } = shootingData.shotingInfo;
     const mealExists = shootingMeals.some((m: Meal) => m.meal && m.meal.toLowerCase() === meal.toLowerCase());
@@ -220,7 +191,7 @@ const ShootingDetail: React.FC<{
         shootingId: parseInt(shootingId),
         sceneId: scene.sceneId?.toString(),
         status: ShootingSceneStatusEnum.Assigned,
-        position: shootingData.mergedSceneBanners.length + 1,
+        position: shootingData.mergedSceneBanners?.length + 1,
         rehearsalStart: null,
         rehearsalEnd: null,
         comment: '',
@@ -371,6 +342,7 @@ const ShootingDetail: React.FC<{
     setAdditionMenu(false);
     setTimeout(() => {
       sceneModalRef.current?.present();
+      setModalSceneIsOpen(true);
     }, 100);
   };
 
@@ -411,80 +383,15 @@ const ShootingDetail: React.FC<{
   //* ****************************** MODALS **********************************//
 
   //* ***************************** EFFECTS *****************************/
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     fetchData();
-  }, [oneWrappDb]);
+  });
 
-  useEffect(() => {
-    if (!isLoading) {
-      setShootingData((prev: ShootingDataProps) => {
-        const updatedInfo = calculateUpdatedInfo(prev.mergedSceneBanners);
-        return {
-          ...prev,
-          shotingInfo: {
-            ...prev.shotingInfo,
-            ...updatedInfo,
-          },
-        };
-      });
-    }
-  }, [shootingData.mergedSceneBanners, isLoading]);
 
   //* ***************************** EFFECTS *****************************//
 
   // *************************** COMPONENTS ************************************//
 
-  const AddNewBanner = () => (
-    <EditionModal
-      modalRef={bannerModalRef}
-      modalTrigger={`open-add-new-banner-modal-${shootingId}`}
-      title="Add New Banner"
-      formInputs={bannerInputs}
-      handleEdition={addNewBanner}
-      defaultFormValues={{}}
-      modalId="add-new-banner-modal"
-      validate={validateBannerExistence}
-    />
-  );
-
-  const AddNewAdvanceCallModal = () => (
-    <EditionModal
-      modalRef={advanceCallModalRef}
-      modalTrigger={`open-add-new-advance-call-modal-${shootingId}`}
-      title="Add New Department Call"
-      formInputs={formattedAdvancedCallInputs}
-      handleEdition={addNewAdvanceCall}
-      defaultFormValues={{}}
-      modalId={`add-new-advance-call-modal-${shootingId}`}
-      validate={validateAdvanceCallExistence}
-    />
-  );
-
-  const AddNewMeal = () => (
-    <EditionModal
-      modalRef={mealModalRef}
-      modalTrigger={`open-add-new-meal-modal-${shootingId}`}
-      title="Add New Meal"
-      formInputs={mealInputs}
-      handleEdition={addNewMeal}
-      defaultFormValues={{}}
-      modalId={`open-add-new-meal-modal-${shootingId}`}
-      validate={validateMealExistence}
-    />
-  );
-
-  const AddNewScenes = () => (
-    <InputModalScene
-      sceneName="Add New SceneDocType"
-      listOfScenes={shootingData.notIncludedScenes}
-      handleCheckboxToggle={addNewScene}
-      selectedScenes={selectedScenes}
-      setSelectedScenes={setSelectedScenes}
-      clearSelections={clearSelectedScenes}
-      multipleSelections
-      modalRef={sceneModalRef}
-    />
-  );
 
   const addShoBanSc = () => {
     if (view === 'scenes') {
@@ -765,7 +672,7 @@ const ShootingDetail: React.FC<{
                 AppLoader()
               ) : (
                 <>
-                  {shootingData.mergedSceneBanners.length === 0 ? (
+                  {shootingData.mergedSceneBanners?.length === 0 ? (
                     <div
                       className="ion-padding-start ion-flex"
                       style={{
@@ -915,10 +822,48 @@ const ShootingDetail: React.FC<{
         )
       }
       <ShootingDetailTabs setView={setView} view={view} handleBack={handleBack} />
-      <AddNewBanner />
-      <AddNewScenes />
-      <AddNewAdvanceCallModal />
-      <AddNewMeal />
+      <EditionModal
+        modalRef={bannerModalRef}
+        modalTrigger={`open-add-new-banner-modal-${shootingId}`}
+        title="Add New Banner"
+        formInputs={bannerInputs}
+        handleEdition={addNewBanner}
+        defaultFormValues={{}}
+        modalId="add-new-banner-modal"
+        validate={validateBannerExistence}
+      />
+      <InputModalScene
+        sceneName="Add New Scene"
+        listOfScenes={shootingData.notIncludedScenes}
+        handleCheckboxToggle={addNewScene}
+        selectedScenes={selectedScenes}
+        setSelectedScenes={setSelectedScenes}
+        clearSelections={clearSelectedScenes}
+        multipleSelections
+        modalRef={sceneModalRef}
+        isOpen={modalSceneIsOpen}
+        setIsOpen={setModalSceneIsOpen}
+      />
+      <EditionModal
+        modalRef={advanceCallModalRef}
+        modalTrigger={`open-add-new-advance-call-modal-${shootingId}`}
+        title="Add New Department Call"
+        formInputs={formattedAdvancedCallInputs}
+        handleEdition={addNewAdvanceCall}
+        defaultFormValues={{}}
+        modalId={`add-new-advance-call-modal-${shootingId}`}
+        validate={validateAdvanceCallExistence}
+      />
+      <EditionModal
+        modalRef={mealModalRef}
+        modalTrigger={`open-add-new-meal-modal-${shootingId}`}
+        title="Add New Meal"
+        formInputs={mealInputs}
+        handleEdition={addNewMeal}
+        defaultFormValues={{}}
+        modalId={`open-add-new-meal-modal-${shootingId}`}
+        validate={validateMealExistence}
+      />
       {moveDiffHoursAlert()}
       <MapFormModal isOpen={showMapModal} closeModal={closeMapModal} onSubmit={selectedLocation ? updateExistingLocation : addNewLocation} selectedLocation={selectedLocation} />
       <MapFormModal isOpen={showHospitalsMapModal} closeModal={closeHospitalsMapModal} onSubmit={selectedHospital ? updateExistingHospital : addNewHospital} hospital selectedLocation={selectedHospital} />

@@ -2,7 +2,10 @@ export default function getUniqueValuesFromNestedArray(items: any, arrayKey: any
   const uniqueValues = new Map();
 
   items.forEach((item: any) => {
-    item[arrayKey].forEach((nestedItem: any) => {
+    const nestedItems = item?.[arrayKey];
+    if (!Array.isArray(nestedItems)) return;
+
+    nestedItems.forEach((nestedItem: any) => {
       const value = nestedItem[valueKey];
       uniqueValues.set(value, nestedItem);
     });

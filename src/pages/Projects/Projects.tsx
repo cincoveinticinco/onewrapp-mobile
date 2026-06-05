@@ -9,9 +9,9 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { useRxData } from 'rxdb-hooks';
 import ProjectCard from './Components/ProjectCard/ProjectCard';
-import Toolbar from '../../Shared/Components/Toolbar/Toolbar';
+import Toolbar from '../../Shared/Components/navigation/Toolbar/Toolbar';
 import DatabaseContext from '../../context/Database/Database.context';
-import AppLoader from '../../Shared/hooks/AppLoader';
+import AppLoader from '../../Shared/Components/loaders/AppLoader/AppLoader';
 
 const Projects: React.FC = () => {
   const { initializeProjectsUserReplication } = useContext(DatabaseContext);
@@ -42,7 +42,7 @@ const Projects: React.FC = () => {
 
   useEffect(() => {
     // Additional fallback to ensure loading state is managed
-    if (!isFetching && projects.length > 0) {
+    if (!isFetching && projects?.length > 0) {
       setIsLoading(false);
     }
   }, [isFetching, projects]);

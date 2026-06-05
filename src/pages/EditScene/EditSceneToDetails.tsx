@@ -7,14 +7,11 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
-import AddScenesForm from '../AddScene/Components/AddSceneForm';
 import DatabaseContext from '../../context/Database/Database.context';
-import useErrorToast from '../../Shared/hooks/useErrorToast';
-import useHideTabs from '../../Shared/hooks/useHideTabs';
-import AppLoader from '../../Shared/hooks/AppLoader';
-import useSuccessToast from '../../Shared/hooks/useSuccessToast';
+import useHideTabs from '../../hooks/utils/useHideTabs/useHideTabs';
 import SecondaryPagesLayout from '../../Layouts/SecondaryPagesLayout/SecondaryPagesLayout';
 import { DatabaseContextProps } from '../../context/Database/types/Database.types';
+import useAlertToast from '../../hooks/utils/useToastAlert/useToastAlert';
 
 const EditSceneToDetails: React.FC = () => {
   const history = useHistory();
@@ -30,8 +27,7 @@ const EditSceneToDetails: React.FC = () => {
   };
   const updatedAt = new Date().toISOString();
   const { oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
-  const successMessageToast = useSuccessToast();
-  const errorToast = useErrorToast();
+  const { successToast , errorToast } = useAlertToast();
   const [sceneDataIsLoading, setSceneDataIsLoading] = useState<boolean>(true);
 
   const sceneDefaultValues = {
@@ -101,7 +97,7 @@ const EditSceneToDetails: React.FC = () => {
   const updateScene = async (formData: any) => {
     try {
       await oneWrapDb?.scenes.upsert(formData);
-      successMessageToast('Scene updated successfully!');
+      successToast('Scene updated successfully!');
       handleBack();
     } catch (error: any) {
       errorToast(error ? error.message : 'Error updating scene');
@@ -135,26 +131,7 @@ const EditSceneToDetails: React.FC = () => {
       handleBack={handleBack}
     >
       <IonContent color="tertiary" ref={contentRef}>
-        {
-          sceneDataIsLoading
-            ? AppLoader()
-            : (
-              <AddScenesForm
-                scrollToTop={() => scrollToTop()}
-                detailsEditMode
-                editMode={false}
-                sceneFormId={sceneFormId}
-                handleSubmit={handleSubmit}
-                control={control}
-                errors={errors}
-                reset={reset}
-                setValue={setValue}
-                watch={watch}
-                formData={formData}
-                onSubmit={onSubmit}
-              />
-            )
-        }
+
       </IonContent>
     </SecondaryPagesLayout>
   );

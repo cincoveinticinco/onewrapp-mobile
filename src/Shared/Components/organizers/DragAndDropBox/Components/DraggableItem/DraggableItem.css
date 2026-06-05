@@ -1,0 +1,6 @@
+.draggable-item:active {
+  cursor: grabbing;
+  filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.5));
+  opacity: 0.8;
+  border: 1px solid var(--ion-color-primary);
+}

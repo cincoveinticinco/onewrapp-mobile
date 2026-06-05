@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IonButton, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonItem,
-  IonList, IonModal, IonRow, useIonViewDidEnter, useIonViewDidLeave, useIonViewWillEnter,
+  IonButton, IonCol, IonContent, IonHeader, IonIcon, IonModal, IonRow, useIonViewDidEnter, useIonViewWillEnter,
 } from '@ionic/react';
-import { chevronForward, search } from 'ionicons/icons';
+import { chevronForward } from 'ionicons/icons';
 import ScenesContext from '../../../../context/Scenes/Scenes.context';
 import './FilterScenesModalSelect.scss';
-import useIsMobile from '../../../../Shared/hooks/useIsMobile';
-import OutlinePrimaryButton from '../../../../Shared/Components/OutlinePrimaryButton/OutlinePrimaryButton';
-import OutlineLightButton from '../../../../Shared/Components/OutlineLightButton/OutlineLightButton';
-import ModalSearchBar from '../../../../Shared/Components/ModalSearchBar/ModalSearchBar';
-import ModalToolbar from '../../../../Shared/Components/ModalToolbar/ModalToolbar';
+import useIsMobile from '../../../../hooks/utils/useIsMobile/useIsMobile';
+import OutlinePrimaryButton from '../../../../Shared/Components/buttons/OutlinePrimaryButton/OutlinePrimaryButton';
+import OutlineLightButton from '../../../../Shared/Components/buttons/OutlineLightButton/OutlineLightButton';
+import ModalSearchBar from '../../../../Shared/Components/inputs/ModalSearchBar/ModalSearchBar';
+import ModalToolbar from '../../../../Shared/Components/modals/ModalToolbar/ModalToolbar';
 import capitalizeString from '../../../../Shared/Utils/capitalizeString';
 import removeNumberAndDot from '../../../../Shared/Utils/removeNumberAndDot';
-import truncateString from '../../../../Shared/Utils/truncateString';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
-import AppLoader from '../../../../Shared/hooks/AppLoader';
+import AppLoader from '../../../../Shared/Components/loaders/AppLoader/AppLoader';
 import RegularList from '../../../../Layouts/RegularCheckboxList/RegularCheckboxList';
 
 interface FilterScenesModalSelectProps {
@@ -30,8 +27,8 @@ interface FilterScenesModalSelectProps {
 const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   filterName,
   listOfFilters,
-  handleSingleFilterOption = () => {},
-  handleNestedFilterOption = () => {},
+  handleSingleFilterOption = () => { },
+  handleNestedFilterOption = () => { },
   optionKey,
   nestedKey = null,
 }) => {
@@ -125,15 +122,15 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
   }, [searchText]);
 
   const getListStyles = () => {
-    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length > 10) {
+    if (uncheckedfilteredFiltersOptions?.length === 0 && listOfFilters?.length > 10) {
       return { border: 'none', outline: 'none', marginTop: '100px' };
     }
 
-    if (listOfFilters.length > 10) {
+    if (listOfFilters?.length > 10) {
       return { marginTop: '100px' };
     }
 
-    if (uncheckedfilteredFiltersOptions.length === 0 && listOfFilters.length <= 10) {
+    if (uncheckedfilteredFiltersOptions?.length === 0 && listOfFilters?.length <= 10) {
       return {};
     }
 
@@ -155,7 +152,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
           className="ion-no-margin ion-no-padding"
         >
           {
-            checkedOptions.length === 0 ? (
+            checkedOptions?.length === 0 ? (
               <p className="ion-no-margin ion-no-padding">View All</p>
             ) : (
               <p
@@ -163,7 +160,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                 style={{ color: 'var(--ion-color-primary)' }}
               >
                 {checkedOptions.map((option: string, i: number) => (
-                  <span key={`checked-option-${i}`}>
+                  <span key={`checked-option-${option}`}>
                     {i > 0 && ', '}
                     {capitalizeString(option)}
                   </span>
@@ -171,7 +168,7 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
               </p>
             )
           }
-          <IonIcon color={checkedOptions.length > 0 ? 'primary' : 'light'} icon={chevronForward} />
+          <IonIcon color={checkedOptions?.length > 0 ? 'primary' : 'light'} icon={chevronForward} />
         </IonButton>
       </IonCol>
       <IonModal
@@ -185,11 +182,11 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
             handleSave={handleSave}
             toolbarTitle={filterName}
             handleReset={clearFilterOptions}
-            showReset={Object.entries(selectedFilterOptions).length > 0}
+            showReset={Object.entries(selectedFilterOptions)?.length > 0}
           />
         </IonHeader>
         <IonContent color="tertiary">
-          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters.length > 10} />
+          <ModalSearchBar searchText={searchText} setSearchText={setSearchText} showSearchBar={listOfFilters?.length > 10} />
           {
             dataIsLoading && (
               AppLoader()
@@ -209,13 +206,13 @@ const FilterScenesModalSelect: React.FC<FilterScenesModalSelectProps> = ({
                   selectedOptions={selectedFilterOptions}
                 />
                 {
-                  uncheckedfilteredFiltersOptions.length === 0
+                  uncheckedfilteredFiltersOptions?.length === 0
                   && (
-                  <p className="no-items-message">
-                    There are no coincidences. Do you want to
-                    <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}> reset search </span>
-                    ?
-                  </p>
+                    <p className="no-items-message">
+                      There are no coincidences. Do you want to
+                      <span onClick={() => setSearchText('')} style={{ color: 'var(--ion-color-primary)' }}> reset search </span>
+                      ?
+                    </p>
                   )
                 }
                 <OutlinePrimaryButton

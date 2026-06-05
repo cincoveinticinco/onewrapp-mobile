@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useParams } from "react-router";
-import EditionModal, { FormInput } from "../../../../../../Shared/Components/EditionModal/EditionModal";
+import EditionModal, { FormInput } from "../../../../../../Shared/Components/modals/EditionModal/EditionModal";
 
 interface AddCastCallModalProps {
   addNewModalIsOpen: boolean;

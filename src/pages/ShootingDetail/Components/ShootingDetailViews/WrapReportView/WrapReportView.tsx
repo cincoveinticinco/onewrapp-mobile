@@ -1,9 +1,8 @@
 import React from 'react';
-import useIsMobile from '../../../../../Shared/hooks/useIsMobile';
+import useIsMobile from '../../../../../hooks/utils/useIsMobile/useIsMobile';
 import { LocationInfo, Meal } from '../../../../../Shared/types/shooting.types';
 import CallSheet from '../../../../CallSheet/CallSheet';
-import { FormInput } from '../../../../../Shared/Components/EditionModal/EditionModal';
-import { Section } from '../../../../../Shared/Components/Section/Section';
+import { Section } from '../../../../../Shared/Components/organizers/Section/Section';
 import ShootingBasicInfo from '../../ShootingBasicInfo/ShootingBasicInfo';
 import { AdvanceCallsSection } from '../../ShootingDetailSections/AdvanceCallsSection/AdvanceCallsSection';
 import { HospitalsSection } from '../../ShootingDetailSections/HospitalSection/HospitalSection';
@@ -12,6 +11,7 @@ import { MealsSection } from '../../ShootingDetailSections/MealsSection/MealsSec
 import ScriptReportView from '../ScriptReportView/ScriptReportView';
 import './WrapReportView.css';
 import { mergedSceneShoot, ShootingDataProps } from '../../../types/ShootingDetail.types';
+import { FormInput } from '../../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface WrapReportViewProps {
   shootingData: ShootingDataProps;

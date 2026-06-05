@@ -1,21 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import {
-  IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,} from '@ionic/react';
+  IonItemSliding, IonItemOptions, IonButton, IonItem, IonTitle, useIonToast,
+} from '@ionic/react';
 import { PiProhibitLight, PiTrashSimpleLight } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
 import './CastCard.scss';
 import secondsToMinSec from '../../../../Shared/Utils/secondsToMinSec';
 import floatToFraction from '../../../../Shared/Utils/floatToFraction';
 import { checkmarkCircle } from 'ionicons/icons';
-import EditionModal from '../../../../Shared/Components/EditionModal/EditionModal';
 import DatabaseContext from '../../../../context/Database/Database.context';
 import { DatabaseContextProps } from '../../../../context/Database/types/Database.types';
 import InputAlert from '../../../../Layouts/InputAlert/InputAlert';
-import InfoLabel from '../../../../Shared/Components/InfoLabel/InfoLabel';
-import useWarningToast from '../../../../Shared/hooks/useWarningToast';
-import useErrorToast from '../../../../Shared/hooks/useErrorToast';
-import useSuccessToast from '../../../../Shared/hooks/useSuccessToast';
+import InfoLabel from '../../../../Shared/Components/descriptive/InfoLabel/InfoLabel';
+import { EmptyEnum } from '../../../../Shared/enums/ennums';
+import useAlertToast from '../../../../hooks/utils/useToastAlert/useToastAlert';
+import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
+import EditionModal from '../../../../Shared/Components/modals/EditionModal/EditionModal';
 
 interface Cast {
   characterNum: string;
@@ -45,8 +45,9 @@ const CastCard: React.FC<CastCardProps> = ({
   const { oneWrapDb, projectId } = useContext<DatabaseContextProps>(DatabaseContext);
   const getCharacterNum = (character: Cast) => (character.characterNum ? `${character.characterNum}.` : '');
   const disableEditions = permissionType !== 1;
-  const errorToast = useErrorToast();
-  const successToast = useSuccessToast();
+  const { errorToast, warningToast, successToast } = useAlertToast();
+
+  const [openEditionModal, setOpenEditionModal] = React.useState(false);
 
   const divideIntegerFromFraction = (value: string) => {
     const [integer, fraction] = value.split(' ');
@@ -57,7 +58,10 @@ const CastCard: React.FC<CastCardProps> = ({
   };
 
   const modalRef = React.useRef<HTMLIonModalElement>(null);
-  const openModalEdition = () => modalRef.current?.present();
+  const openModalEdition = () => {
+    setOpenEditionModal(true);
+    modalRef.current?.present();
+  }
 
   const fraction = floatToFraction(character.pagesSum);
 
@@ -89,8 +93,6 @@ const CastCard: React.FC<CastCardProps> = ({
       cssClass: 'success-toast',
     });
   };
-
-  const warningMessageToast = useWarningToast();
 
   const formInputs = [
     {
@@ -130,17 +132,23 @@ const CastCard: React.FC<CastCardProps> = ({
     },
   ];
 
-  const defaultValues = {
-    categoryName: character.categoryName === 'NO CATEGORY' ? '' : character.categoryName,
-    characterNum: character.characterNum,
-    characterName: character.characterName,
-  };
+  const defaultValues = useMemo(() => {
+    return{
+      categoryName: character.categoryName === EmptyEnum.NoCategory ? '' : character.categoryName,
+      characterNum: character.characterNum,
+      characterName: character.characterName,
+    };
+  }, [character]);
 
-  const extraDefaultValues = {
-    extraName: character.extraName,
-  };
+  const extraDefaultValues = useMemo(() => {
+    return (
+      {
+        extraName: character.extraName,
+      }
+    )
+  }, [character]);
 
-  const scenesToEdit = () => oneWrapDb?.scenes.find({
+  const scenesToEdit = async () => oneWrapDb?.scenes.find({
     selector: {
       projectId,
       'characters.characterName': character.characterName,
@@ -156,7 +164,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
   const deleteCharacter = async () => {
     try {
-      warningMessageToast('Please wait...');
+      warningToast('Please wait...');
       const scenes = await scenesToEdit();
       const updatedScenes: any = [];
 
@@ -170,16 +178,18 @@ const CastCard: React.FC<CastCardProps> = ({
 
       await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
-      successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
+      successToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully deleted from all scenes!`);
     } catch (error) {
       errorToast('Error deleting character');
     }
   };
 
   const editCharacter = async (newCharacter: any) => {
+    console.log(newCharacter, 'Çççççççççç')
     try {
-      warningMessageToast('Please wait...');
+      warningToast('Please wait...');
       const scenes = await scenesToEdit();
+      console.log(scenes, 'Çççççççççç')
       const updatedScenes: any = [];
 
       scenes?.forEach((scene: any) => {
@@ -190,7 +200,7 @@ const CastCard: React.FC<CastCardProps> = ({
         updatedScenes.push(updatedScene);
       });
 
-      const result = await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
+      await oneWrapDb?.scenes.bulkUpsert(updatedScenes);
 
       successMessageSceneToast(`${!character.extraName ? character.characterName.toUpperCase() : 'NO NAME'} was successfully updated!`);
     } catch (error) {
@@ -252,49 +262,62 @@ const CastCard: React.FC<CastCardProps> = ({
   const validateExistence = (value: string) => validationFunction(value, character.characterName);
 
   return (
-    <IonItemSliding>
-      <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
-        <div className="cast-card-wrapper">
-          <div className="cast-card-image">
-            {/* EMPTY TEMPORARY */}
-          </div>
-          <div color="dark" className="cast-card-header">
-            <IonTitle className="cast-card-header-title">
-              <HighlightedText
-                text={`${getCharacterNum(character)} ${character.characterName || character.extraName}`}
-                searchTerm={searchText}
-              />
-            </IonTitle>
-            <p className="cast-card-header-subtitle">
-              TALENT NOT ASSIGNED
-            </p>
-          </div>
-          <div className="cast-card-content">
-            <InfoLabel label="PART." value={character.participation} symbol="%" />
-            <InfoLabel label="LOC." value={character.locationsQuantity} />
-            <InfoLabel label="SETS" value={character.setsQuantity} />
-            <InfoLabel label="EP." value={character.episodesQuantity} />
-            <InfoLabel label="SCN." value={character.scenesQuantity} />
-            <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
-            <InfoLabel label="PROT." value={character.protectionQuantity} />
-            <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
-          </div>
-        </div>
-      </IonItem>
-      <IonItemOptions className="cast-card-item-options">
-        <div className="buttons-wrapper">
-          <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
-            <CiEdit className="button-icon view" />
-          </IonButton>
-          <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
-            <PiProhibitLight className="button-icon ban" />
-          </IonButton>
-          <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
-            <PiTrashSimpleLight className="button-icon trash" />
-          </IonButton>
-        </div>
-      </IonItemOptions>
+    <>
+      {
+        !openEditionModal && (
+          <IonItemSliding>
+            <IonItem mode="md" className="cast-card ion-no-margin ion-no-padding ion-nowrap" color="tertiary">
+              <div className="cast-card-wrapper">
+                <div className="cast-card-image">
+                  {/* EMPTY TEMPORARY */}
+                </div>
+                <div color="dark" className="cast-card-header">
+                  <IonTitle className="cast-card-header-title">
+                    <HighlightedText
+                      text={`${getCharacterNum(character)} ${character.characterName || character.extraName}`}
+                      searchTerm={searchText}
+                    />
+                  </IonTitle>
+                  <p className="cast-card-header-subtitle">
+                    TALENT NOT ASSIGNED
+                  </p>
+                </div>
+                <div className="cast-card-content">
+                  <InfoLabel label="PART." value={character.participation} symbol="%" />
+                  <InfoLabel label="LOC." value={character.locationsQuantity} />
+                  <InfoLabel label="SETS" value={character.setsQuantity} />
+                  <InfoLabel label="EP." value={character.episodesQuantity} />
+                  <InfoLabel label="SCN." value={character.scenesQuantity} />
+                  <InfoLabel label="PAGES" value={integerPart} symbol={fractionPart} />
+                  <InfoLabel label="PROT." value={character.protectionQuantity} />
+                  <InfoLabel label="TIME" value={minutes} symbol={`:${seconds}`} />
+                </div>
+              </div>
+            </IonItem>
+            <IonItemOptions className="cast-card-item-options">
+              <div className="buttons-wrapper">
+                <IonButton fill="clear" onClick={openModalEdition} disabled={disableEditions}>
+                  <CiEdit className="button-icon view" />
+                </IonButton>
+                <IonButton fill="clear" onClick={() => scenesToEdit()?.then((values: any) => values)} disabled={disableEditions}>
+                  <PiProhibitLight className="button-icon ban" />
+                </IonButton>
+                <IonButton fill="clear" id={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`} disabled={disableEditions}>
+                  <PiTrashSimpleLight className="button-icon trash" />
+                </IonButton>
+              </div>
+            </IonItemOptions>
+            <InputAlert
+              header="Delete Scene"
+              message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
+              handleOk={() => (!character.extraName ? deleteCharacter() : deleteExtra())}
+              inputs={[]}
+              trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
+            />
 
+          </IonItemSliding>
+        )
+      }
       <EditionModal
         formInputs={!character.extraName ? formInputs : extraFormInputs}
         handleEdition={!character.extraName ? editCharacter : editExtra}
@@ -302,18 +325,11 @@ const CastCard: React.FC<CastCardProps> = ({
         defaultFormValues={!character.extraName ? defaultValues : extraDefaultValues}
         validate={validateExistence}
         modalRef={modalRef}
+        isOpen={openEditionModal}
+        setIsOpen={setOpenEditionModal}
       />
-
-      <InputAlert
-        header="Delete Scene"
-        message={`Are you sure you want to delete ${!character.extraName ? character.characterName.toUpperCase() : character.extraName.toUpperCase() ? character.extraName : 'NO NAME'} character from all the scenes?`}
-        handleOk={() => (!character.extraName ? deleteCharacter() : deleteExtra())}
-        inputs={[]}
-        trigger={!character.extraName ? `delete-cast-${character.characterName}` : `delete-extra-${character.extraName}`}
-      />
-
-    </IonItemSliding>
+    </>
   );
 };
 
-export default CastCard;
+export default React.memo(CastCard);

@@ -1,5 +1,5 @@
-import DropDownButton from '../../../../Shared/Components/DropDownButton/DropDownButton';
-import HighlightedText from '../../../../Shared/Components/HighlightedText/HighlightedText';
+import DropDownButton from '../../../../Shared/Components/buttons/DropDownButton/DropDownButton';
+import HighlightedText from '../../../../Shared/Components/descriptive/HighlightedText/HighlightedText';
 import './DropDownCast.scss';
 
 interface DropDownCastProps {

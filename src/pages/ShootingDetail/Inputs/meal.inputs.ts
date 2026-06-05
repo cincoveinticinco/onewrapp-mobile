@@ -1,4 +1,4 @@
-import { FormInput } from "../../../Shared/Components/EditionModal/EditionModal";
+import { FormInput } from "../../../Shared/Components/modals/EditionModal/EditionModal";
 
 export const mealInputs:FormInput[] = [
     {

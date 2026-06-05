@@ -1,0 +1,228 @@
+import { useEffect, useState } from "react";
+import { SceneDocType } from "../../../../Shared/types/scenes.types";
+import { InfoType, SceneTypeEnum } from "../../../../Shared/enums/ennums";
+import SceneInfoLabels from "../../../SceneDetails/Components/SceneInfoLabels/SceneInfoLabels";
+import getUniqueValuesFromNestedArray from "../../../../Shared/Utils/getUniqueValuesFromNestedArray";
+import getUniqueValuesByKey from "../../../../Shared/Utils/getUniqueValuesByKey";
+import { IonItem } from "@ionic/react";
+
+interface ScenesTotalsProps {
+  scenes: SceneDocType[];
+  isSection?: boolean;
+}
+
+const ScenesTotals: React.FC<ScenesTotalsProps> = ({
+  scenes,
+  isSection = false
+}) => {
+  const [sceneTotals, setSceneTotals] = useState({
+    totalScenes: 0,
+    totalProtections: 0,
+    totalPages: 0,
+    totalCharacters: 0,
+    totalExtras: 0,
+    totalElements: 0,
+    totalLocations: 0,
+    totalSets: 0,
+    totalSeconds: 0
+  });
+
+  useEffect(() => {
+    let totalScenes = 0;
+    let totalProtections = 0;
+    let totalPages = 0;
+    let totalCharacters = 0;
+    let totalExtras = 0;
+    let totalElements = 0;
+    let totalLocations = 0;
+    let totalSets = 0;
+    let totalSeconds = 0;
+
+    scenes.forEach(scene => {
+      if(scene.sceneType === SceneTypeEnum.SCENE) {
+        totalScenes++;
+      } else {
+        totalProtections++;
+      }
+    });
+
+    scenes.forEach(scene => {
+      totalPages += scene.pages ?? 0;
+      totalSeconds += scene.estimatedSeconds ?? 0;
+    });
+
+    const uniqueCharacters = getUniqueValuesFromNestedArray(scenes, 'characters', 'characterName')
+
+    const uniqueExtras = getUniqueValuesFromNestedArray(scenes, 'extras', 'extraName')
+
+    const uniqueElements = getUniqueValuesFromNestedArray(scenes, 'elements', 'elementName')
+
+    const uniqueLocations = getUniqueValuesByKey(scenes, 'locationName')
+
+    const uniqueSets = getUniqueValuesByKey(scenes, 'setName')
+
+    totalCharacters = uniqueCharacters?.length;
+    totalExtras = uniqueExtras?.length;
+    totalElements = uniqueElements?.length;
+    totalLocations = uniqueLocations?.length;
+    totalSets = uniqueSets?.length;
+
+    setSceneTotals({
+      totalScenes,
+      totalProtections,
+      totalPages,
+      totalCharacters,
+      totalExtras,
+      totalElements,
+      totalLocations,
+      totalSets,
+      totalSeconds
+    });
+  }, [scenes]);
+
+  const wraperLabelStyles = {
+    margin: '0 12px',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+
+  const totalsColor = isSection ? 'light' : 'tertiary';
+  const sectionStyles = isSection ? 'totals-bar-for-section' : 'ion-padding-top';
+  const slot = !isSection ? 'start' : 'end';
+
+  return (
+    <IonItem
+      className={sectionStyles}
+      color={totalsColor}
+    >
+      {
+        isSection && (
+          <div style={{ width: '20%', textWrap: 'nowrap'}}>
+            <b>TOTALS</b>
+          </div>
+        )
+      }
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalScenes',
+            isEditable: false,
+            disabled: true,
+            title: 'Scn',
+            info: sceneTotals.totalScenes,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalProtections',
+            isEditable: false,
+            disabled: true,
+            title: 'Prot',
+            info: sceneTotals.totalProtections,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalPages',
+            isEditable: false,
+            disabled: true,
+            title: 'Pgs',
+            info: sceneTotals.totalPages,
+          }}
+          type={InfoType.Pages}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalCharacters',
+            isEditable: false,
+            disabled: true,
+            title: 'Characters',
+            info: sceneTotals.totalCharacters,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalExtras',
+            isEditable: false,
+            disabled: true,
+            title: 'Extras',
+            info: sceneTotals.totalExtras,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalElements',
+            isEditable: false,
+            disabled: true,
+            title: 'Elements',
+            info: sceneTotals.totalElements,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalLocations',
+            isEditable: false,
+            disabled: true,
+            title: 'Locations',
+            info: sceneTotals.totalLocations,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalSets',
+            isEditable: false,
+            disabled: true,
+            title: 'Sets',
+            info: sceneTotals.totalSets,
+          }}
+          type={InfoType.Number}
+        />
+      </div>
+      <div style={wraperLabelStyles} slot={slot}>
+        <SceneInfoLabels
+          editMode={false}
+          label={{
+            fieldKeyName: 'totalSeconds',
+            isEditable: false,
+            disabled: true,
+            title: 'EST. TIME',
+            info: sceneTotals.totalSeconds,
+          }}
+          type={InfoType.Minutes}
+        />
+      </div>
+    </IonItem>
+  );
+}
+
+export default ScenesTotals;

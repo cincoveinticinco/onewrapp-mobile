@@ -1,29 +1,28 @@
 import { IonButton } from '@ionic/react';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useEffect, useMemo, useRef, useState,
 } from 'react';
 import { FaClipboardList } from 'react-icons/fa';
 import { HiMiniUsers } from 'react-icons/hi2';
 import { MdOutlineFaceUnlock } from 'react-icons/md';
 import { PiNotePencil } from 'react-icons/pi';
-import DatabaseContext from '../../../context/Database/Database.context';
-import useFormTypeLogic from '../../../hooks/SceneScript/useFormTypeLogic';
-import useIsMobile from '../../../Shared/hooks/useIsMobile';
-import AppLoader from '../../../Shared/hooks/AppLoader';
-import useTextSelection from '../../../Shared/hooks/useSelectedText';
-import useSuccessToast from '../../../Shared/hooks/useSuccessToast';
+import useFormTypeLogic from '../../../hooks/utils/useScriptFormLogic/useFormTypeLogic';
+import useIsMobile from '../../../hooks/utils/useIsMobile/useIsMobile';
+import AppLoader from '../../../Shared/Components/loaders/AppLoader/AppLoader';
+import useTextSelection from '../../../hooks/utils/useSelectedText/useSelectedText';
 import InputModal from '../../../Layouts/InputModal/InputModal';
 import CharacterForm from './SceneParagraph/CharacterForm';
 import ElementForm from './SceneParagraph/ElementForm';
 import ExtraForm from './SceneParagraph/ExtraForm';
 import NoteForm from './SceneParagraph/NoteForm';
 import SceneParagraph from './SceneParagraph/SceneParagraph';
-import { DatabaseContextProps } from '../../../context/Database/types/Database.types';
 import { Character, Element, Extra, Note } from '../../../Shared/types/scenes.types';
-import { SearchTerm } from '../../../Shared/Components/HighlightedTextWithArray/HighlightedTextWithArray';
 import getUniqueValuesFromNestedArray from '../../../Shared/Utils/getUniqueValuesFromNestedArray';
 import removeAccents from '../../../Shared/Utils/removeAccents';
-import FiilledSuccessButton from '../../../Shared/Components/FilledSuccessButton/FillSuccessButton';
+import FiilledSuccessButton from '../../../Shared/Components/buttons/FilledSuccessButton/FillSuccessButton';
+import useAlertToast from '../../../hooks/utils/useToastAlert/useToastAlert';
+import { SearchTerm } from '../../../Shared/Components/descriptive/HighlightedTextWithArray/HighlightedTextWithArray';
+import { useProjectScenes } from '../../../hooks/database/useProjectScenes/useProjectScenes';
 
 interface ScriptPageProps {
   zoomLevel: number;
@@ -54,15 +53,15 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
   };
   const isMobile = useIsMobile();
 
-  const successToast = useSuccessToast();
-  const { offlineScenes, oneWrapDb } = useContext<DatabaseContextProps>(DatabaseContext);
+  const { successToast } = useAlertToast();
+  const projectScenes = useProjectScenes();
   const selectionRef = useRef<string | null>(null);
   const { selectedText, setSelectedText } = useTextSelection(handlePopupOpen);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [scenesList, setScenesList] = useState<any[]>([]);
 
   const getScenesArray = () => {
-    const scenesList = offlineScenes.map((scene: any) => {
+    const scenesList = projectScenes.map((scene: any) => {
       const sceneId = scene.id;
       const sceneHeader = `${parseInt(scene.episodeNumber) > 0 ? (`${scene.episodeNumber}.`) : ''}${scene.sceneNumber} ${scene.intOrExtOption ? (`${scene.intOrExtOption}.`) : ''} ${scene.locationName ? (`${scene.locationName}.`) : ''} ${scene.setName}-${scene.dayOrNightOption}${scene.scriptDay} ${scene.year ? `(${scene.year})` : ''}`;
       return {
@@ -75,7 +74,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
 
   useEffect(() => {
     setScenesList(getScenesArray());
-  }, [offlineScenes, oneWrapDb]);
+  }, [projectScenes]);
 
   const viewportHeight = window.innerHeight;
   const selectionPercentage = (popupPosition.y + 50) / viewportHeight;
@@ -114,7 +113,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setNote,
     setFormType,
     popupMessage,
-  } = useFormTypeLogic(offlineScenes, selectedText);
+  } = useFormTypeLogic(projectScenes, selectedText);
 
   useEffect(() => {
     setNote((prevNote: any) => ({ ...prevNote, note: selectedText }));
@@ -123,12 +122,27 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setExtra((prevExtra: any) => ({ ...prevExtra, extraName: selectedText }));
   }, [selectedText]);
 
-  const elementsUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName).filter((categoryName) => categoryName !== undefined);
-  const charactersUniqueCategories = getUniqueValuesFromNestedArray(offlineScenes, 'characters', 'categoryName').map((category: Character) => category.categoryName).filter((categoryName) => categoryName !== undefined);
+  const elementsUniqueCategories = useMemo(() => getUniqueValuesFromNestedArray(projectScenes, 'elements', 'categoryName').map((category: Element) => category.categoryName).filter((categoryName) => categoryName !== undefined), [projectScenes]);
+  const charactersUniqueCategories = useMemo(() => 
+      getUniqueValuesFromNestedArray(projectScenes, 'characters', 'categoryName')
+        .map((category: Character) => category.categoryName)
+        .filter((categoryName) => categoryName !== undefined), 
+    [projectScenes]);
 
   const handleFormTypeChange = (newFormType: 'character' | 'element' | 'extra' | 'note') => {
     setFormType(newFormType);
   };
+  const [elementCategories, setElementCategories] = useState<(string | null)[]>([]);
+
+  useEffect(() => {
+    setElementCategories(elementsUniqueCategories);
+  }, [elementsUniqueCategories]);
+
+  const [characterCategories, setCharacterCategories] = useState<(string | null)[]>([]);
+
+  useEffect(() => {
+    setCharacterCategories(charactersUniqueCategories);
+  }, [charactersUniqueCategories]);
 
   const handlePopupClose = () => {
     setShowPopup(false);
@@ -244,7 +258,7 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
     setSelectedSceneId(sceneId);
   };
 
-  if (paragraphs.length === 0) {
+  if (paragraphs?.length === 0) {
     return (
       <div
         className="script-page"
@@ -290,9 +304,9 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
           transformOrigin: 'top left',
         }}
       >
-        {paragraphs.map((paragraph, index) => (
+        {paragraphs.map((paragraph) => (
           <SceneParagraph
-            key={index}
+            key={`paragraph-${paragraph.id}`}
             type={paragraph.type}
             content={paragraph.content}
             searchTermsArray={searchTerms}
@@ -365,8 +379,8 @@ const ScriptPage: React.FC<ScriptPageProps> = ({
                   <HiMiniUsers className={`form-type-icon${formType === 'extra' ? ' active' : ''}`} />
                 </button>
               </div>
-              {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={charactersUniqueCategories} />}
-              {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementsUniqueCategories} />}
+              {formType === 'character' && <MemoizedCharacterForm character={character} setCharacter={setCharacter} characterCategories={characterCategories} setCharacterCategories={setCharacterCategories} />}
+              {formType === 'element' && <MemoizedElementForm element={element} setElement={setElement} elementCategories={elementCategories} setElementCategories={setElementCategories} />}
               {formType === 'extra' && <MemoizedExtraForm extra={extra} setExtra={setExtra} />}
               {formType === 'note' && <MemoizedNoteForm note={note} setNote={setNote} />}
               <>

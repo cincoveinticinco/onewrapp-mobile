@@ -1,3 +1,6 @@
+import { EnvironmentPlugin } from './plugins/EnvironmentPlugin';
+import { Capacitor } from '@capacitor/core';
+
 interface Environment {
   URL_PATH: string;
   SCENES_ENDPOINT_PULL: string;
@@ -20,10 +23,13 @@ interface Environment {
   SERVICE_MATRICES_ENDPOINT_PULL: string;
   SERVICE_MATRICES_ENDPOINT_PUSH: string;
   USER_ENDPOINT_PULL: string;
+  PROJ_WEEKS_ENDPOINT_PULL: string;
+  STRIPBOARD_ENDPOINT_PULL: string;
+  STRIPBOARD_ENDPOINT_PUSH: string;
 }
 
-const environment: Environment = {
-  URL_PATH: import.meta.env.VITE_URL_PATH || '',
+const environmentVariables: Environment = {
+  URL_PATH: import.meta.env.VITE_URL_PATH_LOCAL || '',
   SCENES_ENDPOINT_PULL: import.meta.env.VITE_SCENES_ENDPOINT_PULL || '',
   SCENE_PARAGRAPHS_ENDPOINT_PULL: import.meta.env.VITE_SCENE_PARAGRAPHS_ENDPOINT_PULL || '',
   SCENES_ENDPOINT_PUSH: import.meta.env.VITE_SCENES_ENDPOINT_PUSH || '',
@@ -44,6 +50,44 @@ const environment: Environment = {
   SERVICE_MATRICES_ENDPOINT_PULL: import.meta.env.VITE_SERVICE_MATRICES_ENDPOINT_PULL || '',
   SERVICE_MATRICES_ENDPOINT_PUSH: import.meta.env.VITE_SERVICE_MATRICES_ENDPOINT_PUSH || '',
   USER_ENDPOINT_PULL: import.meta.env.VITE_USER_ENDPOINT_PULL || '',
+  PROJ_WEEKS_ENDPOINT_PULL: import.meta.env.VITE_PROJ_WEEKS_ENDPOINT_PULL || '',
+  STRIPBOARD_ENDPOINT_PULL: import.meta.env.VITE_STRIPBOARD_ENDPOINT_PULL || '',
+  STRIPBOARD_ENDPOINT_PUSH: import.meta.env.VITE_STRIPBOARD_ENDPOINT_PUSH || '',
 };
 
+const envConfigs: Record<string, Environment> = {
+  qa: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_STAGING || '',
+  },
+  production: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_PRODUCTION || '',
+  },
+  local: {
+    ...environmentVariables,
+    URL_PATH: import.meta.env.VITE_URL_PATH_LOCAL || '',
+  }
+};
+
+// Default to local so web/iPad development never talks to staging before async environment loading finishes.
+const environment: Environment = envConfigs.local;
+
+export async function loadEnvironment(isIos: boolean) {
+  if(isIos && Capacitor.isNativePlatform()) {
+    try {
+      const { environment: selectedEnv } = await EnvironmentPlugin.getEnvironment();
+      console.log("Ambiente seleccionado:", selectedEnv);
+      // Actualizamos el environment objeto directamente
+      Object.assign(environment, envConfigs[selectedEnv] || envConfigs.local);
+    } catch (error) {
+      console.error("Error al obtener el ambiente:", error);
+      Object.assign(environment, envConfigs.local);
+    }
+  } else {
+    Object.assign(environment, envConfigs.local);
+  }
+}
+
+// Exportación por defecto del environment
 export default environment;
